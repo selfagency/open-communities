@@ -47,6 +47,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.45)
+      bits-ui:
+        specifier: ^0.21.13
+        version: 0.21.13(svelte@4.2.19)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -341,6 +344,15 @@ packages:
   '@exodus/schemasafe@1.3.0':
     resolution: {integrity: sha512-5Aap/GaRupgNx/feGBwLLTVv8OQFfv3pq2lPRzPg9R+IOBnDgghTGW7l7EuVXOvg5cc/xSAlRW8rBrjIC3Nvqw==}
 
+  '@floating-ui/core@1.6.7':
+    resolution: {integrity: sha512-yDzVT/Lm101nQ5TCVeK65LtdN7Tj4Qpr9RTXJ2vPFLqtLxwOrpoxAHAJI8J3yYWUc40J0BDBheaitK5SJmno2g==}
+
+  '@floating-ui/dom@1.6.10':
+    resolution: {integrity: sha512-fskgCFv8J8OamCmyun8MfjB1Olfn+uZKjOKZ0vhYF3gRmEUXcGOjxWL8bBr7i4kIuPZ2KD2S3EUIOxnjC8kl2A==}
+
+  '@floating-ui/utils@0.2.7':
+    resolution: {integrity: sha512-X8R8Oj771YRl/w+c1HqAC1szL8zWQRwFvgDwT129k9ACdBoud/+/rX9V0qiMl6LWUdP9voC2nDVZYPMQQsb6eA==}
+
   '@gcornut/valibot-json-schema@0.31.0':
     resolution: {integrity: sha512-3xGptCurm23e7nuPQkdrE5rEs1FeTPHhAUsBuwwqG4/YeZLwJOoYZv+fmsppUEfo5y9lzUwNQrNqLS/q7HMc7g==}
     hasBin: true
@@ -358,6 +370,9 @@ packages:
   '@humanwhocodes/retry@0.3.0':
     resolution: {integrity: sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==}
     engines: {node: '>=18.18'}
+
+  '@internationalized/date@3.5.5':
+    resolution: {integrity: sha512-H+CfYvOZ0LTJeeLOqm19E3uj/4YjrmOFtBufDHPfvtI80hFAMqtrp7oCACpe4Cil5l8S0Qu/9dYfZc/5lY8WQQ==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -383,6 +398,11 @@ packages:
 
   '@leeoniya/ufuzzy@1.0.14':
     resolution: {integrity: sha512-/xF4baYuCQMo+L/fMSUrZnibcu0BquEGnbxfVPiZhs/NbJeKj4c/UmFpQzW9Us0w45ui/yYW3vyaqawhNYsTzA==}
+
+  '@melt-ui/svelte@0.76.2':
+    resolution: {integrity: sha512-7SbOa11tXUS95T3fReL+dwDs5FyJtCEqrqG3inRziDws346SYLsxOQ6HmX+4BkIsQh1R8U3XNa+EMmdMt38lMA==}
+    peerDependencies:
+      svelte: '>=3 <5'
 
   '@nanostores/persistent@0.10.2':
     resolution: {integrity: sha512-BEndnLhRC+yP7gXTESepBbSj8XNl8OXK9hu4xAgKC7MWJHKXnEqJMqY47LUyHxK6vYgFnisyHmqq+vq8AUFyIg==}
@@ -586,6 +606,9 @@ packages:
   '@sveltekit-i18n/parser-default@1.1.1':
     resolution: {integrity: sha512-/gtzLlqm/sox7EoPKD56BxGZktK/syGc79EbJAPWY5KVitQD9SM0TP8yJCqDxTVPk7Lk0WJhrBGUE2Nn0f5M1w==}
 
+  '@swc/helpers@0.5.13':
+    resolution: {integrity: sha512-UoKGxQ3r5kYI9dALKJapMmuK+1zWM/H17Z1+iwnNmzcJRnfFuevZs375TA5rW31pu4BS4NoSy1fRsexDXfWn5w==}
+
   '@tailwindcss/typography@0.5.15':
     resolution: {integrity: sha512-AqhlCXl+8grUz8uqExv5OTtgpjuVIwFTSXTrh8y9/pw6q2ek7fJ+Y8ZEVw7EB2DCcuCOtEjf9w3+J3rzts01uA==}
     peerDependencies:
@@ -748,6 +771,11 @@ packages:
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
+
+  bits-ui@0.21.13:
+    resolution: {integrity: sha512-7nmOh6Ig7ND4DXZHv1FhNsY9yUGrad0+mf3tc4YN//3MgnJT1LnHtk4HZAKgmxCOe7txSX7/39LtYHbkrXokAQ==}
+    peerDependencies:
+      svelte: ^4.0.0 || ^5.0.0-next.118
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
@@ -1084,6 +1112,9 @@ packages:
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
 
+  focus-trap@7.5.4:
+    resolution: {integrity: sha512-N7kHdlgsO/v+iD/dMoJKtsSqs5Dz/dXZVebRgJw23LDk+jMi/974zyiOYDziY2JPp8xivq9BmUGwIJMiuSBi7w==}
+
   follow-redirects@1.15.9:
     resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
     engines: {node: '>=4.0'}
@@ -1343,6 +1374,11 @@ packages:
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
 
   nanostores@0.11.3:
@@ -1763,6 +1799,9 @@ packages:
       '@sveltejs/kit': 1.x || 2.x
       svelte: 3.x || 4.x || >=5.0.0-next.51
 
+  tabbable@6.2.0:
+    resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
+
   tailwind-merge@2.5.2:
     resolution: {integrity: sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==}
 
@@ -2095,6 +2134,17 @@ snapshots:
   '@exodus/schemasafe@1.3.0':
     optional: true
 
+  '@floating-ui/core@1.6.7':
+    dependencies:
+      '@floating-ui/utils': 0.2.7
+
+  '@floating-ui/dom@1.6.10':
+    dependencies:
+      '@floating-ui/core': 1.6.7
+      '@floating-ui/utils': 0.2.7
+
+  '@floating-ui/utils@0.2.7': {}
+
   '@gcornut/valibot-json-schema@0.31.0':
     dependencies:
       valibot: 0.31.1
@@ -2113,6 +2163,10 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.3.0': {}
+
+  '@internationalized/date@3.5.5':
+    dependencies:
+      '@swc/helpers': 0.5.13
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -2141,6 +2195,16 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@leeoniya/ufuzzy@1.0.14': {}
+
+  '@melt-ui/svelte@0.76.2(svelte@4.2.19)':
+    dependencies:
+      '@floating-ui/core': 1.6.7
+      '@floating-ui/dom': 1.6.10
+      '@internationalized/date': 3.5.5
+      dequal: 2.0.3
+      focus-trap: 7.5.4
+      nanoid: 5.0.7
+      svelte: 4.2.19
 
   '@nanostores/persistent@0.10.2(nanostores@0.11.3)':
     dependencies:
@@ -2323,6 +2387,10 @@ snapshots:
       svelte: 4.2.19
 
   '@sveltekit-i18n/parser-default@1.1.1': {}
+
+  '@swc/helpers@0.5.13':
+    dependencies:
+      tslib: 2.7.0
 
   '@tailwindcss/typography@0.5.15(tailwindcss@3.4.10)':
     dependencies:
@@ -2515,6 +2583,13 @@ snapshots:
   balanced-match@1.0.2: {}
 
   binary-extensions@2.3.0: {}
+
+  bits-ui@0.21.13(svelte@4.2.19):
+    dependencies:
+      '@internationalized/date': 3.5.5
+      '@melt-ui/svelte': 0.76.2(svelte@4.2.19)
+      nanoid: 5.0.7
+      svelte: 4.2.19
 
   brace-expansion@1.1.11:
     dependencies:
@@ -2882,6 +2957,10 @@ snapshots:
 
   flatted@3.3.1: {}
 
+  focus-trap@7.5.4:
+    dependencies:
+      tabbable: 6.2.0
+
   follow-redirects@1.15.9: {}
 
   foreground-child@3.3.0:
@@ -3104,6 +3183,8 @@ snapshots:
       thenify-all: 1.6.0
 
   nanoid@3.3.7: {}
+
+  nanoid@5.0.7: {}
 
   nanostores@0.11.3: {}
 
@@ -3469,6 +3550,8 @@ snapshots:
       yup: 1.4.0
       zod: 3.23.8
       zod-to-json-schema: 3.23.3(zod@3.23.8)
+
+  tabbable@6.2.0: {}
 
   tailwind-merge@2.5.2: {}
 

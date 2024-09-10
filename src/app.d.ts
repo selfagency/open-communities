@@ -1,8 +1,11 @@
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
+/* region imports */
 import type { CookieSerializeOptions } from 'cookie';
 import type { SuperValidated } from 'sveltekit-superforms';
+
 import { Logger } from 'tslog';
+
+import type { TypedPocketBase, CongregationMetaRecord } from '$lib/types';
+/* endregion imports */
 
 declare global {
 	namespace App {
@@ -15,7 +18,7 @@ declare global {
 		}
 
 		interface Locals {
-			api: ApiService;
+			api: TypedPocketBase;
 			auth: string;
 			cookieOpts: CookieSerializeOptions & { path: string };
 			startTimer?: number;
@@ -31,7 +34,10 @@ declare global {
 				schema?: unknown
 			) => Promise<SuperValidated<Record<string, unknown>, unknown, Record<string, unknown>>>;
 		}
-		// interface PageData {}
+
+		interface PageData {
+			congregations: CongregationMetaRecord[];
+		}
 		// interface PageState {}
 		// interface Platform {}
 	}

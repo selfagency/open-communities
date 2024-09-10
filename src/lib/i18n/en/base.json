@@ -1,5 +1,8 @@
 {
 	"accommodations": "Accommodations",
+	"accommodations.ada": "ADA accessibility",
+	"accommodations.cc": "Closed captioning",
+	"accommodations.eva": "EVA transcriptions",
 	"accommodations.extended": "Which of the following accommodations will be available?",
 	"accommodations.hybrid_automatedCaptions": "Automated captions, online access to hybrid services",
 	"accommodations.hybrid_liveCaptions": "Live captions, online access to hybrid services",
