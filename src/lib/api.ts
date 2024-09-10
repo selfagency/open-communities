@@ -1,8 +1,10 @@
 /* region imports */
-import type { TypedPocketBase } from '$lib/types.d';
-import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 import PocketBase from 'pocketbase';
 import { assign, omit } from 'radashi';
+
+import type { TypedPocketBase } from '$lib/types.d';
+
+import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 /* endregion imports */
 
 // instantiate pocketbase api service

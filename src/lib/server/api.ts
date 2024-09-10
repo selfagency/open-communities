@@ -1,11 +1,15 @@
 /* region imports */
-import type { TypedPocketBase, UsersRecord } from '$lib/types.d';
 import type { Cookies } from '@sveltejs/kit';
-import { PUBLIC_API_ENDPOINT } from '$env/static/public';
+
 import { error } from '@sveltejs/kit';
 import cookie from 'cookie';
 import PocketBase from 'pocketbase';
+
+import type { TypedPocketBase, UsersRecord } from '$lib/types.d';
+
+import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 import { cleanResponse, expand } from '$lib/api';
+
 import { log } from './logger';
 /* endregion imports */
 

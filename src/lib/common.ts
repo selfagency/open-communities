@@ -1,5 +1,8 @@
+/* region imports */
 import { Logger } from 'tslog';
+
 import { dev } from '$app/environment';
+/* endregion imports */
 
 const logger = new Logger(
 	{
