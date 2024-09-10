@@ -28,7 +28,7 @@
 </script>
 
 {#if mode === 'mini'}
-	<div class="flex w-full flex-row items-center justify-end space-x-2">
+	<div class="flex w-full flex-row items-center justify-end space-x-1">
 		{#if ada}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
@@ -66,64 +66,79 @@
 {/if}
 
 {#if mode === 'full'}
-	<h2 class="text-md font-bold">{$t('base.accommodations')}</h2>
-
-	<div class="grid grid-cols-12 gap-x-0 gap-y-4">
+	<div class="col-span-3">
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				<h2 class="label">{$t('base.accommodations.short')}</h2>
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<span class="text-nowrap">{$t('base.accommodations')}</span>
+			</Tooltip.Content>
+		</Tooltip.Root>
+	</div>
+	<div class="col-span-9">
 		{#if ada}
-			<div class="col-span-1 flex flex-row items-center justify-start">
-				<AdaIcon size="18" />
-				<span class="sr-only">{$t('base.accommodations.ada')}</span>
-			</div>
-			<div class="col-span-11 flex flex-col items-start justify-center text-sm">
-				{#if accommodations.inPerson_adaSome}
-					{$t('base.accommodations.inPerson_adaSome')}
-				{/if}
-				{#if accommodations.inPerson_adaAll}
-					{$t('base.accommodations.inPerson_adaAll')}
-				{/if}
+			<div class="flex flex-row items-center justify-start space-x-1">
+				<span>
+					<AdaIcon size="18" />
+					<span class="sr-only">{$t('base.accommodations.ada')}</span>
+				</span>
+				<span>
+					{#if accommodations.inPerson_adaSome}
+						{$t('base.accommodations.inPerson_adaSome')}
+					{/if}
+					{#if accommodations.inPerson_adaAll}
+						{$t('base.accommodations.inPerson_adaAll')}
+					{/if}
+				</span>
 			</div>
 		{/if}
 
 		{#if cc}
-			<div class="col-span-1 flex flex-row items-start justify-start">
-				<CcIcon size="18" />
-				<span class="sr-only">{$t('base.accommodations.cc')}</span>
-			</div>
-			<div class="col-span-11 flex flex-col items-start justify-center text-sm">
-				{#if accommodations.hybrid_automatedCaptions}
-					{$t('base.accommodations.hybrid_automatedCaptions')}
-				{/if}
-				{#if accommodations.hybrid_liveCaptions}
-					{$t('base.accommodations.hybrid_liveCaptions')}
-				{/if}
-				{#if accommodations.online_automatedCaptions}
-					{$t('base.accommodations.online_automatedCaptions')}
-				{/if}
-				{#if accommodations.online_liveCaptions}
-					{$t('base.accommodations.online_liveCaptions')}
-				{/if}
+			<div class="flex flex-row items-center justify-start space-x-1">
+				<span>
+					<CcIcon size="18" />
+					<span class="sr-only">{$t('base.accommodations.cc')}</span>
+				</span>
+				<span>
+					{#if accommodations.hybrid_automatedCaptions}
+						{$t('base.accommodations.hybrid_automatedCaptions')}
+					{/if}
+					{#if accommodations.hybrid_liveCaptions}
+						{$t('base.accommodations.hybrid_liveCaptions')}
+					{/if}
+					{#if accommodations.online_automatedCaptions}
+						{$t('base.accommodations.online_automatedCaptions')}
+					{/if}
+					{#if accommodations.online_liveCaptions}
+						{$t('base.accommodations.online_liveCaptions')}
+					{/if}
+				</span>
 			</div>
 		{/if}
 
 		{#if eva}
-			<div class="col-span-1 flex flex-row items-start justify-start">
-				<EvaIcon size="18" />
-				<span class="sr-only">{$t('base.accommodations.eva')}</span>
-			</div>
-			<div class="col-span-11 flex flex-col items-start justify-center text-sm">
-				{#if accommodations.inPerson_eva}
-					{$t('base.accommodations.inPerson_eva')}
-				{/if}
+			<div class="flex flex-row items-center justify-start space-x-1">
+				<span>
+					<EvaIcon size="18" />
+					<span class="sr-only">{$t('base.accommodations.eva')}</span>
+				</span>
+				<span>
+					{#if accommodations.inPerson_eva}
+						{$t('base.accommodations.inPerson_eva')}
+					{/if}
+				</span>
 			</div>
 		{/if}
 
 		{#if !ada && !cc && !eva}
-			<div class="col-span-1 flex flex-row items-start justify-start">
-				<WarningIcon size="18" />
-				<span class="sr-only">{$t('base.unspecified')}</span>
-			</div>
-			<div class="justify-left col-span-11 flex flex-row items-center text-sm">
-				{$t('base.unspecified')}
+			<div class="flex flex-row items-center justify-start space-x-1">
+				<span>
+					<WarningIcon size="18" />
+					<span class="sr-only">{$t('base.unspecified')}</span>
+				</span>
+
+				<span>{$t('base.unspecified')}</span>
 			</div>
 		{/if}
 	</div>

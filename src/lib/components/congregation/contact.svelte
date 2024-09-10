@@ -10,10 +10,10 @@
 	/* endregion variables */
 </script>
 
-<div class="col-span-2 flex flex-row items-start justify-start">
-	<span class="font-bold">{$t('base.congregation.contact')}</span>
+<div class="col-span-3 flex flex-row items-start justify-start">
+	<h2 class="label">{$t('base.congregation.contact')}</h2>
 </div>
-<div class="col-span-10 flex flex-row items-start justify-start">
+<div class="col-span-9 flex flex-row items-start justify-start">
 	{#if contactEmail && contactName}
 		<a href="mailto:{contactEmail}" class="underline">
 			{#if contactName}

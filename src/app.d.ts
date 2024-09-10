@@ -2,6 +2,7 @@
 import type { CookieSerializeOptions } from 'cookie';
 import type { SuperValidated } from 'sveltekit-superforms';
 
+import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
 
 import type { TypedPocketBase, CongregationMetaRecord } from '$lib/types';

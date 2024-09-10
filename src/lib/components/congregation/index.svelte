@@ -55,7 +55,7 @@
       X"fit": "JSON",
       "registration": "JSON",
       "safety": "JSON",
-      "services": "JSON"
+      X"services": "JSON"
     }, -->
 
 <Dialog.Root>
@@ -90,19 +90,19 @@
 
 		<div class="grid grid-cols-12 gap-x-2 gap-y-4">
 			{#if congregation.flavor}
-				<div class="col-span-2 flex flex-row items-start justify-start">
-					<span class="font-bold">{$t('base.congregation.flavor')}</span>
+				<div class="col-span-3 flex flex-row items-start justify-start">
+					<h2 class="label">{$t('base.congregation.flavor')}</h2>
 				</div>
-				<div class="col-span-10 flex flex-row items-start justify-start">
+				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.flavor}
 				</div>
 			{/if}
 
 			{#if congregation.clergy}
-				<div class="col-span-2 flex flex-row items-start justify-start">
-					<span class="font-bold">{$t('base.congregation.clergy')}</span>
+				<div class="col-span-3 flex flex-row items-start justify-start">
+					<h2 class="label">{$t('base.congregation.clergy')}</h2>
 				</div>
-				<div class="col-span-10 flex flex-row items-start justify-start">
+				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.clergy}
 				</div>
 			{/if}
@@ -116,21 +116,15 @@
 			{/if}
 
 			{#if accommodations}
-				<div class="col-span-12">
-					<Accommodations {accommodations} mode="full" />
-				</div>
+				<Accommodations {accommodations} mode="full" />
 			{/if}
 
 			{#if safety}
-				<div class="col-span-12">
-					<Safety {safety} />
-				</div>
+				<Safety {safety} />
 			{/if}
 
 			{#if registration}
-				<div class="col-span-12">
-					<Registration {registration} />
-				</div>
+				<Registration {registration} />
 			{/if}
 
 			{#if congregation.contactName || congregation.contactEmail}

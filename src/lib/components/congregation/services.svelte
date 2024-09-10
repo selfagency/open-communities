@@ -11,7 +11,7 @@
 	/* endregion variables */
 </script>
 
-<div class="col-span-3"><h2 class="font-bold">Services</h2></div>
+<div class="col-span-3"><h2 class="label">Services</h2></div>
 <div class="col-span-9">
 	<ul class="w-full list-inside list-disc">
 		{#if services?.inPerson}
