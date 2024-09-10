@@ -7,6 +7,7 @@ import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	Accommodations = "accommodations",
+	CongregationMeta = "congregationMeta",
 	Congregations = "congregations",
 	Fit = "fit",
 	Registration = "registration",
@@ -40,7 +41,7 @@ export type AuthSystemFields<T = never> = {
 // Record types for each collection
 
 export type AccommodationsRecord = {
-	congregation?: RecordIdString
+	congregation: RecordIdString
 	hybrid_automatedCaptions?: boolean
 	hybrid_liveCaptions?: boolean
 	inPerson_adaAll?: boolean
@@ -52,10 +53,30 @@ export type AccommodationsRecord = {
 	online_liveCaptions?: boolean
 }
 
+export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
+	accommodations?: null | Taccommodations
+	city?: string
+	clergy?: string
+	contactEmail?: string
+	contactName?: string
+	contactUrl?: string
+	country?: string
+	description?: string
+	fit?: null | Tfit
+	flavor?: string
+	name?: string
+	notes?: string
+	registration?: null | Tregistration
+	safety?: null | Tsafety
+	services?: null | Tservices
+	state?: string
+}
+
 export type CongregationsRecord = {
 	city?: string
 	clergy?: string
 	contactEmail?: string
+	contactName?: string
 	contactUrl?: string
 	country?: string
 	description?: string
@@ -72,7 +93,7 @@ export enum FitFlagOptions {
 }
 export type FitRecord = {
 	clergyMember?: boolean
-	congregation?: RecordIdString
+	congregation: RecordIdString
 	flag?: FitFlagOptions
 	multipleClergyMembers?: boolean
 	other?: boolean
@@ -87,7 +108,7 @@ export enum RegistrationRegistrationTypeOptions {
 	"other" = "other",
 }
 export type RegistrationRecord = {
-	congregation?: RecordIdString
+	congregation: RecordIdString
 	email?: string
 	otherText?: string
 	registrationType?: RegistrationRegistrationTypeOptions
@@ -95,6 +116,7 @@ export type RegistrationRecord = {
 }
 
 export type SafetyRecord = {
+	congregation: RecordIdString
 	maskingRecommended?: boolean
 	maskingRequired?: boolean
 	noGuidelines?: boolean
@@ -103,20 +125,29 @@ export type SafetyRecord = {
 }
 
 export type ServicesRecord = {
-	congregation?: RecordIdString
+	congregation: RecordIdString
 	hybrid?: boolean
 	inPerson?: boolean
 	offsite?: boolean
 	onlineOnly?: boolean
 }
 
+export enum UsersLangOptions {
+	"en" = "en",
+	"es" = "es",
+	"fr" = "fr",
+	"he" = "he",
+}
 export type UsersRecord = {
+	admin?: boolean
 	congregation?: RecordIdString
+	lang?: UsersLangOptions
 	name?: string
 }
 
 // Response types include system fields and match responses from the PocketBase API
 export type AccommodationsResponse<Texpand = unknown> = Required<AccommodationsRecord> & BaseSystemFields<Texpand>
+export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
 export type CongregationsResponse<Texpand = unknown> = Required<CongregationsRecord> & BaseSystemFields<Texpand>
 export type FitResponse<Texpand = unknown> = Required<FitRecord> & BaseSystemFields<Texpand>
 export type RegistrationResponse<Texpand = unknown> = Required<RegistrationRecord> & BaseSystemFields<Texpand>
@@ -128,6 +159,7 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 
 export type CollectionRecords = {
 	accommodations: AccommodationsRecord
+	congregationMeta: CongregationMetaRecord
 	congregations: CongregationsRecord
 	fit: FitRecord
 	registration: RegistrationRecord
@@ -138,6 +170,7 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
 	accommodations: AccommodationsResponse
+	congregationMeta: CongregationMetaResponse
 	congregations: CongregationsResponse
 	fit: FitResponse
 	registration: RegistrationResponse
@@ -151,6 +184,7 @@ export type CollectionResponses = {
 
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'accommodations'): RecordService<AccommodationsResponse>
+	collection(idOrName: 'congregationMeta'): RecordService<CongregationMetaResponse>
 	collection(idOrName: 'congregations'): RecordService<CongregationsResponse>
 	collection(idOrName: 'fit'): RecordService<FitResponse>
 	collection(idOrName: 'registration'): RecordService<RegistrationResponse>

@@ -1,4 +1,4 @@
-import { loadTranslations } from '$lib/translations';
+import { loadTranslations } from '$lib/i18n';
 
 export const load = async ({ url }) => {
 	const { pathname } = url;
