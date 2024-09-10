@@ -28,6 +28,7 @@
 	"congregation.city": "City",
 	"congregation.clergy": "Clergy",
 	"congregation.clergy.extended": "List the clergy team below that will lead during the Yamim Noraim.",
+	"congregation.contact": "Contact",
 	"congregation.contactEmail": "Contact email",
 	"congregation.contactEmail.extended": "Email address for contact person listed above",
 	"congregation.contactName": "Contact name",
@@ -41,9 +42,11 @@
 	"congregation.notes": "Notes",
 	"congregation.notes.extended": "Anything else we should know?",
 	"congregation.state": "State/Province",
-	"fit": "Why would your congregation be a good fit for Jews in the ceasefire movement? Please share additional reasons in the 'Other' field.",
+	"fit": "Fit",
 	"fit.clergyMember": "A member of the clergy team is affiliated with Rabbis for Ceasefire",
-	"fit.flag": "Does your congregation display an Israeli flag?",
+	"fit.extended": "Why would your congregation be a good fit for Jews in the ceasefire movement? Please share additional reasons in the 'Other' field.",
+	"fit.flag": "Flag displayed",
+	"fit.flag.extended": "Does your congregation display an Israeli flag?",
 	"fit.flag.no": "No, we do not",
 	"fit.flag.note": "If yes, we will note that in the listing of your congregation so that people can make an informed decision about where they attend.",
 	"fit.flag.yes": "Yes, but not on the bima",
@@ -68,7 +71,8 @@
 	"services": "Services",
 	"services.extended": "What types of services are non-members invited to join?",
 	"services.hybrid": "Online access to hybrid services",
-	"services.inPerson": "In-person services",
+	"services.inPerson": "In-person",
 	"services.offsite": "Off-site events",
-	"services.onlineOnly": "Online-only services"
+	"services.onlineOnly": "Online-only",
+	"unspecified": "Unspecified"
 }

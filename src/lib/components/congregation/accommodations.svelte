@@ -2,6 +2,7 @@
 	/* region imports */
 	import AdaIcon from 'lucide-svelte/icons/accessibility';
 	import CcIcon from 'lucide-svelte/icons/captions';
+	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import EvaIcon from 'lucide-svelte/icons/languages';
 
 	import type { AccommodationsRecord } from '$lib/types';
@@ -16,19 +17,13 @@
 	export let mode: 'mini' | 'full' = 'mini';
 
 	// constants
-	const ada = true;
-	const cc = true;
-	const eva = true;
-
-	accommodations.inPerson_adaSome = true;
-
-	// const ada = accommodations.inPerson_adaSome || accommodations.inPerson_adaAll;
-	// const cc =
-	// 	accommodations.hybrid_automatedCaptions ||
-	// 	accommodations.hybrid_liveCaptions ||
-	// 	accommodations.online_automatedCaptions ||
-	// 	accommodations.online_liveCaptions;
-	// const eva = accommodations.inPerson_eva;
+	const ada = accommodations.inPerson_adaSome || accommodations.inPerson_adaAll;
+	const cc =
+		accommodations.hybrid_automatedCaptions ||
+		accommodations.hybrid_liveCaptions ||
+		accommodations.online_automatedCaptions ||
+		accommodations.online_liveCaptions;
+	const eva = accommodations.inPerson_eva;
 	/* endregion variables */
 </script>
 
@@ -71,13 +66,15 @@
 {/if}
 
 {#if mode === 'full'}
-	<div class="grid grid-cols-9 gap-x-2 gap-y-4">
+	<h2 class="text-md font-bold">{$t('base.accommodations')}</h2>
+
+	<div class="grid grid-cols-12 gap-x-0 gap-y-4">
 		{#if ada}
-			<div class="col-span-1 flex flex-row items-start justify-center">
+			<div class="col-span-1 flex flex-row items-center justify-start">
 				<AdaIcon size="18" />
 				<span class="sr-only">{$t('base.accommodations.ada')}</span>
 			</div>
-			<div class="col-span-8 flex flex-col items-start justify-start">
+			<div class="col-span-11 flex flex-col items-start justify-center text-sm">
 				{#if accommodations.inPerson_adaSome}
 					{$t('base.accommodations.inPerson_adaSome')}
 				{/if}
@@ -88,19 +85,46 @@
 		{/if}
 
 		{#if cc}
-			<div class="col-span-1 flex flex-row items-start justify-center">
+			<div class="col-span-1 flex flex-row items-start justify-start">
 				<CcIcon size="18" />
 				<span class="sr-only">{$t('base.accommodations.cc')}</span>
 			</div>
-			<div class="col-span-8"></div>
+			<div class="col-span-11 flex flex-col items-start justify-center text-sm">
+				{#if accommodations.hybrid_automatedCaptions}
+					{$t('base.accommodations.hybrid_automatedCaptions')}
+				{/if}
+				{#if accommodations.hybrid_liveCaptions}
+					{$t('base.accommodations.hybrid_liveCaptions')}
+				{/if}
+				{#if accommodations.online_automatedCaptions}
+					{$t('base.accommodations.online_automatedCaptions')}
+				{/if}
+				{#if accommodations.online_liveCaptions}
+					{$t('base.accommodations.online_liveCaptions')}
+				{/if}
+			</div>
 		{/if}
 
 		{#if eva}
-			<div class="col-span-1 flex flex-row items-start justify-center">
+			<div class="col-span-1 flex flex-row items-start justify-start">
 				<EvaIcon size="18" />
 				<span class="sr-only">{$t('base.accommodations.eva')}</span>
 			</div>
-			<div class="col-span-8"></div>
+			<div class="col-span-11 flex flex-col items-start justify-center text-sm">
+				{#if accommodations.inPerson_eva}
+					{$t('base.accommodations.inPerson_eva')}
+				{/if}
+			</div>
+		{/if}
+
+		{#if !ada && !cc && !eva}
+			<div class="col-span-1 flex flex-row items-start justify-start">
+				<WarningIcon size="18" />
+				<span class="sr-only">{$t('base.unspecified')}</span>
+			</div>
+			<div class="justify-left col-span-11 flex flex-row items-center text-sm">
+				{$t('base.unspecified')}
+			</div>
 		{/if}
 	</div>
 {/if}

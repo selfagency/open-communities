@@ -2,7 +2,7 @@
 	/* region imports */
 	import type { CongregationMetaRecord } from '$lib/types';
 
-	import Congregation from './congregation.svelte';
+	import Congregation from './congregation/index.svelte';
 	/* endregion imports */
 
 	/* region variables */
