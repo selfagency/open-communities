@@ -18,7 +18,7 @@
 	<h2 class="label">{$t('base.fit')}</h2>
 </div>
 <div class="col-span-9">
-	<ul class="w-full list-inside list-disc">
+	<ul class="w-full divide-y">
 		{#if fit.publicStatement}
 			<li>{$t('base.fit.publicStatement')}</li>
 		{/if}
@@ -33,13 +33,15 @@
 	</ul>
 </div>
 
+<hr class="col-span-12 border-t border-slate-200" />
+
 <div class="col-span-3">
 	<Tooltip.Root>
 		<Tooltip.Trigger>
 			<h2 class="label">{$t('base.fit.flag.short')}</h2>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
-			<h2 class="label">{$t('base.fit.flag')}</h2>
+			{$t('base.fit.flag')}
 		</Tooltip.Content>
 	</Tooltip.Root>
 </div>

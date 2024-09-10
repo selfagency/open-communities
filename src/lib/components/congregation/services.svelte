@@ -13,7 +13,7 @@
 
 <div class="col-span-3"><h2 class="label">Services</h2></div>
 <div class="col-span-9">
-	<ul class="w-full list-inside list-disc">
+	<ul class="w-full divide-y">
 		{#if services?.inPerson}
 			<li>{$t('base.services.inPerson')}</li>
 		{/if}

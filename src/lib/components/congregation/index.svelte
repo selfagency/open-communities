@@ -36,28 +36,6 @@
 	/* endregion variables */
 </script>
 
-<!-- {
-      X"id": "RECORD_ID",
-      X"collectionId": "o7pypf0j70kmhet",
-      X"collectionName": "congregationMeta",
-      X"name": "test",
-      X"city": "test",
-      X"state": "test",
-      X"country": "test",
-      X"description": "test",
-      X"notes": "test",
-      X"clergy": "test",
-      X"flavor": "test",
-      X"contactName": "test",
-      X"contactEmail": "test@example.com",
-      X"contactUrl": "https://example.com",
-      X"accommodations": "JSON",
-      X"fit": "JSON",
-      "registration": "JSON",
-      "safety": "JSON",
-      X"services": "JSON"
-    }, -->
-
 <Dialog.Root>
 	<Dialog.Trigger>
 		<Tile {congregation} />
@@ -66,12 +44,15 @@
 		<Dialog.Header>
 			<Dialog.Title>
 				{#if congregation.contactUrl}
-					<div class="flex flex-row items-center justify-start space-x-2">
-						<a href={congregation.contactUrl} target="_blank" rel="noopener noreferrer">
-							{congregation.name}
-						</a>
+					<a
+						href={congregation.contactUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="flex max-w-fit flex-row items-center justify-start space-x-2"
+					>
+						<h1 class="text-xl font-bold">{congregation.name}</h1>
 						<LinkIcon size="14" color="gray" />
-					</div>
+					</a>
 				{:else}
 					{congregation.name}
 				{/if}
@@ -88,7 +69,7 @@
 			<p>{congregation.description}</p>
 		{/if}
 
-		<div class="grid grid-cols-12 gap-x-2 gap-y-4">
+		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
 			{#if congregation.flavor}
 				<div class="col-span-3 flex flex-row items-start justify-start">
 					<h2 class="label">{$t('base.congregation.flavor')}</h2>
@@ -96,6 +77,7 @@
 				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.flavor}
 				</div>
+				<hr class="col-span-12 my-4 border-t border-slate-400" />
 			{/if}
 
 			{#if congregation.clergy}
@@ -105,22 +87,27 @@
 				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.clergy}
 				</div>
+				<hr class="col-span-12 h-1 border-t border-slate-200" />
 			{/if}
 
 			{#if fit}
 				<Fit {fit} />
+				<hr class="col-span-12 h-1 border-t border-slate-200" />
 			{/if}
 
 			{#if services}
 				<Services {services} />
+				<hr class="col-span-12 h-1 border-t border-slate-200" />
 			{/if}
 
 			{#if accommodations}
 				<Accommodations {accommodations} mode="full" />
+				<hr class="col-span-12 h-1 border-t border-slate-200" />
 			{/if}
 
 			{#if safety}
 				<Safety {safety} />
+				<hr class="col-span-12 h-1 border-t border-slate-200" />
 			{/if}
 
 			{#if registration}
@@ -128,6 +115,7 @@
 			{/if}
 
 			{#if congregation.contactName || congregation.contactEmail}
+				<hr class="col-span-12 border-t border-slate-200" />
 				<Contact contactName={congregation.contactName} contactEmail={congregation.contactEmail} />
 			{/if}
 		</div>

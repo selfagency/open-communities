@@ -76,5 +76,6 @@
 	"services.inPerson": "In-person",
 	"services.offsite": "Off-site events",
 	"services.onlineOnly": "Online-only",
-	"unspecified": "Unspecified"
+	"unspecified": "Unspecified",
+	"website": "Website"
 }
