@@ -57,7 +57,9 @@ const servicesSchema = joi.object<ServicesRecord & { id: string }>({
 	hybrid: joi.boolean(),
 	inPerson: joi.boolean(),
 	offsite: joi.boolean(),
-	onlineOnly: joi.boolean()
+	onlineOnly: joi.boolean(),
+	other: joi.boolean(),
+	otherText: joi.string().allow('')
 });
 
 export type DefaultSchema = CongregationMetaRecord;

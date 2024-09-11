@@ -3,6 +3,7 @@
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { joi } from 'sveltekit-superforms/adapters';
@@ -33,6 +34,17 @@
 	export let data;
 	export let content: PagesRecord | undefined = undefined;
 	export let mode: 'add' | 'edit' = 'add';
+
+	// local vars
+	let hasErrors: boolean = false;
+	let errorsCongregation: boolean = false;
+	let errorsFit: boolean = false;
+	let errorsRegistration: boolean = false;
+	let errorsSafety: boolean = false;
+	let errorsContact: boolean = false;
+	let errorsAccommodations: boolean = false;
+	let errorsServices: boolean = false;
+
 	/* endregion variables */
 
 	/* region methods */
@@ -86,12 +98,17 @@
 		};
 
 		$formData.registration = {
-			type: '',
+			registrationType: '',
 			otherText: '',
 			email: '',
 			url: ''
 		};
 	}
+
+	function noValues(obj: Record<string, any>): boolean {
+		return Object.values(obj).every((value) => value === false || isEmpty(value));
+	}
+
 	/* endregion methods */
 
 	/* region form */
@@ -99,9 +116,27 @@
 		id: 'addEditCongregation',
 		dataType: 'json',
 		validators: joi(defaultSchema),
-		async onUpdate({ result }) {
-			if (!isEmpty(result.data.form.errors)) {
+		async onUpdate({ form: f, result }) {
+			hasErrors = false;
+			errorsCongregation = false;
+			errorsContact = false;
+			errorsFit = false;
+			errorsRegistration = false;
+			errorsSafety = false;
+			errorsServices = false;
+
+			if (!f.valid) {
 				log.error(JSON.stringify(result.data.form.errors));
+				toast.error($t('base.congregation.addFailure'));
+				hasErrors = true;
+				errorsCongregation = !f.data.name || !f.data.clergy || !f.data.flavor;
+				errorsContact = !f.data.contactName || !f.data.contactEmail;
+				errorsFit = noValues(f.data.fit) || !isEmpty(result.data.form.errors.fit);
+				errorsRegistration =
+					noValues(f.data.registration) || !isEmpty(result.data.form.errors.registration);
+				errorsSafety = noValues(f.data.safety) || !isEmpty(result.data.form.errors.safety);
+				errorsServices = noValues(f.data.services) || !isEmpty(result.data.form.errors.services);
+
 				if (result.data.form.errors.error) {
 					toast.error(result.data.form.errors.error);
 				}
@@ -138,7 +173,6 @@
 						? $t('base.common.editThing', { thing: $formData.name })
 						: $t('base.congregation.add')}</Card.Title
 				>
-				<!-- <Card.Description></Card.Description> -->
 			</Card.Header>
 			<Card.Content>
 				{#if mode === 'add' && content}
@@ -147,16 +181,32 @@
 				{#if mode === 'edit'}
 					<Alert.Root class="bg-slate-50">
 						<WarningIcon size="18" />
-						<Alert.Description class="mt-0.5"
-							>{$t('base.congregation.editNotice')}</Alert.Description
-						>
+						<Alert.Description class="mt-0.5">
+							{$t('base.congregation.editNotice')}
+						</Alert.Description>
 					</Alert.Root>
+				{/if}
+
+				{#if hasErrors}
+					<span in:fade={{ duration: 150, delay: 300 }} out:fade={{ duration: 150, delay: 150 }}>
+						<Alert.Root variant="destructive" class="my-4 bg-red-50">
+							<WarningIcon size="18" />
+							<Alert.Description class="mt-0.5">{$t('base.common.formErrors')}</Alert.Description>
+						</Alert.Root>
+					</span>
 				{/if}
 
 				<!-- congregation -->
 				<Accordion.Root>
 					<Accordion.Item value="congregation">
-						<Accordion.Trigger>{$t('base.congregation.congregation')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.congregation.congregation')}
+								{#if errorsCongregation}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
 							<Form.Field {form} name="name">
 								<Form.Control let:attrs>
@@ -210,7 +260,7 @@
 							<Form.Field {form} name="notes">
 								<Form.Control let:attrs>
 									<Form.Label>{$t('base.congregation.notes.extended')}</Form.Label>
-									<Textarea {...attrs} bind:value={$formData.notes} required />
+									<Textarea {...attrs} bind:value={$formData.notes} />
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
@@ -221,9 +271,18 @@
 				<!-- fit -->
 				<Accordion.Root>
 					<Accordion.Item value="fit">
-						<Accordion.Trigger>{$t('base.fit.fit')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.fit.fit')}
+								{#if errorsFit}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question">{$t('base.fit.extended')}</div>
+							<div class="question">
+								{$t('base.fit.extended')}
+							</div>
 							<div class="my-4 space-y-2">
 								<Form.Field {form} name="publicStatement">
 									<Form.Control let:attrs>
@@ -285,6 +344,9 @@
 										<Form.FieldErrors />
 									</Form.Field>
 								{/if}
+								{#if errorsFit}
+									<span class="text-red-500">{$t('base.common.required')}</span>
+								{/if}
 							</div>
 
 							<!-- flag -->
@@ -315,7 +377,14 @@
 				<!-- services -->
 				<Accordion.Root>
 					<Accordion.Item value="services">
-						<Accordion.Trigger>{$t('base.services.services')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.services.services')}
+								{#if errorsServices}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
 							<div class="question">{$t('base.services.extended')}</div>
 							<div class="my-4 space-y-2">
@@ -392,6 +461,9 @@
 										<Form.FieldErrors />
 									</Form.Field>
 								{/if}
+								{#if errorsServices}
+									<span class="text-red-500">{$t('base.common.required')}</span>
+								{/if}
 							</div>
 						</Accordion.Content>
 					</Accordion.Item>
@@ -400,7 +472,14 @@
 				<!-- accommodations -->
 				<Accordion.Root>
 					<Accordion.Item value="accommodations">
-						<Accordion.Trigger>{$t('base.accommodations.accommodations')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.accommodations.accommodations')}
+								{#if errorsAccommodations}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
 							<div class="question">{$t('base.accommodations.extended')}</div>
 							<div class="mt-2 italic text-slate-500">{$t('base.accommodations.note')}</div>
@@ -566,7 +645,14 @@
 				<!-- safety -->
 				<Accordion.Root>
 					<Accordion.Item value="safety">
-						<Accordion.Trigger>{$t('base.safety.safety')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.safety.safety')}
+								{#if errorsSafety}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
 							<Form.Field {form} name="protocol">
 								<Form.Control let:attrs>
@@ -575,6 +661,7 @@
 										{...attrs}
 										class="space-y-2"
 										bind:value={$formData.safety.protocol}
+										required
 									>
 										<div class="flex items-center space-x-2">
 											<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
@@ -608,6 +695,9 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
+							{#if errorsSafety}
+								<span class="mt-4 block text-red-500">{$t('base.common.required')}</span>
+							{/if}
 						</Accordion.Content>
 					</Accordion.Item>
 				</Accordion.Root>
@@ -615,15 +705,23 @@
 				<!-- registration -->
 				<Accordion.Root>
 					<Accordion.Item value="registration">
-						<Accordion.Trigger>{$t('base.registration.registration')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.registration.registration')}
+								{#if errorsRegistration}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
+							<div class="question mb-4">{$t('base.registration.extended')}</div>
 							<Form.Field {form} name="protocol">
 								<Form.Control let:attrs>
-									<div class="question mb-4">{$t('base.registration.extended')}</div>
 									<RadioGroup.Root
 										{...attrs}
 										class="space-y-2"
 										bind:value={$formData.registration.registrationType}
+										required
 									>
 										<div class="flex items-center space-x-2">
 											<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
@@ -631,32 +729,36 @@
 										</div>
 										<div class="flex items-center space-x-2">
 											<RadioGroup.Item value="slidingScale" id="slidingScale" />
-											<Form.Label for="slidingScale"
-												>{$t('base.registration.slidingScale')}</Form.Label
-											>
+											<Form.Label for="slidingScale">
+												{$t('base.registration.slidingScale')}
+											</Form.Label>
 										</div>
 										<div class="flex items-center space-x-2">
 											<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
-											<Form.Label for="suggestedDonation"
-												>{$t('base.registration.suggestedDonation')}</Form.Label
-											>
+											<Form.Label for="suggestedDonation">
+												{$t('base.registration.suggestedDonation')}
+											</Form.Label>
 										</div>
 										<div class="flex items-center space-x-2">
 											<RadioGroup.Item value="other" id="other" />
 											<Form.Label for="other">{$t('base.common.other')}</Form.Label>
 										</div>
 									</RadioGroup.Root>
-									{#if $formData.registration.registrationType === 'other'}
-										<Form.Field {form} name="registration_otherText">
-											<Form.Control let:attrs>
-												<Input {...attrs} bind:value={$formData.registration.otherText} />
-											</Form.Control>
-											<Form.FieldErrors />
-										</Form.Field>
-									{/if}
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
+							{#if $formData.registration.registrationType === 'other'}
+								<Form.Field {form} name="registration_otherText">
+									<Form.Control let:attrs>
+										<Input {...attrs} bind:value={$formData.registration.otherText} />
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+							{/if}
+							{#if errorsRegistration}
+								<span class="mt-4 block text-red-500">{$t('base.common.required')}</span>
+							{/if}
+
 							<div class="question my-4">{$t('base.register.extended')}</div>
 							<Form.Field {form} name="registration_email">
 								<Form.Control let:attrs>
@@ -679,7 +781,14 @@
 				<!-- contact -->
 				<Accordion.Root>
 					<Accordion.Item value="contact">
-						<Accordion.Trigger>{$t('base.congregation.contact')}</Accordion.Trigger>
+						<Accordion.Trigger>
+							<span>
+								{$t('base.congregation.contact')}
+								{#if errorsContact}
+									<span class="text-red-500">*</span>
+								{/if}
+							</span>
+						</Accordion.Trigger>
 						<Accordion.Content>
 							<div class="question mb-4">{$t('base.congregation.contactName.extended')}</div>
 							<Form.Field {form} name="contactName">
@@ -709,10 +818,12 @@
 			<!-- actions -->
 			<Card.Footer>
 				<div class="flex w-full flex-row items-center justify-between space-x-2">
-					<div class="flex flex-row items-center justify-start space-x-2">
-						<Delete data={data.delete} id={$formData.id} />
-						<Transfer data={data.transfer} id={$formData.id} />
-					</div>
+					{#if mode === 'edit'}
+						<div class="flex flex-row items-center justify-start space-x-2">
+							<Delete data={data.delete} id={$formData.id} />
+							<Transfer data={data.transfer} id={$formData.id} />
+						</div>
+					{/if}
 					<!-- default -->
 					<div class="flex flex-row items-center justify-end space-x-2">
 						<Button

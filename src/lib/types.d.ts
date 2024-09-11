@@ -152,6 +152,8 @@ export type ServicesRecord = {
 	inPerson?: boolean
 	offsite?: boolean
 	onlineOnly?: boolean
+	other?: boolean
+	otherText?: string
 }
 
 export enum UsersLangOptions {

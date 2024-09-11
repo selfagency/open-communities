@@ -19,9 +19,13 @@
 	let:fieldErrorsAttrs
 	let:errorAttrs
 >
-	<slot {errors} {fieldErrorsAttrs} {errorAttrs}>
-		{#each errors as error}
-			<div {...errorAttrs} class={cn(errorClasses)}>{error}</div>
-		{/each}
-	</slot>
+	{#if errors.length > 0}
+		<div class="pb-4">
+			<slot {errors} {fieldErrorsAttrs} {errorAttrs}>
+				{#each errors as error}
+					<div {...errorAttrs} class={cn(errorClasses)}>{error}</div>
+				{/each}
+			</slot>
+		</div>
+	{/if}
 </FormPrimitive.FieldErrors>

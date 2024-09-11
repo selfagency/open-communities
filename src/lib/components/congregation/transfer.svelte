@@ -2,6 +2,7 @@
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { isEmpty } from 'radashi';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { joi } from 'sveltekit-superforms/adapters';
@@ -13,7 +14,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
 	import { t } from '$lib/i18n';
 	import { transferSchema } from '$lib/schemas';
 	import { log } from '$lib/utils';
@@ -23,32 +23,14 @@
 	// props
 	export let data: SuperValidated<any>;
 	export let id: string;
-
-	// local vars
-	let transferring: boolean = false;
-	let transferEmail: string = '';
 	/* endregion variables */
 
 	/* region methods */
-	async function transferCongregation(e) {
-		try {
-			e.preventDefault();
-			const body = new FormData();
-			body.append('id', id);
-			body.append('email', transferEmail);
-			const res = await fetch('?/transfer', {
-				method: 'POST',
-				body
-			});
-			if (res.status === 200) {
-				await goto('/');
-			} else {
-				throw new Error($t('base.congregation.transferFailure'));
-			}
-		} catch (error) {
-			log.error(error);
-			toast.error((error as Error).message);
-		}
+	function transferCongregation(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		const formEl = document.getElementById('transfer');
+		if (form) form.submit(formEl);
 	}
 	/* endregion methods */
 
@@ -61,11 +43,11 @@
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));
 				if (result.data.form.errors.error) {
-					toast.error(result.data.form.errors.error);
+					toast.error($t('base.congregation.transferFailure'));
 				}
 			} else if (result.type === 'success') {
-				log.debug(JSON.stringify(result.data.user));
 				toast.success($t('base.congregation.transferSuccess'));
+				await goto('/');
 			}
 		},
 		onError({ result }) {
@@ -76,6 +58,11 @@
 
 	const { form: formData, enhance } = form;
 	/* endregion form */
+
+	/* region lifecycle */
+	onMount(() => {
+		$formData.id = id;
+	});
 </script>
 
 <AlertDialog.Root>
@@ -90,7 +77,7 @@
 		</Button>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
-		<form method="POST" action="?/transfer" use:enhance>
+		<form id="transfer" method="POST" action="?/transfer" use:enhance>
 			<AlertDialog.Header>
 				<AlertDialog.Title>{$t('base.common.transfer.transfer')}</AlertDialog.Title>
 				<AlertDialog.Description class="space-y-4">
@@ -101,15 +88,25 @@
 						<Alert.Description class="mt-0.5">{$t('base.common.warningNote')}</Alert.Description>
 					</Alert.Root>
 
-					<div class="space-y-2">
-						<Label for="email">{$t('base.common.email')}</Label>
-						<Input name="email" bind:value={$formData.email} />
-					</div>
+					<Form.Field {form} name="id">
+						<Form.Control let:attrs>
+							<input type="hidden" {...attrs} bind:value={$formData.id} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<Form.Field {form} name="email">
+						<Form.Control let:attrs>
+							<Form.Label for="email">{$t('base.common.email')}</Form.Label>
+							<Input {...attrs} bind:value={$formData.email} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 				</AlertDialog.Description>
 			</AlertDialog.Header>
 			<AlertDialog.Footer class="mt-4">
 				<AlertDialog.Cancel>{$t('base.common.cancel')}</AlertDialog.Cancel>
-				<AlertDialog.Action>
+				<AlertDialog.Action on:click={transferCongregation}>
 					{$t('base.common.continue')}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>

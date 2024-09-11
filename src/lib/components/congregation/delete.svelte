@@ -25,24 +25,11 @@
 	/* endregion variables */
 
 	/* region methods */
-	async function deleteCongregation(e) {
-		try {
-			e.preventDefault();
-			const body = new FormData();
-			body.append('id', id);
-			const res = await fetch('?/delete', {
-				method: 'POST',
-				body
-			});
-			if (res.status === 200) {
-				await goto('/');
-			} else {
-				throw new Error($t('base.congregation.deleteFailure'));
-			}
-		} catch (error) {
-			log.error(error);
-			toast.error((error as Error).message);
-		}
+	function deleteCongregation(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		const formEl = document.getElementById('delete');
+		if (form) form.submit(formEl);
 	}
 	/* endregion methods */
 
@@ -55,11 +42,11 @@
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));
 				if (result.data.form.errors.error) {
-					toast.error(result.data.form.errors.error);
+					toast.error($t('base.congregation.deleteFailure'));
 				}
 			} else if (result.type === 'success') {
-				log.debug(JSON.stringify(result.data.user));
-				toast.success($t('base.congregation.addSuccess'));
+				toast.success($t('base.congregation.deleteSuccess'));
+				await goto('/');
 			}
 		},
 		onError({ result }) {
@@ -70,6 +57,11 @@
 
 	const { form: formData, enhance } = form;
 	/* endregion form */
+
+	/* region lifecycle */
+	onMount(() => {
+		$formData.id = id;
+	});
 </script>
 
 <AlertDialog.Root>
@@ -84,7 +76,7 @@
 		</Button>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
-		<form method="POST" action="?/delete" use:enhance>
+		<form id="delete" method="POST" action="?/delete" use:enhance>
 			<AlertDialog.Header>
 				<AlertDialog.Title>{$t('base.common.warning')}</AlertDialog.Title>
 				<AlertDialog.Description>
@@ -93,9 +85,9 @@
 						<Alert.Description class="mt-0.5">{$t('base.common.warningNote')}</Alert.Description>
 					</Alert.Root>
 
-					<Form.Field {form} name="name">
+					<Form.Field {form} name="id">
 						<Form.Control let:attrs>
-							<input {...attrs} type="hidden" name="id" bind:value={$formData.id} />
+							<input type="hidden" {...attrs} bind:value={$formData.id} />
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
@@ -103,7 +95,7 @@
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
 				<AlertDialog.Cancel>{$t('base.common.cancel')}</AlertDialog.Cancel>
-				<AlertDialog.Action>
+				<AlertDialog.Action on:click={deleteCongregation}>
 					{$t('base.common.continue')}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>
