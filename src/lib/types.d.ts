@@ -84,6 +84,7 @@ export type CongregationsRecord = {
 	name?: string
 	notes?: string
 	state?: string
+	visible?: boolean
 }
 
 export enum FitFlagOptions {

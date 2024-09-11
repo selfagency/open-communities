@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:types": "pnpx pocketbase-typegen --db ./pb_data/data.db --out ./src/lib/types.d.ts",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -24,6 +25,7 @@
 		"@tailwindcss/typography": "^0.5.14",
 		"@types/cookie": "^0.6.0",
 		"@types/eslint": "^9.6.1",
+		"@types/joi": "^17.2.3",
 		"@types/web": "^0.0.162",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^0.21.13",
@@ -65,7 +67,9 @@
 	"type": "module",
 	"packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
 	"dependencies": {
+		"formsnap": "^1.0.1",
 		"mode-watcher": "^0.4.1",
-		"svelte-sonner": "^0.3.27"
+		"svelte-sonner": "^0.3.27",
+		"zod": "^3.23.8"
 	}
 }

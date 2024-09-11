@@ -4,6 +4,7 @@
 
 	import type { FitRecord } from '$lib/types';
 
+	import { Separator } from '$lib/components/ui/separator';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
 	/* endregion imports */
@@ -33,7 +34,7 @@
 	</ul>
 </div>
 
-<hr class="col-span-12 border-t border-slate-200" />
+<Separator class="col-span-12" />
 
 <div class="col-span-3">
 	<Tooltip.Root>

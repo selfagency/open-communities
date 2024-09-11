@@ -12,6 +12,7 @@
 	} from '$lib/types';
 
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { Separator } from '$lib/components/ui/separator';
 	import { t } from '$lib/i18n';
 
 	import Accommodations from './accommodations.svelte';
@@ -77,7 +78,7 @@
 				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.flavor}
 				</div>
-				<hr class="col-span-12 my-4 border-t border-slate-400" />
+				<Separator class="col-span-12" />
 			{/if}
 
 			{#if congregation.clergy}
@@ -87,27 +88,27 @@
 				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.clergy}
 				</div>
-				<hr class="col-span-12 h-1 border-t border-slate-200" />
+				<Separator class="col-span-12" />
 			{/if}
 
 			{#if fit}
 				<Fit {fit} />
-				<hr class="col-span-12 h-1 border-t border-slate-200" />
+				<Separator class="col-span-12" />
 			{/if}
 
 			{#if services}
 				<Services {services} />
-				<hr class="col-span-12 h-1 border-t border-slate-200" />
+				<Separator class="col-span-12" />
 			{/if}
 
 			{#if accommodations}
 				<Accommodations {accommodations} mode="full" />
-				<hr class="col-span-12 h-1 border-t border-slate-200" />
+				<Separator class="col-span-12" />
 			{/if}
 
 			{#if safety}
 				<Safety {safety} />
-				<hr class="col-span-12 h-1 border-t border-slate-200" />
+				<Separator class="col-span-12" />
 			{/if}
 
 			{#if registration}
@@ -115,7 +116,7 @@
 			{/if}
 
 			{#if congregation.contactName || congregation.contactEmail}
-				<hr class="col-span-12 border-t border-slate-200" />
+				<Separator class="col-span-12" />
 				<Contact contactName={congregation.contactName} contactEmail={congregation.contactEmail} />
 			{/if}
 		</div>
