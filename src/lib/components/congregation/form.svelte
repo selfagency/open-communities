@@ -345,7 +345,7 @@
 									</Form.Field>
 								{/if}
 								{#if errorsFit}
-									<span class="text-red-500">{$t('base.common.required')}</span>
+									<span class="text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
 							</div>
 
@@ -464,7 +464,7 @@
 									</Form.Field>
 								{/if}
 								{#if errorsServices}
-									<span class="text-red-500">{$t('base.common.required')}</span>
+									<span class="text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
 							</div>
 						</Accordion.Content>
@@ -700,7 +700,7 @@
 								<Form.FieldErrors />
 							</Form.Field>
 							{#if errorsSafety}
-								<span class="mt-4 block text-red-500">{$t('base.common.required')}</span>
+								<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 							{/if}
 						</Accordion.Content>
 					</Accordion.Item>
@@ -762,7 +762,7 @@
 								</Form.Field>
 							{/if}
 							{#if errorsRegistration}
-								<span class="mt-4 block text-red-500">{$t('base.common.required')}</span>
+								<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 							{/if}
 
 							<div class="question my-4">{$t('base.register.extended')}</div>
