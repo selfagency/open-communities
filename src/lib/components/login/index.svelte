@@ -1,11 +1,14 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { joi } from 'sveltekit-superforms/adapters';
 
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import Reset from '$lib/components/login/reset.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
@@ -19,7 +22,19 @@
 	// props
 	export let data: SuperValidated<any>;
 	export let reset: SuperValidated<any>;
+
+	// local vars
+	let resetting: boolean = false;
+	let resetSuccess: boolean = false;
 	/* endregion variables */
+
+	/* region lifecycle */
+	onMount(() => {
+		if ($page.url.searchParams.has('verifyEmail')) {
+			resetting = true;
+		}
+	});
+	/* endregion lifecycle */
 
 	/* region form */
 	const form = superForm(data, {
@@ -50,29 +65,50 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>{$t('base.auth.login')}</Card.Title>
+		<Card.Title>{resetting ? $t('base.auth.resetPassword') : $t('base.auth.login')}</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
-		<form method="POST" action="?/login" use:enhance class="space-y-2">
-			<Form.Field {form} name="email">
-				<Form.Control let:attrs>
-					<Form.Label>{$t('base.auth.email')}</Form.Label>
-					<Input {...attrs} bind:value={$formData.email} />
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+		{#if resetting && !resetSuccess}
+			<Reset
+				data={reset}
+				token={$page.url.searchParams.get('resetPassword')}
+				bind:reset={resetSuccess}
+				bind:resetting
+			/>
+		{:else if resetSuccess}
+			<div class="flex flex-col items-center justify-center space-y-4">
+				<span>{$t('base.auth.passwordSuccess')}</span>
+				<span
+					role="button"
+					tabindex="0"
+					on:click={() => (resetSuccess = false)}
+					on:keypress={() => (resetSuccess = false)}
+				>
+					{$t('base.auth.continueToLogin')} →
+				</span>
+			</div>
+		{:else}
+			<form method="POST" action="?/login" use:enhance class="space-y-2">
+				<Form.Field {form} name="email">
+					<Form.Control let:attrs>
+						<Form.Label>{$t('base.auth.email')}</Form.Label>
+						<Input {...attrs} bind:value={$formData.email} />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 
-			<Form.Field {form} name="password">
-				<Form.Control let:attrs>
-					<Form.Label>{$t('base.auth.password')}</Form.Label>
-					<Input {...attrs} bind:value={$formData.password} type="password" />
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+				<Form.Field {form} name="password">
+					<Form.Control let:attrs>
+						<Form.Label>{$t('base.auth.password')}</Form.Label>
+						<Input {...attrs} bind:value={$formData.password} type="password" />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 
-			<Form.Button>{$t('base.auth.login')}</Form.Button>
-		</form>
+				<Form.Button>{$t('base.auth.login')}</Form.Button>
+			</form>
+		{/if}
 	</Card.Content>
 	<!-- <Card.Footer></Card.Footer> -->
 </Card.Root>

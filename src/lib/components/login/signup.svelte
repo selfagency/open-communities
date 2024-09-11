@@ -54,7 +54,7 @@
 	/* endregion form */
 
 	/* region lifecycle */
-	onMount(async () => {
+	onMount(() => {
 		if ($page.url.searchParams.has('verifyEmail')) {
 			verifying = true;
 		}

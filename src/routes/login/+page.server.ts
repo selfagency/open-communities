@@ -3,6 +3,7 @@ import type { ClientResponseError } from 'pocketbase';
 import type { SuperValidated } from 'sveltekit-superforms';
 
 import { fail } from '@sveltejs/kit';
+import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { joi } from 'sveltekit-superforms/adapters';
 
@@ -25,7 +26,9 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	login: async (event) => {
-		const { api } = event.locals;
+		const { cookies, fetch, locals } = event;
+		const { api, cookieOpts } = locals;
+
 		const form: SuperValidated<any> = await superValidate(event, joi(loginSchema));
 		let user: UsersRecord;
 
@@ -40,9 +43,13 @@ export const actions = {
 				(
 					await api
 						.collection('users')
-						.authWithPassword(form.data.email as string, form.data.password as string)
+						.authWithPassword(form.data.email as string, form.data.password as string, { fetch })
 				).record
 			) as UsersRecord;
+
+			// cookies.set('remember', remember ? (username as string) : '', cookieOpts);
+			cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);
+			cookies.set('session', uid(32), cookieOpts);
 
 			return {
 				form,
@@ -61,6 +68,14 @@ export const actions = {
 				}
 			});
 		}
+	},
+	logout: async (event) => {
+		const { cookies, locals } = event;
+
+		cookies.set('auth', '', locals.cookieOpts);
+		cookies.set('session', '', locals.cookieOpts);
+
+		return {};
 	},
 	signup: async (event) => {
 		const { api } = event.locals;
