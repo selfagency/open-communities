@@ -280,7 +280,7 @@
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question">
+							<div class="question" class:error={errorsFit}>
 								{$t('base.fit.extended')}
 							</div>
 							<div class="my-4 space-y-2">
@@ -386,7 +386,9 @@
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question">{$t('base.services.extended')}</div>
+							<div class="question" class:error={errorsServices}>
+								{$t('base.services.extended')}
+							</div>
 							<div class="my-4 space-y-2">
 								<Form.Field {form} name="inPerson">
 									<Form.Control let:attrs>
@@ -656,7 +658,9 @@
 						<Accordion.Content>
 							<Form.Field {form} name="protocol">
 								<Form.Control let:attrs>
-									<div class="question mb-4">{$t('base.safety.extended')}</div>
+									<div class="question mb-4" class:error={errorsSafety}>
+										{$t('base.safety.extended')}
+									</div>
 									<RadioGroup.Root
 										{...attrs}
 										class="space-y-2"
@@ -714,7 +718,9 @@
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question mb-4">{$t('base.registration.extended')}</div>
+							<div class="question mb-4" class:error={errorsRegistration}>
+								{$t('base.registration.extended')}
+							</div>
 							<Form.Field {form} name="protocol">
 								<Form.Control let:attrs>
 									<RadioGroup.Root
@@ -854,5 +860,9 @@
 <style lang="postcss">
 	.question {
 		@apply text-base text-slate-600;
+
+		&.error {
+			@apply text-red-500;
+		}
 	}
 </style>
