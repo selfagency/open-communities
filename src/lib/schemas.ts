@@ -125,3 +125,19 @@ export const userSchema = joi.object<UserSchema>({
 	oldPassword: joi.string(),
 	passwordConfirm: joi.string().valid(joi.ref('password'))
 });
+
+export type TokenSchema = {
+	token: string;
+	email?: string;
+	password?: string;
+	passwordConfirm?: string;
+	type: string;
+};
+
+export const tokenSchema = joi.object<TokenSchema>({
+	token: joi.string().required(),
+	email: joi.string().email({ tlds: { allow: false } }),
+	password: joi.string(),
+	passwordConfirm: joi.string().valid(joi.ref('password')),
+	type: joi.string().valid('resetPassword', 'verifyEmail')
+});

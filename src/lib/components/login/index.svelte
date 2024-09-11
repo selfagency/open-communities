@@ -18,6 +18,7 @@
 	/* region variables */
 	// props
 	export let data: SuperValidated<any>;
+	export let reset: SuperValidated<any>;
 	/* endregion variables */
 
 	/* region form */
@@ -47,35 +48,31 @@
 	/* endregion form */
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 80vh;">
-	<div class="w-full max-w-96">
-		<Card.Root>
-			<Card.Header>
-				<Card.Title>{$t('base.auth.login')}</Card.Title>
-				<!-- <Card.Description></Card.Description> -->
-			</Card.Header>
-			<Card.Content>
-				<form method="POST" use:enhance class="space-y-2">
-					<Form.Field {form} name="email">
-						<Form.Control let:attrs>
-							<Form.Label>{$t('base.auth.email')}</Form.Label>
-							<Input {...attrs} bind:value={$formData.email} />
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
+<Card.Root>
+	<Card.Header>
+		<Card.Title>{$t('base.auth.login')}</Card.Title>
+		<!-- <Card.Description></Card.Description> -->
+	</Card.Header>
+	<Card.Content>
+		<form method="POST" action="?/login" use:enhance class="space-y-2">
+			<Form.Field {form} name="email">
+				<Form.Control let:attrs>
+					<Form.Label>{$t('base.auth.email')}</Form.Label>
+					<Input {...attrs} bind:value={$formData.email} />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-					<Form.Field {form} name="password">
-						<Form.Control let:attrs>
-							<Form.Label>{$t('base.auth.password')}</Form.Label>
-							<Input {...attrs} bind:value={$formData.password} type="password" />
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
+			<Form.Field {form} name="password">
+				<Form.Control let:attrs>
+					<Form.Label>{$t('base.auth.password')}</Form.Label>
+					<Input {...attrs} bind:value={$formData.password} type="password" />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-					<Form.Button>{$t('base.auth.login')}</Form.Button>
-				</form>
-			</Card.Content>
-			<!-- <Card.Footer></Card.Footer> -->
-		</Card.Root>
-	</div>
-</div>
+			<Form.Button>{$t('base.auth.login')}</Form.Button>
+		</form>
+	</Card.Content>
+	<!-- <Card.Footer></Card.Footer> -->
+</Card.Root>

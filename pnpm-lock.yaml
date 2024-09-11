@@ -7,19 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      formsnap:
-        specifier: ^1.0.1
-        version: 1.0.1(svelte@4.2.19)(sveltekit-superforms@2.17.0(@sveltejs/kit@2.5.26(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.3))(svelte@4.2.19)(vite@5.4.3))(svelte@4.2.19))
-      mode-watcher:
-        specifier: ^0.4.1
-        version: 0.4.1(svelte@4.2.19)
-      svelte-sonner:
-        specifier: ^0.3.27
-        version: 0.3.27(svelte@4.2.19)
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.1.0
@@ -57,9 +44,6 @@ importers:
       '@types/eslint':
         specifier: ^9.6.1
         version: 9.6.1
-      '@types/joi':
-        specifier: ^17.2.3
-        version: 17.2.3
       '@types/web':
         specifier: ^0.0.162
         version: 0.0.162
@@ -93,6 +77,9 @@ importers:
       eslint-plugin-tailwindcss:
         specifier: ^3.17.4
         version: 3.17.4(tailwindcss@3.4.10)
+      formsnap:
+        specifier: ^1.0.1
+        version: 1.0.1(svelte@4.2.19)(sveltekit-superforms@2.17.0(@sveltejs/kit@2.5.26(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.3))(svelte@4.2.19)(vite@5.4.3))(svelte@4.2.19))
       globals:
         specifier: ^15.9.0
         version: 15.9.0
@@ -102,6 +89,9 @@ importers:
       lucide-svelte:
         specifier: ^0.439.0
         version: 0.439.0(svelte@4.2.19)
+      mode-watcher:
+        specifier: ^0.4.1
+        version: 0.4.1(svelte@4.2.19)
       nanostores:
         specifier: ^0.11.3
         version: 0.11.3
@@ -135,6 +125,9 @@ importers:
       svelte-check:
         specifier: ^4.0.0
         version: 4.0.1(svelte@4.2.19)(typescript@5.6.2)
+      svelte-sonner:
+        specifier: ^0.3.27
+        version: 0.3.27(svelte@4.2.19)
       sveltekit-i18n:
         specifier: ^2.4.2
         version: 2.4.2(svelte@4.2.19)
@@ -171,6 +164,9 @@ importers:
       vite-plugin-webfont-dl:
         specifier: ^3.9.5
         version: 3.9.5(vite@5.4.3)
+      wait-for-the-element:
+        specifier: ^4.0.2
+        version: 4.0.2
 
 packages:
 
@@ -652,10 +648,6 @@ packages:
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
-
-  '@types/joi@17.2.3':
-    resolution: {integrity: sha512-dGjs/lhrWOa+eO0HwgxCSnDm5eMGCsXuvLglMghJq32F6q5LyyNuXb41DHzrg501CKNOSSAHmfB7FDGeUnDmzw==}
-    deprecated: This is a stub types definition. joi provides its own type definitions, so you do not need this installed.
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2045,6 +2037,9 @@ packages:
       vite:
         optional: true
 
+  wait-for-the-element@4.0.2:
+    resolution: {integrity: sha512-7GGXsUAxv5tLmhzc75/DyYntgRW+Jw3Yimo24G43yJFN/86q3muCXipdEsuVPflqqdgPous9FvjL58t1jjEI2A==}
+
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
@@ -2502,10 +2497,6 @@ snapshots:
       '@types/json-schema': 7.0.15
 
   '@types/estree@1.0.5': {}
-
-  '@types/joi@17.2.3':
-    dependencies:
-      joi: 17.13.3
 
   '@types/json-schema@7.0.15': {}
 
@@ -3850,6 +3841,8 @@ snapshots:
     optionalDependencies:
       vite: 5.4.3
 
+  wait-for-the-element@4.0.2: {}
+
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
@@ -3887,4 +3880,5 @@ snapshots:
       zod: 3.23.8
     optional: true
 
-  zod@3.23.8: {}
+  zod@3.23.8:
+    optional: true
