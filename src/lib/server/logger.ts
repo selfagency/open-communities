@@ -4,7 +4,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { uid } from 'radashi';
 
 import { PUBLIC_HOSTNAME } from '$env/static/public';
-import { logger } from '$lib/common';
+import { logger } from '$lib/utils';
 /* endregion imports */
 
 /* region variables */

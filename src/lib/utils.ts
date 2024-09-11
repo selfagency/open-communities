@@ -4,6 +4,9 @@ import type { TransitionConfig } from 'svelte/transition';
 import { type ClassValue, clsx } from 'clsx';
 import { cubicOut } from 'svelte/easing';
 import { twMerge } from 'tailwind-merge';
+import { Logger } from 'tslog';
+
+import { dev } from '$app/environment';
 /* endregion imports */
 
 /* region types */
@@ -59,3 +62,16 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+export const logger = new Logger(
+	{
+		type: 'pretty',
+		hideLogPositionForProduction: dev,
+		prettyLogTemplate: '{{yyyy}}/{{mm}}/{{dd}} {{hh}}:{{MM}}:{{ss}} {{logLevelName}} [{{name}}] ',
+		prettyErrorTemplate: '{{errorName}}: {{errorMessage}}\n{{errorStack}}',
+		prettyErrorStackTemplate: '{{method}} - {{filePathWithLine}}'
+	},
+	{ main: true, sub: false }
+);
+
+export const log = logger.getSubLogger({ name: 'frontend' });

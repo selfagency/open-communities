@@ -6,7 +6,8 @@ import type {
 	FitRecord,
 	RegistrationRecord,
 	SafetyRecord,
-	ServicesRecord
+	ServicesRecord,
+	UsersRecord
 } from './types';
 
 const base = {
@@ -73,6 +74,8 @@ const servicesSchema = joi.object<ServicesRecord & { id: string }>({
 	onlineOnly: joi.boolean()
 });
 
+export type DefaultSchema = CongregationMetaRecord;
+
 export const defaultSchema = joi.object<CongregationMetaRecord>({
 	...base,
 	accommodations: accommodationsSchema,
@@ -88,14 +91,33 @@ const password = joi
 	.max(64)
 	.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{12,64}$'));
 
-export const loginSchema = joi.object({
-	email: joi.string().email().required(),
+export type LoginSchema = {
+	email: string;
+	password: string;
+};
+
+export const loginSchema = joi.object<LoginSchema>({
+	email: joi
+		.string()
+		.email({ tlds: { allow: false } })
+		.required(),
 	password: joi.string().required()
 });
 
-export const userSchema = joi.object({
+export type UserSchema = UsersRecord & {
+	id?: string;
+	email?: string;
+	password?: string;
+	passwordConfirm?: string;
+	oldPassword?: string;
+};
+
+export const userSchema = joi.object<UserSchema>({
 	id: joi.string(),
-	email: joi.string().email().required(),
+	email: joi
+		.string()
+		.email({ tlds: { allow: false } })
+		.required(),
 	congregation: joi.string(),
 	name: joi.string().required(),
 	lang: joi.string().valid('en', 'es', 'fr', 'he'),

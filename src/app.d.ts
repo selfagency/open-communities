@@ -1,11 +1,14 @@
 /* region imports */
 import type { CookieSerializeOptions } from 'cookie';
-import type { SuperValidated } from 'sveltekit-superforms';
+import type { ObjectSchema } from 'joi';
+import type { SuperValidated, Infer } from 'sveltekit-superforms';
 
 import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
 
+import type { LoginSchema, UserSchema, DefaultSchema } from '$lib/schemas';
 import type { TypedPocketBase, CongregationMetaRecord } from '$lib/types';
+
 /* endregion imports */
 
 declare global {
@@ -33,13 +36,14 @@ declare global {
 			validate: (
 				request: unknown,
 				schema?: unknown
-			) => Promise<SuperValidated<Record<string, unknown>, unknown, Record<string, unknown>>>;
+			) => Promise<SuperValidated<Infer<ObjectSchema<LoginSchema | UserSchema | DefaultSchema>>>>;
 		}
 
 		interface PageData {
 			congregations: CongregationMetaRecord[];
-			form: SuperValidated<Record<string, unknown>, unknown, Record<string, unknown>>;
+			form: SuperValidated<Infer<ObjectSchema<LoginSchema | UserSchema | DefaultSchema>>>;
 		}
+
 		// interface PageState {}
 		// interface Platform {}
 	}

@@ -1,13 +1,12 @@
 <script lang="ts">
 	/* region imports */
-	import { superForm } from 'sveltekit-superforms';
+	import Login from '$lib/components/login.svelte';
 	/* endregion imports */
 
 	/* region variables */
 	// props
 	export let data;
-
-	// constants
-	const { form, errors, constraints, message, enhance } = superForm(data.form);
 	/* endregion variables */
 </script>
+
+<Login data={data.form} />
