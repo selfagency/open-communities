@@ -1,11 +1,18 @@
-import i18n from 'sveltekit-i18n';
+import i18n, { type Config } from 'sveltekit-i18n';
 
-const config = {
+const config: Config<{
+	thing: string;
+}> = {
 	loaders: [
 		{
 			locale: 'en',
 			key: 'base',
 			loader: async () => (await import('./en/base.json')).default
+		},
+		{
+			locale: 'de',
+			key: 'base',
+			loader: async () => (await import('./de/base.json')).default
 		},
 		{
 			locale: 'es',

@@ -9,4 +9,4 @@
 	/* endregion variables */
 </script>
 
-<AddForm data={data.form} />
+<AddForm data={data.form} content={data.content} />

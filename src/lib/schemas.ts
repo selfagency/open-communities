@@ -22,7 +22,7 @@ const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
 	online_automatedCaptions: joi.boolean(),
 	online_liveCaptions: joi.boolean(),
 	other: joi.boolean(),
-	otherText: joi.string()
+	otherText: joi.string().allow('')
 });
 
 const fitSchema = joi.object<FitRecord & { id: string }>({
@@ -31,22 +31,25 @@ const fitSchema = joi.object<FitRecord & { id: string }>({
 	flag: joi.string().valid('no', 'yes', 'yesBima'),
 	multipleClergyMembers: joi.boolean(),
 	other: joi.boolean(),
-	otherText: joi.string(),
+	otherText: joi.string().allow(''),
 	publicStatement: joi.boolean()
 });
 
 const registrationSchema = joi.object<RegistrationRecord & { id: string }>({
 	id: joi.string(),
-	email: joi.string(),
-	otherText: joi.string(),
-	registrationType: joi.string().valid('slidingScale', 'fixedPrice', 'suggestedDonation', 'other'),
-	url: joi.string()
+	email: joi.string().allow(''),
+	otherText: joi.string().allow(''),
+	registrationType: joi
+		.string()
+		.valid('slidingScale', 'fixedPrice', 'suggestedDonation', 'other')
+		.required(),
+	url: joi.string().allow('')
 });
 
 const safetySchema = joi.object<SafetyRecord & { id: string }>({
 	id: joi.string(),
 	protocol: joi.string().valid('maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'),
-	otherText: joi.string()
+	otherText: joi.string().allow('')
 });
 
 const servicesSchema = joi.object<ServicesRecord & { id: string }>({
@@ -61,16 +64,16 @@ export type DefaultSchema = CongregationMetaRecord;
 
 export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>({
 	id: joi.string(),
-	city: joi.string(),
-	clergy: joi.string(),
+	city: joi.string().allow(''),
+	clergy: joi.string().required(),
 	contactEmail: joi.string().required(),
-	contactName: joi.string(),
-	contactUrl: joi.string(),
-	country: joi.string(),
-	flavor: joi.string(),
+	contactName: joi.string().required(),
+	contactUrl: joi.string().allow(''),
+	country: joi.string().allow(''),
+	flavor: joi.string().required(),
 	name: joi.string().required(),
-	notes: joi.string(),
-	state: joi.string(),
+	notes: joi.string().allow(''),
+	state: joi.string().allow(''),
 	visible: joi.boolean(),
 	accommodations: accommodationsSchema,
 	fit: fitSchema,
@@ -134,4 +137,16 @@ export const tokenSchema = joi.object<TokenSchema>({
 	password: joi.string(),
 	passwordConfirm: joi.string().valid(joi.ref('password')),
 	type: joi.string().valid('resetPassword', 'verifyEmail')
+});
+
+export const deleteSchema = joi.object({
+	id: joi.string().required()
+});
+
+export const transferSchema = joi.object({
+	id: joi.string().required(),
+	email: joi
+		.string()
+		.email({ tlds: { allow: false } })
+		.required()
 });

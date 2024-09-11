@@ -10,6 +10,7 @@ export enum Collections {
 	CongregationMeta = "congregationMeta",
 	Congregations = "congregations",
 	Fit = "fit",
+	Pages = "pages",
 	Registration = "registration",
 	Safety = "safety",
 	Services = "services",
@@ -103,6 +104,22 @@ export type FitRecord = {
 	publicStatement?: boolean
 }
 
+export enum PagesLangOptions {
+	"en" = "en",
+	"de" = "de",
+	"es" = "es",
+	"fr" = "fr",
+	"he" = "he",
+}
+export type PagesRecord = {
+	content?: HTMLString
+	description?: string
+	lang: PagesLangOptions
+	sisters?: RecordIdString[]
+	slug: string
+	title: string
+}
+
 export enum RegistrationRegistrationTypeOptions {
 	"fixedPrice" = "fixedPrice",
 	"slidingScale" = "slidingScale",
@@ -155,6 +172,7 @@ export type AccommodationsResponse<Texpand = unknown> = Required<AccommodationsR
 export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
 export type CongregationsResponse<Texpand = unknown> = Required<CongregationsRecord> & BaseSystemFields<Texpand>
 export type FitResponse<Texpand = unknown> = Required<FitRecord> & BaseSystemFields<Texpand>
+export type PagesResponse<Texpand = unknown> = Required<PagesRecord> & BaseSystemFields<Texpand>
 export type RegistrationResponse<Texpand = unknown> = Required<RegistrationRecord> & BaseSystemFields<Texpand>
 export type SafetyResponse<Texpand = unknown> = Required<SafetyRecord> & BaseSystemFields<Texpand>
 export type ServicesResponse<Texpand = unknown> = Required<ServicesRecord> & BaseSystemFields<Texpand>
@@ -167,6 +185,7 @@ export type CollectionRecords = {
 	congregationMeta: CongregationMetaRecord
 	congregations: CongregationsRecord
 	fit: FitRecord
+	pages: PagesRecord
 	registration: RegistrationRecord
 	safety: SafetyRecord
 	services: ServicesRecord
@@ -178,6 +197,7 @@ export type CollectionResponses = {
 	congregationMeta: CongregationMetaResponse
 	congregations: CongregationsResponse
 	fit: FitResponse
+	pages: PagesResponse
 	registration: RegistrationResponse
 	safety: SafetyResponse
 	services: ServicesResponse
@@ -192,6 +212,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'congregationMeta'): RecordService<CongregationMetaResponse>
 	collection(idOrName: 'congregations'): RecordService<CongregationsResponse>
 	collection(idOrName: 'fit'): RecordService<FitResponse>
+	collection(idOrName: 'pages'): RecordService<PagesResponse>
 	collection(idOrName: 'registration'): RecordService<RegistrationResponse>
 	collection(idOrName: 'safety'): RecordService<SafetyResponse>
 	collection(idOrName: 'services'): RecordService<ServicesResponse>

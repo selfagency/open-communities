@@ -11,7 +11,7 @@
 
 	/* region variables */
 	// props
-	export let congregations: CongregationMetaRecord[] = [];
+	export let congregations: CongregationMetaRecord & { id: string }[] = [];
 	/* endregion variables */
 </script>
 
@@ -21,7 +21,7 @@
 	</Button>
 </div>
 
-<section class="grid w-full grid-cols-4 gap-4">
+<section class="grid w-full grid-cols-3 gap-4">
 	{#each congregations as congregation}
 		<div class="col-span-1">
 			<Congregation {congregation} />

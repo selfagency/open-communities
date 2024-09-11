@@ -26,7 +26,7 @@
 
 	/* region variables */
 	// props
-	export let congregation: CongregationMetaRecord;
+	export let congregation: CongregationMetaRecord & { id: string };
 
 	// constants
 	const accommodations = congregation.accommodations as AccommodationsRecord;

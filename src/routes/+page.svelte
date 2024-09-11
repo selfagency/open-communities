@@ -12,7 +12,7 @@
 	export let data;
 
 	// local vars
-	let congregations: CongregationMetaRecord[];
+	let congregations: CongregationMetaRecord & { id: string }[];
 	/* endregion variables */
 
 	/* region lifecycle */
