@@ -72,7 +72,7 @@
 				<h2 class="label">{$t('base.accommodations.short')}</h2>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<span class="text-nowrap">{$t('base.accommodations')}</span>
+				<span class="text-nowrap">{$t('base.accommodations.accommodations')}</span>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</div>
@@ -135,10 +135,10 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<WarningIcon size="18" />
-					<span class="sr-only">{$t('base.unspecified')}</span>
+					<span class="sr-only">{$t('base.common.unspecified')}</span>
 				</span>
 
-				<span>{$t('base.unspecified')}</span>
+				<span>{$t('base.common.unspecified')}</span>
 			</div>
 		{/if}
 	</div>

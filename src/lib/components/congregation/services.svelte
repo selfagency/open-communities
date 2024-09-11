@@ -11,7 +11,7 @@
 	/* endregion variables */
 </script>
 
-<div class="col-span-3"><h2 class="label">Services</h2></div>
+<div class="col-span-3"><h2 class="label">{$t('base.services.services')}</h2></div>
 <div class="col-span-9">
 	<ul class="w-full divide-y">
 		{#if services?.inPerson}

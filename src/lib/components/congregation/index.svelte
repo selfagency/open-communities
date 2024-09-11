@@ -73,7 +73,7 @@
 		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
 			{#if congregation.flavor}
 				<div class="col-span-3 flex flex-row items-start justify-start">
-					<h2 class="label">{$t('base.congregation.flavor')}</h2>
+					<h2 class="label">{$t('base.congregation.flavor.flavor')}</h2>
 				</div>
 				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.flavor}
@@ -83,7 +83,7 @@
 
 			{#if congregation.clergy}
 				<div class="col-span-3 flex flex-row items-start justify-start">
-					<h2 class="label">{$t('base.congregation.clergy')}</h2>
+					<h2 class="label">{$t('base.congregation.clergy.clergy')}</h2>
 				</div>
 				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.clergy}

@@ -97,7 +97,7 @@
 
 				<Form.Field {form} name="email">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.auth.email')}</Form.Label>
+						<Form.Label>{$t('base.common.email')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.email} />
 					</Form.Control>
 					<Form.FieldErrors />

@@ -16,7 +16,7 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('base.fit')}</h2>
+	<h2 class="label">{$t('base.fit.fit')}</h2>
 </div>
 <div class="col-span-9">
 	<ul class="w-full divide-y">
@@ -42,7 +42,7 @@
 			<h2 class="label">{$t('base.fit.flag.short')}</h2>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
-			{$t('base.fit.flag')}
+			{$t('base.fit.flag.flag')}
 		</Tooltip.Content>
 	</Tooltip.Root>
 </div>
@@ -52,7 +52,7 @@
 	{:else}
 		<div class="flex flex-row items-center justify-start space-x-1">
 			<span> <WarningIcon size="18" /></span>
-			<span>{$t('base.unspecified')}</span>
+			<span>{$t('base.common.unspecified')}</span>
 		</div>
 	{/if}
 </div>

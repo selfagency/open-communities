@@ -15,7 +15,7 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('base.safety')}</h2>
+	<h2 class="label">{$t('base.safety.safety')}</h2>
 </div>
 
 <div class="col-span-9 space-y-2">

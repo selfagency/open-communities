@@ -21,26 +21,6 @@ const config = {
 			locale: 'he',
 			key: 'base',
 			loader: async () => (await import('./he/base.json')).default
-		},
-		{
-			locale: 'en',
-			key: 'forms',
-			loader: async () => (await import('./en/forms.json')).default
-		},
-		{
-			locale: 'es',
-			key: 'forms',
-			loader: async () => (await import('./es/forms.json')).default
-		},
-		{
-			locale: 'fr',
-			key: 'forms',
-			loader: async () => (await import('./fr/forms.json')).default
-		},
-		{
-			locale: 'he',
-			key: 'forms',
-			loader: async () => (await import('./he/forms.json')).default
 		}
 	]
 };

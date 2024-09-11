@@ -17,7 +17,7 @@
 
 <div class="mb-4 flex flex-row items-center justify-end">
 	<Button on:click={async () => await goto('/add')}>
-		{$t('base.addNew')}
+		{$t('base.congregation.add')}
 	</Button>
 </div>
 
