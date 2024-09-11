@@ -51,6 +51,8 @@ export type AccommodationsRecord = {
 	online_asl?: boolean
 	online_automatedCaptions?: boolean
 	online_liveCaptions?: boolean
+	other?: boolean
+	otherText?: string
 }
 
 export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
@@ -61,7 +63,6 @@ export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tr
 	contactName?: string
 	contactUrl?: string
 	country?: string
-	description?: string
 	fit?: null | Tfit
 	flavor?: string
 	name?: string
@@ -70,6 +71,7 @@ export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tr
 	safety?: null | Tsafety
 	services?: null | Tservices
 	state?: string
+	visible?: boolean
 }
 
 export type CongregationsRecord = {
@@ -79,7 +81,6 @@ export type CongregationsRecord = {
 	contactName?: string
 	contactUrl?: string
 	country?: string
-	description?: string
 	flavor?: string
 	name?: string
 	notes?: string
@@ -116,13 +117,16 @@ export type RegistrationRecord = {
 	url?: string
 }
 
+export enum SafetyProtocolOptions {
+	"maskingRequired" = "maskingRequired",
+	"maskingRecommended" = "maskingRecommended",
+	"noGuidelines" = "noGuidelines",
+	"other" = "other",
+}
 export type SafetyRecord = {
 	congregation: RecordIdString
-	maskingRecommended?: boolean
-	maskingRequired?: boolean
-	noGuidelines?: boolean
-	other?: boolean
 	otherText?: string
+	protocol?: SafetyProtocolOptions
 }
 
 export type ServicesRecord = {

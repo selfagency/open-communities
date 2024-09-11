@@ -13,7 +13,11 @@ const encoder = {
 };
 /* endregion constants */
 
-const user = persistentMap<UsersRecord>('user_', {} as UsersRecord, encoder);
+const user = persistentMap<UsersRecord & { email: string }>(
+	'user_',
+	{} as UsersRecord & { email: string },
+	encoder
+);
 
 // exports
 export { user };

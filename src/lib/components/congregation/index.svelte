@@ -66,21 +66,11 @@
 			</Dialog.Description>
 		</Dialog.Header>
 
-		{#if congregation.description}
-			<p>{congregation.description}</p>
+		{#if congregation.flavor}
+			<p>{congregation.flavor}</p>
 		{/if}
 
 		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
-			{#if congregation.flavor}
-				<div class="col-span-3 flex flex-row items-start justify-start">
-					<h2 class="label">{$t('base.congregation.flavor.flavor')}</h2>
-				</div>
-				<div class="col-span-9 flex flex-row items-start justify-start">
-					{congregation.flavor}
-				</div>
-				<Separator class="col-span-12" />
-			{/if}
-
 			{#if congregation.clergy}
 				<div class="col-span-3 flex flex-row items-start justify-start">
 					<h2 class="label">{$t('base.congregation.clergy.clergy')}</h2>

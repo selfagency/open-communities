@@ -28,7 +28,7 @@
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<p class="line-clamp-3">{congregation.description}</p>
+			<p class="line-clamp-3">{congregation.flavor}</p>
 		</Card.Content>
 		<Card.Footer>
 			{#if congregation.notes}

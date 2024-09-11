@@ -10,22 +10,6 @@ import type {
 	UsersRecord
 } from './types';
 
-const base = {
-	id: joi.string(),
-	city: joi.string(),
-	clergy: joi.string(),
-	contactEmail: joi.string().required(),
-	contactName: joi.string(),
-	contactUrl: joi.string(),
-	country: joi.string(),
-	description: joi.string(),
-	flavor: joi.string(),
-	name: joi.string().required(),
-	notes: joi.string(),
-	state: joi.string(),
-	visible: joi.boolean()
-};
-
 const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
 	id: joi.string(),
 	hybrid_automatedCaptions: joi.boolean(),
@@ -36,7 +20,9 @@ const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
 	inPerson_eva: joi.boolean(),
 	online_asl: joi.boolean(),
 	online_automatedCaptions: joi.boolean(),
-	online_liveCaptions: joi.boolean()
+	online_liveCaptions: joi.boolean(),
+	other: joi.boolean(),
+	otherText: joi.string()
 });
 
 const fitSchema = joi.object<FitRecord & { id: string }>({
@@ -59,10 +45,7 @@ const registrationSchema = joi.object<RegistrationRecord & { id: string }>({
 
 const safetySchema = joi.object<SafetyRecord & { id: string }>({
 	id: joi.string(),
-	maskingRecommended: joi.boolean(),
-	maskingRequired: joi.boolean(),
-	noGuidelines: joi.boolean(),
-	other: joi.boolean(),
+	protocol: joi.string().valid('maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'),
 	otherText: joi.string()
 });
 
@@ -76,8 +59,19 @@ const servicesSchema = joi.object<ServicesRecord & { id: string }>({
 
 export type DefaultSchema = CongregationMetaRecord;
 
-export const defaultSchema = joi.object<CongregationMetaRecord>({
-	...base,
+export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>({
+	id: joi.string(),
+	city: joi.string(),
+	clergy: joi.string(),
+	contactEmail: joi.string().required(),
+	contactName: joi.string(),
+	contactUrl: joi.string(),
+	country: joi.string(),
+	flavor: joi.string(),
+	name: joi.string().required(),
+	notes: joi.string(),
+	state: joi.string(),
+	visible: joi.boolean(),
 	accommodations: accommodationsSchema,
 	fit: fitSchema,
 	registration: registrationSchema,
