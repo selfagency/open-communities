@@ -38,6 +38,7 @@ declare global {
 
 		interface PageData {
 			congregations: CongregationMetaRecord[];
+			form: SuperValidated<Record<string, unknown>, unknown, Record<string, unknown>>;
 		}
 		// interface PageState {}
 		// interface Platform {}

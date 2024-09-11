@@ -2,27 +2,14 @@ import joi from 'joi';
 
 import type {
 	AccommodationsRecord,
-	CongregationsRecord,
+	CongregationMetaRecord,
 	FitRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord
 } from './types';
 
-const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
-	id: joi.string(),
-	hybrid_automatedCaptions: joi.boolean(),
-	hybrid_liveCaptions: joi.boolean(),
-	inPerson_adaAll: joi.boolean(),
-	inPerson_adaSome: joi.boolean(),
-	inPerson_asl: joi.boolean(),
-	inPerson_eva: joi.boolean(),
-	online_asl: joi.boolean(),
-	online_automatedCaptions: joi.boolean(),
-	online_liveCaptions: joi.boolean()
-});
-
-const congregationSchema = joi.object<CongregationsRecord & { id: string }>({
+const base = {
 	id: joi.string(),
 	city: joi.string(),
 	clergy: joi.string(),
@@ -36,6 +23,19 @@ const congregationSchema = joi.object<CongregationsRecord & { id: string }>({
 	notes: joi.string(),
 	state: joi.string(),
 	visible: joi.boolean()
+};
+
+const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
+	id: joi.string(),
+	hybrid_automatedCaptions: joi.boolean(),
+	hybrid_liveCaptions: joi.boolean(),
+	inPerson_adaAll: joi.boolean(),
+	inPerson_adaSome: joi.boolean(),
+	inPerson_asl: joi.boolean(),
+	inPerson_eva: joi.boolean(),
+	online_asl: joi.boolean(),
+	online_automatedCaptions: joi.boolean(),
+	online_liveCaptions: joi.boolean()
 });
 
 const fitSchema = joi.object<FitRecord & { id: string }>({
@@ -73,8 +73,8 @@ const servicesSchema = joi.object<ServicesRecord & { id: string }>({
 	onlineOnly: joi.boolean()
 });
 
-export const defaultSchema = joi.object({
-	...congregationSchema,
+export const defaultSchema = joi.object<CongregationMetaRecord>({
+	...base,
 	accommodations: accommodationsSchema,
 	fit: fitSchema,
 	registration: registrationSchema,
