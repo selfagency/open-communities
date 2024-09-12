@@ -8,12 +8,18 @@ export async function load({ locals, cookies }) {
 	const client = loadUser(cookies);
 
 	try {
+		const page = await api
+			.collection('pages')
+			.getFirstListItem(`slug="home-${client?.lang || 'en'}"`);
+
 		const congregations = await api.collection('congregationMeta').getFullList({
 			fetch,
 			requestKey: `congregationMeta_${session}`,
 			filter: client?.admin ? '' : 'visible=1'
 		});
+
 		return {
+			page,
 			congregations
 		};
 	} catch (err) {
