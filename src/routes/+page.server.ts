@@ -11,7 +11,7 @@ export async function load({ locals, cookies }) {
 		const congregations = await api.collection('congregationMeta').getFullList({
 			fetch,
 			requestKey: `congregationMeta_${session}`,
-			filter: client.admin ? '' : 'visible=1'
+			filter: client?.admin ? '' : 'visible=1'
 		});
 		return {
 			congregations

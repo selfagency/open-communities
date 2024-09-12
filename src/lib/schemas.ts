@@ -1,8 +1,9 @@
 /* region imports */
 import joi from 'joi';
+import { isEmpty } from 'radashi';
 
 import { t } from '$lib/i18n';
-import { log } from '$lib/utils';
+// import { log } from '$lib/utils';
 
 import type {
 	AccommodationsRecord,
@@ -14,6 +15,97 @@ import type {
 	UsersRecord
 } from './types';
 /* endregion imports */
+
+/* region types */
+export type DefaultSchema = CongregationMetaRecord;
+
+export type LoginSchema = {
+	email: string;
+	password: string;
+};
+
+export type UserSchema = UsersRecord & {
+	id?: string;
+	email?: string;
+	password?: string;
+	passwordConfirm?: string;
+	oldPassword?: string;
+};
+
+export type TokenSchema = {
+	token: string;
+	email?: string;
+	password?: string;
+	passwordConfirm?: string;
+	type: string;
+};
+/* endregion types */
+
+/* region variables */
+// constants
+const password = joi
+	.string()
+	.min(12)
+	.max(64)
+	.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{12,64}$'));
+/* endregion variables */
+
+/* region methods */
+const fitCheck: joi.CustomValidator = (value, helpers) => {
+	if (
+		!isEmpty(value) &&
+		!value?.clergyMember &&
+		!value?.multipleClergyMembers &&
+		!value?.other &&
+		!value?.publicStatement
+	) {
+		return helpers.message(t.get('base.common.required'));
+	}
+	return value;
+};
+
+const registrationCheck: joi.CustomValidator = (value, helpers) => {
+	if (!isEmpty(value) && isEmpty(value?.email) && isEmpty(value?.url)) {
+		return helpers.message(
+			t.get('base.common.thingRequired', { thing: t.get('base.common.emailOrUrl') })
+		);
+	}
+
+	return value;
+};
+
+const safetyCheck: joi.CustomValidator = (value, helpers) => {
+	if (!isEmpty(value) && isEmpty(value?.protocol)) {
+		return helpers.message(t.get('base.common.required'));
+	}
+	if (!isEmpty(value) && value?.protocol === 'other' && isEmpty(value?.otherText)) {
+		return helpers.message(
+			t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
+		);
+	}
+	return value;
+};
+
+const servicesCheck: joi.CustomValidator = (value, helpers) => {
+	if (
+		!isEmpty(value) &&
+		!value?.hybrid &&
+		!value?.inPerson &&
+		!value?.offsite &&
+		!value?.onlineOnly &&
+		!value?.other
+	) {
+		return helpers.message(t.get('base.common.required'));
+	}
+
+	if (value?.other && isEmpty(value?.otherText)) {
+		return helpers.message(
+			t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
+		);
+	}
+	return value;
+};
+/* endregion methods */
 
 const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
 	id: joi.string(),
@@ -40,20 +132,7 @@ const fitSchema = joi
 		otherText: joi.string().allow('').required(),
 		publicStatement: joi.boolean().required()
 	})
-	.custom((value, helpers) => {
-		if (
-			!value.clergyMember &&
-			!value.multipleClergyMembers &&
-			!value.other &&
-			!value.publicStatement
-		) {
-			return helpers.error('any.custom', { message: t.get('base.common.required') });
-		}
-		return value;
-	})
-	.messages({
-		'any.custom': t.get('base.common.required')
-	});
+	.custom(fitCheck, 'fitCheck');
 
 const registrationSchema = joi
 	.object<RegistrationRecord & { id: string }>({
@@ -73,15 +152,7 @@ const registrationSchema = joi
 			.allow('')
 			.messages({ 'string.uri': t.get('base.common.invalidUrl') })
 	})
-	.or('email', 'url')
-	.custom((value, helpers) => {
-		if (value.email === '' && value.url === '') {
-			return helpers.error('any.custom', {
-				message: t.get('base.common.thingRequired', { thing: t.get('base.common.emailOrUrl') })
-			});
-		}
-		return value;
-	});
+	.custom(registrationCheck, 'registrationCheck');
 
 const safetySchema = joi
 	.object<SafetyRecord & { id: string }>({
@@ -95,17 +166,7 @@ const safetySchema = joi
 			}),
 		otherText: joi.string().allow('')
 	})
-	.custom((value, helpers) => {
-		if (value.protocol === '') {
-			return helpers.error('any.custom', { message: t.get('base.common.required') });
-		}
-		if (value.protocol === 'other' && value.otherText === '') {
-			return helpers.error('any.custom', {
-				message: t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
-			});
-		}
-		return value;
-	});
+	.custom(safetyCheck, 'safetyCheck');
 
 const servicesSchema = joi
 	.object<ServicesRecord & { id: string }>({
@@ -117,21 +178,7 @@ const servicesSchema = joi
 		other: joi.boolean(),
 		otherText: joi.string().allow('')
 	})
-	.or('hybrid', 'inPerson', 'offsite', 'onlineOnly', 'other')
-	.custom((value, helpers) => {
-		if (!value.hybrid && !value.inPerson && !value.offsite && !value.onlineOnly && !value.other) {
-			return helpers.error('any.custom', { message: t.get('base.common.required') });
-		}
-
-		if (value.other && value.otherText === '') {
-			return helpers.error('any.custom', {
-				message: t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
-			});
-		}
-		return value;
-	});
-
-export type DefaultSchema = CongregationMetaRecord;
+	.custom(servicesCheck, 'servicesCheck');
 
 export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>({
 	id: joi.string(),
@@ -205,17 +252,6 @@ export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>
 	services: servicesSchema
 });
 
-const password = joi
-	.string()
-	.min(12)
-	.max(64)
-	.pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{12,64}$'));
-
-export type LoginSchema = {
-	email: string;
-	password: string;
-};
-
 export const loginSchema = joi.object<LoginSchema>({
 	email: joi
 		.string()
@@ -241,14 +277,6 @@ export const loginSchema = joi.object<LoginSchema>({
 			})
 		})
 });
-
-export type UserSchema = UsersRecord & {
-	id?: string;
-	email?: string;
-	password?: string;
-	passwordConfirm?: string;
-	oldPassword?: string;
-};
 
 export const userSchema = joi.object<UserSchema>({
 	id: joi.string(),
@@ -281,14 +309,6 @@ export const userSchema = joi.object<UserSchema>({
 	oldPassword: joi.string(),
 	passwordConfirm: joi.string().valid(joi.ref('password'))
 });
-
-export type TokenSchema = {
-	token: string;
-	email?: string;
-	password?: string;
-	passwordConfirm?: string;
-	type: string;
-};
 
 export const tokenSchema = joi.object<TokenSchema>({
 	token: joi

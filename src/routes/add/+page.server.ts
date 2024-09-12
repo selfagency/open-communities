@@ -18,20 +18,30 @@ import { defaultSchema } from '$lib/schemas';
 import { loadUser, handleError } from '$lib/server/api';
 /* endregion imports */
 
+/* region types */
+type MetaRecord = {
+	accommodations: AccommodationsRecord;
+	fit: FitRecord;
+	registration: RegistrationRecord;
+	safety: SafetyRecord;
+	services: ServicesRecord;
+};
+/* endregion types */
+
 export const load = async ({ locals, fetch, cookies }) => {
 	const { api, validate } = locals;
 	const client = loadUser(cookies);
 
 	try {
-		if (client?.id) {
-			const content = (await api
-				.collection('pages')
-				.getFirstListItem(`slug="add-${client.lang}"`, { fetch })) as PagesRecord;
-
-			return { form: { default: await validate(defaultSchema) }, content };
-		} else {
-			throw new Error('403');
+		if (!client?.id) {
+			throw new Error('Forbidden');
 		}
+
+		const content = (await api
+			.collection('pages')
+			.getFirstListItem(`slug="add-${client?.lang || 'en'}"`, { fetch })) as PagesRecord;
+
+		return { form: { default: await validate(defaultSchema) }, content };
 	} catch (error) {
 		if ((error as Error).message === '403') {
 			redirect(302, '/login');
@@ -41,26 +51,21 @@ export const load = async ({ locals, fetch, cookies }) => {
 	}
 };
 
-type MetaRecord = {
-	accommodations: AccommodationsRecord;
-	fit: FitRecord;
-	registration: RegistrationRecord;
-	safety: SafetyRecord;
-	services: ServicesRecord;
-};
-
 export const actions = {
-	add: async (event) => {
-		const { fetch, locals } = event;
+	submit: async (event) => {
+		const { fetch, locals, cookies } = event;
 		const { api, validate } = locals;
+		const client = loadUser(cookies);
 
-		const form = await validate(defaultSchema);
+		const form = await validate(defaultSchema, event);
 
 		try {
+			if (!client?.id) {
+				throw new Error('Forbidden');
+			}
+
 			if (!form.valid) {
-				return {
-					form
-				};
+				throw new Error('Invalid form data');
 			}
 
 			const record = await api
@@ -90,13 +95,17 @@ export const actions = {
 				api.collection('services').create({ ...services, congregation: record.id }, { fetch })
 			]);
 
+			if (!client?.admin) {
+				await api.collection('users').update(client.id, { congregation: record.id }, { fetch });
+			}
+
 			return {
 				form
 			};
 		} catch (error) {
 			const err = error as ClientResponseError;
 
-			return fail(err.status, {
+			return fail(err.status ?? 400, {
 				form: {
 					...form,
 					errors: {
