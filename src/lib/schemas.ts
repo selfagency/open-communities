@@ -9,11 +9,12 @@ import type {
 	AccommodationsRecord,
 	CongregationMetaRecord,
 	FitRecord,
+	LocalesRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord,
 	UsersRecord
-} from './types';
+} from '$lib/types';
 /* endregion imports */
 
 /* region types */
@@ -134,6 +135,14 @@ const fitSchema = joi
 	})
 	.custom(fitCheck, 'fitCheck');
 
+const localeSchema = joi.object<LocalesRecord & { id: string }>({
+	city: joi.string().required(),
+	country: joi.string().required(),
+	state: joi.string().required(),
+	latitude: joi.number().required(),
+	longitude: joi.number().required()
+});
+
 const registrationSchema = joi
 	.object<RegistrationRecord & { id: string }>({
 		id: joi.string(),
@@ -182,7 +191,6 @@ const servicesSchema = joi
 
 export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>({
 	id: joi.string(),
-	city: joi.string().allow(''),
 	clergy: joi
 		.string()
 		.required()
@@ -221,7 +229,6 @@ export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>
 		.uri()
 		.allow('')
 		.messages({ 'string.uri': t.get('base.common.invalidUrl') }),
-	country: joi.string().allow(''),
 	flavor: joi
 		.string()
 		.required()
@@ -243,10 +250,10 @@ export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>
 			})
 		}),
 	notes: joi.string().allow(''),
-	state: joi.string().allow(''),
 	visible: joi.boolean(),
 	accommodations: accommodationsSchema,
 	fit: fitSchema,
+	locale: localeSchema,
 	registration: registrationSchema,
 	safety: safetySchema,
 	services: servicesSchema

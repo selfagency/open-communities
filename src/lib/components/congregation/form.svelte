@@ -48,16 +48,13 @@
 
 	/* region methods */
 	function initData() {
-		$formData.city = '';
 		$formData.clergy = '';
 		$formData.contactEmail = $user.email;
 		$formData.contactName = $user.name;
 		$formData.contactUrl = '';
-		$formData.country = '';
 		$formData.flavor = '';
 		$formData.name = '';
 		$formData.notes = '';
-		$formData.state = '';
 		$formData.visible = false;
 
 		$formData.fit = {
@@ -66,6 +63,14 @@
 			multipleClergyMembers: false,
 			other: false,
 			otherText: ''
+		};
+
+		$formData.locale = {
+			city: '',
+			state: '',
+			country: '',
+			latitude: 0,
+			longitude: 0
 		};
 
 		$formData.services = {
@@ -207,22 +212,34 @@
 							</Form.Field>
 							<Form.Field {form} name="city">
 								<Form.Control let:attrs>
-									<Form.Label>{$t('base.congregation.city')}</Form.Label>
-									<Input {...attrs} bind:value={$formData.city} />
+									<Form.Label>{$t('base.locale.city')}</Form.Label>
+									<Input {...attrs} bind:value={$formData.locale.city} />
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
 							<Form.Field {form} name="state">
 								<Form.Control let:attrs>
-									<Form.Label>{$t('base.congregation.state')}</Form.Label>
-									<Input {...attrs} bind:value={$formData.state} />
+									<Form.Label>{$t('base.locale.state')}</Form.Label>
+									<Input {...attrs} bind:value={$formData.locale.state} />
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
 							<Form.Field {form} name="country">
 								<Form.Control let:attrs>
-									<Form.Label>{$t('base.congregation.country')}</Form.Label>
-									<Input {...attrs} bind:value={$formData.country} />
+									<Form.Label>{$t('base.locale.country')}</Form.Label>
+									<Input {...attrs} bind:value={$formData.locale.country} />
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field {form} name="latitude">
+								<Form.Control let:attrs>
+									<input type="hidden" {...attrs} bind:value={$formData.locale.latitude} />
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+							<Form.Field {form} name="longitude">
+								<Form.Control let:attrs>
+									<input type="hidden" {...attrs} bind:value={$formData.locale.longitude} />
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
@@ -255,7 +272,7 @@
 								<Form.FieldErrors />
 							</Form.Field>
 							<div class="mt-4 flex flex-row items-center justify-end">
-								<Button class="bg-slate-500 text-white" on:click={() => (view = 'fit')}
+								<Button variant="secondary" on:click={() => (view = 'fit')}
 									>{$t('base.common.next')} →</Button
 								>
 							</div>
@@ -367,7 +384,7 @@
 								</Form.Field>
 
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button class="bg-slate-500 text-white" on:click={() => (view = 'services')}
+									<Button variant="secondary" on:click={() => (view = 'services')}
 										>{$t('base.common.next')} →</Button
 									>
 								</div>
@@ -470,10 +487,7 @@
 									{/if}
 								</div>
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button
-										class="bg-slate-500 text-white"
-										on:click={() => (view = 'accommodations')}
-									>
+									<Button variant="secondary" on:click={() => (view = 'accommodations')}>
 										{$t('base.common.next')} →
 									</Button>
 								</div>
@@ -665,7 +679,7 @@
 								</div>
 
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button class="bg-slate-500 text-white" on:click={() => (view = 'safety')}
+									<Button variant="secondary" on:click={() => (view = 'safety')}
 										>{$t('base.common.next')} →</Button
 									>
 								</div>
@@ -733,7 +747,7 @@
 									<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button class="bg-slate-500 text-white" on:click={() => (view = 'registration')}>
+									<Button variant="secondary" on:click={() => (view = 'registration')}>
 										{$t('base.common.next')} →
 									</Button>
 								</div>
@@ -829,7 +843,7 @@
 									</span>
 								{/if}
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button class="bg-slate-500 text-white" on:click={() => (view = 'contact')}
+									<Button variant="secondary" on:click={() => (view = 'contact')}
 										>{$t('base.common.next')} →</Button
 									>
 								</div>
@@ -883,9 +897,12 @@
 						</div>
 					{/if}
 					<!-- default -->
-					<div class="flex flex-row items-center justify-end space-x-2">
+					<div
+						class="flex flex-row items-center justify-end space-x-2"
+						class:w-full={mode === 'add'}
+					>
 						<Button
-							class="border border-slate-300 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-600"
+							variant="outline"
 							on:click={(e) => {
 								e.preventDefault();
 								if (browser) {

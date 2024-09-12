@@ -11,7 +11,7 @@ import { logger } from '$lib/utils';
 // constants
 const log = logger.getSubLogger({
 	name: 'server',
-	type: process.env.NODE_ENVIRONMENT !== 'production' ? 'pretty' : 'json'
+	type: import.meta.env.__NODE_ENV__ !== 'production' ? 'pretty' : 'json'
 });
 /* endregion variables */
 

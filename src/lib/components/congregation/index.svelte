@@ -8,7 +8,8 @@
 		FitRecord,
 		ServicesRecord,
 		RegistrationRecord,
-		SafetyRecord
+		SafetyRecord,
+		LocalesRecord
 	} from '$lib/types';
 
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -31,6 +32,7 @@
 	// constants
 	const accommodations = congregation.accommodations as AccommodationsRecord;
 	const fit = congregation.fit as FitRecord;
+	const locale = congregation.locale as LocalesRecord;
 	const services = congregation.services as ServicesRecord;
 	const registration = congregation.registration as RegistrationRecord;
 	const safety = congregation.safety as SafetyRecord;
@@ -59,9 +61,9 @@
 				{/if}
 			</Dialog.Title>
 			<Dialog.Description>
-				<span>{congregation.city}</span>,
-				<span>{congregation.state}</span>{#if congregation.country !== 'US'}<span
-						>, {congregation.country}</span
+				<span>{locale.city}</span>,
+				<span>{locale.state}</span>{#if locale.country !== 'United States'}<span
+						>, {locale.country}</span
 					>{/if}
 			</Dialog.Description>
 		</Dialog.Header>

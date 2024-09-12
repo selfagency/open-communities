@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import type { CongregationMetaRecord, AccommodationsRecord } from '$lib/types';
+	import type { CongregationMetaRecord, AccommodationsRecord, LocalesRecord } from '$lib/types';
 
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
@@ -16,6 +16,7 @@
 
 	// constants
 	const accommodations = congregation.accommodations as AccommodationsRecord;
+	const locale = congregation.locale as LocalesRecord;
 	/* endregion variables */
 </script>
 
@@ -24,9 +25,9 @@
 		<Card.Header>
 			<Card.Title>{congregation.name}</Card.Title>
 			<Card.Description>
-				<span>{congregation.city}</span>,
-				<span>{congregation.state}</span>{#if congregation.country !== 'US'}<span
-						>, {congregation.country}</span
+				<span>{locale.city}</span>,
+				<span>{locale.state}</span>{#if locale.country !== 'United States'}<span
+						>, {locale.country}</span
 					>{/if}
 			</Card.Description>
 		</Card.Header>

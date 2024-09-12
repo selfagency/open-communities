@@ -10,6 +10,7 @@ export enum Collections {
 	CongregationMeta = "congregationMeta",
 	Congregations = "congregations",
 	Fit = "fit",
+	Locales = "locales",
 	Pages = "pages",
 	Registration = "registration",
 	Safety = "safety",
@@ -56,36 +57,32 @@ export type AccommodationsRecord = {
 	otherText?: string
 }
 
-export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
+export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tlocale = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
 	accommodations?: null | Taccommodations
-	city?: string
 	clergy?: string
 	contactEmail?: string
 	contactName?: string
 	contactUrl?: string
-	country?: string
 	fit?: null | Tfit
 	flavor?: string
+	locale?: null | Tlocale
 	name?: string
 	notes?: string
 	registration?: null | Tregistration
 	safety?: null | Tsafety
 	services?: null | Tservices
-	state?: string
 	visible?: boolean
 }
 
 export type CongregationsRecord = {
-	city?: string
 	clergy?: string
 	contactEmail?: string
 	contactName?: string
 	contactUrl?: string
-	country?: string
 	flavor?: string
+	locale?: RecordIdString
 	name?: string
 	notes?: string
-	state?: string
 	visible?: boolean
 }
 
@@ -102,6 +99,14 @@ export type FitRecord = {
 	other?: boolean
 	otherText?: string
 	publicStatement?: boolean
+}
+
+export type LocalesRecord = {
+	city?: string
+	country?: string
+	latitude?: number
+	longitude?: number
+	state?: string
 }
 
 export enum PagesLangOptions {
@@ -171,9 +176,10 @@ export type UsersRecord = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type AccommodationsResponse<Texpand = unknown> = Required<AccommodationsRecord> & BaseSystemFields<Texpand>
-export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
+export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tlocale = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tlocale, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
 export type CongregationsResponse<Texpand = unknown> = Required<CongregationsRecord> & BaseSystemFields<Texpand>
 export type FitResponse<Texpand = unknown> = Required<FitRecord> & BaseSystemFields<Texpand>
+export type LocalesResponse<Texpand = unknown> = Required<LocalesRecord> & BaseSystemFields<Texpand>
 export type PagesResponse<Texpand = unknown> = Required<PagesRecord> & BaseSystemFields<Texpand>
 export type RegistrationResponse<Texpand = unknown> = Required<RegistrationRecord> & BaseSystemFields<Texpand>
 export type SafetyResponse<Texpand = unknown> = Required<SafetyRecord> & BaseSystemFields<Texpand>
@@ -187,6 +193,7 @@ export type CollectionRecords = {
 	congregationMeta: CongregationMetaRecord
 	congregations: CongregationsRecord
 	fit: FitRecord
+	locales: LocalesRecord
 	pages: PagesRecord
 	registration: RegistrationRecord
 	safety: SafetyRecord
@@ -199,6 +206,7 @@ export type CollectionResponses = {
 	congregationMeta: CongregationMetaResponse
 	congregations: CongregationsResponse
 	fit: FitResponse
+	locales: LocalesResponse
 	pages: PagesResponse
 	registration: RegistrationResponse
 	safety: SafetyResponse
@@ -214,6 +222,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'congregationMeta'): RecordService<CongregationMetaResponse>
 	collection(idOrName: 'congregations'): RecordService<CongregationsResponse>
 	collection(idOrName: 'fit'): RecordService<FitResponse>
+	collection(idOrName: 'locales'): RecordService<LocalesResponse>
 	collection(idOrName: 'pages'): RecordService<PagesResponse>
 	collection(idOrName: 'registration'): RecordService<RegistrationResponse>
 	collection(idOrName: 'safety'): RecordService<SafetyResponse>
