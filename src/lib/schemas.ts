@@ -2,6 +2,7 @@
 import joi from 'joi';
 
 import { t } from '$lib/i18n';
+import { log } from '$lib/utils';
 
 import type {
 	AccommodationsRecord,
@@ -32,12 +33,12 @@ const accommodationsSchema = joi.object<AccommodationsRecord & { id: string }>({
 const fitSchema = joi
 	.object<FitRecord & { id: string }>({
 		id: joi.string(),
-		clergyMember: joi.boolean(),
+		clergyMember: joi.boolean().required(),
 		flag: joi.string().valid('no', 'yes', 'yesBima'),
-		multipleClergyMembers: joi.boolean(),
-		other: joi.boolean(),
-		otherText: joi.string().allow(''),
-		publicStatement: joi.boolean()
+		multipleClergyMembers: joi.boolean().required(),
+		other: joi.boolean().required(),
+		otherText: joi.string().allow('').required(),
+		publicStatement: joi.boolean().required()
 	})
 	.custom((value, helpers) => {
 		if (
@@ -51,8 +52,6 @@ const fitSchema = joi
 		return value;
 	})
 	.messages({
-		'string.empty': t.get('base.common.required'),
-		'any.only': t.get('base.common.required'),
 		'any.custom': t.get('base.common.required')
 	});
 
@@ -66,32 +65,22 @@ const registrationSchema = joi
 			.valid('slidingScale', 'fixedPrice', 'suggestedDonation', 'other')
 			.required()
 			.messages({
-				'string.empty': t.get('base.common.required'),
-				'any.only': t.get('base.common.required'),
-				'any.required': t.get('base.common.required')
+				'any.only': t.get('base.common.required')
 			}),
-		url: joi.string().uri().allow('')
+		url: joi
+			.string()
+			.uri()
+			.allow('')
+			.messages({ 'string.uri': t.get('base.common.invalidUrl') })
 	})
 	.or('email', 'url')
 	.custom((value, helpers) => {
-		if (!value.email && !value.url) {
+		if (value.email === '' && value.url === '') {
 			return helpers.error('any.custom', {
 				message: t.get('base.common.thingRequired', { thing: t.get('base.common.emailOrUrl') })
 			});
 		}
 		return value;
-	})
-	.messages({
-		'any.only': t.get('base.common.thingRequired', {
-			thing: t.get('base.registration.registration')
-		}),
-		'string.empty': t.get('base.common.thingRequired', {
-			thing: t.get('base.registration.registration')
-		}),
-		'object.missing': t.get('base.common.thingRequired', {
-			thing: t.get('base.common.emailOrUrl')
-		}),
-		'any.custom': t.get('base.common.required')
 	});
 
 const safetySchema = joi
@@ -102,29 +91,20 @@ const safetySchema = joi
 			.valid('maskingRequired', 'maskingRecommended', 'noGuidelines', 'other')
 			.required()
 			.messages({
-				'any.only': t.get('base.common.required'),
-				'string.empty': t.get('base.common.required'),
-				'any.required': t.get('base.common.required'),
-				'object.missing': t.get('base.common.required')
+				'any.only': t.get('base.common.required')
 			}),
 		otherText: joi.string().allow('')
 	})
 	.custom((value, helpers) => {
-		if (!value.protocol) {
+		if (value.protocol === '') {
 			return helpers.error('any.custom', { message: t.get('base.common.required') });
 		}
-		if (value.protocol === 'other' && !value.otherText) {
+		if (value.protocol === 'other' && value.otherText === '') {
 			return helpers.error('any.custom', {
 				message: t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
 			});
 		}
 		return value;
-	})
-	.messages({
-		'any.only': t.get('base.common.required'),
-		'string.empty': t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') }),
-		'object.missing': t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') }),
-		'any.custom': t.get('base.common.required')
 	});
 
 const servicesSchema = joi
@@ -142,18 +122,13 @@ const servicesSchema = joi
 		if (!value.hybrid && !value.inPerson && !value.offsite && !value.onlineOnly && !value.other) {
 			return helpers.error('any.custom', { message: t.get('base.common.required') });
 		}
-		if (value.other && !value.otherText) {
+
+		if (value.other && value.otherText === '') {
 			return helpers.error('any.custom', {
 				message: t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
 			});
 		}
 		return value;
-	})
-	.messages({
-		'string.empty': t.get('base.common.required'),
-		'any.only': t.get('base.common.required'),
-		'object.missing': t.get('base.common.required'),
-		'any.custom': t.get('base.common.required')
 	});
 
 export type DefaultSchema = CongregationMetaRecord;
@@ -194,15 +169,17 @@ export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>
 				thing: t.get('base.congregation.contactName.contactName')
 			})
 		}),
-	contactUrl: joi.string().uri().allow(''),
+	contactUrl: joi
+		.string()
+		.uri()
+		.allow('')
+		.messages({ 'string.uri': t.get('base.common.invalidUrl') }),
 	country: joi.string().allow(''),
 	flavor: joi
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.flavor.flavor')
-			}),
+			'string.empty': t.get('base.common.required'),
 			'any.required': t.get('base.common.thingRequired', {
 				thing: t.get('base.congregation.flavor.flavor')
 			})

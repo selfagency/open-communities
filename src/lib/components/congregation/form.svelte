@@ -37,14 +37,6 @@
 
 	// local vars
 	let hasErrors: boolean = false;
-	let errorsCongregation: boolean = false;
-	let errorsFit: boolean = false;
-	let errorsRegistration: boolean = false;
-	let errorsSafety: boolean = false;
-	let errorsContact: boolean = false;
-	let errorsAccommodations: boolean = false;
-	let errorsServices: boolean = false;
-
 	/* endregion variables */
 
 	/* region methods */
@@ -105,10 +97,9 @@
 		};
 	}
 
-	function noValues(obj: Record<string, any>): boolean {
-		return Object.values(obj).every((value) => value === false || isEmpty(value));
-	}
-
+	const fixType = (input: any) => {
+		return input as { _errors?: string[] | undefined } & Record<string, unknown>;
+	};
 	/* endregion methods */
 
 	/* region form */
@@ -118,27 +109,14 @@
 		validators: joi(defaultSchema),
 		async onUpdate({ form: f, result }) {
 			hasErrors = false;
-			errorsCongregation = false;
-			errorsContact = false;
-			errorsFit = false;
-			errorsRegistration = false;
-			errorsSafety = false;
-			errorsServices = false;
 
 			if (!f.valid) {
-				log.error(JSON.stringify(result.data.form.errors));
-				toast.error($t('base.congregation.addFailure'));
 				hasErrors = true;
-				errorsCongregation = !f.data.name || !f.data.clergy || !f.data.flavor;
-				errorsContact = !f.data.contactName || !f.data.contactEmail;
-				errorsFit = noValues(f.data.fit) || !isEmpty(result.data.form.errors.fit);
-				errorsRegistration =
-					noValues(f.data.registration) || !isEmpty(result.data.form.errors.registration);
-				errorsSafety = noValues(f.data.safety) || !isEmpty(result.data.form.errors.safety);
-				errorsServices = noValues(f.data.services) || !isEmpty(result.data.form.errors.services);
-
+				log.error(JSON.stringify(result.data.form.errors, null, 2));
 				if (result.data.form.errors.error) {
 					toast.error(result.data.form.errors.error);
+				} else {
+					toast.error($t('base.congregation.addFailure'));
 				}
 			} else if (result.type === 'success') {
 				log.debug(JSON.stringify(result.data.user));
@@ -151,7 +129,7 @@
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, errors, enhance } = form;
 	/* endregion form */
 
 	/* region lifecycle */
@@ -202,7 +180,7 @@
 						<Accordion.Trigger>
 							<span>
 								{$t('base.congregation.congregation')}
-								{#if errorsCongregation}
+								{#if $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
@@ -270,17 +248,18 @@
 
 				<!-- fit -->
 				<Accordion.Root>
+					{@const fitErrors = fixType($errors.fit)?._errors}
 					<Accordion.Item value="fit">
 						<Accordion.Trigger>
 							<span>
 								{$t('base.fit.fit')}
-								{#if errorsFit}
+								{#if fitErrors}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question" class:error={errorsFit}>
+							<div class="question" class:error={fitErrors}>
 								{$t('base.fit.extended')}
 							</div>
 							<div class="my-4 space-y-2">
@@ -344,7 +323,7 @@
 										<Form.FieldErrors />
 									</Form.Field>
 								{/if}
-								{#if errorsFit}
+								{#if fitErrors}
 									<span class="text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
 							</div>
@@ -376,17 +355,18 @@
 
 				<!-- services -->
 				<Accordion.Root>
+					{@const servicesErrors = fixType($errors.services)?._errors}
 					<Accordion.Item value="services">
 						<Accordion.Trigger>
 							<span>
 								{$t('base.services.services')}
-								{#if errorsServices}
+								{#if servicesErrors}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question" class:error={errorsServices}>
+							<div class="question" class:error={servicesErrors}>
 								{$t('base.services.extended')}
 							</div>
 							<div class="my-4 space-y-2">
@@ -463,7 +443,7 @@
 										<Form.FieldErrors />
 									</Form.Field>
 								{/if}
-								{#if errorsServices}
+								{#if servicesErrors}
 									<span class="text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
 							</div>
@@ -477,7 +457,7 @@
 						<Accordion.Trigger>
 							<span>
 								{$t('base.accommodations.accommodations')}
-								{#if errorsAccommodations}
+								{#if $errors.accommodations}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
@@ -490,7 +470,7 @@
 									<Form.Control let:attrs>
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Checkbox {...attrs} bind:checked={$formData.services.online_asl} />
+												<Checkbox {...attrs} bind:checked={$formData.accommodations.online_asl} />
 											</span>
 											<span class="-mt-0.5">
 												<Form.Label>{$t('base.accommodations.online_asl')}</Form.Label>
@@ -505,7 +485,7 @@
 											<span>
 												<Checkbox
 													{...attrs}
-													bind:checked={$formData.services.online_liveCaptions}
+													bind:checked={$formData.accommodations.online_liveCaptions}
 												/>
 											</span>
 											<span class="-mt-0.5">
@@ -521,7 +501,7 @@
 											<span>
 												<Checkbox
 													{...attrs}
-													bind:checked={$formData.services.online_automatedCaptions}
+													bind:checked={$formData.accommodations.online_automatedCaptions}
 												/>
 											</span>
 											<span class="-mt-0.5">
@@ -539,7 +519,7 @@
 											<span>
 												<Checkbox
 													{...attrs}
-													bind:checked={$formData.services.hybrid_liveCaptions}
+													bind:checked={$formData.accommodations.hybrid_liveCaptions}
 												/>
 											</span>
 											<span class="-mt-0.5">
@@ -555,7 +535,7 @@
 											<span>
 												<Checkbox
 													{...attrs}
-													bind:checked={$formData.services.hybrid_automatedCaptions}
+													bind:checked={$formData.accommodations.hybrid_automatedCaptions}
 												/>
 											</span>
 											<span class="-mt-0.5">
@@ -570,7 +550,10 @@
 									<Form.Control let:attrs>
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Checkbox {...attrs} bind:checked={$formData.services.inPerson_adaAll} />
+												<Checkbox
+													{...attrs}
+													bind:checked={$formData.accommodations.inPerson_adaAll}
+												/>
 											</span>
 											<span class="-mt-0.5">
 												<Form.Label>{$t('base.accommodations.inPerson_adaAll')}</Form.Label>
@@ -583,7 +566,10 @@
 									<Form.Control let:attrs>
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Checkbox {...attrs} bind:checked={$formData.services.inPerson_adaSome} />
+												<Checkbox
+													{...attrs}
+													bind:checked={$formData.accommodations.inPerson_adaSome}
+												/>
 											</span>
 											<span class="-mt-0.5">
 												<Form.Label>{$t('base.accommodations.inPerson_adaSome')}</Form.Label>
@@ -596,7 +582,7 @@
 									<Form.Control let:attrs>
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Checkbox {...attrs} bind:checked={$formData.services.inPerson_asl} />
+												<Checkbox {...attrs} bind:checked={$formData.accommodations.inPerson_asl} />
 											</span>
 											<span class="-mt-0.5">
 												<Form.Label>{$t('base.accommodations.inPerson_asl')}</Form.Label>
@@ -609,7 +595,7 @@
 									<Form.Control let:attrs>
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Checkbox {...attrs} bind:checked={$formData.services.inPerson_eva} />
+												<Checkbox {...attrs} bind:checked={$formData.accommodations.inPerson_eva} />
 											</span>
 											<span class="-mt-0.5">
 												<Form.Label>{$t('base.accommodations.inPerson_eva')}</Form.Label>
@@ -646,11 +632,12 @@
 
 				<!-- safety -->
 				<Accordion.Root>
+					{@const safetyErrors = fixType($errors.safety)}
 					<Accordion.Item value="safety">
 						<Accordion.Trigger>
 							<span>
 								{$t('base.safety.safety')}
-								{#if errorsSafety}
+								{#if safetyErrors}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
@@ -658,7 +645,7 @@
 						<Accordion.Content>
 							<Form.Field {form} name="protocol">
 								<Form.Control let:attrs>
-									<div class="question mb-4" class:error={errorsSafety}>
+									<div class="question mb-4" class:error={safetyErrors.protocol}>
 										{$t('base.safety.extended')}
 									</div>
 									<RadioGroup.Root
@@ -699,7 +686,7 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							{#if errorsSafety}
+							{#if safetyErrors.protocol}
 								<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 							{/if}
 						</Accordion.Content>
@@ -708,17 +695,20 @@
 
 				<!-- registration -->
 				<Accordion.Root>
+					{@const registrationErrors = fixType($errors.registration)}
+					{@const registrationInvalid =
+						fixType($errors.registration)?.email || fixType($errors.registration)?.url}
 					<Accordion.Item value="registration">
 						<Accordion.Trigger>
 							<span>
 								{$t('base.registration.registration')}
-								{#if errorsRegistration}
+								{#if registrationErrors}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question mb-4" class:error={errorsRegistration}>
+							<div class="question mb-4" class:error={registrationErrors?.registrationType}>
 								{$t('base.registration.extended')}
 							</div>
 							<Form.Field {form} name="protocol">
@@ -761,11 +751,13 @@
 									<Form.FieldErrors />
 								</Form.Field>
 							{/if}
-							{#if errorsRegistration}
+							{#if registrationErrors?.registrationType}
 								<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 							{/if}
 
-							<div class="question my-4">{$t('base.register.extended')}</div>
+							<div class="question my-4" class:error={registrationInvalid}>
+								{$t('base.register.extended')}
+							</div>
 							<Form.Field {form} name="registration_email">
 								<Form.Control let:attrs>
 									<Form.Label for="registration_email">{$t('base.common.email')}</Form.Label>
@@ -780,6 +772,12 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
+
+							{#if registrationInvalid}
+								<span class="mt-4 block text-xs text-red-500">
+									{$t('base.common.thingRequired', { thing: $t('base.common.emailOrUrl') })}
+								</span>
+							{/if}
 						</Accordion.Content>
 					</Accordion.Item>
 				</Accordion.Root>
@@ -790,7 +788,7 @@
 						<Accordion.Trigger>
 							<span>
 								{$t('base.congregation.contact')}
-								{#if errorsContact}
+								{#if $errors.contactName || $errors.contactEmail}
 									<span class="text-red-500">*</span>
 								{/if}
 							</span>
@@ -799,9 +797,9 @@
 							<div class="question mb-4">{$t('base.congregation.contactName.extended')}</div>
 							<Form.Field {form} name="contactName">
 								<Form.Control let:attrs>
-									<Form.Label for="contactName"
-										>{$t('base.congregation.contactName.contactName')}</Form.Label
-									>
+									<Form.Label for="contactName">
+										{$t('base.congregation.contactName.contactName')}
+									</Form.Label>
 									<Input {...attrs} bind:value={$formData.contactName} required />
 								</Form.Control>
 								<Form.FieldErrors />
@@ -809,9 +807,9 @@
 							<div class="question my-4">{$t('base.congregation.contactEmail.extended')}</div>
 							<Form.Field {form} name="contactEmail">
 								<Form.Control let:attrs>
-									<Form.Label for="contactEmail"
-										>{$t('base.congregation.contactEmail.contactEmail')}</Form.Label
-									>
+									<Form.Label for="contactEmail">
+										{$t('base.congregation.contactEmail.contactEmail')}
+									</Form.Label>
 									<Input {...attrs} bind:value={$formData.contactEmail} required />
 								</Form.Control>
 								<Form.FieldErrors />
