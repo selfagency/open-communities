@@ -43,7 +43,7 @@ export const load = async ({ locals, fetch, cookies }) => {
 
 		return { form: { default: await validate(defaultSchema) }, content };
 	} catch (error) {
-		if ((error as Error).message === '403') {
+		if ((error as Error).message === 'Forbidden') {
 			redirect(302, '/login');
 		} else {
 			return handleError(error);

@@ -41,7 +41,7 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 			const congregation = await api
 				.collection('congregationMeta')
 				.getFirstListItem(`id="${id}"`, { fetch });
-			log.debug(congregation);
+			// log.debug(congregation);
 
 			return {
 				form: {

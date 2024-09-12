@@ -1,13 +1,13 @@
 <script lang="ts">
 	/* region imports */
-	import CloseIcon from 'lucide-svelte/icons/x';
 	import { onMount } from 'svelte';
 
 	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
 
-	import Congregations from '$lib/components/congregations.svelte';
-	import * as Collapsible from '$lib/components/ui/collapsible';
+	import Congregations from '$lib/components/congregation/congregations.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
 	import { t } from '$lib/i18n';
+	import { state, setState } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */
@@ -28,17 +28,20 @@
 	});
 </script>
 
-<Collapsible.Root>
-	<Collapsible.Trigger>
-		<CloseIcon size="18" />
-	</Collapsible.Trigger>
-	<Collapsible.Content>
-		<section class="prose mx-auto mb-12">
-			<h1 class="text-2xl">{$t('base.home.title')}</h1>
-			{@html content?.content}
-		</section>
-	</Collapsible.Content>
-</Collapsible.Root>
+{#if content?.content}
+	<Dialog.Root open={$state.showIntro} onOpenChange={() => setState({ showIntro: false })}>
+		<Dialog.Content>
+			<Dialog.Header>
+				<Dialog.Title class="text-xl">{$t('base.home.title')}</Dialog.Title>
+				<Dialog.Description>
+					<section class="prose mx-auto my-4">
+						{@html content?.content}
+					</section>
+				</Dialog.Description>
+			</Dialog.Header>
+		</Dialog.Content>
+	</Dialog.Root>
+{/if}
 
 {#if congregations}
 	<Congregations {congregations} />
