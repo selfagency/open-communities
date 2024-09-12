@@ -55,6 +55,7 @@
 	"common.reloadPage": "Reload page",
 	"common.required": "Response is required",
 	"common.reset": "Reset",
+	"common.search": "Search",
 	"common.selectThing": "Select {{thing}}…",
 	"common.submit": "Submit",
 	"common.thingRequired": "{{thing}} is required",

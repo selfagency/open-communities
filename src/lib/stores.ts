@@ -6,7 +6,7 @@ import type { UsersRecord } from '$lib/types';
 /* endregion imports */
 
 /* region types  */
-type State = {
+export type State = {
 	showIntro?: boolean;
 };
 /* endregion types */
