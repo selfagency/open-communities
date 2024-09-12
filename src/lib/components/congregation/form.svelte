@@ -1,5 +1,6 @@
 <script lang="ts">
 	/* region imports */
+	import { Country, State, City, type ICity } from 'country-state-city';
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -15,6 +16,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
@@ -28,6 +30,10 @@
 	import Transfer from './transfer.svelte';
 	/* endregion imports */
 
+	/* region types */
+	type SelectOption = { label: string; value: string };
+	/* endregion types */
+
 	/* region variables */
 	// props
 	export let data;
@@ -35,6 +41,11 @@
 	export let mode: 'add' | 'edit' = 'add';
 
 	// local vars
+	let allCities: ICity[] = [];
+	let cities: SelectOption[] = [];
+	let city: ICity | undefined;
+	let countries: SelectOption[] = [];
+	let states: SelectOption[] = [];
 	let hasErrors: boolean = false;
 	let view:
 		| 'congregation'
@@ -112,6 +123,29 @@
 	const fixType = (input: any) => {
 		return input as { _errors?: string[] | undefined } & Record<string, unknown>;
 	};
+
+	const getCountries = () => {
+		countries = Country.getAllCountries().map((c) => ({ label: c.name, value: c.isoCode }));
+	};
+
+	const getStates = () => {
+		states = State.getStatesOfCountry($formData.locale.country).map((s) => ({
+			label: s.name,
+			value: s.isoCode
+		}));
+	};
+
+	const getCities = () => {
+		allCities = City.getCitiesOfState($formData.locale.country, $formData.locale.state);
+		cities = allCities.map((c) => ({
+			label: c.name,
+			value: c.name
+		}));
+	};
+
+	const getCity = () => {
+		city = allCities.find((c) => c.name === $formData.locale.city);
+	};
 	/* endregion methods */
 
 	/* region form */
@@ -149,9 +183,18 @@
 			initData();
 		}
 
+		getCountries();
+
 		$formData.visible = false;
 	});
 	/* endregion lifecycle */
+
+	/* region reactivity */
+	$: if (city) {
+		$formData.locale.latitude = city.latitude;
+		$formData.locale.longitude = city.longitude;
+	}
+	/* endregion reactivity */
 
 	/* region exports */
 	export const snapshot = { capture, restore };
@@ -210,39 +253,72 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							<Form.Field {form} name="city">
-								<Form.Control let:attrs>
-									<Form.Label>{$t('base.locale.city')}</Form.Label>
-									<Input {...attrs} bind:value={$formData.locale.city} />
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="state">
-								<Form.Control let:attrs>
-									<Form.Label>{$t('base.locale.state')}</Form.Label>
-									<Input {...attrs} bind:value={$formData.locale.state} />
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="country">
-								<Form.Control let:attrs>
-									<Form.Label>{$t('base.locale.country')}</Form.Label>
-									<Input {...attrs} bind:value={$formData.locale.country} />
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="latitude">
-								<Form.Control let:attrs>
-									<input type="hidden" {...attrs} bind:value={$formData.locale.latitude} />
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
-							<Form.Field {form} name="longitude">
-								<Form.Control let:attrs>
-									<input type="hidden" {...attrs} bind:value={$formData.locale.longitude} />
-								</Form.Control>
-								<Form.FieldErrors />
-							</Form.Field>
+
+							{#if $formData.locale}
+								<Form.Field {form} name="country">
+									<Form.Control let:attrs>
+										<Form.Label>{$t('base.locale.country')}</Form.Label>
+										<!-- <Input {...attrs} bind:value={$formData.locale.country} /> -->
+										<Combobox
+											items={countries}
+											{attrs}
+											bind:value={$formData.locale.country}
+											placeholder={$t('base.common.selectThing', {
+												thing: $t('base.locale.country').toLowerCase()
+											})}
+											on:change={getStates}
+										/>
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+								<Form.Field {form} name="state">
+									<Form.Control let:attrs>
+										<Form.Label>{$t('base.locale.state')}</Form.Label>
+										<!-- <Input {...attrs} bind:value={$formData.locale.state} /> -->
+										<Combobox
+											items={states}
+											{attrs}
+											bind:value={$formData.locale.state}
+											placeholder={$t('base.common.selectThing', {
+												thing: $t('base.locale.state').toLowerCase()
+											})}
+											disabled={!$formData.locale.country}
+											on:change={getCities}
+										/>
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+								<Form.Field {form} name="city">
+									<Form.Control let:attrs>
+										<Form.Label>{$t('base.locale.city')}</Form.Label>
+										<!-- <Input {...attrs} bind:value={$formData.locale.city} /> -->
+										<Combobox
+											items={cities}
+											{attrs}
+											bind:value={$formData.locale.city}
+											placeholder={$t('base.common.selectThing', {
+												thing: $t('base.locale.city').toLowerCase()
+											})}
+											disabled={!$formData.locale.state}
+											on:change={getCity}
+										/>
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+								<Form.Field {form} name="latitude">
+									<Form.Control let:attrs>
+										<input type="hidden" {...attrs} bind:value={$formData.locale.latitude} />
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+								<Form.Field {form} name="longitude">
+									<Form.Control let:attrs>
+										<input type="hidden" {...attrs} bind:value={$formData.locale.longitude} />
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+							{/if}
+
 							<Form.Field {form} name="contactUrl">
 								<Form.Control let:attrs>
 									<Form.Label>{$t('base.common.website')}</Form.Label>
