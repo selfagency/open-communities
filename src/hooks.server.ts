@@ -33,8 +33,14 @@ export async function handle({ event, resolve }) {
 	event.locals.api.authStore.loadFromCookie(event.cookies.get('auth') ?? '');
 
 	try {
-		if (event.locals.api.authStore.isValid) {
-			await event.locals.api.collection('users').authRefresh();
+		if (event.url.pathname === '/logout') {
+			event.cookies.set('auth', '', event.locals.cookieOpts);
+			event.cookies.set('session', '', event.locals.cookieOpts);
+			event.locals.api.authStore.clear();
+		} else {
+			if (event.locals.api.authStore.isValid) {
+				await event.locals.api.collection('users').authRefresh();
+			}
 		}
 	} catch {
 		event.locals.api.authStore.clear();

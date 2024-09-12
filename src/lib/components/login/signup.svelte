@@ -40,7 +40,6 @@
 					toast.error(result.data.form.errors.error);
 				}
 			} else if (result.type === 'success') {
-				log.debug(JSON.stringify(result.data.user));
 				success = true;
 			}
 		},
