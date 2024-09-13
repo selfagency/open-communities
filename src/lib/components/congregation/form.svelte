@@ -1,6 +1,5 @@
 <script lang="ts">
 	/* region imports */
-	import { Country, State, City, type ICity } from 'country-state-city';
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -23,16 +22,12 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
 	import { defaultSchema } from '$lib/schemas';
-	import { user } from '$lib/stores';
+	import { user, Locale } from '$lib/stores';
 	import { log } from '$lib/utils';
 
 	import Delete from './delete.svelte';
 	import Transfer from './transfer.svelte';
 	/* endregion imports */
-
-	/* region types */
-	type SelectOption = { label: string; value: string };
-	/* endregion types */
 
 	/* region variables */
 	// props
@@ -40,12 +35,13 @@
 	export let content: PagesRecord | undefined = undefined;
 	export let mode: 'add' | 'edit' = 'add';
 
+	// constants
+	const { state: locale, setCountry, setState, setCity } = new Locale();
+
 	// local vars
-	let allCities: ICity[] = [];
-	let cities: SelectOption[] = [];
-	let city: ICity | undefined;
-	let countries: SelectOption[] = [];
-	let states: SelectOption[] = [];
+	let country: string = '';
+	let state: string = '';
+	let city: string = '';
 	let hasErrors: boolean = false;
 	let view:
 		| 'congregation'
@@ -123,29 +119,6 @@
 	const fixType = (input: any) => {
 		return input as { _errors?: string[] | undefined } & Record<string, unknown>;
 	};
-
-	const getCountries = () => {
-		countries = Country.getAllCountries().map((c) => ({ label: c.name, value: c.isoCode }));
-	};
-
-	const getStates = () => {
-		states = State.getStatesOfCountry($formData.locale.country).map((s) => ({
-			label: s.name,
-			value: s.isoCode
-		}));
-	};
-
-	const getCities = () => {
-		allCities = City.getCitiesOfState($formData.locale.country, $formData.locale.state);
-		cities = allCities.map((c) => ({
-			label: c.name,
-			value: c.name
-		}));
-	};
-
-	const getCity = () => {
-		city = allCities.find((c) => c.name === $formData.locale.city);
-	};
 	/* endregion methods */
 
 	/* region form */
@@ -183,16 +156,13 @@
 			initData();
 		}
 
-		getCountries();
-
 		$formData.visible = false;
 	});
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if (city) {
-		$formData.locale.latitude = city.latitude;
-		$formData.locale.longitude = city.longitude;
+	$: if ($locale.record) {
+		$formData.locale = $locale.record;
 	}
 	/* endregion reactivity */
 
@@ -201,7 +171,7 @@
 	/* endregion exports */
 </script>
 
-<section class="m-auto w-full" style="max-width: 480px;">
+<section class="w-full m-auto" style="max-width: 480px;">
 	<Card.Root>
 		<form method="POST" action="?/submit" use:enhance>
 			<Card.Header>
@@ -258,15 +228,14 @@
 								<Form.Field {form} name="country">
 									<Form.Control let:attrs>
 										<Form.Label>{$t('base.locale.country')}</Form.Label>
-										<!-- <Input {...attrs} bind:value={$formData.locale.country} /> -->
 										<Combobox
-											items={countries}
+											items={$locale.options.countryOptions}
 											{attrs}
-											bind:value={$formData.locale.country}
+											bind:value={country}
 											placeholder={$t('base.common.selectThing', {
 												thing: $t('base.locale.country').toLowerCase()
 											})}
-											on:change={getStates}
+											on:change={() => setCountry(country)}
 										/>
 									</Form.Control>
 									<Form.FieldErrors />
@@ -274,16 +243,15 @@
 								<Form.Field {form} name="state">
 									<Form.Control let:attrs>
 										<Form.Label>{$t('base.locale.state')}</Form.Label>
-										<!-- <Input {...attrs} bind:value={$formData.locale.state} /> -->
 										<Combobox
-											items={states}
+											items={$locale.options.stateOptions}
 											{attrs}
-											bind:value={$formData.locale.state}
+											bind:value={state}
 											placeholder={$t('base.common.selectThing', {
 												thing: $t('base.locale.state').toLowerCase()
 											})}
-											disabled={!$formData.locale.country}
-											on:change={getCities}
+											disabled={!country}
+											on:change={() => setState(state)}
 										/>
 									</Form.Control>
 									<Form.FieldErrors />
@@ -291,29 +259,16 @@
 								<Form.Field {form} name="city">
 									<Form.Control let:attrs>
 										<Form.Label>{$t('base.locale.city')}</Form.Label>
-										<!-- <Input {...attrs} bind:value={$formData.locale.city} /> -->
 										<Combobox
-											items={cities}
+											items={$locale.options.cityOptions}
 											{attrs}
-											bind:value={$formData.locale.city}
+											bind:value={city}
 											placeholder={$t('base.common.selectThing', {
 												thing: $t('base.locale.city').toLowerCase()
 											})}
-											disabled={!$formData.locale.state}
-											on:change={getCity}
+											disabled={!state}
+											on:change={() => setCity(city)}
 										/>
-									</Form.Control>
-									<Form.FieldErrors />
-								</Form.Field>
-								<Form.Field {form} name="latitude">
-									<Form.Control let:attrs>
-										<input type="hidden" {...attrs} bind:value={$formData.locale.latitude} />
-									</Form.Control>
-									<Form.FieldErrors />
-								</Form.Field>
-								<Form.Field {form} name="longitude">
-									<Form.Control let:attrs>
-										<input type="hidden" {...attrs} bind:value={$formData.locale.longitude} />
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
@@ -347,7 +302,7 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							<div class="mt-4 flex flex-row items-center justify-end">
+							<div class="flex flex-row items-center justify-end mt-4">
 								<Button variant="secondary" on:click={() => (view = 'fit')}
 									>{$t('base.common.next')} →</Button
 								>
@@ -440,7 +395,7 @@
 								<!-- flag -->
 								<Form.Field {form} name="flag">
 									<Form.Control let:attrs>
-										<div class="question my-4">{$t('base.fit.flag.extended')}</div>
+										<div class="my-4 question">{$t('base.fit.flag.extended')}</div>
 										<RadioGroup.Root {...attrs} class="space-y-2" bind:value={$formData.fit.flag}>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="no" id="no" />
@@ -459,7 +414,7 @@
 									<Form.FieldErrors />
 								</Form.Field>
 
-								<div class="mt-4 flex flex-row items-center justify-end">
+								<div class="flex flex-row items-center justify-end mt-4">
 									<Button variant="secondary" on:click={() => (view = 'services')}
 										>{$t('base.common.next')} →</Button
 									>
@@ -562,7 +517,7 @@
 										<span class="text-xs text-red-500">{$t('base.common.required')}</span>
 									{/if}
 								</div>
-								<div class="mt-4 flex flex-row items-center justify-end">
+								<div class="flex flex-row items-center justify-end mt-4">
 									<Button variant="secondary" on:click={() => (view = 'accommodations')}>
 										{$t('base.common.next')} →
 									</Button>
@@ -754,7 +709,7 @@
 									{/if}
 								</div>
 
-								<div class="mt-4 flex flex-row items-center justify-end">
+								<div class="flex flex-row items-center justify-end mt-4">
 									<Button variant="secondary" on:click={() => (view = 'safety')}
 										>{$t('base.common.next')} →</Button
 									>
@@ -778,7 +733,7 @@
 							<Accordion.Content>
 								<Form.Field {form} name="protocol">
 									<Form.Control let:attrs>
-										<div class="question mb-4" class:error={safetyErrors?.protocol}>
+										<div class="mb-4 question" class:error={safetyErrors?.protocol}>
 											{$t('base.safety.extended')}
 										</div>
 										<RadioGroup.Root
@@ -820,9 +775,9 @@
 									<Form.FieldErrors />
 								</Form.Field>
 								{#if safetyErrors?.protocol}
-									<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
+									<span class="block mt-4 text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
-								<div class="mt-4 flex flex-row items-center justify-end">
+								<div class="flex flex-row items-center justify-end mt-4">
 									<Button variant="secondary" on:click={() => (view = 'registration')}>
 										{$t('base.common.next')} →
 									</Button>
@@ -848,7 +803,7 @@
 								</span>
 							</Accordion.Trigger>
 							<Accordion.Content>
-								<div class="question mb-4" class:error={registrationErrors?.registrationType}>
+								<div class="mb-4 question" class:error={registrationErrors?.registrationType}>
 									{$t('base.registration.extended')}
 								</div>
 								<Form.Field {form} name="protocol">
@@ -894,9 +849,9 @@
 									</Form.Field>
 								{/if}
 								{#if registrationErrors?.registrationType}
-									<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
+									<span class="block mt-4 text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
-								<div class="question my-4" class:error={registrationInvalid}>
+								<div class="my-4 question" class:error={registrationInvalid}>
 									{$t('base.register.extended')}
 								</div>
 								<Form.Field {form} name="registration_email">
@@ -914,11 +869,11 @@
 									<Form.FieldErrors />
 								</Form.Field>
 								{#if registrationInvalid}
-									<span class="mt-4 block text-xs text-red-500">
+									<span class="block mt-4 text-xs text-red-500">
 										{$t('base.common.thingRequired', { thing: $t('base.common.emailOrUrl') })}
 									</span>
 								{/if}
-								<div class="mt-4 flex flex-row items-center justify-end">
+								<div class="flex flex-row items-center justify-end mt-4">
 									<Button variant="secondary" on:click={() => (view = 'contact')}
 										>{$t('base.common.next')} →</Button
 									>
@@ -938,7 +893,7 @@
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="question mb-4">{$t('base.congregation.contactName.extended')}</div>
+							<div class="mb-4 question">{$t('base.congregation.contactName.extended')}</div>
 							<Form.Field {form} name="contactName">
 								<Form.Control let:attrs>
 									<Form.Label for="contactName">
@@ -948,7 +903,7 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							<div class="question my-4">{$t('base.congregation.contactEmail.extended')}</div>
+							<div class="my-4 question">{$t('base.congregation.contactEmail.extended')}</div>
 							<Form.Field {form} name="contactEmail">
 								<Form.Control let:attrs>
 									<Form.Label for="contactEmail">
@@ -965,7 +920,7 @@
 
 			<!-- actions -->
 			<Card.Footer class="flex flex-col items-center justify-start space-y-4">
-				<div class="flex w-full flex-row items-center justify-between space-x-2">
+				<div class="flex flex-row items-center justify-between w-full space-x-2">
 					{#if mode === 'edit'}
 						<div class="flex flex-row items-center justify-start space-x-2">
 							<Delete data={data.delete} id={$formData.id} />

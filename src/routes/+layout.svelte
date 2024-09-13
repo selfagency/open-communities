@@ -36,7 +36,7 @@
 
 <Nav />
 
-<main class="mt-24 w-full">
+<main class="container mx-auto mt-24 min-w-[360px] max-w-[960px]">
 	<slot />
 </main>
 

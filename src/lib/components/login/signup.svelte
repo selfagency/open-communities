@@ -78,6 +78,8 @@
 				{$t('base.auth.signUpSuccess')}
 			</span>
 		{:else}
+			<div class="mb-4">{$t('base.auth.signupInfo')}</div>
+
 			<form
 				method="POST"
 				action="?/signup"

@@ -16,6 +16,7 @@ type FlyAndScaleParams = {
 	start?: number;
 	duration?: number;
 };
+
 /* endregion types */
 
 export function cn(...inputs: ClassValue[]) {

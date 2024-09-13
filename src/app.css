@@ -81,3 +81,31 @@
 		@apply font-bold text-slate-600;
 	}
 }
+
+.filter-heading {
+	@apply grid w-64 grid-cols-8 gap-2;
+
+	.filter-icon {
+		@apply col-span-1 flex flex-row items-center justify-center;
+	}
+
+	.filter-label {
+		@apply col-span-5 flex flex-row items-center justify-start text-sm underline-offset-4 hover:underline;
+	}
+
+	.filter-status {
+		@apply col-span-1 flex flex-row items-center justify-center text-slate-400;
+	}
+}
+
+.filter-box {
+	@apply my-2 flex w-full flex-col items-center justify-start space-y-2 px-1;
+
+	.filter-item {
+		@apply flex w-full flex-row items-start justify-start space-x-2;
+
+		.filter-label {
+			@apply mt-0.5;
+		}
+	}
+}

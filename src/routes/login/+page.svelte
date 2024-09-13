@@ -19,7 +19,7 @@
 
 	/* region lifecycle */
 	onMount(() => {
-		if ($page.url.searchParams.has('verifyEmail')) {
+		if ($page.url.searchParams.has('signUp') || $page.url.searchParams.has('verifyEmail')) {
 			tab = 'signup';
 		}
 

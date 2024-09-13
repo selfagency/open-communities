@@ -51,7 +51,7 @@
 						href={congregation.contactUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="flex max-w-fit flex-row items-center justify-start space-x-2"
+						class="flex flex-row items-center justify-start space-x-2 max-w-fit"
 					>
 						<h1 class="text-xl font-bold">{congregation.name}</h1>
 						<LinkIcon size="14" color="gray" />
@@ -72,12 +72,12 @@
 			<p>{congregation.flavor}</p>
 		{/if}
 
-		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+		<div class="grid grid-cols-12 text-sm gap-x-0 gap-y-4">
 			{#if congregation.clergy}
-				<div class="col-span-3 flex flex-row items-start justify-start">
+				<div class="flex flex-row items-start justify-start col-span-3">
 					<h2 class="label">{$t('base.congregation.clergy.clergy')}</h2>
 				</div>
-				<div class="col-span-9 flex flex-row items-start justify-start">
+				<div class="flex flex-row items-start justify-start col-span-9">
 					{congregation.clergy}
 				</div>
 				<Separator class="col-span-12" />

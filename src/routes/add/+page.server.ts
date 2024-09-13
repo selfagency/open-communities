@@ -44,7 +44,7 @@ export const load = async ({ locals, fetch, cookies }) => {
 		return { form: { default: await validate(defaultSchema) }, content };
 	} catch (error) {
 		if ((error as Error).message === 'Forbidden') {
-			redirect(302, '/login');
+			redirect(302, '/login?signUp=true');
 		} else {
 			return handleError(error);
 		}
