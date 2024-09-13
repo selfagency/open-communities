@@ -28,23 +28,23 @@
 		searchState.subscribe((value) => {
 			if (!isEmpty(value.searchLocale)) {
 				if (!isEmpty(value.searchLocale?.country)) {
+					if (!isEmpty(value.searchLocale?.longitude) && !isEmpty(value.searchLocale?.latitude)) {
+						center = [value.searchLocale?.longitude, value.searchLocale?.latitude] as LngLatLike;
+					} else {
+						center = [0, 10];
+					}
+
 					zoom = 3;
+
+					if (!isEmpty(value.searchLocale?.state)) {
+						zoom = 6;
+					}
+
+					if (!isEmpty(value.searchLocale?.city)) {
+						zoom = 10;
+					}
 				} else {
 					zoom = 1;
-				}
-
-				if (!isEmpty(value.searchLocale?.state)) {
-					zoom = 6;
-				}
-
-				if (!isEmpty(value.searchLocale?.city)) {
-					zoom = 10;
-				}
-
-				if (!isEmpty(value.searchLocale?.longitude) && !isEmpty(value.searchLocale?.latitude)) {
-					center = [value.searchLocale?.longitude, value.searchLocale?.latitude] as LngLatLike;
-				} else {
-					center = [0, 10];
 				}
 			} else {
 				center = [0, 10];
@@ -63,8 +63,8 @@
 >
 	{#each unique(locales) as { latitude, longitude, city, state }}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
-			<Popup offset={[0, -10]}>
-				<div class="text-lg font-bold">{city}, {state}</div>
+			<Popup offset={[0, -10]} on:click={() => {}}>
+				<div class="font-sans">{city}, {state}</div>
 			</Popup>
 		</DefaultMarker>
 	{/each}

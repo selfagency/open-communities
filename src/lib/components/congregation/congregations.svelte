@@ -6,6 +6,7 @@
 
 	import type { CongregationMetaRecord, LocalesRecord } from '$lib/types';
 
+	import { dev } from '$app/environment';
 	import Locale from '$lib/components/congregation/locale.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -23,7 +24,7 @@
 
 	// constants
 	const locales = congregations.map((c) => c.locale) as LocalesRecord[];
-	const search = new Search(true);
+	const search = new Search(dev);
 	const { state: searchState } = search;
 
 	// local vars

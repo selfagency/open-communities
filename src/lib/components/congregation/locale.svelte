@@ -1,7 +1,6 @@
 <script lang="ts">
 	/* region imports */
 	import ResetIcon from 'lucide-svelte/icons/circle-x';
-	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
@@ -28,7 +27,7 @@
 	/* region lifecycle */
 	onMount(() => {
 		locale.subscribe((value) => {
-			if (!isEmpty(value.record)) search.setSearchLocale(value.record);
+			search.setSearchLocale(value.record);
 		});
 	});
 	/* endregion lifecycle */

@@ -94,9 +94,13 @@ export class Search {
 	}
 
 	toggleLocale() {
+		this.resetLocale();
 		const state = this.state.get();
-		this.state.set({ ...state, showLocale: !state.showLocale });
-		if (this.debug) log.debug('search:toggleLocale', this.state.get());
+		this.state.set({
+			...state,
+			showLocale: !state.showLocale
+		});
+		if (this.debug) log.debug('search:toggleLocale', this.state.get().showLocale);
 	}
 
 	setSearchTerms(searchTerms: string) {
@@ -131,7 +135,7 @@ export class Search {
 
 	resetLocale() {
 		const state = this.state.get();
-		this.state.set({ ...state, searchLocale: undefined });
+		this.state.set({ ...state, searchLocale: {} });
 		if (this.debug) log.debug('search:locale', this.state.get().searchLocale);
 	}
 
@@ -171,8 +175,8 @@ export class Locale {
 	}
 
 	reset() {
-		if (this.search) this.search.resetLocale();
 		this.state.set(this.default);
+		if (this.search) this.search.resetLocale();
 	}
 
 	setCountry(input: string) {
