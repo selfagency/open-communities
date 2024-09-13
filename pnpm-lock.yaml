@@ -123,8 +123,8 @@ importers:
         specifier: ^0.6.5
         version: 0.6.6(prettier-plugin-organize-attributes@1.0.0(prettier@3.3.3))(prettier-plugin-svelte@3.2.6(prettier@3.3.3)(svelte@4.2.19))(prettier@3.3.3)
       radashi:
-        specifier: ^12.1.0
-        version: 12.1.0
+        specifier: 12.2.0-beta.af825f4
+        version: 12.2.0-beta.af825f4
       svelte:
         specifier: ^4.2.7
         version: 4.2.19
@@ -1912,9 +1912,9 @@ packages:
   quickselect@3.0.0:
     resolution: {integrity: sha512-XdjUArbK4Bm5fLLvlm5KpTFOiOThgfWWI4axAZDWg4E/0mKdZyI9tNEfds27qCi1ze/vwTR16kvmmGhRra3c2g==}
 
-  radashi@12.1.0:
-    resolution: {integrity: sha512-EB/t8uDEuCzAhWsVzUvI0fK7K0/nCRl0jh7oFUuQUium6zolLjQlaSJGykDdwcarTbmcDy2EHqxFPylOPcoZxQ==}
-    engines: {node: '>=14.18.0'}
+  radashi@12.2.0-beta.af825f4:
+    resolution: {integrity: sha512-qgHft4yu2ZPoHGEYEfqfsq1NMGoPq2Eo/r3QkbrJimNJ+63m8sDgISsQnTFjayC3pRCBr+FO2YIsORPs8pIiJA==}
+    engines: {node: '>=16.0.0'}
 
   read-cache@1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
@@ -3937,7 +3937,7 @@ snapshots:
 
   quickselect@3.0.0: {}
 
-  radashi@12.1.0: {}
+  radashi@12.2.0-beta.af825f4: {}
 
   read-cache@1.0.0:
     dependencies:

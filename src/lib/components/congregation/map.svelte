@@ -6,7 +6,7 @@
 
 	import type { LocalesRecord } from '$lib/types';
 
-	import { Search } from '$lib/stores';
+	import { Search } from '$lib/search';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
 

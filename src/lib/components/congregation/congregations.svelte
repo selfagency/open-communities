@@ -11,7 +11,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { Search } from '$lib/stores';
+	import { Search } from '$lib/search';
 
 	import Congregation from './congregation.svelte';
 	import Filters from './filters.svelte';

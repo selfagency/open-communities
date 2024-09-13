@@ -20,7 +20,8 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
 	import { t } from '$lib/i18n';
-	import { user, Search } from '$lib/stores';
+	import { Search } from '$lib/search';
+	import { user } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */

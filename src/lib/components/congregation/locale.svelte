@@ -7,7 +7,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import { t } from '$lib/i18n';
-	import { Locale, Search } from '$lib/stores';
+	import { Locale } from '$lib/locale';
+	import { Search } from '$lib/search';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
 

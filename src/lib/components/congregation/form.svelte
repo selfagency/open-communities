@@ -21,8 +21,9 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
+	import { Locale } from '$lib/locale';
 	import { defaultSchema } from '$lib/schemas';
-	import { user, Locale } from '$lib/stores';
+	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 
 	import Delete from './delete.svelte';
@@ -171,7 +172,7 @@
 	/* endregion exports */
 </script>
 
-<section class="w-full m-auto" style="max-width: 480px;">
+<section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
 		<form method="POST" action="?/submit" use:enhance>
 			<Card.Header>
@@ -302,7 +303,7 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							<div class="flex flex-row items-center justify-end mt-4">
+							<div class="mt-4 flex flex-row items-center justify-end">
 								<Button variant="secondary" on:click={() => (view = 'fit')}
 									>{$t('base.common.next')} →</Button
 								>
@@ -395,7 +396,7 @@
 								<!-- flag -->
 								<Form.Field {form} name="flag">
 									<Form.Control let:attrs>
-										<div class="my-4 question">{$t('base.fit.flag.extended')}</div>
+										<div class="question my-4">{$t('base.fit.flag.extended')}</div>
 										<RadioGroup.Root {...attrs} class="space-y-2" bind:value={$formData.fit.flag}>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="no" id="no" />
@@ -414,7 +415,7 @@
 									<Form.FieldErrors />
 								</Form.Field>
 
-								<div class="flex flex-row items-center justify-end mt-4">
+								<div class="mt-4 flex flex-row items-center justify-end">
 									<Button variant="secondary" on:click={() => (view = 'services')}
 										>{$t('base.common.next')} →</Button
 									>
@@ -517,7 +518,7 @@
 										<span class="text-xs text-red-500">{$t('base.common.required')}</span>
 									{/if}
 								</div>
-								<div class="flex flex-row items-center justify-end mt-4">
+								<div class="mt-4 flex flex-row items-center justify-end">
 									<Button variant="secondary" on:click={() => (view = 'accommodations')}>
 										{$t('base.common.next')} →
 									</Button>
@@ -709,7 +710,7 @@
 									{/if}
 								</div>
 
-								<div class="flex flex-row items-center justify-end mt-4">
+								<div class="mt-4 flex flex-row items-center justify-end">
 									<Button variant="secondary" on:click={() => (view = 'safety')}
 										>{$t('base.common.next')} →</Button
 									>
@@ -733,7 +734,7 @@
 							<Accordion.Content>
 								<Form.Field {form} name="protocol">
 									<Form.Control let:attrs>
-										<div class="mb-4 question" class:error={safetyErrors?.protocol}>
+										<div class="question mb-4" class:error={safetyErrors?.protocol}>
 											{$t('base.safety.extended')}
 										</div>
 										<RadioGroup.Root
@@ -775,9 +776,9 @@
 									<Form.FieldErrors />
 								</Form.Field>
 								{#if safetyErrors?.protocol}
-									<span class="block mt-4 text-xs text-red-500">{$t('base.common.required')}</span>
+									<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
-								<div class="flex flex-row items-center justify-end mt-4">
+								<div class="mt-4 flex flex-row items-center justify-end">
 									<Button variant="secondary" on:click={() => (view = 'registration')}>
 										{$t('base.common.next')} →
 									</Button>
@@ -803,7 +804,7 @@
 								</span>
 							</Accordion.Trigger>
 							<Accordion.Content>
-								<div class="mb-4 question" class:error={registrationErrors?.registrationType}>
+								<div class="question mb-4" class:error={registrationErrors?.registrationType}>
 									{$t('base.registration.extended')}
 								</div>
 								<Form.Field {form} name="protocol">
@@ -849,9 +850,9 @@
 									</Form.Field>
 								{/if}
 								{#if registrationErrors?.registrationType}
-									<span class="block mt-4 text-xs text-red-500">{$t('base.common.required')}</span>
+									<span class="mt-4 block text-xs text-red-500">{$t('base.common.required')}</span>
 								{/if}
-								<div class="my-4 question" class:error={registrationInvalid}>
+								<div class="question my-4" class:error={registrationInvalid}>
 									{$t('base.register.extended')}
 								</div>
 								<Form.Field {form} name="registration_email">
@@ -869,11 +870,11 @@
 									<Form.FieldErrors />
 								</Form.Field>
 								{#if registrationInvalid}
-									<span class="block mt-4 text-xs text-red-500">
+									<span class="mt-4 block text-xs text-red-500">
 										{$t('base.common.thingRequired', { thing: $t('base.common.emailOrUrl') })}
 									</span>
 								{/if}
-								<div class="flex flex-row items-center justify-end mt-4">
+								<div class="mt-4 flex flex-row items-center justify-end">
 									<Button variant="secondary" on:click={() => (view = 'contact')}
 										>{$t('base.common.next')} →</Button
 									>
@@ -893,7 +894,7 @@
 							</span>
 						</Accordion.Trigger>
 						<Accordion.Content>
-							<div class="mb-4 question">{$t('base.congregation.contactName.extended')}</div>
+							<div class="question mb-4">{$t('base.congregation.contactName.extended')}</div>
 							<Form.Field {form} name="contactName">
 								<Form.Control let:attrs>
 									<Form.Label for="contactName">
@@ -903,7 +904,7 @@
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
-							<div class="my-4 question">{$t('base.congregation.contactEmail.extended')}</div>
+							<div class="question my-4">{$t('base.congregation.contactEmail.extended')}</div>
 							<Form.Field {form} name="contactEmail">
 								<Form.Control let:attrs>
 									<Form.Label for="contactEmail">
@@ -920,7 +921,7 @@
 
 			<!-- actions -->
 			<Card.Footer class="flex flex-col items-center justify-start space-y-4">
-				<div class="flex flex-row items-center justify-between w-full space-x-2">
+				<div class="flex w-full flex-row items-center justify-between space-x-2">
 					{#if mode === 'edit'}
 						<div class="flex flex-row items-center justify-start space-x-2">
 							<Delete data={data.delete} id={$formData.id} />
