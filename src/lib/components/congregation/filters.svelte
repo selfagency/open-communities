@@ -20,10 +20,13 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
 	import { t } from '$lib/i18n';
-	import { setState, user } from '$lib/stores';
+	import { user, Search } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */
+	// props
+	export let search: Search;
+
 	// local vars
 	let filters: Record<string, Record<string, boolean>>;
 
@@ -81,14 +84,14 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: setState({ filters });
+	$: search.setFilters(filters);
 	/* endregion reactivity */
 </script>
 
 <Popover.Root>
 	<Popover.Trigger>
 		<Button variant="outline" class="space-x-2 text-slate-500">
-			<FilterIcon size="18" color="gray" />
+			<FilterIcon size="18" />
 			<span>{$t('base.common.filter')}</span>
 		</Button>
 	</Popover.Trigger>
@@ -99,18 +102,18 @@
 					<Collapsible.Trigger>
 						<div class="filter-heading">
 							<span class="filter-icon">
-								<SiddurIcon class="w-4 h-4 fill-slate-500 stroke-slate-500" />
+								<SiddurIcon class="h-4 w-4 fill-slate-500 stroke-slate-500" />
 							</span>
 							<span class="filter-label">
 								<span>{$t('base.services.services')}</span>
 							</span>
 							<span class="filter-status">
 								{#if every(filters.services)}
-									<CircleCheckIcon class="w-4 h-4" />
+									<CircleCheckIcon class="h-4 w-4" />
 								{:else if some(filters.services)}
-									<CircleMinusIcon class="w-4 h-4" />
+									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
-									<CircleIcon class="w-4 h-4" />
+									<CircleIcon class="h-4 w-4" />
 								{/if}
 							</span>
 							<span class="filter-icon">
@@ -185,11 +188,11 @@
 							</span>
 							<span class="filter-status">
 								{#if every(filters.accommodations)}
-									<CircleCheckIcon class="w-4 h-4" />
+									<CircleCheckIcon class="h-4 w-4" />
 								{:else if some(filters.accommodations)}
-									<CircleMinusIcon class="w-4 h-4" />
+									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
-									<CircleIcon class="w-4 h-4" />
+									<CircleIcon class="h-4 w-4" />
 								{/if}
 							</span>
 							<span class="filter-icon">
@@ -293,16 +296,16 @@
 					<Collapsible.Trigger>
 						<div class="filter-heading">
 							<span class="filter-icon"
-								><MaskIcon class="w-5 h-5 fill-slate-500 stroke-slate-500" /></span
+								><MaskIcon class="h-5 w-5 fill-slate-500 stroke-slate-500" /></span
 							>
 							<span class="filter-label"><span>{$t('base.safety.safety')}</span></span>
 							<span class="filter-status">
 								{#if every(filters.safety)}
-									<CircleCheckIcon class="w-4 h-4" />
+									<CircleCheckIcon class="h-4 w-4" />
 								{:else if some(filters.safety)}
-									<CircleMinusIcon class="w-4 h-4" />
+									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
-									<CircleIcon class="w-4 h-4" />
+									<CircleIcon class="h-4 w-4" />
 								{/if}
 							</span>
 							<span class="filter-icon">
@@ -363,11 +366,11 @@
 							</span>
 							<span class="filter-status">
 								{#if every(filters.registration)}
-									<CircleCheckIcon class="w-4 h-4" />
+									<CircleCheckIcon class="h-4 w-4" />
 								{:else if some(filters.registration)}
-									<CircleMinusIcon class="w-4 h-4" />
+									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
-									<CircleIcon class="w-4 h-4" />
+									<CircleIcon class="h-4 w-4" />
 								{/if}
 							</span>
 							<span class="filter-icon">
@@ -432,11 +435,11 @@
 							</span>
 							<span class="filter-status">
 								{#if every(filters.admin)}
-									<CircleCheckIcon class="w-4 h-4" />
+									<CircleCheckIcon class="h-4 w-4" />
 								{:else if some(filters.admin)}
-									<CircleMinusIcon class="w-4 h-4" />
+									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
-									<CircleIcon class="w-4 h-4" />
+									<CircleIcon class="h-4 w-4" />
 								{/if}
 							</span>
 							<span class="filter-icon">
@@ -472,7 +475,7 @@
 			{/if}
 
 			<Button
-				class="h-auto p-0 filter-heading text-slate-500"
+				class="filter-heading h-auto p-0 text-slate-500"
 				variant="link"
 				on:click={() => initFilters()}
 			>

@@ -37,7 +37,7 @@
 	/* endregion methods */
 
 	/* region reactivity */
-	$: selectedValue = items.find((f) => f.value === value)?.label ?? placeholder;
+	$: selectedValue = items?.find((f) => f.value === value)?.label ?? placeholder;
 	/* endregion reactivity */
 </script>
 

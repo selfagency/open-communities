@@ -1,18 +1,23 @@
 <script lang="ts">
 	/* region imports */
+	import ResetIcon from 'lucide-svelte/icons/circle-x';
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 
+	import { Button } from '$lib/components/ui/button';
 	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import { t } from '$lib/i18n';
-	import { setState, Locale } from '$lib/stores';
+	import { Locale, Search } from '$lib/stores';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
+	// props
+	export let search: Search;
+
 	// constants
-	const { state: locale, setCountry, setState: setLocale, setCity } = new Locale();
-	// log.debug($locale);
+	const { state: locale, reset, setCountry, setState: setLocale, setCity } = new Locale(search);
 
 	// local vars
 	let country: string = '';
@@ -23,39 +28,70 @@
 	/* region lifecycle */
 	onMount(() => {
 		locale.subscribe((value) => {
-			if (!isEmpty(value.record)) setState({ searchLocale: value.record });
+			if (!isEmpty(value.record)) search.setSearchLocale(value.record);
 		});
 	});
 	/* endregion lifecycle */
 </script>
 
-<div class="flex flex-row items-center justify-center space-x-2">
-	<Combobox
-		items={$locale.options.countryOptions}
-		bind:value={country}
-		placeholder={$t('base.common.selectThing', {
-			thing: $t('base.locale.country').toLowerCase()
-		})}
-		on:change={() => setCountry(country)}
-	/>
+<div
+	class="flex w-full flex-row items-center justify-between space-x-2 rounded-lg bg-slate-100 p-2"
+>
+	<div class="flex w-full flex-row items-center justify-start space-x-2">
+		<span transition:fade class="w-1/3">
+			<Combobox
+				items={$locale.options.countryOptions}
+				bind:value={country}
+				placeholder={$t('base.common.selectThing', {
+					thing: $t('base.locale.country').toLowerCase()
+				})}
+				disabled={!$locale.options?.countryOptions?.length}
+				on:change={() => setCountry(country)}
+			/>
+		</span>
 
-	<Combobox
-		items={$locale.options.stateOptions}
-		bind:value={state}
-		placeholder={$t('base.common.selectThing', {
-			thing: $t('base.locale.state').toLowerCase()
-		})}
-		disabled={!country}
-		on:change={() => setLocale(state)}
-	/>
+		<span transition:fade class="w-1/3">
+			<Combobox
+				items={$locale.options.stateOptions}
+				bind:value={state}
+				placeholder={$t('base.common.selectThing', {
+					thing: $t('base.locale.state').toLowerCase()
+				})}
+				disabled={!country && !$locale.options?.stateOptions?.length}
+				on:change={() => setLocale(state)}
+			/>
+		</span>
 
-	<Combobox
-		items={$locale.options.cityOptions}
-		bind:value={city}
-		placeholder={$t('base.common.selectThing', {
-			thing: $t('base.locale.city').toLowerCase()
-		})}
-		disabled={!state}
-		on:change={() => setCity(city)}
-	/>
+		<span transition:fade class="w-1/3">
+			<Combobox
+				items={$locale.options.cityOptions}
+				bind:value={city}
+				placeholder={$t('base.common.selectThing', {
+					thing: $t('base.locale.city').toLowerCase()
+				})}
+				disabled={!state || !$locale.options?.cityOptions?.length}
+				on:change={() => setCity(city)}
+			/>
+		</span>
+	</div>
+
+	<span>
+		<Button
+			variant="link"
+			class="h-auto"
+			on:click={() => {
+				country = '';
+				state = '';
+				city = '';
+				reset();
+			}}
+		>
+			<span
+				class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700"
+			>
+				<ResetIcon size="16" />
+				<span>{$t('base.common.reset')}</span>
+			</span>
+		</Button>
+	</span>
 </div>

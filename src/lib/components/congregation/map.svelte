@@ -1,28 +1,57 @@
 <script lang="ts">
 	/* region imports */
-	import { unique } from 'radashi';
+	import { unique, isEmpty } from 'radashi';
+	import { onMount } from 'svelte';
 	import { MapLibre, DefaultMarker, Popup, type LngLatLike } from 'svelte-maplibre';
 
 	import type { LocalesRecord } from '$lib/types';
 
-	import { state } from '$lib/stores';
+	import { Search } from '$lib/stores';
+	// import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
 	export let locales: LocalesRecord[] = [];
+	export let search: Search;
+
+	// constants
+	const { state: searchState } = search;
 
 	// local vars
 	let center: LngLatLike = [0, 10];
 	let zoom = 1;
 	/* endregion variables */
 
-	/* region reactivity */
-	$: if ($state.searchLocale?.longitude && $state.searchLocale?.latitude) {
-		center = [$state.searchLocale.longitude, $state.searchLocale.latitude] as LngLatLike;
-		zoom = 5;
-	}
-	/* endregion reactivity */
+	/* region lifecycle */
+	onMount(() => {
+		searchState.subscribe((value) => {
+			if (!isEmpty(value.searchLocale)) {
+				if (!isEmpty(value.searchLocale?.country)) {
+					zoom = 3;
+				} else {
+					zoom = 1;
+				}
+
+				if (!isEmpty(value.searchLocale?.state)) {
+					zoom = 6;
+				}
+
+				if (!isEmpty(value.searchLocale?.city)) {
+					zoom = 10;
+				}
+
+				if (!isEmpty(value.searchLocale?.longitude) && !isEmpty(value.searchLocale?.latitude)) {
+					center = [value.searchLocale?.longitude, value.searchLocale?.latitude] as LngLatLike;
+				} else {
+					center = [0, 10];
+				}
+			} else {
+				center = [0, 10];
+				zoom = 1;
+			}
+		});
+	});
 </script>
 
 <MapLibre
