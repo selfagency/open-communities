@@ -1,3 +1,9 @@
+!.env.example
+!.vscode/*.code-snippets
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
 ._*
 .apdisk
 .AppleDB
@@ -45,12 +51,13 @@
 .serverless/
 .Spotlight-V100
 .stylelintcache
-.svelte-kit/*
+.svelte-kit
 .temp
 .TemporaryItems
 .tern-port
 .Trash-*
 .Trashes
+.vercel
 .VolumeIcon.icns
 .vscode-test
 .vscode/*
@@ -88,14 +95,11 @@
 *.tsbuildinfo
 *.vsix
 *~
-build/
-dev-dist/
-old_data/
-package/
-pb_data/*
 $RECYCLE.BIN/
 bower_components
+build/
 coverage
+dev-dist/
 dist
 ehthumbs_vista.db
 ehthumbs.db
@@ -108,9 +112,13 @@ Network Trash Folder
 node_modules
 node_modules/
 npm-debug.log*
+old_data/
 out
 package
+package/
+pb_*
 pb_data.zip
+pb_data/*
 pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 Temporary Items
@@ -121,10 +129,3 @@ vite.config.ts.timestamp-*
 web_modules/
 yarn-debug.log*
 yarn-error.log*
-!.env.example
-!.vscode/*.code-snippets
-!.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/settings.json
-!.vscode/tasks.json
-pb_*

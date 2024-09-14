@@ -1,4 +1,4 @@
-import i18n, { type Config } from 'sveltekit-i18n';
+import i18n from 'sveltekit-i18n';
 
 import { log } from '$lib/utils';
 
@@ -15,18 +15,12 @@ const dicts = [
 	'services'
 ];
 
-const config: Config<{
-	thing: string;
-}> = {
+export const { t, locale, locales, loading, loadTranslations, translations } = new i18n({
 	initLocale: 'en',
 	log: { logger: log },
-	loaders: await Promise.all(
-		dicts.map((dict) => ({
-			locale: 'en',
-			key: dict,
-			loader: async () => (await import(`./en/${dict}.json`)).default
-		}))
-	)
-};
-
-export const { t, locale, locales, loading, loadTranslations, translations } = new i18n(config);
+	loaders: dicts.map((dict) => ({
+		locale: 'en',
+		key: dict,
+		loader: async () => (await import(`./en/${dict}.json`)).default
+	}))
+});

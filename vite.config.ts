@@ -8,6 +8,15 @@ import webfontDownload from 'vite-plugin-webfont-dl';
 dotenv();
 
 export default defineConfig({
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					'svelte-maplibre': ['svelte-maplibre']
+				}
+			}
+		}
+	},
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({
