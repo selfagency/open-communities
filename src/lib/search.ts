@@ -3,7 +3,7 @@ import type { MapStore } from 'nanostores';
 
 import Fuzzy from '@leeoniya/ufuzzy';
 import { map } from 'nanostores';
-import { isEmpty, crush } from 'radashi';
+import { isEmpty, unique, alphabetical, shake, listify } from 'radashi';
 
 import type { LocalesRecord } from '$lib/types';
 
@@ -28,9 +28,44 @@ type SearchState = {
 export class Search {
 	state: MapStore<SearchState>;
 	debug: boolean;
+	data: any[];
+	ids: string[];
+	resultIds: string[];
+	results: MapStore<any[]>;
+	fuzzy: Fuzzy;
 
-	constructor(debug = false) {
+	constructor(data: any[] = [], debug = false) {
+		this.data = alphabetical(data, (i) => i.name);
+		this.debug = debug;
+
 		this.state = map<SearchState>();
+		this.results = map<any[]>();
+		this.fuzzy = new Fuzzy();
+
+		this.ids = this.data.map((i) => i.id);
+		this.resultIds = this.ids;
+		this.results.set(this.data);
+
+		this.state.subscribe(() => {
+			// if (this.debug) log.debug('search:state:terms', this.state.get().searchTerms);
+
+			this.resultIds = this.ids;
+			this.results.set(this.data);
+
+			this.filterByLocale();
+			this.searchText();
+			this.applyFilters();
+
+			this.results.set(
+				alphabetical(
+					this.data.filter((record) => unique(this.resultIds).includes(record.id)),
+					(i) => i.name
+				)
+			);
+
+			if (this.debug) log.debug('search:state:resultIds', this.resultIds);
+			if (this.debug) log.debug('search:state:results', this.results.get().length);
+		});
 
 		this.setSearchTerms = this.setSearchTerms.bind(this);
 		this.setSearchLocale = this.setSearchLocale.bind(this);
@@ -41,33 +76,120 @@ export class Search {
 		this.resetAll = this.resetAll.bind(this);
 		this.toggleLocale = this.toggleLocale.bind(this);
 		this.searchText = this.searchText.bind(this);
-
-		this.debug = debug;
 	}
 
-	searchText(data: any[]) {
+	filterByLocale() {
+		const stateObj = this.state.get();
+		if (!stateObj.searchLocale || isEmpty(stateObj.searchLocale)) return;
+
+		const {
+			city: filterCity,
+			country: filterCountry,
+			state: filterState
+		} = stateObj.searchLocale as LocalesRecord;
+
+		const ids = this.data
+			.filter((record) => {
+				const { city, country, state } = record.locale;
+
+				return (
+					(filterCity ? city === filterCity : true) &&
+					(filterCountry ? country === filterCountry : true) &&
+					(filterState ? state === filterState : true)
+				);
+			})
+			.map((i) => i.id);
+
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
+	}
+
+	searchText() {
 		const state = this.state.get();
-		if (!data || data?.length === 0) return [];
-		if (!state.searchTerms || state.searchTerms?.length === 0) return data;
-		const fuzzy = new Fuzzy();
-		const filtered =
-			fuzzy?.filter(
-				data.map((i) => JSON.stringify(i)),
-				state.searchTerms.toLowerCase()
-			) ?? [];
-		return filtered.map((i) => data[i]);
+		if (!state.searchTerms || isEmpty(state.searchTerms)) return;
+
+		const ids =
+			this.fuzzy
+				?.filter(
+					this.data.map((i) => `${i.name} ${i.flavor}`),
+					(state.searchTerms as string)?.toLowerCase()
+				)
+				?.map((i) => this.data[i].id) || [];
+
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
-	applyFilters(data: any[]) {
+	boolFilter(filter: string) {
 		const state = this.state.get();
-		const results = data;
+		const filters = shake(state.filters?.[filter], (f) => !f);
+		if (isEmpty(filters)) return;
 
-		if (isEmpty(state.filters)) return results;
+		const ids = this.data
+			.filter((record) => {
+				return Object.keys(filters).some((key) => {
+					return record[filter]?.[key];
+				});
+			})
+			.map((i) => i.id);
 
-		const filters = crush(state.filters).filter((i) => i === true);
+		if (this.debug) log.debug('search:filters:bool', filter, ids);
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
-	filterByLocale(data: any[]) {}
+	stringFilter(filter: string, targetKey: string) {
+		const state = this.state.get();
+		const filters = shake(state.filters?.[filter], (f) => !f);
+		if (isEmpty(filters)) return;
+
+		const ids = this.data
+			.filter((record) => {
+				return Object.keys(filters).some((key) => {
+					return record[filter][targetKey] === key;
+				});
+			})
+			.map((i) => i.id);
+
+		if (this.debug) log.debug('search:filters:string', filter, targetKey, ids);
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
+	}
+
+	applyFilters() {
+		const state = this.state.get();
+
+		const hasFilter = (filters: any, filter: string): boolean => {
+			if (!filters || isEmpty(filters)) return false;
+			if (this.debug) log.debug(`search:filters:${filter}`, filters);
+			return !isEmpty(shake(filters, (f) => !f));
+		};
+
+		const hasServices = hasFilter(state.filters?.services, 'services');
+		const hasAccommodations = hasFilter(state.filters?.accommodations, 'accommodations');
+		const hasSafety = hasFilter(state.filters?.safety, 'safety');
+		const hasRegistration = hasFilter(state.filters?.registration, 'registration');
+
+		if (
+			!state.filters ||
+			isEmpty(state.filters) ||
+			(!hasServices && !hasAccommodations && !hasSafety && !hasRegistration)
+		) {
+			return;
+		}
+
+		if (hasServices) {
+			this.boolFilter('services');
+		}
+
+		if (hasAccommodations) {
+			this.boolFilter('accommodations');
+		}
+
+		if (hasSafety) {
+			this.stringFilter('safety', 'protocol');
+		}
+
+		if (hasRegistration) {
+			this.stringFilter('registration', 'registrationType');
+		}
+	}
 
 	toggleLocale() {
 		this.resetLocale();
@@ -94,7 +216,7 @@ export class Search {
 	setFilters(filters: SearchState['filters']) {
 		const state = this.state.get();
 		this.state.set({ ...state, filters });
-		if (this.debug) log.debug('search:filters', this.state.get().filters);
+		// if (this.debug) log.debug('search:filters', this.state.get().filters);
 	}
 
 	resetSearchTerms() {

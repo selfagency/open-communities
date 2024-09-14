@@ -23,9 +23,9 @@
 	export let congregations: (CongregationMetaRecord & { id: string })[] = [];
 
 	// constants
-	const locales = congregations.map((c) => c.locale) as LocalesRecord[];
-	const search = new Search(dev);
-	const { state: searchState } = search;
+	const search = new Search(congregations, dev);
+	const { state: searchState, results } = search;
+	const locales = $results.map((c) => c.locale) as LocalesRecord[];
 
 	// local vars
 	let searchTerms = '';
@@ -67,7 +67,7 @@
 	</div>
 
 	<div class="grid w-full grid-cols-3 gap-4">
-		{#each congregations as congregation}
+		{#each $results as congregation}
 			<div class="col-span-1">
 				<Congregation {congregation} />
 			</div>
