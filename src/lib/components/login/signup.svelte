@@ -5,7 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { joi } from 'sveltekit-superforms/adapters';
+	import { zod } from 'sveltekit-superforms/adapters';
 
 	import { page } from '$app/stores';
 	import Verify from '$lib/components/login/verify.svelte';
@@ -32,7 +32,7 @@
 	const form = superForm(data, {
 		id: 'signup',
 		dataType: 'json',
-		validators: joi(userSchema),
+		validators: zod(userSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));

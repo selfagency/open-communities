@@ -15,18 +15,18 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('registration.registration')}</h2>
+	<h2 class="label">{$t('congregation.registration.registration')}</h2>
 </div>
 
 <div class="col-span-9 flex flex-col items-start justify-start space-y-2">
 	{#if registration?.registrationType}
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
-				<span>{$t('registration.fixedPrice')}</span>
+				<span>{$t('congregation.registration.fixedPrice')}</span>
 			{:else if registration.registrationType === 'slidingScale'}
-				<span>{$t('registration.slidingScale')}</span>
+				<span>{$t('congregation.registration.slidingScale')}</span>
 			{:else if registration.registrationType === 'suggestedDonation'}
-				<span>{$t('registration.suggestedDonation')}</span>
+				<span>{$t('congregation.registration.suggestedDonation')}</span>
 			{:else if registration.registrationType === 'other'}
 				<span>{registration.otherText}</span>
 			{:else}

@@ -16,20 +16,20 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('fit.fit')}</h2>
+	<h2 class="label">{$t('congregation.fit.fit')}</h2>
 </div>
 <div class="col-span-9">
 	<ul class="w-full divide-y">
 		{#if fit.publicStatement}
-			<li>{$t('fit.publicStatement')}</li>
+			<li>{$t('congregation.fit.publicStatement')}</li>
 		{/if}
 
 		{#if fit.clergyMember}
-			<li>{$t('fit.clergyMember')}</li>
+			<li>{$t('congregation.fit.clergyMember')}</li>
 		{/if}
 
 		{#if fit.multipleClergyMembers}
-			<li>{$t('fit.multipleClergyMembers')}</li>
+			<li>{$t('congregation.fit.multipleClergyMembers')}</li>
 		{/if}
 	</ul>
 </div>
@@ -39,10 +39,10 @@
 <div class="col-span-3">
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<h2 class="label">{$t('fit.flag.short')}</h2>
+			<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
-			{$t('fit.flag.flag')}
+			{$t('congregation.fit.flag.flag')}
 		</Tooltip.Content>
 	</Tooltip.Root>
 </div>

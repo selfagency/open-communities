@@ -15,28 +15,28 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('safety.safety')}</h2>
+	<h2 class="label">{$t('congregation.safety.safety')}</h2>
 </div>
 
 <div class="col-span-9 space-y-2">
 	{#if safety?.protocol === 'maskingRecommended'}
 		<div class="flex flex-row items-center justify-start space-x-1">
 			<span><MaskIcon class="w-18" /></span>
-			<span>{$t('safety.maskingRecommended')}</span>
+			<span>{$t('congregation.safety.maskingRecommended')}</span>
 		</div>
 	{/if}
 
 	{#if safety?.protocol === 'maskingRequired'}
 		<div class="flex flex-row items-center justify-start space-x-1">
 			<span><MaskIcon class="w-18" /></span>
-			<span>{$t('safety.maskingRequired')}</span>
+			<span>{$t('congregation.safety.maskingRequired')}</span>
 		</div>
 	{/if}
 
 	{#if safety?.protocol === 'noGuidelines'}
 		<div class="flex flex-row items-center justify-start space-x-1">
 			<span><WarningIcon size="18" /></span>
-			<span>{$t('safety.noGuidelines')}</span>
+			<span>{$t('congregation.safety.noGuidelines')}</span>
 		</div>
 	{/if}
 

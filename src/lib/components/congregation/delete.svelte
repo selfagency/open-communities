@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { joi } from 'sveltekit-superforms/adapters';
+	import { zod } from 'sveltekit-superforms/adapters';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -37,7 +37,7 @@
 	const form = superForm(data, {
 		id: 'deleteCongregation',
 		dataType: 'json',
-		validators: joi(deleteSchema),
+		validators: zod(deleteSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));

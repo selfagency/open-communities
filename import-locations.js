@@ -66,6 +66,7 @@ const cities = City.getAllCities();
 
 		const countries = await pb.collection('countries').getFullList();
 		const states = await pb.collection('states').getFullList();
+		const exists = await pb.collection('cities').getFullList();
 
 		for (const city of cities) {
 			await sleep(500);
@@ -73,6 +74,8 @@ const cities = City.getAllCities();
 			const state = states.find(
 				(state) => state.code === city.stateCode && state.country === country.id
 			);
+
+			const cityExists = exists.find((city) => city.name === city.name && city.state === state.id);
 
 			const record = {
 				country: country?.id,
@@ -82,7 +85,7 @@ const cities = City.getAllCities();
 				latitude: city.latitude
 			};
 
-			await pb.collection('cities').create(record);
+			if (!cityExists) await pb.collection('cities').create(record);
 		}
 	} catch (error) {
 		console.log(error);

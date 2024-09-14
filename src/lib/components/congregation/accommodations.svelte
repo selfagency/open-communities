@@ -34,10 +34,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<AdaIcon size="18" />
-					<span class="sr-only">{$t('accommodations.ada')}</span>
+					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('accommodations.ada')}</span>
+					<span class="text-nowrap">{$t('congregation.accommodations.ada')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -45,10 +45,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<CcIcon size="18" />
-					<span class="sr-only">{$t('accommodations.cc')}</span>
+					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('accommodations.cc')}</span>
+					<span class="text-nowrap">{$t('congregation.accommodations.cc')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -56,10 +56,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<EvaIcon size="18" />
-					<span class="sr-only">{$t('accommodations.eva')}</span>
+					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('accommodations.eva')}</span>
+					<span class="text-nowrap">{$t('congregation.accommodations.eva')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -71,11 +71,13 @@
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				<h2 class="label">
-					{$state.isMobile ? $t('accommodations.short') : $t('accommodations.accommodations')}
+					{$state.isMobile
+						? $t('congregation.accommodations.short')
+						: $t('congregation.accommodations.accommodations')}
 				</h2>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<span class="text-nowrap">{$t('accommodations.accommodations')}</span>
+				<span class="text-nowrap">{$t('congregation.accommodations.accommodations')}</span>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</div>
@@ -84,14 +86,14 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<AdaIcon size="18" />
-					<span class="sr-only">{$t('accommodations.ada')}</span>
+					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
 				</span>
 				<span>
 					{#if accommodations.inPerson_adaSome}
-						{$t('accommodations.inPerson_adaSome')}
+						{$t('congregation.accommodations.inPerson_adaSome')}
 					{/if}
 					{#if accommodations.inPerson_adaAll}
-						{$t('accommodations.inPerson_adaAll')}
+						{$t('congregation.accommodations.inPerson_adaAll')}
 					{/if}
 				</span>
 			</div>
@@ -101,20 +103,20 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<CcIcon size="18" />
-					<span class="sr-only">{$t('accommodations.cc')}</span>
+					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
 				</span>
 				<span>
 					{#if accommodations.hybrid_automatedCaptions}
-						{$t('accommodations.hybrid_automatedCaptions')}
+						{$t('congregation.accommodations.hybrid_automatedCaptions')}
 					{/if}
 					{#if accommodations.hybrid_liveCaptions}
-						{$t('accommodations.hybrid_liveCaptions')}
+						{$t('congregation.accommodations.hybrid_liveCaptions')}
 					{/if}
 					{#if accommodations.online_automatedCaptions}
-						{$t('accommodations.online_automatedCaptions')}
+						{$t('congregation.accommodations.online_automatedCaptions')}
 					{/if}
 					{#if accommodations.online_liveCaptions}
-						{$t('accommodations.online_liveCaptions')}
+						{$t('congregation.accommodations.online_liveCaptions')}
 					{/if}
 				</span>
 			</div>
@@ -124,11 +126,11 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<EvaIcon size="18" />
-					<span class="sr-only">{$t('accommodations.eva')}</span>
+					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
 				</span>
 				<span>
 					{#if accommodations.inPerson_eva}
-						{$t('accommodations.inPerson_eva')}
+						{$t('congregation.accommodations.inPerson_eva')}
 					{/if}
 				</span>
 			</div>

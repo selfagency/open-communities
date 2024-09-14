@@ -43,7 +43,6 @@
 		"eslint-plugin-tailwindcss": "^3.17.4",
 		"formsnap": "^1.0.1",
 		"globals": "^15.9.0",
-		"joi": "^17.13.3",
 		"lucide-svelte": "^0.441.0",
 		"mode-watcher": "^0.4.1",
 		"nanostores": "^0.11.3",
@@ -72,7 +71,8 @@
 		"vite": "^5.0.3",
 		"vite-plugin-pwa": "^0.20.5",
 		"vite-plugin-webfont-dl": "^3.9.5",
-		"wait-for-the-element": "^4.0.2"
+		"wait-for-the-element": "^4.0.2",
+		"zod": "^3.23.8"
 	},
 	"packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c"
 }

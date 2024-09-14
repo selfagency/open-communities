@@ -5,7 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { joi } from 'sveltekit-superforms/adapters';
+	import { zod } from 'sveltekit-superforms/adapters';
 	import { waitForTheElement } from 'wait-for-the-element';
 
 	import { t } from '$lib/i18n';
@@ -25,7 +25,7 @@
 	const form = superForm(data, {
 		id: 'verify',
 		dataType: 'json',
-		validators: joi(tokenSchema),
+		validators: zod(tokenSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));

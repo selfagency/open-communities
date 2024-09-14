@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { joi } from 'sveltekit-superforms/adapters';
+	import { zod } from 'sveltekit-superforms/adapters';
 
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
@@ -40,7 +40,7 @@
 	const form = superForm(data, {
 		id: 'login',
 		dataType: 'json',
-		validators: joi(loginSchema),
+		validators: zod(loginSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));

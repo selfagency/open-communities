@@ -5,7 +5,7 @@ import type { SuperValidated } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
-import { joi } from 'sveltekit-superforms/adapters';
+import { zod } from 'sveltekit-superforms/adapters';
 
 import type { UsersRecord } from '$lib/types';
 
@@ -29,7 +29,7 @@ export const actions = {
 		const { cookies, fetch, locals } = event;
 		const { api, cookieOpts } = locals;
 
-		const form: SuperValidated<any> = await superValidate(event, joi(loginSchema));
+		const form: SuperValidated<any> = await superValidate(event, zod(loginSchema));
 		let user: UsersRecord;
 
 		try {
@@ -79,7 +79,7 @@ export const actions = {
 	},
 	signup: async (event) => {
 		const { api } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, joi(userSchema));
+		const form: SuperValidated<any> = await superValidate(event, zod(userSchema));
 		let user: UsersRecord;
 
 		try {
@@ -118,7 +118,7 @@ export const actions = {
 	},
 	acct: async (event) => {
 		const { api } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, joi(tokenSchema));
+		const form: SuperValidated<any> = await superValidate(event, zod(tokenSchema));
 
 		try {
 			if (!form.valid) {

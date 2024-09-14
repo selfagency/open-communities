@@ -46,7 +46,7 @@
 					items={$location.options.countryOptions}
 					bind:value={country}
 					placeholder={$t('common.selectThing', {
-						thing: $t('location.country').toLowerCase()
+						thing: $t('congregation.location.country').toLowerCase()
 					})}
 					disabled={!$location.options?.countryOptions?.length}
 					on:change={() => setCountry(country)}
@@ -58,7 +58,7 @@
 					items={$location.options.stateOptions}
 					bind:value={state}
 					placeholder={$t('common.selectThing', {
-						thing: $t('location.state').toLowerCase()
+						thing: $t('congregation.location.state').toLowerCase()
 					})}
 					disabled={!country && !$location.options?.stateOptions?.length}
 					on:change={() => setState(state)}
@@ -70,7 +70,7 @@
 					items={$location.options.cityOptions}
 					bind:value={city}
 					placeholder={$t('common.selectThing', {
-						thing: $t('location.city').toLowerCase()
+						thing: $t('congregation.location.city').toLowerCase()
 					})}
 					disabled={!state || !$location.options?.cityOptions?.length}
 					on:change={() => setCity(city)}

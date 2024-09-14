@@ -9,15 +9,14 @@ export async function load({ locals, url, cookies }) {
 	const { session } = locals;
 	const { pathname, search } = url;
 	const client = loadUser(cookies);
-	const location = !isEmpty(client?.lang) ? client.lang : 'en';
+	const locale = !isEmpty(client?.lang) ? client.lang : 'en';
 	const auth = cookies.get('auth');
 
 	try {
-		const route = `${pathname}${search}`;
-		await loadTranslations(location as string, pathname);
+		await loadTranslations(locale as string, pathname);
 
 		return {
-			i18n: { location, route },
+			i18n: { locale, route: `${pathname}${search}` },
 			translations: translations.get(),
 			auth,
 			session

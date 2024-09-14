@@ -5,7 +5,7 @@
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
-	import { joi } from 'sveltekit-superforms/adapters';
+	import { zod } from 'sveltekit-superforms/adapters';
 
 	import type { LocationRecord } from '$lib/location';
 	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
@@ -129,7 +129,7 @@
 	const form = superForm(data.default, {
 		id: 'addEditCongregation',
 		dataType: 'json',
-		validators: joi(defaultSchema),
+		validators: zod(defaultSchema),
 		async onUpdate({ form: f, result }) {
 			hasErrors = false;
 
@@ -240,13 +240,13 @@
 							{#if $formData.location}
 								<Form.Field {form} name="country">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('location.country')}</Form.Label>
+										<Form.Label>{$t('congregation.location.country')}</Form.Label>
 										<Combobox
 											items={$location.options.countryOptions}
 											{attrs}
 											bind:value={country}
 											placeholder={$t('common.selectThing', {
-												thing: $t('location.country').toLowerCase()
+												thing: $t('congregation.location.country').toLowerCase()
 											})}
 											on:change={async () => await setCountry(country)}
 										/>
@@ -255,13 +255,13 @@
 								</Form.Field>
 								<Form.Field {form} name="state">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('location.state')}</Form.Label>
+										<Form.Label>{$t('congregation.location.state')}</Form.Label>
 										<Combobox
 											items={$location.options.stateOptions}
 											{attrs}
 											bind:value={state}
 											placeholder={$t('common.selectThing', {
-												thing: $t('location.state').toLowerCase()
+												thing: $t('congregation.location.state').toLowerCase()
 											})}
 											disabled={!country}
 											on:change={async () => await setState(state)}
@@ -271,13 +271,13 @@
 								</Form.Field>
 								<Form.Field {form} name="city">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('location.city')}</Form.Label>
+										<Form.Label>{$t('congregation.location.city')}</Form.Label>
 										<Combobox
 											items={$location.options.cityOptions}
 											{attrs}
 											bind:value={city}
 											placeholder={$t('common.selectThing', {
-												thing: $t('location.city').toLowerCase()
+												thing: $t('congregation.location.city').toLowerCase()
 											})}
 											disabled={!state}
 											on:change={() => setCity(city)}
@@ -329,7 +329,7 @@
 						<Accordion.Item value="fit">
 							<Accordion.Trigger>
 								<span>
-									{$t('fit.fit')}
+									{$t('congregation.fit.fit')}
 									{#if fitErrors}
 										<span class="text-red-500">*</span>
 									{/if}
@@ -337,7 +337,7 @@
 							</Accordion.Trigger>
 							<Accordion.Content>
 								<div class="question" class:error={fitErrors}>
-									{$t('fit.extended')}
+									{$t('congregation.fit.extended')}
 								</div>
 								<div class="my-4 space-y-2">
 									<Form.Field {form} name="publicStatement">
@@ -347,7 +347,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.fit.publicStatement} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('fit.publicStatement')}</Form.Label>
+													<Form.Label>{$t('congregation.fit.publicStatement')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -360,7 +360,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.fit.clergyMember} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('fit.clergyMember')}</Form.Label>
+													<Form.Label>{$t('congregation.fit.clergyMember')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -373,7 +373,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.fit.multipleClergyMembers} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('fit.multipleClergyMembers')}</Form.Label>
+													<Form.Label>{$t('congregation.fit.multipleClergyMembers')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -408,19 +408,19 @@
 								<!-- flag -->
 								<Form.Field {form} name="flag">
 									<Form.Control let:attrs>
-										<div class="question my-4">{$t('fit.flag.extended')}</div>
+										<div class="question my-4">{$t('congregation.fit.flag.extended')}</div>
 										<RadioGroup.Root {...attrs} class="space-y-2" bind:value={$formData.fit.flag}>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="no" id="no" />
-												<Form.Label for="no">{$t('fit.flag.no')}</Form.Label>
+												<Form.Label for="no">{$t('congregation.fit.flag.no')}</Form.Label>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="yes" id="yes" />
-												<Form.Label for="yes">{$t('fit.flag.yes')}</Form.Label>
+												<Form.Label for="yes">{$t('congregation.fit.flag.yes')}</Form.Label>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="yesBima" id="yesBima" />
-												<Form.Label for="yesBima">{$t('fit.flag.yesBima')}</Form.Label>
+												<Form.Label for="yesBima">{$t('congregation.fit.flag.yesBima')}</Form.Label>
 											</div>
 										</RadioGroup.Root>
 									</Form.Control>
@@ -442,7 +442,7 @@
 						<Accordion.Item value="services">
 							<Accordion.Trigger>
 								<span>
-									{$t('services.services')}
+									{$t('congregation.services.services')}
 									{#if servicesErrors}
 										<span class="text-red-500">*</span>
 									{/if}
@@ -450,7 +450,7 @@
 							</Accordion.Trigger>
 							<Accordion.Content>
 								<div class="question" class:error={servicesErrors}>
-									{$t('services.extended')}
+									{$t('congregation.services.extended')}
 								</div>
 								<div class="my-4 space-y-2">
 									<Form.Field {form} name="inPerson">
@@ -460,7 +460,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.services.inPerson} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('services.inPerson')}</Form.Label>
+													<Form.Label>{$t('congregation.services.inPerson')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -473,7 +473,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.services.hybrid} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('services.hybrid')}</Form.Label>
+													<Form.Label>{$t('congregation.services.hybrid')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -486,7 +486,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.services.onlineOnly} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('services.onlineOnly')}</Form.Label>
+													<Form.Label>{$t('congregation.services.onlineOnly')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -499,7 +499,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.services.offsite} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('services.offsite')}</Form.Label>
+													<Form.Label>{$t('congregation.services.offsite')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -544,15 +544,17 @@
 						<Accordion.Item value="accommodations">
 							<Accordion.Trigger>
 								<span>
-									{$t('accommodations.accommodations')}
+									{$t('congregation.accommodations.accommodations')}
 									{#if $errors.accommodations}
 										<span class="text-red-500">*</span>
 									{/if}
 								</span>
 							</Accordion.Trigger>
 							<Accordion.Content>
-								<div class="question">{$t('accommodations.extended')}</div>
-								<div class="mt-2 italic text-slate-500">{$t('accommodations.note')}</div>
+								<div class="question">{$t('congregation.accommodations.extended')}</div>
+								<div class="mt-2 italic text-slate-500">
+									{$t('congregation.accommodations.note')}
+								</div>
 								<div class="my-4 space-y-2">
 									<Form.Field {form} name="online_asl">
 										<Form.Control let:attrs>
@@ -561,7 +563,7 @@
 													<Checkbox {...attrs} bind:checked={$formData.accommodations.online_asl} />
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.online_asl')}</Form.Label>
+													<Form.Label>{$t('congregation.accommodations.online_asl')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -577,7 +579,9 @@
 													/>
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.online_liveCaptions')}</Form.Label>
+													<Form.Label
+														>{$t('congregation.accommodations.online_liveCaptions')}</Form.Label
+													>
 												</span>
 											</span>
 										</Form.Control>
@@ -594,7 +598,7 @@
 												</span>
 												<span class="-mt-0.5">
 													<Form.Label>
-														{$t('accommodations.online_automatedCaptions')}
+														{$t('congregation.accommodations.online_automatedCaptions')}
 													</Form.Label>
 												</span>
 											</span>
@@ -611,7 +615,9 @@
 													/>
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.hybrid_liveCaptions')}</Form.Label>
+													<Form.Label
+														>{$t('congregation.accommodations.hybrid_liveCaptions')}</Form.Label
+													>
 												</span>
 											</span>
 										</Form.Control>
@@ -628,7 +634,7 @@
 												</span>
 												<span class="-mt-0.5">
 													<Form.Label>
-														{$t('accommodations.hybrid_automatedCaptions')}
+														{$t('congregation.accommodations.hybrid_automatedCaptions')}
 													</Form.Label>
 												</span>
 											</span>
@@ -645,7 +651,9 @@
 													/>
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.inPerson_adaAll')}</Form.Label>
+													<Form.Label
+														>{$t('congregation.accommodations.inPerson_adaAll')}</Form.Label
+													>
 												</span>
 											</span>
 										</Form.Control>
@@ -661,7 +669,9 @@
 													/>
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.inPerson_adaSome')}</Form.Label>
+													<Form.Label
+														>{$t('congregation.accommodations.inPerson_adaSome')}</Form.Label
+													>
 												</span>
 											</span>
 										</Form.Control>
@@ -677,7 +687,7 @@
 													/>
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.inPerson_asl')}</Form.Label>
+													<Form.Label>{$t('congregation.accommodations.inPerson_asl')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -693,7 +703,7 @@
 													/>
 												</span>
 												<span class="-mt-0.5">
-													<Form.Label>{$t('accommodations.inPerson_eva')}</Form.Label>
+													<Form.Label>{$t('congregation.accommodations.inPerson_eva')}</Form.Label>
 												</span>
 											</span>
 										</Form.Control>
@@ -737,7 +747,7 @@
 						<Accordion.Item value="safety">
 							<Accordion.Trigger>
 								<span>
-									{$t('safety.safety')}
+									{$t('congregation.safety.safety')}
 									{#if safetyErrors}
 										<span class="text-red-500">*</span>
 									{/if}
@@ -747,7 +757,7 @@
 								<Form.Field {form} name="protocol">
 									<Form.Control let:attrs>
 										<div class="question mb-4" class:error={safetyErrors?.protocol}>
-											{$t('safety.extended')}
+											{$t('congregation.safety.extended')}
 										</div>
 										<RadioGroup.Root
 											{...attrs}
@@ -757,18 +767,21 @@
 										>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
-												<Form.Label for="maskingRequired">{$t('safety.maskingRequired')}</Form.Label
+												<Form.Label for="maskingRequired"
+													>{$t('congregation.safety.maskingRequired')}</Form.Label
 												>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
 												<Form.Label for="maskingRecommended"
-													>{$t('safety.maskingRecommended')}</Form.Label
+													>{$t('congregation.safety.maskingRecommended')}</Form.Label
 												>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
-												<Form.Label for="noGuidelines">{$t('safety.noGuidelines')}</Form.Label>
+												<Form.Label for="noGuidelines"
+													>{$t('congregation.safety.noGuidelines')}</Form.Label
+												>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="other" id="other" />
@@ -808,7 +821,7 @@
 						<Accordion.Item value="registration">
 							<Accordion.Trigger>
 								<span>
-									{$t('registration.registration')}
+									{$t('congregation.registration.registration')}
 									{#if registrationErrors}
 										<span class="text-red-500">*</span>
 									{/if}
@@ -816,7 +829,7 @@
 							</Accordion.Trigger>
 							<Accordion.Content>
 								<div class="question mb-4" class:error={registrationErrors?.registrationType}>
-									{$t('registration.extended')}
+									{$t('congregation.registration.extended')}
 								</div>
 								<Form.Field {form} name="protocol">
 									<Form.Control let:attrs>
@@ -828,18 +841,20 @@
 										>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
-												<Form.Label for="fixedPrice">{$t('registration.fixedPrice')}</Form.Label>
+												<Form.Label for="fixedPrice"
+													>{$t('congregation.registration.fixedPrice')}</Form.Label
+												>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="slidingScale" id="slidingScale" />
 												<Form.Label for="slidingScale">
-													{$t('registration.slidingScale')}
+													{$t('congregation.registration.slidingScale')}
 												</Form.Label>
 											</div>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
 												<Form.Label for="suggestedDonation">
-													{$t('registration.suggestedDonation')}
+													{$t('congregation.registration.suggestedDonation')}
 												</Form.Label>
 											</div>
 											<div class="flex items-center space-x-2">
@@ -862,7 +877,7 @@
 									<span class="mt-4 block text-xs text-red-500">{$t('common.required')}</span>
 								{/if}
 								<div class="question my-4" class:error={registrationInvalid}>
-									{$t('register.extended')}
+									{$t('congregation.register.extended')}
 								</div>
 								<Form.Field {form} name="registration_email">
 									<Form.Control let:attrs>

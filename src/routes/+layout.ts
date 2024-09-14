@@ -1,7 +1,7 @@
 import { loadTranslations } from '$lib/i18n';
 
-export const load = async ({ url }) => {
+export const load = async ({ url, data }) => {
 	const { pathname } = url;
-	await loadTranslations('en', pathname);
+	await loadTranslations(data.i18n.locale || 'en', pathname);
 	return {};
 };

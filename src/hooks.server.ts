@@ -3,7 +3,7 @@ import type { CookieSerializeOptions } from 'cookie';
 
 import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
-import { joi } from 'sveltekit-superforms/adapters';
+import { zod } from 'sveltekit-superforms/adapters';
 
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
@@ -16,7 +16,7 @@ const log = logger.getSubLogger({ name: 'hooks' });
 
 /* region methods */
 const validate = async (schema: any, request: any = undefined) => {
-	return request ? superValidate(request, joi(schema)) : superValidate(joi(schema));
+	return request ? superValidate(request, zod(schema)) : superValidate(zod(schema));
 };
 /* endregion methods */
 

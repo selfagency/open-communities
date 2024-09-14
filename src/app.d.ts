@@ -1,7 +1,7 @@
 /* region imports */
 import type { CookieSerializeOptions } from 'cookie';
-import type { ObjectSchema } from 'joi';
 import type { SuperValidated, Infer } from 'sveltekit-superforms';
+import type { ObjectSchema } from 'zod';
 
 import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
