@@ -5,12 +5,19 @@
 
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
-	import Nav from '$lib/components/nav/index.svelte';
+	import Footer from '$lib/components/global/footer.svelte';
+	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
-	import { initState, state } from '$lib/stores';
+	import { initState, setState, state } from '$lib/stores';
 
 	import '../app.css';
 	/* endregion imports */
+
+	/* region variables */
+	// local vars
+	let innerWidth = 0;
+	let innerHeight = 0;
+	/* endregion variables */
 
 	/* region lifecycle */
 	onMount(() => {
@@ -32,12 +39,26 @@
 		}
 	});
 	/* endregion lifecycle */
+
+	/* region reactivity */
+	$: if (innerWidth > 0) {
+		setState({ offsetWidth: innerWidth, isMobile: innerWidth < 640 });
+	}
+
+	$: if (innerHeight > 0) {
+		setState({ offsetHeight: innerHeight });
+	}
+	/* endregion reactivity */
 </script>
 
-<Nav />
+<svelte:window bind:innerWidth bind:innerHeight />
 
-<main class="container mx-auto mt-24 min-w-[360px] max-w-[960px]">
-	<slot />
-</main>
+<div class="flex h-full min-h-screen flex-col items-center justify-between">
+	<Header />
+	<main class="container mx-auto mt-24 min-w-[420px] max-w-[1024px]">
+		<slot />
+	</main>
+	<Footer />
+</div>
 
 <Toaster />

@@ -67,7 +67,7 @@
 
 			<Form.Field {form} name="password">
 				<Form.Control let:attrs>
-					<Form.Label>{$t('base.auth.password')}</Form.Label>
+					<Form.Label>{$t('auth.password')}</Form.Label>
 					<Input {...attrs} bind:value={$formData.password} />
 				</Form.Control>
 				<Form.FieldErrors />
@@ -75,13 +75,13 @@
 
 			<Form.Field {form} name="passwordConfirm">
 				<Form.Control let:attrs>
-					<Form.Label>{$t('base.auth.confirmPassword')}</Form.Label>
+					<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
 					<Input {...attrs} bind:value={$formData.passwordConfirm} type="password" />
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{$t('base.auth.resetPassword')}</Form.Button>
+			<Form.Button>{$t('auth.resetPassword')}</Form.Button>
 		</form>
 	{/if}
 </span>

@@ -23,7 +23,7 @@
 <div class="text-left">
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>{congregation.name}</Card.Title>
+			<Card.Title class="font-display text-xl leading-4">{congregation.name}</Card.Title>
 			<Card.Description>
 				<span>{locale.city}</span>,
 				<span>{locale.state}</span>{#if locale.country !== 'United States'}<span

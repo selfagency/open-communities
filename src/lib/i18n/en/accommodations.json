@@ -1,0 +1,18 @@
+{
+	"accommodations": "Accommodations",
+	"ada": "ADA accessibility",
+	"cc": "Closed captioning",
+	"eva": "EVA transcriptions",
+	"extended": "Which of the following accommodations will be available?",
+	"hybrid_automatedCaptions": "Automated captions, online access to hybrid services",
+	"hybrid_liveCaptions": "Live captions, online access to hybrid services",
+	"inPerson_adaAll": "ADA-compliant location for all in-person services",
+	"inPerson_adaSome": "ADA-compliant location for some in-person services",
+	"inPerson_asl": "ASL interpretation, in person",
+	"inPerson_eva": "EVA transcriptions, in person",
+	"note": "If participants must request accommodations in advance, please add that detail in the 'Other' field.",
+	"online_asl": "ASL interpretation, online",
+	"online_automatedCaptions": "Automated captions, online",
+	"online_liveCaptions": "Live captions, online",
+	"short": "Accomms."
+}

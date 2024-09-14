@@ -93,7 +93,7 @@
 	<Popover.Trigger>
 		<Button variant="outline" class="space-x-2 text-slate-500">
 			<FilterIcon size="18" />
-			<span>{$t('base.common.filter')}</span>
+			<span>{$t('common.filter')}</span>
 		</Button>
 	</Popover.Trigger>
 	<Popover.Content>
@@ -106,7 +106,7 @@
 								<SiddurIcon class="h-4 w-4 fill-slate-500 stroke-slate-500" />
 							</span>
 							<span class="filter-label">
-								<span>{$t('base.services.services')}</span>
+								<span>{$t('services.services')}</span>
 							</span>
 							<span class="filter-status">
 								{#if every(filters.services)}
@@ -131,7 +131,7 @@
 									bind:checked={filters.services.inPerson}
 								/>
 								<Label for="services_inPerson">
-									<div class="filter-label">{$t('base.services.inPerson')}</div>
+									<div class="filter-label">{$t('services.inPerson')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -141,7 +141,7 @@
 									bind:checked={filters.services.onlineOnly}
 								/>
 								<Label for="services_onlineOnly">
-									<div class="filter-label">{$t('base.services.onlineOnly')}</div>
+									<div class="filter-label">{$t('services.onlineOnly')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -151,7 +151,7 @@
 									bind:checked={filters.services.hybrid}
 								/>
 								<Label for="services_hybrid">
-									<div class="filter-label">{$t('base.services.hybrid')}</div>
+									<div class="filter-label">{$t('services.hybrid')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -161,7 +161,7 @@
 									bind:checked={filters.services.offsite}
 								/>
 								<Label for="services_offsite">
-									<div class="filter-label">{$t('base.services.offsite')}</div>
+									<div class="filter-label">{$t('services.offsite')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -171,7 +171,7 @@
 									bind:checked={filters.services.other}
 								/>
 								<Label for="services_other">
-									<div class="filter-label">{$t('base.common.other')}</div>
+									<div class="filter-label">{$t('common.other')}</div>
 								</Label>
 							</span>
 						</div>
@@ -185,7 +185,7 @@
 						<div class="filter-heading">
 							<span class="filter-icon"><AccommodationsIcon size="17" /></span>
 							<span class="filter-label">
-								<span>{$t('base.accommodations.accommodations')}</span>
+								<span>{$t('accommodations.accommodations')}</span>
 							</span>
 							<span class="filter-status">
 								{#if every(filters.accommodations)}
@@ -210,7 +210,7 @@
 									bind:checked={filters.accommodations.inPerson_adaSome}
 								/>
 								<Label for="accommodations_inPerson_adaSome">
-									<div class="filter-label">{$t('base.accommodations.inPerson_adaSome')}</div>
+									<div class="filter-label">{$t('accommodations.inPerson_adaSome')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -220,7 +220,7 @@
 									bind:checked={filters.accommodations.inPerson_adaAll}
 								/>
 								<Label for="accommodations_inPerson_adaAll">
-									<div class="filter-label">{$t('base.accommodations.inPerson_adaAll')}</div>
+									<div class="filter-label">{$t('accommodations.inPerson_adaAll')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -230,7 +230,7 @@
 									bind:checked={filters.accommodations.inPerson_eva}
 								/>
 								<Label for="accommodations_inPerson_eva">
-									<div class="filter-label">{$t('base.accommodations.inPerson_eva')}</div>
+									<div class="filter-label">{$t('accommodations.inPerson_eva')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -241,7 +241,7 @@
 								/>
 								<Label for="accommodations_hybrid_automatedCaptions">
 									<div class="filter-label">
-										{$t('base.accommodations.hybrid_automatedCaptions')}
+										{$t('accommodations.hybrid_automatedCaptions')}
 									</div>
 								</Label>
 							</span>
@@ -252,7 +252,7 @@
 									bind:checked={filters.accommodations.hybrid_liveCaptions}
 								/>
 								<Label for="accommodations_hybrid_liveCaptions">
-									<div class="filter-label">{$t('base.accommodations.hybrid_liveCaptions')}</div>
+									<div class="filter-label">{$t('accommodations.hybrid_liveCaptions')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -263,7 +263,7 @@
 								/>
 								<Label for="accommodations_online_automatedCaptions">
 									<div class="filter-label">
-										{$t('base.accommodations.online_automatedCaptions')}
+										{$t('accommodations.online_automatedCaptions')}
 									</div>
 								</Label>
 							</span>
@@ -274,7 +274,7 @@
 									bind:checked={filters.accommodations.online_liveCaptions}
 								/>
 								<Label for="accommodations_online_liveCaptions">
-									<div class="filter-label">{$t('base.accommodations.online_liveCaptions')}</div>
+									<div class="filter-label">{$t('accommodations.online_liveCaptions')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -284,7 +284,7 @@
 									bind:checked={filters.accommodations.other}
 								/>
 								<Label for="accommodations_other">
-									<div class="filter-label">{$t('base.common.other')}</div>
+									<div class="filter-label">{$t('common.other')}</div>
 								</Label>
 							</span>
 						</div>
@@ -299,7 +299,7 @@
 							<span class="filter-icon"
 								><MaskIcon class="h-5 w-5 fill-slate-500 stroke-slate-500" /></span
 							>
-							<span class="filter-label"><span>{$t('base.safety.safety')}</span></span>
+							<span class="filter-label"><span>{$t('safety.safety')}</span></span>
 							<span class="filter-status">
 								{#if every(filters.safety)}
 									<CircleCheckIcon class="h-4 w-4" />
@@ -323,7 +323,7 @@
 									bind:checked={filters.safety.maskingRequired}
 								/>
 								<Label for="safety_maskingRequired">
-									<div class="filter-label">{$t('base.safety.maskingRequired')}</div>
+									<div class="filter-label">{$t('safety.maskingRequired')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -333,7 +333,7 @@
 									bind:checked={filters.safety.maskingRecommended}
 								/>
 								<Label for="safety_maskingRecommended">
-									<div class="filter-label">{$t('base.safety.maskingRecommended')}</div>
+									<div class="filter-label">{$t('safety.maskingRecommended')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -343,13 +343,13 @@
 									bind:checked={filters.safety.noGuidelines}
 								/>
 								<Label for="safety_noGuidelines">
-									<div class="filter-label">{$t('base.safety.noGuidelines')}</div>
+									<div class="filter-label">{$t('safety.noGuidelines')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox id="safety_other" class="scale-75" bind:checked={filters.safety.other} />
 								<Label for="safety_other">
-									<div class="filter-label">{$t('base.common.other')}</div>
+									<div class="filter-label">{$t('common.other')}</div>
 								</Label>
 							</span>
 						</div>
@@ -363,7 +363,7 @@
 						<div class="filter-heading">
 							<span class="filter-icon"><RegistrationIcon size="16" /></span>
 							<span class="filter-label">
-								<span>{$t('base.registration.registration')}</span>
+								<span>{$t('registration.registration')}</span>
 							</span>
 							<span class="filter-status">
 								{#if every(filters.registration)}
@@ -388,7 +388,7 @@
 									bind:checked={filters.registration.fixedPrice}
 								/>
 								<Label for="registration_fixedPrice">
-									<div class="filter-label">{$t('base.registration.fixedPrice')}</div>
+									<div class="filter-label">{$t('registration.fixedPrice')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -398,7 +398,7 @@
 									bind:checked={filters.registration.slidingScale}
 								/>
 								<Label for="registration_slidingScale">
-									<div class="filter-label">{$t('base.registration.slidingScale')}</div>
+									<div class="filter-label">{$t('registration.slidingScale')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -408,7 +408,7 @@
 									bind:checked={filters.registration.suggestedDonation}
 								/>
 								<Label for="registration_suggestedDonation">
-									<div class="filter-label">{$t('base.registration.suggestedDonation')}</div>
+									<div class="filter-label">{$t('registration.suggestedDonation')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -418,7 +418,7 @@
 									bind:checked={filters.registration.other}
 								/>
 								<Label for="registration_other">
-									<div class="filter-label">{$t('base.common.other')}</div>
+									<div class="filter-label">{$t('common.other')}</div>
 								</Label>
 							</span>
 						</div>
@@ -432,7 +432,7 @@
 						<div class="filter-heading">
 							<span class="filter-icon"><AdminIcon size="16" /></span>
 							<span class="filter-label">
-								<span>{$t('base.common.admin')}</span>
+								<span>{$t('common.admin')}</span>
 							</span>
 							<span class="filter-status">
 								{#if every(filters.admin)}
@@ -457,7 +457,7 @@
 									bind:checked={filters.admin.unapproved}
 								/>
 								<Label for="admin_unapproved">
-									<div class="filter-label">{$t('base.common.unapproved')}</div>
+									<div class="filter-label">{$t('common.unapproved')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
@@ -467,7 +467,7 @@
 									bind:checked={filters.admin.unclaimed}
 								/>
 								<Label for="admin_unclaimed">
-									<div class="filter-label">{$t('base.common.unclaimed')}</div>
+									<div class="filter-label">{$t('common.unclaimed')}</div>
 								</Label>
 							</span>
 						</div>
@@ -481,7 +481,7 @@
 				on:click={() => initFilters()}
 			>
 				<span class="filter-icon"><CloseIcon size="16" /></span>
-				<span class="filter-label"><span>{$t('base.common.reset')}</span></span>
+				<span class="filter-label"><span>{$t('common.reset')}</span></span>
 			</Button>
 		</div>
 	</Popover.Content>

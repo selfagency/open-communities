@@ -58,7 +58,7 @@
 		<Popover.Content class="w-96 p-0">
 			<Command.Root>
 				<Command.Input {placeholder} />
-				<Command.Empty>{$t('base.common.nothingFound')}</Command.Empty>
+				<Command.Empty>{$t('common.nothingFound')}</Command.Empty>
 				<Command.Group>
 					<div class="max-h-64 overflow-y-scroll">
 						{#each items as item}

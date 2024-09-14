@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import typography from '@tailwindcss/typography';
-import animate from 'tailwindcss-animate';
 import { fontFamily } from 'tailwindcss/defaultTheme';
+import animate from 'tailwindcss-animate';
 
 export default {
 	mode: 'jit',
@@ -84,6 +84,15 @@ export default {
 			}
 		},
 		fontFamily: {
+			display: [
+				'Magilio Regular',
+				'Atkinson Hyperlegible',
+				'Roboto',
+				'sans-serif',
+				'ui-sans-serif',
+				'system-ui',
+				'-apple-system'
+			],
 			sans: [
 				'Atkinson Hyperlegible',
 				'Roboto',

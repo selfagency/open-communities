@@ -16,20 +16,20 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('base.fit.fit')}</h2>
+	<h2 class="label">{$t('fit.fit')}</h2>
 </div>
 <div class="col-span-9">
 	<ul class="w-full divide-y">
 		{#if fit.publicStatement}
-			<li>{$t('base.fit.publicStatement')}</li>
+			<li>{$t('fit.publicStatement')}</li>
 		{/if}
 
 		{#if fit.clergyMember}
-			<li>{$t('base.fit.clergyMember')}</li>
+			<li>{$t('fit.clergyMember')}</li>
 		{/if}
 
 		{#if fit.multipleClergyMembers}
-			<li>{$t('base.fit.multipleClergyMembers')}</li>
+			<li>{$t('fit.multipleClergyMembers')}</li>
 		{/if}
 	</ul>
 </div>
@@ -39,10 +39,10 @@
 <div class="col-span-3">
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<h2 class="label">{$t('base.fit.flag.short')}</h2>
+			<h2 class="label">{$t('fit.flag.short')}</h2>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
-			{$t('base.fit.flag.flag')}
+			{$t('fit.flag.flag')}
 		</Tooltip.Content>
 	</Tooltip.Root>
 </div>
@@ -52,7 +52,7 @@
 	{:else}
 		<div class="flex flex-row items-center justify-start space-x-1">
 			<span> <WarningIcon size="18" /></span>
-			<span>{$t('base.common.unspecified')}</span>
+			<span>{$t('common.unspecified')}</span>
 		</div>
 	{/if}
 </div>

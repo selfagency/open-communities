@@ -1,4 +1,5 @@
 <script lang="ts">
+	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	/* region imports */
 	import LocationIcon from 'lucide-svelte/icons/globe';
 	import SearchIcon from 'lucide-svelte/icons/search';
@@ -33,24 +34,26 @@
 </script>
 
 <section class="w-full space-y-4">
-	<div class="flex w-full flex-row items-center justify-between space-x-2">
+	<div
+		class="flex w-full flex-col items-center justify-between space-x-0 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+	>
 		<div class="flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500">
 			<SearchIcon size="20" />
 			<Input
-				placeholder={$t('base.common.search')}
+				placeholder={$t('common.search')}
 				bind:value={searchTerms}
 				on:keyup={() => search.setSearchTerms(searchTerms)}
 			/>
 		</div>
 
-		<div class="flex flex-row items-center justify-end space-x-2">
+		<div class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto">
 			<Button
 				variant="outline"
 				class={`space-x-2 text-slate-500 ${$searchState.showLocale ? 'bg-slate-100' : ''}`}
 				on:click={() => search.toggleLocale()}
 			>
 				<LocationIcon size="20" />
-				<span>{$t('base.common.location')}</span>
+				<span>{$t('common.location')}</span>
 			</Button>
 			<Filters {search} />
 		</div>
@@ -66,11 +69,20 @@
 		<Map {locales} {search} />
 	</div>
 
-	<div class="grid w-full grid-cols-3 gap-4">
-		{#each $results as congregation}
-			<div class="col-span-1">
-				<Congregation {congregation} />
+	<div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+		{#if $results.length === 0}
+			<div
+				class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
+			>
+				<WarningIcon size="20" />
+				<span>{$t('congregation.nothingFound')}</span>
 			</div>
-		{/each}
+		{:else}
+			{#each $results as congregation}
+				<div class="col-span-1">
+					<Congregation {congregation} />
+				</div>
+			{/each}
+		{/if}
 	</div>
 </section>

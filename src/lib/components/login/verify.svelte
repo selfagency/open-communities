@@ -57,7 +57,7 @@
 </script>
 
 <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-	{$t('base.auth.verifying')}
+	{$t('auth.verifying')}
 
 	{#if $formData.token && $formData.type}
 		<form id="verify" method="POST" action="?/acct" use:enhance>

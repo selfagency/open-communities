@@ -60,16 +60,14 @@ const fitCheck: joi.CustomValidator = (value, helpers) => {
 		!value?.other &&
 		!value?.publicStatement
 	) {
-		return helpers.message(t.get('base.common.required'));
+		return helpers.message(t.get('common.required'));
 	}
 	return value;
 };
 
 const registrationCheck: joi.CustomValidator = (value, helpers) => {
 	if (!isEmpty(value) && isEmpty(value?.email) && isEmpty(value?.url)) {
-		return helpers.message(
-			t.get('base.common.thingRequired', { thing: t.get('base.common.emailOrUrl') })
-		);
+		return helpers.message(t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') }));
 	}
 
 	return value;
@@ -77,12 +75,10 @@ const registrationCheck: joi.CustomValidator = (value, helpers) => {
 
 const safetyCheck: joi.CustomValidator = (value, helpers) => {
 	if (!isEmpty(value) && isEmpty(value?.protocol)) {
-		return helpers.message(t.get('base.common.required'));
+		return helpers.message(t.get('common.required'));
 	}
 	if (!isEmpty(value) && value?.protocol === 'other' && isEmpty(value?.otherText)) {
-		return helpers.message(
-			t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
-		);
+		return helpers.message(t.get('common.thingRequired', { thing: t.get('common.otherText') }));
 	}
 	return value;
 };
@@ -96,13 +92,11 @@ const servicesCheck: joi.CustomValidator = (value, helpers) => {
 		!value?.onlineOnly &&
 		!value?.other
 	) {
-		return helpers.message(t.get('base.common.required'));
+		return helpers.message(t.get('common.required'));
 	}
 
 	if (value?.other && isEmpty(value?.otherText)) {
-		return helpers.message(
-			t.get('base.common.thingRequired', { thing: t.get('base.common.otherText') })
-		);
+		return helpers.message(t.get('common.thingRequired', { thing: t.get('common.otherText') }));
 	}
 	return value;
 };
@@ -153,13 +147,13 @@ const registrationSchema = joi
 			.valid('slidingScale', 'fixedPrice', 'suggestedDonation', 'other')
 			.required()
 			.messages({
-				'any.only': t.get('base.common.required')
+				'any.only': t.get('common.required')
 			}),
 		url: joi
 			.string()
 			.uri()
 			.allow('')
-			.messages({ 'string.uri': t.get('base.common.invalidUrl') })
+			.messages({ 'string.uri': t.get('common.invalidUrl') })
 	})
 	.custom(registrationCheck, 'registrationCheck');
 
@@ -171,7 +165,7 @@ const safetySchema = joi
 			.valid('maskingRequired', 'maskingRecommended', 'noGuidelines', 'other')
 			.required()
 			.messages({
-				'any.only': t.get('base.common.required')
+				'any.only': t.get('common.required')
 			}),
 		otherText: joi.string().allow('')
 	})
@@ -195,58 +189,58 @@ export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.clergy.clergy')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('congregation.clergy.clergy')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.clergy.clergy')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('congregation.clergy.clergy')
 			})
 		}),
 	contactEmail: joi
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.contactEmail.contactEmail')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('congregation.contactEmail.contactEmail')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.contactEmail.contactEmail')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('congregation.contactEmail.contactEmail')
 			})
 		}),
 	contactName: joi
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.contactName.contactName')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('congregation.contactName.contactName')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.contactName.contactName')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('congregation.contactName.contactName')
 			})
 		}),
 	contactUrl: joi
 		.string()
 		.uri()
 		.allow('')
-		.messages({ 'string.uri': t.get('base.common.invalidUrl') }),
+		.messages({ 'string.uri': t.get('common.invalidUrl') }),
 	flavor: joi
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.required'),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.congregation.flavor.flavor')
+			'string.empty': t.get('common.required'),
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('congregation.flavor.flavor')
 			})
 		}),
 	name: joi
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.name')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('common.name')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.name')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('common.name')
 			})
 		}),
 	notes: joi.string().allow(''),
@@ -265,22 +259,22 @@ export const loginSchema = joi.object<LoginSchema>({
 		.email({ tlds: { allow: false } })
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.email')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('common.email')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.email')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('common.email')
 			})
 		}),
 	password: joi
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.auth.password')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('auth.password')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.auth.password')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('auth.password')
 			})
 		})
 });
@@ -292,11 +286,11 @@ export const userSchema = joi.object<UserSchema>({
 		.email({ tlds: { allow: false } })
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.email')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('common.email')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.email')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('common.email')
 			})
 		}),
 	congregation: joi.string(),
@@ -304,11 +298,11 @@ export const userSchema = joi.object<UserSchema>({
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.name')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('common.name')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.name')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('common.name')
 			})
 		}),
 	lang: joi.string().valid('en', 'es', 'fr', 'he').default('en'),
@@ -322,11 +316,11 @@ export const tokenSchema = joi.object<TokenSchema>({
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.token')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('common.token')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.token')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('common.token')
 			})
 		}),
 	email: joi.string().email({ tlds: { allow: false } }),
@@ -340,10 +334,10 @@ export const deleteSchema = joi.object({
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
+			'string.empty': t.get('common.thingRequired', {
 				thing: '`id`'
 			}),
-			'any.required': t.get('base.common.thingRequired', {
+			'any.required': t.get('common.thingRequired', {
 				thing: '`id`'
 			})
 		})
@@ -354,10 +348,10 @@ export const transferSchema = joi.object({
 		.string()
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
+			'string.empty': t.get('common.thingRequired', {
 				thing: '`id`'
 			}),
-			'any.required': t.get('base.common.thingRequired', {
+			'any.required': t.get('common.thingRequired', {
 				thing: '`id`'
 			})
 		}),
@@ -366,11 +360,11 @@ export const transferSchema = joi.object({
 		.email({ tlds: { allow: false } })
 		.required()
 		.messages({
-			'string.empty': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.email')
+			'string.empty': t.get('common.thingRequired', {
+				thing: t.get('common.email')
 			}),
-			'any.required': t.get('base.common.thingRequired', {
-				thing: t.get('base.common.email')
+			'any.required': t.get('common.thingRequired', {
+				thing: t.get('common.email')
 			})
 		})
 });

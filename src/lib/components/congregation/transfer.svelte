@@ -43,10 +43,10 @@
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));
 				if (result.data.form.errors.error) {
-					toast.error($t('base.congregation.transferFailure'));
+					toast.error($t('congregation.transferFailure'));
 				}
 			} else if (result.type === 'success') {
-				toast.success($t('base.congregation.transferSuccess'));
+				toast.success($t('congregation.transferSuccess'));
 				await goto('/');
 			}
 		},
@@ -73,19 +73,19 @@
 				e.preventDefault();
 			}}
 		>
-			{$t('base.common.transfer.transfer')}
+			{$t('common.transfer.transfer')}
 		</Button>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<form id="transfer" method="POST" action="?/transfer" use:enhance>
 			<AlertDialog.Header>
-				<AlertDialog.Title>{$t('base.common.transfer.transfer')}</AlertDialog.Title>
+				<AlertDialog.Title>{$t('common.transfer.transfer')}</AlertDialog.Title>
 				<AlertDialog.Description class="space-y-4">
-					<div>{$t('base.common.transfer.desc')}</div>
+					<div>{$t('common.transfer.desc')}</div>
 
 					<Alert.Root variant="destructive" class="my-4 bg-red-50">
 						<WarningIcon size="18" />
-						<Alert.Description class="mt-0.5">{$t('base.common.warningNote')}</Alert.Description>
+						<Alert.Description class="mt-0.5">{$t('common.warningNote')}</Alert.Description>
 					</Alert.Root>
 
 					<Form.Field {form} name="id">
@@ -97,7 +97,7 @@
 
 					<Form.Field {form} name="email">
 						<Form.Control let:attrs>
-							<Form.Label for="email">{$t('base.common.email')}</Form.Label>
+							<Form.Label for="email">{$t('common.email')}</Form.Label>
 							<Input {...attrs} bind:value={$formData.email} />
 						</Form.Control>
 						<Form.FieldErrors />
@@ -105,9 +105,9 @@
 				</AlertDialog.Description>
 			</AlertDialog.Header>
 			<AlertDialog.Footer class="mt-4">
-				<AlertDialog.Cancel>{$t('base.common.cancel')}</AlertDialog.Cancel>
+				<AlertDialog.Cancel>{$t('common.cancel')}</AlertDialog.Cancel>
 				<AlertDialog.Action on:click={transferCongregation}>
-					{$t('base.common.continue')}
+					{$t('common.continue')}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>
 		</form>

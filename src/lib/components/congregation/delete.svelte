@@ -42,10 +42,10 @@
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));
 				if (result.data.form.errors.error) {
-					toast.error($t('base.congregation.deleteFailure'));
+					toast.error($t('congregation.deleteFailure'));
 				}
 			} else if (result.type === 'success') {
-				toast.success($t('base.congregation.deleteSuccess'));
+				toast.success($t('congregation.deleteSuccess'));
 				await goto('/');
 			}
 		},
@@ -72,17 +72,17 @@
 				e.preventDefault();
 			}}
 		>
-			{$t('base.common.delete')}
+			{$t('common.delete')}
 		</Button>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<form id="delete" method="POST" action="?/delete" use:enhance>
 			<AlertDialog.Header>
-				<AlertDialog.Title>{$t('base.common.warning')}</AlertDialog.Title>
+				<AlertDialog.Title>{$t('common.warning')}</AlertDialog.Title>
 				<AlertDialog.Description>
 					<Alert.Root variant="destructive" class="my-4 bg-red-50">
 						<WarningIcon size="18" />
-						<Alert.Description class="mt-0.5">{$t('base.common.warningNote')}</Alert.Description>
+						<Alert.Description class="mt-0.5">{$t('common.warningNote')}</Alert.Description>
 					</Alert.Root>
 
 					<Form.Field {form} name="id">
@@ -94,9 +94,9 @@
 				</AlertDialog.Description>
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
-				<AlertDialog.Cancel>{$t('base.common.cancel')}</AlertDialog.Cancel>
+				<AlertDialog.Cancel>{$t('common.cancel')}</AlertDialog.Cancel>
 				<AlertDialog.Action on:click={deleteCongregation}>
-					{$t('base.common.continue')}
+					{$t('common.continue')}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>
 		</form>

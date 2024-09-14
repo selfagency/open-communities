@@ -6,6 +6,7 @@
 
 	import type { LocalesRecord } from '$lib/types';
 
+	import { Button } from '$lib/components/ui/button';
 	import { Search } from '$lib/search';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
@@ -61,10 +62,27 @@
 	standardControls
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 >
-	{#each unique(locales) as { latitude, longitude, city, state }}
+	{#each unique(locales) as { latitude, longitude, city, state, country }}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
-			<Popup offset={[0, -10]} on:click={() => {}}>
-				<div class="font-sans">{city}, {state}</div>
+			<Popup offset={[0, -10]}>
+				<Button
+					variant="link"
+					class="h-auto p-0"
+					on:click={() => {
+						searchState.set({
+							...searchState.get(),
+							searchLocale: {
+								city,
+								state,
+								country,
+								latitude,
+								longitude
+							}
+						});
+					}}
+				>
+					{city}, {state}
+				</Button>
 			</Popup>
 		</DefaultMarker>
 	{/each}

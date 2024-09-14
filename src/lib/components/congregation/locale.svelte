@@ -35,39 +35,41 @@
 </script>
 
 <div
-	class="flex w-full flex-row items-center justify-between space-x-2 rounded-lg bg-slate-100 p-2"
+	class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-x-2 sm:space-y-0"
 >
-	<div class="flex w-full flex-row items-center justify-start space-x-2">
-		<span transition:fade class="w-1/3">
+	<div
+		class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-x-2 sm:space-y-0"
+	>
+		<span transition:fade class="w-full sm:w-1/3">
 			<Combobox
 				items={$locale.options.countryOptions}
 				bind:value={country}
-				placeholder={$t('base.common.selectThing', {
-					thing: $t('base.locale.country').toLowerCase()
+				placeholder={$t('common.selectThing', {
+					thing: $t('locale.country').toLowerCase()
 				})}
 				disabled={!$locale.options?.countryOptions?.length}
 				on:change={() => setCountry(country)}
 			/>
 		</span>
 
-		<span transition:fade class="w-1/3">
+		<span transition:fade class="w-full sm:w-1/3">
 			<Combobox
 				items={$locale.options.stateOptions}
 				bind:value={state}
-				placeholder={$t('base.common.selectThing', {
-					thing: $t('base.locale.state').toLowerCase()
+				placeholder={$t('common.selectThing', {
+					thing: $t('locale.state').toLowerCase()
 				})}
 				disabled={!country && !$locale.options?.stateOptions?.length}
 				on:change={() => setLocale(state)}
 			/>
 		</span>
 
-		<span transition:fade class="w-1/3">
+		<span transition:fade class="w-full sm:w-1/3">
 			<Combobox
 				items={$locale.options.cityOptions}
 				bind:value={city}
-				placeholder={$t('base.common.selectThing', {
-					thing: $t('base.locale.city').toLowerCase()
+				placeholder={$t('common.selectThing', {
+					thing: $t('locale.city').toLowerCase()
 				})}
 				disabled={!state || !$locale.options?.cityOptions?.length}
 				on:change={() => setCity(city)}
@@ -90,7 +92,7 @@
 				class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700"
 			>
 				<ResetIcon size="16" />
-				<span>{$t('base.common.reset')}</span>
+				<span>{$t('common.reset')}</span>
 			</span>
 		</Button>
 	</span>

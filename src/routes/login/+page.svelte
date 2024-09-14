@@ -34,8 +34,8 @@
 	<div class="w-full max-w-96">
 		<Tabs.Root value={tab}>
 			<Tabs.List class="w-full">
-				<Tabs.Trigger value="login" class="w-1/2">{$t('base.auth.login')}</Tabs.Trigger>
-				<Tabs.Trigger value="signup" class="w-1/2">{$t('base.auth.signUp')}</Tabs.Trigger>
+				<Tabs.Trigger value="login" class="w-1/2">{$t('auth.login')}</Tabs.Trigger>
+				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="login">
 				<Login data={data.form.login} reset={data.form.reset} />

@@ -43,7 +43,7 @@
 	<Dialog.Trigger>
 		<Tile {congregation} />
 	</Dialog.Trigger>
-	<Dialog.Content>
+	<Dialog.Content class="min-w-[380px] max-w-[380px] sm:max-w-[540px]">
 		<Dialog.Header>
 			<Dialog.Title>
 				{#if congregation.contactUrl}
@@ -51,9 +51,9 @@
 						href={congregation.contactUrl}
 						target="_blank"
 						rel="noopener noreferrer"
-						class="flex flex-row items-center justify-start space-x-2 max-w-fit"
+						class="flex max-w-fit flex-row items-center justify-start space-x-2"
 					>
-						<h1 class="text-xl font-bold">{congregation.name}</h1>
+						<h1 class="font-display text-2xl leading-5">{congregation.name}</h1>
 						<LinkIcon size="14" color="gray" />
 					</a>
 				{:else}
@@ -72,12 +72,12 @@
 			<p>{congregation.flavor}</p>
 		{/if}
 
-		<div class="grid grid-cols-12 text-sm gap-x-0 gap-y-4">
+		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
 			{#if congregation.clergy}
-				<div class="flex flex-row items-start justify-start col-span-3">
-					<h2 class="label">{$t('base.congregation.clergy.clergy')}</h2>
+				<div class="col-span-3 flex flex-row items-start justify-start">
+					<h2 class="label">{$t('congregation.clergy.clergy')}</h2>
 				</div>
-				<div class="flex flex-row items-start justify-start col-span-9">
+				<div class="col-span-9 flex flex-row items-start justify-start">
 					{congregation.clergy}
 				</div>
 				<Separator class="col-span-12" />

@@ -13,7 +13,7 @@
 </script>
 
 <div class="col-span-3 flex flex-row items-center justify-start">
-	<h2 class="label">{$t('base.congregation.contact')}</h2>
+	<h2 class="label">{$t('congregation.contact')}</h2>
 </div>
 <div class="col-span-9 flex flex-row items-center justify-start">
 	{#if contactEmail}

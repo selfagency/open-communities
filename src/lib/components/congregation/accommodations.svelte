@@ -9,6 +9,7 @@
 
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
+	import { state } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */
@@ -33,10 +34,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<AdaIcon size="18" />
-					<span class="sr-only">{$t('base.accommodations.ada')}</span>
+					<span class="sr-only">{$t('accommodations.ada')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('base.accommodations.ada')}</span>
+					<span class="text-nowrap">{$t('accommodations.ada')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -44,10 +45,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<CcIcon size="18" />
-					<span class="sr-only">{$t('base.accommodations.cc')}</span>
+					<span class="sr-only">{$t('accommodations.cc')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('base.accommodations.cc')}</span>
+					<span class="text-nowrap">{$t('accommodations.cc')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -55,10 +56,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<EvaIcon size="18" />
-					<span class="sr-only">{$t('base.accommodations.eva')}</span>
+					<span class="sr-only">{$t('accommodations.eva')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('base.accommodations.eva')}</span>
+					<span class="text-nowrap">{$t('accommodations.eva')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -69,10 +70,12 @@
 	<div class="col-span-3">
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<h2 class="label">{$t('base.accommodations.short')}</h2>
+				<h2 class="label">
+					{$state.isMobile ? $t('accommodations.short') : $t('accommodations.accommodations')}
+				</h2>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<span class="text-nowrap">{$t('base.accommodations.accommodations')}</span>
+				<span class="text-nowrap">{$t('accommodations.accommodations')}</span>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</div>
@@ -81,14 +84,14 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<AdaIcon size="18" />
-					<span class="sr-only">{$t('base.accommodations.ada')}</span>
+					<span class="sr-only">{$t('accommodations.ada')}</span>
 				</span>
 				<span>
 					{#if accommodations.inPerson_adaSome}
-						{$t('base.accommodations.inPerson_adaSome')}
+						{$t('accommodations.inPerson_adaSome')}
 					{/if}
 					{#if accommodations.inPerson_adaAll}
-						{$t('base.accommodations.inPerson_adaAll')}
+						{$t('accommodations.inPerson_adaAll')}
 					{/if}
 				</span>
 			</div>
@@ -98,20 +101,20 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<CcIcon size="18" />
-					<span class="sr-only">{$t('base.accommodations.cc')}</span>
+					<span class="sr-only">{$t('accommodations.cc')}</span>
 				</span>
 				<span>
 					{#if accommodations.hybrid_automatedCaptions}
-						{$t('base.accommodations.hybrid_automatedCaptions')}
+						{$t('accommodations.hybrid_automatedCaptions')}
 					{/if}
 					{#if accommodations.hybrid_liveCaptions}
-						{$t('base.accommodations.hybrid_liveCaptions')}
+						{$t('accommodations.hybrid_liveCaptions')}
 					{/if}
 					{#if accommodations.online_automatedCaptions}
-						{$t('base.accommodations.online_automatedCaptions')}
+						{$t('accommodations.online_automatedCaptions')}
 					{/if}
 					{#if accommodations.online_liveCaptions}
-						{$t('base.accommodations.online_liveCaptions')}
+						{$t('accommodations.online_liveCaptions')}
 					{/if}
 				</span>
 			</div>
@@ -121,11 +124,11 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<EvaIcon size="18" />
-					<span class="sr-only">{$t('base.accommodations.eva')}</span>
+					<span class="sr-only">{$t('accommodations.eva')}</span>
 				</span>
 				<span>
 					{#if accommodations.inPerson_eva}
-						{$t('base.accommodations.inPerson_eva')}
+						{$t('accommodations.inPerson_eva')}
 					{/if}
 				</span>
 			</div>
@@ -135,10 +138,10 @@
 			<div class="flex flex-row items-center justify-start space-x-1">
 				<span>
 					<WarningIcon size="18" />
-					<span class="sr-only">{$t('base.common.unspecified')}</span>
+					<span class="sr-only">{$t('common.unspecified')}</span>
 				</span>
 
-				<span>{$t('base.common.unspecified')}</span>
+				<span>{$t('common.unspecified')}</span>
 			</div>
 		{/if}
 	</div>

@@ -63,7 +63,7 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>{$t('base.auth.signUp')}</Card.Title>
+		<Card.Title class="font-display text-2xl">{$t('auth.signUp')}</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
@@ -71,14 +71,14 @@
 			<Verify data={verify} bind:verified token={$page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-				{$t('base.auth.verified.extended')}
+				{$t('auth.verified.extended')}
 			</span>
 		{:else if success}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-				{$t('base.auth.signUpSuccess')}
+				{$t('auth.signUpSuccess')}
 			</span>
 		{:else}
-			<div class="mb-4">{$t('base.auth.signupInfo')}</div>
+			<div class="mb-4">{$t('auth.signUpInfo')}</div>
 
 			<form
 				method="POST"
@@ -90,7 +90,7 @@
 			>
 				<Form.Field {form} name="name">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.auth.name')}</Form.Label>
+						<Form.Label>{$t('auth.name')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.name} />
 					</Form.Control>
 					<Form.FieldErrors />
@@ -98,7 +98,7 @@
 
 				<Form.Field {form} name="email">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.common.email')}</Form.Label>
+						<Form.Label>{$t('common.email')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.email} />
 					</Form.Control>
 					<Form.FieldErrors />
@@ -106,7 +106,7 @@
 
 				<Form.Field {form} name="password">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.auth.password')}</Form.Label>
+						<Form.Label>{$t('auth.password')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.password} type="password" />
 					</Form.Control>
 					<Form.FieldErrors />
@@ -114,13 +114,13 @@
 
 				<Form.Field {form} name="passwordConfirm">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.auth.confirmPassword')}</Form.Label>
+						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.passwordConfirm} type="password" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{$t('base.auth.signUp')}</Form.Button>
+				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
 		{/if}
 	</Card.Content>

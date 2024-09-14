@@ -64,7 +64,9 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title>{resetting ? $t('base.auth.resetPassword') : $t('base.auth.login')}</Card.Title>
+		<Card.Title class="font-display text-2xl">
+			<span>{resetting ? $t('auth.resetPassword') : $t('auth.login')}</span>
+		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
@@ -77,21 +79,21 @@
 			/>
 		{:else if resetSuccess}
 			<div class="flex flex-col items-center justify-center space-y-4">
-				<span>{$t('base.auth.passwordSuccess')}</span>
+				<span>{$t('auth.passwordSuccess')}</span>
 				<span
 					role="button"
 					tabindex="0"
 					on:click={() => (resetSuccess = false)}
 					on:keypress={() => (resetSuccess = false)}
 				>
-					{$t('base.auth.continueToLogin')} →
+					{$t('auth.continueToLogin')} →
 				</span>
 			</div>
 		{:else}
 			<form method="POST" action="?/login" use:enhance class="space-y-2">
 				<Form.Field {form} name="email">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.common.email')}</Form.Label>
+						<Form.Label>{$t('common.email')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.email} />
 					</Form.Control>
 					<Form.FieldErrors />
@@ -99,13 +101,13 @@
 
 				<Form.Field {form} name="password">
 					<Form.Control let:attrs>
-						<Form.Label>{$t('base.auth.password')}</Form.Label>
+						<Form.Label>{$t('auth.password')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.password} type="password" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{$t('base.auth.login')}</Form.Button>
+				<Form.Button>{$t('auth.login')}</Form.Button>
 			</form>
 		{/if}
 	</Card.Content>

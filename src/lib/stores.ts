@@ -12,6 +12,9 @@ export type SelectOption = { label: string; value: string };
 
 export type State = {
 	showIntro?: boolean;
+	offsetWidth?: number;
+	offsetHeight?: number;
+	isMobile?: boolean;
 };
 /* endregion types */
 
@@ -42,7 +45,10 @@ export function setState(newState: Partial<State>) {
 
 export function initState() {
 	setState({
-		showIntro: true
+		showIntro: true,
+		offsetWidth: window.innerWidth,
+		offsetHeight: window.innerHeight,
+		isMobile: window.innerWidth < 640
 	});
 }
 /* endregion methods */
