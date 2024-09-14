@@ -15,11 +15,8 @@ const config = {
 		csrf: {
 			checkOrigin: false
 		},
-		// files: {
-		// 	serviceWorker: 'src/service-worker.ts'
-		// },
 		serviceWorker: {
-			register: true
+			register: false
 		}
 	}
 };

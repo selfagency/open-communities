@@ -2,6 +2,7 @@
 	/* region imports */
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
@@ -41,6 +42,8 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
+	$: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : '';
+
 	$: if (innerWidth > 0) {
 		setState({ offsetWidth: innerWidth, isMobile: innerWidth < 640 });
 	}
@@ -52,6 +55,10 @@
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
+
+<svelte:head>
+	{@html webManifestLink}
+</svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
 	<Header />

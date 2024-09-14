@@ -1,0 +1,9 @@
+@font-face {
+	font-family: 'Magilio Regular';
+	src:
+		url('MagilioRegular.woff2') format('woff2'),
+		url('MagilioRegular.woff') format('woff'),
+		url('MagilioRegular.otf') format('opentype');
+	font-style: normal;
+	font-weight: 400;
+}

@@ -10,9 +10,36 @@ dotenv();
 export default defineConfig({
 	plugins: [
 		sveltekit(),
-		SvelteKitPWA(),
-		svg(),
-		webfontDownload(['https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap'])
+		SvelteKitPWA({
+			injectRegister: 'auto',
+			registerType: 'autoUpdate',
+			workbox: {
+				globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+			},
+			includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+			manifest: {
+				name: 'Open Communities',
+				short_name: 'open-communities',
+				description: 'Find inclusive Jewish congregations',
+				theme_color: '#f8fafc',
+				icons: [
+					{
+						src: 'pwa-192x192.png',
+						sizes: '192x192',
+						type: 'image/png'
+					},
+					{
+						src: 'pwa-512x512.png',
+						sizes: '512x512',
+						type: 'image/png'
+					}
+				]
+			}
+		}),
+		webfontDownload([
+			'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap'
+		]),
+		svg()
 	],
 	define: {
 		__NODE_ENV__: JSON.stringify(process.env.NODE_ENV)
