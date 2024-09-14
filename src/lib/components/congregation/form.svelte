@@ -7,7 +7,8 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { joi } from 'sveltekit-superforms/adapters';
 
-	import type { PagesRecord, CongregationMetaRecord, LocalesRecord } from '$lib/types';
+	import type { LocationRecord } from '$lib/location';
+	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
 
 	import { browser, dev } from '$app/environment';
 	import * as Accordion from '$lib/components/ui/accordion';
@@ -22,7 +23,7 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
-	import { Locale } from '$lib/locale';
+	import { Location } from '$lib/location';
 	import { defaultSchema } from '$lib/schemas';
 	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
@@ -38,7 +39,7 @@
 	export let mode: 'add' | 'edit' = 'add';
 
 	// constants
-	const { state: locale, setCountry, setState, setCity, load: loadLocale } = new Locale();
+	const { state: location, setCountry, setState, setCity, load: loadLocation } = new Location();
 	const congregation = getContext('congregation');
 
 	// local vars
@@ -75,7 +76,7 @@
 			otherText: ''
 		};
 
-		$formData.locale = {
+		$formData.location = {
 			city: '',
 			state: '',
 			country: '',
@@ -158,10 +159,12 @@
 		if (!$formData.id) {
 			initData();
 		} else {
-			const locale = loadLocale((congregation as CongregationMetaRecord).locale as LocalesRecord);
-			city = locale.city || '';
-			state = locale.state || '';
-			country = locale.country || '';
+			const location = loadLocation(
+				(congregation as CongregationMetaRecord).location as LocationRecord
+			);
+			city = location.city || '';
+			state = location.state || '';
+			country = location.country || '';
 		}
 
 		if (!$user.admin) {
@@ -171,8 +174,8 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if ($locale.record) {
-		$formData.locale = $locale.record;
+	$: if ($location.record) {
+		$formData.location = $location.record;
 	}
 	/* endregion reactivity */
 
@@ -234,16 +237,16 @@
 								<Form.FieldErrors />
 							</Form.Field>
 
-							{#if $formData.locale}
+							{#if $formData.location}
 								<Form.Field {form} name="country">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('locale.country')}</Form.Label>
+										<Form.Label>{$t('location.country')}</Form.Label>
 										<Combobox
-											items={$locale.options.countryOptions}
+											items={$location.options.countryOptions}
 											{attrs}
 											bind:value={country}
 											placeholder={$t('common.selectThing', {
-												thing: $t('locale.country').toLowerCase()
+												thing: $t('location.country').toLowerCase()
 											})}
 											on:change={async () => await setCountry(country)}
 										/>
@@ -252,13 +255,13 @@
 								</Form.Field>
 								<Form.Field {form} name="state">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('locale.state')}</Form.Label>
+										<Form.Label>{$t('location.state')}</Form.Label>
 										<Combobox
-											items={$locale.options.stateOptions}
+											items={$location.options.stateOptions}
 											{attrs}
 											bind:value={state}
 											placeholder={$t('common.selectThing', {
-												thing: $t('locale.state').toLowerCase()
+												thing: $t('location.state').toLowerCase()
 											})}
 											disabled={!country}
 											on:change={async () => await setState(state)}
@@ -268,13 +271,13 @@
 								</Form.Field>
 								<Form.Field {form} name="city">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('locale.city')}</Form.Label>
+										<Form.Label>{$t('location.city')}</Form.Label>
 										<Combobox
-											items={$locale.options.cityOptions}
+											items={$location.options.cityOptions}
 											{attrs}
 											bind:value={city}
 											placeholder={$t('common.selectThing', {
-												thing: $t('locale.city').toLowerCase()
+												thing: $t('location.city').toLowerCase()
 											})}
 											disabled={!state}
 											on:change={() => setCity(city)}

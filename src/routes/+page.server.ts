@@ -1,34 +1,31 @@
 /* region imports */
-import { PUBLIC_GEO_API_KEY, PUBLIC_GEO_API_ENDPOINT } from '$env/static/public';
 import { handleError } from '$lib/server/api';
-import { api, loadUser } from '$lib/server/api';
+import { loadUser, cleanResponse } from '$lib/server/api';
 /* endregion imports */
 
 export async function load({ locals, cookies }) {
-	const { session } = locals;
+	const { api } = locals;
 	const client = loadUser(cookies);
+	const locale = client?.lang || 'en';
 
 	try {
-		const page = await api
-			.collection('pages')
-			.getFirstListItem(`slug="home-${client?.lang || 'en'}"`);
+		const [content, congregations, countries] = await Promise.all([
+			api.collection('pages').getFirstListItem(`slug="home-${locale}"`),
 
-		const congregations = await api.collection('congregationMeta').getFullList({
-			fetch,
-			requestKey: `congregationMeta_${session}`,
-			filter: client?.admin ? '' : 'visible=1'
-		});
+			api.collection('congregationMeta').getFullList({
+				fetch,
+				filter: client?.admin ? '' : 'visible=1'
+			}),
 
-		const countries = await (
-			await fetch(`${PUBLIC_GEO_API_ENDPOINT}/countries`, {
-				headers: { authorization: PUBLIC_GEO_API_KEY }
+			api.collection('countries').getFullList({
+				fetch
 			})
-		).json();
+		]);
 
 		return {
-			page,
-			countries,
-			congregations
+			content,
+			congregations: congregations.map((c) => cleanResponse(c)),
+			countries: countries.map((c) => cleanResponse(c))
 		};
 	} catch (err) {
 		return handleError(err as Error);

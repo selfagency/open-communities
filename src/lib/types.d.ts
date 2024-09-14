@@ -7,14 +7,16 @@ import type { RecordService } from 'pocketbase'
 
 export enum Collections {
 	Accommodations = "accommodations",
+	Cities = "cities",
 	CongregationMeta = "congregationMeta",
 	Congregations = "congregations",
+	Countries = "countries",
 	Fit = "fit",
-	Locales = "locales",
 	Pages = "pages",
 	Registration = "registration",
 	Safety = "safety",
 	Services = "services",
+	States = "states",
 	Users = "users",
 }
 
@@ -57,7 +59,14 @@ export type AccommodationsRecord = {
 	otherText?: string
 }
 
-export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tlocale = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
+export type CitiesRecord = {
+	latitude?: number
+	longitude?: number
+	name?: string
+	state?: RecordIdString
+}
+
+export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tlocation = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
 	accommodations?: null | Taccommodations
 	clergy?: string
 	contactEmail?: string
@@ -65,7 +74,7 @@ export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tl
 	contactUrl?: string
 	fit?: null | Tfit
 	flavor?: string
-	locale?: null | Tlocale
+	location?: null | Tlocation
 	name?: string
 	notes?: string
 	registration?: null | Tregistration
@@ -75,15 +84,25 @@ export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tl
 }
 
 export type CongregationsRecord = {
+	city?: RecordIdString
 	clergy?: string
 	contactEmail?: string
 	contactName?: string
 	contactUrl?: string
+	country?: RecordIdString
 	flavor?: string
-	locale?: RecordIdString
 	name?: string
 	notes?: string
+	state?: RecordIdString
 	visible?: boolean
+}
+
+export type CountriesRecord = {
+	code?: string
+	flag?: string
+	latitude?: number
+	longitude?: number
+	name?: string
 }
 
 export enum FitFlagOptions {
@@ -99,14 +118,6 @@ export type FitRecord = {
 	other?: boolean
 	otherText?: string
 	publicStatement?: boolean
-}
-
-export type LocalesRecord = {
-	city?: string
-	country?: string
-	latitude?: number
-	longitude?: number
-	state?: string
 }
 
 export enum PagesLangOptions {
@@ -161,6 +172,14 @@ export type ServicesRecord = {
 	otherText?: string
 }
 
+export type StatesRecord = {
+	code?: string
+	country?: RecordIdString
+	latitude?: number
+	longitude?: number
+	name?: string
+}
+
 export enum UsersLangOptions {
 	"en" = "en",
 	"es" = "es",
@@ -176,41 +195,47 @@ export type UsersRecord = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type AccommodationsResponse<Texpand = unknown> = Required<AccommodationsRecord> & BaseSystemFields<Texpand>
-export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tlocale = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tlocale, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
+export type CitiesResponse<Texpand = unknown> = Required<CitiesRecord> & BaseSystemFields<Texpand>
+export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tlocation = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tlocation, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
 export type CongregationsResponse<Texpand = unknown> = Required<CongregationsRecord> & BaseSystemFields<Texpand>
+export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FitResponse<Texpand = unknown> = Required<FitRecord> & BaseSystemFields<Texpand>
-export type LocalesResponse<Texpand = unknown> = Required<LocalesRecord> & BaseSystemFields<Texpand>
 export type PagesResponse<Texpand = unknown> = Required<PagesRecord> & BaseSystemFields<Texpand>
 export type RegistrationResponse<Texpand = unknown> = Required<RegistrationRecord> & BaseSystemFields<Texpand>
 export type SafetyResponse<Texpand = unknown> = Required<SafetyRecord> & BaseSystemFields<Texpand>
 export type ServicesResponse<Texpand = unknown> = Required<ServicesRecord> & BaseSystemFields<Texpand>
+export type StatesResponse<Texpand = unknown> = Required<StatesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
 	accommodations: AccommodationsRecord
+	cities: CitiesRecord
 	congregationMeta: CongregationMetaRecord
 	congregations: CongregationsRecord
+	countries: CountriesRecord
 	fit: FitRecord
-	locales: LocalesRecord
 	pages: PagesRecord
 	registration: RegistrationRecord
 	safety: SafetyRecord
 	services: ServicesRecord
+	states: StatesRecord
 	users: UsersRecord
 }
 
 export type CollectionResponses = {
 	accommodations: AccommodationsResponse
+	cities: CitiesResponse
 	congregationMeta: CongregationMetaResponse
 	congregations: CongregationsResponse
+	countries: CountriesResponse
 	fit: FitResponse
-	locales: LocalesResponse
 	pages: PagesResponse
 	registration: RegistrationResponse
 	safety: SafetyResponse
 	services: ServicesResponse
+	states: StatesResponse
 	users: UsersResponse
 }
 
@@ -219,13 +244,15 @@ export type CollectionResponses = {
 
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'accommodations'): RecordService<AccommodationsResponse>
+	collection(idOrName: 'cities'): RecordService<CitiesResponse>
 	collection(idOrName: 'congregationMeta'): RecordService<CongregationMetaResponse>
 	collection(idOrName: 'congregations'): RecordService<CongregationsResponse>
+	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'fit'): RecordService<FitResponse>
-	collection(idOrName: 'locales'): RecordService<LocalesResponse>
 	collection(idOrName: 'pages'): RecordService<PagesResponse>
 	collection(idOrName: 'registration'): RecordService<RegistrationResponse>
 	collection(idOrName: 'safety'): RecordService<SafetyResponse>
 	collection(idOrName: 'services'): RecordService<ServicesResponse>
+	collection(idOrName: 'states'): RecordService<StatesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

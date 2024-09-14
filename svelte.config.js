@@ -9,12 +9,6 @@ const config = {
 	}),
 	kit: {
 		adapter: adapter(),
-		csp: {
-			directives: {}
-		},
-		csrf: {
-			checkOrigin: false
-		},
 		serviceWorker: {
 			register: false
 		}

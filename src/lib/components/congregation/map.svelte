@@ -4,16 +4,15 @@
 	import { onMount } from 'svelte';
 	import { MapLibre, DefaultMarker, Popup, type LngLatLike } from 'svelte-maplibre';
 
-	import type { LocalesRecord } from '$lib/types';
+	import type { LocationRecord } from '$lib/location';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Search } from '$lib/search';
-	// import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let locales: LocalesRecord[] = [];
+	export let locations: LocationRecord[] = [];
 	export let search: Search;
 
 	// constants
@@ -27,21 +26,27 @@
 	/* region lifecycle */
 	onMount(() => {
 		searchState.subscribe((value) => {
-			if (!isEmpty(value.searchLocale)) {
-				if (!isEmpty(value.searchLocale?.country)) {
-					if (!isEmpty(value.searchLocale?.longitude) && !isEmpty(value.searchLocale?.latitude)) {
-						center = [value.searchLocale?.longitude, value.searchLocale?.latitude] as LngLatLike;
+			if (!isEmpty(value.searchLocation)) {
+				if (!isEmpty(value.searchLocation?.country)) {
+					if (
+						!isEmpty(value.searchLocation?.longitude) &&
+						!isEmpty(value.searchLocation?.latitude)
+					) {
+						center = [
+							value.searchLocation?.longitude,
+							value.searchLocation?.latitude
+						] as LngLatLike;
 					} else {
 						center = [0, 10];
 					}
 
 					zoom = 3;
 
-					if (!isEmpty(value.searchLocale?.state)) {
+					if (!isEmpty(value.searchLocation?.state)) {
 						zoom = 6;
 					}
 
-					if (!isEmpty(value.searchLocale?.city)) {
+					if (!isEmpty(value.searchLocation?.city)) {
 						zoom = 10;
 					}
 				} else {
@@ -63,7 +68,7 @@
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 	attributionControl={false}
 >
-	{#each unique(locales) as { latitude, longitude, city, state, country }}
+	{#each unique(locations) as { city, state, country, longitude, latitude }}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
 			<Popup offset={[0, -10]}>
 				<Button
@@ -72,17 +77,17 @@
 					on:click={() => {
 						searchState.set({
 							...searchState.get(),
-							searchLocale: {
+							searchLocation: {
 								city,
 								state,
-								country,
-								latitude,
-								longitude
+								country
 							}
 						});
 					}}
 				>
-					{city}, {state}
+					{#if city}{city},{/if}
+					{#if state}{state},{/if}
+					{#if country}{country}{/if}
 				</Button>
 			</Popup>
 		</DefaultMarker>

@@ -2,14 +2,14 @@
 	/* region imports */
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
 
+	import type { LocationMeta } from '$lib/location';
 	import type {
 		CongregationMetaRecord,
 		AccommodationsRecord,
 		FitRecord,
 		ServicesRecord,
 		RegistrationRecord,
-		SafetyRecord,
-		LocalesRecord
+		SafetyRecord
 	} from '$lib/types';
 
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -32,7 +32,7 @@
 	// constants
 	const accommodations = congregation.accommodations as AccommodationsRecord;
 	const fit = congregation.fit as FitRecord;
-	const locale = congregation.locale as LocalesRecord;
+	const location = congregation.location as LocationMeta;
 	const services = congregation.services as ServicesRecord;
 	const registration = congregation.registration as RegistrationRecord;
 	const safety = congregation.safety as SafetyRecord;
@@ -61,10 +61,9 @@
 				{/if}
 			</Dialog.Title>
 			<Dialog.Description>
-				<span>{locale.city}</span>,
-				<span>{locale.state}</span>{#if locale.country !== 'United States'}<span
-						>, {locale.country}</span
-					>{/if}
+				{#if location.city.name}<span>{location.city.name}</span>,{/if}
+				{#if location.state.name}<span>{location.state.name}</span>,{/if}
+				{#if location.country.name !== 'United States'}<span>{location.country.name}</span>{/if}
 			</Dialog.Description>
 		</Dialog.Header>
 

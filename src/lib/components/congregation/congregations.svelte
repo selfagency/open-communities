@@ -5,10 +5,11 @@
 	import SearchIcon from 'lucide-svelte/icons/search';
 	import { fade } from 'svelte/transition';
 
-	import type { CongregationMetaRecord, LocalesRecord } from '$lib/types';
+	import type { LocationRecord } from '$lib/location';
+	import type { CongregationMetaRecord } from '$lib/types';
 
 	import { dev } from '$app/environment';
-	import Locale from '$lib/components/congregation/locale.svelte';
+	import Location from '$lib/components/congregation/location.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
@@ -26,7 +27,15 @@
 	// constants
 	const search = new Search(congregations, dev);
 	const { state: searchState, results } = search;
-	const locales = $results.map((c) => c.locale) as LocalesRecord[];
+	const locations = $results.map((c) => ({
+		city: c.location.city?.name,
+		state: c.location.state?.name,
+		country: c.location.country?.name,
+		latitude:
+			c.location.city?.latitude || c.location.state?.latitude || c.location.country?.latitude,
+		longitude:
+			c.location.city?.longitude || c.location.state?.longitude || c.location.country?.longitude
+	})) as LocationRecord[];
 
 	// local vars
 	let searchTerms = '';
@@ -49,8 +58,8 @@
 		<div class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto">
 			<Button
 				variant="outline"
-				class={`space-x-2 text-slate-500 ${$searchState.showLocale ? 'bg-slate-100' : ''}`}
-				on:click={() => search.toggleLocale()}
+				class={`space-x-2 text-slate-500 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
+				on:click={() => search.toggleLocation()}
 			>
 				<LocationIcon size="20" />
 				<span>{$t('common.location')}</span>
@@ -59,14 +68,14 @@
 		</div>
 	</div>
 
-	{#if $searchState.showLocale}
+	{#if $searchState.showLocation}
 		<div class="flex flex-row items-center justify-center" transition:fade>
-			<Locale {search} />
+			<Location {search} />
 		</div>
 	{/if}
 
 	<div class="py-4">
-		<Map {locales} {search} />
+		<Map {locations} {search} />
 	</div>
 
 	<div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">

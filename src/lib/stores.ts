@@ -1,9 +1,8 @@
 /* region imports */
-import type { ICountry } from 'country-state-city';
-
 import * as persistent from '@nanostores/persistent';
 import { assign } from 'radashi';
 
+import type { CountriesRecord } from '$lib/types';
 import type { UsersRecord } from '$lib/types';
 
 // import { log } from '$lib/utils';
@@ -17,7 +16,7 @@ export type State = {
 	offsetWidth?: number;
 	offsetHeight?: number;
 	isMobile?: boolean;
-	countries?: ICountry[];
+	countries?: CountriesRecord[];
 };
 /* endregion types */
 

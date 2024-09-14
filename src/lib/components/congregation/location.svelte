@@ -7,7 +7,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import { t } from '$lib/i18n';
-	import { Locale } from '$lib/locale';
+	import { Location } from '$lib/location';
 	import { Search } from '$lib/search';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
@@ -17,7 +17,7 @@
 	export let search: Search;
 
 	// constants
-	const { state: locale, reset, setCountry, setState: setLocale, setCity } = new Locale(search);
+	const { state: location, reset, setCountry, setState, setCity } = new Location(search);
 
 	// local vars
 	let country: string = '';
@@ -27,14 +27,14 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		locale.subscribe((value) => {
-			search.setSearchLocale(value.record);
+		location.subscribe((value) => {
+			search.setSearchLocation(value.record);
 		});
 	});
 	/* endregion lifecycle */
 </script>
 
-{#if !isEmpty($locale.options)}
+{#if !isEmpty($location.options)}
 	<div
 		class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-x-2 sm:space-y-0"
 	>
@@ -43,36 +43,36 @@
 		>
 			<span class="w-full sm:w-1/3">
 				<Combobox
-					items={$locale.options.countryOptions}
+					items={$location.options.countryOptions}
 					bind:value={country}
 					placeholder={$t('common.selectThing', {
-						thing: $t('locale.country').toLowerCase()
+						thing: $t('location.country').toLowerCase()
 					})}
-					disabled={!$locale.options?.countryOptions?.length}
+					disabled={!$location.options?.countryOptions?.length}
 					on:change={() => setCountry(country)}
 				/>
 			</span>
 
 			<span class="w-full sm:w-1/3">
 				<Combobox
-					items={$locale.options.stateOptions}
+					items={$location.options.stateOptions}
 					bind:value={state}
 					placeholder={$t('common.selectThing', {
-						thing: $t('locale.state').toLowerCase()
+						thing: $t('location.state').toLowerCase()
 					})}
-					disabled={!country && !$locale.options?.stateOptions?.length}
-					on:change={() => setLocale(state)}
+					disabled={!country && !$location.options?.stateOptions?.length}
+					on:change={() => setState(state)}
 				/>
 			</span>
 
 			<span class="w-full sm:w-1/3">
 				<Combobox
-					items={$locale.options.cityOptions}
+					items={$location.options.cityOptions}
 					bind:value={city}
 					placeholder={$t('common.selectThing', {
-						thing: $t('locale.city').toLowerCase()
+						thing: $t('location.city').toLowerCase()
 					})}
-					disabled={!state || !$locale.options?.cityOptions?.length}
+					disabled={!state || !$location.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>
 			</span>

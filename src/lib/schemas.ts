@@ -9,7 +9,6 @@ import type {
 	AccommodationsRecord,
 	CongregationMetaRecord,
 	FitRecord,
-	LocalesRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord,
@@ -129,14 +128,6 @@ const fitSchema = joi
 	})
 	.custom(fitCheck, 'fitCheck');
 
-const localeSchema = joi.object<LocalesRecord & { id: string }>({
-	city: joi.string().required(),
-	country: joi.string().required(),
-	state: joi.string().required(),
-	latitude: joi.number().required(),
-	longitude: joi.number().required()
-});
-
 const registrationSchema = joi
 	.object<RegistrationRecord & { id: string }>({
 		id: joi.string(),
@@ -245,9 +236,13 @@ export const defaultSchema = joi.object<CongregationMetaRecord & { id: string }>
 		}),
 	notes: joi.string().allow(''),
 	visible: joi.boolean(),
+	location: {
+		city: joi.string(),
+		country: joi.string(),
+		state: joi.string()
+	},
 	accommodations: accommodationsSchema,
 	fit: fitSchema,
-	locale: localeSchema,
 	registration: registrationSchema,
 	safety: safetySchema,
 	services: servicesSchema

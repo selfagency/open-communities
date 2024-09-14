@@ -9,7 +9,7 @@ const dicts = [
 	'congregation',
 	'fit',
 	'home',
-	'locale',
+	'location',
 	'registration',
 	'safety',
 	'services'

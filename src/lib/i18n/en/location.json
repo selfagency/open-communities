@@ -1,7 +1,9 @@
 {
 	"city": "City",
 	"country": "Country",
+	"countryCode": "Country Code",
 	"latitude": "Latitude",
 	"longitude": "Longitude",
-	"state": "State/Province"
+	"state": "State/Province",
+	"stateCode": "State/Province Code"
 }

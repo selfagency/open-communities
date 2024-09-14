@@ -45,8 +45,8 @@ importers:
         specifier: ^22.5.5
         version: 22.5.5
       '@types/web':
-        specifier: ^0.0.162
-        version: 0.0.162
+        specifier: ^0.0.163
+        version: 0.0.163
       '@vite-pwa/sveltekit':
         specifier: ^0.6.5
         version: 0.6.5(@sveltejs/kit@2.5.26(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0)))(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0)))(vite-plugin-pwa@0.20.5(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0))(workbox-build@7.1.1)(workbox-window@7.1.0))
@@ -176,6 +176,9 @@ importers:
       vite:
         specifier: ^5.0.3
         version: 5.4.3(@types/node@22.5.5)(terser@5.32.0)
+      vite-plugin-pwa:
+        specifier: ^0.20.5
+        version: 0.20.5(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0))(workbox-build@7.1.1)(workbox-window@7.1.0)
       vite-plugin-webfont-dl:
         specifier: ^3.9.5
         version: 3.9.5(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0))
@@ -1327,8 +1330,8 @@ packages:
   '@types/validator@13.12.1':
     resolution: {integrity: sha512-w0URwf7BQb0rD/EuiG12KP0bailHKHP5YVviJG9zw3ykAokL0TuxU2TUqMB7EwZ59bDHYdeTIvjI5m0S7qHfOA==}
 
-  '@types/web@0.0.162':
-    resolution: {integrity: sha512-uYssYXblX0BTDdpxllMQ84uDEk0EeU+dcfo8Whyl715cpfsYk5+msRQ6ul0TJGHbCr0XftFybVQGpy1eU262Aw==}
+  '@types/web@0.0.163':
+    resolution: {integrity: sha512-5Pg2gKfulo186wFnv+YXx0luJGWQ94cCY2/Dy8lU5WAE50FdBoOK45uBbp8FceOSpLJ4UW3dmTW5tvsN9uuX7A==}
 
   '@typescript-eslint/eslint-plugin@8.5.0':
     resolution: {integrity: sha512-lHS5hvz33iUFQKuPFGheAB84LwcJ60G8vKnEhnfcK1l8kGVLro2SFYW6K0/tj8FUhRJ0VHyg1oAfg50QGbPPHw==}
@@ -5049,7 +5052,7 @@ snapshots:
   '@types/validator@13.12.1':
     optional: true
 
-  '@types/web@0.0.162': {}
+  '@types/web@0.0.163': {}
 
   '@typescript-eslint/eslint-plugin@8.5.0(@typescript-eslint/parser@8.5.0(eslint@9.10.0(jiti@1.21.6))(typescript@5.6.2))(eslint@9.10.0(jiti@1.21.6))(typescript@5.6.2)':
     dependencies:

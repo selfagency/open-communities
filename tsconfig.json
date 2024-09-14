@@ -12,6 +12,6 @@
 		"moduleResolution": "bundler",
 		"noImplicitAny": false,
 		"lib": ["DOM", "ESNext"],
-		"types": ["node", "web"]
+		"types": ["node", "web", "vite-plugin-pwa/svelte", "vite-plugin-pwa/info"]
 	}
 }

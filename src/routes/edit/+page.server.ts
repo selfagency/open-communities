@@ -4,11 +4,11 @@ import type { ClientResponseError } from 'pocketbase';
 import { redirect, fail } from '@sveltejs/kit';
 import { omit } from 'radashi';
 
+import type { LocationRecord } from '$lib/location';
 import type {
 	CongregationMetaRecord,
 	AccommodationsRecord,
 	FitRecord,
-	LocalesRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord
@@ -23,7 +23,7 @@ import { loadUser, handleError } from '$lib/server/api';
 type MetaRecord = {
 	accommodations: AccommodationsRecord & { id: string };
 	fit: FitRecord & { id: string };
-	locale: LocalesRecord & { id: string };
+	location: LocationRecord & { id: string };
 	registration: RegistrationRecord & { id: string };
 	safety: SafetyRecord & { id: string };
 	services: ServicesRecord & { id: string };
@@ -43,7 +43,6 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 			const congregation = await api
 				.collection('congregationMeta')
 				.getFirstListItem(`id="${id}"`, { fetch });
-			// log.debug(congregation);
 
 			return {
 				form: {
@@ -85,7 +84,7 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const { accommodations, fit, locale, registration, safety, services } = data;
+			const { accommodations, fit, location, registration, safety, services } = data;
 
 			await Promise.all([
 				api.collection('congregations').update(
@@ -100,7 +99,7 @@ export const actions = {
 					.collection('accommodations')
 					.update(accommodations.id, omit(accommodations, ['id']), { fetch }),
 				api.collection('fit').update(fit.id, omit(fit, ['id']), { fetch }),
-				api.collection('locales').update(data.id, omit(locale, ['id']), { fetch }),
+				api.collection('locations').update(data.id, omit(location, ['id']), { fetch }),
 				api
 					.collection('registration')
 					.update(registration.id, omit(registration, ['id']), { fetch }),

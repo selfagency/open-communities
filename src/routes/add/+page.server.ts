@@ -4,12 +4,12 @@ import type { ClientResponseError } from 'pocketbase';
 import { redirect, fail } from '@sveltejs/kit';
 import { omit } from 'radashi';
 
+import type { LocationRecord } from '$lib/location';
 import type {
 	CongregationMetaRecord,
 	PagesRecord,
 	AccommodationsRecord,
 	FitRecord,
-	LocalesRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord
@@ -23,7 +23,7 @@ import { loadUser, handleError } from '$lib/server/api';
 type MetaRecord = {
 	accommodations: AccommodationsRecord;
 	fit: FitRecord;
-	locale: LocalesRecord;
+	location: LocationRecord;
 	registration: RegistrationRecord;
 	safety: SafetyRecord;
 	services: ServicesRecord;
@@ -79,7 +79,7 @@ export const actions = {
 				{ fetch }
 			);
 
-			const { accommodations, fit, locale, registration, safety, services } =
+			const { accommodations, fit, location, registration, safety, services } =
 				formData as MetaRecord;
 
 			await Promise.all([
@@ -87,7 +87,7 @@ export const actions = {
 					.collection('accommodations')
 					.create({ ...accommodations, congregation: record.id }, { fetch }),
 				api.collection('fit').create({ ...fit, congregation: record.id }, { fetch }),
-				api.collection('locales').create({ ...locale, congregation: record.id }, { fetch }),
+				api.collection('locations').create({ ...location, congregation: record.id }, { fetch }),
 				api
 					.collection('registration')
 					.create({ ...registration, congregation: record.id }, { fetch }),

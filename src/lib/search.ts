@@ -5,7 +5,7 @@ import Fuzzy from '@leeoniya/ufuzzy';
 import { map } from 'nanostores';
 import { isEmpty, unique, alphabetical, shake } from 'radashi';
 
-import type { LocalesRecord } from '$lib/types';
+import type { LocationRecord } from '$lib/location';
 
 import { log } from '$lib/utils';
 /* endregion imports */
@@ -15,8 +15,8 @@ export type SelectOption = { label: string; value: string };
 
 type SearchState = {
 	searchTerms?: string;
-	searchLocale?: LocalesRecord;
-	showLocale?: boolean;
+	searchLocation?: LocationRecord;
+	showLocation?: boolean;
 	filters?: {
 		[key: string]: {
 			[key: string]: boolean;
@@ -52,7 +52,7 @@ export class Search {
 			this.resultIds = this.ids;
 			this.results.set(this.data);
 
-			this.filterByLocale();
+			this.filterByLocation();
 			this.searchText();
 			this.applyFilters();
 
@@ -68,29 +68,29 @@ export class Search {
 		});
 
 		this.setSearchTerms = this.setSearchTerms.bind(this);
-		this.setSearchLocale = this.setSearchLocale.bind(this);
+		this.setSearchLocation = this.setSearchLocation.bind(this);
 		this.setFilters = this.setFilters.bind(this);
 		this.resetSearchTerms = this.resetSearchTerms.bind(this);
 		this.resetFilters = this.resetFilters.bind(this);
-		this.resetLocale = this.resetLocale.bind(this);
+		this.resetLocation = this.resetLocation.bind(this);
 		this.resetAll = this.resetAll.bind(this);
-		this.toggleLocale = this.toggleLocale.bind(this);
+		this.toggleLocation = this.toggleLocation.bind(this);
 		this.searchText = this.searchText.bind(this);
 	}
 
-	filterByLocale() {
+	filterByLocation() {
 		const stateObj = this.state.get();
-		if (!stateObj.searchLocale || isEmpty(stateObj.searchLocale)) return;
+		if (!stateObj.searchLocation || isEmpty(stateObj.searchLocation)) return;
 
 		const {
 			city: filterCity,
 			country: filterCountry,
 			state: filterState
-		} = stateObj.searchLocale as LocalesRecord;
+		} = stateObj.searchLocation as LocationRecord;
 
 		const ids = this.data
 			.filter((record) => {
-				const { city, country, state } = record.locale;
+				const { city, country, state } = record.location;
 
 				return (
 					(filterCity ? city === filterCity : true) &&
@@ -191,14 +191,14 @@ export class Search {
 		}
 	}
 
-	toggleLocale() {
-		this.resetLocale();
+	toggleLocation() {
+		this.resetLocation();
 		const state = this.state.get();
 		this.state.set({
 			...state,
-			showLocale: !state.showLocale
+			showLocation: !state.showLocation
 		});
-		if (this.debug) log.debug('search:toggleLocale', this.state.get().showLocale);
+		if (this.debug) log.debug('search:toggleLocation', this.state.get().showLocation);
 	}
 
 	setSearchTerms(searchTerms: string) {
@@ -207,10 +207,10 @@ export class Search {
 		if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
 	}
 
-	setSearchLocale(searchLocale: LocalesRecord) {
+	setSearchLocation(searchLocation: LocationRecord) {
 		const state = this.state.get();
-		this.state.set({ ...state, searchLocale });
-		if (this.debug) log.debug('search:locale', this.state.get().searchLocale);
+		this.state.set({ ...state, searchLocation });
+		if (this.debug) log.debug('search:location', this.state.get().searchLocation);
 	}
 
 	setFilters(filters: SearchState['filters']) {
@@ -231,10 +231,10 @@ export class Search {
 		if (this.debug) log.debug('search:filters', this.state.get().filters);
 	}
 
-	resetLocale() {
+	resetLocation() {
 		const state = this.state.get();
-		this.state.set({ ...state, searchLocale: {} });
-		if (this.debug) log.debug('search:locale', this.state.get().searchLocale);
+		this.state.set({ ...state, searchLocation: {} });
+		if (this.debug) log.debug('search:location', this.state.get().searchLocation);
 	}
 
 	resetAll() {

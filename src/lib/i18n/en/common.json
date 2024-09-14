@@ -7,6 +7,15 @@
 	"editThing": "Edit ‘{{thing}}’",
 	"email": "Email",
 	"emailOrUrl": "Email or URL",
+	"errors": {
+		"congregationFailed": "Failed to load congregation data",
+		"countriesFailed": "Failed to load location data",
+		"dataFailed": "Failed to load data",
+		"email": "Invalid email address",
+		"pageFailed": "Failed to load page data",
+		"required": "This field is required",
+		"url": "Invalid URL"
+	},
 	"filter": "Filter",
 	"filterBy": "Filter by",
 	"formErrors": "Check form for errors.",
