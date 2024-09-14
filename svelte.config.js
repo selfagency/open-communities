@@ -14,13 +14,13 @@ const config = {
 		},
 		csrf: {
 			checkOrigin: false
-		}
+		},
 		// files: {
 		// 	serviceWorker: 'src/service-worker.ts'
 		// },
-		// serviceWorker: {
-		// 	register: false
-		// }
+		serviceWorker: {
+			register: true
+		}
 	}
 };
 
