@@ -9,6 +9,7 @@ import type {
 	PagesRecord,
 	AccommodationsRecord,
 	FitRecord,
+	LocalesRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord
@@ -22,6 +23,7 @@ import { loadUser, handleError } from '$lib/server/api';
 type MetaRecord = {
 	accommodations: AccommodationsRecord;
 	fit: FitRecord;
+	locale: LocalesRecord;
 	registration: RegistrationRecord;
 	safety: SafetyRecord;
 	services: ServicesRecord;
@@ -58,6 +60,7 @@ export const actions = {
 		const client = loadUser(cookies);
 
 		const form = await validate(defaultSchema, event);
+		const formData = form.data as CongregationMetaRecord & MetaRecord;
 
 		try {
 			if (!client?.id) {
@@ -68,26 +71,23 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const record = await api
-				.collection('congregations')
-				.create(
-					omit(form.data as CongregationMetaRecord, [
-						'accommodations',
-						'fit',
-						'registration',
-						'safety',
-						'services'
-					]),
-					{ fetch }
-				);
+			const record = await api.collection('congregations').create(
+				{
+					...omit(formData, ['accommodations', 'fit', 'registration', 'safety', 'services']),
+					visible: client?.admin ? formData.visible : false
+				},
+				{ fetch }
+			);
 
-			const { accommodations, fit, registration, safety, services } = form.data as MetaRecord;
+			const { accommodations, fit, locale, registration, safety, services } =
+				formData as MetaRecord;
 
 			await Promise.all([
 				api
 					.collection('accommodations')
 					.create({ ...accommodations, congregation: record.id }, { fetch }),
 				api.collection('fit').create({ ...fit, congregation: record.id }, { fetch }),
+				api.collection('locales').create({ ...locale, congregation: record.id }, { fetch }),
 				api
 					.collection('registration')
 					.create({ ...registration, congregation: record.id }, { fetch }),

@@ -1,13 +1,13 @@
 <script lang="ts">
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
-	import { onMount } from 'svelte';
+	import { onMount, getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
 	import { joi } from 'sveltekit-superforms/adapters';
 
-	import type { PagesRecord } from '$lib/types';
+	import type { PagesRecord, CongregationMetaRecord, LocalesRecord } from '$lib/types';
 
 	import { browser, dev } from '$app/environment';
 	import * as Accordion from '$lib/components/ui/accordion';
@@ -19,6 +19,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
+	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
 	import { Locale } from '$lib/locale';
@@ -37,7 +38,8 @@
 	export let mode: 'add' | 'edit' = 'add';
 
 	// constants
-	const { state: locale, setCountry, setState, setCity } = new Locale();
+	const { state: locale, setCountry, setState, setCity, load: loadLocale } = new Locale();
+	const congregation = getContext('congregation');
 
 	// local vars
 	let country: string = '';
@@ -155,9 +157,16 @@
 	onMount(async () => {
 		if (!$formData.id) {
 			initData();
+		} else {
+			const locale = loadLocale((congregation as CongregationMetaRecord).locale as LocalesRecord);
+			city = locale.city || '';
+			state = locale.state || '';
+			country = locale.country || '';
 		}
 
-		$formData.visible = false;
+		if (!$user.admin) {
+			$formData.visible = false;
+		}
 	});
 	/* endregion lifecycle */
 
@@ -176,18 +185,18 @@
 	<Card.Root>
 		<form method="POST" action="?/submit" use:enhance>
 			<Card.Header>
-				<Card.Title
-					>{mode === 'edit'
+				<Card.Title class="-mb-4 font-display text-2xl">
+					{mode === 'edit'
 						? $t('common.editThing', { thing: $formData.name })
-						: $t('congregation.add')}</Card.Title
-				>
+						: $t('congregation.add')}
+				</Card.Title>
 			</Card.Header>
 			<Card.Content>
 				{#if mode === 'add' && content}
 					<div class="prose">{@html content.content}</div>
 				{/if}
 
-				{#if mode === 'edit'}
+				{#if mode === 'edit' && !$user.admin}
 					<Alert.Root class="bg-slate-50">
 						<WarningIcon size="18" />
 						<Alert.Description class="mt-0.5">
@@ -914,6 +923,25 @@
 						</Accordion.Content>
 					</Accordion.Item>
 				</Accordion.Root>
+
+				<!-- visibiliy -->
+				<div class="mt-8 flex flex-row items-center justify-end">
+					{#if $user.admin}
+						<Form.Field {form} name="visible">
+							<Form.Control let:attrs>
+								<span class="flex flex-row items-start justify-start space-x-2">
+									<span>
+										<Form.Label><strong>{$t('congregation.approved')}</strong></Form.Label>
+									</span>
+									<span>
+										<Switch {...attrs} bind:checked={$formData.visible} />
+									</span>
+								</span>
+							</Form.Control>
+							<Form.FieldErrors />
+						</Form.Field>
+					{/if}
+				</div>
 			</Card.Content>
 
 			<!-- actions -->

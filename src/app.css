@@ -69,3 +69,7 @@
 		}
 	}
 }
+
+.maplibregl-marker > svg g {
+	@apply fill-slate-500;
+}

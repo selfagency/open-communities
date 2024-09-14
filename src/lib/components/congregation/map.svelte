@@ -61,6 +61,7 @@
 	class="h-96"
 	standardControls
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+	attributionControl={false}
 >
 	{#each unique(locales) as { latitude, longitude, city, state, country }}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>

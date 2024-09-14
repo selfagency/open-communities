@@ -4,11 +4,11 @@ import type { MapStore } from 'nanostores';
 import { Country, State, City, type ICity, type IState, type ICountry } from 'country-state-city';
 import { map } from 'nanostores';
 
+import { log } from '$lib/utils';
+
 import type { LocalesRecord } from './types';
 
 import { Search } from './search';
-
-// import { log } from '$lib/utils';
 /* endregion imports */
 
 /* region types  */
@@ -71,6 +71,30 @@ export class Locale {
 		this.setState = this.setState.bind(this);
 		this.setCity = this.setCity.bind(this);
 		this.reset = this.reset.bind(this);
+		this.load = this.load.bind(this);
+	}
+
+	load(record: LocalesRecord) {
+		let objState = this.state.get();
+
+		const country = this.countries?.find((c) => c.name === record.country);
+		this.setCountry(`(${country?.isoCode})`);
+
+		objState = this.state.get();
+		const state = objState.localities.states?.find((s) => s.name === record.state);
+		this.setState(`(${state?.isoCode})`);
+
+		objState = this.state.get();
+		const city = objState.localities.cities?.find((c) => c.name === record.city);
+		this.setCity(city?.name as string);
+
+		log.debug({ country, state, city });
+
+		return {
+			city: city?.name,
+			country: `${country?.name} (${country?.isoCode})`,
+			state: `${state?.name} (${state?.isoCode})`
+		};
 	}
 
 	reset() {

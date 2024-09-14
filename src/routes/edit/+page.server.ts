@@ -8,6 +8,7 @@ import type {
 	CongregationMetaRecord,
 	AccommodationsRecord,
 	FitRecord,
+	LocalesRecord,
 	RegistrationRecord,
 	SafetyRecord,
 	ServicesRecord
@@ -22,6 +23,7 @@ import { loadUser, handleError } from '$lib/server/api';
 type MetaRecord = {
 	accommodations: AccommodationsRecord & { id: string };
 	fit: FitRecord & { id: string };
+	locale: LocalesRecord & { id: string };
 	registration: RegistrationRecord & { id: string };
 	safety: SafetyRecord & { id: string };
 	services: ServicesRecord & { id: string };
@@ -31,7 +33,7 @@ type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
 export const load = async ({ locals, fetch, cookies, url }) => {
-	const { log, api, validate } = locals;
+	const { api, validate } = locals;
 	const client = loadUser(cookies);
 
 	try {
@@ -83,20 +85,22 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const { accommodations, fit, registration, safety, services } = data;
+			const { accommodations, fit, locale, registration, safety, services } = data;
 
 			await Promise.all([
-				api
-					.collection('congregations')
-					.update(
-						data.id,
-						omit(data, ['id', 'accommodations', 'fit', 'registration', 'safety', 'services']),
-						{ fetch }
-					),
+				api.collection('congregations').update(
+					data.id,
+					{
+						...omit(data, ['id', 'accommodations', 'fit', 'registration', 'safety', 'services']),
+						visible: client?.admin ? data.visible : false
+					},
+					{ fetch }
+				),
 				api
 					.collection('accommodations')
 					.update(accommodations.id, omit(accommodations, ['id']), { fetch }),
 				api.collection('fit').update(fit.id, omit(fit, ['id']), { fetch }),
+				api.collection('locales').update(data.id, omit(locale, ['id']), { fetch }),
 				api
 					.collection('registration')
 					.update(registration.id, omit(registration, ['id']), { fetch }),

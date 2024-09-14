@@ -30,7 +30,7 @@
 	/* endregion lifecycle */
 </script>
 
-<div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 80vh;">
+<div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
 	<div class="w-full max-w-96">
 		<Tabs.Root value={tab}>
 			<Tabs.List class="w-full">

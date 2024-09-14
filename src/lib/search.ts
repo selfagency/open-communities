@@ -3,7 +3,7 @@ import type { MapStore } from 'nanostores';
 
 import Fuzzy from '@leeoniya/ufuzzy';
 import { map } from 'nanostores';
-import { isEmpty, unique, alphabetical, shake, listify } from 'radashi';
+import { isEmpty, unique, alphabetical, shake } from 'radashi';
 
 import type { LocalesRecord } from '$lib/types';
 
