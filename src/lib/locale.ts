@@ -1,9 +1,11 @@
 /* region imports */
 import type { MapStore } from 'nanostores';
 
-import { Country, State, City, type ICity, type IState, type ICountry } from 'country-state-city';
+import { type ICity, type IState, type ICountry } from 'country-state-city';
 import { map } from 'nanostores';
 
+import { PUBLIC_GEO_API_KEY, PUBLIC_GEO_API_ENDPOINT } from '$env/static/public';
+import { state as appState } from '$lib/stores';
 import { log } from '$lib/utils';
 
 import type { LocalesRecord } from './types';
@@ -52,13 +54,14 @@ export class Locale {
 
 	constructor(search?: Search) {
 		if (search) this.search = search;
-		this.countries = Country.getAllCountries();
 
+		this.countries = appState.get().countries as ICountry[];
+		log.debug('countries', this.countries);
 		this.default = {
 			locality: {},
 			localities: { countries: this.countries },
 			options: {
-				countryOptions: this.countries.map((c) => ({
+				countryOptions: this.countries?.map((c) => ({
 					label: c.name,
 					value: `${c.name} (${c.isoCode})`
 				}))
@@ -102,71 +105,97 @@ export class Locale {
 		if (this.search) this.search.resetLocale();
 	}
 
-	setCountry(input: string) {
+	async setCountry(input: string) {
+		log.debug('input', input);
 		input = input.split('(')[1].slice(0, -1);
 		const state = this.state.get();
 		const country = this.countries?.find((c) => c.isoCode === input) as ICountry;
-		const states = State.getStatesOfCountry(input);
 
-		this.state.set({
-			...state,
-			locality: {
-				country
-			},
-			localities: {
-				countries: state.localities.countries,
-				states,
-				cities: []
-			},
-			options: {
-				countryOptions: state.options.countryOptions,
-				stateOptions: states.map((s) => ({
-					label: s.name,
-					value: `${s.name} (${s.isoCode})`
-				})),
-				cityOptions: []
-			},
-			record: {
-				country: country?.name,
-				state: undefined,
-				city: undefined,
-				latitude: country?.latitude as unknown as number,
-				longitude: country?.longitude as unknown as number
-			}
-		});
+		let states: IState[] = [];
+		try {
+			states = await (
+				await fetch(`${PUBLIC_GEO_API_ENDPOINT}/states?country=${input}`, {
+					headers: { authorization: PUBLIC_GEO_API_KEY }
+				})
+			).json();
+
+			log.debug('states', states);
+
+			this.state.set({
+				...state,
+				locality: {
+					country
+				},
+				localities: {
+					countries: state.localities.countries,
+					states,
+					cities: []
+				},
+				options: {
+					countryOptions: state.options.countryOptions,
+					stateOptions: states?.map((s) => ({
+						label: s.name,
+						value: `${s.name} (${s.isoCode})`
+					})),
+					cityOptions: []
+				},
+				record: {
+					country: country?.name,
+					state: undefined,
+					city: undefined,
+					latitude: country?.latitude as unknown as number,
+					longitude: country?.longitude as unknown as number
+				}
+			});
+		} catch (err) {
+			log.error(err);
+		}
 	}
 
-	setState(input: string) {
+	async setState(input: string) {
 		input = input.split('(')[1].slice(0, -1);
 		const objState = this.state.get();
 		const state = objState.localities?.states?.find((s) => s.isoCode === input);
-		const cities = City.getCitiesOfState(objState.locality.country?.isoCode as string, input);
 
-		this.state.set({
-			...objState,
-			locality: {
-				country: objState.locality.country,
-				state
-			},
-			localities: {
-				...objState.localities,
-				cities
-			},
-			options: {
-				...objState.options,
-				cityOptions: cities.map((c) => ({
-					label: c.name,
-					value: c.name
-				}))
-			},
-			record: {
-				country: objState.locality.country?.name,
-				state: state?.name,
-				city: undefined,
-				latitude: state?.latitude as unknown as number,
-				longitude: state?.longitude as unknown as number
-			}
-		});
+		let cities: ICity[] = [];
+		try {
+			cities = await (
+				await fetch(
+					`${PUBLIC_GEO_API_ENDPOINT}/cities?state=${state?.isoCode}&country=${objState.locality.country?.isoCode}`,
+					{
+						headers: { authorization: PUBLIC_GEO_API_KEY }
+					}
+				)
+			).json();
+
+			this.state.set({
+				...objState,
+				locality: {
+					country: objState.locality.country,
+					state
+				},
+				localities: {
+					...objState.localities,
+					cities
+				},
+				options: {
+					...objState.options,
+					cityOptions: cities?.map((c) => ({
+						label: c.name,
+						value: c.name
+					}))
+				},
+				record: {
+					country: objState.locality.country?.name,
+					state: state?.name,
+					city: undefined,
+					latitude: state?.latitude as unknown as number,
+					longitude: state?.longitude as unknown as number
+				}
+			});
+		} catch (err) {
+			log.error(err);
+		}
 	}
 
 	setCity(input: string) {

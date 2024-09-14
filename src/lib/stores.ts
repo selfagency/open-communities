@@ -1,4 +1,6 @@
 /* region imports */
+import type { ICountry } from 'country-state-city';
+
 import * as persistent from '@nanostores/persistent';
 import { assign } from 'radashi';
 
@@ -15,6 +17,7 @@ export type State = {
 	offsetWidth?: number;
 	offsetHeight?: number;
 	isMobile?: boolean;
+	countries?: ICountry[];
 };
 /* endregion types */
 
@@ -48,7 +51,8 @@ export function initState() {
 		showIntro: true,
 		offsetWidth: window.innerWidth,
 		offsetHeight: window.innerHeight,
-		isMobile: window.innerWidth < 640
+		isMobile: window.innerWidth < 640,
+		countries: []
 	});
 }
 /* endregion methods */

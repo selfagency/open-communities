@@ -245,7 +245,7 @@
 											placeholder={$t('common.selectThing', {
 												thing: $t('locale.country').toLowerCase()
 											})}
-											on:change={() => setCountry(country)}
+											on:change={async () => await setCountry(country)}
 										/>
 									</Form.Control>
 									<Form.FieldErrors />
@@ -261,7 +261,7 @@
 												thing: $t('locale.state').toLowerCase()
 											})}
 											disabled={!country}
-											on:change={() => setState(state)}
+											on:change={async () => await setState(state)}
 										/>
 									</Form.Control>
 									<Form.FieldErrors />

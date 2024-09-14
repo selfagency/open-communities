@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';

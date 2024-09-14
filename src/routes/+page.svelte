@@ -24,6 +24,7 @@
 		if (data) {
 			congregations = data.congregations;
 			content = data.page;
+			setState({ countries: [...data.countries] });
 		}
 	});
 </script>

@@ -33,7 +33,6 @@
 		"clsx": "^2.1.1",
 		"cmdk-sv": "^0.0.18",
 		"cookie": "^0.6.0",
-		"country-state-city": "^3.2.1",
 		"dotenv": "^16.4.5",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
