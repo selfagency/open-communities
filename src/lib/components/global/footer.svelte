@@ -22,11 +22,23 @@
 		</span>
 	</div>
 	<div class="flex w-full flex-row items-center justify-center">
-		<span class="text-center text-xs text-slate-400 hover:text-slate-500">
-			<a href="https://self.agency" target="_blank">
-				{@html $t('common.home.credit', {
-					thing: 'The Self Agency, LLC'
-				})}
+		<span class="flex flex-row items-center justify-center space-x-4">
+			<a class="text-xs text-slate-400 hover:text-slate-500" href="/privacy">
+				<span>{$t('common.privacyPolicy')}</span>
+			</a>
+			<a class="text-xs text-slate-400 hover:text-slate-500" href="/terms">
+				<span>{$t('common.termsOfService')}</span>
+			</a>
+			<a
+				class="text-xs text-slate-400 hover:text-slate-500"
+				href="https://self.agency"
+				target="_blank"
+			>
+				<span>
+					{@html $t('common.home.credit', {
+						thing: 'The Self Agency, LLC'
+					})}
+				</span>
 			</a>
 		</span>
 	</div>

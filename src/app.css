@@ -73,3 +73,11 @@
 .maplibregl-marker > svg g {
 	@apply fill-slate-500;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+	@apply font-display;
+}
