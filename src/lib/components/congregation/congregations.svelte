@@ -1,8 +1,9 @@
 <script lang="ts">
-	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	/* region imports */
+	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import LocationIcon from 'lucide-svelte/icons/globe';
 	import SearchIcon from 'lucide-svelte/icons/search';
+	import { isEmpty } from 'radashi';
 	import { fade } from 'svelte/transition';
 
 	import type { LocationMeta } from '$lib/location';
@@ -27,15 +28,21 @@
 	// constants
 	const search = new Search(congregations, dev);
 	const { state: searchState, results } = search;
-	const locations = $results.map((c) => ({
-		city: c.location.city,
-		state: c.location.state,
-		country: c.location.country,
-		latitude:
-			c.location.city?.latitude || c.location.state?.latitude || c.location.country?.latitude,
-		longitude:
-			c.location.city?.longitude || c.location.state?.longitude || c.location.country?.longitude
-	})) as LocationMeta[];
+	const locations = $results
+		.filter((l) =>
+			[l.location.city.name, l.location.state.name, l.location.country.name].every(
+				(l) => !isEmpty(l)
+			)
+		)
+		.map((l) => ({
+			city: l.location.city,
+			state: l.location.state,
+			country: l.location.country,
+			latitude:
+				l.location.city?.latitude || l.location.state?.latitude || l.location.country?.latitude,
+			longitude:
+				l.location.city?.longitude || l.location.state?.longitude || l.location.country?.longitude
+		})) as LocationMeta[];
 
 	// local vars
 	let searchTerms = '';

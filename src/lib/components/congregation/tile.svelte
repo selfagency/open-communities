@@ -26,33 +26,36 @@
 	/* endregion variables */
 </script>
 
-<div class="text-left">
-	<Card.Root>
-		<Card.Header>
-			<Card.Title class="font-display text-xl leading-4">{congregation.name}</Card.Title>
-			<Card.Description>
-				{#if location.city.name}<span>{location.city.name}</span>,{/if}
-				{#if location.state.name}<span>{location.state.name}</span>,{/if}
-				{#if location.country.name !== 'United States'}<span>{location.country.name}</span>{/if}
-			</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			<p class="line-clamp-3">{congregation.flavor}</p>
-		</Card.Content>
-		{#if accommodations || $user.admin}
-			<Card.Footer>
-				{#if $user.admin}
-					<Button
-						on:click={async (e) => {
-							e.stopPropagation();
-							await goto(`/edit?id=${congregation.id}`);
-						}}>Edit</Button
-					>
-				{/if}
-				{#if accommodations}
-					<Accommodations {accommodations} mode="mini" />
-				{/if}
-			</Card.Footer>
-		{/if}
-	</Card.Root>
-</div>
+<Card.Root class="text-left">
+	<Card.Header>
+		<Card.Title class="font-display text-xl leading-4 tracking-wide">{congregation.name}</Card.Title
+		>
+		<Card.Description>
+			{#if location.city.name}<span>{location.city.name}</span
+				>{#if location.state.name || location.country.name},{/if}{/if}
+			{#if location.state.name}<span>{location.state.name}</span
+				>{#if location.country.name && location.country.name !== 'United States'},{/if}{/if}
+			{#if location.country.name && location.country.name !== 'United States'}<span
+					>{location.country.name}</span
+				>{/if}
+		</Card.Description>
+	</Card.Header>
+	<Card.Content>
+		<p class="line-clamp-3">{congregation.flavor}</p>
+	</Card.Content>
+	{#if accommodations || $user.admin}
+		<Card.Footer>
+			{#if $user.admin}
+				<Button
+					on:click={async (e) => {
+						e.stopPropagation();
+						await goto(`/edit?id=${congregation.id}`);
+					}}>Edit</Button
+				>
+			{/if}
+			{#if accommodations}
+				<Accommodations {accommodations} mode="mini" />
+			{/if}
+		</Card.Footer>
+	{/if}
+</Card.Root>

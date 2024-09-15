@@ -46,7 +46,7 @@
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger>
+	<Dialog.Trigger class="w-full">
 		<Tile {congregation} />
 	</Dialog.Trigger>
 	<Dialog.Content class="min-w-[380px] max-w-[380px] sm:max-w-[540px]">
@@ -67,9 +67,10 @@
 				{/if}
 			</Dialog.Title>
 			<Dialog.Description>
-				{#if city.name}<span>{city.name}</span>,{/if}
-				{#if state.name}<span>{state.name}</span>,{/if}
-				{#if country.name !== 'United States'}<span>{country.name}</span>{/if}
+				{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
+				{#if state.name}<span>{state.name}</span
+					>{#if country.name && country.name !== 'United States'},{/if}{/if}
+				{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
 			</Dialog.Description>
 		</Dialog.Header>
 
