@@ -105,9 +105,11 @@
 			</div>
 		{:else}
 			{#each $results as congregation}
-				<div class="col-span-1">
-					<Congregation {congregation} />
-				</div>
+				{#key congregation.id}
+					<div class="col-span-1">
+						<Congregation {congregation} />
+					</div>
+				{/key}
 			{/each}
 		{/if}
 	</div>
