@@ -51,9 +51,9 @@ const fitCheck = (value: any) => {
 		!value?.other &&
 		!value?.publicStatement
 	) {
-		throw new Error(t.get('common.required'));
+		return false;
 	}
-	return value;
+	return true;
 };
 
 const registrationCheck = (value: any) => {
@@ -79,13 +79,14 @@ const servicesCheck = (value: any) => {
 		!value?.onlineOnly &&
 		!value?.other
 	) {
-		throw new Error(t.get('common.required'));
+		return false;
 	}
 
 	if (value?.other && isEmpty(value?.otherText)) {
-		throw new Error(t.get('common.thingRequired', { thing: t.get('common.otherText') }));
+		return false;
 	}
-	return value;
+
+	return true;
 };
 /* endregion methods */
 
