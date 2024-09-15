@@ -22,14 +22,20 @@
 	"addFailure": "Failed to add congregation.",
 	"addSuccess": "Congregation added successfully.",
 	"approved": "Approved",
-	"clergy.clergy": "Clergy",
-	"clergy.extended": "List the clergy team below that will lead during the Yamim Noraim.",
+	"clergy": {
+		"clergy": "Clergy",
+		"extended": "List the clerg`y team below that will lead during the Yamim Noraim."
+	},
 	"congregation": "Congregation",
 	"contact": "Contact",
-	"contactEmail.contactEmail": "Contact email",
-	"contactEmail.extended": "Email address for contact person listed above",
-	"contactName.contactName": "Contact name",
-	"contactName.extended": "Name of best contact person for communications from Rabbis for Ceasefire",
+	"contactEmail": {
+		"contactEmail": "Contact email",
+		"extended": "Email address for contact person listed above"
+	},
+	"contactName": {
+		"contactName": "Contact name",
+		"extended": "Name of best contact person for communications from Rabbis for Ceasefire"
+	},
 	"contactUrl": "Contact URL",
 	"delete": "Delete congregation",
 	"deleteFailure": "Failed to delete congregation.",
@@ -56,8 +62,10 @@
 		"multipleClergyMembers": "Multiple members of the clergy team are affiliated with Rabbis for Ceasefire",
 		"publicStatement": "The congregation has made a public statement supporting permanent ceasefire"
 	},
-	"flavor.extended": "In 50 words or less, describe the congregation and ritual 'flavor' that guests will experience.",
-	"flavor.flavor": "Flavor",
+	"flavor": {
+		"extended": "In 50 words or less, describe the congregation and ritual 'flavor' that guests will experience.",
+		"flavor": "Flavor"
+	},
 	"location": {
 		"city": "City",
 		"country": "Country",
@@ -68,8 +76,10 @@
 		"stateCode": "State/Province Code"
 	},
 	"name": "Name of Congregation",
-	"notes.extended": "Anything else we should know?",
-	"notes.notes": "Notes",
+	"notes": {
+		"extended": "Anything else we should know?",
+		"notes": "Notes"
+	},
 	"nothingFound": "No congregations found.",
 	"registration": {
 		"extended": "What kind of registration do you offer to guests?",
