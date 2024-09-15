@@ -1,6 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
+	import ClearIcon from 'lucide-svelte/icons/circle-x';
 	import LocationIcon from 'lucide-svelte/icons/globe';
 	import SearchIcon from 'lucide-svelte/icons/search';
 	import { isEmpty } from 'radashi';
@@ -63,13 +64,32 @@
 	<div
 		class="flex w-full flex-col items-center justify-between space-x-0 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
 	>
-		<div class="flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500">
+		<div
+			class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500"
+		>
 			<SearchIcon size="20" />
-			<Input
-				placeholder={$t('common.search')}
-				bind:value={searchTerms}
-				on:keyup={() => search.setSearchTerms(searchTerms)}
-			/>
+			<span class="w-full">
+				<Input
+					placeholder={$t('common.search')}
+					bind:value={searchTerms}
+					on:keyup={() => search.setSearchTerms(searchTerms)}
+					class="w-full"
+				/>
+
+				<span class="absolute right-2 top-0 z-10 h-10 w-10">
+					<Button
+						variant="link"
+						class="text-slate-400 hover:text-slate-500"
+						on:click={() => {
+							searchTerms = '';
+							search.setSearchTerms(searchTerms);
+						}}
+					>
+						<ClearIcon size="20" />
+						<span class="sr-only">{$t('common.clear')}</span>
+					</Button>
+				</span>
+			</span>
 		</div>
 
 		<div class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto">
