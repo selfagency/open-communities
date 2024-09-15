@@ -28,8 +28,7 @@ export default defineConfig({
 			strategies: 'injectManifest',
 			injectManifest: {
 				globIgnores: ['server/*'],
-				globPatterns: ['client/**/*.{html,js,css,ico,png,svg,woff,woff2,ttf,xml,webmanifest}'],
-				swSrc: './src/service-worker.ts'
+				globPatterns: ['client/**/*.{html,js,css,ico,png,svg,woff,woff2,ttf,xml,webmanifest}']
 			},
 			includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
 			manifest: {
