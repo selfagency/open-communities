@@ -22,16 +22,28 @@ const validate = async (schema: any, request: any = undefined) => {
 
 export async function handle({ event, resolve }) {
 	const startTimer = Date.now();
-	event.locals.startTimer = startTimer;
+
+	// services
+	event.locals.api = api;
+	event.locals.log = log;
+	event.locals.validate = validate;
 	event.locals.cookieOpts = {
 		maxAge: 60 * 60 * 24 * 1, // 1 day
 		path: '/',
 		sameSite: 'strict',
 		secure: true
 	} as CookieSerializeOptions & { path: string };
-	event.locals.api = api;
+
+	// auth
 	event.locals.api.authStore.loadFromCookie(event.cookies.get('auth') ?? '');
 
+	// i18n
+	event.locals.i18n = {
+		locale: event.locals.api.authStore.model?.lang || 'en',
+		route: `${event.url.pathname}${event.url.search}`
+	};
+
+	// auth
 	try {
 		if (event.url.pathname === '/logout') {
 			event.cookies.set('auth', '', event.locals.cookieOpts);
@@ -40,19 +52,21 @@ export async function handle({ event, resolve }) {
 		} else {
 			if (event.locals.api.authStore.isValid) {
 				await event.locals.api.collection('users').authRefresh();
+				event.cookies.set(
+					'auth',
+					event.locals.api.authStore.exportToCookie(),
+					event.locals.cookieOpts
+				);
 			}
 		}
 	} catch {
 		event.locals.api.authStore.clear();
 	}
 
-	event.cookies.set('auth', event.locals.api.authStore.exportToCookie(), event.locals.cookieOpts);
-	event.locals.log = log;
-	event.locals.validate = validate;
-
+	// response
 	const response = await resolve(event);
+	event.locals.startTimer = startTimer;
 	logEvent(response.status, event);
-
 	return response;
 }
 

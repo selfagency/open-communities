@@ -54,7 +54,7 @@
 	<Dialog.Root open={$state.showIntro} onOpenChange={() => setState({ showIntro: false })}>
 		<Dialog.Content>
 			<Dialog.Header>
-				<Dialog.Title class="font-display text-2xl">{$t('home.dialogTitle')}</Dialog.Title>
+				<Dialog.Title class="font-display text-2xl">{$t('common.home.dialogTitle')}</Dialog.Title>
 				<Dialog.Description>
 					<section class="prose mx-auto my-4">
 						{@html content?.content}

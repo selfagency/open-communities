@@ -54,8 +54,6 @@
 	/* endregion reactivity */
 </script>
 
-/// <reference types="vite-plugin-pwa/svelte" />
-
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <svelte:head>

@@ -10,7 +10,7 @@
 		class="flex w-full flex-row items-center justify-center space-x-2 p-4 text-sm text-slate-700 sm:text-base"
 	>
 		<span class="pointer-events-none flex w-1/3 flex-row items-center justify-end"
-			>{$t('home.project')}</span
+			>{$t('common.home.project')}</span
 		>
 		<span class="flex flex-row items-center justify-center">
 			<a href="https://rabbis4ceasefire.com/" target="_blank">
@@ -18,13 +18,13 @@
 			</a>
 		</span>
 		<span class="pointer-events-none flex w-1/3 flex-row items-center justify-start font-bold"
-			>{$t('home.ceasefire')}
+			>{$t('common.home.ceasefire')}
 		</span>
 	</div>
 	<div class="flex w-full flex-row items-center justify-center">
 		<span class="text-center text-xs text-slate-400 hover:text-slate-500">
 			<a href="https://self.agency" target="_blank">
-				{@html $t('home.credit', {
+				{@html $t('common.home.credit', {
 					thing: 'The Self Agency, LLC'
 				})}
 			</a>

@@ -29,6 +29,10 @@ declare global {
 			error?: string;
 			errorId?: string;
 			errorStackTrace?: string;
+			i18n: {
+				locale: string;
+				route: string;
+			};
 			log: Logger<{ main: boolean; sub: boolean }>;
 			message?: unknown;
 			session: string;

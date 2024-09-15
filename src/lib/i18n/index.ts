@@ -4,7 +4,7 @@ import i18n, { type Config } from 'sveltekit-i18n';
 import { log } from '$lib/utils';
 /* endregion imports */
 
-const dicts = ['auth', 'common', 'congregation', 'home'];
+const dicts = ['auth', 'common', 'congregation'];
 
 export const { t, locale, locales, loading, loadTranslations, translations } = new i18n(<
 	Config<{
@@ -12,6 +12,7 @@ export const { t, locale, locales, loading, loadTranslations, translations } = n
 	}>
 >{
 	initLocale: 'en',
+	fallbackLocale: 'en',
 	log: { logger: log },
 	loaders: dicts.map((dict) => ({
 		locale: 'en',

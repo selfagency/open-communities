@@ -191,7 +191,7 @@
 				<Card.Title class="-mb-4 font-display text-2xl">
 					{mode === 'edit'
 						? $t('common.editThing', { thing: $formData.name })
-						: $t('congregation.add')}
+						: $t('congregation.addCongregation')}
 				</Card.Title>
 			</Card.Header>
 			<Card.Content>
@@ -221,7 +221,7 @@
 					<!-- congregation -->
 					<Accordion.Item value="congregation">
 						<Accordion.Trigger>
-							<span>
+							<span class="font-display text-lg">
 								{$t('congregation.congregation')}
 								{#if $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
 									<span class="text-red-500">*</span>
@@ -328,7 +328,7 @@
 						{@const fitErrors = fixType($errors.fit)?._errors}
 						<Accordion.Item value="fit">
 							<Accordion.Trigger>
-								<span>
+								<span class="font-display text-lg">
 									{$t('congregation.fit.fit')}
 									{#if fitErrors}
 										<span class="text-red-500">*</span>
@@ -441,7 +441,7 @@
 						{@const servicesErrors = fixType($errors.services)?._errors}
 						<Accordion.Item value="services">
 							<Accordion.Trigger>
-								<span>
+								<span class="font-display text-lg">
 									{$t('congregation.services.services')}
 									{#if servicesErrors}
 										<span class="text-red-500">*</span>
@@ -543,7 +543,7 @@
 					{#if $formData.accommodations}
 						<Accordion.Item value="accommodations">
 							<Accordion.Trigger>
-								<span>
+								<span class="font-display text-lg">
 									{$t('congregation.accommodations.accommodations')}
 									{#if $errors.accommodations}
 										<span class="text-red-500">*</span>
@@ -746,7 +746,7 @@
 						{@const safetyErrors = fixType($errors.safety)}
 						<Accordion.Item value="safety">
 							<Accordion.Trigger>
-								<span>
+								<span class="font-display text-lg">
 									{$t('congregation.safety.safety')}
 									{#if safetyErrors}
 										<span class="text-red-500">*</span>
@@ -820,7 +820,7 @@
 							fixType($errors.registration)?._errors}
 						<Accordion.Item value="registration">
 							<Accordion.Trigger>
-								<span>
+								<span class="font-display text-lg">
 									{$t('congregation.registration.registration')}
 									{#if registrationErrors}
 										<span class="text-red-500">*</span>
@@ -910,7 +910,7 @@
 					<!-- contact -->
 					<Accordion.Item value="contact">
 						<Accordion.Trigger>
-							<span>
+							<span class="font-display text-lg">
 								{$t('congregation.contact')}
 								{#if $errors.contactName || $errors.contactEmail}
 									<span class="text-red-500">*</span>
