@@ -26,10 +26,6 @@ export default defineConfig({
 				globPatterns: ['**/*.{js,css,html,ico,png,svg}']
 			},
 			strategies: 'generateSW',
-			injectManifest: {
-				globIgnores: ['server/*'],
-				globPatterns: ['client/**/*.{html,js,css,ico,png,svg,woff,woff2,otf,ttf,xml,webmanifest}']
-			},
 			includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
 			manifest: {
 				name: 'Open Communities',

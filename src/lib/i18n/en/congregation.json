@@ -52,7 +52,9 @@
 			"short": "Israeli flag",
 			"yes": "Yes, but not on the bima",
 			"yesBima": "Yes, on the bima"
-		}
+		},
+		"multipleClergyMembers": "Multiple members of the clergy team are affiliated with Rabbis for Ceasefire",
+		"publicStatement": "The congregation has made a public statement supporting permanent ceasefire"
 	},
 	"flavor.extended": "In 50 words or less, describe the congregation and ritual 'flavor' that guests will experience.",
 	"flavor.flavor": "Flavor",
@@ -65,12 +67,10 @@
 		"state": "State/Province",
 		"stateCode": "State/Province Code"
 	},
-	"multipleClergyMembers": "Multiple members of the clergy team are affiliated with Rabbis for Ceasefire",
 	"name": "Name of Congregation",
 	"notes.extended": "Anything else we should know?",
 	"notes.notes": "Notes",
 	"nothingFound": "No congregations found.",
-	"publicStatement": "The congregation has made a public statement supporting permanent ceasefire",
 	"registration": {
 		"extended": "What kind of registration do you offer to guests?",
 		"fixedPrice": "Fixed ticket price (per service or for all)",
