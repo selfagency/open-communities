@@ -26,5 +26,8 @@
 		{#if services?.offsite}
 			<li>{$t('congregation.services.offsite')}</li>
 		{/if}
+		{#if services?.other}
+			<li>{services.otherText}</li>
+		{/if}
 	</ul>
 </div>

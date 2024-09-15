@@ -31,6 +31,10 @@
 		{#if fit.multipleClergyMembers}
 			<li>{$t('congregation.fit.multipleClergyMembers')}</li>
 		{/if}
+
+		{#if fit.other}
+			<li>{fit.other}</li>
+		{/if}
 	</ul>
 </div>
 

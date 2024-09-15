@@ -25,6 +25,7 @@
 		accommodations.online_automatedCaptions ||
 		accommodations.online_liveCaptions;
 	const eva = accommodations.inPerson_eva;
+	const other = accommodations.otherText;
 	/* endregion variables */
 </script>
 
@@ -136,7 +137,13 @@
 			</li>
 		{/if}
 
-		{#if !ada && !cc && !eva}
+		{#if other}
+			<li class="flex flex-row items-start justify-start space-x-1">
+				<span class="flex flex-col items-start justify-start">{other}</span>
+			</li>
+		{/if}
+
+		{#if !ada && !cc && !eva && !other}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<WarningIcon size="18" />
