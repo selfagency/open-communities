@@ -57,21 +57,17 @@ const fitCheck = (value: any) => {
 };
 
 const registrationCheck = (value: any) => {
-	if (!isEmpty(value) && isEmpty(value?.email) && isEmpty(value?.url)) {
-		throw new Error(t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') }));
-	}
-
-	return value;
+	return !isEmpty(value?.email) && !isEmpty(value?.url);
 };
 
 const safetyCheck = (value: any) => {
-	if (!isEmpty(value) && isEmpty(value?.protocol)) {
-		throw new Error(t.get('common.required'));
+	if (isEmpty(value?.protocol)) return false;
+
+	if (value?.protocol === 'other' && isEmpty(value?.otherText)) {
+		return false;
 	}
-	if (!isEmpty(value) && value?.protocol === 'other' && isEmpty(value?.otherText)) {
-		throw new Error(t.get('common.thingRequired', { thing: t.get('common.otherText') }));
-	}
-	return value;
+
+	return true;
 };
 
 const servicesCheck = (value: any) => {
