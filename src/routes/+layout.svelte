@@ -6,7 +6,7 @@
 	// import { pwaInfo } from 'virtual:pwa-info';
 	// import { registerSW } from 'virtual:pwa-register';
 
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import Footer from '$lib/components/global/footer.svelte';
 	import Header from '$lib/components/global/header.svelte';
@@ -47,9 +47,7 @@
 			// 	if (dev) log.warn('ServiceWorker not available');
 			// }
 
-			if (isEmpty($state)) {
-				initState();
-			}
+			if (isEmpty(state)) initState();
 		}
 	});
 

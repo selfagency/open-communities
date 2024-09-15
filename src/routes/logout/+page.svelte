@@ -5,13 +5,13 @@
 	import type { UsersRecord } from '$lib/types';
 
 	import { goto } from '$app/navigation';
-	import { state, user, type State } from '$lib/stores';
+	import { user, initState } from '$lib/stores';
 	/* endregion imports */
 
 	/* region lifecycle */
 	onMount(async () => {
 		user.set({} as UsersRecord & { email: string });
-		state.set({} as State);
+		initState();
 		await fetch('?/logout', { method: 'POST', body: new FormData() });
 		await goto('/');
 	});
