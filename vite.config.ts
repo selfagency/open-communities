@@ -25,6 +25,12 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg}']
 			},
+			strategies: 'injectManifest',
+			injectManifest: {
+				globIgnores: ['server/*'],
+				globPatterns: ['client/**/*.{html,js,css,ico,png,svg,woff,woff2,ttf,xml,webmanifest}'],
+				swSrc: './src/service-worker.ts'
+			},
 			includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
 			manifest: {
 				name: 'Open Communities',

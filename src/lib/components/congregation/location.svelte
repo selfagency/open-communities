@@ -60,7 +60,7 @@
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.state').toLowerCase()
 					})}
-					disabled={!country && !$location.options?.stateOptions?.length}
+					disabled={!$location.options?.stateOptions?.length}
 					on:change={() => setState(state)}
 				/>
 			</span>
@@ -72,7 +72,7 @@
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.city').toLowerCase()
 					})}
-					disabled={!state || !$location.options?.cityOptions?.length}
+					disabled={!$location.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>
 			</span>

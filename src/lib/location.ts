@@ -130,12 +130,17 @@ export class Location {
 		const api = this.api as TypedPocketBase;
 
 		let states: State[] = [];
+		let cities: City[] = [];
 		try {
 			states = await api?.collection('states')?.getFullList({
 				filter: `country="${country.id}"`
 			});
 
-			if (states)
+			cities = await api?.collection('cities')?.getFullList({
+				filter: `country="${country.id}"`
+			});
+
+			if (states || cities)
 				this.state.set({
 					...state,
 					locality: {
@@ -144,7 +149,7 @@ export class Location {
 					localities: {
 						countries: state.localities.countries,
 						states,
-						cities: []
+						cities
 					},
 					options: {
 						countryOptions: state.options.countryOptions,
@@ -153,7 +158,11 @@ export class Location {
 							value: `${s.name} (${s.code})`,
 							id: s.id
 						})),
-						cityOptions: []
+						cityOptions: cities?.map((c) => ({
+							label: c.name as string,
+							value: c.name as string,
+							id: c.id
+						}))
 					},
 					record: {
 						country,

@@ -5,7 +5,7 @@
 	import SearchIcon from 'lucide-svelte/icons/search';
 	import { fade } from 'svelte/transition';
 
-	import type { LocationRecord } from '$lib/location';
+	import type { LocationMeta } from '$lib/location';
 	import type { CongregationMetaRecord } from '$lib/types';
 
 	import { dev } from '$app/environment';
@@ -28,14 +28,14 @@
 	const search = new Search(congregations, dev);
 	const { state: searchState, results } = search;
 	const locations = $results.map((c) => ({
-		city: c.location.city?.name,
-		state: c.location.state?.name,
-		country: c.location.country?.name,
+		city: c.location.city,
+		state: c.location.state,
+		country: c.location.country,
 		latitude:
 			c.location.city?.latitude || c.location.state?.latitude || c.location.country?.latitude,
 		longitude:
 			c.location.city?.longitude || c.location.state?.longitude || c.location.country?.longitude
-	})) as LocationRecord[];
+	})) as LocationMeta[];
 
 	// local vars
 	let searchTerms = '';

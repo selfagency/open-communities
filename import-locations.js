@@ -33,7 +33,7 @@ const cities = City.getAllCities();
 // 			const stateExists = exists.find((s) => s.code === state.isoCode);
 // 			if (stateExists) continue;
 
-// 			await sleep(100);
+// 			await sleep(10);
 // 			const record = await pb.collection('states').create({
 // 				name: state.name,
 // 				country: countries.find((country) => country.code === state.countryCode).id,
@@ -44,23 +44,23 @@ const cities = City.getAllCities();
 // 			stateIds.push({ id: record.id, state: state.isoCode });
 // 		}
 
-// 		for (const city of cities) {
-// 			await sleep(100);
-// 			const country = countries.find((country) => country.code === city.countryCode);
-// 			const state = states.find(
-// 				(state) => state.code === city.stateCode && state.country === country.id
-// 			);
+// 		// for (const city of cities) {
+// 		// 	const country = countries.find((country) => country.code === city.countryCode);
+// 		// 	const state = states.find(
+// 		// 		(state) => state.code === city.stateCode && state.country === country.id
+// 		// 	);
 
-// 			const record = {
-// 				country: country?.id,
-// 				state: state?.id,
-// 				name: city.name,
-// 				longitude: city.longitude,
-// 				latitude: city.latitude
-// 			};
+// 		// 	const record = {
+// 		// 		country: country?.id,
+// 		// 		state: state?.id,
+// 		// 		name: city.name,
+// 		// 		longitude: city.longitude,
+// 		// 		latitude: city.latitude
+// 		// 	};
 
-// 			await pb.collection('cities').create(record);
-// 		}
+// 		// 	await sleep(10);
+// 		// 	await pb.collection('cities').create(record);
+// 		// }
 // 	} catch (error) {
 // 		console.log(error);
 // 	}
@@ -77,10 +77,8 @@ const cities = City.getAllCities();
 		for (const city of cities) {
 			const country = countries.find((country) => country.code === city.countryCode);
 			const state = states.find(
-				(state) => state.code === city.stateCode && state.country === country.id
+				(state) => state.code === city.stateCode && state.country === country?.id
 			);
-
-			const cityExists = exists.find((city) => city.name === city.name && city.state === state.id);
 
 			const record = {
 				country: country?.id,
@@ -90,8 +88,13 @@ const cities = City.getAllCities();
 				latitude: city.latitude
 			};
 
+			const cityExists = exists.find(
+				(city) =>
+					city.name === city.name && (city.state === state?.id || city.country === country?.id)
+			);
+
 			if (!cityExists) {
-				await sleep(500);
+				await sleep(5);
 				await pb.collection('cities').create(record);
 			}
 		}

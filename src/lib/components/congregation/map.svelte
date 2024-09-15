@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { MapLibre, DefaultMarker, Popup, type LngLatLike } from 'svelte-maplibre';
 
-	import type { LocationRecord } from '$lib/location';
+	import type { LocationMeta } from '$lib/location';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Search } from '$lib/search';
@@ -12,7 +12,7 @@
 
 	/* region variables */
 	// props
-	export let locations: LocationRecord[] = [];
+	export let locations: LocationMeta[] = [];
 	export let search: Search;
 
 	// constants
@@ -85,9 +85,9 @@
 						});
 					}}
 				>
-					{#if city}{city},{/if}
-					{#if state}{state},{/if}
-					{#if country}{country}{/if}
+					{#if city}{city.name},{/if}
+					{#if state}{state.name},{/if}
+					{#if country}{country.name}{/if}
 				</Button>
 			</Popup>
 		</DefaultMarker>

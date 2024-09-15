@@ -267,7 +267,7 @@
 											placeholder={$t('common.selectThing', {
 												thing: $t('congregation.location.state').toLowerCase()
 											})}
-											disabled={!country}
+											disabled={!$location.options.stateOptions}
 											on:change={async () => await setState(state)}
 										/>
 									</Form.Control>
@@ -283,7 +283,7 @@
 											placeholder={$t('common.selectThing', {
 												thing: $t('congregation.location.city').toLowerCase()
 											})}
-											disabled={!state}
+											disabled={!$location.options.cityOptions}
 											on:change={() => setCity(city)}
 										/>
 									</Form.Control>

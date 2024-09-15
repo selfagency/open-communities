@@ -2,14 +2,17 @@
 	/* region imports */
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
+	import { pwaAssetsHead } from 'virtual:pwa-assets/head';
 	import { pwaInfo } from 'virtual:pwa-info';
+	import { registerSW } from 'virtual:pwa-register';
 
-	import { browser } from '$app/environment';
+	import { browser, dev } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import Footer from '$lib/components/global/footer.svelte';
 	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { initState, setState, state } from '$lib/stores';
+	import { log } from '$lib/utils';
 
 	import '../app.css';
 	/* endregion imports */
@@ -23,6 +26,27 @@
 	/* region lifecycle */
 	onMount(() => {
 		if (browser && isEmpty($state)) {
+			if ('serviceWorker' in navigator && pwaInfo) {
+				const updateSw = registerSW({
+					immediate: false,
+					onRegistered(r) {
+						if (r) {
+							setInterval(() => {
+								r.update();
+							}, 60 * 1000);
+						}
+					},
+					onRegisterError(error) {
+						log.error('ServiceWorker registration error:', error);
+					},
+					async onNeedRefresh() {
+						await updateSw();
+					}
+				});
+			} else {
+				if (dev) log.warn('ServiceWorker not available');
+			}
+
 			initState();
 		}
 	});
@@ -58,6 +82,12 @@
 
 <svelte:head>
 	{@html webManifestLink}
+	{#if pwaAssetsHead.themeColor}
+		<meta name="theme-color" content={pwaAssetsHead.themeColor.content} />
+	{/if}
+	{#each pwaAssetsHead.links as link}
+		<link {...link} />
+	{/each}
 </svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">

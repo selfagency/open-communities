@@ -1,7 +1,12 @@
 <script lang="ts">
 	/* region imports */
-	import type { LocationMeta } from '$lib/location';
-	import type { CongregationMetaRecord, AccommodationsRecord } from '$lib/types';
+	import type {
+		CongregationMetaRecord,
+		AccommodationsRecord,
+		CitiesRecord as City,
+		CountriesRecord as Country,
+		StatesRecord as State
+	} from '$lib/types';
 
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
@@ -17,7 +22,7 @@
 
 	// constants
 	const accommodations = congregation.accommodations as AccommodationsRecord;
-	const location = congregation.location as LocationMeta;
+	const location = congregation.location as { city: City; state: State; country: Country };
 	/* endregion variables */
 </script>
 
