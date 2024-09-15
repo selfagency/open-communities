@@ -8,7 +8,6 @@
 
 	import { Button } from '$lib/components/ui/button';
 	import { Search } from '$lib/search';
-	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
@@ -59,6 +58,11 @@
 			}
 		});
 	});
+	/* endregion lifecycle */
+
+	/* region reactivity */
+	$: locations = unique(locations, (l) => l.city?.id as string);
+	/* endregion reactivity */
 </script>
 
 <MapLibre
@@ -69,7 +73,7 @@
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 	attributionControl={false}
 >
-	{#each unique(locations) as { city, state, country, longitude, latitude }}
+	{#each locations as { city, state, country, longitude, latitude }}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
 			<Popup offset={[0, -10]}>
 				<Button

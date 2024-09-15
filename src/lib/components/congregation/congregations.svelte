@@ -28,25 +28,35 @@
 	// constants
 	const search = new Search(congregations, dev);
 	const { state: searchState, results } = search;
-	const locations = $results
-		.filter((l) =>
-			[l.location.city.name, l.location.state.name, l.location.country.name].every(
-				(l) => !isEmpty(l)
-			)
-		)
-		.map((l) => ({
-			city: l.location.city,
-			state: l.location.state,
-			country: l.location.country,
-			latitude:
-				l.location.city?.latitude || l.location.state?.latitude || l.location.country?.latitude,
-			longitude:
-				l.location.city?.longitude || l.location.state?.longitude || l.location.country?.longitude
-		})) as LocationMeta[];
 
 	// local vars
 	let searchTerms = '';
+	let locations: LocationMeta[] = [];
 	/* endregion variables */
+
+	/* region reactivity */
+	results.subscribe((value) => {
+		if (value.length > 0) {
+			locations = value
+				.filter((l) =>
+					[l.location.city.name, l.location.state.name, l.location.country.name].every(
+						(l) => !isEmpty(l)
+					)
+				)
+				.map((l) => ({
+					city: l.location.city,
+					state: l.location.state,
+					country: l.location.country,
+					latitude:
+						l.location.city?.latitude || l.location.state?.latitude || l.location.country?.latitude,
+					longitude:
+						l.location.city?.longitude ||
+						l.location.state?.longitude ||
+						l.location.country?.longitude
+				})) as LocationMeta[];
+		}
+	});
+	/* endregion reactivity */
 </script>
 
 <section class="w-full space-y-4">
