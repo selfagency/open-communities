@@ -71,16 +71,24 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
+			const { accommodations, fit, location, registration, safety, services } =
+				formData as MetaRecord;
+
 			const record = await api.collection('congregations').create(
 				{
-					...omit(formData, ['accommodations', 'fit', 'registration', 'safety', 'services']),
+					...omit(formData, [
+						'accommodations',
+						'fit',
+						'location',
+						'registration',
+						'safety',
+						'services'
+					]),
+					...location,
 					visible: client?.admin ? formData.visible : false
 				},
 				{ fetch }
 			);
-
-			const { accommodations, fit, location, registration, safety, services } =
-				formData as MetaRecord;
 
 			await Promise.all([
 				api

@@ -90,8 +90,17 @@ export const actions = {
 				api.collection('congregations').update(
 					data.id,
 					{
-						...omit(data, ['id', 'accommodations', 'fit', 'registration', 'safety', 'services']),
-						visible: client?.admin ? data.visible : false
+						...omit(data, [
+							'id',
+							'accommodations',
+							'fit',
+							'location',
+							'registration',
+							'safety',
+							'services'
+						]),
+						visible: client?.admin ? data.visible : false,
+						...location
 					},
 					{ fetch }
 				),
