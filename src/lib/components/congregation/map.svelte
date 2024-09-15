@@ -8,7 +8,7 @@
 
 	import { Button } from '$lib/components/ui/button';
 	import { Search } from '$lib/search';
-	import { log } from '$lib/utils';
+	// import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
@@ -27,7 +27,6 @@
 	/* region lifecycle */
 	onMount(() => {
 		searchState.subscribe((value) => {
-			log.debug('searchState', value);
 			if (!isEmpty(value.searchLocation)) {
 				if (!isEmpty(value.searchLocation?.country)) {
 					center = [
