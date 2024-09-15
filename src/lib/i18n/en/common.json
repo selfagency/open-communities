@@ -8,10 +8,14 @@
 	"email": "Email",
 	"emailOrUrl": "Email or URL",
 	"errors": {
+		"401": "You are not authorized to view this page",
+		"404": "Page not found",
+		"500": "An unexpected error occurred",
 		"congregationFailed": "Failed to load congregation data",
 		"countriesFailed": "Failed to load location data",
 		"dataFailed": "Failed to load data",
 		"email": "Invalid email address",
+		"error": "Error",
 		"pageFailed": "Failed to load page data",
 		"required": "This field is required",
 		"url": "Invalid URL"
