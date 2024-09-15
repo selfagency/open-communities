@@ -32,7 +32,7 @@
 	/* endregion variables */
 </script>
 
-<Card.Root class="h-full min-h-max text-left">
+<Card.Root class="h-full min-h-max text-left transition-transform hover:scale-105">
 	<Card.Header>
 		<Card.Title class="font-display text-xl leading-6 tracking-wide">{congregation.name}</Card.Title
 		>
