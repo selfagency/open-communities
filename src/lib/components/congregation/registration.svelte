@@ -39,9 +39,9 @@
 		{#if registration?.email}
 			<a
 				href="mailto:{registration.email}"
-				class="flex flex-row items-center justify-start space-x-2 text-nowrap hover:text-slate-500"
+				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
-				<span><EmailIcon size="18" /></span>
+				<span><EmailIcon size="16" /></span>
 				<span>{$t('common.email')}</span>
 			</a>
 		{/if}
@@ -49,9 +49,9 @@
 			<a
 				href={registration.url}
 				target="_blank"
-				class="flex flex-row items-center justify-start space-x-2 text-nowrap hover:text-slate-500"
+				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
-				<span><WebIcon size="18" /></span>
+				<span><WebIcon size="16" /></span>
 				<span>{$t('common.website')}</span>
 			</a>
 		{/if}

@@ -37,14 +37,7 @@
 <Separator class="col-span-12" />
 
 <div class="col-span-3">
-	<Tooltip.Root>
-		<Tooltip.Trigger>
-			<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
-		</Tooltip.Trigger>
-		<Tooltip.Content>
-			{$t('congregation.fit.flag.flag')}
-		</Tooltip.Content>
-	</Tooltip.Root>
+	<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
 </div>
 <div class="col-span-9">
 	{#if fit.flag}

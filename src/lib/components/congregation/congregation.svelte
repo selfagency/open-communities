@@ -46,7 +46,7 @@
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger class="w-full">
+	<Dialog.Trigger class="h-full min-h-max w-full">
 		<Tile {congregation} />
 	</Dialog.Trigger>
 	<Dialog.Content class="min-w-[380px] max-w-[380px] sm:max-w-[540px]">

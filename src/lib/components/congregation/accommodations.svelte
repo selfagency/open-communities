@@ -68,27 +68,27 @@
 
 {#if mode === 'full'}
 	<div class="col-span-3">
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<h2 class="label">
-					{$state.isMobile
-						? $t('congregation.accommodations.short')
-						: $t('congregation.accommodations.accommodations')}
-				</h2>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<span class="text-nowrap">{$t('congregation.accommodations.accommodations')}</span>
-			</Tooltip.Content>
-		</Tooltip.Root>
+		{#if $state.isMobile}
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<h2 class="label">$t('congregation.accommodations.short')</h2>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<span class="text-nowrap">{$t('congregation.accommodations.accommodations')}</span>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{:else}
+			<h2 class="label">{$t('congregation.accommodations.accommodations')}</h2>
+		{/if}
 	</div>
-	<div class="col-span-9">
+	<ul class="col-span-9 space-y-2">
 		{#if ada}
-			<div class="flex flex-row items-center justify-start space-x-1">
-				<span>
+			<li class="flex flex-row items-start justify-start space-x-1">
+				<span class="flex flex-col items-start justify-start">
 					<AdaIcon size="18" />
 					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
 				</span>
-				<span>
+				<span class="flex flex-col items-start justify-start">
 					{#if accommodations.inPerson_adaSome}
 						{$t('congregation.accommodations.inPerson_adaSome')}
 					{/if}
@@ -96,16 +96,16 @@
 						{$t('congregation.accommodations.inPerson_adaAll')}
 					{/if}
 				</span>
-			</div>
+			</li>
 		{/if}
 
 		{#if cc}
-			<div class="flex flex-row items-center justify-start space-x-1">
-				<span>
+			<li class="flex flex-row items-start justify-start space-x-1">
+				<span class="flex flex-col items-start justify-start">
 					<CcIcon size="18" />
 					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
 				</span>
-				<span>
+				<span class="flex flex-col items-start justify-start">
 					{#if accommodations.hybrid_automatedCaptions}
 						{$t('congregation.accommodations.hybrid_automatedCaptions')}
 					{/if}
@@ -119,32 +119,32 @@
 						{$t('congregation.accommodations.online_liveCaptions')}
 					{/if}
 				</span>
-			</div>
+			</li>
 		{/if}
 
 		{#if eva}
-			<div class="flex flex-row items-center justify-start space-x-1">
-				<span>
+			<li class="flex flex-row items-start justify-start space-x-1">
+				<span class="flex flex-col items-start justify-start">
 					<EvaIcon size="18" />
 					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
 				</span>
-				<span>
+				<span class="flex flex-col items-start justify-start">
 					{#if accommodations.inPerson_eva}
 						{$t('congregation.accommodations.inPerson_eva')}
 					{/if}
 				</span>
-			</div>
+			</li>
 		{/if}
 
 		{#if !ada && !cc && !eva}
-			<div class="flex flex-row items-center justify-start space-x-1">
-				<span>
+			<li class="flex flex-row items-start justify-start space-x-1">
+				<span class="flex flex-col items-start justify-start">
 					<WarningIcon size="18" />
 					<span class="sr-only">{$t('common.unspecified')}</span>
 				</span>
 
-				<span>{$t('common.unspecified')}</span>
-			</div>
+				<span class="flex flex-col items-start justify-start">{$t('common.unspecified')}</span>
+			</li>
 		{/if}
-	</div>
+	</ul>
 {/if}

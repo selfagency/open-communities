@@ -38,7 +38,7 @@
 		@apply min-w-[420px] bg-slate-50 pt-4 text-foreground text-slate-700;
 	}
 	.label {
-		@apply font-display leading-6 text-slate-600;
+		@apply pointer-events-none font-display leading-6 text-slate-600;
 	}
 }
 

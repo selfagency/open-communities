@@ -85,7 +85,7 @@
 		<Map {locations} {search} />
 	</div>
 
-	<div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+	<div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3">
 		{#if $results.length === 0}
 			<div
 				class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
