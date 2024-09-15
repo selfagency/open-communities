@@ -26,7 +26,6 @@
 
 	/* region lifecycle */
 	onMount(() => {
-		log.debug(locations);
 		searchState.subscribe((value) => {
 			if (!isEmpty(value.searchLocation)) {
 				if (!isEmpty(value.searchLocation?.country)) {
