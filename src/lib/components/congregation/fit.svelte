@@ -18,7 +18,7 @@
 	<h2 class="label">{$t('congregation.fit.fit')}</h2>
 </div>
 <div class="col-span-9">
-	<ul class="space-y-2y w-full">
+	<ul class="w-full space-y-2">
 		{#if fit.publicStatement}
 			<li>{$t('congregation.fit.publicStatement')}</li>
 		{/if}
