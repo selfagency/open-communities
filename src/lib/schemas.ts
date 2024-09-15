@@ -1,5 +1,6 @@
 /* region imports */
 import { isEmpty } from 'radashi';
+import { listify } from 'radashi';
 import { z } from 'zod';
 
 import { t } from '$lib/i18n';
@@ -43,50 +44,12 @@ const password = z
 /* endregion variables */
 
 /* region methods */
-const fitCheck = (value: any) => {
-	if (
-		!isEmpty(value) &&
-		!value?.clergyMember &&
-		!value?.multipleClergyMembers &&
-		!value?.other &&
-		!value?.publicStatement
-	) {
-		return false;
-	}
-	return true;
+const valueSelected = (value: any) => {
+	return !listify(value, (_, value) => value).every((value) => !value);
 };
 
-const registrationCheck = (value: any) => {
-	return !isEmpty(value?.email) && !isEmpty(value?.url);
-};
-
-const safetyCheck = (value: any) => {
-	if (isEmpty(value?.protocol)) return false;
-
-	if (value?.protocol === 'other' && isEmpty(value?.otherText)) {
-		return false;
-	}
-
-	return true;
-};
-
-const servicesCheck = (value: any) => {
-	if (
-		!isEmpty(value) &&
-		!value?.hybrid &&
-		!value?.inPerson &&
-		!value?.offsite &&
-		!value?.onlineOnly &&
-		!value?.other
-	) {
-		return false;
-	}
-
-	if (value?.other && isEmpty(value?.otherText)) {
-		return false;
-	}
-
-	return true;
+const hasContact = (value: any) => {
+	return !(isEmpty(value?.email) && isEmpty(value?.url));
 };
 /* endregion methods */
 
@@ -115,9 +78,8 @@ const fitSchema = z
 		otherText: z.string().optional(),
 		publicStatement: z.boolean()
 	})
-	.refine(fitCheck, {
-		message: t.get('common.required'),
-		path: ['fitCheck']
+	.refine(valueSelected, {
+		message: t.get('common.required')
 	});
 
 const registrationSchema = z
@@ -130,27 +92,24 @@ const registrationSchema = z
 			.refine((value) => !!value, {
 				message: t.get('common.required')
 			}),
-		url: z.string().url().nullable().optional()
+		url: z.preprocess(
+			(val) => (val === '' ? undefined : val),
+			z.string().url().nullable().optional()
+		)
 	})
-	.refine(registrationCheck, {
-		message: t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') }),
-		path: ['registrationCheck']
+	.refine(hasContact, {
+		message: t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') })
 	});
 
-const safetySchema = z
-	.object({
-		id: z.string().optional(),
-		protocol: z
-			.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
-			.refine((value) => !!value, {
-				message: t.get('common.required')
-			}),
-		otherText: z.string().optional()
-	})
-	.refine(safetyCheck, {
-		message: t.get('common.thingRequired', { thing: t.get('common.otherText') }),
-		path: ['safetyCheck']
-	});
+const safetySchema = z.object({
+	id: z.string().optional(),
+	protocol: z
+		.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
+		.refine((value) => !!value, {
+			message: t.get('common.required')
+		}),
+	otherText: z.string().optional()
+});
 
 const servicesSchema = z
 	.object({
@@ -162,9 +121,8 @@ const servicesSchema = z
 		other: z.boolean(),
 		otherText: z.string().optional()
 	})
-	.refine(servicesCheck, {
-		message: t.get('common.thingRequired', { thing: t.get('common.otherText') }),
-		path: ['servicesCheck']
+	.refine(valueSelected, {
+		message: t.get('common.required')
 	});
 
 export const defaultSchema = z.object({
@@ -184,7 +142,10 @@ export const defaultSchema = z.object({
 			thing: t.get('congregation.contactName.contactName')
 		})
 	}),
-	contactUrl: z.string().url().nullable().optional(),
+	contactUrl: z.preprocess(
+		(val) => (val === '' ? undefined : val),
+		z.string().url().nullable().optional()
+	),
 	flavor: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
 			thing: t.get('congregation.flavor.flavor')

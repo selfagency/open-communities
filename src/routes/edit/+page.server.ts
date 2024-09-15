@@ -108,7 +108,6 @@ export const actions = {
 					.collection('accommodations')
 					.update(accommodations.id, omit(accommodations, ['id']), { fetch }),
 				api.collection('fit').update(fit.id, omit(fit, ['id']), { fetch }),
-				api.collection('locations').update(data.id, omit(location, ['id']), { fetch }),
 				api
 					.collection('registration')
 					.update(registration.id, omit(registration, ['id']), { fetch }),

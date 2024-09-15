@@ -132,6 +132,7 @@
 		validators: zod(defaultSchema),
 		async onUpdate({ form: f, result }) {
 			hasErrors = false;
+			log.debug(result);
 
 			if (!f.valid) {
 				hasErrors = true;

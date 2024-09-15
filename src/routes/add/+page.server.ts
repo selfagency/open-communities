@@ -95,7 +95,6 @@ export const actions = {
 					.collection('accommodations')
 					.create({ ...accommodations, congregation: record.id }, { fetch }),
 				api.collection('fit').create({ ...fit, congregation: record.id }, { fetch }),
-				api.collection('locations').create({ ...location, congregation: record.id }, { fetch }),
 				api
 					.collection('registration')
 					.create({ ...registration, congregation: record.id }, { fetch }),
