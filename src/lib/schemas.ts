@@ -130,13 +130,7 @@ const registrationSchema = z
 			.refine((value) => !!value, {
 				message: t.get('common.required')
 			}),
-		url: z
-			.string()
-			.url()
-			.optional()
-			.refine((value) => !!value, {
-				message: t.get('common.invalidUrl')
-			})
+		url: z.string().url().nullable().optional()
 	})
 	.refine(registrationCheck, {
 		message: t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') }),
@@ -190,13 +184,7 @@ export const defaultSchema = z.object({
 			thing: t.get('congregation.contactName.contactName')
 		})
 	}),
-	contactUrl: z
-		.string()
-		.url()
-		.optional()
-		.refine((value) => !!value, {
-			message: t.get('common.invalidUrl')
-		}),
+	contactUrl: z.string().url().nullable().optional(),
 	flavor: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
 			thing: t.get('congregation.flavor.flavor')
