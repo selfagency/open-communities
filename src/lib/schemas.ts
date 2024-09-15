@@ -94,7 +94,7 @@ const servicesCheck = (value: any) => {
 /* endregion methods */
 
 const accommodationsSchema = z.object({
-	id: z.string(),
+	id: z.string().optional(),
 	hybrid_automatedCaptions: z.boolean(),
 	hybrid_liveCaptions: z.boolean(),
 	inPerson_adaAll: z.boolean(),
@@ -110,9 +110,9 @@ const accommodationsSchema = z.object({
 
 const fitSchema = z
 	.object({
-		id: z.string(),
+		id: z.string().optional(),
 		clergyMember: z.boolean(),
-		flag: z.enum(['no', 'yes', 'yesBima']),
+		flag: z.enum(['no', 'yes', 'yesBima']).optional(),
 		multipleClergyMembers: z.boolean(),
 		other: z.boolean(),
 		otherText: z.string().optional(),
@@ -125,7 +125,7 @@ const fitSchema = z
 
 const registrationSchema = z
 	.object({
-		id: z.string(),
+		id: z.string().optional(),
 		email: z.string().optional(),
 		otherText: z.string().optional(),
 		registrationType: z
@@ -148,7 +148,7 @@ const registrationSchema = z
 
 const safetySchema = z
 	.object({
-		id: z.string(),
+		id: z.string().optional(),
 		protocol: z
 			.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
 			.refine((value) => !!value, {
@@ -163,7 +163,7 @@ const safetySchema = z
 
 const servicesSchema = z
 	.object({
-		id: z.string(),
+		id: z.string().optional(),
 		hybrid: z.boolean(),
 		inPerson: z.boolean(),
 		offsite: z.boolean(),
@@ -177,7 +177,7 @@ const servicesSchema = z
 	});
 
 export const defaultSchema = z.object({
-	id: z.string(),
+	id: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
 			thing: t.get('congregation.clergy.clergy')

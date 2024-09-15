@@ -884,7 +884,7 @@
 									<span class="mt-4 block text-xs text-red-500">{$t('common.required')}</span>
 								{/if}
 								<div class="question my-4" class:error={registrationInvalid}>
-									{$t('congregation.register.extended')}
+									{$t('congregation.registration.extended')}
 								</div>
 								<Form.Field {form} name="registration_email">
 									<Form.Control let:attrs>
