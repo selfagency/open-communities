@@ -48,7 +48,7 @@
 </div>
 <div class="col-span-9">
 	{#if fit.flag}
-		{fit.flag}
+		{$t(`fit.flag.${fit.flag}`)}
 	{:else}
 		<div class="flex flex-row items-center justify-start space-x-1">
 			<span> <WarningIcon size="18" /></span>

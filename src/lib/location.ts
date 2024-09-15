@@ -79,9 +79,9 @@ export class Location {
 			localities: { countries: this.countries },
 			options: {
 				countryOptions: this.countries?.map((c) => ({
-					label: c.name,
-					value: `${c.name} (${c.code})`,
-					id: c.id
+					label: c?.name,
+					value: `${c?.name} (${c?.code})`,
+					id: c?.id
 				}))
 			},
 			record: {}
@@ -125,7 +125,7 @@ export class Location {
 
 	async setCountry(input: string) {
 		const state = this.state.get();
-		const country = this.countries?.find((c) => c.id === input) as Country;
+		const country = this.countries?.find((c) => c?.id === input) as Country;
 
 		const api = this.api as TypedPocketBase;
 
@@ -133,11 +133,11 @@ export class Location {
 		let cities: City[] = [];
 		try {
 			states = await api?.collection('states')?.getFullList({
-				filter: `country="${country.id}"`
+				filter: `country="${country?.id}"`
 			});
 
 			cities = await api?.collection('cities')?.getFullList({
-				filter: `country="${country.id}"`
+				filter: `country="${country?.id}"`
 			});
 
 			if (states || cities)
@@ -154,14 +154,14 @@ export class Location {
 					options: {
 						countryOptions: state.options.countryOptions,
 						stateOptions: states?.map((s) => ({
-							label: s.name as string,
-							value: `${s.name} (${s.code})`,
-							id: s.id
+							label: s?.name as string,
+							value: `${s?.name} (${s.code})`,
+							id: s?.id
 						})),
 						cityOptions: cities?.map((c) => ({
 							label: c.name as string,
 							value: c.name as string,
-							id: c.id
+							id: c?.id
 						}))
 					},
 					record: {
@@ -179,7 +179,7 @@ export class Location {
 
 	async setState(input: string) {
 		const objState = this.state.get();
-		const state = objState.localities?.states?.find((s) => s.id === input) as State;
+		const state = objState.localities?.states?.find((s) => s?.id === input) as State;
 		const api = this.api as TypedPocketBase;
 
 		let cities: City[] = [];
@@ -202,9 +202,9 @@ export class Location {
 					options: {
 						...objState.options,
 						cityOptions: cities?.map((c) => ({
-							label: c.name as string,
-							value: c.name as string,
-							id: c.id
+							label: c?.name as string,
+							value: c?.name as string,
+							id: c?.id
 						}))
 					},
 					record: {
@@ -224,7 +224,7 @@ export class Location {
 		const objState = this.state.get();
 		const { cities } = objState.localities;
 
-		const city = cities?.find((c) => c.id === input) as City;
+		const city = cities?.find((c) => c?.id === input) as City;
 
 		if (city)
 			this.state.set({

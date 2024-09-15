@@ -60,6 +60,7 @@ export type AccommodationsRecord = {
 }
 
 export type CitiesRecord = {
+	country?: RecordIdString
 	latitude?: number
 	longitude?: number
 	name?: string

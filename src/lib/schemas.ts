@@ -72,7 +72,10 @@ const fitSchema = z
 	.object({
 		id: z.string().optional(),
 		clergyMember: z.boolean(),
-		flag: z.enum(['no', 'yes', 'yesBima']).optional(),
+		flag: z.preprocess(
+			(val) => (val === '' ? undefined : val),
+			z.enum(['no', 'yes', 'yesBima']).nullable().optional()
+		),
 		multipleClergyMembers: z.boolean(),
 		other: z.boolean(),
 		otherText: z.string().optional(),
@@ -159,9 +162,9 @@ export const defaultSchema = z.object({
 	notes: z.string().optional(),
 	visible: z.boolean(),
 	location: z.object({
-		city: z.string(),
-		country: z.string(),
-		state: z.string()
+		city: z.string().optional(),
+		country: z.string().optional(),
+		state: z.string().optional()
 	}),
 	accommodations: accommodationsSchema,
 	fit: fitSchema,

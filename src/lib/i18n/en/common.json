@@ -49,8 +49,10 @@
 	"thingRequired": "{{thing}} is required",
 	"title": "Open Communities",
 	"token": "Token",
-	"transfer.desc": "Transfer ownership of this congregation to another user.",
-	"transfer.transfer": "Transfer",
+	"transfer": {
+		"desc": "Transfer ownership of this congregation to another user.",
+		"transfer": "Transfer"
+	},
 	"unapproved": "Unapproved",
 	"unclaimed": "Unclaimed",
 	"unspecified": "Unspecified",

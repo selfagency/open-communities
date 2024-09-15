@@ -159,7 +159,7 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		if (!$formData.id) {
+		if (!$formData?.id) {
 			initData();
 		} else {
 			const location = loadLocation(
@@ -977,8 +977,8 @@
 				<div class="flex w-full flex-row items-center justify-between space-x-2">
 					{#if mode === 'edit'}
 						<div class="flex flex-row items-center justify-start space-x-2">
-							<Delete data={data.delete} id={$formData.id} />
-							<Transfer data={data.transfer} id={$formData.id} />
+							<Delete data={data.delete} id={$formData?.id} />
+							<Transfer data={data.transfer} id={$formData?.id} />
 						</div>
 					{/if}
 					<!-- default -->
