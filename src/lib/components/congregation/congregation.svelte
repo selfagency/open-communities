@@ -17,6 +17,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Separator } from '$lib/components/ui/separator';
 	import { t } from '$lib/i18n';
+	import { user } from '$lib/stores';
 
 	import Accommodations from './accommodations.svelte';
 	import Contact from './contact.svelte';
@@ -117,7 +118,7 @@
 				<Registration {registration} />
 			{/if}
 
-			{#if congregation.contactName || congregation.contactEmail}
+			{#if $user.admin && (congregation.contactName || congregation.contactEmail)}
 				<Separator class="col-span-12" />
 				<Contact contactName={congregation.contactName} contactEmail={congregation.contactEmail} />
 			{/if}
