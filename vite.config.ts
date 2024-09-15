@@ -25,7 +25,7 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg}']
 			},
-			strategies: 'injectManifest',
+			strategies: 'generateSW',
 			injectManifest: {
 				globIgnores: ['server/*'],
 				globPatterns: ['client/**/*.{html,js,css,ico,png,svg,woff,woff2,otf,ttf,xml,webmanifest}']
