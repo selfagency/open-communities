@@ -5,7 +5,7 @@ import Fuzzy from '@leeoniya/ufuzzy';
 import { map } from 'nanostores';
 import { isEmpty, unique, alphabetical, shake } from 'radashi';
 
-import type { LocationRecord } from '$lib/location';
+import type { LocationMeta } from '$lib/location';
 
 import { log } from '$lib/utils';
 /* endregion imports */
@@ -15,7 +15,7 @@ export type SelectOption = { label: string; value: string };
 
 type SearchState = {
 	searchTerms?: string;
-	searchLocation?: LocationRecord;
+	searchLocation?: LocationMeta;
 	showLocation?: boolean;
 	filters?: {
 		[key: string]: {
@@ -86,7 +86,7 @@ export class Search {
 			city: filterCity,
 			country: filterCountry,
 			state: filterState
-		} = stateObj.searchLocation as LocationRecord;
+		} = stateObj.searchLocation as LocationMeta;
 
 		const ids = this.data
 			.filter((record) => {
@@ -207,7 +207,7 @@ export class Search {
 		if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
 	}
 
-	setSearchLocation(searchLocation: LocationRecord) {
+	setSearchLocation(searchLocation: LocationMeta) {
 		const state = this.state.get();
 		this.state.set({ ...state, searchLocation });
 		if (this.debug) log.debug('search:location', this.state.get().searchLocation);

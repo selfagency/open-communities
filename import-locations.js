@@ -12,25 +12,31 @@ const cities = City.getAllCities();
 // 	try {
 // 		await pb.admins.authWithPassword(process.env.PB_EMAIL, process.env.PB_PASSWORD);
 
-// 		const countryIds = [];
-// 		for (const country of countries) {
-// 			await sleep(500);
-// 			const record = await pb.collection('countries').create({
-// 				name: country.name,
-// 				code: country.isoCode,
-// 				flag: country.flag,
-// 				longitude: country.longitude,
-// 				latitude: country.latitude
-// 			});
-// 			countryIds.push({ id: record.id, country: country.isoCode });
-// 		}
+// 		const countries = await pb.collection('countries').getFullList();
+// 		const exists = await pb.collection('states').getFullList();
+
+// 		// const countryIds = [];
+// 		// for (const country of countries) {
+// 		// 	await sleep(500);
+// 		// 	const record = await pb.collection('countries').create({
+// 		// 		name: country.name,
+// 		// 		code: country.isoCode,
+// 		// 		flag: country.flag,
+// 		// 		longitude: country.longitude,
+// 		// 		latitude: country.latitude
+// 		// 	});
+// 		// 	countryIds.push({ id: record.id, country: country.isoCode });
+// 		// }
 
 // 		const stateIds = [];
 // 		for (const state of states) {
-// 			await sleep(500);
+// 			const stateExists = exists.find((s) => s.code === state.isoCode);
+// 			if (stateExists) continue;
+
+// 			await sleep(100);
 // 			const record = await pb.collection('states').create({
 // 				name: state.name,
-// 				country: countryIds.find((country) => country.country === state.countryCode).id,
+// 				country: countries.find((country) => country.code === state.countryCode).id,
 // 				code: state.isoCode,
 // 				longitude: state.longitude,
 // 				latitude: state.latitude
@@ -39,7 +45,7 @@ const cities = City.getAllCities();
 // 		}
 
 // 		for (const city of cities) {
-// 			await sleep(500);
+// 			await sleep(100);
 // 			const country = countries.find((country) => country.code === city.countryCode);
 // 			const state = states.find(
 // 				(state) => state.code === city.stateCode && state.country === country.id

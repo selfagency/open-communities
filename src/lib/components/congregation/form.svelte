@@ -162,9 +162,9 @@
 			const location = loadLocation(
 				(congregation as CongregationMetaRecord).location as LocationRecord
 			);
-			city = location.city || '';
-			state = location.state || '';
-			country = location.country || '';
+			city = location.city?.id as string;
+			state = location.state?.id as string;
+			country = location.country?.id as string;
 		}
 
 		if (!$user.admin) {
@@ -175,7 +175,11 @@
 
 	/* region reactivity */
 	$: if ($location.record) {
-		$formData.location = $location.record;
+		$formData.location = {
+			country: $location.record.country?.id,
+			state: $location.record.state?.id,
+			city: $location.record.city?.id
+		};
 	}
 	/* endregion reactivity */
 
@@ -408,7 +412,10 @@
 								<!-- flag -->
 								<Form.Field {form} name="flag">
 									<Form.Control let:attrs>
-										<div class="question my-4">{$t('congregation.fit.flag.extended')}</div>
+										<div class="question my-4 flex flex-col items-start justify-start space-y-2">
+											<span>{$t('congregation.fit.flag.extended')}</span>
+											<small class="leading-1">{$t('congregation.fit.flag.note')}</small>
+										</div>
 										<RadioGroup.Root {...attrs} class="space-y-2" bind:value={$formData.fit.flag}>
 											<div class="flex items-center space-x-2">
 												<RadioGroup.Item value="no" id="no" />

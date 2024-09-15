@@ -14,9 +14,9 @@
 
 	/* region variables */
 	// props
-	export let items: { label: string; value: string }[] = [];
-	export let placeholder: string = '';
-	export let value: string = '';
+	export let items: { label: string; value: string; id: string }[] = [];
+	export let placeholder: string | undefined;
+	export let value: string | undefined;
 	export let attrs: Record<string, any> = {};
 	export let disabled: boolean = false;
 
@@ -37,7 +37,7 @@
 	/* endregion methods */
 
 	/* region reactivity */
-	$: selectedValue = items?.find((f) => f.value === value)?.label ?? placeholder;
+	$: selectedValue = items?.find((f) => f.id === value)?.label ?? placeholder;
 	/* endregion reactivity */
 </script>
 
@@ -65,8 +65,8 @@
 							<Command.Item
 								value={item.value}
 								onSelect={(currentValue) => {
-									value = currentValue;
-									dispatch('change', { value: currentValue });
+									value = items.find((i) => i.value === currentValue)?.id;
+									dispatch('change', { value: items.find((i) => i.value === currentValue)?.id });
 									closeAndFocusTrigger(ids.trigger);
 								}}
 							>
