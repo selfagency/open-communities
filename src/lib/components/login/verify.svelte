@@ -8,6 +8,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { waitForTheElement } from 'wait-for-the-element';
 
+	import { dev } from '$app/environment';
 	import { t } from '$lib/i18n';
 	import { tokenSchema } from '$lib/schemas';
 	import { log } from '$lib/utils';
@@ -64,5 +65,11 @@
 			<input type="hidden" name="token" bind:value={$formData.token} />
 			<input type="hidden" name="type" bind:value={$formData.type} />
 		</form>
+	{/if}
+
+	{#if dev}
+		{#await import('sveltekit-superforms') then { default: SuperDebug }}
+			<div class="mt-4"><SuperDebug data={$formData} /></div>
+		{/await}
 	{/if}
 </span>

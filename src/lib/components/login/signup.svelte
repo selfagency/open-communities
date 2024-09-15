@@ -7,6 +7,7 @@
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
+	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -122,6 +123,12 @@
 
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
+
+			{#if dev}
+				{#await import('sveltekit-superforms') then { default: SuperDebug }}
+					<div class="mt-4"><SuperDebug data={$formData} /></div>
+				{/await}
+			{/if}
 		{/if}
 	</Card.Content>
 	<!-- <Card.Footer></Card.Footer> -->

@@ -277,7 +277,7 @@ export const tokenSchema = z
 		}),
 		email: z.string().email().optional(),
 		password: z.string().optional(),
-		passwordConfirm: z.string()
+		passwordConfirm: z.string().optional()
 	})
 	.superRefine((data, ctx) => {
 		if (data.passwordConfirm !== data.password) {

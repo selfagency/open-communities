@@ -8,6 +8,7 @@
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { waitForTheElement } from 'wait-for-the-element';
 
+	import { dev } from '$app/environment';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
@@ -20,7 +21,7 @@
 	export let data: SuperValidated<any>;
 	export let token: string | null;
 	export let reset: boolean = false;
-	export let resetting: boolean = false;
+	export let sent: boolean = false;
 	/* endregion variables */
 
 	/* region form */
@@ -35,8 +36,10 @@
 					toast.error(result.data.form.errors.error);
 				}
 			} else if (result.type === 'success') {
-				reset = true;
-				resetting = false;
+				if ($formData.type === 'resetPassword') {
+					reset = true;
+				}
+				if ($formData.type === 'requestReset') sent = true;
 			}
 		},
 		onError({ result }) {
@@ -50,8 +53,8 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		$formData.token = token;
-		$formData.type = 'resetPassword';
+		$formData.token = token ? token : 'invalid';
+		$formData.type = token ? 'resetPassword' : 'requestReset';
 		await waitForTheElement('#reset', { timeout: 1000 });
 		const formEl = document.getElementById('reset') as HTMLFormElement;
 		form.submit(formEl);
@@ -60,15 +63,15 @@
 </script>
 
 <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-	{#if $formData.token && $formData.type}
-		<form id="verify" method="POST" action="?/acct" use:enhance>
-			<input type="hidden" name="token" bind:value={$formData.token} />
-			<input type="hidden" name="type" bind:value={$formData.type} />
+	<form id="verify" method="POST" action="?/acct" use:enhance>
+		<input type="hidden" name="token" bind:value={$formData.token} />
+		<input type="hidden" name="type" bind:value={$formData.type} />
 
+		{#if $formData.type === 'resetPassword'}
 			<Form.Field {form} name="password">
 				<Form.Control let:attrs>
 					<Form.Label>{$t('auth.password')}</Form.Label>
-					<Input {...attrs} bind:value={$formData.password} />
+					<Input {...attrs} bind:value={$formData.password} required />
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
@@ -76,12 +79,30 @@
 			<Form.Field {form} name="passwordConfirm">
 				<Form.Control let:attrs>
 					<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
-					<Input {...attrs} bind:value={$formData.passwordConfirm} type="password" />
+					<Input {...attrs} bind:value={$formData.passwordConfirm} type="password" required />
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
 			<Form.Button>{$t('auth.resetPassword')}</Form.Button>
-		</form>
+		{:else}
+			<p class="mb-4">{$t('auth.resetNotice')}</p>
+
+			<Form.Field {form} name="email">
+				<Form.Control let:attrs>
+					<Form.Label>{$t('common.email')}</Form.Label>
+					<Input {...attrs} bind:value={$formData.email} required />
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+
+			<Form.Button>{$t('auth.sendResetEmail')}</Form.Button>
+		{/if}
+	</form>
+
+	{#if dev}
+		{#await import('sveltekit-superforms') then { default: SuperDebug }}
+			<div class="mt-4"><SuperDebug data={$formData} /></div>
+		{/await}
 	{/if}
 </span>

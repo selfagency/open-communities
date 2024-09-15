@@ -6,9 +6,11 @@
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
+	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Reset from '$lib/components/login/reset.svelte';
+	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
@@ -26,7 +28,16 @@
 	// local vars
 	let resetting: boolean = false;
 	let resetSuccess: boolean = false;
+	let sentSuccess: boolean = false;
 	/* endregion variables */
+
+	/* region methods */
+	const resetter = () => {
+		resetting = false;
+		resetSuccess = false;
+		sentSuccess = false;
+	};
+	/* endregion methods */
 
 	/* region lifecycle */
 	onMount(() => {
@@ -70,25 +81,33 @@
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
-		{#if resetting && !resetSuccess}
-			<Reset
-				data={reset}
-				token={$page.url.searchParams.get('resetPassword')}
-				bind:reset={resetSuccess}
-				bind:resetting
-			/>
-		{:else if resetSuccess}
-			<div class="flex flex-col items-center justify-center space-y-4">
-				<span>{$t('auth.passwordSuccess')}</span>
-				<span
-					role="button"
-					tabindex="0"
-					on:click={() => (resetSuccess = false)}
-					on:keypress={() => (resetSuccess = false)}
-				>
-					{$t('auth.continueToLogin')} →
-				</span>
-			</div>
+		{#if resetting}
+			{#if !sentSuccess && !resetSuccess}
+				<Reset
+					data={reset}
+					token={$page.url.searchParams.get('resetPassword')}
+					bind:reset={resetSuccess}
+					bind:sent={sentSuccess}
+				/>
+			{/if}
+			{#if sentSuccess && !resetSuccess}
+				<div class="flex flex-col items-center justify-center space-y-4">
+					<span>{$t('auth.emailSent')}</span>
+				</div>
+			{/if}
+			{#if resetSuccess}
+				<div class="flex flex-col items-center justify-center space-y-4">
+					<span>{$t('auth.passwordSuccess')}</span>
+					<span
+						role="button"
+						tabindex="0"
+						on:click={() => resetter()}
+						on:keypress={() => resetter()}
+					>
+						{$t('auth.continueToLogin')} →
+					</span>
+				</div>
+			{/if}
 		{:else}
 			<form method="POST" action="?/login" use:enhance class="space-y-2">
 				<Form.Field {form} name="email">
@@ -108,7 +127,16 @@
 				</Form.Field>
 
 				<Form.Button>{$t('auth.login')}</Form.Button>
+				<Button variant="link" on:click={() => (resetting = true)}
+					>{$t('auth.forgotPassword')}</Button
+				>
 			</form>
+
+			{#if dev}
+				{#await import('sveltekit-superforms') then { default: SuperDebug }}
+					<div class="mt-4"><SuperDebug data={$formData} /></div>
+				{/await}
+			{/if}
 		{/if}
 	</Card.Content>
 	<!-- <Card.Footer></Card.Footer> -->
