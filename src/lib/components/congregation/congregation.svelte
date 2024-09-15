@@ -67,10 +67,14 @@
 				{/if}
 			</Dialog.Title>
 			<Dialog.Description>
-				{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
-				{#if state.name}<span>{state.name}</span
-					>{#if country.name && country.name !== 'United States'},{/if}{/if}
-				{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
+				{#if city.name || state.name || country.name}
+					{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
+					{#if state.name}<span>{state.name}</span
+						>{#if country.name && country.name !== 'United States'},{/if}{/if}
+					{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
+				{:else if services.onlineOnly}
+					{$t('congregation.services.onlineOnly')}
+				{/if}
 			</Dialog.Description>
 		</Dialog.Header>
 

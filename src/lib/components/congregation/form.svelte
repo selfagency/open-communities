@@ -183,6 +183,11 @@
 			city: $location.record.city?.id
 		};
 	}
+
+	$: if ($formData.services.onlineOnly) {
+		$formData.safety.protocol = 'other';
+		$formData.safety.otherText = 'N/A';
+	}
 	/* endregion reactivity */
 
 	/* region exports */

@@ -34,31 +34,35 @@
 	</div>
 
 	<ul class="col-span-9 space-y-2">
-		{#if safety?.protocol === 'maskingRecommended'}
-			<li class="flex flex-row items-center justify-start space-x-1">
-				<span><MaskIcon class="w-18 h-3" /></span>
-				<span>{$t('congregation.safety.maskingRecommended')}</span>
-			</li>
-		{/if}
+		{#if safety?.protocol === 'other' && safety?.otherText === 'N/A'}
+			{$t('congregation.safety.notApplicable')}
+		{:else}
+			{#if safety?.protocol === 'maskingRecommended'}
+				<li class="flex flex-row items-center justify-start space-x-1">
+					<span><MaskIcon class="w-18 h-3" /></span>
+					<span>{$t('congregation.safety.maskingRecommended')}</span>
+				</li>
+			{/if}
 
-		{#if safety?.protocol === 'maskingRequired'}
-			<li class="flex flex-row items-center justify-start space-x-1">
-				<span><MaskIcon class="w-18 h-3" /></span>
-				<span>{$t('congregation.safety.maskingRequired')}</span>
-			</li>
-		{/if}
+			{#if safety?.protocol === 'maskingRequired'}
+				<li class="flex flex-row items-center justify-start space-x-1">
+					<span><MaskIcon class="w-18 h-3" /></span>
+					<span>{$t('congregation.safety.maskingRequired')}</span>
+				</li>
+			{/if}
 
-		{#if safety?.protocol === 'noGuidelines'}
-			<li class="flex flex-row items-center justify-start space-x-1">
-				<span><WarningIcon size="18" /></span>
-				<span>{$t('congregation.safety.noGuidelines')}</span>
-			</li>
-		{/if}
+			{#if safety?.protocol === 'noGuidelines'}
+				<li class="flex flex-row items-center justify-start space-x-1">
+					<span><WarningIcon size="18" /></span>
+					<span>{$t('congregation.safety.noGuidelines')}</span>
+				</li>
+			{/if}
 
-		{#if safety?.protocol === 'other'}
-			<li class="flex flex-row items-center justify-start space-x-1">
-				<span>{safety.otherText}</span>
-			</li>
+			{#if safety?.protocol === 'other'}
+				<li class="flex flex-row items-center justify-start space-x-1">
+					<span>{safety.otherText}</span>
+				</li>
+			{/if}
 		{/if}
 	</ul>
 {/if}
