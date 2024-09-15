@@ -10,7 +10,7 @@ export async function load({ locals, cookies }) {
 
 	try {
 		const [content, congregations, countries] = await Promise.all([
-			api.collection('pages').getFirstListItem(`slug="home-${locale}"`),
+			api.collection('pages').getFirstListItem(`slug="home-${locale}"`, { fetch }),
 
 			api.collection('congregationMeta').getFullList({
 				fetch,
