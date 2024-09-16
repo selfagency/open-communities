@@ -135,6 +135,25 @@ export class Search {
 		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
+	adminFilter() {
+		const state = this.state.get();
+		const filters = shake(state.filters?.admin, (f) => !f);
+		if (isEmpty(filters)) return;
+
+		let ids: string[] = [];
+
+		if (filters['unapproved']) {
+			ids = this.data.filter((record) => !record.visible).map((i) => i.id);
+		}
+
+		if (filters['unclaimed']) {
+			ids = this.data.filter((record) => !record.owner).map((i) => i.id);
+		}
+
+		if (this.debug) log.debug('search:filters:admin', filters, ids);
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
+	}
+
 	stringFilter(filter: string, targetKey: string) {
 		const state = this.state.get();
 		const filters = shake(state.filters?.[filter], (f) => !f);
@@ -165,11 +184,12 @@ export class Search {
 		const hasAccommodations = hasFilter(state.filters?.accommodations, 'accommodations');
 		const hasSafety = hasFilter(state.filters?.safety, 'safety');
 		const hasRegistration = hasFilter(state.filters?.registration, 'registration');
+		const hasAdmin = hasFilter(state.filters?.admin, 'admin');
 
 		if (
 			!state.filters ||
 			isEmpty(state.filters) ||
-			(!hasServices && !hasAccommodations && !hasSafety && !hasRegistration)
+			(!hasServices && !hasAccommodations && !hasSafety && !hasRegistration && !hasAdmin)
 		) {
 			return;
 		}
@@ -188,6 +208,10 @@ export class Search {
 
 		if (hasRegistration) {
 			this.stringFilter('registration', 'registrationType');
+		}
+
+		if (hasAdmin) {
+			this.adminFilter();
 		}
 	}
 

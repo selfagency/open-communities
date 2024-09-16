@@ -41,7 +41,7 @@
 				<Login data={data.form.login} reset={data.form.reset} />
 			</Tabs.Content>
 			<Tabs.Content value="signup">
-				<SignUp data={data.form.signup} verify={data.form.verify} active={tab === 'signup'} />
+				<SignUp data={data.form.signup} verify={data.form.verify} />
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>

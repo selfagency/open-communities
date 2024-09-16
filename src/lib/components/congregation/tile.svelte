@@ -11,6 +11,7 @@
 	} from '$lib/types';
 
 	import { goto } from '$app/navigation';
+	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { t } from '$lib/i18n';
@@ -65,11 +66,15 @@
 					>
 				{/if}
 				<div class="flex w-auto flex-row items-center justify-end space-x-1">
-					{#if safety}
-						<Safety {safety} mode="mini" />
-					{/if}
-					{#if accommodations}
-						<Accommodations {accommodations} mode="mini" />
+					{#if !congregation.visible}
+						<Badge variant="outline">{$t('common.pending')}</Badge>
+					{:else}
+						{#if safety}
+							<Safety {safety} mode="mini" />
+						{/if}
+						{#if accommodations}
+							<Accommodations {accommodations} mode="mini" />
+						{/if}
 					{/if}
 				</div>
 			</div>
