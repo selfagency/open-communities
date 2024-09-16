@@ -63,7 +63,9 @@
 						<span><LinkIcon size="14" color="gray" class="ml-1 inline" /></span>
 					</a>
 				{:else}
-					{congregation.name}
+					<h1 class="inline font-display text-2xl leading-6">
+						{congregation.name}
+					</h1>
 				{/if}
 			</Dialog.Title>
 			<Dialog.Description>
