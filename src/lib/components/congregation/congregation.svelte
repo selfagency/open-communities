@@ -51,7 +51,7 @@
 		<Tile {congregation} />
 	</Dialog.Trigger>
 	<Dialog.Content
-		class="max-h-[95vh] min-w-[380px] max-w-[380px] overflow-y-scroll sm:max-w-[540px]"
+		class="max-h-[90vh] min-w-[380px] max-w-[380px] overflow-y-scroll sm:max-w-[540px]"
 	>
 		<Dialog.Header>
 			<Dialog.Title>
