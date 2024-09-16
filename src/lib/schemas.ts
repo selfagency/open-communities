@@ -135,8 +135,11 @@ export const defaultSchema = z.object({
 			thing: t.get('congregation.clergy.clergy')
 		})
 	}),
-	contactEmail: z.string().email().optional(),
-	contactName: z.string().optional(),
+	contactEmail: z.preprocess(
+		(val) => (val === '' ? undefined : val),
+		z.string().email().optional()
+	),
+	contactName: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
 	contactUrl: z.preprocess(
 		(val) => (val === '' ? undefined : val),
 		z.string().url().nullable().optional()
