@@ -201,7 +201,8 @@ export const userSchema = z
 		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
 		password,
 		oldPassword: z.string().optional(),
-		passwordConfirm: z.string()
+		passwordConfirm: z.string(),
+		captcha: z.string().optional()
 	})
 	.superRefine((data, ctx) => {
 		if (data.passwordConfirm !== data.password) {

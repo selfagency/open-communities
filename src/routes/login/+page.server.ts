@@ -10,6 +10,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { UsersRecord } from '$lib/types';
 
 import { dev } from '$app/environment';
+import { TURNSTILE_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, userSchema, tokenSchema } from '$lib/schemas';
 /* endregion imports */
@@ -88,6 +89,28 @@ export const actions = {
 				return fail(400, {
 					form
 				});
+			}
+
+			if (!dev) {
+				const captcha = (
+					await (
+						await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+							body: JSON.stringify({
+								secret: TURNSTILE_SECRET,
+								response: form.data.captcha,
+								remoteip: event.request.headers.get('CF-Connecting-IP')
+							}),
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						})
+					).json()
+				).outcome;
+
+				if (captcha !== 'success') {
+					throw new Error('Captcha failed');
+				}
 			}
 
 			user = (await api.collection('users').create(

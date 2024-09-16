@@ -121,6 +121,12 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
+				<div
+					class="cf-turnstile"
+					data-sitekey="0x4AAAAAAAkDZ8fQw76peFu5"
+					data-callback={(token) => ($formData.captcha = token)}
+				></div>
+
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
 
