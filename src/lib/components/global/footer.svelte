@@ -9,7 +9,8 @@
 	<div
 		class="flex w-full flex-col items-center justify-center space-y-2 p-4 text-sm text-slate-700 sm:flex-row sm:space-x-2 sm:space-y-0 sm:text-base"
 	>
-		<span class="pointer-events-none flex w-1/3 flex-row items-center justify-end"
+		<span
+			class="pointer-events-none flex flex-row items-center justify-center sm:w-1/3 sm:justify-end"
 			>{$t('common.home.project')}</span
 		>
 		<span class="flex flex-row items-center justify-center">
@@ -17,7 +18,8 @@
 				<RabbisLogo class="w-24 fill-slate-700 hover:fill-slate-900 sm:w-36" />
 			</a>
 		</span>
-		<span class="pointer-events-none flex w-1/3 flex-row items-center justify-start font-bold"
+		<span
+			class="pointer-events-none flex flex-row items-center justify-center font-bold sm:w-1/3 sm:justify-start"
 			>{$t('common.home.ceasefire')}
 		</span>
 	</div>
