@@ -32,7 +32,7 @@
 
 <div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
 	<div class="w-full max-w-96">
-		<Tabs.Root value={tab}>
+		<Tabs.Root bind:value={tab}>
 			<Tabs.List class="w-full">
 				<Tabs.Trigger value="login" class="w-1/2">{$t('auth.login')}</Tabs.Trigger>
 				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>

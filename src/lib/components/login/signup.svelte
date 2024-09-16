@@ -7,7 +7,7 @@
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
-	import { dev, browser } from '$app/environment';
+	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -28,6 +28,7 @@
 	let success: boolean = false;
 	let verified: boolean = false;
 	let verifying: boolean = false;
+	let captchaLoaded: boolean = false;
 	/* endregion variables */
 
 	/* region form */
@@ -63,20 +64,19 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if (active) {
-		if (browser) {
-			try {
-				window['turnstile'].ready(function () {
-					window['turnstile'].render(document.querySelector('.cf-turnstile'), {
-						callback: function (token) {
-							$formData.captcha = token;
-						},
-						sitekey: '0x4AAAAAAAkDZ8fQw76peFu5'
-					});
+	$: if (active && !captchaLoaded) {
+		try {
+			window['turnstile'].ready(function () {
+				window['turnstile'].render(document.querySelector('.cf-turnstile'), {
+					callback: function (token) {
+						$formData.captcha = token;
+					},
+					sitekey: '0x4AAAAAAAkDZ8fQw76peFu5'
 				});
-			} catch (error) {
-				log.error(error);
-			}
+			});
+			captchaLoaded = true;
+		} catch (error) {
+			log.error(error);
 		}
 	}
 </script>
