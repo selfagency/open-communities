@@ -6,8 +6,9 @@
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
+	import { waitForTheElement } from 'wait-for-the-element';
 
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -54,9 +55,27 @@
 	/* endregion form */
 
 	/* region lifecycle */
-	onMount(() => {
+	onMount(async () => {
 		if ($page.url.searchParams.has('verifyEmail')) {
 			verifying = true;
+		}
+
+		if (browser && !dev) {
+			const sitekey = '0x4AAAAAAAkDZ8fQw76peFu5';
+			log.debug(typeof sitekey, sitekey);
+			await waitForTheElement('.cf-turnstile');
+			try {
+				window['turnstile'].ready(function () {
+					window['turnstile'].render(document.querySelector('.cf-turnstile'), {
+						callback: function (token) {
+							$formData.captcha = token;
+						},
+						sitekey
+					});
+				});
+			} catch (error) {
+				log.error(error);
+			}
 		}
 	});
 	/* endregion lifecycle */
@@ -121,11 +140,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<div
-					class="cf-turnstile"
-					data-sitekey="0x4AAAAAAAkDZ8fQw76peFu5"
-					data-callback={(token) => ($formData.captcha = token)}
-				></div>
+				<div class="cf-turnstile"></div>
 
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
@@ -138,4 +153,5 @@
 		{/if}
 	</Card.Content>
 	<!-- <Card.Footer></Card.Footer> -->
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 </Card.Root>
