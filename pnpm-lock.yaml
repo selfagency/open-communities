@@ -50,12 +50,6 @@ importers:
       '@vite-pwa/sveltekit':
         specifier: ^0.6.5
         version: 0.6.5(@sveltejs/kit@2.5.26(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0)))(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0)))(vite-plugin-pwa@0.20.5(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0))(workbox-build@7.1.1)(workbox-window@7.1.0))
-      altcha:
-        specifier: ^1.0.0
-        version: 1.0.0
-      altcha-lib:
-        specifier: ^1.1.0
-        version: 1.1.0
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.45)
@@ -197,9 +191,6 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
-
-  '@altcha/crypto@0.0.1':
-    resolution: {integrity: sha512-qZMdnoD3lAyvfSUMNtC2adRi666Pxdcw9zqfMU5qBOaJWqpN9K+eqQGWqeiKDMqL0SF+EytNG4kR/Pr/99GJ6g==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -1199,11 +1190,6 @@ packages:
     cpu: [s390x]
     os: [linux]
 
-  '@rollup/rollup-linux-x64-gnu@4.18.0':
-    resolution: {integrity: sha512-xuglR2rBVHA5UsI8h8UbX4VJ470PtGCf5Vpswh7p2ukaqBGFTnsfzxUBetoWBWymHMxbIG0Cmx7Y9qDZzr648w==}
-    cpu: [x64]
-    os: [linux]
-
   '@rollup/rollup-linux-x64-gnu@4.21.2':
     resolution: {integrity: sha512-B90tYAUoLhU22olrafY3JQCFLnT3NglazdwkHyxNDYF/zAxJt5fJUB/yBoWFoIQ7SQj+KLe3iL4BhOMa9fzgpw==}
     cpu: [x64]
@@ -1455,12 +1441,6 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
-
-  altcha-lib@1.1.0:
-    resolution: {integrity: sha512-H1ML0YOoZb+H6lfU2GX5IOtcphpzlW/Nrrf537OcQOnRJcXu+wsTo6hs7cTjPFDEySlR3LTdVyTNHaq3fA5Gdg==}
-
-  altcha@1.0.0:
-    resolution: {integrity: sha512-USavcU/e/2pJtLXyWRYDZV63+OvTKGSntQlqQbF5feeChaTj8Hc1TtH8CbQi4OwX3ffeQiHuW+LCzwCgn+JvZg==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -3786,8 +3766,6 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@altcha/crypto@0.0.1': {}
-
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
@@ -4922,9 +4900,6 @@ snapshots:
   '@rollup/rollup-linux-s390x-gnu@4.21.2':
     optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.18.0':
-    optional: true
-
   '@rollup/rollup-linux-x64-gnu@4.21.2':
     optional: true
 
@@ -5235,14 +5210,6 @@ snapshots:
       fast-uri: 3.0.1
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
-
-  altcha-lib@1.1.0: {}
-
-  altcha@1.0.0:
-    dependencies:
-      '@altcha/crypto': 0.0.1
-    optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu': 4.18.0
 
   ansi-regex@5.0.1: {}
 
