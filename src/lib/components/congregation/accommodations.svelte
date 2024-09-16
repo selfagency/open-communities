@@ -36,7 +36,7 @@
 		{#if ada}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<AdaIcon size="20" />
+					<AdaIcon size="18" />
 					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -47,7 +47,7 @@
 		{#if cc}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<CcIcon size="20" />
+					<CcIcon size="18" />
 					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -58,7 +58,7 @@
 		{#if eva}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<EvaIcon size="20" />
+					<EvaIcon size="18" />
 					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -69,7 +69,7 @@
 		{#if asl}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<AslIcon class="h-5 w-5" />
+					<AslIcon class="h-4 w-4" />
 					<span class="sr-only">{$t('congregation.accommodations.asl')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -131,6 +131,23 @@
 					{/if}
 					{#if accommodations.online_liveCaptions}
 						{$t('congregation.accommodations.online_liveCaptions')}
+					{/if}
+				</span>
+			</li>
+		{/if}
+
+		{#if asl}
+			<li class="flex flex-row items-start justify-start space-x-1">
+				<span class="flex flex-col items-start justify-start">
+					<AslIcon class="h-4 w-4" />
+					<span class="sr-only">{$t('congregation.accommodations.asl')}</span>
+				</span>
+				<span class="flex flex-col items-start justify-start">
+					{#if accommodations.inPerson_asl}
+						{$t('congregation.accommodations.inPerson_asl')}
+					{/if}
+					{#if accommodations.online_asl}
+						{$t('congregation.accommodations.online_asl')}
 					{/if}
 				</span>
 			</li>
