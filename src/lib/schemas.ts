@@ -91,7 +91,7 @@ const registrationSchema = z
 		email: z.string().optional(),
 		otherText: z.string().optional(),
 		registrationType: z
-			.enum(['slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
+			.enum(['free', 'slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
 			.refine((value) => !!value, {
 				message: t.get('common.required')
 			}),

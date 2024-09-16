@@ -86,6 +86,7 @@
 	"registration": {
 		"extended": "What kind of registration do you offer to guests?",
 		"fixedPrice": "Fixed ticket price (per service or for all)",
+		"free": "Free",
 		"register": "Register",
 		"registration": "Registration",
 		"slidingScale": "Sliding scale",

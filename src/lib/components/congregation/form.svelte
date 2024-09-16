@@ -900,6 +900,10 @@
 												required
 											>
 												<div class="flex items-center space-x-2">
+													<RadioGroup.Item value="free" id="free" />
+													<Form.Label for="free">{$t('congregation.registration.free')}</Form.Label>
+												</div>
+												<div class="flex items-center space-x-2">
 													<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
 													<Form.Label for="fixedPrice"
 														>{$t('congregation.registration.fixedPrice')}</Form.Label

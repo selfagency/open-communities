@@ -23,6 +23,8 @@
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
 				<span>{$t('congregation.registration.fixedPrice')}</span>
+			{:else if registration.registrationType === 'free'}
+				<span>{$t('congregation.registration.free')}</span>
 			{:else if registration.registrationType === 'slidingScale'}
 				<span>{$t('congregation.registration.slidingScale')}</span>
 			{:else if registration.registrationType === 'suggestedDonation'}

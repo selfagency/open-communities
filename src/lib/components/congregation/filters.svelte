@@ -65,6 +65,7 @@
 				other: false
 			},
 			registration: {
+				free: false,
 				fixedPrice: false,
 				slidingScale: false,
 				suggestedDonation: false,
