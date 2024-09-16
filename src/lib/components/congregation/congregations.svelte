@@ -14,6 +14,7 @@
 	import Location from '$lib/components/congregation/location.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import * as Pagination from '$lib/components/ui/pagination';
 	import { t } from '$lib/i18n';
 	import { Search } from '$lib/search';
 
@@ -22,9 +23,13 @@
 	import Map from './map.svelte';
 	/* endregion imports */
 
+	/* region types */
+	type Congregation = CongregationMetaRecord & { id: string };
+	/* endregion types */
+
 	/* region variables */
 	// props
-	export let congregations: (CongregationMetaRecord & { id: string })[] = [];
+	export let congregations: Congregation[] = [];
 
 	// constants
 	const search = new Search(congregations, dev);
@@ -33,7 +38,24 @@
 	// local vars
 	let searchTerms = '';
 	let locations: LocationMeta[] = [];
+	let currentPage = 1;
+	let perPage = 12;
+	let pages: Congregation[][] = [];
 	/* endregion variables */
+
+	/* region methods */
+	function paginate(items: Congregation[]) {
+		const result: Congregation[][] = [];
+		for (let i = 0; i < items.length; i += perPage) {
+			result.push(items.slice(i, i + perPage));
+		}
+		return result;
+	}
+
+	function onPageChange(pageNo: number) {
+		currentPage = pageNo;
+	}
+	/*endregion methods */
 
 	/* region reactivity */
 	results.subscribe((value) => {
@@ -55,6 +77,9 @@
 						l.location.state?.longitude ||
 						l.location.country?.longitude
 				})) as LocationMeta[];
+
+			currentPage = 1;
+			pages = paginate(value as Congregation[]);
 		}
 	});
 	/* endregion reactivity */
@@ -124,7 +149,7 @@
 				<span>{$t('congregation.nothingFound')}</span>
 			</div>
 		{:else}
-			{#each $results as congregation}
+			{#each pages[currentPage - 1] as congregation}
 				{#key congregation.id}
 					<div class="col-span-1">
 						<Congregation {congregation} />
@@ -132,5 +157,31 @@
 				{/key}
 			{/each}
 		{/if}
+	</div>
+
+	<div class="flex w-full flex-row items-center justify-center pt-4">
+		<Pagination.Root count={$results.length} {perPage} let:pages let:currentPage {onPageChange}>
+			<Pagination.Content>
+				<Pagination.Item>
+					<Pagination.PrevButton />
+				</Pagination.Item>
+				{#each pages as page (page.key)}
+					{#if page.type === 'ellipsis'}
+						<Pagination.Item>
+							<Pagination.Ellipsis />
+						</Pagination.Item>
+					{:else}
+						<Pagination.Item>
+							<Pagination.Link {page} isActive={currentPage == page.value}>
+								{page.value}
+							</Pagination.Link>
+						</Pagination.Item>
+					{/if}
+				{/each}
+				<Pagination.Item>
+					<Pagination.NextButton />
+				</Pagination.Item>
+			</Pagination.Content>
+		</Pagination.Root>
 	</div>
 </section>
