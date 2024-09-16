@@ -160,10 +160,14 @@
 				if (result.data.form.errors.error) {
 					toast.error(result.data.form.errors.error);
 				} else {
-					toast.error($t('congregation.addFailure'));
+					toast.error(
+						mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
+					);
 				}
 			} else if (result.type === 'success') {
-				toast.success($t('congregation.addSuccess'));
+				toast.success(
+					mode === 'edit' ? $t('congregation.editSuccess') : $t('congregation.addSuccess')
+				);
 				if ($user.admin) {
 					await goto('/', { invalidateAll: true });
 				} else {
