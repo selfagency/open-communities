@@ -391,16 +391,16 @@
 					<Collapsible.Content>
 						<div class="filter-box">
 							<span class="filter-item">
-								<span class="filter-item">
-									<Checkbox
-										id="registration_free"
-										class="scale-75"
-										bind:checked={filters.registration.free}
-									/>
-									<Label for="registration_free">
-										<div class="filter-label">{$t('congregation.registration.free')}</div>
-									</Label>
-								</span>
+								<Checkbox
+									id="registration_free"
+									class="scale-75"
+									bind:checked={filters.registration.free}
+								/>
+								<Label for="registration_free">
+									<div class="filter-label">{$t('congregation.registration.free')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
 								<Checkbox
 									id="registration_fixedPrice"
 									class="scale-75"
