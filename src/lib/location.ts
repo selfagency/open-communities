@@ -95,27 +95,18 @@ export class Location {
 		this.load = this.load.bind(this);
 	}
 
-	load(record: LocationRecord) {
-		let objState = this.state.get();
+	async load(record: LocationRecord) {
+		if (record.country) {
+			await this.setCountry(record.country);
 
-		const country = this.countries?.find((c) => c.name === record.country);
-		this.setCountry(`(${country?.code})`);
+			if (record.state) {
+				await this.setState(record.state);
 
-		objState = this.state.get();
-		const state = objState.localities.states?.find((s) => s.name === record.state);
-		this.setState(`(${state?.code})`);
-
-		objState = this.state.get();
-		const city = objState.localities.cities?.find((c) => c.name === record.city);
-		this.setCity(city?.name as string);
-
-		return {
-			city,
-			country,
-			state,
-			latitude: city?.latitude || state?.latitude || country?.latitude,
-			longitude: city?.longitude || state?.longitude || country?.longitude
-		};
+				if (record.city) {
+					this.setCity(record.city);
+				}
+			}
+		}
 	}
 
 	reset() {
@@ -126,7 +117,6 @@ export class Location {
 	async setCountry(input: string) {
 		const state = this.state.get();
 		const country = this.countries?.find((c) => c?.id === input) as Country;
-
 		const api = this.api as TypedPocketBase;
 
 		let states: State[] = [];

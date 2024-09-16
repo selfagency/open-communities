@@ -7,7 +7,7 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
-	import type { LocationRecord } from '$lib/location';
+	import type { LocationRecord, LocationMeta } from '$lib/location';
 	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
 
 	import { browser, dev } from '$app/environment';
@@ -47,10 +47,13 @@
 	let country: string = '';
 	let state: string = '';
 	let city: string = '';
+
 	let hasErrors: boolean = false;
 	let addSuccess: boolean = false;
 	let editSuccess: boolean = false;
+
 	let title: string = '';
+
 	let view:
 		| 'congregation'
 		| 'fit'
@@ -186,12 +189,17 @@
 		if (!$formData?.id) {
 			initData();
 		} else {
-			const location = loadLocation(
-				(congregation as CongregationMetaRecord).location as LocationRecord
-			);
+			const location = (congregation as CongregationMetaRecord).location as LocationMeta;
+
 			city = location.city?.id as string;
 			state = location.state?.id as string;
 			country = location.country?.id as string;
+
+			await loadLocation({
+				city,
+				state,
+				country
+			} as LocationRecord);
 		}
 
 		if (!$user.admin) {
