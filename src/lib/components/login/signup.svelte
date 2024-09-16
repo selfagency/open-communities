@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { onDestroy } from 'svelte';
+	// import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
@@ -22,13 +22,13 @@
 	// props
 	export let data: SuperValidated<any>;
 	export let verify: SuperValidated<any>;
-	export let active: boolean = false;
+	// export let active: boolean = false;
 
 	// local vars
 	let success: boolean = false;
 	let verified: boolean = false;
 	let verifying: boolean = false;
-	let captchaLoaded: boolean = false;
+	// let captchaLoaded: boolean = false;
 	/* endregion variables */
 
 	/* region form */
@@ -56,12 +56,12 @@
 	/* endregion form */
 
 	/* region lifecycle */
-	onDestroy(() => {
-		if (browser) {
-			window['turnstile'].remove();
-			captchaLoaded = false;
-		}
-	});
+	// onDestroy(() => {
+	// 	if (browser) {
+	// 		window['turnstile'].remove();
+	// 		captchaLoaded = false;
+	// 	}
+	// });
 	/* endregion lifecycle */
 
 	/* region reactivity */
@@ -69,24 +69,24 @@
 		verifying = true;
 	}
 
-	$: if (active && !captchaLoaded && browser) {
-		try {
-			window['turnstile'].ready(function () {
-				window['turnstile'].render(document.querySelector('.cf-turnstile'), {
-					callback: function (token) {
-						$formData.captcha = token;
-					}
-				});
-			});
-			captchaLoaded = true;
-		} catch (error) {
-			log.error(error);
-		}
-	}
+	// $: if (active && !captchaLoaded && browser) {
+	// 	try {
+	// 		window['turnstile'].ready(function () {
+	// 			window['turnstile'].render(document.querySelector('.cf-turnstile'), {
+	// 				callback: function (token) {
+	// 					$formData.captcha = token;
+	// 				}
+	// 			});
+	// 		});
+	// 		captchaLoaded = true;
+	// 	} catch (error) {
+	// 		log.error(error);
+	// 	}
+	// }
 
-	$: if (active && captchaLoaded && browser) {
-		window['turnstile'].reset();
-	}
+	// $: if (active && captchaLoaded && browser) {
+	// 	window['turnstile'].reset();
+	// }
 </script>
 
 <Card.Root>
@@ -150,12 +150,12 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<div
+				<!-- <div
 					class="cf-turnstile"
 					data-theme="light"
 					data-sitekey="0x4AAAAAAAkDZ8fQw76peFu5"
 					data-response-filed="false"
-				></div>
+				></div> -->
 
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
@@ -168,5 +168,5 @@
 		{/if}
 	</Card.Content>
 	<!-- <Card.Footer></Card.Footer> -->
-	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
+	<!-- <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script> -->
 </Card.Root>
