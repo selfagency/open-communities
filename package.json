@@ -28,6 +28,8 @@
 		"@types/node": "^22.5.5",
 		"@types/web": "^0.0.163",
 		"@vite-pwa/sveltekit": "^0.6.5",
+		"altcha": "^1.0.0",
+		"altcha-lib": "^1.1.0",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^0.21.13",
 		"clsx": "^2.1.1",

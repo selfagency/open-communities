@@ -7,7 +7,7 @@
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -28,6 +28,14 @@
 	let verified: boolean = false;
 	let verifying: boolean = false;
 	/* endregion variables */
+
+	/* region methods */
+	const verifyCaptcha = (e) => {
+		log.debug('verified captcha', e.detail.payload);
+		const { payload } = e.detail;
+		$formData.captcha = payload;
+	};
+	/* endregion methods */
 
 	/* region form */
 	const form = superForm(data, {
@@ -120,6 +128,21 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
+
+				<div id="captcha">
+					{#await import('altcha')}
+						<altcha-widget
+							challengeurl="/captcha"
+							auto="onload"
+							floating="auto"
+							floatinganchor="#captcha"
+							delay={4000}
+							expire={60 * 1000}
+							debug
+							on:verified={verifyCaptcha}
+						></altcha-widget>
+					{/await}
+				</div>
 
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>

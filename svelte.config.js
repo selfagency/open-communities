@@ -9,6 +9,12 @@ const config = {
 	}),
 	kit: {
 		adapter: adapter(),
+		csp: {
+			directives: {
+				'script-src': ['self'],
+				'worker-src': ['self', 'blob:']
+			}
+		},
 		serviceWorker: {
 			register: false
 		}
