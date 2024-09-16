@@ -21,6 +21,7 @@
 	"addCongregation": "Add congregation",
 	"addFailure": "Failed to add congregation.",
 	"addSuccess": "Congregation added successfully.",
+	"addSuccessNotice": "Thank you for your submission. Someone will review and approve it shortly or reach out as needed.",
 	"approved": "Approved",
 	"clergy": {
 		"clergy": "Clergy",
@@ -46,6 +47,7 @@
 	"editFailure": "Failed to edit congregation.",
 	"editNotice": "Making edits will delist this congregation until an administrator can approve your changes.",
 	"editSuccess": "Congregation edited successfully.",
+	"editSuccessNotice": "Thanks for the update! Someone will review and approve it shortly or reach out as needed.",
 	"fit": {
 		"clergyMember": "A member of the clergy team is affiliated with Rabbis for Ceasefire",
 		"extended": "Why would your congregation be a good fit for Jews in the ceasefire movement? Please share additional reasons in the 'Other' field.",

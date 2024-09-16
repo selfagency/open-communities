@@ -1,7 +1,6 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
@@ -38,14 +37,6 @@
 		sentSuccess = false;
 	};
 	/* endregion methods */
-
-	/* region lifecycle */
-	onMount(() => {
-		if ($page.url.searchParams.has('verifyEmail')) {
-			resetting = true;
-		}
-	});
-	/* endregion lifecycle */
 
 	/* region form */
 	const form = superForm(data, {

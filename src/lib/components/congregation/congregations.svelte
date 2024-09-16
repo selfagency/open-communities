@@ -76,7 +76,7 @@
 					class="w-full"
 				/>
 
-				<span class="absolute right-2 top-0 z-10 h-10 w-10">
+				<span class="absolute right-1 top-0 z-10 h-10 w-10">
 					<Button
 						variant="link"
 						class="text-slate-400 hover:text-slate-500"
@@ -85,7 +85,7 @@
 							search.setSearchTerms(searchTerms);
 						}}
 					>
-						<ClearIcon size="20" />
+						<ClearIcon size="16" />
 						<span class="sr-only">{$t('common.clear')}</span>
 					</Button>
 				</span>
