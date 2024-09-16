@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script lang="ts">
 	/* region imports */
 	import { setContext } from 'svelte';
@@ -8,6 +10,7 @@
 	/* region variables */
 	// props
 	export let data;
+	export let snapshot;
 	/* endregion variables */
 
 	/* region lifecycle */
@@ -15,4 +18,4 @@
 	/* endregion lifecycle */
 </script>
 
-<EditForm data={data.form} mode="edit" />
+<EditForm data={data.form} mode="edit" bind:snapshot />

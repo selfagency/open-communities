@@ -38,6 +38,7 @@
 	export let data;
 	export let content: PagesRecord | undefined = undefined;
 	export let mode: 'add' | 'edit' = 'add';
+	export let snapshot: any = {};
 
 	// constants
 	const { state: location, setCountry, setState, setCity, load: loadLocation } = new Location();
@@ -186,6 +187,7 @@
 	});
 
 	const { form: formData, errors, enhance, capture, restore } = form;
+	snapshot = { capture, restore };
 	/* endregion form */
 
 	/* region lifecycle */
@@ -230,10 +232,6 @@
 
 	$: if (addSuccess || editSuccess) setTitle();
 	/* endregion reactivity */
-
-	/* region exports */
-	export const snapshot = { capture, restore };
-	/* endregion exports */
 </script>
 
 <section class="m-auto w-full" style="max-width: 480px;">
