@@ -10,7 +10,7 @@
 	import type { LocationRecord, LocationMeta } from '$lib/location';
 	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
 
-	import { browser, dev } from '$app/environment';
+	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
@@ -1056,8 +1056,12 @@
 								variant="outline"
 								on:click={(e) => {
 									e.preventDefault();
-									if (browser) {
-										window.location.reload();
+									e.stopPropagation();
+
+									if (mode === 'add') {
+										initData();
+									} else {
+										$formData = congregation;
 									}
 								}}
 							>

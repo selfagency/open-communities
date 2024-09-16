@@ -40,9 +40,9 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 		if (client?.id) {
 			const id = client?.admin ? url.searchParams.get('id') : client.congregation;
 
-			const congregation = await api
-				.collection('congregationMeta')
-				.getFirstListItem(`id="${id}"`, { fetch });
+			const congregation = cleanResponse(
+				await api.collection('congregationMeta').getFirstListItem(`id="${id}"`, { fetch })
+			);
 
 			return {
 				form: {
