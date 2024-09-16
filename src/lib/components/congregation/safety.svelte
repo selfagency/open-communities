@@ -17,10 +17,10 @@
 </script>
 
 {#if mode === 'mini'}
-	{#if safety?.protocol === 'maskingRecommended' || safety?.protocol === 'maskingRequired'}
+	{#if safety?.protocol === 'maskingRecommended' || safety?.protocol === 'maskingRequired' || (safety?.protocol === 'other' && safety?.otherText !== 'N/A')}
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<span><MaskIcon class="w-18 h-3" /></span>
+				<span><MaskIcon class="h-5 w-5" /></span>
 				<span class="sr-only">{$t(`congregation.safety.${safety.protocol}`)}</span>
 			</Tooltip.Trigger>
 			<Tooltip.Content>

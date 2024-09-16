@@ -7,6 +7,7 @@
 
 	import type { AccommodationsRecord } from '$lib/types';
 
+	import AslIcon from '$lib/assets/asl.svg?component';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
 	import { state } from '$lib/stores';
@@ -25,16 +26,17 @@
 		accommodations.online_automatedCaptions ||
 		accommodations.online_liveCaptions;
 	const eva = accommodations.inPerson_eva;
+	const asl = accommodations.inPerson_asl || accommodations.online_asl;
 	const other = accommodations.otherText;
 	/* endregion variables */
 </script>
 
 {#if mode === 'mini'}
-	<div class="flex w-full flex-row items-center justify-end space-x-1">
+	<div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
 		{#if ada}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<AdaIcon size="18" />
+					<AdaIcon size="20" />
 					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -45,7 +47,7 @@
 		{#if cc}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<CcIcon size="18" />
+					<CcIcon size="20" />
 					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -56,11 +58,22 @@
 		{#if eva}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<EvaIcon size="18" />
+					<EvaIcon size="20" />
 					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
 					<span class="text-nowrap">{$t('congregation.accommodations.eva')}</span>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{/if}
+		{#if asl}
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<AslIcon class="h-5 w-5" />
+					<span class="sr-only">{$t('congregation.accommodations.asl')}</span>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<span class="text-nowrap">{$t('congregation.accommodations.asl')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
