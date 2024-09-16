@@ -92,28 +92,26 @@ export const actions = {
 				});
 			}
 
-			// if (!dev) {
-			// 	const captcha = (
-			// 		await (
-			// 			await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-			// 				body: JSON.stringify({
-			// 					secret: TURNSTILE_SECRET,
-			// 					response: form.data.captcha,
-			// 					remoteip: event.request.headers.get('CF-Connecting-IP')
-			// 				}),
-			// 				method: 'POST',
-			// 				headers: {
-			// 					'Content-Type': 'application/json'
-			// 				}
-			// 			})
-			// 		).json()
-			// 	).outcome;
+			if (!dev) {
+				const captcha = await (
+					await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+						body: JSON.stringify({
+							secret: TURNSTILE_SECRET,
+							response: form.data.captcha,
+							remoteip: event.request.headers.get('CF-Connecting-IP')
+						}),
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					})
+				).json();
 
-			// 	log.debug('captcha', captcha);
-			// 	if (captcha !== 'success') {
-			// 		throw new Error('Captcha failed');
-			// 	}
-			// }
+				if (captcha.outcome !== 'success') {
+					log.error('captcha', captcha);
+					// throw new Error('Captcha failed');
+				}
+			}
 
 			user = (await api.collection('users').create(
 				{
