@@ -26,7 +26,7 @@
 		{#if $state.offsetWidth && $state.offsetWidth < 420}
 			<Sheet.Root>
 				<Sheet.Trigger>
-					<MenuIcon class="h-6 w-6" />
+					<MenuIcon class="mt-2 h-6 w-6" />
 					<span class="sr-only">{$t('common.menu')}</span>
 				</Sheet.Trigger>
 				<Sheet.Content>
