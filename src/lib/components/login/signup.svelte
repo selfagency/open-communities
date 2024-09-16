@@ -1,7 +1,6 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
@@ -55,15 +54,11 @@
 	const { form: formData, enhance } = form;
 	/* endregion form */
 
-	/* region lifecycle */
-	onMount(async () => {
-		if ($page.url.searchParams.has('verifyEmail')) {
-			verifying = true;
-		}
-	});
-	/* endregion lifecycle */
-
 	/* region reactivity */
+	$: if ($page.url.searchParams.has('verifyEmail')) {
+		verifying = true;
+	}
+
 	$: if (active && !captchaLoaded) {
 		try {
 			window['turnstile'].ready(function () {
@@ -83,7 +78,9 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="font-display text-2xl">{$t('auth.signUp')}</Card.Title>
+		<Card.Title class="font-display text-2xl"
+			>{verifying ? $t('auth.verifyEmail') : $t('auth.signUp')}</Card.Title
+		>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>

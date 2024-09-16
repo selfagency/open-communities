@@ -1,7 +1,5 @@
 <script lang="ts">
 	/* region imports */
-	import { onMount } from 'svelte';
-
 	import { page } from '$app/stores';
 	import Login from '$lib/components/login/index.svelte';
 	import SignUp from '$lib/components/login/signup.svelte';
@@ -17,17 +15,15 @@
 	let tab: 'login' | 'signup' = 'login';
 	/* endregion variables */
 
-	/* region lifecycle */
-	onMount(() => {
-		if ($page.url.searchParams.has('signUp') || $page.url.searchParams.has('verifyEmail')) {
-			tab = 'signup';
-		}
+	/* region reactivity */
+	$: if ($page.url.searchParams.has('signUp') || $page.url.searchParams.has('verifyEmail')) {
+		tab = 'signup';
+	}
 
-		if ($page.url.searchParams.has('resetPassword')) {
-			tab = 'login';
-		}
-	});
-	/* endregion lifecycle */
+	$: if ($page.url.searchParams.has('resetPassword')) {
+		tab = 'login';
+	}
+	/* endregion reactivity */
 </script>
 
 <div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">

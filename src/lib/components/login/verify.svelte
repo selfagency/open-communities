@@ -20,6 +20,8 @@
 	export let token: string | null;
 	export let verified: boolean = false;
 
+	// local vars
+	let error: string;
 	/* endregion variables */
 
 	/* region form */
@@ -29,6 +31,7 @@
 		validators: zod(tokenSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
+				error = $t('auth.verifyFailure');
 				log.error(JSON.stringify(result.data.form.errors));
 				if (result.data.form.errors.error) {
 					toast.error(result.data.form.errors.error);
@@ -57,8 +60,16 @@
 	/* endregion lifecycle */
 </script>
 
-<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-	{$t('auth.verifying')}
+<div
+	in:fade={{ delay: 200, duration: 100 }}
+	out:fade={{ duration: 100, delay: 0 }}
+	class="space-y-4"
+>
+	{#if error}
+		<div>{error}</div>
+	{:else}
+		<div>{$t('auth.verifying')}</div>
+	{/if}
 
 	{#if $formData.token && $formData.type}
 		<form id="verify" method="POST" action="?/acct" use:enhance>
@@ -72,4 +83,4 @@
 			<div class="mt-4"><SuperDebug data={$formData} /></div>
 		{/await}
 	{/if}
-</span>
+</div>
