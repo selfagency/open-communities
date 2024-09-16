@@ -1,12 +1,13 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
+	import { onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -54,25 +55,37 @@
 	const { form: formData, enhance } = form;
 	/* endregion form */
 
+	/* region lifecycle */
+	onDestroy(() => {
+		if (browser) {
+			window['turnstile'].remove();
+			captchaLoaded = false;
+		}
+	});
+	/* endregion lifecycle */
+
 	/* region reactivity */
 	$: if ($page.url.searchParams.has('verifyEmail')) {
 		verifying = true;
 	}
 
-	$: if (active && !captchaLoaded) {
+	$: if (active && !captchaLoaded && browser) {
 		try {
 			window['turnstile'].ready(function () {
 				window['turnstile'].render(document.querySelector('.cf-turnstile'), {
 					callback: function (token) {
 						$formData.captcha = token;
-					},
-					sitekey: '0x4AAAAAAAkDZ8fQw76peFu5'
+					}
 				});
 			});
 			captchaLoaded = true;
 		} catch (error) {
 			log.error(error);
 		}
+	}
+
+	$: if (active && captchaLoaded && browser) {
+		window['turnstile'].reset();
 	}
 </script>
 
@@ -137,7 +150,12 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<div class="cf-turnstile"></div>
+				<div
+					class="cf-turnstile"
+					data-theme="light"
+					data-sitekey="0x4AAAAAAAkDZ8fQw76peFu5"
+					data-response-filed="false"
+				></div>
 
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
