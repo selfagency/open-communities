@@ -23,6 +23,7 @@
 	// props
 	export let data: SuperValidated<any>;
 	export let verify: SuperValidated<any>;
+	export let active: boolean = false;
 
 	// local vars
 	let success: boolean = false;
@@ -59,11 +60,13 @@
 		if ($page.url.searchParams.has('verifyEmail')) {
 			verifying = true;
 		}
+	});
+	/* endregion lifecycle */
 
-		if (browser && !dev) {
-			const sitekey = '0x4AAAAAAAkDZ8fQw76peFu5';
-			log.debug(typeof sitekey, sitekey);
-			await waitForTheElement('.cf-turnstile');
+	/* region reactivity */
+	$: if (active && browser && !dev) {
+		const sitekey = '0x4AAAAAAAkDZ8fQw76peFu5';
+		waitForTheElement('.cf-turnstile').then(() => {
 			try {
 				window['turnstile'].ready(function () {
 					window['turnstile'].render(document.querySelector('.cf-turnstile'), {
@@ -76,9 +79,8 @@
 			} catch (error) {
 				log.error(error);
 			}
-		}
-	});
-	/* endregion lifecycle */
+		});
+	}
 </script>
 
 <Card.Root>
