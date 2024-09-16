@@ -13,7 +13,6 @@ import { dev } from '$app/environment';
 import { TURNSTILE_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, userSchema, tokenSchema } from '$lib/schemas';
-import { log } from '$lib/utils';
 /* endregion imports */
 
 export const load = async ({ locals }) => {
@@ -107,9 +106,8 @@ export const actions = {
 					})
 				).json();
 
-				if (captcha.outcome !== 'success') {
-					log.error('captcha', captcha);
-					// throw new Error('Captcha failed');
+				if (!captcha.success) {
+					throw new Error('Captcha failed');
 				}
 			}
 

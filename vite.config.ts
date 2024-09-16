@@ -52,6 +52,6 @@ export default defineConfig({
 		svg()
 	],
 	define: {
-		__NODE_ENV__: JSON.stringify(process.env.NODE_ENV)
+		NODE_ENV: JSON.stringify(process.env.NODE_ENV)
 	}
 });
