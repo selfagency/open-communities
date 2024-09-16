@@ -72,7 +72,7 @@
 		{#if $state.isMobile}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<h2 class="label">$t('congregation.accommodations.short')</h2>
+					<h2 class="label">{$t('congregation.accommodations.short')}</h2>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
 					<span class="text-nowrap">{$t('congregation.accommodations.accommodations')}</span>

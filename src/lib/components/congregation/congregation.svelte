@@ -50,18 +50,17 @@
 	<Dialog.Trigger class="h-full min-h-max w-full">
 		<Tile {congregation} />
 	</Dialog.Trigger>
-	<Dialog.Content class="min-w-[380px] max-w-[380px] sm:max-w-[540px]">
+	<Dialog.Content
+		class="max-h-[95vh] min-w-[380px] max-w-[380px] overflow-y-scroll sm:max-w-[540px]"
+	>
 		<Dialog.Header>
 			<Dialog.Title>
 				{#if congregation.contactUrl}
-					<a
-						href={congregation.contactUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="flex max-w-fit flex-row items-center justify-start space-x-2"
-					>
-						<h1 class="font-display text-2xl leading-5">{congregation.name}</h1>
-						<LinkIcon size="14" color="gray" />
+					<a href={congregation.contactUrl} target="_blank" rel="noopener noreferrer">
+						<h1 class="inline font-display text-2xl leading-6">
+							<span>{congregation.name}</span>
+						</h1>
+						<span><LinkIcon size="14" color="gray" class="ml-1 inline" /></span>
 					</a>
 				{:else}
 					{congregation.name}
