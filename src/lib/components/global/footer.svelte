@@ -7,7 +7,7 @@
 
 <footer class="flex w-full flex-col items-center justify-center space-y-2 py-12">
 	<div
-		class="flex w-full flex-row items-center justify-center space-x-2 p-4 text-sm text-slate-700 sm:text-base"
+		class="flex w-full flex-col items-center justify-center space-y-2 p-4 text-sm text-slate-700 sm:flex-row sm:space-x-2 sm:space-y-0 sm:text-base"
 	>
 		<span class="pointer-events-none flex w-1/3 flex-row items-center justify-end"
 			>{$t('common.home.project')}</span
@@ -22,13 +22,17 @@
 		</span>
 	</div>
 	<div class="flex w-full flex-row items-center justify-center">
-		<span class="flex flex-row items-center justify-center space-x-4">
-			<a class="text-xs text-slate-400 hover:text-slate-500" href="/privacy">
-				<span>{$t('common.privacyPolicy')}</span>
-			</a>
-			<a class="text-xs text-slate-400 hover:text-slate-500" href="/terms">
-				<span>{$t('common.termsOfService')}</span>
-			</a>
+		<span
+			class="flex flex-col items-center justify-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0"
+		>
+			<span class="flex flex-row items-center justify-center space-x-4">
+				<a class="text-xs text-slate-400 hover:text-slate-500" href="/privacy">
+					<span>{$t('common.privacyPolicy')}</span>
+				</a>
+				<a class="text-xs text-slate-400 hover:text-slate-500" href="/terms">
+					<span>{$t('common.termsOfService')}</span>
+				</a>
+			</span>
 			<a
 				class="text-xs text-slate-400 hover:text-slate-500"
 				href="https://self.agency"

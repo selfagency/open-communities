@@ -92,7 +92,7 @@
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
 	<Header />
-	<main class="container mx-auto mt-24 min-w-[420px] max-w-[1024px]">
+	<main class="container mx-auto mt-24 min-w-[300px] max-w-[1024px]">
 		<slot />
 	</main>
 	<Footer />

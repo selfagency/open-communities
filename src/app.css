@@ -35,7 +35,7 @@
 		@apply border-border;
 	}
 	body {
-		@apply min-w-[420px] bg-slate-50 pt-4 text-foreground text-slate-700;
+		@apply min-w-[320px] max-w-[100vw] bg-slate-50 pt-4 text-foreground text-slate-700;
 	}
 	.label {
 		@apply pointer-events-none font-display leading-6 text-slate-600;

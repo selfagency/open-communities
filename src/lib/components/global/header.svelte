@@ -1,18 +1,14 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	/* region imports */
+	import MenuIcon from 'lucide-svelte/icons/menu';
+
 	import Tent from '$lib/assets/tent.svg?component';
-	import { Button } from '$lib/components/ui/button';
+	import * as Sheet from '$lib/components/ui/sheet';
 	import { t } from '$lib/i18n';
-	import { user, state } from '$lib/stores';
+	import { state } from '$lib/stores';
+
+	import Nav from './nav.svelte';
 	/*  endregion imports */
-
-	/* region variables */
-	// props
-	/* endregion variables */
-
-	/* region methods */
-	/* endregion methods */
 </script>
 
 <nav
@@ -26,26 +22,19 @@
 			<h1 class="mt-2 font-display text-2xl font-bold sm:text-3xl">{$t('common.title')}</h1>
 		</a>
 	</div>
-	<div class="flex-row items-center justify-between space-x-2">
-		{#if $user.congregation}
-			<Button on:click={async () => await goto('/add')}>
-				{$state.isMobile ? $t('congregation.edit') : $t('congregation.editCongregation')}
-			</Button>
+	<div>
+		{#if $state.offsetWidth && $state.offsetWidth < 420}
+			<Sheet.Root>
+				<Sheet.Trigger>
+					<MenuIcon class="h-6 w-6" />
+					<span class="sr-only">{$t('common.menu')}</span>
+				</Sheet.Trigger>
+				<Sheet.Content>
+					<Nav mode="mini" />
+				</Sheet.Content>
+			</Sheet.Root>
 		{:else}
-			<Button on:click={async () => await goto('/add')}>
-				{$state.isMobile ? $t('congregation.add') : $t('congregation.addCongregation')}
-			</Button>
-		{/if}
-
-		{#if $user.email}
-			<Button variant="outline" on:click={async () => await goto('/logout')}>
-				{$t('auth.logout')}
-			</Button>
-		{:else}
-			<Button variant="outline" on:click={async () => await goto('/login')}>
-				{$t('auth.login')}
-				{$state.isMobile ? '' : `/ ${$t('auth.signUp')}`}
-			</Button>
+			<Nav />
 		{/if}
 	</div>
 </nav>
