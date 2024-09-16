@@ -67,8 +67,8 @@
 	/* region methods */
 	function initData() {
 		$formData.clergy = '';
-		$formData.contactEmail = $user.email;
-		$formData.contactName = $user.name;
+		$formData.contactEmail = '';
+		$formData.contactName = '';
 		$formData.contactUrl = '';
 		$formData.flavor = '';
 		$formData.name = '';
@@ -1000,7 +1000,7 @@
 										<Form.Label for="contactName">
 											{$t('congregation.contactName.contactName')}
 										</Form.Label>
-										<Input {...attrs} bind:value={$formData.contactName} required />
+										<Input {...attrs} bind:value={$formData.contactName} />
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
@@ -1010,7 +1010,7 @@
 										<Form.Label for="contactEmail">
 											{$t('congregation.contactEmail.contactEmail')}
 										</Form.Label>
-										<Input {...attrs} bind:value={$formData.contactEmail} required />
+										<Input {...attrs} bind:value={$formData.contactEmail} />
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
