@@ -16,7 +16,9 @@
 	import { Input } from '$lib/components/ui/input';
 	import * as Pagination from '$lib/components/ui/pagination';
 	import { t } from '$lib/i18n';
+	import { Location as LocationService } from '$lib/location';
 	import { Search } from '$lib/search';
+	// import { log } from '$lib/utils';
 
 	import Congregation from './congregation.svelte';
 	import Filters from './filters.svelte';
@@ -34,6 +36,7 @@
 	// constants
 	const search = new Search(congregations, dev);
 	const { state: searchState, results } = search;
+	const location = new LocationService(search);
 
 	// local vars
 	let searchTerms = '';
@@ -41,6 +44,7 @@
 	let currentPage = 1;
 	let perPage = 12;
 	let pages: Congregation[][] = [];
+	let reset: boolean = false;
 	/* endregion variables */
 
 	/* region methods */
@@ -54,6 +58,12 @@
 
 	function onPageChange(pageNo: number) {
 		currentPage = pageNo;
+	}
+
+	function resetMap() {
+		if (reset === true) reset = false;
+		reset = true;
+		reset = false;
 	}
 	/*endregion methods */
 
@@ -121,7 +131,10 @@
 			<Button
 				variant="outline"
 				class={`space-x-2 text-slate-500 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
-				on:click={() => search.toggleLocation()}
+				on:click={() => {
+					search.toggleLocation();
+					resetMap();
+				}}
 			>
 				<LocationIcon size="20" />
 				<span>{$t('common.location')}</span>
@@ -132,7 +145,7 @@
 
 	{#if $searchState.showLocation}
 		<div class="flex flex-row items-center justify-center" transition:fade>
-			<Location {search} />
+			<Location {location} {search} />
 		</div>
 	{/if}
 

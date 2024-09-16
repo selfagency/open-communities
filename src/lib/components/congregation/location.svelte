@@ -15,9 +15,10 @@
 	/* region variables */
 	// props
 	export let search: Search;
+	export let location: Location;
 
 	// constants
-	const { state: location, reset, setCountry, setState, setCity } = new Location(search);
+	const { state: locationState, reset, setCountry, setState, setCity } = location;
 
 	// local vars
 	let country: string = '';
@@ -27,14 +28,14 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		location.subscribe((value) => {
+		locationState.subscribe((value) => {
 			search.setSearchLocation(value.record);
 		});
 	});
 	/* endregion lifecycle */
 </script>
 
-{#if !isEmpty($location.options)}
+{#if !isEmpty($locationState.options)}
 	<div
 		class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-x-2 sm:space-y-0"
 	>
@@ -43,36 +44,36 @@
 		>
 			<span class="w-full sm:w-1/3">
 				<Combobox
-					items={$location.options.countryOptions}
+					items={$locationState.options.countryOptions}
 					bind:value={country}
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.country').toLowerCase()
 					})}
-					disabled={!$location.options?.countryOptions?.length}
+					disabled={!$locationState.options?.countryOptions?.length}
 					on:change={() => setCountry(country)}
 				/>
 			</span>
 
 			<span class="w-full sm:w-1/3">
 				<Combobox
-					items={$location.options.stateOptions}
+					items={$locationState.options.stateOptions}
 					bind:value={state}
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.state').toLowerCase()
 					})}
-					disabled={!country && !$location.options?.stateOptions?.length}
+					disabled={!country && !$locationState.options?.stateOptions?.length}
 					on:change={() => setState(state)}
 				/>
 			</span>
 
 			<span class="w-full sm:w-1/3">
 				<Combobox
-					items={$location.options.cityOptions}
+					items={$locationState.options.cityOptions}
 					bind:value={city}
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.city').toLowerCase()
 					})}
-					disabled={!state && !$location.options?.cityOptions?.length}
+					disabled={!state && !$locationState.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>
 			</span>

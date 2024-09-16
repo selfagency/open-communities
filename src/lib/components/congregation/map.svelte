@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import { unique, isEmpty } from 'radashi';
+	import { unique } from 'radashi';
 	import { onMount } from 'svelte';
 	import { MapLibre, DefaultMarker, Popup, type LngLatLike } from 'svelte-maplibre';
 
@@ -27,31 +27,21 @@
 	/* region lifecycle */
 	onMount(() => {
 		searchState.subscribe((value) => {
-			if (!isEmpty(value.searchLocation)) {
-				if (!isEmpty(value.searchLocation?.country)) {
-					center = [
-						value.searchLocation?.city?.longitude ||
-							value.searchLocation?.state?.longitude ||
-							value.searchLocation?.country?.longitude ||
-							0,
-						value.searchLocation?.city?.latitude ||
-							value.searchLocation?.state?.latitude ||
-							value.searchLocation?.country?.latitude ||
-							10
-					] as LngLatLike;
+			if (value.searchLocation?.country?.id) {
+				center = [
+					value.searchLocation?.city?.longitude ||
+						value.searchLocation?.state?.longitude ||
+						value.searchLocation?.country?.longitude ||
+						0,
+					value.searchLocation?.city?.latitude ||
+						value.searchLocation?.state?.latitude ||
+						value.searchLocation?.country?.latitude ||
+						10
+				] as LngLatLike;
 
-					zoom = 3;
-
-					if (!isEmpty(value.searchLocation?.state)) {
-						zoom = 6;
-					}
-
-					if (!isEmpty(value.searchLocation?.city)) {
-						zoom = 10;
-					}
-				} else {
-					zoom = 1;
-				}
+				zoom = 3;
+				if (value.searchLocation?.state?.id) zoom = 6;
+				if (value.searchLocation?.city?.id) zoom = 10;
 			} else {
 				center = [0, 10];
 				zoom = 1;
