@@ -13,6 +13,7 @@ import { dev } from '$app/environment';
 import { TURNSTILE_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, userSchema, tokenSchema } from '$lib/schemas';
+import { log } from '$lib/utils';
 /* endregion imports */
 
 export const load = async ({ locals }) => {
@@ -91,27 +92,28 @@ export const actions = {
 				});
 			}
 
-			if (!dev) {
-				const captcha = (
-					await (
-						await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-							body: JSON.stringify({
-								secret: TURNSTILE_SECRET,
-								response: form.data.captcha,
-								remoteip: event.request.headers.get('CF-Connecting-IP')
-							}),
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json'
-							}
-						})
-					).json()
-				).outcome;
+			// if (!dev) {
+			// 	const captcha = (
+			// 		await (
+			// 			await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+			// 				body: JSON.stringify({
+			// 					secret: TURNSTILE_SECRET,
+			// 					response: form.data.captcha,
+			// 					remoteip: event.request.headers.get('CF-Connecting-IP')
+			// 				}),
+			// 				method: 'POST',
+			// 				headers: {
+			// 					'Content-Type': 'application/json'
+			// 				}
+			// 			})
+			// 		).json()
+			// 	).outcome;
 
-				if (captcha !== 'success') {
-					throw new Error('Captcha failed');
-				}
-			}
+			// 	log.debug('captcha', captcha);
+			// 	if (captcha !== 'success') {
+			// 		throw new Error('Captcha failed');
+			// 	}
+			// }
 
 			user = (await api.collection('users').create(
 				{
