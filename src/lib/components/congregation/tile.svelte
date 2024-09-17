@@ -2,12 +2,13 @@
 	/* region imports */
 	import type {
 		CongregationMetaRecord,
-		AccommodationsRecord,
+		AccessibilityRecord,
 		CitiesRecord as City,
 		CountriesRecord as Country,
 		ServicesRecord,
 		StatesRecord as State,
-		SafetyRecord
+		SecurityRecord,
+		HealthRecord
 	} from '$lib/types';
 
 	import { goto } from '$app/navigation';
@@ -17,8 +18,9 @@
 	import { t } from '$lib/i18n';
 	import { user } from '$lib/stores';
 
-	import Accommodations from './accommodations.svelte';
-	import Safety from './safety.svelte';
+	import Accessibility from './accessibility.svelte';
+	import Health from './health.svelte';
+	import Security from './security.svelte';
 	/* endregion imports */
 
 	/* region variables */
@@ -26,9 +28,10 @@
 	export let congregation: CongregationMetaRecord & { id: string };
 
 	// constants
-	const accommodations = congregation?.accommodations as AccommodationsRecord;
-	const safety = congregation?.safety as SafetyRecord;
+	const accessibility = congregation?.accessibility as AccessibilityRecord;
+	const health = congregation?.health as HealthRecord;
 	const services = congregation?.services as ServicesRecord;
+	const security = congregation?.security as SecurityRecord;
 	const location = congregation?.location as { city: City; state: State; country: Country };
 	/* endregion variables */
 </script>
@@ -38,7 +41,12 @@
 		<Card.Title class="font-display text-xl leading-6 tracking-wide">{congregation.name}</Card.Title
 		>
 		<Card.Description>
-			{#if location.city.name || location.state.name || location.country.name}
+			{#if services.onlineOnly}
+				<span>{$t('congregation.services.onlineOnly')}</span
+				>{#if location.country.name && location.country.name !== 'United States'}<span
+						>, {location.country.name}</span
+					>{/if}
+			{:else if location.city.name || location.state.name || location.country.name}
 				{#if location.city.name}<span>{location.city.name}</span
 					>{#if location.state.name || location.country.name},{/if}{/if}
 				{#if location.state.name}<span>{location.state.name}</span
@@ -46,15 +54,13 @@
 				{#if location.country.name && location.country.name !== 'United States'}<span
 						>{location.country.name}</span
 					>{/if}
-			{:else if services.onlineOnly}
-				{$t('congregation.services.onlineOnly')}
 			{/if}
 		</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<p class="line-clamp-3">{congregation.flavor}</p>
 	</Card.Content>
-	{#if accommodations || $user.admin}
+	{#if accessibility || $user.admin}
 		<Card.Footer>
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
 				{#if $user.admin}
@@ -69,11 +75,14 @@
 					{#if !congregation.visible}
 						<Badge variant="outline">{$t('common.pending')}</Badge>
 					{:else}
-						{#if safety}
-							<Safety {safety} mode="mini" />
+						{#if security}
+							<Security {security} mode="mini" />
 						{/if}
-						{#if accommodations}
-							<Accommodations {accommodations} mode="mini" />
+						{#if health}
+							<Health {health} mode="mini" />
+						{/if}
+						{#if accessibility}
+							<Accessibility {accessibility} mode="mini" />
 						{/if}
 					{/if}
 				</div>

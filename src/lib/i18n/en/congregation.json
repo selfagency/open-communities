@@ -1,18 +1,18 @@
 {
-	"accommodations": {
-		"accommodations": "Accommodations",
+	"accessibility": {
+		"accessibility": "Accessibility",
 		"ada": "ADA accessibility",
 		"asl": "ASL interpretation",
 		"cc": "Closed captioning",
 		"eva": "EVA transcriptions",
-		"extended": "Which of the following accommodations will be available?",
+		"extended": "Which of the following accessibility will be available?",
 		"hybrid_automatedCaptions": "Automated captions, online access to hybrid services",
 		"hybrid_liveCaptions": "Live captions, online access to hybrid services",
 		"inPerson_adaAll": "ADA-compliant location for all in-person services",
 		"inPerson_adaSome": "ADA-compliant location for some in-person services",
 		"inPerson_asl": "ASL interpretation, in person",
 		"inPerson_eva": "EVA transcriptions, in person",
-		"note": "If participants must request accommodations in advance, please add that detail in the 'Other' field.",
+		"note": "If participants must request accessibility in advance, please add that detail in the 'Other' field.",
 		"online_asl": "ASL interpretation, online",
 		"online_automatedCaptions": "Automated captions, online",
 		"online_liveCaptions": "Live captions, online",
@@ -69,6 +69,15 @@
 		"extended": "In 50 words or less, describe the congregation and ritual 'flavor' that guests will experience.",
 		"flavor": "Flavor"
 	},
+	"health": {
+		"extended": "For in-person services, please briefly describe COVID health and masking protocols at your congregation, or link to congregational guidelines.",
+		"health": "Health",
+		"maskingRecommended": "Masking recommended",
+		"maskingRequired": "Masking required",
+		"noGuidelines": "No COVID guidelines in place",
+		"notApplicable": "Not applicable, online-only",
+		"other": "Other COVID policy"
+	},
 	"location": {
 		"city": "City",
 		"country": "Country",
@@ -93,14 +102,17 @@
 		"slidingScale": "Sliding scale",
 		"suggestedDonation": "Suggested donation"
 	},
-	"safety": {
-		"extended": "For in-person services, please briefly describe COVID safety and masking protocols at your congregation, or link to congregational guidelines.",
-		"maskingRecommended": "Masking recommended",
-		"maskingRequired": "Masking required",
-		"noGuidelines": "No COVID guidelines in place",
-		"notApplicable": "Not applicable, online-only",
-		"other": "Other COVID policy",
-		"safety": "Safety"
+	"security": {
+		"armedSecurity": "Armed security",
+		"clergyArmed": "Armed clergy",
+		"congregantsArmed": "Armed congregants",
+		"extended": "Does your congregation have a police presence or other armed security?",
+		"localPolice": "Local police or sheriff",
+		"noFirearms": "No firearms permitted",
+		"privateSecurityArmed": "Armed private security",
+		"privateSecurityUnarmed": "Unarmed private security",
+		"security": "Security",
+		"unarmedSecurity": "Unarmed security"
 	},
 	"services": {
 		"extended": "What types of services are non-members invited to join?",

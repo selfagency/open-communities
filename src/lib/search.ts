@@ -181,15 +181,15 @@ export class Search {
 		};
 
 		const hasServices = hasFilter(state.filters?.services, 'services');
-		const hasAccommodations = hasFilter(state.filters?.accommodations, 'accommodations');
-		const hasSafety = hasFilter(state.filters?.safety, 'safety');
+		const hasAccessibility = hasFilter(state.filters?.accessibility, 'accessibility');
+		const hasHealth = hasFilter(state.filters?.health, 'health');
 		const hasRegistration = hasFilter(state.filters?.registration, 'registration');
 		const hasAdmin = hasFilter(state.filters?.admin, 'admin');
 
 		if (
 			!state.filters ||
 			isEmpty(state.filters) ||
-			(!hasServices && !hasAccommodations && !hasSafety && !hasRegistration && !hasAdmin)
+			(!hasServices && !hasAccessibility && !hasHealth && !hasRegistration && !hasAdmin)
 		) {
 			return;
 		}
@@ -198,12 +198,12 @@ export class Search {
 			this.boolFilter('services');
 		}
 
-		if (hasAccommodations) {
-			this.boolFilter('accommodations');
+		if (hasAccessibility) {
+			this.boolFilter('accessibility');
 		}
 
-		if (hasSafety) {
-			this.stringFilter('safety', 'protocol');
+		if (hasHealth) {
+			this.stringFilter('health', 'protocol');
 		}
 
 		if (hasRegistration) {

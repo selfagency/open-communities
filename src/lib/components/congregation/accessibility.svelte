@@ -5,25 +5,24 @@
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import EvaIcon from 'lucide-svelte/icons/languages';
 
-	import type { AccommodationsRecord } from '$lib/types';
+	import type { AccessibilityRecord } from '$lib/types';
 
 	import AslIcon from '$lib/assets/asl.svg?component';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
-	import { state } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let accommodations: AccommodationsRecord;
+	export let accessibility: AccessibilityRecord;
 	export let mode: 'mini' | 'full' = 'mini';
 
 	// constants
-	const ada = accommodations.inPerson_adaSome || accommodations.inPerson_adaAll;
-	const cc = accommodations.online_automatedCaptions || accommodations.online_liveCaptions;
-	const eva = accommodations.inPerson_eva;
-	const asl = accommodations.inPerson_asl || accommodations.online_asl;
-	const other = accommodations.otherText;
+	const ada = accessibility.inPerson_adaSome || accessibility.inPerson_adaAll;
+	const cc = accessibility.online_automatedCaptions || accessibility.online_liveCaptions;
+	const eva = accessibility.inPerson_eva;
+	const asl = accessibility.inPerson_asl || accessibility.online_asl;
+	const other = accessibility.otherText;
 	/* endregion variables */
 </script>
 
@@ -33,10 +32,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<AdaIcon size="18" />
-					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.ada')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accommodations.ada')}</span>
+					<span class="text-nowrap">{$t('congregation.accessibility.ada')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -44,10 +43,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<CcIcon size="18" />
-					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.cc')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accommodations.cc')}</span>
+					<span class="text-nowrap">{$t('congregation.accessibility.cc')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -55,10 +54,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<EvaIcon size="18" />
-					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.eva')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accommodations.eva')}</span>
+					<span class="text-nowrap">{$t('congregation.accessibility.eva')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -66,10 +65,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<AslIcon class="h-4 w-4" />
-					<span class="sr-only">{$t('congregation.accommodations.asl')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.asl')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accommodations.asl')}</span>
+					<span class="text-nowrap">{$t('congregation.accessibility.asl')}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		{/if}
@@ -78,32 +77,21 @@
 
 {#if mode === 'full'}
 	<div class="col-span-3">
-		{#if $state.isMobile}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<h2 class="label">{$t('congregation.accommodations.short')}</h2>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accommodations.accommodations')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
-		{:else}
-			<h2 class="label">{$t('congregation.accommodations.accommodations')}</h2>
-		{/if}
+		<h2 class="label">{$t('congregation.accessibility.accessibility')}</h2>
 	</div>
 	<ul class="col-span-9 space-y-2">
 		{#if ada}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<AdaIcon size="18" />
-					<span class="sr-only">{$t('congregation.accommodations.ada')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.ada')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
-					{#if accommodations.inPerson_adaSome}
-						{$t('congregation.accommodations.inPerson_adaSome')}
+					{#if accessibility.inPerson_adaSome}
+						{$t('congregation.accessibility.inPerson_adaSome')}
 					{/if}
-					{#if accommodations.inPerson_adaAll}
-						{$t('congregation.accommodations.inPerson_adaAll')}
+					{#if accessibility.inPerson_adaAll}
+						{$t('congregation.accessibility.inPerson_adaAll')}
 					{/if}
 				</span>
 			</li>
@@ -113,14 +101,14 @@
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<CcIcon size="18" />
-					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.cc')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
-					{#if accommodations.online_automatedCaptions}
-						{$t('congregation.accommodations.online_automatedCaptions')}
+					{#if accessibility.online_automatedCaptions}
+						{$t('congregation.accessibility.online_automatedCaptions')}
 					{/if}
-					{#if accommodations.online_liveCaptions}
-						{$t('congregation.accommodations.online_liveCaptions')}
+					{#if accessibility.online_liveCaptions}
+						{$t('congregation.accessibility.online_liveCaptions')}
 					{/if}
 				</span>
 			</li>
@@ -130,14 +118,14 @@
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<AslIcon class="h-4 w-4" />
-					<span class="sr-only">{$t('congregation.accommodations.asl')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.asl')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
-					{#if accommodations.inPerson_asl}
-						{$t('congregation.accommodations.inPerson_asl')}
+					{#if accessibility.inPerson_asl}
+						{$t('congregation.accessibility.inPerson_asl')}
 					{/if}
-					{#if accommodations.online_asl}
-						{$t('congregation.accommodations.online_asl')}
+					{#if accessibility.online_asl}
+						{$t('congregation.accessibility.online_asl')}
 					{/if}
 				</span>
 			</li>
@@ -147,11 +135,11 @@
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<EvaIcon size="18" />
-					<span class="sr-only">{$t('congregation.accommodations.eva')}</span>
+					<span class="sr-only">{$t('congregation.accessibility.eva')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
-					{#if accommodations.inPerson_eva}
-						{$t('congregation.accommodations.inPerson_eva')}
+					{#if accessibility.inPerson_eva}
+						{$t('congregation.accessibility.inPerson_eva')}
 					{/if}
 				</span>
 			</li>

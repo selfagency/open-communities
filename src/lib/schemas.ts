@@ -53,7 +53,7 @@ const hasContact = (value: any) => {
 };
 /* endregion methods */
 
-const accommodationsSchema = z.object({
+const accessibilitySchema = z.object({
 	id: z.string().optional(),
 	hybrid_automatedCaptions: z.boolean(),
 	hybrid_liveCaptions: z.boolean(),
@@ -104,13 +104,24 @@ const registrationSchema = z
 		message: t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') })
 	});
 
-const safetySchema = z.object({
+const healthSchema = z.object({
 	id: z.string().optional(),
 	protocol: z
 		.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
 		.refine((value) => !!value, {
 			message: t.get('common.required')
 		}),
+	otherText: z.string().optional()
+});
+
+const securitySchema = z.object({
+	id: z.string().optional(),
+	localPolice: z.boolean(),
+	privateSecurityArmed: z.boolean(),
+	privateSecurityUnarmed: z.boolean(),
+	clergyArmed: z.boolean(),
+	congregantsArmed: z.boolean(),
+	noFirearms: z.boolean(),
 	otherText: z.string().optional()
 });
 
@@ -161,10 +172,11 @@ export const defaultSchema = z.object({
 		country: z.string().optional(),
 		state: z.string().optional()
 	}),
-	accommodations: accommodationsSchema,
+	accessibility: accessibilitySchema,
 	fit: fitSchema,
 	registration: registrationSchema,
-	safety: safetySchema,
+	health: healthSchema,
+	security: securitySchema,
 	services: servicesSchema
 });
 

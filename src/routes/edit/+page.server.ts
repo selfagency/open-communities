@@ -7,10 +7,11 @@ import { omit } from 'radashi';
 import type { LocationRecord } from '$lib/location';
 import type {
 	CongregationMetaRecord,
-	AccommodationsRecord,
+	AccessibilityRecord,
 	FitRecord,
 	RegistrationRecord,
-	SafetyRecord,
+	HealthRecord,
+	SecurityRecord,
 	ServicesRecord
 } from '$lib/types';
 
@@ -21,11 +22,12 @@ import { loadUser, handleError } from '$lib/server/api';
 
 /* region types */
 type MetaRecord = {
-	accommodations: AccommodationsRecord & { id: string };
+	accessibility: AccessibilityRecord & { id: string };
 	fit: FitRecord & { id: string };
 	location: LocationRecord & { id: string };
 	registration: RegistrationRecord & { id: string };
-	safety: SafetyRecord & { id: string };
+	health: HealthRecord & { id: string };
+	security: SecurityRecord & { id: string };
 	services: ServicesRecord & { id: string };
 };
 
@@ -84,7 +86,7 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const { accommodations, fit, location, registration, safety, services } = data;
+			const { accessibility, fit, location, registration, health, services, security } = data;
 
 			await Promise.all([
 				api.collection('congregations').update(
@@ -92,11 +94,12 @@ export const actions = {
 					{
 						...omit(data, [
 							'id',
-							'accommodations',
+							'accessibility',
 							'fit',
 							'location',
 							'registration',
-							'safety',
+							'health',
+							'security',
 							'services'
 						]),
 						visible: client?.admin ? data.visible : false,
@@ -105,13 +108,14 @@ export const actions = {
 					{ fetch }
 				),
 				api
-					.collection('accommodations')
-					.update(accommodations.id, omit(accommodations, ['id']), { fetch }),
+					.collection('accessibility')
+					.update(accessibility.id, omit(accessibility, ['id']), { fetch }),
 				api.collection('fit').update(fit.id, omit(fit, ['id']), { fetch }),
 				api
 					.collection('registration')
 					.update(registration.id, omit(registration, ['id']), { fetch }),
-				api.collection('safety').update(safety.id, omit(safety, ['id']), { fetch }),
+				api.collection('health').update(health.id, omit(health, ['id']), { fetch }),
+				api.collection('security').update(security.id, omit(security, ['id']), { fetch }),
 				api.collection('services').update(services.id, omit(services, ['id']), { fetch })
 			]);
 
@@ -152,13 +156,14 @@ export const actions = {
 			}
 
 			const record = await api.collection('congregationMeta').getOne(data.id, { fetch });
-			const { accommodations, fit, registration, safety, services } = record as MetaRecord;
+			const { accessibility, fit, registration, health, services, security } = record as MetaRecord;
 
 			await Promise.all([
-				api.collection('accommodations').delete(accommodations.id, { fetch }),
+				api.collection('accessibility').delete(accessibility.id, { fetch }),
 				api.collection('fit').delete(fit.id, { fetch }),
 				api.collection('registration').delete(registration.id, { fetch }),
-				api.collection('safety').delete(safety.id, { fetch }),
+				api.collection('health').delete(health.id, { fetch }),
+				api.collection('security').delete(security.id, { fetch }),
 				api.collection('services').delete(services.id, { fetch })
 			]);
 

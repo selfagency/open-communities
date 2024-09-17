@@ -8,10 +8,11 @@ import type { LocationRecord } from '$lib/location';
 import type {
 	CongregationMetaRecord,
 	PagesRecord,
-	AccommodationsRecord,
+	AccessibilityRecord,
 	FitRecord,
 	RegistrationRecord,
-	SafetyRecord,
+	HealthRecord,
+	SecurityRecord,
 	ServicesRecord
 } from '$lib/types';
 
@@ -21,11 +22,12 @@ import { loadUser, handleError } from '$lib/server/api';
 
 /* region types */
 type MetaRecord = {
-	accommodations: AccommodationsRecord;
+	accessibility: AccessibilityRecord;
 	fit: FitRecord;
 	location: LocationRecord;
 	registration: RegistrationRecord;
-	safety: SafetyRecord;
+	health: HealthRecord;
+	security: SecurityRecord;
 	services: ServicesRecord;
 };
 /* endregion types */
@@ -71,17 +73,18 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const { accommodations, fit, location, registration, safety, services } =
+			const { accessibility, fit, location, registration, health, security, services } =
 				formData as MetaRecord;
 
 			const record = await api.collection('congregations').create(
 				{
 					...omit(formData, [
-						'accommodations',
+						'accessibility',
 						'fit',
 						'location',
 						'registration',
-						'safety',
+						'health',
+						'security',
 						'services'
 					]),
 					...location,
@@ -92,13 +95,14 @@ export const actions = {
 
 			await Promise.all([
 				api
-					.collection('accommodations')
-					.create({ ...accommodations, congregation: record.id }, { fetch }),
+					.collection('accessibility')
+					.create({ ...accessibility, congregation: record.id }, { fetch }),
 				api.collection('fit').create({ ...fit, congregation: record.id }, { fetch }),
 				api
 					.collection('registration')
 					.create({ ...registration, congregation: record.id }, { fetch }),
-				api.collection('safety').create({ ...safety, congregation: record.id }, { fetch }),
+				api.collection('health').create({ ...health, congregation: record.id }, { fetch }),
+				api.collection('security').create({ ...security, congregation: record.id }, { fetch }),
 				api.collection('services').create({ ...services, congregation: record.id }, { fetch })
 			]);
 

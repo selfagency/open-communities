@@ -2,7 +2,7 @@
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 
 	/* region imports */
-	import type { SafetyRecord } from '$lib/types';
+	import type { HealthRecord } from '$lib/types';
 
 	import MaskIcon from '$lib/assets/mask.svg?component';
 	import * as Tooltip from '$lib/components/ui/tooltip';
@@ -11,56 +11,56 @@
 
 	/* region variables */
 	// props
-	export let safety: SafetyRecord | undefined;
+	export let health: HealthRecord | undefined;
 	export let mode: 'mini' | 'full' = 'full';
 	/* endregion variables */
 </script>
 
 {#if mode === 'mini'}
-	{#if safety?.protocol === 'maskingRecommended' || safety?.protocol === 'maskingRequired' || (safety?.protocol === 'other' && safety?.otherText !== 'N/A')}
+	{#if health?.protocol === 'maskingRecommended' || health?.protocol === 'maskingRequired' || (health?.protocol === 'other' && health?.otherText !== 'N/A')}
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				<span><MaskIcon class="h-5 w-5" /></span>
-				<span class="sr-only">{$t(`congregation.safety.${safety.protocol}`)}</span>
+				<span class="sr-only">{$t(`congregation.health.${health.protocol}`)}</span>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<span class="text-nowrap">{$t(`congregation.safety.${safety.protocol}`)}</span>
+				<span class="text-nowrap">{$t(`congregation.health.${health.protocol}`)}</span>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	{/if}
 {:else}
 	<div class="col-span-3">
-		<h2 class="label">{$t('congregation.safety.safety')}</h2>
+		<h2 class="label">{$t('congregation.health.health')}</h2>
 	</div>
 
 	<ul class="col-span-9 space-y-2">
-		{#if safety?.protocol === 'other' && safety?.otherText === 'N/A'}
-			{$t('congregation.safety.notApplicable')}
+		{#if health?.protocol === 'other' && health?.otherText === 'N/A'}
+			{$t('congregation.health.notApplicable')}
 		{:else}
-			{#if safety?.protocol === 'maskingRecommended'}
+			{#if health?.protocol === 'maskingRecommended'}
 				<li class="flex flex-row items-center justify-start space-x-1">
 					<span><MaskIcon class="w-18 h-3" /></span>
-					<span>{$t('congregation.safety.maskingRecommended')}</span>
+					<span>{$t('congregation.health.maskingRecommended')}</span>
 				</li>
 			{/if}
 
-			{#if safety?.protocol === 'maskingRequired'}
+			{#if health?.protocol === 'maskingRequired'}
 				<li class="flex flex-row items-center justify-start space-x-1">
 					<span><MaskIcon class="w-18 h-3" /></span>
-					<span>{$t('congregation.safety.maskingRequired')}</span>
+					<span>{$t('congregation.health.maskingRequired')}</span>
 				</li>
 			{/if}
 
-			{#if safety?.protocol === 'noGuidelines'}
+			{#if health?.protocol === 'noGuidelines'}
 				<li class="flex flex-row items-center justify-start space-x-1">
 					<span><WarningIcon size="18" /></span>
-					<span>{$t('congregation.safety.noGuidelines')}</span>
+					<span>{$t('congregation.health.noGuidelines')}</span>
 				</li>
 			{/if}
 
-			{#if safety?.protocol === 'other'}
+			{#if health?.protocol === 'other'}
 				<li class="flex flex-row items-center justify-start space-x-1">
-					<span>{safety.otherText}</span>
+					<span>{health.otherText}</span>
 				</li>
 			{/if}
 		{/if}

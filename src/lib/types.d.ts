@@ -6,15 +6,16 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
-	Accommodations = "accommodations",
+	Accessibility = "accessibility",
 	Cities = "cities",
 	CongregationMeta = "congregationMeta",
 	Congregations = "congregations",
 	Countries = "countries",
 	Fit = "fit",
+	Health = "health",
 	Pages = "pages",
 	Registration = "registration",
-	Safety = "safety",
+	Security = "security",
 	Services = "services",
 	States = "states",
 	Users = "users",
@@ -44,7 +45,7 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
-export type AccommodationsRecord = {
+export type AccessibilityRecord = {
 	congregation: RecordIdString
 	inPerson_adaAll?: boolean
 	inPerson_adaSome?: boolean
@@ -77,8 +78,8 @@ export enum CongregationMetaDenominationOptions {
 	"humanist" = "humanist",
 	"other" = "other",
 }
-export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tlocation = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown> = {
-	accommodations?: null | Taccommodations
+export type CongregationMetaRecord<Taccessibility = unknown, Tfit = unknown, Thealth = unknown, Tlocation = unknown, Tregistration = unknown, Tsecurity = unknown, Tservices = unknown> = {
+	accessibility?: null | Taccessibility
 	clergy?: string
 	contactEmail?: string
 	contactName?: string
@@ -86,12 +87,13 @@ export type CongregationMetaRecord<Taccommodations = unknown, Tfit = unknown, Tl
 	denomination?: CongregationMetaDenominationOptions
 	fit?: null | Tfit
 	flavor?: string
+	health?: null | Thealth
 	location?: null | Tlocation
 	name?: string
 	notes?: string
 	owner?: RecordIdString
 	registration?: null | Tregistration
-	safety?: null | Tsafety
+	security?: null | Tsecurity
 	services?: null | Tservices
 	visible?: boolean
 }
@@ -146,6 +148,18 @@ export type FitRecord = {
 	publicStatement?: boolean
 }
 
+export enum HealthProtocolOptions {
+	"maskingRequired" = "maskingRequired",
+	"maskingRecommended" = "maskingRecommended",
+	"noGuidelines" = "noGuidelines",
+	"other" = "other",
+}
+export type HealthRecord = {
+	congregation: RecordIdString
+	otherText?: string
+	protocol?: HealthProtocolOptions
+}
+
 export enum PagesLangOptions {
 	"en" = "en",
 	"de" = "de",
@@ -177,16 +191,16 @@ export type RegistrationRecord = {
 	url?: string
 }
 
-export enum SafetyProtocolOptions {
-	"maskingRequired" = "maskingRequired",
-	"maskingRecommended" = "maskingRecommended",
-	"noGuidelines" = "noGuidelines",
-	"other" = "other",
-}
-export type SafetyRecord = {
-	congregation: RecordIdString
+export type SecurityRecord = {
+	clergyArmed?: boolean
+	congregantsArmed?: boolean
+	congregation?: RecordIdString
+	localPolice?: boolean
+	noFirearms?: boolean
+	other?: boolean
 	otherText?: string
-	protocol?: SafetyProtocolOptions
+	privateSecurityArmed?: boolean
+	privateSecurityUnarmed?: boolean
 }
 
 export type ServicesRecord = {
@@ -221,15 +235,16 @@ export type UsersRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type AccommodationsResponse<Texpand = unknown> = Required<AccommodationsRecord> & BaseSystemFields<Texpand>
+export type AccessibilityResponse<Texpand = unknown> = Required<AccessibilityRecord> & BaseSystemFields<Texpand>
 export type CitiesResponse<Texpand = unknown> = Required<CitiesRecord> & BaseSystemFields<Texpand>
-export type CongregationMetaResponse<Taccommodations = unknown, Tfit = unknown, Tlocation = unknown, Tregistration = unknown, Tsafety = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccommodations, Tfit, Tlocation, Tregistration, Tsafety, Tservices>> & BaseSystemFields<Texpand>
+export type CongregationMetaResponse<Taccessibility = unknown, Tfit = unknown, Thealth = unknown, Tlocation = unknown, Tregistration = unknown, Tsecurity = unknown, Tservices = unknown, Texpand = unknown> = Required<CongregationMetaRecord<Taccessibility, Tfit, Thealth, Tlocation, Tregistration, Tsecurity, Tservices>> & BaseSystemFields<Texpand>
 export type CongregationsResponse<Texpand = unknown> = Required<CongregationsRecord> & BaseSystemFields<Texpand>
 export type CountriesResponse<Texpand = unknown> = Required<CountriesRecord> & BaseSystemFields<Texpand>
 export type FitResponse<Texpand = unknown> = Required<FitRecord> & BaseSystemFields<Texpand>
+export type HealthResponse<Texpand = unknown> = Required<HealthRecord> & BaseSystemFields<Texpand>
 export type PagesResponse<Texpand = unknown> = Required<PagesRecord> & BaseSystemFields<Texpand>
 export type RegistrationResponse<Texpand = unknown> = Required<RegistrationRecord> & BaseSystemFields<Texpand>
-export type SafetyResponse<Texpand = unknown> = Required<SafetyRecord> & BaseSystemFields<Texpand>
+export type SecurityResponse<Texpand = unknown> = Required<SecurityRecord> & BaseSystemFields<Texpand>
 export type ServicesResponse<Texpand = unknown> = Required<ServicesRecord> & BaseSystemFields<Texpand>
 export type StatesResponse<Texpand = unknown> = Required<StatesRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
@@ -237,30 +252,32 @@ export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSyste
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
-	accommodations: AccommodationsRecord
+	accessibility: AccessibilityRecord
 	cities: CitiesRecord
 	congregationMeta: CongregationMetaRecord
 	congregations: CongregationsRecord
 	countries: CountriesRecord
 	fit: FitRecord
+	health: HealthRecord
 	pages: PagesRecord
 	registration: RegistrationRecord
-	safety: SafetyRecord
+	security: SecurityRecord
 	services: ServicesRecord
 	states: StatesRecord
 	users: UsersRecord
 }
 
 export type CollectionResponses = {
-	accommodations: AccommodationsResponse
+	accessibility: AccessibilityResponse
 	cities: CitiesResponse
 	congregationMeta: CongregationMetaResponse
 	congregations: CongregationsResponse
 	countries: CountriesResponse
 	fit: FitResponse
+	health: HealthResponse
 	pages: PagesResponse
 	registration: RegistrationResponse
-	safety: SafetyResponse
+	security: SecurityResponse
 	services: ServicesResponse
 	states: StatesResponse
 	users: UsersResponse
@@ -270,15 +287,16 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
-	collection(idOrName: 'accommodations'): RecordService<AccommodationsResponse>
+	collection(idOrName: 'accessibility'): RecordService<AccessibilityResponse>
 	collection(idOrName: 'cities'): RecordService<CitiesResponse>
 	collection(idOrName: 'congregationMeta'): RecordService<CongregationMetaResponse>
 	collection(idOrName: 'congregations'): RecordService<CongregationsResponse>
 	collection(idOrName: 'countries'): RecordService<CountriesResponse>
 	collection(idOrName: 'fit'): RecordService<FitResponse>
+	collection(idOrName: 'health'): RecordService<HealthResponse>
 	collection(idOrName: 'pages'): RecordService<PagesResponse>
 	collection(idOrName: 'registration'): RecordService<RegistrationResponse>
-	collection(idOrName: 'safety'): RecordService<SafetyResponse>
+	collection(idOrName: 'security'): RecordService<SecurityResponse>
 	collection(idOrName: 'services'): RecordService<ServicesResponse>
 	collection(idOrName: 'states'): RecordService<StatesResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>

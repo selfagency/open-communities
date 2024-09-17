@@ -59,8 +59,9 @@
 		| 'congregation'
 		| 'fit'
 		| 'services'
-		| 'accommodations'
-		| 'safety'
+		| 'accessibility'
+		| 'health'
+		| 'security'
 		| 'registration'
 		| 'contact' = 'congregation';
 	/* endregion variables */
@@ -101,7 +102,7 @@
 			otherText: ''
 		};
 
-		$formData.accommodations = {
+		$formData.accessibility = {
 			online_asl: false,
 			online_liveCaptions: false,
 			online_automatedCaptions: false,
@@ -113,8 +114,18 @@
 			otherText: ''
 		};
 
-		$formData.safety = {
+		$formData.health = {
 			protocol: '',
+			otherText: ''
+		};
+
+		$formData.security = {
+			localPolice: false,
+			privateSecurityArmed: false,
+			privateSecurityUnarmed: false,
+			clergyArmed: false,
+			congregantsArmed: false,
+			other: false,
 			otherText: ''
 		};
 
@@ -224,8 +235,10 @@
 	}
 
 	$: if ($formData.services.onlineOnly) {
-		$formData.safety.protocol = 'other';
-		$formData.safety.otherText = 'N/A';
+		$formData.health.protocol = 'other';
+		$formData.health.otherText = 'N/A';
+		$formData.security.other = true;
+		$formData.security.otherText = 'N/A';
 	}
 
 	$: if (addSuccess || editSuccess) setTitle();
@@ -594,7 +607,7 @@
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'accommodations')}>
+										<Button variant="secondary" on:click={() => (view = 'accessibility')}>
 											{$t('common.next')} →
 										</Button>
 									</div>
@@ -602,21 +615,21 @@
 							</Accordion.Item>
 						{/if}
 
-						<!-- accommodations -->
-						{#if $formData.accommodations}
-							<Accordion.Item value="accommodations">
+						<!-- accessibility -->
+						{#if $formData.accessibility}
+							<Accordion.Item value="accessibility">
 								<Accordion.Trigger>
 									<span class="font-display text-lg">
-										{$t('congregation.accommodations.accommodations')}
-										{#if $errors.accommodations}
+										{$t('congregation.accessibility.accessibility')}
+										{#if $errors.accessibility}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
 								</Accordion.Trigger>
 								<Accordion.Content>
-									<div class="question">{$t('congregation.accommodations.extended')}</div>
+									<div class="question">{$t('congregation.accessibility.extended')}</div>
 									<div class="mt-2 italic text-slate-500">
-										{$t('congregation.accommodations.note')}
+										{$t('congregation.accessibility.note')}
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="online_asl">
@@ -625,11 +638,11 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.online_asl}
+															bind:checked={$formData.accessibility.online_asl}
 														/>
 													</span>
 													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.accommodations.online_asl')}</Form.Label>
+														<Form.Label>{$t('congregation.accessibility.online_asl')}</Form.Label>
 													</span>
 												</span>
 											</Form.Control>
@@ -641,12 +654,12 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.online_liveCaptions}
+															bind:checked={$formData.accessibility.online_liveCaptions}
 														/>
 													</span>
 													<span class="-mt-0.5">
 														<Form.Label
-															>{$t('congregation.accommodations.online_liveCaptions')}</Form.Label
+															>{$t('congregation.accessibility.online_liveCaptions')}</Form.Label
 														>
 													</span>
 												</span>
@@ -659,48 +672,12 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.online_automatedCaptions}
+															bind:checked={$formData.accessibility.online_automatedCaptions}
 														/>
 													</span>
 													<span class="-mt-0.5">
 														<Form.Label>
-															{$t('congregation.accommodations.online_automatedCaptions')}
-														</Form.Label>
-													</span>
-												</span>
-											</Form.Control>
-											<Form.FieldErrors />
-										</Form.Field>
-										<Form.Field {form} name="hybrid_liveCaptions">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accommodations.hybrid_liveCaptions}
-														/>
-													</span>
-													<span class="-mt-0.5">
-														<Form.Label
-															>{$t('congregation.accommodations.hybrid_liveCaptions')}</Form.Label
-														>
-													</span>
-												</span>
-											</Form.Control>
-											<Form.FieldErrors />
-										</Form.Field>
-										<Form.Field {form} name="hybrid_automatedCaptions">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accommodations.hybrid_automatedCaptions}
-														/>
-													</span>
-													<span class="-mt-0.5">
-														<Form.Label>
-															{$t('congregation.accommodations.hybrid_automatedCaptions')}
+															{$t('congregation.accessibility.online_automatedCaptions')}
 														</Form.Label>
 													</span>
 												</span>
@@ -713,12 +690,12 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.inPerson_adaAll}
+															bind:checked={$formData.accessibility.inPerson_adaAll}
 														/>
 													</span>
 													<span class="-mt-0.5">
 														<Form.Label
-															>{$t('congregation.accommodations.inPerson_adaAll')}</Form.Label
+															>{$t('congregation.accessibility.inPerson_adaAll')}</Form.Label
 														>
 													</span>
 												</span>
@@ -731,12 +708,12 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.inPerson_adaSome}
+															bind:checked={$formData.accessibility.inPerson_adaSome}
 														/>
 													</span>
 													<span class="-mt-0.5">
 														<Form.Label
-															>{$t('congregation.accommodations.inPerson_adaSome')}</Form.Label
+															>{$t('congregation.accessibility.inPerson_adaSome')}</Form.Label
 														>
 													</span>
 												</span>
@@ -749,12 +726,11 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.inPerson_asl}
+															bind:checked={$formData.accessibility.inPerson_asl}
 														/>
 													</span>
 													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.accommodations.inPerson_asl')}</Form.Label
-														>
+														<Form.Label>{$t('congregation.accessibility.inPerson_asl')}</Form.Label>
 													</span>
 												</span>
 											</Form.Control>
@@ -766,12 +742,11 @@
 													<span>
 														<Checkbox
 															{...attrs}
-															bind:checked={$formData.accommodations.inPerson_eva}
+															bind:checked={$formData.accessibility.inPerson_eva}
 														/>
 													</span>
 													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.accommodations.inPerson_eva')}</Form.Label
-														>
+														<Form.Label>{$t('congregation.accessibility.inPerson_eva')}</Form.Label>
 													</span>
 												</span>
 											</Form.Control>
@@ -781,7 +756,7 @@
 											<Form.Control let:attrs>
 												<span class="flex flex-row items-start justify-start space-x-2">
 													<span>
-														<Checkbox {...attrs} bind:checked={$formData.accommodations.other} />
+														<Checkbox {...attrs} bind:checked={$formData.accessibility.other} />
 													</span>
 													<span class="-mt-0.5">
 														<Form.Label>{$t('common.other')}</Form.Label>
@@ -790,10 +765,10 @@
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
-										{#if $formData.accommodations.other}
+										{#if $formData.accessibility.other}
 											<Form.Field {form} name="accoms_otherText">
 												<Form.Control let:attrs>
-													<Input {...attrs} bind:value={$formData.accommodations.otherText} />
+													<Input {...attrs} bind:value={$formData.accessibility.otherText} />
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
@@ -801,7 +776,7 @@
 									</div>
 
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'safety')}
+										<Button variant="secondary" on:click={() => (view = 'health')}
 											>{$t('common.next')} →</Button
 										>
 									</div>
@@ -809,14 +784,14 @@
 							</Accordion.Item>
 						{/if}
 
-						<!-- safety -->
-						{#if $formData.safety}
-							{@const safetyErrors = fixType($errors.safety)}
-							<Accordion.Item value="safety">
+						<!-- health -->
+						{#if $formData.health}
+							{@const healthErrors = fixType($errors.health)}
+							<Accordion.Item value="health">
 								<Accordion.Trigger>
 									<span class="font-display text-lg">
-										{$t('congregation.safety.safety')}
-										{#if safetyErrors}
+										{$t('congregation.health.health')}
+										{#if healthErrors}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
@@ -824,31 +799,31 @@
 								<Accordion.Content>
 									<Form.Field {form} name="protocol">
 										<Form.Control let:attrs>
-											<div class="question mb-4" class:error={safetyErrors?.protocol}>
-												{$t('congregation.safety.extended')}
+											<div class="question mb-4" class:error={healthErrors?.protocol}>
+												{$t('congregation.health.extended')}
 											</div>
 											<RadioGroup.Root
 												{...attrs}
 												class="space-y-2"
-												bind:value={$formData.safety.protocol}
+												bind:value={$formData.health.protocol}
 												required
 											>
 												<div class="flex items-center space-x-2">
 													<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
 													<Form.Label for="maskingRequired"
-														>{$t('congregation.safety.maskingRequired')}</Form.Label
+														>{$t('congregation.health.maskingRequired')}</Form.Label
 													>
 												</div>
 												<div class="flex items-center space-x-2">
 													<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
 													<Form.Label for="maskingRecommended"
-														>{$t('congregation.safety.maskingRecommended')}</Form.Label
+														>{$t('congregation.health.maskingRecommended')}</Form.Label
 													>
 												</div>
 												<div class="flex items-center space-x-2">
 													<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
 													<Form.Label for="noGuidelines"
-														>{$t('congregation.safety.noGuidelines')}</Form.Label
+														>{$t('congregation.health.noGuidelines')}</Form.Label
 													>
 												</div>
 												<div class="flex items-center space-x-2">
@@ -856,10 +831,10 @@
 													<Form.Label for="other">{$t('common.other')}</Form.Label>
 												</div>
 											</RadioGroup.Root>
-											{#if $formData.safety.protocol === 'other'}
-												<Form.Field {form} name="safety_otherText">
+											{#if $formData.health.protocol === 'other'}
+												<Form.Field {form} name="health_otherText">
 													<Form.Control let:attrs>
-														<Input {...attrs} bind:value={$formData.safety.otherText} />
+														<Input {...attrs} bind:value={$formData.health.otherText} />
 													</Form.Control>
 													<Form.FieldErrors />
 												</Form.Field>
@@ -867,9 +842,151 @@
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
-									{#if safetyErrors?.protocol}
+									{#if healthErrors?.protocol}
 										<span class="mt-4 block text-xs text-red-500">{$t('common.required')}</span>
 									{/if}
+									<div class="mt-4 flex flex-row items-center justify-end">
+										<Button variant="secondary" on:click={() => (view = 'security')}>
+											{$t('common.next')} →
+										</Button>
+									</div>
+								</Accordion.Content>
+							</Accordion.Item>
+						{/if}
+
+						<!-- security -->
+						{#if $formData.security}
+							{@const securityErrors = fixType($errors.security)?._errors}
+							<Accordion.Item value="security">
+								<Accordion.Trigger>
+									<span class="font-display text-lg">
+										{$t('congregation.security.security')}
+										{#if securityErrors}
+											<span class="text-red-500">*</span>
+										{/if}
+									</span>
+								</Accordion.Trigger>
+								<Accordion.Content>
+									<div class="question" class:error={securityErrors}>
+										{$t('congregation.security.extended')}
+									</div>
+									<div class="my-4 space-y-2">
+										<Form.Field {form} name="localPolice">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox {...attrs} bind:checked={$formData.security.localPolice} />
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label>{$t('congregation.security.localPolice')}</Form.Label>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										<Form.Field {form} name="privateSecurityArmed">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox
+															{...attrs}
+															bind:checked={$formData.security.privateSecurityArmed}
+														/>
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label
+															>{$t('congregation.security.privateSecurityArmed')}</Form.Label
+														>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										<Form.Field {form} name="privateSecurityUnarmed">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox
+															{...attrs}
+															bind:checked={$formData.security.privateSecurityUnarmed}
+														/>
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label
+															>{$t('congregation.security.privateSecurityUnarmed')}</Form.Label
+														>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										<Form.Field {form} name="clergyArmed">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox {...attrs} bind:checked={$formData.security.clergyArmed} />
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label>{$t('congregation.security.clergyArmed')}</Form.Label>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										<Form.Field {form} name="congregantsArmed">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox
+															{...attrs}
+															bind:checked={$formData.security.congregantsArmed}
+														/>
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label>{$t('congregation.security.congregantsArmed')}</Form.Label>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										<Form.Field {form} name="noFirearms">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox {...attrs} bind:checked={$formData.security.noFirearms} />
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label>{$t('congregation.security.noFirearms')}</Form.Label>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										<Form.Field {form} name="security_other">
+											<Form.Control let:attrs>
+												<span class="flex flex-row items-start justify-start space-x-2">
+													<span>
+														<Checkbox {...attrs} bind:checked={$formData.security.other} />
+													</span>
+													<span class="-mt-0.5">
+														<Form.Label>{$t('common.other')}</Form.Label>
+													</span>
+												</span>
+											</Form.Control>
+											<Form.FieldErrors />
+										</Form.Field>
+										{#if $formData.security.other}
+											<Form.Field {form} name="security_otherText">
+												<Form.Control let:attrs>
+													<Input {...attrs} bind:value={$formData.security.otherText} />
+												</Form.Control>
+												<Form.FieldErrors />
+											</Form.Field>
+										{/if}
+										{#if securityErrors}
+											<span class="text-xs text-red-500">{$t('common.required')}</span>
+										{/if}
+									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" on:click={() => (view = 'registration')}>
 											{$t('common.next')} →

@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import AccommodationsIcon from 'lucide-svelte/icons/accessibility';
+	import AccessibilityIcon from 'lucide-svelte/icons/accessibility';
 	import OpenIcon from 'lucide-svelte/icons/chevrons-up-down';
 	import CircleIcon from 'lucide-svelte/icons/circle';
 	import CircleCheckIcon from 'lucide-svelte/icons/circle-check';
@@ -8,7 +8,8 @@
 	import CloseIcon from 'lucide-svelte/icons/circle-x';
 	import RegistrationIcon from 'lucide-svelte/icons/clipboard-pen';
 	import FilterIcon from 'lucide-svelte/icons/filter';
-	import AdminIcon from 'lucide-svelte/icons/shield-check';
+	import AdminIcon from 'lucide-svelte/icons/settings';
+	import SecurityIcon from 'lucide-svelte/icons/shield';
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 
@@ -48,7 +49,7 @@
 				offsite: false,
 				other: false
 			},
-			accommodations: {
+			accessibility: {
 				inPerson_adaSome: false,
 				inPerson_adaAll: false,
 				inPerson_eva: false,
@@ -58,11 +59,19 @@
 				online_liveCaptions: false,
 				other: false
 			},
-			safety: {
+			health: {
 				maskingRequired: false,
 				maskingRecommended: false,
 				noGuidelines: false,
 				other: false
+			},
+			security: {
+				localPolice: false,
+				privateSecurityArmed: false,
+				privateSecurityUnarmed: false,
+				clergyArmed: false,
+				congregantsArmed: false,
+				noFirearms: false
 			},
 			registration: {
 				free: false,
@@ -180,18 +189,18 @@
 				</Collapsible.Root>
 			{/if}
 
-			{#if !isEmpty(filters?.accommodations)}
+			{#if !isEmpty(filters?.accessibility)}
 				<Collapsible.Root>
 					<Collapsible.Trigger>
 						<div class="filter-heading">
-							<span class="filter-icon"><AccommodationsIcon size="17" /></span>
+							<span class="filter-icon"><AccessibilityIcon size="17" /></span>
 							<span class="filter-label">
-								<span>{$t('congregation.accommodations.accommodations')}</span>
+								<span>{$t('congregation.accessibility.accessibility')}</span>
 							</span>
 							<span class="filter-status">
-								{#if every(filters.accommodations)}
+								{#if every(filters.accessibility)}
 									<CircleCheckIcon class="h-4 w-4" />
-								{:else if some(filters.accommodations)}
+								{:else if some(filters.accessibility)}
 									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
 									<CircleIcon class="h-4 w-4" />
@@ -206,89 +215,89 @@
 						<div class="filter-box">
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_inPerson_adaSome"
+									id="accessibility_inPerson_adaSome"
 									class="scale-75"
-									bind:checked={filters.accommodations.inPerson_adaSome}
+									bind:checked={filters.accessibility.inPerson_adaSome}
 								/>
-								<Label for="accommodations_inPerson_adaSome">
+								<Label for="accessibility_inPerson_adaSome">
 									<div class="filter-label">
-										{$t('congregation.accommodations.inPerson_adaSome')}
+										{$t('congregation.accessibility.inPerson_adaSome')}
 									</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_inPerson_adaAll"
+									id="accessibility_inPerson_adaAll"
 									class="scale-75"
-									bind:checked={filters.accommodations.inPerson_adaAll}
+									bind:checked={filters.accessibility.inPerson_adaAll}
 								/>
-								<Label for="accommodations_inPerson_adaAll">
+								<Label for="accessibility_inPerson_adaAll">
 									<div class="filter-label">
-										{$t('congregation.accommodations.inPerson_adaAll')}
+										{$t('congregation.accessibility.inPerson_adaAll')}
 									</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_inPerson_eva"
+									id="accessibility_inPerson_eva"
 									class="scale-75"
-									bind:checked={filters.accommodations.inPerson_eva}
+									bind:checked={filters.accessibility.inPerson_eva}
 								/>
-								<Label for="accommodations_inPerson_eva">
-									<div class="filter-label">{$t('congregation.accommodations.inPerson_eva')}</div>
+								<Label for="accessibility_inPerson_eva">
+									<div class="filter-label">{$t('congregation.accessibility.inPerson_eva')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_online_automatedCaptions"
+									id="accessibility_online_automatedCaptions"
 									class="scale-75"
-									bind:checked={filters.accommodations.online_automatedCaptions}
+									bind:checked={filters.accessibility.online_automatedCaptions}
 								/>
-								<Label for="accommodations_online_automatedCaptions">
+								<Label for="accessibility_online_automatedCaptions">
 									<div class="filter-label">
-										{$t('congregation.accommodations.online_automatedCaptions')}
+										{$t('congregation.accessibility.online_automatedCaptions')}
 									</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_online_liveCaptions"
+									id="accessibility_online_liveCaptions"
 									class="scale-75"
-									bind:checked={filters.accommodations.online_liveCaptions}
+									bind:checked={filters.accessibility.online_liveCaptions}
 								/>
-								<Label for="accommodations_online_liveCaptions">
+								<Label for="accessibility_online_liveCaptions">
 									<div class="filter-label">
-										{$t('congregation.accommodations.online_liveCaptions')}
+										{$t('congregation.accessibility.online_liveCaptions')}
 									</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_inPerson_asl"
+									id="accessibility_inPerson_asl"
 									class="scale-75"
-									bind:checked={filters.accommodations.inPerson_asl}
+									bind:checked={filters.accessibility.inPerson_asl}
 								/>
-								<Label for="accommodations_other">
-									<div class="filter-label">{$t('congregation.accommodations.inPerson_asl')}</div>
+								<Label for="accessibility_other">
+									<div class="filter-label">{$t('congregation.accessibility.inPerson_asl')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_online_asl"
+									id="accessibility_online_asl"
 									class="scale-75"
-									bind:checked={filters.accommodations.online_asl}
+									bind:checked={filters.accessibility.online_asl}
 								/>
-								<Label for="accommodations_other">
-									<div class="filter-label">{$t('congregation.accommodations.online_asl')}</div>
+								<Label for="accessibility_other">
+									<div class="filter-label">{$t('congregation.accessibility.online_asl')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_other"
+									id="accessibility_other"
 									class="scale-75"
-									bind:checked={filters.accommodations.other}
+									bind:checked={filters.accessibility.other}
 								/>
-								<Label for="accommodations_other">
+								<Label for="accessibility_other">
 									<div class="filter-label">{$t('common.other')}</div>
 								</Label>
 							</span>
@@ -297,18 +306,18 @@
 				</Collapsible.Root>
 			{/if}
 
-			{#if !isEmpty(filters?.safety)}
+			{#if !isEmpty(filters?.health)}
 				<Collapsible.Root>
 					<Collapsible.Trigger>
 						<div class="filter-heading">
-							<span class="filter-icon"
-								><MaskIcon class="h-5 w-5 fill-slate-500 stroke-slate-500" /></span
-							>
-							<span class="filter-label"><span>{$t('congregation.safety.safety')}</span></span>
+							<span class="filter-icon">
+								<MaskIcon class="h-5 w-5 fill-slate-500 stroke-slate-500" />
+							</span>
+							<span class="filter-label"><span>{$t('congregation.health.health')}</span></span>
 							<span class="filter-status">
-								{#if every(filters.safety)}
+								{#if every(filters.health)}
 									<CircleCheckIcon class="h-4 w-4" />
-								{:else if some(filters.safety)}
+								{:else if some(filters.health)}
 									<CircleMinusIcon class="h-4 w-4" />
 								{:else}
 									<CircleIcon class="h-4 w-4" />
@@ -323,38 +332,135 @@
 						<div class="filter-box">
 							<span class="filter-item">
 								<Checkbox
-									id="safety_maskingRequired"
+									id="health_maskingRequired"
 									class="scale-75"
-									bind:checked={filters.safety.maskingRequired}
+									bind:checked={filters.health.maskingRequired}
 								/>
-								<Label for="safety_maskingRequired">
-									<div class="filter-label">{$t('congregation.safety.maskingRequired')}</div>
+								<Label for="health_maskingRequired">
+									<div class="filter-label">{$t('congregation.health.maskingRequired')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="safety_maskingRecommended"
+									id="health_maskingRecommended"
 									class="scale-75"
-									bind:checked={filters.safety.maskingRecommended}
+									bind:checked={filters.health.maskingRecommended}
 								/>
-								<Label for="safety_maskingRecommended">
-									<div class="filter-label">{$t('congregation.safety.maskingRecommended')}</div>
+								<Label for="health_maskingRecommended">
+									<div class="filter-label">{$t('congregation.health.maskingRecommended')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="safety_noGuidelines"
+									id="health_noGuidelines"
 									class="scale-75"
-									bind:checked={filters.safety.noGuidelines}
+									bind:checked={filters.health.noGuidelines}
 								/>
-								<Label for="safety_noGuidelines">
-									<div class="filter-label">{$t('congregation.safety.noGuidelines')}</div>
+								<Label for="health_noGuidelines">
+									<div class="filter-label">{$t('congregation.health.noGuidelines')}</div>
 								</Label>
 							</span>
 							<span class="filter-item">
-								<Checkbox id="safety_other" class="scale-75" bind:checked={filters.safety.other} />
-								<Label for="safety_other">
+								<Checkbox id="health_other" class="scale-75" bind:checked={filters.health.other} />
+								<Label for="health_other">
 									<div class="filter-label">{$t('common.other')}</div>
+								</Label>
+							</span>
+						</div>
+					</Collapsible.Content>
+				</Collapsible.Root>
+			{/if}
+
+			{#if !isEmpty(filters?.security)}
+				<Collapsible.Root>
+					<Collapsible.Trigger>
+						<div class="filter-heading">
+							<span class="filter-icon">
+								<SecurityIcon class="h-4 w-4  stroke-slate-500" />
+							</span>
+							<span class="filter-label"><span>{$t('congregation.security.security')}</span></span>
+							<span class="filter-status">
+								{#if every(filters.security)}
+									<CircleCheckIcon class="h-4 w-4" />
+								{:else if some(filters.security)}
+									<CircleMinusIcon class="h-4 w-4" />
+								{:else}
+									<CircleIcon class="h-4 w-4" />
+								{/if}
+							</span>
+							<span class="filter-icon">
+								<OpenIcon size="16" />
+							</span>
+						</div>
+					</Collapsible.Trigger>
+					<Collapsible.Content>
+						<div class="filter-box">
+							<span class="filter-item">
+								<Checkbox
+									id="security_localPolice"
+									class="scale-75"
+									bind:checked={filters.security.localPolice}
+								/>
+								<Label for="security_localPolice">
+									<div class="filter-label">{$t('congregation.security.localPolice')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="security_privateSecurityArmed"
+									class="scale-75"
+									bind:checked={filters.security.privateSecurityArmed}
+								/>
+								<Label for="security_privateSecurityArmed">
+									<div class="filter-label">{$t('congregation.security.privateSecurityArmed')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="security_privateSecurityUnarmed"
+									class="scale-75"
+									bind:checked={filters.security.privateSecurityUnarmed}
+								/>
+								<Label for="security_privateSecurityUnarmed">
+									<div class="filter-label">
+										{$t('congregation.security.privateSecurityUnarmed')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="security_clergyArmed"
+									class="scale-75"
+									bind:checked={filters.security.clergyArmed}
+								/>
+								<Label for="security_clergyArmed">
+									<div class="filter-label">
+										{$t('congregation.security.clergyArmed')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="security_congregantsArmed"
+									class="scale-75"
+									bind:checked={filters.security.congregantsArmed}
+								/>
+								<Label for="security_congregantsArmed">
+									<div class="filter-label">
+										{$t('congregation.security.congregantsArmed')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="security_noFirearms"
+									class="scale-75"
+									bind:checked={filters.security.noFirearms}
+								/>
+								<Label for="security_noFirearms">
+									<div class="filter-label">
+										{$t('congregation.security.noFirearms')}
+									</div>
 								</Label>
 							</span>
 						</div>

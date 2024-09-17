@@ -4,11 +4,12 @@
 
 	import type {
 		CongregationMetaRecord,
-		AccommodationsRecord,
+		AccessibilityRecord,
 		FitRecord,
 		ServicesRecord,
 		RegistrationRecord,
-		SafetyRecord,
+		HealthRecord,
+		SecurityRecord,
 		CitiesRecord as City,
 		StatesRecord as State,
 		CountriesRecord as Country
@@ -16,14 +17,16 @@
 
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Separator } from '$lib/components/ui/separator';
+	import * as Tabs from '$lib/components/ui/tabs';
 	import { t } from '$lib/i18n';
 	import { user } from '$lib/stores';
 
-	import Accommodations from './accommodations.svelte';
+	import Accessibility from './accessibility.svelte';
 	import Contact from './contact.svelte';
 	import Fit from './fit.svelte';
+	import Health from './health.svelte';
 	import Registration from './registration.svelte';
-	import Safety from './safety.svelte';
+	import Security from './security.svelte';
 	import Services from './services.svelte';
 	import Tile from './tile.svelte';
 	/* endregion imports */
@@ -33,7 +36,7 @@
 	export let congregation: CongregationMetaRecord & { id: string };
 
 	// constants
-	const accommodations = congregation.accommodations as AccommodationsRecord;
+	const accessibility = congregation.accessibility as AccessibilityRecord;
 	const fit = congregation.fit as FitRecord;
 	const { city, state, country } = congregation.location as {
 		city: City;
@@ -43,8 +46,16 @@
 	const notes = congregation.notes as string;
 	const services = congregation.services as ServicesRecord;
 	const registration = congregation.registration as RegistrationRecord;
-	const safety = congregation.safety as SafetyRecord;
+	const health = congregation.health as HealthRecord;
+	const security = congregation.security as SecurityRecord;
+
+	// local vars
+	let tab: 'about' | 'services' | 'accessibility & health';
 	/* endregion variables */
+
+	/* region methods */
+	const allFalse = (obj) => Object.values(obj).every((v) => !v && v !== '');
+	/* endregion methods */
 </script>
 
 <Dialog.Root>
@@ -85,6 +96,15 @@
 			<p>{congregation.flavor}</p>
 		{/if}
 
+		<Tabs.Root bind:value={tab}>
+			<Tabs.List class="w-full">
+				<Tabs.Trigger value="login" class="w-1/2">{$t('auth.login')}</Tabs.Trigger>
+				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>
+			</Tabs.List>
+			<Tabs.Content value="login"></Tabs.Content>
+			<Tabs.Content value="signup"></Tabs.Content>
+		</Tabs.Root>
+
 		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
 			{#if congregation.clergy}
 				<div class="col-span-3 flex flex-row items-start justify-start">
@@ -96,27 +116,32 @@
 				<Separator class="col-span-12" />
 			{/if}
 
-			{#if fit}
+			{#if !allFalse(fit)}
 				<Fit {fit} />
 				<Separator class="col-span-12" />
 			{/if}
 
-			{#if services}
+			{#if !allFalse(services)}
 				<Services {services} />
 				<Separator class="col-span-12" />
 			{/if}
 
-			{#if accommodations}
-				<Accommodations {accommodations} mode="full" />
+			{#if !allFalse(accessibility)}
+				<Accessibility {accessibility} mode="full" />
 				<Separator class="col-span-12" />
 			{/if}
 
-			{#if safety}
-				<Safety {safety} />
+			{#if !allFalse(health)}
+				<Health {health} />
 				<Separator class="col-span-12" />
 			{/if}
 
-			{#if notes}
+			{#if !allFalse(security)}
+				<Security {security} />
+				<Separator class="col-span-12" />
+			{/if}
+
+			{#if !allFalse(notes)}
 				<div class="col-span-3 flex flex-row items-start justify-start">
 					<h2 class="label">{$t('congregation.notes.notes')}</h2>
 				</div>
@@ -126,7 +151,7 @@
 				<Separator class="col-span-12" />
 			{/if}
 
-			{#if registration}
+			{#if !allFalse(registration)}
 				<Registration {registration} />
 			{/if}
 
