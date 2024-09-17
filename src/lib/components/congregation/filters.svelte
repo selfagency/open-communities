@@ -288,6 +288,26 @@
 							</span>
 							<span class="filter-item">
 								<Checkbox
+									id="accommodations_inPerson_asl"
+									class="scale-75"
+									bind:checked={filters.accommodations.inPerson_asl}
+								/>
+								<Label for="accommodations_other">
+									<div class="filter-label">{$t('congregation.accommodations.inPerson_asl')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="accommodations_online_asl"
+									class="scale-75"
+									bind:checked={filters.accommodations.online_asl}
+								/>
+								<Label for="accommodations_other">
+									<div class="filter-label">{$t('congregation.accommodations.online_asl')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
 									id="accommodations_other"
 									class="scale-75"
 									bind:checked={filters.accommodations.other}
