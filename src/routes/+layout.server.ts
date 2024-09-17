@@ -3,7 +3,7 @@ import { handleError } from '$lib/server/api';
 /* endregion imports */
 
 export async function load({ locals }) {
-	const { i18n } = locals;
+	const { api, i18n } = locals;
 
 	try {
 		return {
