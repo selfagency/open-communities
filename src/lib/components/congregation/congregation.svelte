@@ -124,7 +124,9 @@
 					{#if !congregation.owner}
 						<div class="col-span-12 flex w-full flex-row items-center justify-end">
 							<a href={`/contact?claim=${congregation.id}`}>
-								<Badge variant="outline" class="text-nowrap hover:bg-slate-100"
+								<Badge
+									variant="outline"
+									class="text-nowrap font-normal text-slate-500 hover:bg-slate-100"
 									>{$t('congregation.claimThis')}</Badge
 								>
 							</a>
