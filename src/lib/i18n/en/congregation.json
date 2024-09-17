@@ -1,4 +1,6 @@
 {
+	"about": "About",
+	"accessHealthSafety": "Access, Health & Safety",
 	"accessibility": {
 		"accessibility": "Accessibility",
 		"ada": "ADA accessibility",
@@ -43,6 +45,7 @@
 	"deleteFailure": "Failed to delete congregation.",
 	"deleteSuccess": "Congregation deleted successfully.",
 	"description": "Description",
+	"details": "Details",
 	"edit": "Edit",
 	"editCongregation": "Edit congregation",
 	"editFailure": "Failed to edit congregation.",

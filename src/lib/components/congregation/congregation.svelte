@@ -1,6 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
+	import { omit } from 'radashi';
 
 	import type {
 		CongregationMetaRecord,
@@ -50,11 +51,11 @@
 	const security = congregation.security as SecurityRecord;
 
 	// local vars
-	let tab: 'about' | 'services' | 'accessibility & health';
+	let tab: 'about' | 'services' | 'details' = 'about';
 	/* endregion variables */
 
 	/* region methods */
-	const allFalse = (obj) => Object.values(obj).every((v) => !v && v !== '');
+	const allFalse = (obj) => Object.values(omit(obj, ['id', 'otherText'])).every((v) => !v);
 	/* endregion methods */
 </script>
 
@@ -63,7 +64,7 @@
 		<Tile {congregation} />
 	</Dialog.Trigger>
 	<Dialog.Content
-		class="max-h-[90vh] min-w-[380px] max-w-[380px] overflow-y-scroll sm:max-w-[540px]"
+		class="flex max-h-[85vh] min-h-[35vh] min-w-[360px] max-w-[360px] flex-col items-start justify-start overflow-y-scroll sm:max-w-[540px]"
 	>
 		<Dialog.Header>
 			<Dialog.Title>
@@ -92,73 +93,94 @@
 			</Dialog.Description>
 		</Dialog.Header>
 
-		{#if congregation.flavor}
-			<p>{congregation.flavor}</p>
-		{/if}
-
-		<!-- <Tabs.Root bind:value={tab}>
-			<Tabs.List class="w-full">
-				<Tabs.Trigger value="login" class="w-1/2">{$t('auth.login')}</Tabs.Trigger>
-				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>
+		<Tabs.Root bind:value={tab} class="w-full">
+			<Tabs.List class="my-4 w-full">
+				<Tabs.Trigger value="about" class="w-1/2">{$t('congregation.about')}</Tabs.Trigger>
+				<Tabs.Trigger value="services" class="w-1/2"
+					>{$t('congregation.services.services')}</Tabs.Trigger
+				>
+				<Tabs.Trigger value="details" class="w-1/2">{$t('congregation.details')}</Tabs.Trigger>
 			</Tabs.List>
-			<Tabs.Content value="login"></Tabs.Content>
-			<Tabs.Content value="signup"></Tabs.Content>
-		</Tabs.Root> -->
+			<Tabs.Content value="about">
+				{#if congregation.flavor}
+					<p class="mb-6">{congregation.flavor}</p>
+				{/if}
 
-		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
-			{#if congregation.clergy}
-				<div class="col-span-3 flex flex-row items-start justify-start">
-					<h2 class="label">{$t('congregation.clergy.clergy')}</h2>
+				<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+					{#if !allFalse(fit)}
+						<Fit {fit} />
+					{/if}
+
+					{#if $user.admin && (congregation.contactName || congregation.contactEmail)}
+						<Separator class="col-span-12" />
+						<Contact
+							contactName={congregation.contactName}
+							contactEmail={congregation.contactEmail}
+						/>
+					{/if}
 				</div>
-				<div class="col-span-9 flex flex-row items-start justify-start">
-					{congregation.clergy}
+			</Tabs.Content>
+			<Tabs.Content value="services">
+				<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+					{#if congregation.clergy}
+						<div class="col-span-3 flex flex-row items-start justify-start">
+							<h2 class="label">{$t('congregation.clergy.clergy')}</h2>
+						</div>
+						<div class="col-span-9 flex flex-row items-start justify-start">
+							{congregation.clergy}
+						</div>
+					{/if}
+
+					{#if !allFalse(services)}
+						{#if congregation.clergy}<Separator class="col-span-12" />{/if}
+						<Services {services} />
+					{/if}
+
+					{#if !allFalse(registration)}
+						{#if congregation.clergy || !allFalse(services)}<Separator class="col-span-12" />{/if}
+						<Registration {registration} />
+					{/if}
 				</div>
-				<Separator class="col-span-12" />
-			{/if}
+			</Tabs.Content>
+			<Tabs.Content value="details">
+				<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+					{#if fit.flag}
+						<div class="col-span-3">
+							<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
+						</div>
+						<div class="col-span-9">
+							{$t(`congregation.fit.flag.${fit.flag}`)}
+						</div>
+					{/if}
 
-			{#if !allFalse(fit)}
-				<Fit {fit} />
-				<Separator class="col-span-12" />
-			{/if}
+					{#if !allFalse(accessibility)}
+						{#if fit.flag}<Separator class="col-span-12" />{/if}
+						<Accessibility {accessibility} mode="full" />
+					{/if}
 
-			{#if !allFalse(services)}
-				<Services {services} />
-				<Separator class="col-span-12" />
-			{/if}
+					{#if health.protocol}
+						{#if !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
+						<Health {health} />
+					{/if}
 
-			{#if !allFalse(accessibility)}
-				<Accessibility {accessibility} mode="full" />
-				<Separator class="col-span-12" />
-			{/if}
+					{#if !allFalse(security)}
+						{#if health.protocol || !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
+						<Security {security} />
+					{/if}
 
-			{#if !allFalse(health)}
-				<Health {health} />
-				<Separator class="col-span-12" />
-			{/if}
-
-			{#if !allFalse(security)}
-				<Security {security} />
-				<Separator class="col-span-12" />
-			{/if}
-
-			{#if !allFalse(notes)}
-				<div class="col-span-3 flex flex-row items-start justify-start">
-					<h2 class="label">{$t('congregation.notes.notes')}</h2>
+					{#if notes}
+						{#if health.protocol || !allFalse(accessibility) || !allFalse(security)}<Separator
+								class="col-span-12"
+							/>{/if}
+						<div class="col-span-3 flex flex-row items-start justify-start">
+							<h2 class="label">{$t('congregation.notes.notes')}</h2>
+						</div>
+						<div class="col-span-9 flex flex-row items-start justify-start">
+							<p>{notes}</p>
+						</div>
+					{/if}
 				</div>
-				<div class="col-span-9 flex flex-row items-start justify-start">
-					<p>{notes}</p>
-				</div>
-				<Separator class="col-span-12" />
-			{/if}
-
-			{#if !allFalse(registration)}
-				<Registration {registration} />
-			{/if}
-
-			{#if $user.admin && (congregation.contactName || congregation.contactEmail)}
-				<Separator class="col-span-12" />
-				<Contact contactName={congregation.contactName} contactEmail={congregation.contactEmail} />
-			{/if}
-		</div>
+			</Tabs.Content>
+		</Tabs.Root>
 	</Dialog.Content>
 </Dialog.Root>
