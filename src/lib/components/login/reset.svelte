@@ -1,18 +1,15 @@
 <script lang="ts">
 	/* region imports */
-	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
 	import { waitForTheElement } from 'wait-for-the-element';
 
 	import { dev } from '$app/environment';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { tokenSchema } from '$lib/schemas';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -28,12 +25,12 @@
 	const form = superForm(data, {
 		id: 'reset',
 		dataType: 'json',
-		validators: zod(tokenSchema),
-		async onUpdate({ result }) {
-			if (!isEmpty(result.data.form.errors)) {
-				log.error(JSON.stringify(result.data.form.errors));
-				if (result.data.form.errors.error) {
-					toast.error(result.data.form.errors.error);
+		async onUpdate({ result, form: f }) {
+			if (!f.valid || result.type !== 'success') {
+				log.error('form errors', 'result.data.form.errors');
+				if (result.data.form.error) {
+					log.error('submission error', result.data.form.error);
+					toast.error($t('auth.resetFailure'));
 				}
 			} else if (result.type === 'success') {
 				if ($formData.type === 'resetPassword') {
@@ -43,7 +40,7 @@
 			}
 		},
 		onError({ result }) {
-			log.error(result.error.message);
+			log.error('submission error', result.error.message);
 			toast.error(result.error.message);
 		}
 	});

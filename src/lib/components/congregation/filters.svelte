@@ -71,7 +71,8 @@
 				privateSecurityUnarmed: false,
 				clergyArmed: false,
 				congregantsArmed: false,
-				noFirearms: false
+				noFirearms: false,
+				other: false
 			},
 			registration: {
 				free: false,

@@ -120,6 +120,7 @@ const securitySchema = z.object({
 	clergyArmed: z.boolean(),
 	congregantsArmed: z.boolean(),
 	noFirearms: z.boolean(),
+	other: z.boolean(),
 	otherText: z.string().optional()
 });
 

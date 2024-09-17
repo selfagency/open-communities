@@ -1,11 +1,10 @@
 <script lang="ts">
 	/* region imports */
-	import { isEmpty, sleep } from 'radashi';
+	import { sleep } from 'radashi';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
 
 	import { dev, browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -15,7 +14,6 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { userSchema } from '$lib/schemas';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -37,12 +35,12 @@
 	const form = superForm(data, {
 		id: 'signup',
 		dataType: 'json',
-		validators: zod(userSchema),
-		async onUpdate({ result }) {
-			if (!isEmpty(result.data.form.errors)) {
+		async onUpdate({ result, form: f }) {
+			if (!f.valid || result.type !== 'success') {
 				log.error('form error', result.data.form.errors);
-				if (result.data.form.errors.error) {
-					toast.error(result.data.form.errors.error);
+				if (result.data.form.error) {
+					log.error('submission error', result.data.form.error);
+					toast.error($t('auth.signUpFailure'));
 				}
 			} else if (result.type === 'success') {
 				success = true;

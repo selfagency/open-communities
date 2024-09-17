@@ -5,7 +5,6 @@
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
 
 	import type { LocationRecord, LocationMeta } from '$lib/location';
 	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
@@ -25,7 +24,6 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
-	import { defaultSchema } from '$lib/schemas';
 	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 
@@ -161,20 +159,19 @@
 	const form = superForm(data.default, {
 		id: 'addEditCongregation',
 		dataType: 'json',
-		validators: zod(defaultSchema),
+		// validators: zod(defaultSchema),
 		async onUpdate({ form: f, result }) {
 			hasErrors = false;
-
-			if (!f.valid) {
+			if (!f.valid || result.type !== 'success') {
 				hasErrors = true;
-				log.error(JSON.stringify(result.data.form.errors, null, 2));
-				if (result.data.form.errors.error) {
-					toast.error(result.data.form.errors.error);
-				} else {
-					toast.error(
-						mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
-					);
+				errors.set(result.data.form.errors);
+				log.error('form errors', result.data.form.errors);
+				if (result.data.form.error) {
+					log.error('submission error', result.data.form.error);
 				}
+				toast.error(
+					mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
+				);
 			} else if (result.type === 'success') {
 				toast.success(
 					mode === 'edit' ? $t('congregation.editSuccess') : $t('congregation.addSuccess')
@@ -1194,6 +1191,7 @@
 	{#if dev}
 		{#await import('sveltekit-superforms') then { default: SuperDebug }}
 			<div class="mt-4"><SuperDebug data={$formData} /></div>
+			<div class="mt-4"><SuperDebug data={$errors} /></div>
 		{/await}
 	{/if}
 </section>

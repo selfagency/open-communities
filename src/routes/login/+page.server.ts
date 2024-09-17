@@ -63,9 +63,9 @@ export const actions = {
 			return fail(err.status, {
 				form: {
 					...form,
+					error: err.message,
 					errors: {
-						...form.errors,
-						error: err.message
+						...form.errors
 					}
 				}
 			});
@@ -135,9 +135,9 @@ export const actions = {
 			return fail(err.status || 400, {
 				form: {
 					...form,
+					error: err.message,
 					errors: {
-						...form.errors,
-						error: err.message
+						...form.errors
 					}
 				}
 			});
@@ -182,9 +182,9 @@ export const actions = {
 			return fail(err.status ?? 400, {
 				form: {
 					...form,
+					error: err.message,
 					errors: {
-						...form.errors,
-						error: err.message
+						...form.errors
 					}
 				}
 			});

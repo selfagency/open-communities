@@ -3,6 +3,7 @@ import type { ClientResponseError } from 'pocketbase';
 
 import { redirect, fail } from '@sveltejs/kit';
 import { omit } from 'radashi';
+import { setError } from 'sveltekit-superforms';
 
 import type { LocationRecord } from '$lib/location';
 import type {
@@ -16,6 +17,7 @@ import type {
 	ServicesRecord
 } from '$lib/types';
 
+import { t } from '$lib/i18n';
 import { defaultSchema } from '$lib/schemas';
 import { loadUser, handleError } from '$lib/server/api';
 /* endregion imports */
@@ -58,7 +60,7 @@ export const load = async ({ locals, fetch, cookies }) => {
 export const actions = {
 	submit: async (event) => {
 		const { fetch, locals, cookies } = event;
-		const { api, validate } = locals;
+		const { api, validate, log } = locals;
 		const client = loadUser(cookies);
 
 		const form = await validate(defaultSchema, event);
@@ -114,15 +116,18 @@ export const actions = {
 				form
 			};
 		} catch (error) {
+			log.error('add:submit:error', error);
 			const err = error as ClientResponseError;
+
+			if (err.message === 'Failed to create record.') {
+				setError(form, 'name', t.get('congregation.exists'));
+			}
 
 			return fail(err.status ?? 400, {
 				form: {
 					...form,
-					errors: {
-						...form.errors,
-						error: err.message
-					}
+					error: err.message,
+					errors: form.errors
 				}
 			});
 		}

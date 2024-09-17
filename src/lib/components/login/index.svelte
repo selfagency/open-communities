@@ -3,7 +3,6 @@
 	import { isEmpty } from 'radashi';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -14,7 +13,6 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { loginSchema } from '$lib/schemas';
 	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
@@ -42,7 +40,6 @@
 	const form = superForm(data, {
 		id: 'login',
 		dataType: 'json',
-		validators: zod(loginSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
 				log.error(JSON.stringify(result.data.form.errors));
