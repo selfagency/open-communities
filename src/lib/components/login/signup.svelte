@@ -21,6 +21,7 @@
 	// props
 	export let data: SuperValidated<any>;
 	export let verify: SuperValidated<any>;
+	export let snapshot: any;
 	// export let active: boolean = false;
 
 	// local vars
@@ -51,7 +52,8 @@
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, capture, restore } = form;
+	snapshot = { capture, restore };
 	/* endregion form */
 
 	/* region reactivity */
@@ -120,17 +122,6 @@
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
-
-				<div
-					class="cf-turnstile"
-					data-theme="light"
-					data-sitekey="0x4AAAAAAAkDZ8fQw76peFu5"
-					data-size="compact"
-					data-response-filed="false"
-					data-callback={(token) => {
-						$formData.captcha = token;
-					}}
-				></div>
 
 				<Form.Button>{$t('auth.signUp')}</Form.Button>
 			</form>
