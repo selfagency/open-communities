@@ -18,6 +18,7 @@
 	import { t } from '$lib/i18n';
 	import { Location as LocationService } from '$lib/location';
 	import { Search } from '$lib/search';
+	import { state } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
 	import Congregation from './congregation.svelte';
@@ -172,8 +173,15 @@
 		{/if}
 	</div>
 
-	<div class="flex w-full flex-row items-center justify-center pt-4">
-		<Pagination.Root count={$results.length} {perPage} let:pages let:currentPage {onPageChange}>
+	<div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
+		<Pagination.Root
+			count={$results.length}
+			{perPage}
+			let:pages
+			let:currentPage
+			{onPageChange}
+			siblingCount={$state.isMobile ? 0 : 1}
+		>
 			<Pagination.Content>
 				<Pagination.Item>
 					<Pagination.PrevButton />
