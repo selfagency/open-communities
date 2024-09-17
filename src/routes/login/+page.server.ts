@@ -80,7 +80,7 @@ export const actions = {
 		return {};
 	},
 	signup: async (event) => {
-		const { api } = event.locals;
+		const { api, log } = event.locals;
 		const form: SuperValidated<any> = await superValidate(event, zod(userSchema));
 		let user: UsersRecord;
 
@@ -105,6 +105,8 @@ export const actions = {
 						}
 					})
 				).json();
+
+				log.debug('captcha', captcha);
 
 				if (!captcha.success) {
 					throw new Error('Captcha failed');
@@ -153,9 +155,6 @@ export const actions = {
 			}
 
 			let res;
-
-			if (dev) log.debug('login', form);
-
 			switch (form.data.type) {
 				case 'verifyEmail':
 					res = await api.collection('users').confirmVerification(form.data.token);
@@ -180,7 +179,7 @@ export const actions = {
 		} catch (error) {
 			const err = error as ClientResponseError;
 
-			return fail(err.status, {
+			return fail(err.status ?? 400, {
 				form: {
 					...form,
 					errors: {

@@ -37,7 +37,7 @@
 		validators: zod(userSchema),
 		async onUpdate({ result }) {
 			if (!isEmpty(result.data.form.errors)) {
-				log.error(JSON.stringify(result.data.form.errors));
+				log.error('form error', result.data.form.errors);
 				if (result.data.form.errors.error) {
 					toast.error(result.data.form.errors.error);
 				}
@@ -46,7 +46,7 @@
 			}
 		},
 		onError({ result }) {
-			log.error(result.error.message);
+			log.error('submission error', result.error.message);
 			toast.error(result.error.message);
 		}
 	});
