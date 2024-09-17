@@ -20,7 +20,7 @@
 	const { state: searchState } = search;
 
 	// local vars
-	let center: LngLatLike = [0, 10];
+	let center: LngLatLike = [-90, 10];
 	let zoom = 1;
 	/* endregion variables */
 
@@ -32,7 +32,7 @@
 					value.searchLocation?.city?.longitude ||
 						value.searchLocation?.state?.longitude ||
 						value.searchLocation?.country?.longitude ||
-						0,
+						-90,
 					value.searchLocation?.city?.latitude ||
 						value.searchLocation?.state?.latitude ||
 						value.searchLocation?.country?.latitude ||
@@ -43,7 +43,7 @@
 				if (value.searchLocation?.state?.id) zoom = 6;
 				if (value.searchLocation?.city?.id) zoom = 10;
 			} else {
-				center = [0, 10];
+				center = [-90, 10];
 				zoom = 1;
 			}
 		});
