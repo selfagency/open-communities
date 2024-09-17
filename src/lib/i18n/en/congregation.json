@@ -59,11 +59,11 @@
 		"flag": {
 			"extended": "Does your congregation display an Israeli flag?",
 			"flag": "Israeli flag displayed",
-			"no": "No, we do not",
+			"no": "No Israeli flag is displayed",
 			"note": "If yes, we will note that in the listing of your congregation so that people can make an informed decision about where they attend.",
 			"short": "Israeli flag",
-			"yes": "Yes, but not on the bima",
-			"yesBima": "Yes, on the bima"
+			"yes": "An Israeli flag is displayed, but not on the bima",
+			"yesBima": "An Israeli flag is displayed on the bima"
 		},
 		"multipleClergyMembers": "Multiple members of the clergy team are affiliated with Rabbis for Ceasefire",
 		"publicStatement": "The congregation has made a public statement supporting permanent ceasefire"
