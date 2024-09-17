@@ -58,13 +58,13 @@
 			<Dialog.Title>
 				{#if congregation.contactUrl}
 					<a href={congregation.contactUrl} target="_blank" rel="noopener noreferrer">
-						<h1 class="inline font-display text-2xl leading-6">
+						<h1 class="inline text-2xl leading-6">
 							<span>{congregation.name}</span>
 						</h1>
 						<span><LinkIcon size="14" color="gray" class="ml-1 inline" /></span>
 					</a>
 				{:else}
-					<h1 class="inline font-display text-2xl leading-6">
+					<h1 class="inline text-2xl leading-6">
 						{congregation.name}
 					</h1>
 				{/if}

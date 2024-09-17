@@ -64,7 +64,7 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="font-display text-2xl"
+		<Card.Title class="font-display text-2xl font-normal"
 			>{verifying ? $t('auth.verifyEmail') : $t('auth.signUp')}</Card.Title
 		>
 		<!-- <Card.Description></Card.Description> -->

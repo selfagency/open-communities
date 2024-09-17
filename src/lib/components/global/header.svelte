@@ -19,7 +19,7 @@
 			<span>
 				<Tent class="w-12 fill-slate-700 sm:w-16" />
 			</span>
-			<h1 class="mt-2 font-display text-2xl font-bold sm:text-3xl">{$t('common.title')}</h1>
+			<h1 class="mt-2 text-2xl sm:text-3xl">{$t('common.title')}</h1>
 		</a>
 	</div>
 	<div>

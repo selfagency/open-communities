@@ -14,7 +14,7 @@
 
 <section>
 	{#if content}
-		<h1 class="font-display text-3xl">{content.title}</h1>
+		<h1 class="text-3xl">{content.title}</h1>
 		<div class="prose max-w-none" class:content>
 			{@html content.content}
 		</div>
