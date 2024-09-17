@@ -53,7 +53,9 @@
 
 {#if content?.content}
 	<Dialog.Root open={$state.showIntro} onOpenChange={() => setState({ showIntro: false })}>
-		<Dialog.Content>
+		<Dialog.Content
+			class="max-h-[90vh] min-w-[380px] max-w-[380px] overflow-y-scroll sm:max-w-[540px]"
+		>
 			<Dialog.Header>
 				<Dialog.Title class="font-display text-2xl font-normal"
 					>{$t('common.home.dialogTitle')}</Dialog.Title
