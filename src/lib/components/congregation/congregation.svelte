@@ -96,14 +96,14 @@
 			<p>{congregation.flavor}</p>
 		{/if}
 
-		<Tabs.Root bind:value={tab}>
+		<!-- <Tabs.Root bind:value={tab}>
 			<Tabs.List class="w-full">
 				<Tabs.Trigger value="login" class="w-1/2">{$t('auth.login')}</Tabs.Trigger>
 				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="login"></Tabs.Content>
 			<Tabs.Content value="signup"></Tabs.Content>
-		</Tabs.Root>
+		</Tabs.Root> -->
 
 		<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
 			{#if congregation.clergy}
