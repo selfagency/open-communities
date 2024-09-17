@@ -93,9 +93,9 @@ export class Search {
 				const { city, country, state } = record.location;
 
 				return (
-					(filterCity ? city === filterCity : true) &&
-					(filterCountry ? country === filterCountry : true) &&
-					(filterState ? state === filterState : true)
+					(filterCity ? city.id === filterCity.id : true) &&
+					(filterCountry ? country.id === filterCountry.id : true) &&
+					(filterState ? state.id === filterState.id : true)
 				);
 			})
 			.map((i) => i.id);
