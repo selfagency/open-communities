@@ -2,6 +2,7 @@
 import type { TransitionConfig } from 'svelte/transition';
 
 import { type ClassValue, clsx } from 'clsx';
+import fstw from 'fast-string-truncated-width';
 import { cubicOut } from 'svelte/easing';
 import { twMerge } from 'tailwind-merge';
 import { Logger } from 'tslog';
@@ -16,8 +17,17 @@ type FlyAndScaleParams = {
 	start?: number;
 	duration?: number;
 };
-
 /* endregion types */
+
+export function truncateText(text: unknown, limit: number = 32, ellipses: boolean = true) {
+	if (!text || typeof text !== 'string') {
+		return '';
+	} else {
+		const opts = { limit, ellipsis: '…' };
+		const sliced = fstw(text, opts);
+		return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
+	}
+}
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));

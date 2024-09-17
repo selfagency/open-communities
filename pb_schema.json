@@ -1,0 +1,1454 @@
+[
+	{
+		"id": "_pb_users_auth_",
+		"name": "users",
+		"type": "auth",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "users_name",
+				"name": "name",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "tdnbgtqf",
+				"name": "congregation",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "wlr7i75w",
+				"name": "admin",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "7nqxhe3b",
+				"name": "lang",
+				"type": "select",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["en", "es", "fr", "he"]
+				}
+			}
+		],
+		"indexes": [],
+		"listRule": "id = @request.auth.id",
+		"viewRule": "id = @request.auth.id",
+		"createRule": "",
+		"updateRule": "id = @request.auth.id",
+		"deleteRule": "id = @request.auth.id",
+		"options": {
+			"allowEmailAuth": true,
+			"allowOAuth2Auth": false,
+			"allowUsernameAuth": false,
+			"exceptEmailDomains": null,
+			"manageRule": null,
+			"minPasswordLength": 12,
+			"onlyEmailDomains": null,
+			"onlyVerified": true,
+			"requireEmail": true
+		}
+	},
+	{
+		"id": "7ueej10v6mkbmdz",
+		"name": "accessibility",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "1pxrcuy0",
+				"name": "online_liveCaptions",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "wplfihrv",
+				"name": "online_automatedCaptions",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "hptfobpb",
+				"name": "online_asl",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "mkoeew0u",
+				"name": "inPerson_eva",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "xtqwfsbx",
+				"name": "inPerson_asl",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "8aizrxe1",
+				"name": "inPerson_adaAll",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "mb63yveu",
+				"name": "inPerson_adaSome",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "yqxonqa6",
+				"name": "other",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "qboavsco",
+				"name": "otherText",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "r7duajmf",
+				"name": "congregation",
+				"type": "relation",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"options": {}
+	},
+	{
+		"id": "ri6eyk1ghbw6hlj",
+		"name": "cities",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "kqtem3qk",
+				"name": "name",
+				"type": "text",
+				"required": false,
+				"presentable": true,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "qbutuh8l",
+				"name": "state",
+				"type": "relation",
+				"required": false,
+				"presentable": true,
+				"unique": false,
+				"options": {
+					"collectionId": "5nfegylz6cbpxhc",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "fx0kwklk",
+				"name": "country",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "wy693kmooys1qoa",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "cykf3nyk",
+				"name": "longitude",
+				"type": "number",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"noDecimal": false
+				}
+			},
+			{
+				"system": false,
+				"id": "mhd5z8yy",
+				"name": "latitude",
+				"type": "number",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"noDecimal": false
+				}
+			}
+		],
+		"indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"options": {}
+	},
+	{
+		"id": "axvp7aw9qf1n1pw",
+		"name": "congregations",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "5ymqcch8",
+				"name": "name",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "bg33d7yz",
+				"name": "clergy",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "jvo3bhnf",
+				"name": "denomination",
+				"type": "select",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": [
+						"reform",
+						"conservative",
+						"orthodox",
+						"reconstructionist",
+						"renewal",
+						"unaffiliated",
+						"postDenominational",
+						"multiDenominational",
+						"humanist",
+						"other"
+					]
+				}
+			},
+			{
+				"system": false,
+				"id": "2obudlxr",
+				"name": "flavor",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "wtwkqr2a",
+				"name": "notes",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "fkxyin3t",
+				"name": "contactName",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "5czvu1vi",
+				"name": "contactEmail",
+				"type": "email",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			},
+			{
+				"system": false,
+				"id": "i24ywiad",
+				"name": "contactUrl",
+				"type": "url",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			},
+			{
+				"system": false,
+				"id": "gxkagphb",
+				"name": "country",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "wy693kmooys1qoa",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "frjwnwqy",
+				"name": "state",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "5nfegylz6cbpxhc",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "4zkz4tkh",
+				"name": "city",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "ri6eyk1ghbw6hlj",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "1c02of8y",
+				"name": "visible",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = id",
+		"options": {}
+	},
+	{
+		"id": "wy693kmooys1qoa",
+		"name": "countries",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "7jbazj5u",
+				"name": "name",
+				"type": "text",
+				"required": false,
+				"presentable": true,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "tvfg4qsw",
+				"name": "code",
+				"type": "text",
+				"required": false,
+				"presentable": true,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "o2rmo6iq",
+				"name": "flag",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "6pjjehvv",
+				"name": "longitude",
+				"type": "number",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"noDecimal": false
+				}
+			},
+			{
+				"system": false,
+				"id": "cpabspft",
+				"name": "latitude",
+				"type": "number",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"noDecimal": false
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"options": {}
+	},
+	{
+		"id": "7nmw6vx1ueiywt4",
+		"name": "fit",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "eezuj54t",
+				"name": "publicStatement",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "nnkfxybf",
+				"name": "clergyMember",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "sltdd55j",
+				"name": "multipleClergyMembers",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "lcafyqpe",
+				"name": "other",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "qlxzoczg",
+				"name": "otherText",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "m5woaiul",
+				"name": "flag",
+				"type": "select",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["no", "yes", "yesBima"]
+				}
+			},
+			{
+				"system": false,
+				"id": "v7f9hyuy",
+				"name": "congregation",
+				"type": "relation",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"options": {}
+	},
+	{
+		"id": "yco9pce2j849hip",
+		"name": "health",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "hj3dd1eo",
+				"name": "protocol",
+				"type": "select",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
+				}
+			},
+			{
+				"system": false,
+				"id": "e82mzyh5",
+				"name": "otherText",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "sevvgm9b",
+				"name": "congregation",
+				"type": "relation",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"options": {}
+	},
+	{
+		"id": "qdpun4yrifka7lx",
+		"name": "pages",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "ynj741ow",
+				"name": "title",
+				"type": "text",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "mfpg1fps",
+				"name": "slug",
+				"type": "text",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": 4,
+					"max": 32,
+					"pattern": "^[a-z0-9-]+$"
+				}
+			},
+			{
+				"system": false,
+				"id": "nrbw6joz",
+				"name": "content",
+				"type": "editor",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"convertUrls": false
+				}
+			},
+			{
+				"system": false,
+				"id": "wvnqdopj",
+				"name": "description",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "0vxu5mkf",
+				"name": "lang",
+				"type": "select",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["en", "de", "es", "fr", "he"]
+				}
+			},
+			{
+				"system": false,
+				"id": "ado6jnjl",
+				"name": "sisters",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "qdpun4yrifka7lx",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": null,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.admin = true",
+		"updateRule": "@request.auth.admin = true",
+		"deleteRule": "@request.auth.admin = true",
+		"options": {}
+	},
+	{
+		"id": "q96ojv7nbgovm9e",
+		"name": "registration",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "vn89ywhw",
+				"name": "email",
+				"type": "email",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			},
+			{
+				"system": false,
+				"id": "hluaco3k",
+				"name": "url",
+				"type": "url",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			},
+			{
+				"system": false,
+				"id": "ich9io6g",
+				"name": "registrationType",
+				"type": "select",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
+				}
+			},
+			{
+				"system": false,
+				"id": "mlt4xjyt",
+				"name": "otherText",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "gp0n8sek",
+				"name": "congregation",
+				"type": "relation",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"options": {}
+	},
+	{
+		"id": "xfnafq1i7scgjfq",
+		"name": "security",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "mkmoy4h1",
+				"name": "localPolice",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "cksccujt",
+				"name": "privateSecurityUnarmed",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "tlwzwpeq",
+				"name": "privateSecurityArmed",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "of67yxxv",
+				"name": "clergyArmed",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "is5p9pgc",
+				"name": "congregantsArmed",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "dngpkpu7",
+				"name": "noFirearms",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "wfuhwz5d",
+				"name": "other",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "45peabat",
+				"name": "otherText",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "a7h7weik",
+				"name": "congregation",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"options": {}
+	},
+	{
+		"id": "ujce5tv4tvca9tf",
+		"name": "services",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "oqfj5fai",
+				"name": "inPerson",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "9zztulsn",
+				"name": "hybrid",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "juhqqs2l",
+				"name": "onlineOnly",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "1cpilpwa",
+				"name": "offsite",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "qxipvepq",
+				"name": "other",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "obnrmdzd",
+				"name": "otherText",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "eauxkfxu",
+				"name": "congregation",
+				"type": "relation",
+				"required": true,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "axvp7aw9qf1n1pw",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			}
+		],
+		"indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": "@request.auth.verified = true",
+		"updateRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"deleteRule": "@request.auth.admin = true || @request.auth.congregation.id = congregation.id",
+		"options": {}
+	},
+	{
+		"id": "5nfegylz6cbpxhc",
+		"name": "states",
+		"type": "base",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "nfv0pfzo",
+				"name": "name",
+				"type": "text",
+				"required": false,
+				"presentable": true,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "jqy8bzts",
+				"name": "code",
+				"type": "text",
+				"required": false,
+				"presentable": true,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "urycsx9g",
+				"name": "country",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "wy693kmooys1qoa",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "gumkkrtx",
+				"name": "longitude",
+				"type": "number",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"noDecimal": false
+				}
+			},
+			{
+				"system": false,
+				"id": "cv20vlud",
+				"name": "latitude",
+				"type": "number",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"noDecimal": false
+				}
+			}
+		],
+		"indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"options": {}
+	},
+	{
+		"id": "o7pypf0j70kmhet",
+		"name": "congregationMeta",
+		"type": "view",
+		"system": false,
+		"schema": [
+			{
+				"system": false,
+				"id": "snu1mlcu",
+				"name": "name",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "ijnd3hrn",
+				"name": "notes",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "31szvbmf",
+				"name": "denomination",
+				"type": "select",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSelect": 1,
+					"values": [
+						"reform",
+						"conservative",
+						"orthodox",
+						"reconstructionist",
+						"renewal",
+						"unaffiliated",
+						"postDenominational",
+						"multiDenominational",
+						"humanist",
+						"other"
+					]
+				}
+			},
+			{
+				"system": false,
+				"id": "s9t2ozdi",
+				"name": "clergy",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "eflsecjh",
+				"name": "flavor",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "b6ran2ae",
+				"name": "contactName",
+				"type": "text",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"min": null,
+					"max": null,
+					"pattern": ""
+				}
+			},
+			{
+				"system": false,
+				"id": "t2s8n2ry",
+				"name": "contactEmail",
+				"type": "email",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			},
+			{
+				"system": false,
+				"id": "o2fze1bj",
+				"name": "contactUrl",
+				"type": "url",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"exceptDomains": null,
+					"onlyDomains": null
+				}
+			},
+			{
+				"system": false,
+				"id": "0p4bnp7i",
+				"name": "visible",
+				"type": "bool",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {}
+			},
+			{
+				"system": false,
+				"id": "ls3nyrfj",
+				"name": "owner",
+				"type": "relation",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"collectionId": "_pb_users_auth_",
+					"cascadeDelete": false,
+					"minSelect": null,
+					"maxSelect": 1,
+					"displayFields": null
+				}
+			},
+			{
+				"system": false,
+				"id": "9sxuw7c3",
+				"name": "location",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			},
+			{
+				"system": false,
+				"id": "rzezonr5",
+				"name": "accessibility",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			},
+			{
+				"system": false,
+				"id": "a7yr50jn",
+				"name": "fit",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			},
+			{
+				"system": false,
+				"id": "wlm5mfy5",
+				"name": "registration",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			},
+			{
+				"system": false,
+				"id": "insbsrsw",
+				"name": "health",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			},
+			{
+				"system": false,
+				"id": "s3wkktjd",
+				"name": "security",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			},
+			{
+				"system": false,
+				"id": "digis760",
+				"name": "services",
+				"type": "json",
+				"required": false,
+				"presentable": false,
+				"unique": false,
+				"options": {
+					"maxSize": 1
+				}
+			}
+		],
+		"indexes": [],
+		"listRule": "",
+		"viewRule": "",
+		"createRule": null,
+		"updateRule": null,
+		"deleteRule": null,
+		"options": {
+			"query": "SELECT \n    c.id,\n    c.name,\n    c.notes,\n    c.denomination,\n    c.clergy,\n    c.flavor,\n    c.contactName,\n    c.contactEmail,\n    c.contactUrl,\n    c.visible,\n    u.id as owner,\n      json_object(\n        'city', json_object('id', city.id, 'name', city.name, 'longitude', city.longitude, 'latitude', city.latitude),\n        'state', json_object('id', state.id, 'name', state.name, 'code', state.code, 'longitude', state.longitude, 'latitude', state.latitude),\n        'country', json_object('id', country.id, 'name', country.name, 'code', country.code, 'longitude', country.longitude, 'latitude', country.latitude)\n    ) AS location,\n    json_object(\n        'id', a.id,\n        'online_liveCaptions', a.online_liveCaptions,\n        'online_automatedCaptions', a.online_automatedCaptions,\n        'online_asl', a.online_asl,\n        'inPerson_eva', a.inPerson_eva,\n        'inPerson_asl', a.inPerson_asl,\n        'inPerson_adaAll', a.inPerson_adaAll,\n        'inPerson_adaSome', a.inPerson_adaSome,\n        'other', a.other,\n        'otherText', a.otherText\n    ) AS accessibility,\n    json_object(\n        'id', f.id,\n        'publicStatement', f.publicStatement,\n        'clergyMember', f.clergyMember,\n        'multipleClergyMembers', f.multipleClergyMembers,\n        'other', f.other,\n        'otherText', f.otherText,\n        'flag', f.flag\n    ) AS fit,\n    json_object(\n        'id', r.id,\n        'email', r.email,\n        'url', r.url,\n        'registrationType', r.registrationType,\n        'otherText', r.otherText\n    ) AS registration,\n    json_object(\n        'id', h.id,\n        'protocol', h.protocol,\n        'otherText', h.otherText\n    ) AS health,\n    json_object(\n      'id', sc.id,\n      'localPolice', sc.localPolice,\n      'privateSecurityArmed', sc.privateSecurityArmed,\n      'privateSecurityUnarmed', sc.privateSecurityUnarmed,\n      'clergyArmed', sc.clergyArmed,\n      'congregantsArmed', sc.congregantsArmed,\n      'noFirearms', sc.noFirearms\n    ) as security,\n    json_object(\n        'id', sv.id,\n        'inPerson', sv.inPerson,\n        'hybrid', sv.hybrid,\n        'onlineOnly', sv.onlineOnly,\n        'offsite', sv.offsite,\n        'other', sv.other,\n        'otherText', sv.otherText\n    ) AS services\nFROM \n    congregations c\nLEFT JOIN countries country ON c.country = country.id\nLEFT JOIN states state ON c.state = state.id\nLEFT JOIN cities city ON c.city = city.id\nLEFT JOIN accessibility a ON c.id = a.congregation\nLEFT JOIN fit f ON c.id = f.congregation\nLEFT JOIN registration r ON c.id = r.congregation\nLEFT JOIN health h ON c.id = h.congregation\nLEFT JOIN services sv ON c.id = sv.congregation\nLEFT JOIN security sc ON c.id = sc.congregation\nLEFT JOIN users u ON u.congregation = c.id;"
+		}
+	}
+]

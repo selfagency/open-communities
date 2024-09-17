@@ -16,6 +16,7 @@
 		CountriesRecord as Country
 	} from '$lib/types';
 
+	import { Badge } from '$lib/components/ui/badge';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -117,6 +118,16 @@
 							contactName={congregation.contactName}
 							contactEmail={congregation.contactEmail}
 						/>
+					{/if}
+
+					{#if !congregation.owner}
+						<div class="col-span-12 flex w-full flex-row items-center justify-end">
+							<a href={`/contact?claim=${congregation.id}`}>
+								<Badge variant="outline" class="text-nowrap hover:bg-slate-100"
+									>{$t('congregation.claimThis')}</Badge
+								>
+							</a>
+						</div>
 					{/if}
 				</div>
 			</Tabs.Content>

@@ -28,6 +28,9 @@
 			class="flex flex-col items-center justify-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0"
 		>
 			<span class="flex flex-row items-center justify-center space-x-4">
+				<a class="text-xs text-slate-400 hover:text-slate-500" href="/contact">
+					<span>{$t('common.contact.contactUs')}</span>
+				</a>
 				<a class="text-xs text-slate-400 hover:text-slate-500" href="/privacy">
 					<span>{$t('common.privacyPolicy')}</span>
 				</a>

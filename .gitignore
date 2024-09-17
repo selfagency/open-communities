@@ -129,3 +129,4 @@ vite.config.ts.timestamp-*
 web_modules/
 yarn-debug.log*
 yarn-error.log*
+!pb_schema.json
