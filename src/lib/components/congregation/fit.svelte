@@ -1,7 +1,5 @@
 <script lang="ts">
 	/* region imports */
-	import WarningIcon from 'lucide-svelte/icons/circle-alert';
-
 	import type { FitRecord } from '$lib/types';
 
 	import { Separator } from '$lib/components/ui/separator';
@@ -37,18 +35,12 @@
 	</ul>
 </div>
 
-<Separator class="col-span-12" />
-
-<div class="col-span-3">
-	<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
-</div>
-<div class="col-span-9">
-	{#if fit.flag}
+{#if fit.flag}
+	<Separator class="col-span-12" />
+	<div class="col-span-3">
+		<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
+	</div>
+	<div class="col-span-9">
 		{$t(`congregation.fit.flag.${fit.flag}`)}
-	{:else}
-		<div class="flex flex-row items-center justify-start space-x-1">
-			<span> <WarningIcon size="18" /></span>
-			<span>{$t('common.unspecified')}</span>
-		</div>
-	{/if}
-</div>
+	</div>
+{/if}

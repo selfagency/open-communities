@@ -40,6 +40,7 @@
 		state: State;
 		country: Country;
 	};
+	const notes = congregation.notes as string;
 	const services = congregation.services as ServicesRecord;
 	const registration = congregation.registration as RegistrationRecord;
 	const safety = congregation.safety as SafetyRecord;
@@ -112,6 +113,16 @@
 
 			{#if safety}
 				<Safety {safety} />
+				<Separator class="col-span-12" />
+			{/if}
+
+			{#if notes}
+				<div class="col-span-3 flex flex-row items-start justify-start">
+					<h2 class="label">{$t('congregation.notes.notes')}</h2>
+				</div>
+				<div class="col-span-9 flex flex-row items-start justify-start">
+					<p>{notes}</p>
+				</div>
 				<Separator class="col-span-12" />
 			{/if}
 
