@@ -125,6 +125,7 @@
 			privateSecurityUnarmed: false,
 			clergyArmed: false,
 			congregantsArmed: false,
+			noFirearms: false,
 			other: false,
 			otherText: ''
 		};

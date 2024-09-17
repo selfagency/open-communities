@@ -55,8 +55,6 @@ const hasContact = (value: any) => {
 
 const accessibilitySchema = z.object({
 	id: z.string().optional(),
-	hybrid_automatedCaptions: z.boolean(),
-	hybrid_liveCaptions: z.boolean(),
 	inPerson_adaAll: z.boolean(),
 	inPerson_adaSome: z.boolean(),
 	inPerson_asl: z.boolean(),

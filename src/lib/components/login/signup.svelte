@@ -72,6 +72,8 @@
 				}
 			});
 		}
+
+		$formData.lang = 'en';
 	});
 
 	/* region reactivity */
