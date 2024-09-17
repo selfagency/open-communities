@@ -7,12 +7,14 @@
 	import type { LocationMeta } from '$lib/location';
 
 	import { Button } from '$lib/components/ui/button';
+	import { Location } from '$lib/location';
 	import { Search } from '$lib/search';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
+	export let location: Location;
 	export let locations: LocationMeta[] = [];
 	export let search: Search;
 
@@ -67,22 +69,25 @@
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
 			<Popup offset={[0, -10]}>
 				<Button
-					variant="link"
-					class="h-auto p-0"
+					variant="ghost"
+					class="h-full min-h-max w-full"
 					on:click={() => {
 						searchState.set({
 							...searchState.get(),
-							searchLocation: {
-								city,
-								state,
-								country
-							}
+							showLocation: true
+						});
+						location.load({
+							city: city?.id,
+							state: state?.id,
+							country: country?.id
 						});
 					}}
 				>
-					{#if city}{city.name},{/if}
-					{#if state}{state.name},{/if}
-					{#if country}{country.name}{/if}
+					<span class="text-xs">
+						{#if city}{city.name},{/if}
+						{#if state}{state.name},{/if}
+						{#if country}{country.name}{/if}
+					</span>
 				</Button>
 			</Popup>
 		</DefaultMarker>

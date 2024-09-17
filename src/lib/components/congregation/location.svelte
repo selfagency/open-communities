@@ -9,7 +9,7 @@
 	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
 	import { Search } from '$lib/search';
-	// import { log } from '$lib/utils';
+	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
@@ -28,8 +28,18 @@
 
 	/* region lifecycle */
 	onMount(async () => {
+		country = $locationState.record.country?.id || '';
+		if ($locationState.record.state) state = $locationState.record.state?.id || '';
+		if ($locationState.record.city) city = $locationState.record.city?.id || '';
+
 		locationState.subscribe((value) => {
-			search.setSearchLocation(value.record);
+			log.debug('locationState', value);
+			if (value.record.country) {
+				search.setSearchLocation(value.record);
+				country = value.record.country?.id || '';
+				if (value.record.state) state = $locationState.record.state?.id || '';
+				if (value.record.city) city = $locationState.record.city?.id || '';
+			}
 		});
 	});
 	/* endregion lifecycle */

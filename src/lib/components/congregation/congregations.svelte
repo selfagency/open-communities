@@ -45,7 +45,7 @@
 	let currentPage = 1;
 	let perPage = 12;
 	let pages: Congregation[][] = [];
-	let reset: boolean = false;
+	// let reset: boolean = false;
 	/* endregion variables */
 
 	/* region methods */
@@ -61,11 +61,11 @@
 		currentPage = pageNo;
 	}
 
-	function resetMap() {
-		if (reset === true) reset = false;
-		reset = true;
-		reset = false;
-	}
+	// function resetMap() {
+	// 	if (reset === true) reset = false;
+	// 	reset = true;
+	// 	reset = false;
+	// }
 	/*endregion methods */
 
 	/* region reactivity */
@@ -134,7 +134,6 @@
 				class={`space-x-2 text-slate-500 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
 				on:click={() => {
 					search.toggleLocation();
-					resetMap();
 				}}
 			>
 				<LocationIcon size="20" />
@@ -151,7 +150,7 @@
 	{/if}
 
 	<div class="py-4">
-		<Map {locations} {search} />
+		<Map {location} {locations} {search} />
 	</div>
 
 	<div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3">

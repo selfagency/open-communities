@@ -7,7 +7,7 @@ import { isEmpty, unique, alphabetical, shake } from 'radashi';
 
 import type { LocationMeta } from '$lib/location';
 
-import { log } from '$lib/utils';
+// import { log } from '$lib/utils';
 /* endregion imports */
 
 /* region types  */
@@ -63,8 +63,8 @@ export class Search {
 				)
 			);
 
-			if (this.debug) log.debug('search:state:resultIds', this.resultIds);
-			if (this.debug) log.debug('search:state:results', this.results.get().length);
+			// if (this.debug) log.debug('search:state:resultIds', this.resultIds);
+			// if (this.debug) log.debug('search:state:results', this.results.get().length);
 		});
 
 		this.setSearchTerms = this.setSearchTerms.bind(this);
@@ -131,7 +131,7 @@ export class Search {
 			})
 			.map((i) => i.id);
 
-		if (this.debug) log.debug('search:filters:bool', filter, ids);
+		// if (this.debug) log.debug('search:filters:bool', filter, ids);
 		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
@@ -150,7 +150,7 @@ export class Search {
 			ids = this.data.filter((record) => !record.owner).map((i) => i.id);
 		}
 
-		if (this.debug) log.debug('search:filters:admin', filters, ids);
+		// if (this.debug) log.debug('search:filters:admin', filters, ids);
 		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
@@ -167,7 +167,7 @@ export class Search {
 			})
 			.map((i) => i.id);
 
-		if (this.debug) log.debug('search:filters:string', filter, targetKey, ids);
+		// if (this.debug) log.debug('search:filters:string', filter, targetKey, ids);
 		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
@@ -176,7 +176,7 @@ export class Search {
 
 		const hasFilter = (filters: any, filter: string): boolean => {
 			if (!filters || isEmpty(filters)) return false;
-			if (this.debug) log.debug(`search:filters:${filter}`, filters);
+			// if (this.debug) log.debug(`search:filters:${filter}`, filters);
 			return !isEmpty(shake(filters, (f) => !f));
 		};
 
@@ -216,25 +216,24 @@ export class Search {
 	}
 
 	toggleLocation() {
-		this.resetLocation();
 		const state = this.state.get();
 		this.state.set({
 			...state,
 			showLocation: !state.showLocation
 		});
-		if (this.debug) log.debug('search:toggleLocation', this.state.get().showLocation);
+		// if (this.debug) log.debug('search:toggleLocation', this.state.get().showLocation);
 	}
 
 	setSearchTerms(searchTerms: string) {
 		const state = this.state.get();
 		this.state.set({ ...state, searchTerms });
-		if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
+		// if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
 	}
 
 	setSearchLocation(searchLocation: LocationMeta) {
 		const state = this.state.get();
 		this.state.set({ ...state, searchLocation });
-		if (this.debug) log.debug('search:location', this.state.get().searchLocation);
+		// if (this.debug) log.debug('search:location', this.state.get().searchLocation);
 	}
 
 	setFilters(filters: SearchState['filters']) {
@@ -246,23 +245,23 @@ export class Search {
 	resetSearchTerms() {
 		const state = this.state.get();
 		this.state.set({ ...state, searchTerms: '' });
-		if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
+		// if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
 	}
 
 	resetFilters() {
 		const state = this.state.get();
 		this.state.set({ ...state, filters: {} });
-		if (this.debug) log.debug('search:filters', this.state.get().filters);
+		// if (this.debug) log.debug('search:filters', this.state.get().filters);
 	}
 
 	resetLocation() {
 		const state = this.state.get();
 		this.state.set({ ...state, searchLocation: {} });
-		if (this.debug) log.debug('search:location', this.state.get().searchLocation);
+		// if (this.debug) log.debug('search:location', this.state.get().searchLocation);
 	}
 
 	resetAll() {
 		this.state.set({});
-		if (this.debug) log.debug('search', this.state.get());
+		// if (this.debug) log.debug('search', this.state.get());
 	}
 }
