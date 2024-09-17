@@ -10,6 +10,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { UsersRecord } from '$lib/types';
 
 import { dev } from '$app/environment';
+import { PROSOPO_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, userSchema, tokenSchema } from '$lib/schemas';
 /* endregion imports */
@@ -79,7 +80,7 @@ export const actions = {
 		return {};
 	},
 	signup: async (event) => {
-		const { api, log } = event.locals;
+		const { api } = event.locals;
 		const form: SuperValidated<any> = await superValidate(event, zod(userSchema));
 		let user: UsersRecord;
 
@@ -87,6 +88,28 @@ export const actions = {
 			if (!form.valid) {
 				return fail(400, {
 					form
+				});
+			}
+
+			const captcha = await (
+				await fetch('https://api.prosopo.io/siteverify', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						token: form.data.captcha,
+						secret: PROSOPO_SECRET
+					})
+				})
+			).json();
+
+			if (!captcha.verified) {
+				return fail(400, {
+					form,
+					errors: {
+						captcha: ['Captcha verification failed']
+					}
 				});
 			}
 
@@ -109,7 +132,7 @@ export const actions = {
 		} catch (error) {
 			const err = error as ClientResponseError;
 
-			return fail(err.status, {
+			return fail(err.status || 400, {
 				form: {
 					...form,
 					errors: {

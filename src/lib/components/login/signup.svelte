@@ -1,13 +1,15 @@
 <script lang="ts">
 	/* region imports */
-	import { isEmpty } from 'radashi';
+	import { isEmpty, sleep } from 'radashi';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
 	import { zod } from 'sveltekit-superforms/adapters';
 
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
@@ -56,11 +58,38 @@
 	snapshot = { capture, restore };
 	/* endregion form */
 
+	/* region lifecycle */
+	onMount(async () => {
+		if (browser) {
+			await sleep(1500);
+			const captchaContainer = document.getElementById('captcha');
+			window['procaptcha']?.render(captchaContainer, {
+				siteKey: PUBLIC_PROSOPO_SITEKEY,
+				theme: 'light',
+				captchaType: 'frictionless',
+				callback: (token) => {
+					$formData.captcha = token;
+				}
+			});
+		}
+	});
+
 	/* region reactivity */
 	$: if ($page.url.searchParams.has('verifyEmail')) {
 		verifying = true;
 	}
+	/* endregion reactivity */
 </script>
+
+<svelte:head>
+	<script
+		type="module"
+		id="procaptcha-script"
+		src="https://js.prosopo.io/js/procaptcha.bundle.js"
+		async
+		defer
+	></script>
+</svelte:head>
 
 <Card.Root>
 	<Card.Header>
@@ -119,6 +148,13 @@
 					<Form.Control let:attrs>
 						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
 						<Input {...attrs} bind:value={$formData.passwordConfirm} type="password" />
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+
+				<Form.Field {form} name="captcha">
+					<Form.Control>
+						<div id="captcha" class="w-full pt-3"></div>
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

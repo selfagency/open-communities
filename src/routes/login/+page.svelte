@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script lang="ts">
 	/* region imports */
 	import { onMount } from 'svelte';

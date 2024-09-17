@@ -81,3 +81,17 @@ h4,
 h5 {
 	@apply font-display font-normal;
 }
+
+#captcha {
+	> div > div {
+		@apply !max-w-full;
+	}
+
+	[data-cy='button-human'] {
+		@apply !max-w-full;
+	}
+
+	input {
+		@apply accent-slate-500;
+	}
+}
