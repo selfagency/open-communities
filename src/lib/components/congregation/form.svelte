@@ -105,8 +105,6 @@
 			online_asl: false,
 			online_liveCaptions: false,
 			online_automatedCaptions: false,
-			hybrid_liveCaptions: false,
-			hybrid_automatedCaptions: false,
 			inPerson_adaAll: false,
 			inPerson_adaSome: false,
 			inPerson_asl: false,

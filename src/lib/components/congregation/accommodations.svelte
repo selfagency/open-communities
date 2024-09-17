@@ -20,11 +20,7 @@
 
 	// constants
 	const ada = accommodations.inPerson_adaSome || accommodations.inPerson_adaAll;
-	const cc =
-		accommodations.hybrid_automatedCaptions ||
-		accommodations.hybrid_liveCaptions ||
-		accommodations.online_automatedCaptions ||
-		accommodations.online_liveCaptions;
+	const cc = accommodations.online_automatedCaptions || accommodations.online_liveCaptions;
 	const eva = accommodations.inPerson_eva;
 	const asl = accommodations.inPerson_asl || accommodations.online_asl;
 	const other = accommodations.otherText;
@@ -120,12 +116,6 @@
 					<span class="sr-only">{$t('congregation.accommodations.cc')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
-					{#if accommodations.hybrid_automatedCaptions}
-						{$t('congregation.accommodations.hybrid_automatedCaptions')}
-					{/if}
-					{#if accommodations.hybrid_liveCaptions}
-						{$t('congregation.accommodations.hybrid_liveCaptions')}
-					{/if}
 					{#if accommodations.online_automatedCaptions}
 						{$t('congregation.accommodations.online_automatedCaptions')}
 					{/if}

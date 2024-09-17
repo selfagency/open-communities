@@ -240,30 +240,6 @@
 							</span>
 							<span class="filter-item">
 								<Checkbox
-									id="accommodations_hybrid_automatedCaptions"
-									class="scale-75"
-									bind:checked={filters.accommodations.hybrid_automatedCaptions}
-								/>
-								<Label for="accommodations_hybrid_automatedCaptions">
-									<div class="filter-label">
-										{$t('congregation.accommodations.hybrid_automatedCaptions')}
-									</div>
-								</Label>
-							</span>
-							<span class="filter-item">
-								<Checkbox
-									id="accommodations_hybrid_liveCaptions"
-									class="scale-75"
-									bind:checked={filters.accommodations.hybrid_liveCaptions}
-								/>
-								<Label for="accommodations_hybrid_liveCaptions">
-									<div class="filter-label">
-										{$t('congregation.accommodations.hybrid_liveCaptions')}
-									</div>
-								</Label>
-							</span>
-							<span class="filter-item">
-								<Checkbox
 									id="accommodations_online_automatedCaptions"
 									class="scale-75"
 									bind:checked={filters.accommodations.online_automatedCaptions}

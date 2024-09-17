@@ -46,8 +46,6 @@ export type AuthSystemFields<T = never> = {
 
 export type AccommodationsRecord = {
 	congregation: RecordIdString
-	hybrid_automatedCaptions?: boolean
-	hybrid_liveCaptions?: boolean
 	inPerson_adaAll?: boolean
 	inPerson_adaSome?: boolean
 	inPerson_asl?: boolean
