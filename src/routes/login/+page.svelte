@@ -33,6 +33,10 @@
 	/* endregion lifecycle */
 </script>
 
+<svelte:head>
+	<title>{$t('auth.login')} &middot; {$t('common.title')}</title>
+</svelte:head>
+
 <div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
 	<div class="w-full max-w-96">
 		<Tabs.Root bind:value={tab}>

@@ -5,6 +5,7 @@
 	import { setContext } from 'svelte';
 
 	import EditForm from '$lib/components/congregation/form.svelte';
+	import { t } from '$lib/i18n';
 	/* endregion imports */
 
 	/* region variables */
@@ -17,5 +18,9 @@
 	setContext('congregation', data.congregation);
 	/* endregion lifecycle */
 </script>
+
+<svelte:head>
+	<title>{$t('congregation.editCongregation')} &middot; {$t('common.title')}</title>
+</svelte:head>
 
 <EditForm data={data.form} mode="edit" bind:snapshot />

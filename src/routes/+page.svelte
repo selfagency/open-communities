@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { isEmpty, isArray } from 'radashi'; /* region imports */
+	/* region imports */
+	import { isEmpty, isArray } from 'radashi';
 	import { onMount } from 'svelte';
 
 	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
@@ -57,9 +58,9 @@
 			class="max-h-[85vh] min-w-[360px] max-w-[360px] overflow-y-scroll sm:max-w-[540px]"
 		>
 			<Dialog.Header>
-				<Dialog.Title class="font-display text-2xl font-normal"
-					>{$t('common.home.dialogTitle')}</Dialog.Title
-				>
+				<Dialog.Title class="font-display text-2xl font-normal">
+					{$t('common.home.dialogTitle')}
+				</Dialog.Title>
 				<Dialog.Description>
 					<section class="prose mx-auto my-4">
 						{@html content?.content}

@@ -1,4 +1,8 @@
 <script lang="ts">
+	/* region imports */
+	import { t } from '$lib/i18n';
+	/* endregion imports */
+
 	/* region variables */
 	// props
 	export let data: any;
@@ -11,6 +15,10 @@
 	$: if (data.content) content = data.content;
 	/* endregion reactivity */
 </script>
+
+<svelte:head>
+	<title>{$t('common.termsOfService')} &middot; {$t('common.title')}</title>
+</svelte:head>
 
 <section>
 	{#if content}

@@ -10,6 +10,7 @@
 	import Footer from '$lib/components/global/footer.svelte';
 	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
+	import { t } from '$lib/i18n';
 	import { setState, state, initState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
@@ -53,6 +54,9 @@
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
+<svelte:head>
+	<title>{$t('common.title')}</title>
+</svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
 	<Header />
