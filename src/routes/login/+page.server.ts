@@ -10,7 +10,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { UsersRecord } from '$lib/types';
 
 import { dev } from '$app/environment';
-import { PROSOPO_SECRET } from '$env/static/private';
+import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, userSchema, tokenSchema } from '$lib/schemas';
 /* endregion imports */
@@ -92,7 +92,7 @@ export const actions = {
 			}
 
 			const captcha = await (
-				await fetch('https://api.prosopo.io/siteverify', {
+				await fetch(PROSOPO_ENDPOINT, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

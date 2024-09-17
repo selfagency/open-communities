@@ -11,7 +11,7 @@
 	import Footer from '$lib/components/global/footer.svelte';
 	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
-	import { initState, setState, state } from '$lib/stores';
+	import { setState, state } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
 	import '../app.css';
@@ -26,6 +26,8 @@
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
+			if (isEmpty($state.showIntro)) setState({ showIntro: true });
+
 			// if ('serviceWorker' in navigator && pwaInfo) {
 			// 	const updateSw = registerSW({
 			// 		immediate: false,
@@ -46,8 +48,6 @@
 			// } else {
 			// 	if (dev) log.warn('ServiceWorker not available');
 			// }
-
-			if (isEmpty(state)) initState();
 		}
 	});
 
@@ -80,15 +80,15 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<svelte:head>
-	<!-- {@html webManifestLink}
+<!-- <svelte:head> -->
+<!-- {@html webManifestLink}
 	{#if pwaAssetsHead.themeColor}
 		<meta name="theme-color" content={pwaAssetsHead.themeColor.content} />
 	{/if}
 	{#each pwaAssetsHead.links as link}
 		<link {...link} />
 	{/each} -->
-</svelte:head>
+<!-- </svelte:head> -->
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
 	<Header />
