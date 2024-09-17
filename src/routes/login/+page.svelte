@@ -2,6 +2,7 @@
 	/* region imports */
 	import { onMount } from 'svelte';
 
+	import { dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import Login from '$lib/components/login/index.svelte';
 	import SignUp from '$lib/components/login/signup.svelte';
@@ -45,4 +46,8 @@
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>
+
+	{#if !dev}
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	{/if}
 </div>
