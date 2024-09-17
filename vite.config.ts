@@ -1,6 +1,8 @@
 import svg from '@poppanator/sveltekit-svg';
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
+
 import { config as dotenv } from 'dotenv';
 import { defineConfig } from 'vite';
 import webfontDownload from 'vite-plugin-webfont-dl';
@@ -18,6 +20,7 @@ export default defineConfig({
 		}
 	},
 	plugins: [
+		sentrySvelteKit(),
 		sveltekit(),
 		// SvelteKitPWA({
 		// 	injectRegister: 'auto',
