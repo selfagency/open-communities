@@ -1,6 +1,8 @@
 <script lang="ts">
 	/* region imports */
+	import { inject } from '@vercel/analytics';
 	import { isEmpty } from 'radashi';
+	import { onMount } from 'svelte';
 	// import { pwaAssetsHead } from 'virtual:pwa-assets/head';
 	// import { pwaInfo } from 'virtual:pwa-info';
 	// import { registerSW } from 'virtual:pwa-register';
@@ -24,6 +26,12 @@
 	/* endregion variables */
 
 	/* region lifecycle */
+	onMount(() => {
+		if (browser) {
+			inject();
+		}
+	});
+
 	onNavigate((navigation) => {
 		if (browser) {
 			if (!document.startViewTransition) return;
