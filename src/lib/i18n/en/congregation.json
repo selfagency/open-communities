@@ -45,6 +45,22 @@
 	"delete": "Delete congregation",
 	"deleteFailure": "Failed to delete congregation.",
 	"deleteSuccess": "Congregation deleted successfully.",
+	"denomination": {
+		"affiliation": "Affiliation",
+		"denominations": "Denominations",
+		"extended": "Is your congregation affiliated with a specific denomination or movement?",
+		"options": {
+			"conservative": "Conservative",
+			"humanist": "Secular/Humanist",
+			"multiDenominational": "Multi-denominational",
+			"orthodox": "Orthodox",
+			"postDenominational": "Post-denominational",
+			"reconstructionist": "Reconstructionist",
+			"reform": "Reform",
+			"renewal": "Renewal",
+			"unaffiliated": "Unaffiliated"
+		}
+	},
 	"description": "Description",
 	"details": "Details",
 	"edit": "Edit",

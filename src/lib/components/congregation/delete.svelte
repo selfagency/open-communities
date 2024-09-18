@@ -14,7 +14,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Form from '$lib/components/ui/form';
 	import { t } from '$lib/i18n';
-	import { deleteSchema } from '$lib/schemas';
+	import { deleteSchema } from '$lib/schemas/record';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 

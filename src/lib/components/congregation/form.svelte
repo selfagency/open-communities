@@ -20,6 +20,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
+	import * as Select from '$lib/components/ui/select';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
@@ -40,7 +41,28 @@
 
 	// constants
 	const { state: location, setCountry, setState, setCity, load: loadLocation } = new Location();
-	const congregation = getContext('congregation');
+	const congregation = getContext('congregation') as CongregationMetaRecord;
+	const denominations = [
+		{ label: $t('congregation.denomination.options.conservative'), value: 'conservative' },
+		{
+			label: $t('congregation.denomination.options.reconstructionist'),
+			value: 'reconstructionist'
+		},
+		{ label: $t('congregation.denomination.options.reform'), value: 'reform' },
+		{ label: $t('congregation.denomination.options.renewal'), value: 'renewal' },
+		{ label: $t('congregation.denomination.options.humanist'), value: 'humanist' },
+		{ label: $t('congregation.denomination.options.orthodox'), value: 'orthodox' },
+		{
+			label: $t('congregation.denomination.options.postDenominational'),
+			value: 'postDenominational'
+		},
+		{
+			label: $t('congregation.denomination.options.multiDenominational'),
+			value: 'multiDenominational'
+		},
+		{ label: $t('congregation.denomination.options.unaffiliated'), value: 'unaffiliated' },
+		{ label: $t('common.other'), value: 'other' }
+	];
 
 	// local vars
 	let country: string = '';
@@ -70,6 +92,7 @@
 		$formData.contactEmail = '';
 		$formData.contactName = '';
 		$formData.contactUrl = '';
+		$formData.denomination = '';
 		$formData.flavor = '';
 		$formData.name = '';
 		$formData.notes = '';
@@ -224,6 +247,15 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
+	$: if (congregation.location) {
+		let loc = congregation.location as LocationMeta;
+		$formData.location = {
+			city: loc.city?.id,
+			state: loc.state?.id,
+			country: loc.country?.id
+		};
+	}
+
 	$: if ($location.record) {
 		$formData.location = {
 			country: $location.record.country?.id,
@@ -364,6 +396,34 @@
 									<Form.Control let:attrs>
 										<Form.Label>{$t('congregation.clergy.extended')}</Form.Label>
 										<Input {...attrs} bind:value={$formData.clergy} required />
+									</Form.Control>
+									<Form.FieldErrors />
+								</Form.Field>
+								<Form.Field {form} name="denomination">
+									<Form.Control let:attrs>
+										<Form.Label>{$t('congregation.denomination.extended')}</Form.Label>
+										<Select.Root
+											selected={$formData.denomination
+												? {
+														label: $t(
+															`congregation.denomination.options.${$formData.denomination}`
+														),
+														value: $formData.denomination
+													}
+												: undefined}
+											onSelectedChange={(v) => {
+												$formData.denomination = v?.value;
+											}}
+										>
+											<Select.Trigger class="w-full">
+												<Select.Value />
+											</Select.Trigger>
+											<Select.Content {...attrs}>
+												{#each denominations as { label, value }}
+													<Select.Item {value}>{label}</Select.Item>
+												{/each}
+											</Select.Content>
+										</Select.Root>
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>

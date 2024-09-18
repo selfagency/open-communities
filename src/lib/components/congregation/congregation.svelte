@@ -108,8 +108,19 @@
 				{/if}
 
 				<div class="grid grid-cols-12 gap-x-2 gap-y-4 text-sm">
+					{#if congregation.denomination}
+						<div class="col-span-3 flex flex-row items-start justify-start">
+							<h2 class="label">{$t('congregation.denomination.affiliation')}</h2>
+						</div>
+						<div class="col-span-9 flex flex-row items-start justify-start">
+							{$t(`congregation.denomination.options.${congregation.denomination}`)}
+						</div>
+					{/if}
+
 					{#if !allFalse(fit)}
-						{#if congregation.flavor}<Separator class="col-span-12" />{/if}
+						{#if congregation.denomination || congregation.flavor}<Separator
+								class="col-span-12"
+							/>{/if}
 						<Fit {fit} />
 					{/if}
 

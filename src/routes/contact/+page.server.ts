@@ -9,7 +9,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { LocationMeta } from '$lib/location';
 
 import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
-import { contactSchema } from '$lib/schemas';
+import { contactSchema } from '$lib/schemas/contact';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 

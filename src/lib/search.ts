@@ -165,7 +165,9 @@ export class Search {
 		const ids = this.data
 			.filter((record) => {
 				return Object.keys(filters).some((key) => {
-					return record[filter][targetKey] === key;
+					return targetKey === 'denomination'
+						? record[targetKey] === key
+						: record[filter][targetKey] === key;
 				});
 			})
 			.map((i) => i.id);
@@ -182,6 +184,7 @@ export class Search {
 			return !isEmpty(shake(filters, (f) => !f));
 		};
 
+		const hasDenominations = hasFilter(state.filters?.denominations);
 		const hasServices = hasFilter(state.filters?.services);
 		const hasAccessibility = hasFilter(state.filters?.accessibility);
 		const hasHealth = hasFilter(state.filters?.health);
@@ -192,7 +195,8 @@ export class Search {
 		if (
 			!state.filters ||
 			isEmpty(state.filters) ||
-			(!hasServices &&
+			(!hasDenominations &&
+				!hasServices &&
 				!hasAccessibility &&
 				!hasHealth &&
 				!hasRegistration &&
@@ -212,6 +216,10 @@ export class Search {
 
 		if (hasAccessibility) {
 			this.boolFilter('accessibility');
+		}
+
+		if (hasDenominations) {
+			this.stringFilter('denominations', 'denomination');
 		}
 
 		if (hasHealth) {

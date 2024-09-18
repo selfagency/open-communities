@@ -15,7 +15,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { transferSchema } from '$lib/schemas';
+	import { transferSchema } from '$lib/schemas/record';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 

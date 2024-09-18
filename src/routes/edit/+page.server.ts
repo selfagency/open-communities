@@ -16,7 +16,7 @@ import type {
 } from '$lib/types';
 
 import { cleanResponse } from '$lib/api';
-import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas';
+import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { loadUser, handleError } from '$lib/server/api';
 /* endregion imports */
 

@@ -12,7 +12,8 @@ import type { UsersRecord } from '$lib/types';
 import { dev } from '$app/environment';
 import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
-import { loginSchema, userSchema, tokenSchema } from '$lib/schemas';
+import { loginSchema, tokenSchema } from '$lib/schemas/login';
+import { userSchema } from '$lib/schemas/user';
 /* endregion imports */
 
 export const load = async ({ locals }) => {

@@ -14,6 +14,7 @@
 	import { onMount } from 'svelte';
 
 	import MaskIcon from '$lib/assets/mask.svg?component';
+	import DenominationIcon from '$lib/assets/menorah.svg?component';
 	import SiddurIcon from '$lib/assets/siddur.svg?component';
 	import { Button } from '$lib/components/ui/button';
 	import { Checkbox } from '$lib/components/ui/checkbox';
@@ -42,6 +43,18 @@
 
 	const initFilters = () => {
 		filters = {
+			denominations: {
+				orthodox: false,
+				conservative: false,
+				reform: false,
+				reconstructionist: false,
+				renewal: false,
+				humanist: false,
+				postDenominational: false,
+				multiDenominational: false,
+				unaffiliated: false,
+				other: false
+			},
 			services: {
 				inPerson: false,
 				onlineOnly: false,
@@ -109,6 +122,151 @@
 	</Popover.Trigger>
 	<Popover.Content>
 		<div class="flex flex-col items-start justify-start space-y-2 text-slate-500">
+			{#if !isEmpty(filters?.denominations)}
+				<Collapsible.Root>
+					<Collapsible.Trigger>
+						<div class="filter-heading">
+							<span class="filter-icon">
+								<DenominationIcon class="h-4 w-4 fill-slate-500 stroke-slate-500" />
+							</span>
+							<span class="filter-label">
+								<span>{$t('congregation.denomination.denominations')}</span>
+							</span>
+							<span class="filter-status">
+								{#if every(filters.denominations)}
+									<CircleCheckIcon class="h-4 w-4" />
+								{:else if some(filters.denominations)}
+									<CircleMinusIcon class="h-4 w-4" />
+								{:else}
+									<CircleIcon class="h-4 w-4" />
+								{/if}
+							</span>
+							<span class="filter-icon">
+								<OpenIcon size="16" />
+							</span>
+						</div>
+					</Collapsible.Trigger>
+					<Collapsible.Content>
+						<div class="filter-box">
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_conservative"
+									class="scale-75"
+									bind:checked={filters.denominations.conservative}
+								/>
+								<Label for="denominations_conservative">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.conservative')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_orthodox"
+									class="scale-75"
+									bind:checked={filters.denominations.orthodox}
+								/>
+								<Label for="denominations_orthodox">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.orthodox')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_reconstructionist"
+									class="scale-75"
+									bind:checked={filters.denominations.reconstructionist}
+								/>
+								<Label for="denominations_reconstructionist">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.reconstructionist')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_reform"
+									class="scale-75"
+									bind:checked={filters.denominations.reform}
+								/>
+								<Label for="denominations_reform">
+									<div class="filter-label">{$t('congregation.denomination.options.reform')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_renewal"
+									class="scale-75"
+									bind:checked={filters.denominations.renewal}
+								/>
+								<Label for="denominations_renewal">
+									<div class="filter-label">{$t('congregation.denomination.options.renewal')}</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_humanist"
+									class="scale-75"
+									bind:checked={filters.denominations.humanist}
+								/>
+								<Label for="denominations_humanist">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.humanist')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_postDenominational"
+									class="scale-75"
+									bind:checked={filters.denominations.postDenominational}
+								/>
+								<Label for="denominations_postDenominational">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.postDenominational')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_multiDenominational"
+									class="scale-75"
+									bind:checked={filters.denominations.multiDenominational}
+								/>
+								<Label for="denominations_multiDenominational">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.multiDenominational')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_unaffiliated"
+									class="scale-75"
+									bind:checked={filters.denominations.unaffiliated}
+								/>
+								<Label for="denominations_unaffiliated">
+									<div class="filter-label">
+										{$t('congregation.denomination.options.unaffiliated')}
+									</div>
+								</Label>
+							</span>
+							<span class="filter-item">
+								<Checkbox
+									id="denominations_other"
+									class="scale-75"
+									bind:checked={filters.denominations.other}
+								/>
+								<Label for="denominations_other">
+									<div class="filter-label">{$t('common.other')}</div>
+								</Label>
+							</span>
+						</div>
+					</Collapsible.Content>
+				</Collapsible.Root>
+			{/if}
+
 			{#if !isEmpty(filters?.services)}
 				<Collapsible.Root>
 					<Collapsible.Trigger>

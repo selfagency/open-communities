@@ -18,7 +18,7 @@ import type {
 } from '$lib/types';
 
 import { t } from '$lib/i18n';
-import { defaultSchema } from '$lib/schemas';
+import { defaultSchema } from '$lib/schemas/record';
 import { loadUser, handleError } from '$lib/server/api';
 /* endregion imports */
 
