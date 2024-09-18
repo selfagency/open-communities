@@ -46,7 +46,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
 			errorStackTrace: errorStackTrace
 		};
 
-		requestLogger[error ? 'error' : 'info'](JSON.stringify(logData));
+		requestLogger[error ? 'error' : 'info']('request', logData);
 	} catch (err) {
 		log.error(err);
 	}
