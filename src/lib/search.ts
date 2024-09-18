@@ -47,6 +47,7 @@ export class Search {
 		this.results.set(this.data);
 
 		this.state.subscribe(() => {
+			// if (this.debug) log.debug('search:state', this.state.get());
 			// if (this.debug) log.debug('search:state:terms', this.state.get().searchTerms);
 
 			this.resultIds = this.ids;
@@ -123,6 +124,8 @@ export class Search {
 		const filters = shake(state.filters?.[filter], (f) => !f);
 		if (isEmpty(filters)) return;
 
+		// log.debug('search:filters:bool', filter, filters[filter]);
+
 		const ids = this.data
 			.filter((record) => {
 				return Object.keys(filters).some((key) => {
@@ -174,28 +177,37 @@ export class Search {
 	applyFilters() {
 		const state = this.state.get();
 
-		const hasFilter = (filters: any, filter: string): boolean => {
+		const hasFilter = (filters: any): boolean => {
 			if (!filters || isEmpty(filters)) return false;
-			// if (this.debug) log.debug(`search:filters:${filter}`, filters);
 			return !isEmpty(shake(filters, (f) => !f));
 		};
 
-		const hasServices = hasFilter(state.filters?.services, 'services');
-		const hasAccessibility = hasFilter(state.filters?.accessibility, 'accessibility');
-		const hasHealth = hasFilter(state.filters?.health, 'health');
-		const hasRegistration = hasFilter(state.filters?.registration, 'registration');
-		const hasAdmin = hasFilter(state.filters?.admin, 'admin');
+		const hasServices = hasFilter(state.filters?.services);
+		const hasAccessibility = hasFilter(state.filters?.accessibility);
+		const hasHealth = hasFilter(state.filters?.health);
+		const hasRegistration = hasFilter(state.filters?.registration);
+		const hasSecurity = hasFilter(state.filters?.security);
+		const hasAdmin = hasFilter(state.filters?.admin);
 
 		if (
 			!state.filters ||
 			isEmpty(state.filters) ||
-			(!hasServices && !hasAccessibility && !hasHealth && !hasRegistration && !hasAdmin)
+			(!hasServices &&
+				!hasAccessibility &&
+				!hasHealth &&
+				!hasRegistration &&
+				!hasSecurity &&
+				!hasAdmin)
 		) {
 			return;
 		}
 
 		if (hasServices) {
 			this.boolFilter('services');
+		}
+
+		if (hasSecurity) {
+			this.boolFilter('security');
 		}
 
 		if (hasAccessibility) {
