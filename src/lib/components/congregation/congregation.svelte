@@ -107,7 +107,7 @@
 					<p class="mb-6">{congregation.flavor}</p>
 				{/if}
 
-				<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+				<div class="grid grid-cols-12 gap-x-2 gap-y-4 text-sm">
 					{#if !allFalse(fit)}
 						{#if congregation.flavor}<Separator class="col-span-12" />{/if}
 						<Fit {fit} />
