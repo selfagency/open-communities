@@ -53,8 +53,5 @@ export default defineConfig({
 			'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap'
 		]),
 		svg()
-	],
-	define: {
-		VERCEL_ENV: JSON.stringify(process.env.VERCEL_ENV)
-	}
+	]
 });
