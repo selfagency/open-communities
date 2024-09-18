@@ -78,13 +78,8 @@ export const actions = {
 			let record;
 			if (form.data.record && form.data.record !== '') {
 				record = await api.collection('congregationMeta').getOne(form.data.record, { fetch });
-				const location = record.location as LocationMeta;
-
 				formData.append('congregation', record.name);
-				formData.append('congregationId', record.id);
-				formData.append('congregationCity', location.city?.name || '');
-				formData.append('congregationState', location.state?.name || '');
-				formData.append('congregationCountry', location.country?.name || '');
+				formData.append('congregationUrl', `https://opencommunities.info/edit?id=${record.id}`);
 			}
 
 			const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
