@@ -87,6 +87,7 @@
 	$: if ($page.url.searchParams.has('claim')) {
 		$formData.reason = 'claim';
 		congregation = $page.url.searchParams.get('claim') as string;
+		$formData.record = congregation;
 	}
 	/* endregion reactivity */
 </script>
@@ -175,7 +176,10 @@
 									thing: $t('congregation.congregation').toLowerCase()
 								})}
 								disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
-								on:change={(e) => ($formData.record = e.detail.value)}
+								on:change={(e) => {
+									log.debug(e.detail);
+									$formData.record = e.detail.value;
+								}}
 							/>
 						</Form.Control>
 						<Form.FieldErrors />
