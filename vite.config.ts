@@ -55,6 +55,6 @@ export default defineConfig({
 		svg()
 	],
 	define: {
-		NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+		VERCEL_ENV: JSON.stringify(process.env.VERCEL_ENV)
 	}
 });
