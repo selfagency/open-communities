@@ -21,6 +21,7 @@ const config = {
 					'unsafe-inline',
 					'*.prosopo.io',
 					'va.vercel-scripts.com',
+					'*.sentry.io',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com'
 				],
@@ -34,7 +35,7 @@ const config = {
 					'va.vercel-scripts.com',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
-					'*.ingest.us.sentry.io'
+					'*.sentry.io'
 				],
 				'worker-src': ['self', 'blob:'],
 				'img-src': ['self', 'data:'],
