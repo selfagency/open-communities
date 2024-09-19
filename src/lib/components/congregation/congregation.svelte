@@ -1,5 +1,6 @@
 <script lang="ts">
 	/* region imports */
+	import EditIcon from 'lucide-svelte/icons/pencil';
 	import ShareIcon from 'lucide-svelte/icons/share';
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
 	import { omit, isEmpty } from 'radashi';
@@ -19,6 +20,7 @@
 		CountriesRecord as Country
 	} from '$lib/types';
 
+	import { goto } from '$app/navigation';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -107,7 +109,7 @@
 				</span>
 
 				<div class="flex w-1/3 flex-row items-center justify-end space-x-2">
-					{#if isEmpty(congregation.owner)}
+					{#if isEmpty(congregation.owner) && !$user.admin}
 						<a href={`/contact?claim=${congregation.id}`}>
 							<Badge
 								variant="outline"
@@ -115,6 +117,25 @@
 								>{$t('congregation.claimThis')}</Badge
 							>
 						</a>
+					{/if}
+					{#if $user.admin}
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button
+									variant="ghost"
+									class="h-8 px-2 py-0"
+									on:click={async () => {
+										await goto(`/edit?id=${congregation.id}`);
+									}}
+								>
+									<EditIcon size="16" class="text-slate-500" />
+								</Button>
+								<span class="sr-only">{$t('common.edit')}</span>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								<span class="text-nowrap">{$t('common.edit')}</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
 					{/if}
 					<Tooltip.Root>
 						<Tooltip.Trigger>

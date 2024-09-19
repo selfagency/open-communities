@@ -4,7 +4,7 @@ import type { ClientResponseError } from 'pocketbase';
 import { redirect, fail } from '@sveltejs/kit';
 import { omit } from 'radashi';
 
-import type { LocationRecord } from '$lib/location';
+import type { LocationRecord, LocationMeta } from '$lib/location';
 import type {
 	CongregationMetaRecord,
 	AccessibilityRecord,
@@ -45,11 +45,23 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 
 			const congregation = cleanResponse(
 				await api.collection('congregationMeta').getFirstListItem(`id="${id}"`, { fetch })
-			);
+			) as RecordWithId;
+
+			const location = congregation.location as LocationMeta;
 
 			return {
 				form: {
-					default: await validate(defaultSchema, cleanResponse(congregation)),
+					default: await validate(
+						defaultSchema,
+						cleanResponse({
+							...congregation,
+							location: {
+								country: location.country?.id,
+								state: location.state?.id,
+								city: location.city?.id
+							}
+						})
+					),
 					delete: await validate(deleteSchema, { id }),
 					transfer: await validate(transferSchema, { id })
 				},

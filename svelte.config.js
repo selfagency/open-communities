@@ -28,6 +28,7 @@ const config = {
 				'font-src': ['self', 'fonts.gstatic.com', 'fonts.googleapis.com'],
 				'connect-src': [
 					'self',
+					'127.0.0.1:8090',
 					'api.opencommunities.info',
 					'*.prosopo.io',
 					'va.vercel-scripts.com',

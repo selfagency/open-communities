@@ -263,20 +263,12 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if (congregation?.location) {
-		let loc = congregation.location as LocationMeta;
+	$: if ($location?.record || congregation?.location) {
+		let loc = ($location.record || congregation.location) as LocationMeta;
 		$formData.location = {
 			city: loc.city?.id,
 			state: loc.state?.id,
 			country: loc.country?.id
-		};
-	}
-
-	$: if ($location?.record) {
-		$formData.location = {
-			country: $location.record.country?.id,
-			state: $location.record.state?.id,
-			city: $location.record.city?.id
 		};
 	}
 
