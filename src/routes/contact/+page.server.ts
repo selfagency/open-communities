@@ -9,6 +9,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { LocationMeta } from '$lib/location';
 
 import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
+import { t } from '$lib/i18n';
 import { contactSchema } from '$lib/schemas/contact';
 import { sendMail } from '$lib/server/mail';
 import { truncateText } from '$lib/utils';
@@ -74,9 +75,13 @@ export const actions = {
 					{
 						name: form.data.name,
 						email: form.data.email,
-						reason: form.data.reason,
-						message: form.data.message,
-						record: form.data.record
+						message: `
+						${t.get(`common.contact.options.${form.data.reason}`)}
+
+						${form.data.message}
+
+						https://opencommunities.info/edit?id=${form.data.record}
+						`
 					},
 					api
 				);
