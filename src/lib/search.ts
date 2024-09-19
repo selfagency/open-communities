@@ -184,7 +184,7 @@ export class Search {
 			return !isEmpty(shake(filters, (f) => !f));
 		};
 
-		const hasDenominations = hasFilter(state.filters?.denominations);
+		const hasDenominations = hasFilter(state.filters?.denomination);
 		const hasServices = hasFilter(state.filters?.services);
 		const hasAccessibility = hasFilter(state.filters?.accessibility);
 		const hasHealth = hasFilter(state.filters?.health);
@@ -219,7 +219,7 @@ export class Search {
 		}
 
 		if (hasDenominations) {
-			this.stringFilter('denominations', 'denomination');
+			this.stringFilter('denomination', 'denomination');
 		}
 
 		if (hasHealth) {
