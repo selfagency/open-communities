@@ -5,8 +5,8 @@
 
 	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
 
-	import Congregations from '$lib/components/congregation/congregations.svelte';
 	import Welcome from '$lib/components/global/welcome.svelte';
+	import Congregations from '$lib/components/search/congregations.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { t } from '$lib/i18n';
 	import { state, setState } from '$lib/stores';

@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	/* region imports */
-	import AddForm from '$lib/components/congregation/form.svelte';
+	import AddForm from '$lib/components/form/form.svelte';
 	import { t } from '$lib/i18n';
 	/* endregion imports */
 

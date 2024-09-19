@@ -13,7 +13,7 @@
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Location from '$lib/components/congregation/location.svelte';
+	import Congregation from '$lib/components/congregation/congregation.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import * as Pagination from '$lib/components/ui/pagination';
@@ -22,8 +22,8 @@
 	import { Search } from '$lib/search';
 	import { state } from '$lib/stores';
 
-	import Congregation from './congregation.svelte';
 	import Filters from './filters.svelte';
+	import Location from './location.svelte';
 	import Map from './map.svelte';
 	/* endregion imports */
 

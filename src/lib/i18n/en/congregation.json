@@ -25,6 +25,11 @@
 	"addFailure": "Failed to add congregation.",
 	"addSuccess": "Congregation added successfully.",
 	"addSuccessNotice": "Thank you for your submission. Someone will review and approve it shortly or reach out as needed.",
+	"admin": {
+		"admin": "Admin",
+		"unapproved": "Unapproved",
+		"unclaimed": "Unclaimed"
+	},
 	"approved": "Approved",
 	"claimThis": "Claim congregation",
 	"clergy": {
@@ -47,19 +52,18 @@
 	"deleteSuccess": "Congregation deleted successfully.",
 	"denomination": {
 		"affiliation": "Affiliation",
+		"conservative": "Conservative",
+		"denomination": "Denomination",
 		"denominations": "Denominations",
 		"extended": "Is your congregation affiliated with a specific denomination or movement?",
-		"options": {
-			"conservative": "Conservative",
-			"humanist": "Secular/Humanist",
-			"multiDenominational": "Multi-denominational",
-			"orthodox": "Orthodox",
-			"postDenominational": "Post-denominational",
-			"reconstructionist": "Reconstructionist",
-			"reform": "Reform",
-			"renewal": "Renewal",
-			"unaffiliated": "Unaffiliated"
-		}
+		"humanist": "Secular/Humanist",
+		"multiDenominational": "Multi-denominational",
+		"orthodox": "Orthodox",
+		"postDenominational": "Post-denominational",
+		"reconstructionist": "Reconstructionist",
+		"reform": "Reform",
+		"renewal": "Renewal",
+		"unaffiliated": "Unaffiliated"
 	},
 	"description": "Description",
 	"details": "Details",

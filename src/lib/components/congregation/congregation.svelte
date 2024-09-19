@@ -182,7 +182,7 @@
 							<h2 class="label">{$t('congregation.denomination.affiliation')}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
-							{$t(`congregation.denomination.options.${congregation.denomination}`)}
+							{$t(`congregation.denomination.${congregation.denomination}`)}
 						</div>
 					{/if}
 
@@ -241,19 +241,21 @@
 					{/if}
 
 					{#if health.protocol}
-						{#if !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
+						{#if fit.flag || !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
 						<Health {health} />
 					{/if}
 
 					{#if !allFalse(security)}
-						{#if health.protocol || !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
+						{#if fit.flag || health.protocol || !allFalse(accessibility)}<Separator
+								class="col-span-12"
+							/>{/if}
 						<Security {security} />
 					{/if}
 
 					{#if notes}
-						{#if health.protocol || !allFalse(accessibility) || !allFalse(security)}<Separator
-								class="col-span-12"
-							/>{/if}
+						{#if fit.flag || health.protocol || !allFalse(accessibility) || !allFalse(security)}
+							<Separator class="col-span-12" />
+						{/if}
 						<div class="col-span-3 flex flex-row items-start justify-start">
 							<h2 class="label">{$t('congregation.notes.notes')}</h2>
 						</div>

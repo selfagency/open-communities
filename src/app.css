@@ -50,7 +50,7 @@
 	}
 
 	.filter-label {
-		@apply col-span-5 flex flex-row items-center justify-start text-sm underline-offset-4 hover:underline;
+		@apply col-span-5 flex flex-row items-center justify-start text-sm text-slate-500 underline-offset-4 hover:underline;
 	}
 
 	.filter-status {

@@ -45,24 +45,24 @@
 	const { state: location, setCountry, setState, setCity, load: loadLocation } = new Location();
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 	const denominations = [
-		{ label: $t('congregation.denomination.options.conservative'), value: 'conservative' },
+		{ label: $t('congregation.denomination.conservative'), value: 'conservative' },
 		{
-			label: $t('congregation.denomination.options.reconstructionist'),
+			label: $t('congregation.denomination.reconstructionist'),
 			value: 'reconstructionist'
 		},
-		{ label: $t('congregation.denomination.options.reform'), value: 'reform' },
-		{ label: $t('congregation.denomination.options.renewal'), value: 'renewal' },
-		{ label: $t('congregation.denomination.options.humanist'), value: 'humanist' },
-		{ label: $t('congregation.denomination.options.orthodox'), value: 'orthodox' },
+		{ label: $t('congregation.denomination.reform'), value: 'reform' },
+		{ label: $t('congregation.denomination.renewal'), value: 'renewal' },
+		{ label: $t('congregation.denomination.humanist'), value: 'humanist' },
+		{ label: $t('congregation.denomination.orthodox'), value: 'orthodox' },
 		{
-			label: $t('congregation.denomination.options.postDenominational'),
+			label: $t('congregation.denomination.postDenominational'),
 			value: 'postDenominational'
 		},
 		{
-			label: $t('congregation.denomination.options.multiDenominational'),
+			label: $t('congregation.denomination.multiDenominational'),
 			value: 'multiDenominational'
 		},
-		{ label: $t('congregation.denomination.options.unaffiliated'), value: 'unaffiliated' },
+		{ label: $t('congregation.denomination.unaffiliated'), value: 'unaffiliated' },
 		{ label: $t('common.other'), value: 'other' }
 	];
 
@@ -424,9 +424,7 @@
 										<Select.Root
 											selected={$formData.denomination
 												? {
-														label: $t(
-															`congregation.denomination.options.${$formData.denomination}`
-														),
+														label: $t(`congregation.denomination.${$formData.denomination}`),
 														value: $formData.denomination
 													}
 												: undefined}

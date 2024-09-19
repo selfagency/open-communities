@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import { t } from '$lib/i18n';
+	import Page from '$lib/components/global/page.svelte';
 	/* endregion imports */
 
 	/* region variables */
@@ -16,15 +16,4 @@
 	/* endregion reactivity */
 </script>
 
-<svelte:head>
-	<title>{$t('common.termsOfService')} &middot; {$t('common.title')}</title>
-</svelte:head>
-
-<section>
-	{#if content}
-		<h1 class="text-3xl">{content.title}</h1>
-		<div class="prose max-w-none" class:content>
-			{@html content.content}
-		</div>
-	{/if}
-</section>
+<Page {content} />

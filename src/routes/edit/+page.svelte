@@ -4,7 +4,7 @@
 	/* region imports */
 	import { setContext } from 'svelte';
 
-	import EditForm from '$lib/components/congregation/form.svelte';
+	import EditForm from '$lib/components/form/form.svelte';
 	import { t } from '$lib/i18n';
 	/* endregion imports */
 

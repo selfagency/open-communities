@@ -83,8 +83,6 @@
 		"desc": "Transfer ownership of this congregation to another user.",
 		"transfer": "Transfer"
 	},
-	"unapproved": "Unapproved",
-	"unclaimed": "Unclaimed",
 	"unspecified": "Unspecified",
 	"warning": "Are you sure you want to continue?",
 	"warningNote": "This action cannot be undone.",
