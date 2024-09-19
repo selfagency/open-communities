@@ -28,7 +28,7 @@ const config = {
 				],
 				'child-src': ['self', 'blob:'],
 				'style-src': ['self', 'unsafe-inline', '*.prosopo.io', 'fonts.googleapis.com'],
-				'font-src': ['self', 'fonts.gstatic.com', 'fonts.googleapis.com'],
+				'font-src': ['self', 'data:', 'fonts.gstatic.com', 'fonts.googleapis.com'],
 				'connect-src': [
 					'self',
 					'127.0.0.1:8090',
