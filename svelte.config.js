@@ -26,7 +26,7 @@ const config = {
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com'
 				],
-				'style-src': ['self', 'unsafe-inline', '*.prosopo.io'],
+				'style-src': ['self', 'unsafe-inline', '*.prosopo.io', 'fonts.googleapis.com'],
 				'font-src': ['self', 'fonts.gstatic.com', 'fonts.googleapis.com'],
 				'connect-src': [
 					'self',
