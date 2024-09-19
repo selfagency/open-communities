@@ -66,6 +66,10 @@
 	/* region methods */
 	const allFalse = (obj) => Object.values(omit(obj, ['id', 'otherText'])).every((v) => !v);
 	/* endregion methods */
+
+	/* region reactivity */
+	$: if (!open) tab = 'about';
+	/* endregion reactivity */
 </script>
 
 <Dialog.Root bind:open>
@@ -169,7 +173,7 @@
 			</Tabs.List>
 			<Tabs.Content value="about">
 				{#if congregation.flavor}
-					<p class="mb-6">{congregation.flavor}</p>
+					<p class="mb-6 text-sm">{@html congregation.flavor}</p>
 				{/if}
 
 				<div class="grid grid-cols-12 gap-4 text-sm">
@@ -254,7 +258,7 @@
 							<h2 class="label">{$t('congregation.notes.notes')}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
-							<p>{notes}</p>
+							<p>{@html notes}</p>
 						</div>
 					{/if}
 				</div>

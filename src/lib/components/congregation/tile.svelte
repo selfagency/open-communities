@@ -1,5 +1,7 @@
 <script lang="ts">
 	/* region imports */
+	import EditIcon from 'lucide-svelte/icons/pencil';
+
 	import type {
 		CongregationMetaRecord,
 		AccessibilityRecord,
@@ -15,6 +17,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
+	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
 	import { user } from '$lib/stores';
 
@@ -64,12 +67,23 @@
 		<Card.Footer>
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
 				{#if $user.admin}
-					<Button
-						on:click={async (e) => {
-							e.stopPropagation();
-							await goto(`/edit?id=${congregation.id}`);
-						}}>Edit</Button
-					>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								variant="ghost"
+								class="h-8 px-2 py-0"
+								on:click={async () => {
+									await goto(`/edit?id=${congregation.id}`);
+								}}
+							>
+								<EditIcon size="16" class="text-slate-700" />
+							</Button>
+							<span class="sr-only">{$t('common.edit')}</span>
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<span class="text-nowrap">{$t('common.edit')}</span>
+						</Tooltip.Content>
+					</Tooltip.Root>
 				{/if}
 				<div class="flex w-auto flex-row items-center justify-end space-x-1">
 					{#if !congregation.visible}
