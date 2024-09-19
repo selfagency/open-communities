@@ -13,7 +13,14 @@ Sentry.init({
 	tracesSampleRate: 1.0,
 	initialScope: {
 		user: pick(user.get(), ['id', 'email'] as any)
-	}
+	},
+	integrations: [
+		Sentry.browserTracingIntegration(),
+		Sentry.browserProfilingIntegration(),
+		Sentry.feedbackIntegration({
+			colorScheme: 'light'
+		})
+	]
 });
 
 export async function customErrorHandler({ error, event, status, message }) {

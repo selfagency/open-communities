@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@sentry/profiling-node':
+        specifier: ^8.30.0
+        version: 8.30.0
       '@sentry/sveltekit':
         specifier: ^8.30.0
         version: 8.30.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.53.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.27.0)(@sveltejs/kit@2.5.26(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0)))(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0)))(svelte@4.2.19)(vite@5.4.3(@types/node@22.5.5)(terser@5.32.0))
@@ -2032,6 +2035,11 @@ packages:
       '@opentelemetry/instrumentation': ^0.53.0
       '@opentelemetry/sdk-trace-base': ^1.26.0
       '@opentelemetry/semantic-conventions': ^1.27.0
+
+  '@sentry/profiling-node@8.30.0':
+    resolution: {integrity: sha512-HKjIjHRtgEpUjO8LXadWEA/G8fwZ4Ej/KVfUK3tdZYimY6ISwzLQj/PFIoROOdqqWEw5z1mcF89AgIhGoKaH+Q==}
+    engines: {node: '>=14.18'}
+    hasBin: true
 
   '@sentry/svelte@8.30.0':
     resolution: {integrity: sha512-nM9s8RYLfM2fIZ7sZWiTpXLXWfWLLtmhJwUY7FN7oZ42wnIy051qhRp4qaJ63v4ZvSwQttv8+HwSSJt+469x7A==}
@@ -4506,6 +4514,10 @@ packages:
   nock@13.5.5:
     resolution: {integrity: sha512-XKYnqUrCwXC8DGG1xX4YH5yNIrlh9c065uaMZZHUoeUUINTOyt+x/G+ezYk0Ft6ExSREVIs+qBJDK503viTfFA==}
     engines: {node: '>= 10.13'}
+
+  node-abi@3.68.0:
+    resolution: {integrity: sha512-7vbj10trelExNjFSBm5kTvZXXa7pZyKWx9RCKIyqe6I9Ev3IzGpQoqBP3a+cOdxY+pWj6VkP28n/2wWysBHD/A==}
+    engines: {node: '>=10'}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -8082,7 +8094,7 @@ snapshots:
       - utf-8-validate
       - webpack-bundle-analyzer
 
-  '@prosopo/common@2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)':
+  '@prosopo/common@2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)':
     dependencies:
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
       '@prosopo/util': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
@@ -8121,24 +8133,6 @@ snapshots:
       - utf-8-validate
       - webpack-bundle-analyzer
 
-  '@prosopo/common@2.0.3(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))':
-    dependencies:
-      '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
-      '@prosopo/util': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
-      consola: 3.2.3
-      i18next: 21.10.0
-      i18next-browser-languagedetector: 7.2.1
-      i18next-http-backend: 1.4.5
-      i18next-http-middleware: 3.6.0
-      react: 18.3.1
-      react-i18next: 11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      zod: 3.23.8
-    transitivePeerDependencies:
-      - '@polkadot/util'
-      - encoding
-      - react-dom
-      - react-native
-
   '@prosopo/config@2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)':
     dependencies:
       '@babel/core': 7.25.2
@@ -8149,7 +8143,7 @@ snapshots:
       '@babel/plugin-transform-react-jsx': 7.25.2(@babel/core@7.25.2)
       '@babel/plugin-transform-runtime': 7.25.4(@babel/core@7.25.2)
       '@babel/preset-env': 7.25.4(@babel/core@7.25.2)
-      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))
+      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/types': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(react-dom@18.3.1(react@18.3.1))
       '@prosopo/util': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@rollup/plugin-alias': 5.1.0(rollup@4.21.2)
@@ -8224,7 +8218,7 @@ snapshots:
       '@polkadot/types-codec': 10.13.1
       '@polkadot/util': 12.6.2
       '@polkadot/util-crypto': 12.6.2(@polkadot/util@12.6.2)
-      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
+      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/tx': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/typechain-types': 1.1.15
       '@prosopo/types': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
@@ -8263,7 +8257,7 @@ snapshots:
       '@polkadot/rpc-provider': 10.13.1
       '@polkadot/util': 12.6.2
       '@prosopo/api': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
-      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
+      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/contract': 2.0.3(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/types': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/util': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
@@ -8303,7 +8297,7 @@ snapshots:
       '@polkadot/types': 10.13.1
       '@polkadot/types-codec': 10.13.1
       '@polkadot/util': 12.6.2
-      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
+      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       '@prosopo/types': 2.0.3(@polkadot/util-crypto@12.6.2(@polkadot/util@12.6.2))(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
     transitivePeerDependencies:
       - '@polkadot/util-crypto'
@@ -8354,7 +8348,7 @@ snapshots:
       '@polkadot/types': 10.13.1
       '@polkadot/types-codec': 10.13.1
       '@polkadot/util': 12.6.2
-      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
+      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       scale-ts: 1.6.0
       zod: 3.23.8
     transitivePeerDependencies:
@@ -8393,7 +8387,7 @@ snapshots:
       '@polkadot/types': 10.13.1
       '@polkadot/types-codec': 10.13.1
       '@polkadot/util': 12.6.2
-      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(react-dom@18.3.1(react@18.3.1))
+      '@prosopo/common': 2.0.3(@polkadot/util@12.6.2)(@types/babel__core@7.20.5)(@types/node@22.5.5)(react-dom@18.3.1(react@18.3.1))(rollup@4.21.2)(terser@5.32.0)(tslib@2.7.0)(typescript@5.6.2)
       scale-ts: 1.6.0
       zod: 3.23.8
     transitivePeerDependencies:
@@ -8782,6 +8776,17 @@ snapshots:
       '@sentry/core': 8.30.0
       '@sentry/types': 8.30.0
       '@sentry/utils': 8.30.0
+
+  '@sentry/profiling-node@8.30.0':
+    dependencies:
+      '@sentry/core': 8.30.0
+      '@sentry/node': 8.30.0
+      '@sentry/types': 8.30.0
+      '@sentry/utils': 8.30.0
+      detect-libc: 2.0.3
+      node-abi: 3.68.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@sentry/svelte@8.30.0(svelte@4.2.19)':
     dependencies:
@@ -11560,6 +11565,10 @@ snapshots:
       propagate: 2.0.1
     transitivePeerDependencies:
       - supports-color
+
+  node-abi@3.68.0:
+    dependencies:
+      semver: 7.6.3
 
   node-domexception@1.0.0: {}
 

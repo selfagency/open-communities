@@ -1,6 +1,7 @@
 /* region imports */
 import type { CookieSerializeOptions } from 'cookie';
 
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { uid } from 'radashi';
@@ -17,7 +18,8 @@ import { logEvent, log as logger } from '$lib/server/logger';
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
 	tracesSampleRate: 1.0,
-	environment: VERCEL_ENV
+	environment: VERCEL_ENV,
+	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()]
 });
 /* endregion init */
 
