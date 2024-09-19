@@ -72,7 +72,9 @@
 							<Button
 								variant="ghost"
 								class="h-8 px-2 py-0"
-								on:click={async () => {
+								on:click={async (e) => {
+									e.preventDefault();
+									e.stopPropagation();
 									await goto(`/edit?id=${congregation.id}`);
 								}}
 							>
