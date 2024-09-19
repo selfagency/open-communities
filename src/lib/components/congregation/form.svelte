@@ -1255,13 +1255,3 @@
 		{/await}
 	{/if}
 </section>
-
-<style lang="postcss">
-	.question {
-		@apply text-base text-slate-600;
-
-		&.error {
-			@apply text-red-500;
-		}
-	}
-</style>

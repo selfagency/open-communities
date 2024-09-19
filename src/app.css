@@ -95,3 +95,11 @@ h5 {
 		@apply accent-slate-500;
 	}
 }
+
+.question {
+	@apply text-base text-slate-600;
+
+	&.error {
+		@apply text-red-500;
+	}
+}

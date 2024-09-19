@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
-	import { omit } from 'radashi';
+	import { omit, isEmpty } from 'radashi';
 
 	import type {
 		CongregationMetaRecord,
@@ -65,16 +65,21 @@
 		<Tile {congregation} />
 	</Dialog.Trigger>
 	<Dialog.Content
-		class="flex max-h-[85vh] min-h-[35vh] min-w-[360px] max-w-[360px] flex-col items-start justify-start overflow-y-scroll sm:max-w-[540px]"
+		class="flex max-h-[85vh] min-h-[35vh] min-w-[360px] max-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 sm:max-w-[540px] sm:p-8"
 	>
-		<Dialog.Header>
+		<Dialog.Header class="w-full">
 			<Dialog.Title>
 				{#if congregation.contactUrl}
-					<a href={congregation.contactUrl} target="_blank" rel="noopener noreferrer">
-						<h1 class="inline text-2xl leading-6">
+					<a
+						href={congregation.contactUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-block max-w-[92%] hyphens-auto"
+					>
+						<h1 class="inline-lbock text-2xl leading-7">
 							<span>{congregation.name}</span>
+							<span><LinkIcon size="14" color="gray" class="inline" /></span>
 						</h1>
-						<span><LinkIcon size="14" color="gray" class="ml-1 inline" /></span>
 					</a>
 				{:else}
 					<h1 class="inline text-2xl leading-6">
@@ -82,14 +87,28 @@
 					</h1>
 				{/if}
 			</Dialog.Title>
-			<Dialog.Description>
-				{#if city.name || state.name || country.name}
-					{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
-					{#if state.name}<span>{state.name}</span
-						>{#if country.name && country.name !== 'United States'},{/if}{/if}
-					{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
-				{:else if services.onlineOnly}
-					{$t('congregation.services.onlineOnly')}
+			<Dialog.Description class="flex w-full flex-row items-center justify-between space-x-2">
+				<span class={isEmpty(congregation.owner) ? 'w-2/3' : 'w-full'}>
+					{#if city.name || state.name || country.name}
+						{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
+						{#if state.name}<span>{state.name}</span
+							>{#if country.name && country.name !== 'United States'},{/if}{/if}
+						{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
+					{:else if services.onlineOnly}
+						{$t('congregation.services.onlineOnly')}
+					{/if}
+				</span>
+
+				{#if isEmpty(congregation.owner)}
+					<div class="flex w-1/3 flex-row items-center justify-end">
+						<a href={`/contact?claim=${congregation.id}`}>
+							<Badge
+								variant="outline"
+								class="text-nowrap font-normal text-slate-500 hover:bg-slate-100"
+								>{$t('congregation.claimThis')}</Badge
+							>
+						</a>
+					</div>
 				{/if}
 			</Dialog.Description>
 		</Dialog.Header>
@@ -107,7 +126,7 @@
 					<p class="mb-6">{congregation.flavor}</p>
 				{/if}
 
-				<div class="grid grid-cols-12 gap-x-2 gap-y-4 text-sm">
+				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if congregation.denomination}
 						<div class="col-span-3 flex flex-row items-start justify-start">
 							<h2 class="label">{$t('congregation.denomination.affiliation')}</h2>
@@ -131,22 +150,10 @@
 							contactEmail={congregation.contactEmail}
 						/>
 					{/if}
-
-					{#if !congregation.owner}
-						<div class="col-span-12 flex w-full flex-row items-center justify-end">
-							<a href={`/contact?claim=${congregation.id}`}>
-								<Badge
-									variant="outline"
-									class="text-nowrap font-normal text-slate-500 hover:bg-slate-100"
-									>{$t('congregation.claimThis')}</Badge
-								>
-							</a>
-						</div>
-					{/if}
 				</div>
 			</Tabs.Content>
 			<Tabs.Content value="services">
-				<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if congregation.clergy}
 						<div class="col-span-3 flex flex-row items-start justify-start">
 							<h2 class="label">{$t('congregation.clergy.clergy')}</h2>
@@ -168,7 +175,7 @@
 				</div>
 			</Tabs.Content>
 			<Tabs.Content value="details">
-				<div class="grid grid-cols-12 gap-x-0 gap-y-4 text-sm">
+				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if fit.flag}
 						<div class="col-span-3">
 							<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
