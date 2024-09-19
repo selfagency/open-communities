@@ -21,6 +21,7 @@ import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
 import { t } from '$lib/i18n';
 import { defaultSchema } from '$lib/schemas/record';
 import { loadUser, handleError } from '$lib/server/api';
+import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
 /* region types */
@@ -32,6 +33,7 @@ type MetaRecord = {
 	health: HealthRecord;
 	security: SecurityRecord;
 	services: ServicesRecord;
+	user: string;
 };
 /* endregion types */
 
@@ -95,7 +97,7 @@ export const actions = {
 				});
 			}
 
-			const { accessibility, fit, location, registration, health, security, services } =
+			const { accessibility, fit, location, registration, health, security, services, user } =
 				formData as MetaRecord;
 
 			const record = await api.collection('congregations').create(
@@ -107,7 +109,8 @@ export const actions = {
 						'registration',
 						'health',
 						'security',
-						'services'
+						'services',
+						'user'
 					]),
 					...location,
 					visible: client?.admin ? formData.visible : false
@@ -129,7 +132,20 @@ export const actions = {
 			]);
 
 			if (!client?.admin) {
-				await api.collection('users').update(client.id, { congregation: record.id }, { fetch });
+				await api.collection('users').update(user, { congregation: record.id }, { fetch });
+
+				await sendMail(
+					{
+						name: client.name,
+						email: client.email,
+						title: `New congregation submitted`,
+						message: `
+						A new congregation, ${record.name}, has been submitted and requires approval:\n
+						https://opencommunities.info/edit?id=${record.id}
+					`
+					},
+					api
+				);
 			}
 
 			return {

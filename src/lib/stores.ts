@@ -33,9 +33,9 @@ const encoder = {
 /* region state */
 export const state = persistentMap<State>('state_', {} as State, encoder);
 
-export const user = persistentMap<UsersRecord & { email: string }>(
+export const user = persistentMap<UsersRecord & { id: string; email: string }>(
 	'user_',
-	{} as UsersRecord & { email: string },
+	{} as UsersRecord & { id: string; email: string },
 	encoder
 );
 /* endregion state */

@@ -19,6 +19,7 @@ import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { loadUser, handleError } from '$lib/server/api';
+import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
 /* region types */
@@ -150,6 +151,21 @@ export const actions = {
 				api.collection('security').update(security.id, omit(security, ['id']), { fetch }),
 				api.collection('services').update(services.id, omit(services, ['id']), { fetch })
 			]);
+
+			if (!client?.admin) {
+				await sendMail(
+					{
+						name: client.name,
+						email: client.email,
+						title: `${data.name} edited`,
+						message: `
+						${data.name} has been edited. Changes require administrator approval:\n
+						https://opencommunities.info/edit?id=${data.id}
+					`
+					},
+					api
+				);
+			}
 
 			return {
 				form

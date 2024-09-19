@@ -13,7 +13,7 @@ import {
 	healthSchema as health,
 	securitySchema as security,
 	servicesSchema as services
-} from './recordChildren';
+} from './children';
 /* endregion imports */
 
 /* region types */
@@ -51,6 +51,7 @@ export const defaultSchema = z.object({
 			thing: t.get('congregation.clergy.clergy')
 		})
 	}),
+	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
 	contactEmail: z.preprocess(
 		(val) => (val === '' ? undefined : val),
 		z.string().email().optional()

@@ -10,6 +10,7 @@ import type { LocationMeta } from '$lib/location';
 
 import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
 import { contactSchema } from '$lib/schemas/contact';
+import { sendMail } from '$lib/server/mail';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 
@@ -68,32 +69,21 @@ export const actions = {
 				});
 			}
 
-			const formData = new FormData();
-			formData.append('name', form.data.name);
-			formData.append('email', form.data.email);
-			formData.append('message', form.data.message);
-			formData.append('reason', form.data.reason);
-			formData.append('record', form.data.record);
-
-			let record;
-			if (form.data.record && form.data.record !== '') {
-				record = await api.collection('congregationMeta').getOne(form.data.record, { fetch });
-				formData.append('congregation', record.name);
-				formData.append('congregationUrl', `https://opencommunities.info/edit?id=${record.id}`);
-			}
-
-			const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
-				method: 'POST',
-				headers: {
-					Accept: 'application/json'
-				},
-				body: formData
-			});
-
-			if (res.status !== 200) {
+			try {
+				await sendMail(
+					{
+						name: form.data.name,
+						email: form.data.email,
+						reason: form.data.reason,
+						message: form.data.message,
+						record: form.data.record
+					},
+					api
+				);
+			} catch (error) {
 				return fail(400, {
 					form,
-					error: await res.json()
+					error
 				});
 			}
 

@@ -51,11 +51,11 @@ function handleError(err) {
 	return error(status, message);
 }
 
-function loadUser(cookies: Cookies): UsersRecord & { id: string } {
+function loadUser(cookies: Cookies): UsersRecord & { email: string; id: string } {
 	const auth = cookies.get('auth');
-	if (!auth) return {} as UsersRecord & { id: string };
+	if (!auth) return {} as UsersRecord & { email: string; id: string };
 	const parsed = cookie.parse(auth);
-	if (!parsed.pb_auth) return {} as UsersRecord & { id: string };
+	if (!parsed.pb_auth) return {} as UsersRecord & { email: string; id: string };
 	return JSON.parse(parsed.pb_auth).model;
 }
 

@@ -99,6 +99,7 @@
 		$formData.name = '';
 		$formData.notes = '';
 		$formData.visible = false;
+		$formData.user = $user.admin ? '' : $user.id;
 		$formData.captcha = '';
 
 		$formData.fit = {
@@ -225,6 +226,8 @@
 
 	/* region lifecycle */
 	onMount(async () => {
+		setTitle();
+
 		if (!$formData?.id) {
 			initData();
 		} else {
@@ -257,8 +260,6 @@
 				}
 			});
 		}
-
-		setTitle();
 	});
 	/* endregion lifecycle */
 

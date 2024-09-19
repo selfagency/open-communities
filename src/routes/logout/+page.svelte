@@ -10,7 +10,7 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		user.set({} as UsersRecord & { email: string });
+		user.set({} as UsersRecord & { id: string; email: string });
 		initState();
 		await fetch('?/logout', { method: 'POST', body: new FormData() });
 		await goto('/');
