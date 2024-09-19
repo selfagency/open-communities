@@ -38,7 +38,7 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-row items-center justify-start space-x-4">
+	<div class="flex flex-col items-start justify-start space-y-4">
 		{#if registration?.email}
 			<Button
 				variant="outline"
