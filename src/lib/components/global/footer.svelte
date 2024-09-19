@@ -49,6 +49,11 @@
 					})}
 				</span>
 			</a>
+			<a class="text-xs text-slate-400 hover:text-slate-500" href="/site-credits">
+				<span>
+					{$t('common.siteCredits')}
+				</span>
+			</a>
 		</span>
 	</div>
 </footer>
