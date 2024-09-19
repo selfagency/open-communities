@@ -111,7 +111,7 @@ export class Search {
 		const ids =
 			this.fuzzy
 				?.filter(
-					this.data.map((i) => `${i.name} ${i.flavor}`),
+					this.data.map((i) => `${i.name} ${i.flavor} ${i.id}`),
 					(state.searchTerms as string)?.toLowerCase()
 				)
 				?.map((i) => this.data[i].id) || [];

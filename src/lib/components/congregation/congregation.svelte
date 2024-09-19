@@ -1,7 +1,10 @@
 <script lang="ts">
 	/* region imports */
+	import ShareIcon from 'lucide-svelte/icons/share';
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
 	import { omit, isEmpty } from 'radashi';
+	import { copyText } from 'svelte-copy';
+	import { toast } from 'svelte-sonner';
 
 	import type {
 		CongregationMetaRecord,
@@ -17,9 +20,11 @@
 	} from '$lib/types';
 
 	import { Badge } from '$lib/components/ui/badge';
+	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
 	import { user } from '$lib/stores';
 
@@ -36,6 +41,7 @@
 	/* region variables */
 	// props
 	export let congregation: CongregationMetaRecord & { id: string };
+	export let open: boolean = false;
 
 	// constants
 	const accessibility = congregation.accessibility as AccessibilityRecord;
@@ -60,11 +66,12 @@
 	/* endregion methods */
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open>
 	<Dialog.Trigger class="h-full min-h-max w-full">
 		<Tile {congregation} />
 	</Dialog.Trigger>
 	<Dialog.Content
+		data-id={congregation.id}
 		class="flex max-h-[85vh] min-h-[35vh] min-w-[360px] max-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 sm:max-w-[540px] sm:p-8"
 	>
 		<Dialog.Header class="w-full">
@@ -88,7 +95,7 @@
 				{/if}
 			</Dialog.Title>
 			<Dialog.Description class="flex w-full flex-row items-center justify-between space-x-2">
-				<span class={isEmpty(congregation.owner) ? 'w-2/3' : 'w-full'}>
+				<span class="w-2/3">
 					{#if city.name || state.name || country.name}
 						{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
 						{#if state.name}<span>{state.name}</span
@@ -99,8 +106,8 @@
 					{/if}
 				</span>
 
-				{#if isEmpty(congregation.owner)}
-					<div class="flex w-1/3 flex-row items-center justify-end">
+				<div class="flex w-1/3 flex-row items-center justify-end space-x-2">
+					{#if isEmpty(congregation.owner)}
 						<a href={`/contact?claim=${congregation.id}`}>
 							<Badge
 								variant="outline"
@@ -108,8 +115,27 @@
 								>{$t('congregation.claimThis')}</Badge
 							>
 						</a>
-					</div>
-				{/if}
+
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button
+									variant="ghost"
+									class="h-8 px-2 py-0"
+									on:click={() => {
+										copyText(`https://opencommunities.info?id=${congregation.id}`);
+										toast.success($t('common.copied'));
+									}}
+								>
+									<ShareIcon size="16" class="text-slate-500" />
+								</Button>
+								<span class="sr-only">{$t('common.share')}</span>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								<span class="text-nowrap">{$t('common.share')}</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					{/if}
+				</div>
 			</Dialog.Description>
 		</Dialog.Header>
 

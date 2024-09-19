@@ -24,30 +24,26 @@
 
 	/* region lifecycle */
 	onMount(() => {
-		try {
-			if (!isEmpty(data)) {
-				if (isArray(data.congregations)) {
-					congregations = data.congregations;
-				} else {
-					log.error($t('common.errors.congregationFailed'));
-				}
-
-				if (!isEmpty(data.content)) {
-					content = data.content;
-				} else {
-					log.error($t('common.errors.pageFailed'));
-				}
-
-				if (isArray(data.countries)) {
-					setState({ countries: data.countries });
-				} else {
-					log.error($t('common.errors.countriesFailed'));
-				}
+		if (!isEmpty(data)) {
+			if (isArray(data.congregations)) {
+				congregations = data.congregations;
 			} else {
-				log.error($t('common.errors.dataFailed'));
+				log.error($t('common.errors.congregationFailed'));
 			}
-		} catch (error) {
-			log.error(error);
+
+			if (!isEmpty(data.content)) {
+				content = data.content;
+			} else {
+				log.error($t('common.errors.pageFailed'));
+			}
+
+			if (isArray(data.countries)) {
+				setState({ countries: data.countries });
+			} else {
+				log.error($t('common.errors.countriesFailed'));
+			}
+		} else {
+			log.error($t('common.errors.dataFailed'));
 		}
 	});
 </script>

@@ -59,6 +59,7 @@
 		"radashi": "12.1.0",
 		"svelte": "^4.2.7",
 		"svelte-check": "^4.0.0",
+		"svelte-copy": "^1.4.2",
 		"svelte-maplibre": "^0.9.13",
 		"svelte-sonner": "^0.3.27",
 		"sveltekit-i18n": "^2.4.2",

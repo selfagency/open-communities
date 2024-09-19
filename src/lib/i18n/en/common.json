@@ -18,6 +18,7 @@
 		"send": "Send"
 	},
 	"continue": "Continue",
+	"copied": "Link copied to clipboard",
 	"delete": "Delete",
 	"edit": "Edit",
 	"editThing": "Edit ‘{{thing}}’",
@@ -70,6 +71,7 @@
 	"reset": "Reset",
 	"search": "Search",
 	"selectThing": "Select {{thing}}…",
+	"share": "Share",
 	"submission": "Submission",
 	"submit": "Submit",
 	"success": "Your {{thing}} was successful",

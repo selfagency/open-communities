@@ -11,6 +11,8 @@
 	import type { CongregationMetaRecord } from '$lib/types';
 
 	import { dev } from '$app/environment';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import Location from '$lib/components/congregation/location.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -19,7 +21,6 @@
 	import { Location as LocationService } from '$lib/location';
 	import { Search } from '$lib/search';
 	import { state } from '$lib/stores';
-	// import { log } from '$lib/utils';
 
 	import Congregation from './congregation.svelte';
 	import Filters from './filters.svelte';
@@ -38,6 +39,7 @@
 	const search = new Search(congregations, dev);
 	const { state: searchState, results } = search;
 	const location = new LocationService(search);
+	const open = {};
 
 	// local vars
 	let searchTerms = '';
@@ -60,12 +62,6 @@
 	function onPageChange(pageNo: number) {
 		currentPage = pageNo;
 	}
-
-	// function resetMap() {
-	// 	if (reset === true) reset = false;
-	// 	reset = true;
-	// 	reset = false;
-	// }
 	/*endregion methods */
 
 	/* region reactivity */
@@ -93,6 +89,29 @@
 			pages = paginate(value as Congregation[]);
 		}
 	});
+
+	$: if (searchTerms) {
+		search.setSearchTerms(searchTerms);
+	}
+
+	$: if ($page.url.searchParams.has('id')) {
+		const id = $page.url.searchParams.get('id') || '';
+		goto($page.url.pathname, { replaceState: false }).then(() => {
+			searchTerms = id;
+			open[id] = true;
+			searchTerms = '';
+		});
+	}
+
+	$: if (currentPage) {
+		pages[currentPage]?.reduce(
+			(acc, congregation) => {
+				acc[congregation.id] = false;
+				return acc;
+			},
+			{} as Record<string, boolean>
+		);
+	}
 	/* endregion reactivity */
 </script>
 
@@ -105,12 +124,7 @@
 		>
 			<SearchIcon size="20" />
 			<span class="w-full">
-				<Input
-					placeholder={$t('common.search')}
-					bind:value={searchTerms}
-					on:keyup={() => search.setSearchTerms(searchTerms)}
-					class="w-full"
-				/>
+				<Input placeholder={$t('common.search')} bind:value={searchTerms} class="w-full" />
 
 				<span class="absolute right-1 top-0 z-10 h-10 w-10">
 					<Button
@@ -165,7 +179,7 @@
 			{#each pages[currentPage - 1] as congregation}
 				{#key congregation.id}
 					<div class="col-span-1">
-						<Congregation {congregation} />
+						<Congregation {congregation} open={open[congregation.id]} />
 					</div>
 				{/key}
 			{/each}
