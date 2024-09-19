@@ -29,6 +29,7 @@ const config = {
 				'script-src-elem': ['self', 'inline'],
 				'child-src': ['self', 'blob:'],
 				'style-src': ['self', 'unsafe-inline', '*.prosopo.io', 'fonts.googleapis.com'],
+				'style-src-elem': ['self', 'fonts.googleapis.com'],
 				'font-src': ['self', 'data:', 'fonts.gstatic.com', 'fonts.googleapis.com'],
 				'connect-src': [
 					'self',
