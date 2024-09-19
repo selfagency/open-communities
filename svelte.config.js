@@ -26,7 +26,7 @@ const config = {
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com'
 				],
-				'script-src-elem': ['self', 'inline'],
+				'script-src-elem': ['self', 'inline', 'va.vercel-scripts.com'],
 				'child-src': ['self', 'blob:'],
 				'style-src': ['self', 'inline', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
 				'style-src-elem': ['self', 'inline', 'fonts.googleapis.com'],
