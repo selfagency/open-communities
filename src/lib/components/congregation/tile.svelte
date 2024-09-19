@@ -61,7 +61,7 @@
 		</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<p class="line-clamp-3">{congregation.flavor}</p>
+		<p class="line-clamp-3 text-sm">{congregation.flavor}</p>
 	</Card.Content>
 	{#if accessibility || $user.admin}
 		<Card.Footer>

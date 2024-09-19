@@ -83,6 +83,8 @@ h5 {
 }
 
 #captcha {
+	@apply font-sans text-sm text-slate-600;
+
 	> div > div {
 		@apply !max-w-full;
 	}
