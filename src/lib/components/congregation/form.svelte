@@ -1,6 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
+	import { sleep } from 'radashi';
 	import { onMount, getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
@@ -9,8 +10,9 @@
 	import type { LocationRecord, LocationMeta } from '$lib/location';
 	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
 
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
 	import { Button } from '$lib/components/ui/button';
@@ -97,6 +99,7 @@
 		$formData.name = '';
 		$formData.notes = '';
 		$formData.visible = false;
+		$formData.captcha = '';
 
 		$formData.fit = {
 			publicStatement: false,
@@ -225,7 +228,7 @@
 		if (!$formData?.id) {
 			initData();
 		} else {
-			const location = (congregation as CongregationMetaRecord).location as LocationMeta;
+			const location = (congregation as CongregationMetaRecord)?.location as LocationMeta;
 
 			city = location.city?.id as string;
 			state = location.state?.id as string;
@@ -242,12 +245,25 @@
 			$formData.visible = false;
 		}
 
+		if (browser) {
+			await sleep(1500);
+			const captchaContainer = document.getElementById('captcha');
+			window['procaptcha']?.render(captchaContainer, {
+				siteKey: PUBLIC_PROSOPO_SITEKEY,
+				theme: 'light',
+				captchaType: 'frictionless',
+				callback: (token) => {
+					$formData.captcha = token;
+				}
+			});
+		}
+
 		setTitle();
 	});
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if (congregation.location) {
+	$: if (congregation?.location) {
 		let loc = congregation.location as LocationMeta;
 		$formData.location = {
 			city: loc.city?.id,
@@ -256,7 +272,7 @@
 		};
 	}
 
-	$: if ($location.record) {
+	$: if ($location?.record) {
 		$formData.location = {
 			country: $location.record.country?.id,
 			state: $location.record.state?.id,
@@ -264,7 +280,7 @@
 		};
 	}
 
-	$: if ($formData.services.onlineOnly) {
+	$: if ($formData?.services?.onlineOnly) {
 		$formData.health.protocol = 'other';
 		$formData.health.otherText = 'N/A';
 		$formData.security.other = true;
@@ -274,6 +290,16 @@
 	$: if (addSuccess || editSuccess) setTitle();
 	/* endregion reactivity */
 </script>
+
+<svelte:head>
+	<script
+		type="module"
+		id="procaptcha-script"
+		src="https://js.prosopo.io/js/procaptcha.bundle.js"
+		async
+		defer
+	></script>
+</svelte:head>
 
 <section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
@@ -1212,6 +1238,14 @@
 
 			<!-- actions -->
 			<Card.Footer class="flex flex-col items-center justify-start space-y-4">
+				<div class="w-full">
+					<Form.Field {form} name="captcha">
+						<Form.Control>
+							<div id="captcha" class="w-full pt-3"></div>
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				</div>
 				{#if !addSuccess && !editSuccess}
 					<div class="flex w-full flex-row items-center justify-between space-x-2">
 						{#if mode === 'edit'}

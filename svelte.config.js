@@ -29,8 +29,7 @@ const config = {
 				'connect-src': [
 					'self',
 					'api.opencommunities.info',
-					'api.prosopo.io',
-					'prosopo.io',
+					'*.prosopo.io',
 					'va.vercel-scripts.com',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
