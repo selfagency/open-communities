@@ -7,6 +7,7 @@ import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
+import { VERCEL_ENV } from '$env/static/private';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
@@ -15,7 +16,8 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* region init */
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 1.0
+	tracesSampleRate: 1.0,
+	environment: VERCEL_ENV
 });
 /* endregion init */
 
@@ -80,7 +82,12 @@ async function customHandler({ event, resolve }) {
 	return response;
 }
 
-export const handle = sequence(Sentry.sentryHandle(), customHandler);
+export const handle = sequence(
+	Sentry.sentryHandle({
+		fetchProxyScriptNonce: '%sveltekit.nonce%'
+	}),
+	customHandler
+);
 
 export const handleError = Sentry.handleErrorWithSentry(async ({ status, error, event }) => {
 	if (status !== 404) {

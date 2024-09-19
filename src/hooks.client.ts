@@ -1,17 +1,19 @@
 /* region imports */
 import * as Sentry from '@sentry/sveltekit';
+import { pick } from 'radashi';
 
 import { dev } from '$app/environment';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
+import { user } from '$lib/stores';
 import { log } from '$lib/utils';
 /* endregion imports */
 
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 1.0
-	// integrations: [Sentry.replayIntegration()],
-	// replaysSessionSampleRate: 0.1,
-	// replaysOnErrorSampleRate: 1.0
+	tracesSampleRate: 1.0,
+	initialScope: {
+		user: pick(user.get(), ['id', 'email'] as any)
+	}
 });
 
 export async function customErrorHandler({ error, event, status, message }) {
