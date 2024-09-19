@@ -1,11 +1,7 @@
 <script lang="ts">
 	/* region imports */
-	import MenuIcon from 'lucide-svelte/icons/menu';
-
 	import Tent from '$lib/assets/tent.svg?component';
-	import * as Sheet from '$lib/components/ui/sheet';
 	import { t } from '$lib/i18n';
-	import { state } from '$lib/stores';
 
 	import Nav from './nav.svelte';
 	/*  endregion imports */
@@ -23,18 +19,6 @@
 		</a>
 	</div>
 	<div>
-		{#if $state.offsetWidth && $state.offsetWidth < 420}
-			<Sheet.Root>
-				<Sheet.Trigger>
-					<MenuIcon class="mt-2 h-6 w-6" />
-					<span class="sr-only">{$t('common.menu')}</span>
-				</Sheet.Trigger>
-				<Sheet.Content>
-					<Nav mode="mini" />
-				</Sheet.Content>
-			</Sheet.Root>
-		{:else}
-			<Nav />
-		{/if}
+		<Nav />
 	</div>
 </nav>

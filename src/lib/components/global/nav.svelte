@@ -1,55 +1,29 @@
 <script lang="ts">
 	/* region imports */
-	import { goto } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
+	import MenuIcon from 'lucide-svelte/icons/menu';
+
+	import * as Sheet from '$lib/components/ui/sheet';
 	import { t } from '$lib/i18n';
-	import { user, state } from '$lib/stores';
+	import { state } from '$lib/stores';
+
+	import Menu from './menu.svelte';
 	/*  endregion imports */
 
-	/* region props */
-	export let mode: 'mini' | 'full' = 'full';
-	/* endregion props */
+	/* region variables */
+	let open = false;
+	/* endregion variables */
 </script>
 
-<div
-	class={mode === 'mini'
-		? 'mt-8 flex flex-col items-start justify-start'
-		: 'flex flex-row items-center justify-between space-x-2'}
->
-	{#if $user.congregation}
-		<Button
-			variant={mode === 'mini' ? 'link' : 'default'}
-			on:click={async () => await goto('/edit')}
-		>
-			{mode === 'full' && $state.isMobile
-				? $t('congregation.edit')
-				: $t('congregation.editCongregation')}
-		</Button>
-	{:else}
-		<Button
-			variant={mode === 'mini' ? 'link' : 'default'}
-			on:click={async () => await goto('/add')}
-		>
-			{mode === 'full' && $state.isMobile
-				? $t('congregation.add')
-				: $t('congregation.addCongregation')}
-		</Button>
-	{/if}
-
-	{#if $user.email}
-		<Button
-			variant={mode === 'mini' ? 'link' : 'outline'}
-			on:click={async () => await goto('/logout')}
-		>
-			{$t('auth.logout')}
-		</Button>
-	{:else}
-		<Button
-			variant={mode === 'mini' ? 'link' : 'outline'}
-			on:click={async () => await goto('/login')}
-		>
-			{$t('auth.login')}
-			{mode === 'full' && $state.isMobile ? '' : `/ ${$t('auth.signUp')}`}
-		</Button>
-	{/if}
-</div>
+{#if $state.offsetWidth && $state.offsetWidth < 420}
+	<Sheet.Root bind:open>
+		<Sheet.Trigger>
+			<MenuIcon class="mt-2 h-6 w-6" />
+			<span class="sr-only">{$t('common.menu')}</span>
+		</Sheet.Trigger>
+		<Sheet.Content>
+			<Menu mode="mini" on:close={() => (open = false)} />
+		</Sheet.Content>
+	</Sheet.Root>
+{:else}
+	<Menu />
+{/if}
