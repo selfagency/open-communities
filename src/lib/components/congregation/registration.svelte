@@ -19,7 +19,7 @@
 	<h2 class="label">{$t('congregation.registration.registration')}</h2>
 </div>
 
-<div class="col-span-9 flex flex-row items-start justify-between space-x-2">
+<div class="col-span-9 flex flex-col items-start justify-between space-y-2">
 	{#if registration?.registrationType}
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
@@ -38,7 +38,7 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-col items-start justify-start space-y-4">
+	<div class="flex flex-row items-center justify-start space-x-4">
 		{#if registration?.email}
 			<Button
 				variant="outline"
