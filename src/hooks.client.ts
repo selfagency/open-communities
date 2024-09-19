@@ -10,7 +10,7 @@ import { log } from '$lib/utils';
 
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 1.0,
+	tracesSampleRate: 0.5,
 	initialScope: {
 		user: pick(user.get(), ['id', 'email'] as any)
 	},

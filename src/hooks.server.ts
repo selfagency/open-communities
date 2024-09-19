@@ -17,7 +17,7 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* region init */
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 1.0,
+	tracesSampleRate: 0.5,
 	environment: VERCEL_ENV,
 	release: VERCEL_GIT_COMMIT_SHA,
 	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()]
