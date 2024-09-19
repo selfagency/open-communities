@@ -249,6 +249,7 @@
 		}
 
 		if (browser) {
+			$formData.captcha = '';
 			await sleep(1500);
 			const captchaContainer = document.getElementById('captcha');
 			window['procaptcha']?.render(captchaContainer, {

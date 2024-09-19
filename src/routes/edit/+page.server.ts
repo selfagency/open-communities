@@ -83,11 +83,11 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 export const actions = {
 	submit: async (event) => {
 		const { fetch, locals, cookies } = event;
-		const { api, validate } = locals;
+		const { api, validate, log } = locals;
 		const client = loadUser(cookies);
 
 		const form = await validate(defaultSchema, event);
-		const data = form.data as RecordWithId & MetaRecord;
+		const data = form.data as RecordWithId & MetaRecord & { captcha: string };
 
 		try {
 			if (!client?.id) {
@@ -100,6 +100,8 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
+			log.debug(data.captcha);
+
 			const captcha = await (
 				await fetch(PROSOPO_ENDPOINT, {
 					method: 'POST',
@@ -107,13 +109,14 @@ export const actions = {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						token: form.data.captcha,
+						token: data.captcha,
 						secret: PROSOPO_SECRET
 					})
 				})
 			).json();
 
 			if (!captcha.verified) {
+				log.error('Captcha verification failed', captcha);
 				return fail(400, {
 					form: { ...form, error: 'Captcha verification failed' }
 				});
@@ -131,6 +134,7 @@ export const actions = {
 							'fit',
 							'location',
 							'registration',
+							'owner',
 							'health',
 							'security',
 							'services'

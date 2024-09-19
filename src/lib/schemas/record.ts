@@ -45,13 +45,13 @@ export const transferSchema = z.object({
 });
 
 export const defaultSchema = z.object({
-	id: z.string().optional(),
+	accessibility,
+	captcha: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
 			thing: t.get('congregation.clergy.clergy')
 		})
 	}),
-	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
 	contactEmail: z.preprocess(
 		(val) => (val === '' ? undefined : val),
 		z.string().email().optional()
@@ -79,10 +79,18 @@ export const defaultSchema = z.object({
 			.nullable()
 			.optional()
 	),
+	fit,
 	flavor: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
 			thing: t.get('congregation.flavor.flavor')
 		})
+	}),
+	health,
+	id: z.string().optional(),
+	location: z.object({
+		city: z.string().optional(),
+		country: z.string().optional(),
+		state: z.string().optional()
 	}),
 	name: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
@@ -90,16 +98,9 @@ export const defaultSchema = z.object({
 		})
 	}),
 	notes: z.string().optional(),
-	visible: z.boolean(),
-	location: z.object({
-		city: z.string().optional(),
-		country: z.string().optional(),
-		state: z.string().optional()
-	}),
-	accessibility,
-	fit,
+	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
 	registration,
-	health,
 	security,
-	services
+	services,
+	visible: z.boolean()
 });
