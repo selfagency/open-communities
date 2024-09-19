@@ -115,26 +115,25 @@
 								>{$t('congregation.claimThis')}</Badge
 							>
 						</a>
-
-						<Tooltip.Root>
-							<Tooltip.Trigger>
-								<Button
-									variant="ghost"
-									class="h-8 px-2 py-0"
-									on:click={() => {
-										copyText(`https://opencommunities.info?id=${congregation.id}`);
-										toast.success($t('common.copied'));
-									}}
-								>
-									<ShareIcon size="16" class="text-slate-500" />
-								</Button>
-								<span class="sr-only">{$t('common.share')}</span>
-							</Tooltip.Trigger>
-							<Tooltip.Content>
-								<span class="text-nowrap">{$t('common.share')}</span>
-							</Tooltip.Content>
-						</Tooltip.Root>
 					{/if}
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Button
+								variant="ghost"
+								class="h-8 px-2 py-0"
+								on:click={() => {
+									copyText(`https://opencommunities.info?id=${congregation.id}`);
+									toast.success($t('common.copied'));
+								}}
+							>
+								<ShareIcon size="16" class="text-slate-500" />
+							</Button>
+							<span class="sr-only">{$t('common.share')}</span>
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<span class="text-nowrap">{$t('common.share')}</span>
+						</Tooltip.Content>
+					</Tooltip.Root>
 				</div>
 			</Dialog.Description>
 		</Dialog.Header>
