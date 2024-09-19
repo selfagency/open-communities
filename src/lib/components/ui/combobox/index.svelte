@@ -61,19 +61,21 @@
 				<Command.Empty>{$t('common.nothingFound')}</Command.Empty>
 				<Command.Group>
 					<div class="max-h-64 overflow-y-scroll">
-						{#each items as item}
-							<Command.Item
-								value={item.value}
-								onSelect={(currentValue) => {
-									value = items.find((i) => i.value === currentValue)?.id;
-									dispatch('change', { value: items.find((i) => i.value === currentValue)?.id });
-									closeAndFocusTrigger(ids.trigger);
-								}}
-							>
-								<Check class={cn('mr-2 h-4 w-4', value !== item.value && 'text-transparent')} />
-								{item.label}
-							</Command.Item>
-						{/each}
+						{#if items?.length > 0}
+							{#each items as item}
+								<Command.Item
+									value={item.value}
+									onSelect={(currentValue) => {
+										value = items.find((i) => i.value === currentValue)?.id;
+										dispatch('change', { value: items.find((i) => i.value === currentValue)?.id });
+										closeAndFocusTrigger(ids.trigger);
+									}}
+								>
+									<Check class={cn('mr-2 h-4 w-4', value !== item.value && 'text-transparent')} />
+									{item.label}
+								</Command.Item>
+							{/each}
+						{/if}
 					</div>
 				</Command.Group>
 			</Command.Root>
