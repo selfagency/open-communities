@@ -1,7 +1,7 @@
 /* region imports */
 import type { RequestEvent } from '@sveltejs/kit';
 
-import { uid } from 'radashi';
+import { uid, shake } from 'radashi';
 
 import { VERCEL_ENV } from '$env/static/private';
 import { PUBLIC_HOSTNAME } from '$env/static/public';
@@ -12,7 +12,7 @@ import { logger } from '$lib/utils';
 // constants
 const log = logger.getSubLogger({
 	name: 'server',
-	type: VERCEL_ENV !== 'production' ? 'pretty' : 'json'
+	type: VERCEL_ENV === 'production' ? 'json' : 'pretty'
 });
 /* endregion variables */
 
@@ -46,7 +46,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
 			errorStackTrace: errorStackTrace
 		};
 
-		requestLogger[error ? 'error' : 'info']('request', logData);
+		requestLogger[error ? 'error' : 'info']('request', shake(logData));
 	} catch (err) {
 		log.error(err);
 	}
