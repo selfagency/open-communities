@@ -161,7 +161,7 @@
 				<WarningIcon size="20" />
 				<span>{$t('congregation.nothingFound')}</span>
 			</div>
-		{:else}
+		{:else if pages.length > 0}
 			{#each pages[currentPage - 1] as congregation}
 				{#key congregation.id}
 					<div class="col-span-1">
