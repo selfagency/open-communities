@@ -29,7 +29,7 @@ const config = {
 				'script-src-elem': ['self', 'inline', 'va.vercel-scripts.com'],
 				'child-src': ['self', 'blob:'],
 				'style-src': ['self', 'inline', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
-				'style-src-elem': ['self', 'inline', 'fonts.googleapis.com'],
+				'style-src-elem': ['self', 'inline', 'unsafe-inline', 'fonts.googleapis.com'],
 				'font-src': ['self', 'data:', 'fonts.gstatic.com', 'fonts.googleapis.com'],
 				'connect-src': [
 					'self',
