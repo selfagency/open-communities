@@ -1,10 +1,11 @@
 <script lang="ts">
+	/* region imports */
 	import WebIcon from 'lucide-svelte/icons/globe';
 	import EmailIcon from 'lucide-svelte/icons/mail';
 
-	/* region imports */
 	import type { RegistrationRecord } from '$lib/types';
 
+	import { Button } from '$lib/components/ui/button';
 	import { t } from '$lib/i18n';
 	/* endregion imports */
 
@@ -18,7 +19,7 @@
 	<h2 class="label">{$t('congregation.registration.registration')}</h2>
 </div>
 
-<div class="col-span-9 flex flex-col items-start justify-start space-y-2">
+<div class="col-span-9 flex flex-row items-start justify-between space-x-2">
 	{#if registration?.registrationType}
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
@@ -39,23 +40,25 @@
 
 	<div class="flex flex-row items-center justify-start space-x-4">
 		{#if registration?.email}
-			<a
+			<Button
+				variant="outline"
 				href="mailto:{registration.email}"
 				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
 				<span><EmailIcon size="16" /></span>
 				<span>{$t('common.email')}</span>
-			</a>
+			</Button>
 		{/if}
 		{#if registration?.url}
-			<a
+			<Button
+				variant="outline"
 				href={registration.url}
 				target="_blank"
 				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
 				<span><WebIcon size="16" /></span>
 				<span>{$t('common.website')}</span>
-			</a>
+			</Button>
 		{/if}
 	</div>
 </div>
