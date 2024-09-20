@@ -85,12 +85,7 @@ async function customHandler({ event, resolve }) {
 	return response;
 }
 
-export const handle = sequence(
-	Sentry.sentryHandle({
-		fetchProxyScriptNonce: '%sveltekit.nonce%'
-	}),
-	customHandler
-);
+export const handle = sequence(Sentry.sentryHandle(), customHandler);
 
 export const handleError = Sentry.handleErrorWithSentry(async ({ status, error, event }) => {
 	if (status !== 404) {
