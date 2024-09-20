@@ -9,7 +9,6 @@
 	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
 	import { Search } from '$lib/search';
-	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
@@ -33,7 +32,6 @@
 		if ($locationState.record.city) city = $locationState.record.city?.id || '';
 
 		locationState.subscribe((value) => {
-			log.debug('locationState', value);
 			if (value.record.country) {
 				search.setSearchLocation(value.record);
 				country = value.record.country?.id || '';
