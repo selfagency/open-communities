@@ -80,7 +80,7 @@ export const actions = {
 
 						${form.data.message}
 
-						https://opencommunities.info/edit?id=${form.data.record}
+						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data.email}` : ''}
 						`
 					},
 					api

@@ -100,8 +100,6 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			log.debug(data.captcha);
-
 			const captcha = await (
 				await fetch(PROSOPO_ENDPOINT, {
 					method: 'POST',
@@ -180,10 +178,48 @@ export const actions = {
 			return fail(err.status ?? 400, {
 				form: {
 					...form,
-					error: err.message,
-					errors: {
-						...form.errors
-					}
+					error: err.message
+				}
+			});
+		}
+	},
+	transfer: async (event) => {
+		const { fetch, locals, cookies } = event;
+		const { api, validate } = locals;
+		const client = loadUser(cookies);
+
+		const form = await validate(transferSchema, event);
+		const data = form.data;
+
+		try {
+			if (!form.valid) {
+				throw new Error('Invalid form data');
+			}
+
+			if (!client?.admin) {
+				const error = new Error('Forbidden') as ClientResponseError;
+				error.status = 403;
+				throw error;
+			}
+
+			const user = await api
+				.collection('users')
+				.getFirstListItem(`email="${data.email}"`, { fetch });
+
+			if (data.owner) {
+				await api.collection('users').update(data.owner, { congregation: undefined }, { fetch });
+			}
+
+			await api.collection('users').update(user.id, { congregation: data.id }, { fetch });
+
+			return { form };
+		} catch (error) {
+			const err = error as ClientResponseError;
+
+			return fail(err.status ?? 400, {
+				form: {
+					...form,
+					error: err.message
 				}
 			});
 		}
@@ -230,10 +266,7 @@ export const actions = {
 			return fail(err.status ?? 400, {
 				form: {
 					...form,
-					error: err.message,
-					errors: {
-						...form.errors
-					}
+					error: err.message
 				}
 			});
 		}

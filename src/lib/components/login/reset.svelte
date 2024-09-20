@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isEmpty } from 'radashi';
 	/* region imports */
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -25,18 +26,16 @@
 	const form = superForm(data, {
 		id: 'reset',
 		dataType: 'json',
-		async onUpdate({ result, form: f }) {
-			if (!f.valid || result.type !== 'success') {
-				log.error('form errors', 'result.data.form.errors');
-				if (result.data.form.error) {
-					log.error('submission error', result.data.form.error);
-					toast.error($t('auth.resetFailure'));
-				}
-			} else if (result.type === 'success') {
+		async onUpdate({ result }) {
+			if (result.type === 'success') {
 				if ($formData.type === 'resetPassword') {
 					reset = true;
 				}
 				if ($formData.type === 'requestReset') sent = true;
+			} else {
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				toast.error($t('auth.resetFailure'));
 			}
 		},
 		onError({ result }) {

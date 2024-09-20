@@ -35,7 +35,7 @@ const config = {
 					'self',
 					'127.0.0.1:8090',
 					'api.opencommunities.info',
-					'js.prosopo.io',
+					'*.prosopo.io',
 					'va.vercel-scripts.com',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',

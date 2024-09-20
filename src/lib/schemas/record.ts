@@ -34,6 +34,7 @@ export const transferSchema = z.object({
 			thing: '`id`'
 		})
 	}),
+	owner: z.string().optional(),
 	email: z
 		.string()
 		.email()

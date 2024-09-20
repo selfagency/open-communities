@@ -4,7 +4,6 @@
 	import ShareIcon from 'lucide-svelte/icons/share';
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
 	import { omit, isEmpty } from 'radashi';
-	import { fade } from 'svelte/transition';
 	import { copyText } from 'svelte-copy';
 	import { toast } from 'svelte-sonner';
 

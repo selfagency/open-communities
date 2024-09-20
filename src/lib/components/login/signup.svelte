@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import { sleep } from 'radashi';
+	import { sleep, isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
@@ -35,15 +35,15 @@
 	const form = superForm(data, {
 		id: 'signup',
 		dataType: 'json',
-		async onUpdate({ result, form: f }) {
-			if (!f.valid || result.type !== 'success') {
-				log.error('form error', result.data.form.errors);
-				if (result.data.form.error) {
-					log.error('submission error', result.data.form.error);
-					toast.error($t('auth.signUpFailure'));
+		async onUpdate({ result }) {
+			if (result.type === 'success') {
+				if ($formData.type === 'resetPassword') {
+					success = true;
 				}
-			} else if (result.type === 'success') {
-				success = true;
+			} else {
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				toast.error($t('auth.signUpFailure'));
 			}
 		},
 		onError({ result }) {
@@ -69,9 +69,10 @@
 					$formData.captcha = token;
 				}
 			});
-		}
 
-		$formData.lang = 'en';
+			$formData.emailVisibility = true;
+			$formData.lang = 'en';
+		}
 	});
 
 	/* region reactivity */

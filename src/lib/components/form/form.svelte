@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
-	import { sleep } from 'radashi';
+	import { sleep, isEmpty } from 'radashi';
 	import { onMount, getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
@@ -187,19 +187,10 @@
 		id: 'addEditCongregation',
 		dataType: 'json',
 		// validators: zod(defaultSchema),
-		async onUpdate({ form: f, result }) {
+		async onUpdate({ result }) {
 			hasErrors = false;
-			if (!f.valid || result.type !== 'success') {
-				hasErrors = true;
-				errors.set(result.data.form.errors);
-				log.error('form errors', result.data.form.errors);
-				if (result.data.form.error) {
-					log.error('submission error', result.data.form.error);
-				}
-				toast.error(
-					mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
-				);
-			} else if (result.type === 'success') {
+
+			if (result.type === 'success') {
 				toast.success(
 					mode === 'edit' ? $t('congregation.editSuccess') : $t('congregation.addSuccess')
 				);
@@ -212,6 +203,14 @@
 						editSuccess = true;
 					}
 				}
+			} else {
+				hasErrors = true;
+				errors.set(result.data.form.errors);
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				toast.error(
+					mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
+				);
 			}
 		},
 		onError({ result }) {
@@ -297,7 +296,7 @@
 
 <section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
-		<form method="POST" action="?/submit" use:enhance>
+		<form id="addEdit" method="POST" action="?/submit" use:enhance>
 			<Card.Header>
 				<Card.Title class="-mb-4 font-display text-2xl">
 					{title}
@@ -1226,10 +1225,7 @@
 						{/if}
 					</div>
 				{/if}
-			</Card.Content>
 
-			<!-- actions -->
-			<Card.Footer class="flex flex-col items-center justify-start space-y-4">
 				<div class="w-full">
 					<Form.Field {form} name="captcha">
 						<Form.Control>
@@ -1238,40 +1234,51 @@
 						<Form.FieldErrors />
 					</Form.Field>
 				</div>
-				{#if !addSuccess && !editSuccess}
-					<div class="flex w-full flex-row items-center justify-between space-x-2">
-						{#if mode === 'edit'}
-							<div class="flex flex-row items-center justify-start space-x-2">
-								<Delete data={data.delete} id={$formData?.id} />
-								<Transfer data={data.transfer} id={$formData?.id} />
-							</div>
-						{/if}
-						<!-- default -->
-						<div
-							class="flex flex-row items-center justify-end space-x-2"
-							class:w-full={mode === 'add'}
-						>
-							<Button
-								variant="outline"
-								on:click={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-
-									if (mode === 'add') {
-										initData();
-									} else {
-										$formData = congregation;
-									}
-								}}
-							>
-								{$t('common.reset')}
-							</Button>
-							<Form.Button>{$t('common.submit')}</Form.Button>
-						</div>
-					</div>
-				{/if}
-			</Card.Footer>
+			</Card.Content>
 		</form>
+
+		<!-- actions -->
+		<Card.Footer class="flex flex-col items-center justify-start space-y-4">
+			{#if !addSuccess && !editSuccess}
+				<div class="flex w-full flex-row items-center justify-between space-x-2">
+					{#if mode === 'edit'}
+						<div class="flex flex-row items-center justify-start space-x-2">
+							<Delete data={data.delete} id={$formData?.id} />
+							<Transfer data={data.transfer} id={$formData?.id} owner={congregation.owner} />
+						</div>
+					{/if}
+					<!-- default -->
+					<div
+						class="flex flex-row items-center justify-end space-x-2"
+						class:w-full={mode === 'add'}
+					>
+						<Button
+							variant="outline"
+							type="reset"
+							on:click={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+
+								if (mode === 'add') {
+									initData();
+								} else {
+									$formData = congregation;
+								}
+							}}
+						>
+							{$t('common.reset')}
+						</Button>
+						<Form.Button
+							on:click={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								form.submit(document.getElementById('addEdit'));
+							}}>{$t('common.submit')}</Form.Button
+						>
+					</div>
+				</div>
+			{/if}
+		</Card.Footer>
 	</Card.Root>
 
 	{#if dev}

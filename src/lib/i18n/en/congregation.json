@@ -147,6 +147,6 @@
 		"onlineOnly": "Online-only",
 		"services": "Services"
 	},
-	"transferFailure": "Failed to transfer congregation.",
+	"transferFailure": "Failed to transfer congregation. Does the user exist?",
 	"transferSuccess": "Congregation transferred successfully."
 }

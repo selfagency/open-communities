@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, superForm } from 'sveltekit-superforms';
-	import { zod } from 'sveltekit-superforms/adapters';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -14,7 +13,6 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Form from '$lib/components/ui/form';
 	import { t } from '$lib/i18n';
-	import { deleteSchema } from '$lib/schemas/record';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -37,16 +35,13 @@
 	const form = superForm(data, {
 		id: 'deleteCongregation',
 		dataType: 'json',
-		validators: zod(deleteSchema),
 		async onUpdate({ result }) {
-			if (!isEmpty(result.data.form.errors)) {
-				log.error(JSON.stringify(result.data.form.errors));
-				if (result.data.form.errors.error) {
-					toast.error($t('congregation.deleteFailure'));
-				}
-			} else if (result.type === 'success') {
+			if (result.type === 'success') {
 				toast.success($t('congregation.deleteSuccess'));
 				await goto('/');
+			} else {
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
+				if (!isEmpty(result.data.form.error)) toast.error($t('congregation.deleteFailure'));
 			}
 		},
 		onError({ result }) {

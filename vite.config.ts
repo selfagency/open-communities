@@ -3,11 +3,8 @@ import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
-import { config as dotenv } from 'dotenv';
 import { defineConfig } from 'vite';
 import webfontDownload from 'vite-plugin-webfont-dl';
-
-dotenv();
 
 export default defineConfig({
 	build: {

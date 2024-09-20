@@ -41,14 +41,14 @@
 		id: 'login',
 		dataType: 'json',
 		async onUpdate({ result }) {
-			if (!isEmpty(result.data.form.errors)) {
-				log.error(JSON.stringify(result.data.form.errors));
-				if (result.data.form.errors.error) {
-					toast.error(result.data.form.errors.error);
-				}
-			} else if (result.type === 'success') {
+			if (result.type === 'success') {
+				toast.success($t('auth.loginSuccess'));
 				user.set(result.data.user);
 				await goto('/');
+			} else {
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				toast.error(result.data.form.error);
 			}
 		},
 		onError({ result }) {
