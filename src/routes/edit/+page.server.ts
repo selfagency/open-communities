@@ -2,7 +2,7 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { redirect, fail } from '@sveltejs/kit';
-import { omit } from 'radashi';
+import { omit, isEmpty } from 'radashi';
 
 import type { LocationRecord, LocationMeta } from '$lib/location';
 import type {
@@ -206,8 +206,8 @@ export const actions = {
 				.collection('users')
 				.getFirstListItem(`email="${data.email}"`, { fetch });
 
-			if (data.owner) {
-				await api.collection('users').update(data.owner, { congregation: undefined }, { fetch });
+			if (!isEmpty(data.owner)) {
+				await api.collection('users').update(data.owner, { congregation: '' }, { fetch });
 			}
 
 			await api.collection('users').update(user.id, { congregation: data.id }, { fetch });
