@@ -177,7 +177,7 @@
 								})}
 								disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
 								on:change={(e) => {
-									log.debug(e.detail);
+									// log.debug(e.detail);
 									$formData.record = e.detail.value;
 								}}
 							/>

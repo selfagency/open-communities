@@ -9,7 +9,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 import type { UsersRecord } from '$lib/types';
 
-import { dev } from '$app/environment';
+// import { dev } from '$app/environment';
 import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
@@ -145,7 +145,7 @@ export const actions = {
 		}
 	},
 	acct: async (event) => {
-		const { api, log } = event.locals;
+		const { api } = event.locals;
 		const form: SuperValidated<any> = await superValidate(event, zod(tokenSchema));
 
 		try {
@@ -155,16 +155,16 @@ export const actions = {
 				});
 			}
 
-			let res;
+			// let res;
 			switch (form.data.type) {
 				case 'verifyEmail':
-					res = await api.collection('users').confirmVerification(form.data.token);
+					await api.collection('users').confirmVerification(form.data.token);
 					break;
 				case 'requestReset':
-					res = await api.collection('users').requestPasswordReset(form.data.email);
+					await api.collection('users').requestPasswordReset(form.data.email);
 					break;
 				case 'resetPassword':
-					res = await api
+					await api
 						.collection('users')
 						.confirmPasswordReset(form.data.token, form.data.password, form.data.passwordConfirm, {
 							fetch
@@ -172,7 +172,7 @@ export const actions = {
 					break;
 			}
 
-			if (dev) log.debug(`login:${form.data.type}`, res);
+			// if (dev) log.debug(`login:${form.data.type}`, res);
 
 			return {
 				form

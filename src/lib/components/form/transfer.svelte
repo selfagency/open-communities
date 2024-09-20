@@ -34,7 +34,7 @@
 		id: 'transferCongregation',
 		dataType: 'json',
 		async onUpdate({ result }) {
-			log.debug('result', result.type);
+			// log.debug('result', result.type);
 			if (result.type === 'success') {
 				open = false;
 				toast.success($t('congregation.transferSuccess'));
