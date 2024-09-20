@@ -78,9 +78,6 @@ importers:
       cookie:
         specifier: ^0.6.0
         version: 0.6.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
       eslint:
         specifier: ^9.0.0
         version: 9.10.0(jiti@1.21.6)
