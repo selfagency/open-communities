@@ -61,14 +61,16 @@
 		if (browser) {
 			await sleep(1500);
 			const captchaContainer = document.getElementById('captcha');
-			window['procaptcha']?.render(captchaContainer, {
-				siteKey: PUBLIC_PROSOPO_SITEKEY,
-				theme: 'light',
-				captchaType: 'frictionless',
-				callback: (token) => {
-					$formData.captcha = token;
-				}
-			});
+			if (captchaContainer) {
+				window['procaptcha']?.render(captchaContainer, {
+					siteKey: PUBLIC_PROSOPO_SITEKEY,
+					theme: 'light',
+					captchaType: 'frictionless',
+					callback: (token) => {
+						$formData.captcha = token;
+					}
+				});
+			}
 
 			$formData.emailVisibility = true;
 			$formData.lang = 'en';
