@@ -1,7 +1,8 @@
 {
-	"name": "high-holidays",
-	"version": "0.0.1",
-	"private": true,
+	"name": "open-communities",
+	"version": "1.0.0",
+	"private": false,
+	"license": "MIT",
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
@@ -12,6 +13,10 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@sentry/profiling-node": "^8.30.0",
+		"@sentry/sveltekit": "^8.30.0"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.1.0",
@@ -77,8 +82,7 @@
 		"zod": "^3.23.8"
 	},
 	"packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c",
-	"dependencies": {
-		"@sentry/profiling-node": "^8.30.0",
-		"@sentry/sveltekit": "^8.30.0"
+	"engines": {
+		"node": ">=20.0.0"
 	}
 }
