@@ -41,7 +41,8 @@
 
 <Card.Root class="h-full min-h-max text-left transition-transform hover:scale-105">
 	<Card.Header>
-		<Card.Title class="font-display text-xl leading-6 tracking-wide">{congregation.name}</Card.Title
+		<Card.Title tag="h1" class="font-display text-xl leading-6 tracking-wide"
+			>{congregation.name}</Card.Title
 		>
 		<Card.Description>
 			{#if services.onlineOnly}
@@ -79,8 +80,8 @@
 								}}
 							>
 								<EditIcon size="16" class="text-slate-700" />
+								<span class="sr-only">{$t('common.edit')}</span>
 							</Button>
-							<span class="sr-only">{$t('common.edit')}</span>
 						</Tooltip.Trigger>
 						<Tooltip.Content>
 							<span class="text-nowrap">{$t('common.edit')}</span>

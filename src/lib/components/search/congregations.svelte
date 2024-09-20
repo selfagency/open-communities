@@ -16,6 +16,7 @@
 	import Congregation from '$lib/components/congregation/congregation.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
 	import * as Pagination from '$lib/components/ui/pagination';
 	import { t } from '$lib/i18n';
 	import { Location as LocationService } from '$lib/location';
@@ -122,9 +123,17 @@
 		<div
 			class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500"
 		>
-			<SearchIcon size="20" />
+			<Label for="search">
+				<SearchIcon size="20" />
+				<span class="sr-only">{$t('common.search')}</span>
+			</Label>
 			<span class="w-full">
-				<Input placeholder={$t('common.search')} bind:value={searchTerms} id="search" class="w-full" />
+				<Input
+					placeholder={$t('common.search')}
+					bind:value={searchTerms}
+					id="search"
+					class="w-full"
+				/>
 
 				<span class="absolute right-1 top-0 z-10 h-10 w-10">
 					<Button

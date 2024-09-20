@@ -22,12 +22,12 @@
 		? 'mt-8 flex flex-col items-start justify-start'
 		: 'flex flex-row items-center justify-between space-x-2'}
 >
-	{#if $user.congregation}
+	{#if $user.congregation && !$user.admin}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'default'}
 			on:click={async () => {
 				dispatch('close');
-				await goto('/edit');
+				await goto(`/edit?id=${$user.congregation}`);
 			}}
 		>
 			{mode === 'full' && $state.isMobile

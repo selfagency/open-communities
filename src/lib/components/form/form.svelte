@@ -422,6 +422,7 @@
 									<Form.Control let:attrs>
 										<Form.Label>{$t('congregation.denomination.extended')}</Form.Label>
 										<Select.Root
+											name="denomination"
 											selected={$formData.denomination
 												? {
 														label: $t(`congregation.denomination.${$formData.denomination}`),

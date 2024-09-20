@@ -113,7 +113,7 @@
 							{...attrs}
 							bind:value={$formData.password}
 							type="password"
-							autocomplete="password"
+							autocomplete="current-password"
 						/>
 					</Form.Control>
 					<Form.FieldErrors />

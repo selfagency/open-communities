@@ -133,8 +133,8 @@
 									}}
 								>
 									<EditIcon size="16" class="text-slate-500" />
+									<span class="sr-only">{$t('common.edit')}</span>
 								</Button>
-								<span class="sr-only">{$t('common.edit')}</span>
 							</Tooltip.Trigger>
 							<Tooltip.Content>
 								<span class="text-nowrap">{$t('common.edit')}</span>
@@ -152,8 +152,8 @@
 								}}
 							>
 								<ShareIcon size="16" class="text-slate-500" />
+								<span class="sr-only">{$t('common.share')}</span>
 							</Button>
-							<span class="sr-only">{$t('common.share')}</span>
 						</Tooltip.Trigger>
 						<Tooltip.Content>
 							<span class="text-nowrap">{$t('common.share')}</span>
