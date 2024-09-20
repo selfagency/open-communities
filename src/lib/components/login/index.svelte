@@ -101,7 +101,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control let:attrs>
 						<Form.Label>{$t('common.email')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.email} />
+						<Input {...attrs} bind:value={$formData.email} autocomplete="email" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -109,7 +109,12 @@
 				<Form.Field {form} name="password">
 					<Form.Control let:attrs>
 						<Form.Label>{$t('auth.password')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.password} type="password" />
+						<Input
+							{...attrs}
+							bind:value={$formData.password}
+							type="password"
+							autocomplete="password"
+						/>
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

@@ -126,7 +126,7 @@
 				<Form.Field {form} name="name">
 					<Form.Control let:attrs>
 						<Form.Label>{$t('auth.name')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.name} />
+						<Input {...attrs} bind:value={$formData.name} autocomplete="name" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -134,7 +134,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control let:attrs>
 						<Form.Label>{$t('common.email')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.email} />
+						<Input {...attrs} bind:value={$formData.email} autocomplete="email" />
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -142,7 +142,12 @@
 				<Form.Field {form} name="password">
 					<Form.Control let:attrs>
 						<Form.Label>{$t('auth.password')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.password} type="password" />
+						<Input
+							{...attrs}
+							bind:value={$formData.password}
+							type="password"
+							autocomplete="new-password"
+						/>
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -150,7 +155,12 @@
 				<Form.Field {form} name="passwordConfirm">
 					<Form.Control let:attrs>
 						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.passwordConfirm} type="password" />
+						<Input
+							{...attrs}
+							bind:value={$formData.passwordConfirm}
+							type="password"
+							autocomplete="new-password"
+						/>
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
