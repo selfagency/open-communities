@@ -18,6 +18,7 @@ const config = {
 				'script-src': [
 					'self',
 					'inline',
+					'inline:',
 					'unsafe-eval',
 					'unsafe-inline',
 					'js.prosopo.io',
