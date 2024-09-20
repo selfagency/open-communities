@@ -32,7 +32,6 @@ const config = {
 				],
 				'script-src': [
 					'self',
-					'inline',
 					'unsafe-eval',
 					'unsafe-inline',
 					'js.prosopo.io',
@@ -41,9 +40,9 @@ const config = {
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com'
 				],
-				'script-src-elem': ['self', 'inline', 'va.vercel-scripts.com', 'js.prosopo.io'],
-				'style-src': ['self', 'inline', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
-				'style-src-elem': ['self', 'inline', 'unsafe-inline', 'fonts.googleapis.com'],
+				'script-src-elem': ['self', 'unsafe-inline', 'va.vercel-scripts.com', 'js.prosopo.io'],
+				'style-src': ['self', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
+				'style-src-elem': ['self', 'unsafe-inline', 'fonts.googleapis.com'],
 				'worker-src': ['self', 'blob:']
 			}
 		},
