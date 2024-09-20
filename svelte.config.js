@@ -38,9 +38,17 @@ const config = {
 					'va.vercel-scripts.com',
 					'*.sentry.io',
 					'basemaps.cartocdn.com',
-					'*.basemaps.cartocdn.com'
+					'*.basemaps.cartocdn.com',
+					'nonce-o247950'
 				],
-				'script-src-elem': ['self', 'unsafe-inline', 'va.vercel-scripts.com', 'js.prosopo.io'],
+				'script-src-elem': [
+					'self',
+					'unsafe-inline',
+					'*.sentry.io',
+					'va.vercel-scripts.com',
+					'js.prosopo.io',
+					'nonce-o247950'
+				],
 				'style-src': ['self', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
 				'style-src-elem': ['self', 'unsafe-inline', 'fonts.googleapis.com'],
 				'worker-src': ['self', 'blob:']

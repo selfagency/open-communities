@@ -124,7 +124,7 @@
 		>
 			<SearchIcon size="20" />
 			<span class="w-full">
-				<Input placeholder={$t('common.search')} bind:value={searchTerms} class="w-full" />
+				<Input placeholder={$t('common.search')} bind:value={searchTerms} id="search" class="w-full" />
 
 				<span class="absolute right-1 top-0 z-10 h-10 w-10">
 					<Button
