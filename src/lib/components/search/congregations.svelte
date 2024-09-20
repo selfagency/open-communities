@@ -157,7 +157,7 @@
 		</div>
 	</div>
 
-	{#if $searchState.showLocation}
+	{#if $searchState?.showLocation}
 		<div class="flex flex-row items-center justify-center" transition:fade>
 			<Location {location} {search} />
 		</div>
@@ -168,14 +168,14 @@
 	</div>
 
 	<div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3">
-		{#if $results.length === 0}
+		{#if $results?.length === 0}
 			<div
 				class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
 			>
 				<WarningIcon size="20" />
 				<span>{$t('congregation.nothingFound')}</span>
 			</div>
-		{:else if pages.length > 0}
+		{:else if pages?.length > 0}
 			{#each pages[currentPage - 1] as congregation}
 				{#key congregation.id}
 					<div class="col-span-1">
@@ -188,7 +188,7 @@
 
 	<div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
 		<Pagination.Root
-			count={$results.length}
+			count={$results?.length || 0}
 			{perPage}
 			let:pages
 			let:currentPage
