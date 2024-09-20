@@ -34,8 +34,7 @@ VERCEL_GIT_COMMIT_SHA="dev"
 ## Development
 
 ```bash
-pb serve
-pnpm run dev
+pb serve & pnpm run dev
 ```
 
 ## Production

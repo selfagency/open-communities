@@ -60,11 +60,11 @@
 			}
 		],
 		"indexes": [],
-		"listRule": "id = @request.auth.id",
-		"viewRule": "id = @request.auth.id",
+		"listRule": "id = @request.auth.id || @request.auth.admin = true",
+		"viewRule": "id = @request.auth.id || @request.auth.admin = true",
 		"createRule": "",
-		"updateRule": "id = @request.auth.id",
-		"deleteRule": "id = @request.auth.id",
+		"updateRule": "id = @request.auth.id || @request.auth.admin = true",
+		"deleteRule": "id = @request.auth.id || @request.auth.admin = true",
 		"options": {
 			"allowEmailAuth": true,
 			"allowOAuth2Auth": false,
