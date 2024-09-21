@@ -1,144 +1,150 @@
 {
-	"about": "Über",
-	"accessHealthSafety": "Zugang, Gesundheit und Sicherheit",
-	"accessibility": {
-		"accessibility": "Erreichbarkeit",
-		"cc": "Geschlossene Untertitel",
-		"eva": "EVA-Transkriptionen",
-		"extended": "Welche der folgenden Zugänglichkeiten wird verfügbar sein?",
-		"inPerson_eva": "EVA-Transkriptionen, persönlich",
-		"note": "Wenn die Teilnehmer die Zugänglichkeit im Voraus beantragen müssen, fügen Sie dies bitte in das Feld \"Sonstiges\" ein.",
-		"online_automatedCaptions": "Automatisierte Beschriftungen, online",
-		"online_liveCaptions": "Live-Untertitel, online"
-	},
-	"add": "hinzufügen",
-	"addCongregation": "Gemeinde hinzufügen",
-	"addFailure": "Die Gemeinde konnte nicht hinzugefügt werden.",
-	"addSuccess": "Kongregation erfolgreich hinzugefügt.",
-	"addSuccessNotice": "Vielen Dank für Ihren Beitrag. Jemand wird sie in Kürze prüfen und genehmigen oder sich bei Bedarf melden.",
-	"admin": {
-		"admin": "Verwaltung",
-		"unapproved": "Nicht genehmigte",
-		"unclaimed": "Nicht beanspruchte"
-	},
-	"approved": "Genehmigt",
-	"claimThis": "Anspruchskongregation",
-	"clergy": {
-		"clergy": "Klerus",
-		"extended": "Geben Sie unten das Geistlichen-Team an, das während der Yamim Noraim die Leitung übernimmt."
-	},
-	"congregation": "Kongregation",
-	"contact": "Kontakt",
-	"contactEmail": {
-		"contactEmail": "Kontakt E-Mail",
-		"extended": "E-Mail Adresse der oben genannten Kontaktperson"
-	},
-	"contactName": {
-		"contactName": "Name der Kontaktperson",
-		"extended": "Name des besten Ansprechpartners für Mitteilungen von Rabbis for Ceasefire"
-	},
-	"contactUrl": "Kontakt-URL",
-	"delete": "Gemeinde löschen",
-	"deleteFailure": "Gemeinde konnte nicht gelöscht werden.",
-	"deleteSuccess": "Kongregation erfolgreich gelöscht.",
-	"denomination": {
-		"affiliation": "Zugehörigkeit",
-		"conservative": "Konservativ",
-		"denomination": "Stückelung",
-		"denominations": "Konfessionen",
-		"extended": "Ist Ihre Gemeinde mit einer bestimmten Konfession oder Bewegung verbunden?",
-		"humanist": "Säkular/Humanistisch",
-		"multiDenominational": "Konfessionsübergreifend",
-		"orthodox": "Orthodoxe",
-		"postDenominational": "Post-konfessionell",
-		"reconstructionist": "Rekonstruktivist",
-		"reform": "Reform",
-		"renewal": "Erneuerung",
-		"unaffiliated": "Ungebunden"
-	},
-	"description": "Beschreibung",
-	"details": "Einzelheiten",
-	"edit": "bearbeiten",
-	"editCongregation": "Gemeinde bearbeiten",
-	"editFailure": "Die Bearbeitung der Gemeinde ist fehlgeschlagen.",
-	"editNotice": "Wenn Sie Änderungen vornehmen, wird diese Gemeinde von der Liste gestrichen, bis ein Administrator Ihre Änderungen genehmigen kann.",
-	"editSuccess": "Kongregation erfolgreich bearbeitet.",
-	"editSuccessNotice": "Vielen Dank für die Aktualisierung! Jemand wird es in Kürze überprüfen und genehmigen oder sich bei Bedarf melden.",
-	"exists": "Eine Gemeinde mit diesem Namen existiert bereits an diesem Ort",
-	"fit": {
-		"clergyMember": "Ein Mitglied des Geistlichen-Teams ist Mitglied von Rabbis for Ceasefire",
-		"extended": "Warum wäre Ihre Gemeinde ein guter Partner für Juden in der Waffenstillstandsbewegung? Bitte nennen Sie weitere Gründe im Feld \"Sonstiges\".",
-		"fit": "Fit",
-		"flag": {
-			"extended": "Trägt Ihre Gemeinde eine israelische Flagge?",
-			"flag": "Ausgestellte israelische Flagge",
-			"no": "Keine israelische Flagge wird gezeigt",
-			"note": "Wenn ja, werden wir dies in der Auflistung Ihrer Gemeinde vermerken, damit die Menschen eine fundierte Entscheidung treffen können, wo sie hingehen.",
-			"short": "Israelische Flagge",
-			"yes": "Eine israelische Flagge wird gezeigt, aber nicht auf der Bima",
-			"yesBima": "Eine israelische Flagge wird auf der Bima gehisst"
-		},
-		"multipleClergyMembers": "Mehrere Mitglieder des Geistlichen-Teams sind mit Rabbis for Ceasefire verbunden",
-		"publicStatement": "Die Gemeinde hat eine öffentliche Erklärung zur Unterstützung eines dauerhaften Waffenstillstands abgegeben"
-	},
-	"flavor": {
-		"extended": "Beschreiben Sie in 50 Worten oder weniger die Gemeinde und den rituellen \"Geschmack\", den die Gäste erleben werden.",
-		"flavor": "Geschmack"
-	},
-	"health": {
-		"extended": "Für persönliche Gottesdienste beschreiben Sie bitte kurz die COVID-Gesundheits- und Maskierungsprotokolle in Ihrer Gemeinde oder verlinken Sie auf die Richtlinien Ihrer Gemeinde.",
-		"health": "Gesundheit",
-		"maskingRecommended": "Maskierung empfohlen",
-		"maskingRequired": "Maskierung erforderlich",
-		"noGuidelines": "Keine COVID-Leitlinien vorhanden",
-		"notApplicable": "Nicht anwendbar, nur online",
-		"other": "Andere COVID-Politik"
-	},
-	"location": {
-		"city": "Stadt",
-		"country": "Land",
-		"countryCode": "Ländercode",
-		"latitude": "Breitengrad",
-		"longitude": "Längengrad",
-		"state": "Staat/Provinz",
-		"stateCode": "Bundesland/Provinz Code"
-	},
-	"name": "Name der Kongregation",
-	"notes": {
-		"extended": "Gibt es sonst noch etwas, das wir wissen sollten?",
-		"notes": "Anmerkungen"
-	},
-	"nothingFound": "Keine Kirchengemeinden gefunden.",
-	"registration": {
-		"contact": "Bitte geben Sie eine E-Mail-Adresse oder eine Website-URL an, unter der man sich anmelden kann.",
-		"extended": "Welche Art von Registrierung bieten Sie Ihren Gästen an?",
-		"fixedPrice": "Fester Fahrpreis (pro Dienst oder für alle)",
-		"free": "Kostenlos",
-		"register": "Register",
-		"registration": "Anmeldung",
-		"slidingScale": "Gleitende Skala",
-		"suggestedDonation": "Empfohlene Spende"
-	},
-	"security": {
-		"armedSecurity": "Bewaffnete Sicherheit",
-		"clergyArmed": "Bewaffneter Klerus",
-		"congregantsArmed": "Bewaffnete Gemeindemitglieder",
-		"extended": "Gibt es in Ihrer Gemeinde eine Polizeipräsenz oder andere bewaffnete Sicherheitskräfte?",
-		"localPolice": "Örtliche Polizei oder Sheriff",
-		"noFirearms": "Schusswaffen sind nicht erlaubt",
-		"privateSecurityArmed": "Bewaffneter privater Sicherheitsdienst",
-		"privateSecurityUnarmed": "Unbewaffneter privater Sicherheitsdienst",
-		"security": "Sicherheit",
-		"unarmedSecurity": "Unbewaffnete Sicherheit"
-	},
-	"services": {
-		"extended": "Welche Arten von Diensten können von Nichtmitgliedern in Anspruch genommen werden?",
-		"hybrid": "Online-Zugang zu hybriden Diensten",
-		"inPerson": "Persönlich",
-		"offsite": "Außerbetriebliche Veranstaltungen",
-		"onlineOnly": "Nur online",
-		"services": "Dienstleistungen"
-	},
-	"transferFailure": "Übertragung der Versammlung fehlgeschlagen. Existiert der Benutzer?",
-	"transferSuccess": "Kongregation erfolgreich verlegt."
+  "about": "Über",
+  "accessHealthSafety": "Zugang, Gesundheit und Sicherheit",
+  "accessibility": {
+    "accessibility": "Erreichbarkeit",
+    "ada": "Zugänglichkeit für Rollstühle",
+    "asl": "Dolmetschen in Gebärdensprache",
+    "cc": "Geschlossene Untertitel",
+    "eva": "EVA-Transkriptionen",
+    "extended": "Welche der folgenden Zugänglichkeiten wird verfügbar sein?",
+    "inPerson_adaAll": "Rollstuhlgerechter Standort für alle persönlichen Dienstleistungen",
+    "inPerson_adaSome": "Rollstuhlgerechter Standort für einige persönliche Dienstleistungen",
+    "inPerson_asl": "Gebärdensprachdolmetscher, persönlich",
+    "inPerson_eva": "EVA-Transkriptionen, persönlich",
+    "note": "Wenn die Teilnehmer die Zugänglichkeit im Voraus beantragen müssen, fügen Sie dies bitte in das Feld \"Sonstiges\" ein.",
+    "online_asl": "Gebärdensprachdolmetscher, online",
+    "online_automatedCaptions": "Automatisierte Beschriftungen, online",
+    "online_liveCaptions": "Live-Untertitel, online"
+  },
+  "add": "hinzufügen",
+  "addCongregation": "Gemeinde hinzufügen",
+  "addFailure": "Die Gemeinde konnte nicht hinzugefügt werden.",
+  "addSuccess": "Kongregation erfolgreich hinzugefügt.",
+  "addSuccessNotice": "Vielen Dank für Ihren Beitrag. Jemand wird sie in Kürze prüfen und genehmigen oder sich bei Bedarf melden.",
+  "admin": {
+    "admin": "Verwaltung",
+    "unapproved": "Nicht genehmigte",
+    "unclaimed": "Nicht beanspruchte"
+  },
+  "approved": "Genehmigt",
+  "claimThis": "Anspruchskongregation",
+  "clergy": {
+    "clergy": "Klerus",
+    "extended": "Geben Sie unten das Geistlichen-Team an, das während der Yamim Noraim die Leitung übernimmt."
+  },
+  "congregation": "Kongregation",
+  "contact": "Kontakt",
+  "contactEmail": {
+    "contactEmail": "Kontakt E-Mail",
+    "extended": "E-Mail Adresse der oben genannten Kontaktperson"
+  },
+  "contactName": {
+    "contactName": "Name der Kontaktperson",
+    "extended": "Name des besten Ansprechpartners für Mitteilungen von Rabbis for Ceasefire"
+  },
+  "contactUrl": "Kontakt-URL",
+  "delete": "Gemeinde löschen",
+  "deleteFailure": "Gemeinde konnte nicht gelöscht werden.",
+  "deleteSuccess": "Kongregation erfolgreich gelöscht.",
+  "denomination": {
+    "affiliation": "Zugehörigkeit",
+    "conservative": "Konservativ",
+    "denomination": "Stückelung",
+    "denominations": "Konfessionen",
+    "extended": "Ist Ihre Gemeinde mit einer bestimmten Konfession oder Bewegung verbunden?",
+    "humanist": "Säkular/Humanistisch",
+    "multiDenominational": "Konfessionsübergreifend",
+    "orthodox": "Orthodoxe",
+    "postDenominational": "Post-konfessionell",
+    "reconstructionist": "Rekonstruktivist",
+    "reform": "Reform",
+    "renewal": "Erneuerung",
+    "unaffiliated": "Ungebunden"
+  },
+  "description": "Beschreibung",
+  "details": "Einzelheiten",
+  "edit": "bearbeiten",
+  "editCongregation": "Gemeinde bearbeiten",
+  "editFailure": "Die Bearbeitung der Gemeinde ist fehlgeschlagen.",
+  "editNotice": "Wenn Sie Änderungen vornehmen, wird diese Gemeinde von der Liste gestrichen, bis ein Administrator Ihre Änderungen genehmigen kann.",
+  "editSuccess": "Kongregation erfolgreich bearbeitet.",
+  "editSuccessNotice": "Vielen Dank für die Aktualisierung! Jemand wird es in Kürze überprüfen und genehmigen oder sich bei Bedarf melden.",
+  "exists": "Eine Gemeinde mit diesem Namen existiert bereits an diesem Ort",
+  "fit": {
+    "clergyMember": "Ein Mitglied des Geistlichen-Teams ist Mitglied von Rabbis for Ceasefire",
+    "extended": "Warum wäre Ihre Gemeinde ein guter Partner für Juden in der Waffenstillstandsbewegung? Bitte nennen Sie weitere Gründe im Feld \"Sonstiges\".",
+    "fit": "Fit",
+    "flag": {
+      "extended": "Trägt Ihre Gemeinde eine israelische Flagge?",
+      "flag": "Ausgestellte israelische Flagge",
+      "no": "Keine israelische Flagge wird gezeigt",
+      "note": "Wenn ja, werden wir dies in der Auflistung Ihrer Gemeinde vermerken, damit die Menschen eine fundierte Entscheidung treffen können, wo sie hingehen.",
+      "short": "Israelische Flagge",
+      "yes": "Eine israelische Flagge wird gezeigt, aber nicht auf der Bima",
+      "yesBima": "Eine israelische Flagge wird auf der Bima gehisst"
+    },
+    "multipleClergyMembers": "Mehrere Mitglieder des Geistlichen-Teams sind mit Rabbis for Ceasefire verbunden",
+    "publicStatement": "Die Gemeinde hat eine öffentliche Erklärung zur Unterstützung eines dauerhaften Waffenstillstands abgegeben"
+  },
+  "flavor": {
+    "extended": "Beschreiben Sie in 50 Worten oder weniger die Gemeinde und den rituellen \"Geschmack\", den die Gäste erleben werden.",
+    "flavor": "Geschmack"
+  },
+  "health": {
+    "extended": "Für persönliche Gottesdienste beschreiben Sie bitte kurz die COVID-Gesundheits- und Maskierungsprotokolle in Ihrer Gemeinde oder verlinken Sie auf die Richtlinien Ihrer Gemeinde.",
+    "health": "Gesundheit",
+    "maskingRecommended": "Maskierung empfohlen",
+    "maskingRequired": "Maskierung erforderlich",
+    "noGuidelines": "Keine COVID-Leitlinien vorhanden",
+    "notApplicable": "Nicht anwendbar, nur online",
+    "other": "Andere COVID-Politik"
+  },
+  "location": {
+    "city": "Stadt",
+    "country": "Land",
+    "countryCode": "Ländercode",
+    "latitude": "Breitengrad",
+    "longitude": "Längengrad",
+    "state": "Staat/Provinz",
+    "stateCode": "Bundesland/Provinz Code"
+  },
+  "name": "Name der Kongregation",
+  "notes": {
+    "extended": "Gibt es sonst noch etwas, das wir wissen sollten?",
+    "notes": "Anmerkungen"
+  },
+  "nothingFound": "Keine Kirchengemeinden gefunden.",
+  "registration": {
+    "contact": "Bitte geben Sie eine E-Mail-Adresse oder eine Website-URL an, unter der man sich anmelden kann.",
+    "extended": "Welche Art von Registrierung bieten Sie Ihren Gästen an?",
+    "fixedPrice": "Fester Fahrpreis (pro Dienst oder für alle)",
+    "free": "Kostenlos",
+    "register": "Register",
+    "registration": "Anmeldung",
+    "slidingScale": "Gleitende Skala",
+    "suggestedDonation": "Empfohlene Spende"
+  },
+  "security": {
+    "armedSecurity": "Bewaffnete Sicherheit",
+    "clergyArmed": "Bewaffneter Klerus",
+    "congregantsArmed": "Bewaffnete Gemeindemitglieder",
+    "extended": "Gibt es in Ihrer Gemeinde eine Polizeipräsenz oder andere bewaffnete Sicherheitskräfte?",
+    "localPolice": "Örtliche Polizei oder Sheriff",
+    "noFirearms": "Schusswaffen sind nicht erlaubt",
+    "privateSecurityArmed": "Bewaffneter privater Sicherheitsdienst",
+    "privateSecurityUnarmed": "Unbewaffneter privater Sicherheitsdienst",
+    "security": "Sicherheit",
+    "unarmedSecurity": "Unbewaffnete Sicherheit"
+  },
+  "services": {
+    "extended": "Welche Arten von Diensten können von Nichtmitgliedern in Anspruch genommen werden?",
+    "hybrid": "Online-Zugang zu hybriden Diensten",
+    "inPerson": "Persönlich",
+    "offsite": "Außerbetriebliche Veranstaltungen",
+    "onlineOnly": "Nur online",
+    "services": "Dienstleistungen"
+  },
+  "transferFailure": "Übertragung der Versammlung fehlgeschlagen. Existiert der Benutzer?",
+  "transferSuccess": "Kongregation erfolgreich verlegt."
 }

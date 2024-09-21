@@ -1,1 +1,150 @@
-{}
+{
+  "about": "Sobre",
+  "accessHealthSafety": "Acesso, saúde e segurança",
+  "accessibility": {
+    "accessibility": "Acessibilidade",
+    "ada": "Acessibilidade para cadeiras de rodas",
+    "asl": "Língua gestual interpretativa",
+    "cc": "Legendas ocultas",
+    "eva": "Transcrições EVA",
+    "extended": "Qual das seguintes acessibilidades estará disponível?",
+    "inPerson_adaAll": "Local acessível a cadeiras de rodas para todos os serviços presenciais",
+    "inPerson_adaSome": "Local acessível a cadeiras de rodas para alguns serviços presenciais",
+    "inPerson_asl": "Língua gestual interpretativa, em pessoa",
+    "inPerson_eva": "Transcrições EVA, presenciais",
+    "note": "Se os participantes tiverem de solicitar a acessibilidade com antecedência, queira acrescentar essa informação no campo \"Outros\".",
+    "online_asl": "Língua gestual interpretativa, em linha",
+    "online_automatedCaptions": "Legendas automatizadas, em linha",
+    "online_liveCaptions": "Legendas em direto, em linha"
+  },
+  "add": "Adicionar",
+  "addCongregation": "Adicionar congregação",
+  "addFailure": "Falha ao adicionar a congregação.",
+  "addSuccess": "Congregação adicionada com sucesso.",
+  "addSuccessNotice": "Obrigado pelo seu envio. Será analisado e aprovado em breve ou contactado se necessário.",
+  "admin": {
+    "admin": "Administrador",
+    "unapproved": "Não aprovado",
+    "unclaimed": "Não reclamado"
+  },
+  "approved": "Aprovado",
+  "claimThis": "Congregação de reivindicações",
+  "clergy": {
+    "clergy": "Clero",
+    "extended": "Enumere abaixo a equipa de clérigos que irá liderar durante os Yamim Noraim."
+  },
+  "congregation": "Congregação",
+  "contact": "Contacto",
+  "contactEmail": {
+    "contactEmail": "E-mail de contacto",
+    "extended": "Endereço de correio eletrónico da pessoa de contacto acima indicada"
+  },
+  "contactName": {
+    "contactName": "Nome do contacto",
+    "extended": "Nome da melhor pessoa de contacto para comunicações da Rabbis for Ceasefire"
+  },
+  "contactUrl": "URL de contacto",
+  "delete": "Eliminar a congregação",
+  "deleteFailure": "Falha ao eliminar a congregação.",
+  "deleteSuccess": "Congregação eliminada com êxito.",
+  "denomination": {
+    "affiliation": "Filiação",
+    "conservative": "Conservador",
+    "denomination": "Denominação",
+    "denominations": "Denominações",
+    "extended": "A sua congregação está ligada a uma denominação ou movimento específico?",
+    "humanist": "Secular/Humanista",
+    "multiDenominational": "Multi-denominacional",
+    "orthodox": "Ortodoxo",
+    "postDenominational": "Pós-denominacional",
+    "reconstructionist": "Reconstrucionista",
+    "reform": "Reforma",
+    "renewal": "Renovação",
+    "unaffiliated": "Não afiliado"
+  },
+  "description": "Descrição",
+  "details": "Detalhes",
+  "edit": "Editar",
+  "editCongregation": "Editar congregação",
+  "editFailure": "Falha ao editar a congregação.",
+  "editNotice": "Ao fazer edições, esta congregação será retirada da lista até que um administrador possa aprovar as alterações.",
+  "editSuccess": "A congregação foi editada com sucesso.",
+  "editSuccessNotice": "Obrigado pela atualização! Alguém irá analisá-la e aprová-la em breve ou entrará em contacto com ela, se necessário.",
+  "exists": "Já existe uma congregação com este nome neste local",
+  "fit": {
+    "clergyMember": "Um membro da equipa de clérigos está filiado na Rabbis for Ceasefire",
+    "extended": "Porque é que a sua congregação seria uma boa opção para os judeus do movimento de cessar-fogo? Por favor, partilhe outras razões no campo \"Outros\".",
+    "fit": "Em forma",
+    "flag": {
+      "extended": "A sua congregação exibe uma bandeira israelita?",
+      "flag": "Bandeira israelita exposta",
+      "no": "Não é exibida qualquer bandeira israelita",
+      "note": "Em caso afirmativo, registaremos esse facto na listagem da sua congregação para que as pessoas possam tomar uma decisão informada sobre o local que frequentam.",
+      "short": "Bandeira israelita",
+      "yes": "É exibida uma bandeira israelita, mas não no bima",
+      "yesBima": "Uma bandeira israelita está exposta no bima"
+    },
+    "multipleClergyMembers": "Vários membros da equipa de clérigos estão ligados à Rabbis for Ceasefire",
+    "publicStatement": "A congregação fez uma declaração pública de apoio ao cessar-fogo permanente"
+  },
+  "flavor": {
+    "extended": "Em 50 palavras ou menos, descreva a congregação e o \"sabor\" ritual que os convidados irão sentir.",
+    "flavor": "Sabor"
+  },
+  "health": {
+    "extended": "Para serviços presenciais, descreva sucintamente os protocolos de saúde e mascaramento da COVID na sua congregação ou ligue para as diretrizes da congregação.",
+    "health": "Saúde",
+    "maskingRecommended": "Recomenda-se o uso de máscara",
+    "maskingRequired": "Máscara necessária",
+    "noGuidelines": "Não existem orientações sobre a COVID-19",
+    "notApplicable": "Não aplicável, apenas em linha",
+    "other": "Outra política de COVID"
+  },
+  "location": {
+    "city": "Cidade",
+    "country": "País",
+    "countryCode": "Código do país",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "state": "Estado/Província",
+    "stateCode": "Código do Estado/Província"
+  },
+  "name": "Nome da Congregação",
+  "notes": {
+    "extended": "Há mais alguma coisa que devamos saber?",
+    "notes": "Notas"
+  },
+  "nothingFound": "Não foram encontradas congregações.",
+  "registration": {
+    "contact": "Indique o endereço de correio eletrónico ou o URL do sítio Web onde as pessoas se podem registar.",
+    "extended": "Que tipo de registo oferecem aos hóspedes?",
+    "fixedPrice": "Preço fixo do bilhete (por serviço ou para todos)",
+    "free": "Grátis",
+    "register": "Registo",
+    "registration": "Registo",
+    "slidingScale": "Escala móvel",
+    "suggestedDonation": "Sugestão de donativo"
+  },
+  "security": {
+    "armedSecurity": "Segurança armada",
+    "clergyArmed": "Clero armado",
+    "congregantsArmed": "Congregações armadas",
+    "extended": "A sua congregação tem uma presença policial ou outro tipo de segurança armada?",
+    "localPolice": "Polícia local ou xerife",
+    "noFirearms": "Não são permitidas armas de fogo",
+    "privateSecurityArmed": "Segurança privada armada",
+    "privateSecurityUnarmed": "Segurança privada não armada",
+    "security": "Segurança",
+    "unarmedSecurity": "Segurança desarmada"
+  },
+  "services": {
+    "extended": "A que tipos de serviços são convidados os não membros?",
+    "hybrid": "Acesso em linha a serviços híbridos",
+    "inPerson": "Presencial",
+    "offsite": "Eventos fora do local",
+    "onlineOnly": "Apenas em linha",
+    "services": "Serviços"
+  },
+  "transferFailure": "Falha ao transferir a congregação. O utilizador existe?",
+  "transferSuccess": "Congregação transferida com sucesso."
+}

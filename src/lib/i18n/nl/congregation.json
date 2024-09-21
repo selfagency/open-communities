@@ -3,11 +3,17 @@
 	"accessHealthSafety": "Toegang, gezondheid en veiligheid",
 	"accessibility": {
 		"accessibility": "Toegankelijkheid",
+		"ada": "Toegankelijkheid voor rolstoelen",
+		"asl": "Interpreterende gebarentaal",
 		"cc": "Gesloten ondertiteling",
 		"eva": "EVA transcripties",
 		"extended": "Welke van de volgende toegankelijkheid is beschikbaar?",
+		"inPerson_adaAll": "Rolstoeltoegankelijke locatie voor alle persoonlijke diensten",
+		"inPerson_adaSome": "Rolstoeltoegankelijke locatie voor sommige persoonlijke diensten",
+		"inPerson_asl": "Tolk gebarentaal, persoonlijk",
 		"inPerson_eva": "EVA transcripties, persoonlijk",
 		"note": "Als deelnemers op voorhand toegankelijkheid moeten aanvragen, voeg dat dan toe in het veld 'Andere'.",
+		"online_asl": "Interpreterende gebarentaal, online",
 		"online_automatedCaptions": "Geautomatiseerde bijschriften, online",
 		"online_liveCaptions": "Live ondertiteling, online"
 	},

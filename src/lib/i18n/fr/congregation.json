@@ -1,144 +1,150 @@
 {
-	"about": "A propos de",
-	"accessHealthSafety": "Accès, santé et sécurité",
-	"accessibility": {
-		"accessibility": "Accessibilité",
-		"cc": "Sous-titrage",
-		"eva": "Transcriptions EVA",
-		"extended": "Laquelle des accessibilités suivantes sera disponible ?",
-		"inPerson_eva": "Transcriptions EVA, en personne",
-		"note": "Si les participants doivent demander l'accessibilité à l'avance, veuillez ajouter ce détail dans le champ \"Autre\".",
-		"online_automatedCaptions": "Légendes automatisées, en ligne",
-		"online_liveCaptions": "Sous-titrage en direct, en ligne"
-	},
-	"add": "Ajouter",
-	"addCongregation": "Ajouter une congrégation",
-	"addFailure": "Échec de l'ajout d'une congrégation.",
-	"addSuccess": "Congrégation ajoutée avec succès.",
-	"addSuccessNotice": "Nous vous remercions pour votre demande. Quelqu'un l'examinera et l'approuvera sous peu ou vous contactera si nécessaire.",
-	"admin": {
-		"admin": "Administrateur",
-		"unapproved": "Non approuvé",
-		"unclaimed": "Non réclamé"
-	},
-	"approved": "Approuvé",
-	"claimThis": "Congrégation des réclamations",
-	"clergy": {
-		"clergy": "Le clergé",
-		"extended": "Dressez la liste de l'équipe du clergé ci-dessous qui dirigera la cérémonie pendant les Yamim Noraim."
-	},
-	"congregation": "Congrégation",
-	"contact": "Contact",
-	"contactEmail": {
-		"contactEmail": "Courriel de contact",
-		"extended": "Adresse électronique de la personne de contact mentionnée ci-dessus"
-	},
-	"contactName": {
-		"contactName": "Nom du contact",
-		"extended": "Nom de la meilleure personne à contacter pour les communications de Rabbis for Ceasefire"
-	},
-	"contactUrl": "URL de contact",
-	"delete": "Supprimer la congrégation",
-	"deleteFailure": "Échec de la suppression de la congrégation.",
-	"deleteSuccess": "Congrégation supprimée avec succès.",
-	"denomination": {
-		"affiliation": "Affiliation",
-		"conservative": "Conservateurs",
-		"denomination": "Dénomination",
-		"denominations": "Dénominations",
-		"extended": "Votre congrégation est-elle affiliée à une dénomination ou à un mouvement spécifique ?",
-		"humanist": "Laïque/humaniste",
-		"multiDenominational": "Multi-confessionnel",
-		"orthodox": "Orthodoxe",
-		"postDenominational": "Post-confessionnel",
-		"reconstructionist": "Reconstructionniste",
-		"reform": "Réforme",
-		"renewal": "Renouvellement",
-		"unaffiliated": "Non affilié"
-	},
-	"description": "Description",
-	"details": "Détails",
-	"edit": "Editer",
-	"editCongregation": "Éditer la congrégation",
-	"editFailure": "Échec de l'édition de la congrégation.",
-	"editNotice": "Si vous apportez des modifications, cette congrégation sera retirée de la liste jusqu'à ce qu'un administrateur puisse approuver vos modifications.",
-	"editSuccess": "Congrégation éditée avec succès.",
-	"editSuccessNotice": "Merci pour cette mise à jour ! Quelqu'un l'examinera et l'approuvera sous peu ou nous contactera si nécessaire.",
-	"exists": "Une congrégation portant ce nom existe déjà dans cette localité",
-	"fit": {
-		"clergyMember": "Un membre du clergé est affilié à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
-		"extended": "Pourquoi votre congrégation conviendrait-elle aux juifs qui participent au mouvement pour le cessez-le-feu ? Veuillez indiquer d'autres raisons dans le champ \"Autres\".",
-		"fit": "En forme",
-		"flag": {
-			"extended": "Votre congrégation arbore-t-elle un drapeau israélien ?",
-			"flag": "Drapeau israélien déployé",
-			"no": "Aucun drapeau israélien n'est déployé",
-			"note": "Dans l'affirmative, nous l'indiquerons dans la liste de votre congrégation afin que les gens puissent décider en toute connaissance de cause de l'endroit où ils se rendent.",
-			"short": "Drapeau israélien",
-			"yes": "Un drapeau israélien est déployé, mais pas sur la bima.",
-			"yesBima": "Un drapeau israélien est déployé sur la bima"
-		},
-		"multipleClergyMembers": "Plusieurs membres du clergé sont affiliés à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
-		"publicStatement": "La congrégation a fait une déclaration publique en faveur d'un cessez-le-feu permanent."
-	},
-	"flavor": {
-		"extended": "En 50 mots ou moins, décrivez la congrégation et la \"saveur\" rituelle dont les invités feront l'expérience.",
-		"flavor": "Saveur"
-	},
-	"health": {
-		"extended": "Pour les services en personne, veuillez décrire brièvement les protocoles de santé et de masquage COVID dans votre congrégation, ou renvoyer aux directives de la congrégation.",
-		"health": "Santé",
-		"maskingRecommended": "Masquage recommandé",
-		"maskingRequired": "Masquage nécessaire",
-		"noGuidelines": "Pas de lignes directrices COVID en place",
-		"notApplicable": "Sans objet, uniquement en ligne",
-		"other": "Autre politique COVID"
-	},
-	"location": {
-		"city": "Ville",
-		"country": "Pays",
-		"countryCode": "Code pays",
-		"latitude": "Latitude",
-		"longitude": "Longitude",
-		"state": "État/Province",
-		"stateCode": "Code de l'État ou de la province"
-	},
-	"name": "Nom de la congrégation",
-	"notes": {
-		"extended": "Y a-t-il autre chose que nous devrions savoir ?",
-		"notes": "Notes"
-	},
-	"nothingFound": "Aucune congrégation n'a été trouvée.",
-	"registration": {
-		"contact": "Veuillez fournir une adresse électronique ou une URL de site web où les personnes peuvent s'inscrire.",
-		"extended": "Quel type d'enregistrement proposez-vous aux invités ?",
-		"fixedPrice": "Prix fixe du billet (par service ou pour tous)",
-		"free": "Gratuit",
-		"register": "Registre",
-		"registration": "Inscription",
-		"slidingScale": "Barème dégressif",
-		"suggestedDonation": "Don suggéré"
-	},
-	"security": {
-		"armedSecurity": "Sécurité armée",
-		"clergyArmed": "Clergé armé",
-		"congregantsArmed": "Des fidèles armés",
-		"extended": "Votre congrégation dispose-t-elle d'une présence policière ou d'une autre forme de sécurité armée ?",
-		"localPolice": "Police locale ou shérif",
-		"noFirearms": "Aucune arme à feu n'est autorisée",
-		"privateSecurityArmed": "Sécurité privée armée",
-		"privateSecurityUnarmed": "Sécurité privée non armée",
-		"security": "Sécurité",
-		"unarmedSecurity": "Sécurité non armée"
-	},
-	"services": {
-		"extended": "Quels sont les types de services auxquels les non-membres sont invités à participer ?",
-		"hybrid": "Accès en ligne aux services hybrides",
-		"inPerson": "En personne",
-		"offsite": "Événements hors site",
-		"onlineOnly": "En ligne uniquement",
-		"services": "Services"
-	},
-	"transferFailure": "Échec du transfert d'une congrégation. L'utilisateur existe-t-il ?",
-	"transferSuccess": "La congrégation a été transférée avec succès."
+  "about": "A propos de",
+  "accessHealthSafety": "Accès, santé et sécurité",
+  "accessibility": {
+    "accessibility": "Accessibilité",
+    "ada": "Accessibilité aux fauteuils roulants",
+    "asl": "Langue des signes interprétative",
+    "cc": "Sous-titrage",
+    "eva": "Transcriptions EVA",
+    "extended": "Laquelle des accessibilités suivantes sera disponible ?",
+    "inPerson_adaAll": "Lieu accessible aux fauteuils roulants pour tous les services en personne",
+    "inPerson_adaSome": "Lieu accessible aux fauteuils roulants pour certains services en personne",
+    "inPerson_asl": "Interprétation en langue des signes, en personne",
+    "inPerson_eva": "Transcriptions EVA, en personne",
+    "note": "Si les participants doivent demander l'accessibilité à l'avance, veuillez ajouter ce détail dans le champ \"Autre\".",
+    "online_asl": "Interprétation en langue des signes, en ligne",
+    "online_automatedCaptions": "Légendes automatisées, en ligne",
+    "online_liveCaptions": "Sous-titrage en direct, en ligne"
+  },
+  "add": "Ajouter",
+  "addCongregation": "Ajouter une congrégation",
+  "addFailure": "Échec de l'ajout d'une congrégation.",
+  "addSuccess": "Congrégation ajoutée avec succès.",
+  "addSuccessNotice": "Nous vous remercions pour votre demande. Quelqu'un l'examinera et l'approuvera sous peu ou vous contactera si nécessaire.",
+  "admin": {
+    "admin": "Administrateur",
+    "unapproved": "Non approuvé",
+    "unclaimed": "Non réclamé"
+  },
+  "approved": "Approuvé",
+  "claimThis": "Congrégation des réclamations",
+  "clergy": {
+    "clergy": "Le clergé",
+    "extended": "Dressez la liste de l'équipe du clergé ci-dessous qui dirigera la cérémonie pendant les Yamim Noraim."
+  },
+  "congregation": "Congrégation",
+  "contact": "Contact",
+  "contactEmail": {
+    "contactEmail": "Courriel de contact",
+    "extended": "Adresse électronique de la personne de contact mentionnée ci-dessus"
+  },
+  "contactName": {
+    "contactName": "Nom du contact",
+    "extended": "Nom de la meilleure personne à contacter pour les communications de Rabbis for Ceasefire"
+  },
+  "contactUrl": "URL de contact",
+  "delete": "Supprimer la congrégation",
+  "deleteFailure": "Échec de la suppression de la congrégation.",
+  "deleteSuccess": "Congrégation supprimée avec succès.",
+  "denomination": {
+    "affiliation": "Affiliation",
+    "conservative": "Conservateurs",
+    "denomination": "Dénomination",
+    "denominations": "Dénominations",
+    "extended": "Votre congrégation est-elle affiliée à une dénomination ou à un mouvement spécifique ?",
+    "humanist": "Laïque/humaniste",
+    "multiDenominational": "Multi-confessionnel",
+    "orthodox": "Orthodoxe",
+    "postDenominational": "Post-confessionnel",
+    "reconstructionist": "Reconstructionniste",
+    "reform": "Réforme",
+    "renewal": "Renouvellement",
+    "unaffiliated": "Non affilié"
+  },
+  "description": "Description",
+  "details": "Détails",
+  "edit": "Editer",
+  "editCongregation": "Éditer la congrégation",
+  "editFailure": "Échec de l'édition de la congrégation.",
+  "editNotice": "Si vous apportez des modifications, cette congrégation sera retirée de la liste jusqu'à ce qu'un administrateur puisse approuver vos modifications.",
+  "editSuccess": "Congrégation éditée avec succès.",
+  "editSuccessNotice": "Merci pour cette mise à jour ! Quelqu'un l'examinera et l'approuvera sous peu ou nous contactera si nécessaire.",
+  "exists": "Une congrégation portant ce nom existe déjà dans cette localité",
+  "fit": {
+    "clergyMember": "Un membre du clergé est affilié à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
+    "extended": "Pourquoi votre congrégation conviendrait-elle aux juifs qui participent au mouvement pour le cessez-le-feu ? Veuillez indiquer d'autres raisons dans le champ \"Autres\".",
+    "fit": "En forme",
+    "flag": {
+      "extended": "Votre congrégation arbore-t-elle un drapeau israélien ?",
+      "flag": "Drapeau israélien déployé",
+      "no": "Aucun drapeau israélien n'est déployé",
+      "note": "Dans l'affirmative, nous l'indiquerons dans la liste de votre congrégation afin que les gens puissent décider en toute connaissance de cause de l'endroit où ils se rendent.",
+      "short": "Drapeau israélien",
+      "yes": "Un drapeau israélien est déployé, mais pas sur la bima.",
+      "yesBima": "Un drapeau israélien est déployé sur la bima"
+    },
+    "multipleClergyMembers": "Plusieurs membres du clergé sont affiliés à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
+    "publicStatement": "La congrégation a fait une déclaration publique en faveur d'un cessez-le-feu permanent."
+  },
+  "flavor": {
+    "extended": "En 50 mots ou moins, décrivez la congrégation et la \"saveur\" rituelle dont les invités feront l'expérience.",
+    "flavor": "Saveur"
+  },
+  "health": {
+    "extended": "Pour les services en personne, veuillez décrire brièvement les protocoles de santé et de masquage COVID dans votre congrégation, ou renvoyer aux directives de la congrégation.",
+    "health": "Santé",
+    "maskingRecommended": "Masquage recommandé",
+    "maskingRequired": "Masquage nécessaire",
+    "noGuidelines": "Pas de lignes directrices COVID en place",
+    "notApplicable": "Sans objet, uniquement en ligne",
+    "other": "Autre politique COVID"
+  },
+  "location": {
+    "city": "Ville",
+    "country": "Pays",
+    "countryCode": "Code pays",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "state": "État/Province",
+    "stateCode": "Code de l'État ou de la province"
+  },
+  "name": "Nom de la congrégation",
+  "notes": {
+    "extended": "Y a-t-il autre chose que nous devrions savoir ?",
+    "notes": "Notes"
+  },
+  "nothingFound": "Aucune congrégation n'a été trouvée.",
+  "registration": {
+    "contact": "Veuillez fournir une adresse électronique ou une URL de site web où les personnes peuvent s'inscrire.",
+    "extended": "Quel type d'enregistrement proposez-vous aux invités ?",
+    "fixedPrice": "Prix fixe du billet (par service ou pour tous)",
+    "free": "Gratuit",
+    "register": "Registre",
+    "registration": "Inscription",
+    "slidingScale": "Barème dégressif",
+    "suggestedDonation": "Don suggéré"
+  },
+  "security": {
+    "armedSecurity": "Sécurité armée",
+    "clergyArmed": "Clergé armé",
+    "congregantsArmed": "Des fidèles armés",
+    "extended": "Votre congrégation dispose-t-elle d'une présence policière ou d'une autre forme de sécurité armée ?",
+    "localPolice": "Police locale ou shérif",
+    "noFirearms": "Aucune arme à feu n'est autorisée",
+    "privateSecurityArmed": "Sécurité privée armée",
+    "privateSecurityUnarmed": "Sécurité privée non armée",
+    "security": "Sécurité",
+    "unarmedSecurity": "Sécurité non armée"
+  },
+  "services": {
+    "extended": "Quels sont les types de services auxquels les non-membres sont invités à participer ?",
+    "hybrid": "Accès en ligne aux services hybrides",
+    "inPerson": "En personne",
+    "offsite": "Événements hors site",
+    "onlineOnly": "En ligne uniquement",
+    "services": "Services"
+  },
+  "transferFailure": "Échec du transfert d'une congrégation. L'utilisateur existe-t-il ?",
+  "transferSuccess": "La congrégation a été transférée avec succès."
 }
