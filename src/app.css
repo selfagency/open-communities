@@ -79,7 +79,7 @@ h2,
 h3,
 h4,
 h5 {
-	@apply font-display font-normal;
+	@apply font-display !font-normal;
 }
 
 #captcha {

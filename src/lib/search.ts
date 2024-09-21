@@ -181,7 +181,7 @@ export class Search {
 
 		const hasFilter = (filters: any): boolean => {
 			if (!filters || isEmpty(filters)) return false;
-			return !isEmpty(shake(filters, (f) => !f));
+			return !isEmpty(shake(filters, (f) => (typeof f === 'boolean' ? f !== true : isEmpty(f))));
 		};
 
 		const hasDenominations = hasFilter(state.filters?.denomination);

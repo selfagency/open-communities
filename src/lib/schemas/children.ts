@@ -43,7 +43,7 @@ export const fitSchema = z
 		publicStatement: z.boolean()
 	})
 	.refine(valueSelected, {
-		message: t.get('common.required')
+		message: t.get('common.requiredResponse')
 	});
 
 export const registrationSchema = z
@@ -54,7 +54,7 @@ export const registrationSchema = z
 		registrationType: z
 			.enum(['free', 'slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
 			.refine((value) => !!value, {
-				message: t.get('common.required')
+				message: t.get('common.requiredResponse')
 			}),
 		url: z.preprocess(
 			(val) => (val === '' ? undefined : val),
@@ -70,7 +70,7 @@ export const healthSchema = z.object({
 	protocol: z
 		.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
 		.refine((value) => !!value, {
-			message: t.get('common.required')
+			message: t.get('common.requiredResponse')
 		}),
 	otherText: z.string().optional()
 });
@@ -98,5 +98,5 @@ export const servicesSchema = z
 		otherText: z.string().optional()
 	})
 	.refine(valueSelected, {
-		message: t.get('common.required')
+		message: t.get('common.requiredResponse')
 	});

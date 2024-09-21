@@ -119,6 +119,7 @@
 	},
 	"nothingFound": "No congregations found.",
 	"registration": {
+		"contact": "Please provide and email address or website URL where people can register.",
 		"extended": "What kind of registration do you offer to guests?",
 		"fixedPrice": "Fixed ticket price (per service or for all)",
 		"free": "Free",

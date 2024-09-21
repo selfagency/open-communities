@@ -41,7 +41,7 @@
 
 <Card.Root class="h-full min-h-max text-left transition-transform hover:scale-105">
 	<Card.Header>
-		<Card.Title tag="h1" class="font-display text-xl leading-6 tracking-wide"
+		<Card.Title tag="h1" class="font-display text-xl font-normal leading-6 tracking-wide"
 			>{congregation.name}</Card.Title
 		>
 		<Card.Description>

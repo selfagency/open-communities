@@ -63,7 +63,7 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="font-display text-2xl">
+		<Card.Title class="font-display text-2xl font-normal">
 			<span>{resetting ? $t('auth.resetPassword') : $t('auth.login')}</span>
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->

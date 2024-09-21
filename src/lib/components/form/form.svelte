@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
-	import { sleep, isEmpty } from 'radashi';
+	import { sleep, isEmpty, shake } from 'radashi';
 	import { onMount, getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
@@ -31,6 +31,7 @@
 	import { log } from '$lib/utils';
 
 	import Delete from './delete.svelte';
+	import Required from './required.svelte';
 	import Transfer from './transfer.svelte';
 	/* endregion imports */
 
@@ -86,6 +87,11 @@
 		| 'security'
 		| 'registration'
 		| 'contact' = 'congregation';
+
+	let hasFit: boolean = false;
+	let hasServices: boolean = false;
+	let hasHealth: boolean = false;
+	let hasRegistration: boolean = false;
 	/* endregion variables */
 
 	/* region methods */
@@ -179,6 +185,12 @@
 					? $t('common.editThing', { thing: $formData.name })
 					: $t('congregation.addCongregation');
 		}
+	};
+
+	const valueSet = (obj: any): boolean => {
+		if (!obj || isEmpty(obj)) return false;
+		const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));
+		return !isEmpty(shaken);
 	};
 	/* endregion methods */
 
@@ -281,6 +293,11 @@
 	}
 
 	$: if (addSuccess || editSuccess) setTitle();
+
+	$: hasFit = valueSet($formData.fit);
+	$: hasServices = valueSet($formData.services);
+	$: hasHealth = valueSet($formData.health);
+	$: hasRegistration = valueSet($formData.registration);
 	/* endregion reactivity */
 </script>
 
@@ -298,7 +315,7 @@
 	<Card.Root>
 		<form id="addEdit" method="POST" action="?/submit" use:enhance>
 			<Card.Header>
-				<Card.Title class="-mb-4 font-display text-2xl">
+				<Card.Title class="-mb-4 font-display text-2xl font-normal">
 					{title}
 				</Card.Title>
 			</Card.Header>
@@ -338,9 +355,9 @@
 						<!-- congregation -->
 						<Accordion.Item value="congregation">
 							<Accordion.Trigger>
-								<span class="font-display text-lg">
+								<span class="font-display text-lg font-normal">
 									{$t('congregation.congregation')}
-									{#if $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
+									{#if isEmpty($formData.name) || isEmpty($formData.clergy) || isEmpty($formData.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
 										<span class="text-red-500">*</span>
 									{/if}
 								</span>
@@ -348,7 +365,10 @@
 							<Accordion.Content>
 								<Form.Field {form} name="name">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('congregation.name')}</Form.Label>
+										<Form.Label
+											>{$t('congregation.name')}
+											<Required set={!isEmpty($formData.name)} /></Form.Label
+										>
 										<Input {...attrs} bind:value={$formData.name} required />
 									</Form.Control>
 									<Form.FieldErrors />
@@ -413,7 +433,10 @@
 								</Form.Field>
 								<Form.Field {form} name="clergy">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('congregation.clergy.extended')}</Form.Label>
+										<Form.Label
+											>{$t('congregation.clergy.extended')}
+											<Required set={!isEmpty($formData.clergy)} /></Form.Label
+										>
 										<Input {...attrs} bind:value={$formData.clergy} required />
 									</Form.Control>
 									<Form.FieldErrors />
@@ -447,7 +470,10 @@
 								</Form.Field>
 								<Form.Field {form} name="flavor">
 									<Form.Control let:attrs>
-										<Form.Label>{$t('congregation.flavor.extended')}</Form.Label>
+										<Form.Label
+											>{$t('congregation.flavor.extended')}
+											<Required set={!isEmpty($formData.flavor)} /></Form.Label
+										>
 										<Textarea {...attrs} bind:value={$formData.flavor} required />
 									</Form.Control>
 									<Form.FieldErrors />
@@ -472,9 +498,9 @@
 							{@const fitErrors = fixType($errors.fit)?._errors}
 							<Accordion.Item value="fit">
 								<Accordion.Trigger>
-									<span class="font-display text-lg">
+									<span class="font-display text-lg font-normal">
 										{$t('congregation.fit.fit')}
-										{#if fitErrors}
+										{#if !hasFit || fitErrors}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
@@ -482,6 +508,7 @@
 								<Accordion.Content>
 									<div class="question" class:error={fitErrors}>
 										{$t('congregation.fit.extended')}
+										<Required set={hasFit} />
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="publicStatement">
@@ -548,7 +575,7 @@
 											</Form.Field>
 										{/if}
 										{#if fitErrors}
-											<span class="text-xs text-red-500">{$t('common.required')}</span>
+											<span class="text-xs text-red-500">{$t('common.requiredResponse')}</span>
 										{/if}
 									</div>
 
@@ -593,9 +620,9 @@
 							{@const servicesErrors = fixType($errors.services)?._errors}
 							<Accordion.Item value="services">
 								<Accordion.Trigger>
-									<span class="font-display text-lg">
+									<span class="font-display text-lg font-normal">
 										{$t('congregation.services.services')}
-										{#if servicesErrors}
+										{#if !hasServices || servicesErrors}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
@@ -603,6 +630,7 @@
 								<Accordion.Content>
 									<div class="question" class:error={servicesErrors}>
 										{$t('congregation.services.extended')}
+										<Required set={hasServices} />
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="inPerson">
@@ -679,7 +707,7 @@
 											</Form.Field>
 										{/if}
 										{#if servicesErrors}
-											<span class="text-xs text-red-500">{$t('common.required')}</span>
+											<span class="text-xs text-red-500">{$t('common.requiredResponse')}</span>
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
@@ -695,7 +723,7 @@
 						{#if $formData.accessibility}
 							<Accordion.Item value="accessibility">
 								<Accordion.Trigger>
-									<span class="font-display text-lg">
+									<span class="font-display text-lg font-normal">
 										{$t('congregation.accessibility.accessibility')}
 										{#if $errors.accessibility}
 											<span class="text-red-500">*</span>
@@ -865,9 +893,9 @@
 							{@const healthErrors = fixType($errors.health)}
 							<Accordion.Item value="health">
 								<Accordion.Trigger>
-									<span class="font-display text-lg">
+									<span class="font-display text-lg font-normal">
 										{$t('congregation.health.health')}
-										{#if healthErrors}
+										{#if !hasHealth || healthErrors}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
@@ -877,6 +905,7 @@
 										<Form.Control let:attrs>
 											<div class="question mb-4" class:error={healthErrors?.protocol}>
 												{$t('congregation.health.extended')}
+												<Required set={hasHealth} />
 											</div>
 											<RadioGroup.Root
 												{...attrs}
@@ -919,7 +948,9 @@
 										<Form.FieldErrors />
 									</Form.Field>
 									{#if healthErrors?.protocol}
-										<span class="mt-4 block text-xs text-red-500">{$t('common.required')}</span>
+										<span class="mt-4 block text-xs text-red-500"
+											>{$t('common.requiredResponse')}</span
+										>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" on:click={() => (view = 'security')}>
@@ -935,7 +966,7 @@
 							{@const securityErrors = fixType($errors.security)?._errors}
 							<Accordion.Item value="security">
 								<Accordion.Trigger>
-									<span class="font-display text-lg">
+									<span class="font-display text-lg font-normal">
 										{$t('congregation.security.security')}
 										{#if securityErrors}
 											<span class="text-red-500">*</span>
@@ -1060,7 +1091,7 @@
 											</Form.Field>
 										{/if}
 										{#if securityErrors}
-											<span class="text-xs text-red-500">{$t('common.required')}</span>
+											<span class="text-xs text-red-500">{$t('common.requiredResponse')}</span>
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
@@ -1081,9 +1112,9 @@
 								fixType($errors.registration)?._errors}
 							<Accordion.Item value="registration">
 								<Accordion.Trigger>
-									<span class="font-display text-lg">
+									<span class="font-display text-lg font-normal">
 										{$t('congregation.registration.registration')}
-										{#if registrationErrors}
+										{#if !hasRegistration || registrationErrors}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
@@ -1091,6 +1122,7 @@
 								<Accordion.Content>
 									<div class="question mb-4" class:error={registrationErrors?.registrationType}>
 										{$t('congregation.registration.extended')}
+										<Required set={hasRegistration} />
 									</div>
 									<Form.Field {form} name="protocol">
 										<Form.Control let:attrs>
@@ -1139,10 +1171,16 @@
 										</Form.Field>
 									{/if}
 									{#if registrationErrors?.registrationType}
-										<span class="mt-4 block text-xs text-red-500">{$t('common.required')}</span>
+										<span class="mt-4 block text-xs text-red-500"
+											>{$t('common.requiredResponse')}</span
+										>
 									{/if}
 									<div class="question my-4" class:error={registrationInvalid}>
-										{$t('congregation.registration.extended')}
+										{$t('congregation.registration.contact')}
+										<Required
+											set={!isEmpty($formData.registration.email) ||
+												!isEmpty($formData.registration.url)}
+										/>
 									</div>
 									<Form.Field {form} name="registration_email">
 										<Form.Control let:attrs>
@@ -1175,7 +1213,7 @@
 						<!-- contact -->
 						<Accordion.Item value="contact">
 							<Accordion.Trigger>
-								<span class="font-display text-lg">
+								<span class="font-display text-lg font-normal">
 									{$t('congregation.contact')}
 									{#if $errors.contactName || $errors.contactEmail}
 										<span class="text-red-500">*</span>
