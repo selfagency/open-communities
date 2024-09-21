@@ -39,7 +39,9 @@
 	/* endregion variables */
 </script>
 
-<Card.Root class="h-full min-h-max text-left transition-transform hover:scale-105">
+<Card.Root
+	class="h-full min-h-max transition-transform hover:scale-105 ltr:text-left rtl:text-right"
+>
 	<Card.Header>
 		<Card.Title tag="h1" class="font-display text-xl font-normal leading-6 tracking-wide"
 			>{congregation.name}</Card.Title

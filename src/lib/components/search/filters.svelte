@@ -47,7 +47,7 @@
 		services: SiddurIcon
 	};
 
-	// local vars
+	// locals
 	let filters: Record<string, Record<string, boolean>>;
 
 	/* endregion variables */
@@ -83,8 +83,6 @@
 				inPerson_adaSome: false,
 				inPerson_adaAll: false,
 				inPerson_eva: false,
-				hybrid_automatedCaptions: false,
-				hybrid_liveCaptions: false,
 				online_automatedCaptions: false,
 				online_liveCaptions: false,
 				other: false
@@ -132,8 +130,8 @@
 
 <Popover.Root>
 	<Popover.Trigger>
-		<Button variant="outline" class="space-x-2 text-slate-500">
-			<svelte:component this={icons.filter} size="18" />
+		<Button variant="outline" class="space-x-2 text-slate-500 rtl:mx-1">
+			<FilterIcon size="18" class="rtl:mx-1" />
 			<span>{$t('common.filter')}</span>
 		</Button>
 	</Popover.Trigger>

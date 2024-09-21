@@ -21,7 +21,7 @@
 	// constants
 	const { state: searchState } = search;
 
-	// local vars
+	// locals
 	let center: LngLatLike = [-90, 10];
 	let zoom = 1;
 	/* endregion variables */

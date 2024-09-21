@@ -22,7 +22,7 @@
 	export let data: SuperValidated<any>;
 	export let reset: SuperValidated<any>;
 
-	// local vars
+	// locals
 	let resetting: boolean = false;
 	let resetSuccess: boolean = false;
 	let sentSuccess: boolean = false;

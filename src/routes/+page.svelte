@@ -17,7 +17,7 @@
 	// props
 	export let data;
 
-	// local vars
+	// locals
 	let congregations: CongregationMetaRecord & { id: string }[];
 	let content: PagesRecord;
 	/* endregion variables */

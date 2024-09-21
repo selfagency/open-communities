@@ -67,7 +67,7 @@
 		{ label: $t('common.other'), value: 'other' }
 	];
 
-	// local vars
+	// locals
 	let country: string = '';
 	let state: string = '';
 	let city: string = '';

@@ -7,7 +7,7 @@
 	// props
 	export let data: any;
 
-	// local vars
+	// locals
 	let content;
 	/* endregion variables */
 

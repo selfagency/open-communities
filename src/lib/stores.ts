@@ -2,8 +2,7 @@
 import * as persistent from '@nanostores/persistent';
 import { assign } from 'radashi';
 
-import type { CountriesRecord } from '$lib/types';
-import type { UsersRecord } from '$lib/types';
+import type { CountriesRecord, UsersRecord, UsersLangOptions } from '$lib/types';
 
 // import { log } from '$lib/utils';
 /* endregion imports */
@@ -43,6 +42,17 @@ export const user = persistentMap<UsersRecord & { id: string; email: string }>(
 /* region methods */
 export function setState(newState: Partial<State>) {
 	state.set(assign(state.get(), newState));
+}
+
+export function initUser() {
+	user.set({
+		id: '',
+		email: '',
+		admin: false,
+		congregation: undefined,
+		lang: 'en' as UsersLangOptions,
+		name: undefined
+	});
 }
 
 export function initState() {

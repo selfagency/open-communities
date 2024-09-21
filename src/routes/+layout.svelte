@@ -1,7 +1,6 @@
 <script lang="ts">
 	/* region imports */
 	import { inject } from '@vercel/analytics';
-	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	// import { pwaAssetsHead } from 'virtual:pwa-assets/head';
 	// import { pwaInfo } from 'virtual:pwa-info';
@@ -13,14 +12,14 @@
 	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { t } from '$lib/i18n';
-	import { setState, state, initState } from '$lib/stores';
+	import { setState, user } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
 	import '../app.css';
 	/* endregion imports */
 
 	/* region variables */
-	// local vars
+	// locals
 	let innerWidth = 0;
 	let innerHeight = 0;
 	/* endregion variables */
@@ -29,6 +28,12 @@
 	onMount(() => {
 		if (browser) {
 			inject();
+
+			if ($user?.lang === 'he') {
+				document.body.setAttribute('dir', 'rtl');
+			} else {
+				document.body.setAttribute('dir', 'ltr');
+			}
 		}
 	});
 
@@ -47,10 +52,6 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if (browser && isEmpty($state)) {
-		initState();
-	}
-
 	$: if (innerWidth > 0) {
 		setState({ offsetWidth: innerWidth, isMobile: innerWidth < 640 });
 	}

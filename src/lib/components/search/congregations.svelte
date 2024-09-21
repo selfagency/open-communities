@@ -42,7 +42,7 @@
 	const location = new LocationService(search);
 	const open = {};
 
-	// local vars
+	// locals
 	let searchTerms = '';
 	let locations: LocationMeta[] = [];
 	let currentPage = 1;
@@ -118,12 +118,12 @@
 
 <section class="w-full space-y-4">
 	<div
-		class="flex w-full flex-col items-center justify-between space-x-0 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+		class="flex w-full flex-col items-center justify-between space-x-0 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 rtl:sm:space-x-0"
 	>
 		<div
 			class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500"
 		>
-			<Label for="search">
+			<Label for="search" class="flex w-8 items-center justify-center">
 				<SearchIcon size="20" />
 				<span class="sr-only">{$t('common.search')}</span>
 			</Label>
@@ -135,7 +135,7 @@
 					class="w-full"
 				/>
 
-				<span class="absolute right-1 top-0 z-10 h-10 w-10">
+				<span class="absolute top-0 z-10 h-10 w-10 ltr:right-1 rtl:left-1 rtl:mx-1">
 					<Button
 						variant="link"
 						class="text-slate-400 hover:text-slate-500"
@@ -154,12 +154,12 @@
 		<div class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto">
 			<Button
 				variant="outline"
-				class={`space-x-2 text-slate-500 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
+				class={`space-x-2 text-slate-500 rtl:mx-1 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
 				on:click={() => {
 					search.toggleLocation();
 				}}
 			>
-				<LocationIcon size="20" />
+				<LocationIcon size="20" class="rtl:mx-1" />
 				<span>{$t('common.location')}</span>
 			</Button>
 			<Filters {search} />

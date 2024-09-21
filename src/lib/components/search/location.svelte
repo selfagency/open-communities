@@ -19,7 +19,7 @@
 	// constants
 	const { state: locationState, reset, setCountry, setState, setCity } = location;
 
-	// local vars
+	// locals
 	let country: string = '';
 	let state: string = '';
 	let city: string = '';
@@ -101,7 +101,7 @@
 				<span
 					class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700"
 				>
-					<ResetIcon size="16" />
+					<ResetIcon size="16" class="rtl:mx-1" />
 					<span>{$t('common.reset')}</span>
 				</span>
 			</Button>

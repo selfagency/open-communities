@@ -59,7 +59,7 @@
 	const health = congregation.health as HealthRecord;
 	const security = congregation.security as SecurityRecord;
 
-	// local vars
+	// locals
 	let tab: 'about' | 'services' | 'details' = 'about';
 	/* endregion variables */
 
@@ -80,7 +80,7 @@
 		data-id={congregation.id}
 		class="flex max-h-[85vh] min-h-[35vh] min-w-[360px] max-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 sm:max-w-[540px] sm:p-8"
 	>
-		<Dialog.Header class="w-full">
+		<Dialog.Header class="w-full rtl:text-right">
 			<Dialog.Title>
 				{#if congregation.contactUrl}
 					<a
@@ -91,7 +91,7 @@
 					>
 						<h1 class="inline-lbock text-2xl leading-7">
 							<span>{congregation.name}</span>
-							<span><LinkIcon size="14" color="gray" class="inline" /></span>
+							<span><LinkIcon size="14" color="gray" class="inline rtl:mx-1" /></span>
 						</h1>
 					</a>
 				{:else}
@@ -132,7 +132,7 @@
 										await goto(`/edit?id=${congregation.id}`);
 									}}
 								>
-									<EditIcon size="16" class="text-slate-500" />
+									<EditIcon size="16" class="text-slate-500 rtl:mx-1" />
 									<span class="sr-only">{$t('common.edit')}</span>
 								</Button>
 							</Tooltip.Trigger>
@@ -151,7 +151,7 @@
 									toast.success($t('common.copied'));
 								}}
 							>
-								<ShareIcon size="16" class="text-slate-500" />
+								<ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
 								<span class="sr-only">{$t('common.share')}</span>
 							</Button>
 						</Tooltip.Trigger>

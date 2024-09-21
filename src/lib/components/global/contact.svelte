@@ -28,7 +28,7 @@
 	export let snapshot: any;
 	export let congregations: any;
 
-	// local vars
+	// locals
 	let success: boolean = false;
 	let congregation: string = '';
 	/* endregion variables */

@@ -31,7 +31,7 @@
 		{#if ada}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<AdaIcon size="18" />
+					<AdaIcon size="18" class="rtl:mx-1" />
 					<span class="sr-only">{$t('congregation.accessibility.ada')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -42,7 +42,7 @@
 		{#if cc}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<CcIcon size="18" />
+					<CcIcon size="18" class="rtl:mx-1" />
 					<span class="sr-only">{$t('congregation.accessibility.cc')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -53,7 +53,7 @@
 		{#if eva}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<EvaIcon size="18" />
+					<EvaIcon size="18" class="rtl:mx-1" />
 					<span class="sr-only">{$t('congregation.accessibility.eva')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -64,7 +64,7 @@
 		{#if asl}
 			<Tooltip.Root>
 				<Tooltip.Trigger>
-					<AslIcon class="h-4 w-4" />
+					<AslIcon class="h-4 w-4 rtl:mx-1" />
 					<span class="sr-only">{$t('congregation.accessibility.asl')}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
@@ -83,7 +83,7 @@
 		{#if ada}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
-					<AdaIcon size="18" />
+					<AdaIcon size="18" class="rtl:mx-2" />
 					<span class="sr-only">{$t('congregation.accessibility.ada')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
@@ -100,7 +100,7 @@
 		{#if cc}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
-					<CcIcon size="18" />
+					<CcIcon size="18" class="rtl:mx-2" />
 					<span class="sr-only">{$t('congregation.accessibility.cc')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
@@ -117,7 +117,7 @@
 		{#if asl}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
-					<AslIcon class="h-4 w-4" />
+					<AslIcon class="h-4 w-4 rtl:mx-2" />
 					<span class="sr-only">{$t('congregation.accessibility.asl')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
@@ -134,7 +134,7 @@
 		{#if eva}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
-					<EvaIcon size="18" />
+					<EvaIcon size="18" class="rtl:mx-2" />
 					<span class="sr-only">{$t('congregation.accessibility.eva')}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
@@ -154,7 +154,7 @@
 		{#if !ada && !cc && !eva && !other}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
-					<WarningIcon size="18" />
+					<WarningIcon size="18" class="rtl:mx-2" />
 					<span class="sr-only">{$t('common.unspecified')}</span>
 				</span>
 

@@ -18,7 +18,7 @@
 	export let token: string | null;
 	export let verified: boolean = false;
 
-	// local vars
+	// locals
 	let error: string;
 	/* endregion variables */
 

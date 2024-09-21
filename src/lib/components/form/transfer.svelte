@@ -25,7 +25,7 @@
 	export let id: string;
 	export let owner: string | undefined = undefined;
 
-	// local vars
+	// locals
 	let open: boolean = false;
 	/* endregion variables */
 

@@ -24,7 +24,7 @@
 	export let snapshot: any;
 	// export let active: boolean = false;
 
-	// local vars
+	// locals
 	let success: boolean = false;
 	let verified: boolean = false;
 	let verifying: boolean = false;

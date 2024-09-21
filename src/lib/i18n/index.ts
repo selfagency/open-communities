@@ -25,6 +25,6 @@ export const { t, locale, locales, loading, loadTranslations, translations } = n
 >{
 	initLocale: 'en',
 	fallbackLocale: 'en',
-	log: { logger: log },
+	log: { logger: log, level: 'error' },
 	loaders
 });

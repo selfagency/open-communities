@@ -55,6 +55,18 @@
 	},
 	"http": "Must begin with `http://` or `https://`",
 	"invalidUrl": "Invalid URL",
+	"locale": {
+		"de": "German",
+		"en": "English",
+		"es": "Spanish",
+		"fr": "French",
+		"he": "Hebrew",
+		"hu": "Hungarian",
+		"nl": "Dutch",
+		"pt": "Portuguese",
+		"ru": "Russian",
+		"uk": "Ukrainian"
+	},
 	"location": "Location",
 	"menu": "Menu",
 	"name": "Name",

@@ -16,7 +16,7 @@
 	export let data;
 	export let snapshot;
 
-	// local vars
+	// locals
 	let tab: 'login' | 'signup' = 'login';
 	/* endregion variables */
 
