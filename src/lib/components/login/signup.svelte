@@ -37,9 +37,7 @@
 		dataType: 'json',
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
-				if ($formData.type === 'resetPassword') {
-					success = true;
-				}
+				success = true;
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);

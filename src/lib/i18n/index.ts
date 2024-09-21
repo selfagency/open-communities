@@ -5,6 +5,18 @@ import { log } from '$lib/utils';
 /* endregion imports */
 
 const dicts = ['auth', 'common', 'congregation'];
+const langs = ['en', 'es', 'fr', 'de'];
+const loaders: any[] = [];
+
+langs.forEach((lang) =>
+	dicts.forEach((dict) =>
+		loaders.push({
+			locale: lang,
+			key: dict,
+			loader: async () => (await import(`./${lang}/${dict}.json`)).default
+		})
+	)
+);
 
 export const { t, locale, locales, loading, loadTranslations, translations } = new i18n(<
 	Config<{
@@ -14,9 +26,5 @@ export const { t, locale, locales, loading, loadTranslations, translations } = n
 	initLocale: 'en',
 	fallbackLocale: 'en',
 	log: { logger: log },
-	loaders: dicts.map((dict) => ({
-		locale: 'en',
-		key: dict,
-		loader: async () => (await import(`./en/${dict}.json`)).default
-	}))
+	loaders
 });

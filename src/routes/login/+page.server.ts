@@ -118,6 +118,8 @@ export const actions = {
 				{
 					name: form.data.name as string,
 					email: form.data.email as string,
+					lang: form.data.lang as string,
+					emailVisibility: form.data.emailVisibility as boolean,
 					password: form.data.password as string,
 					passwordConfirm: form.data.passwordConfirm as string
 				},

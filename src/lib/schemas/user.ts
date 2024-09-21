@@ -44,6 +44,7 @@ export const userSchema = z
 			})
 		}),
 		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
+		emailVisibility: z.boolean().default(true),
 		password,
 		oldPassword: z.string().optional(),
 		passwordConfirm: z.string(),
