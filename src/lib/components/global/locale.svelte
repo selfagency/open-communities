@@ -27,6 +27,11 @@
 			const locale = value.value;
 			user.set({ ...$user, lang: locale });
 			window.location.reload();
+			if (locale === 'he') {
+				document.body.setAttribute('dir', 'rtl');
+			} else {
+				document.body.setAttribute('dir', 'ltr');
+			}
 		}
 	};
 	/* endregion methods */

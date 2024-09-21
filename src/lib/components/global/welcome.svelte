@@ -13,7 +13,7 @@
 	<Inclusive class="absolute -bottom-10 -right-5 w-24 fill-slate-800 sm:w-32 lg:-right-10" />
 
 	<h1
-		class="pointer-events-none w-full text-center text-xl sm:max-w-[70%] sm:text-3xl md:text-4xl lg:text-5xl"
+		class="pointer-events-none w-full text-center text-xl sm:max-w-[80%] sm:text-3xl md:text-4xl lg:text-5xl"
 	>
 		{$t('common.home.blurb')}
 	</h1>

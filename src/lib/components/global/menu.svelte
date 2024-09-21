@@ -2,12 +2,13 @@
 	/* region imports */
 	import { createEventDispatcher } from 'svelte';
 
+	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { t } from '$lib/i18n';
 	import { user, state } from '$lib/stores';
 
-	// import Locale from './locale.svelte';
+	import Locale from './locale.svelte';
 	/*  endregion imports */
 
 	/* region variables */
@@ -24,7 +25,7 @@
 		? 'mt-8 flex flex-col items-start justify-start'
 		: 'flex flex-row items-center justify-between space-x-2'}
 >
-	<!-- <span class="mx-2"><Locale /></span> -->
+	{#if dev}<span class="mx-2"><Locale /></span>{/if}
 	{#if $user.congregation && !$user.admin}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'default'}

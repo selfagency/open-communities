@@ -85,7 +85,7 @@ export default {
 		},
 		fontFamily: {
 			display: [
-				'Magilio Regular',
+				'Magilio',
 				'Atkinson Hyperlegible',
 				'Roboto',
 				'sans-serif',
