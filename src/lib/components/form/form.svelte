@@ -369,7 +369,14 @@
 											>{$t('congregation.name')}
 											<Required set={!isEmpty($formData.name)} /></Form.Label
 										>
-										<Input {...attrs} bind:value={$formData.name} required />
+										<Input
+											{...attrs}
+											bind:value={$formData.name}
+											required
+											on:change={() => {
+												$formData.name = $formData.name.trim();
+											}}
+										/>
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
@@ -427,7 +434,14 @@
 								<Form.Field {form} name="contactUrl">
 									<Form.Control let:attrs>
 										<Form.Label>{$t('common.website')}</Form.Label>
-										<Input {...attrs} bind:value={$formData.contactUrl} />
+										<div class="text-xs text-slate-500">{$t('common.http')}</div>
+										<Input
+											{...attrs}
+											bind:value={$formData.contactUrl}
+											on:change={() => {
+												$formData.contactUrl = $formData.contactUrl.trim();
+											}}
+										/>
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
@@ -1185,14 +1199,27 @@
 									<Form.Field {form} name="registration_email">
 										<Form.Control let:attrs>
 											<Form.Label for="registration_email">{$t('common.email')}</Form.Label>
-											<Input {...attrs} bind:value={$formData.registration.email} />
+											<Input
+												{...attrs}
+												bind:value={$formData.registration.email}
+												on:change={() => {
+													$formData.registration.email = $formData.registration.email.trim();
+												}}
+											/>
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 									<Form.Field {form} name="registration_url">
 										<Form.Control let:attrs>
 											<Form.Label for="registration_url">{$t('common.website')}</Form.Label>
-											<Input {...attrs} bind:value={$formData.registration.url} />
+											<div class="text-xs text-slate-500">{$t('common.http')}</div>
+											<Input
+												{...attrs}
+												bind:value={$formData.registration.url}
+												on:change={() => {
+													$formData.registration.url = $formData.registration.url.trim();
+												}}
+											/>
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
