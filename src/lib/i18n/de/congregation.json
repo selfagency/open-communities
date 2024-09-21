@@ -3,22 +3,13 @@
 	"accessHealthSafety": "Zugang, Gesundheit und Sicherheit",
 	"accessibility": {
 		"accessibility": "Erreichbarkeit",
-		"ada": "ADA-Zugänglichkeit",
-		"asl": "ASL-Dolmetschen",
 		"cc": "Geschlossene Untertitel",
 		"eva": "EVA-Transkriptionen",
 		"extended": "Welche der folgenden Zugänglichkeiten wird verfügbar sein?",
-		"hybrid_automatedCaptions": "Automatisierte Untertitel, Online-Zugang zu hybriden Diensten",
-		"hybrid_liveCaptions": "Live-Untertitel, Online-Zugang zu hybriden Diensten",
-		"inPerson_adaAll": "ADA-konforme Räumlichkeiten für alle persönlichen Dienstleistungen",
-		"inPerson_adaSome": "ADA-konforme Räumlichkeiten für einige persönliche Dienstleistungen",
-		"inPerson_asl": "ASL-Dolmetschen, persönlich",
 		"inPerson_eva": "EVA-Transkriptionen, persönlich",
 		"note": "Wenn die Teilnehmer die Zugänglichkeit im Voraus beantragen müssen, fügen Sie dies bitte in das Feld \"Sonstiges\" ein.",
-		"online_asl": "ASL-Dolmetschen, online",
 		"online_automatedCaptions": "Automatisierte Beschriftungen, online",
-		"online_liveCaptions": "Live-Untertitel, online",
-		"short": "Erreich."
+		"online_liveCaptions": "Live-Untertitel, online"
 	},
 	"add": "hinzufügen",
 	"addCongregation": "Gemeinde hinzufügen",

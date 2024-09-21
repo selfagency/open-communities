@@ -1,5 +1,144 @@
 {
+	"about": "Over",
+	"accessHealthSafety": "Toegang, gezondheid en veiligheid",
+	"accessibility": {
+		"accessibility": "Toegankelijkheid",
+		"cc": "Gesloten ondertiteling",
+		"eva": "EVA transcripties",
+		"extended": "Welke van de volgende toegankelijkheid is beschikbaar?",
+		"inPerson_eva": "EVA transcripties, persoonlijk",
+		"note": "Als deelnemers op voorhand toegankelijkheid moeten aanvragen, voeg dat dan toe in het veld 'Andere'.",
+		"online_automatedCaptions": "Geautomatiseerde bijschriften, online",
+		"online_liveCaptions": "Live ondertiteling, online"
+	},
+	"add": "Voeg  toe",
+	"addCongregation": "Gemeente toevoegen",
+	"addFailure": "Mislukt om gemeente toe te voegen.",
+	"addSuccess": "Gemeente succesvol toegevoegd.",
+	"addSuccessNotice": "Bedankt voor uw inzending. Iemand zal het binnenkort bekijken en goedkeuren of contact met je opnemen als dat nodig is.",
+	"admin": {
+		"admin": "Admin",
+		"unapproved": "Niet goedgekeurd",
+		"unclaimed": "Niet opgeëiste"
+	},
+	"approved": "Goedgekeurd",
+	"claimThis": "Claim gemeente",
+	"clergy": {
+		"clergy": "Geestelijken",
+		"extended": "Noem hieronder het team van geestelijken dat zal voorgaan tijdens Yamim Noraim."
+	},
+	"congregation": "Gemeente",
+	"contact": "Neem contact op met",
 	"contactEmail": {
-		"contactEmail": "Contact e-mail"
-	}
+		"contactEmail": "Contact e-mail",
+		"extended": "E-mailadres van bovenstaande contactpersoon"
+	},
+	"contactName": {
+		"contactName": "Naam contactpersoon",
+		"extended": "Naam van beste contactpersoon voor communicatie van Rabbis for Ceasefire"
+	},
+	"contactUrl": "Contact URL",
+	"delete": "Gemeente verwijderen",
+	"deleteFailure": "Gemeente niet verwijderd.",
+	"deleteSuccess": "Gemeente succesvol verwijderd.",
+	"denomination": {
+		"affiliation": "Aansluiting",
+		"conservative": "Conservatief",
+		"denomination": "Denominatie",
+		"denominations": "Benamingen",
+		"extended": "Is je congregatie verbonden met een specifieke denominatie of beweging?",
+		"humanist": "Seculier/Humanistisch",
+		"multiDenominational": "Multi-kerkelijk",
+		"orthodox": "Orthodox",
+		"postDenominational": "Postconfessioneel",
+		"reconstructionist": "Reconstructionistisch",
+		"reform": "Hervorm",
+		"renewal": "Vernieuwing",
+		"unaffiliated": "Niet-aangesloten"
+	},
+	"description": "Beschrijving",
+	"details": "Details",
+	"edit": "Bewerk",
+	"editCongregation": "Samenkomst bewerken",
+	"editFailure": "Mislukt om gemeente te bewerken.",
+	"editNotice": "Als je wijzigingen aanbrengt, wordt deze gemeente van de lijst verwijderd totdat een beheerder je wijzigingen kan goedkeuren.",
+	"editSuccess": "Gemeente met succes bewerkt.",
+	"editSuccessNotice": "Bedankt voor de update! Iemand zal het binnenkort bekijken en goedkeuren of indien nodig contact met je opnemen.",
+	"exists": "Er bestaat al een congregatie met deze naam op deze locatie",
+	"fit": {
+		"clergyMember": "Een lid van het team van geestelijken is aangesloten bij Rabbis for Ceasefire",
+		"extended": "Waarom zou jouw gemeente goed passen bij Joden in de staakt-het-vuren beweging? Geef a.u.b. aanvullende redenen op in het veld 'Overig'.",
+		"fit": "Pas",
+		"flag": {
+			"extended": "Hangt er in jouw gemeente een Israëlische vlag?",
+			"flag": "Israëlische vlag getoond",
+			"no": "Er wordt geen Israëlische vlag getoond",
+			"note": "Zo ja, dan vermelden we dat in de lijst van je gemeente, zodat mensen een geïnformeerde beslissing kunnen nemen over waar ze naartoe gaan.",
+			"short": "Israëlische vlag",
+			"yes": "Er hangt een Israëlische vlag, maar niet op de bima",
+			"yesBima": "Op de bima hangt een Israëlische vlag"
+		},
+		"multipleClergyMembers": "Meerdere leden van het team van geestelijken zijn aangesloten bij Rabbis for Ceasefire",
+		"publicStatement": "De congregatie heeft een publieke verklaring afgelegd ter ondersteuning van een permanent staakt-het-vuren"
+	},
+	"flavor": {
+		"extended": "Beschrijf in 50 woorden of minder de congregatie en de rituele 'smaak' die gasten zullen ervaren.",
+		"flavor": "Smaak"
+	},
+	"health": {
+		"extended": "Geef voor persoonlijke diensten een korte beschrijving van de COVID-gezondheids- en maskeerprotocollen in uw gemeente of link naar de gemeentelijke richtlijnen.",
+		"health": "Gezondheid",
+		"maskingRecommended": "Maskeren aanbevolen",
+		"maskingRequired": "Maskeren vereist",
+		"noGuidelines": "Geen COVID-richtlijnen aanwezig",
+		"notApplicable": "Niet van toepassing, alleen online",
+		"other": "Ander COVID-beleid"
+	},
+	"location": {
+		"city": "Stad",
+		"country": "Land",
+		"countryCode": "Landcode",
+		"latitude": "Breedte",
+		"longitude": "Lengte",
+		"state": "Staat/provincie",
+		"stateCode": "Code staat/provincie"
+	},
+	"name": "Naam van gemeente",
+	"notes": {
+		"extended": "Is er nog iets dat we moeten weten?",
+		"notes": "Opmerkingen"
+	},
+	"nothingFound": "Geen gemeenten gevonden.",
+	"registration": {
+		"contact": "Geef een e-mailadres of website-URL op waar mensen zich kunnen registreren.",
+		"extended": "Wat voor soort registratie bieden jullie gasten aan?",
+		"fixedPrice": "Vaste ticketprijs (per dienst of voor alles)",
+		"free": "Gratis",
+		"register": "Registreer",
+		"registration": "Registratie",
+		"slidingScale": "Glijdende schaal",
+		"suggestedDonation": "Voorgestelde donatie"
+	},
+	"security": {
+		"armedSecurity": "Gewapende beveiliging",
+		"clergyArmed": "Gewapende geestelijken",
+		"congregantsArmed": "Gewapende gemeenteleden",
+		"extended": "Is er politie of andere gewapende beveiliging aanwezig in je gemeente?",
+		"localPolice": "Lokale politie of sheriff",
+		"noFirearms": "Vuurwapens niet toegestaan",
+		"privateSecurityArmed": "Gewapende particuliere beveiliging",
+		"privateSecurityUnarmed": "Ongewapende particuliere beveiliging",
+		"security": "Beveiliging",
+		"unarmedSecurity": "Ongewapende beveiliging"
+	},
+	"services": {
+		"extended": "Voor welk soort diensten worden niet-leden uitgenodigd?",
+		"hybrid": "Online toegang tot hybride diensten",
+		"inPerson": "Persoonlijk",
+		"offsite": "Evenementen op locatie",
+		"onlineOnly": "Alleen online",
+		"services": "Diensten"
+	},
+	"transferFailure": "Overdracht van gemeente mislukt. Bestaat de gebruiker?",
+	"transferSuccess": "Congregatie succesvol overgedragen."
 }
