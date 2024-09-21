@@ -1,0 +1,153 @@
+{
+  "about": "A  oldalról",
+  "accessHealthSafety": "Hozzáférés, egészség és biztonság",
+  "accessibility": {
+    "accessibility": "Hozzáférhetőség",
+    "ada": "ADA hozzáférhetőség",
+    "asl": "ASL tolmácsolás",
+    "cc": "Zárt feliratozás",
+    "eva": "EVA átiratok",
+    "extended": "Az alábbi elérhetőségek közül melyik lesz elérhető?",
+    "hybrid_automatedCaptions": "Automatizált feliratok, online hozzáférés a hibrid szolgáltatásokhoz",
+    "hybrid_liveCaptions": "Élő feliratozás, online hozzáférés a hibrid szolgáltatásokhoz",
+    "inPerson_adaAll": "ADA-kompatibilis helyszín minden személyes szolgáltatáshoz",
+    "inPerson_adaSome": "ADA-kompatibilis helyszín néhány személyes szolgáltatáshoz",
+    "inPerson_asl": "ASL tolmácsolás, személyesen",
+    "inPerson_eva": "EVA átiratok, személyesen",
+    "note": "Ha a résztvevőknek előzetesen kérniük kell a hozzáférhetőséget, kérjük, adja meg ezt a részletet az \"Egyéb\" mezőben.",
+    "online_asl": "ASL tolmácsolás, online",
+    "online_automatedCaptions": "Automatizált feliratok, online",
+    "online_liveCaptions": "Élő feliratok, online",
+    "short": "Accomms."
+  },
+  "add": "Add",
+  "addCongregation": "Gyülekezet hozzáadása",
+  "addFailure": "Nem sikerült hozzáadni a gyülekezetet.",
+  "addSuccess": "A gyülekezet sikeresen hozzáadta.",
+  "addSuccessNotice": "Köszönjük a beadványát. Valaki rövidesen átnézi és jóváhagyja, vagy szükség esetén felveszi vele a kapcsolatot.",
+  "admin": {
+    "admin": "Admin",
+    "unapproved": "Nem jóváhagyott",
+    "unclaimed": "Nem igényelt"
+  },
+  "approved": "Jóváhagyva",
+  "claimThis": "Claim kongregáció",
+  "clergy": {
+    "clergy": "Lelkészek",
+    "extended": "Sorolja fel az alábbiakban azt a lelkészi csapatot, amelyik a Jamim Noraim alatt vezetni fog."
+  },
+  "congregation": "Gyülekezet",
+  "contact": "Kapcsolat",
+  "contactEmail": {
+    "contactEmail": "Kapcsolat e-mail",
+    "extended": "A fent felsorolt kapcsolattartó személy e-mail címe"
+  },
+  "contactName": {
+    "contactName": "Kapcsolattartó neve",
+    "extended": "A Rabbis for Ceasefire legjobb kapcsolattartójának neve a kommunikációra vonatkozóan"
+  },
+  "contactUrl": "Kapcsolat URL",
+  "delete": "Gyülekezet törlése",
+  "deleteFailure": "Nem sikerült törölni a gyülekezetet.",
+  "deleteSuccess": "Gyülekezet sikeresen törölve.",
+  "denomination": {
+    "affiliation": "Hovatartozás",
+    "conservative": "Konzervatív",
+    "denomination": "Megnevezés",
+    "denominations": "Megnevezések",
+    "extended": "A gyülekezete egy adott felekezethez vagy mozgalomhoz tartozik?",
+    "humanist": "Világi/humanista",
+    "multiDenominational": "Több felekezetű",
+    "orthodox": "Ortodox",
+    "postDenominational": "A felekezetek utáni",
+    "reconstructionist": "Rekonstruktivista",
+    "reform": "Reform",
+    "renewal": "Megújulás",
+    "unaffiliated": "Nem kapcsolt"
+  },
+  "description": "Leírás",
+  "details": "Részletek",
+  "edit": "Szerkesztés",
+  "editCongregation": "Gyülekezet szerkesztése",
+  "editFailure": "A gyülekezet szerkesztése sikertelen.",
+  "editNotice": "A módosítások elvégzésével a gyülekezet törlődik a listáról, amíg a rendszergazda jóvá nem hagyja a módosításokat.",
+  "editSuccess": "A gyülekezet sikeresen szerkesztett.",
+  "editSuccessNotice": "Köszönöm a frissítést! Valaki rövidesen felülvizsgálja és jóváhagyja, vagy szükség esetén kapcsolatba lép velünk.",
+  "exists": "Ezen a helyen már létezik egy ilyen nevű gyülekezet.",
+  "fit": {
+    "clergyMember": "A lelkészi csapat egyik tagja a Rabbik a tűzszünetért szervezet tagja",
+    "extended": "Miért lenne az Ön gyülekezete jó választás a tűzszüneti mozgalomban részt vevő zsidók számára? Kérjük, az \"Egyéb\" mezőben ossza meg további okait.",
+    "fit": "Fit",
+    "flag": {
+      "extended": "Az Ön gyülekezete kitűzi az izraeli zászlót?",
+      "flag": "Izraeli zászló kitűzve",
+      "no": "Izraeli zászló nincs kitűzve",
+      "note": "Ha igen, akkor ezt fel fogjuk tüntetni a gyülekezetének listáján, hogy az emberek megalapozott döntést hozhassanak arról, hogy hova járjanak.",
+      "short": "Izraeli zászló",
+      "yes": "Izraeli zászlót tűztek ki, de nem a bimán.",
+      "yesBima": "Egy izraeli zászló van kitűzve a bimára"
+    },
+    "multipleClergyMembers": "A lelkészi csapat több tagja a Rabbik a tűzszünetért szervezethez tartozik.",
+    "publicStatement": "A gyülekezet nyilvános nyilatkozatot tett a tartós tűzszünet támogatásáról."
+  },
+  "flavor": {
+    "extended": "Legfeljebb 50 szóban írja le a gyülekezetet és a rituális \"ízt\", amelyet a vendégek tapasztalni fognak.",
+    "flavor": "Ízek"
+  },
+  "health": {
+    "extended": "Személyes szolgáltatások esetén kérjük, röviden írja le a COVID egészségügyi és maszkolási protokollokat az Ön gyülekezetében, vagy hivatkozzon a gyülekezeti irányelvekre.",
+    "health": "Egészség",
+    "maskingRecommended": "Maszkolás ajánlott",
+    "maskingRequired": "Szükséges maszkolás",
+    "noGuidelines": "Nincsenek COVID-irányelvek",
+    "notApplicable": "Nem alkalmazható, csak online",
+    "other": "Egyéb COVID politika"
+  },
+  "location": {
+    "city": "Város",
+    "country": "Ország",
+    "countryCode": "Országkód",
+    "latitude": "Szélesség",
+    "longitude": "Hosszúság",
+    "state": "Állam/Megye",
+    "stateCode": "Állam/Megye kódja"
+  },
+  "name": "A gyülekezet neve",
+  "notes": {
+    "extended": "Van még valami, amit tudnunk kell?",
+    "notes": "Megjegyzések"
+  },
+  "nothingFound": "Nem találtak gyülekezeteket.",
+  "registration": {
+    "contact": "Kérjük, adja meg az e-mail címet vagy a weboldal URL-címét, ahol az emberek regisztrálhatnak.",
+    "extended": "Milyen regisztrációt kínálnak a vendégeknek?",
+    "fixedPrice": "Fix jegyár (szolgáltatásonként vagy az egészre)",
+    "free": "Ingyenes",
+    "register": "Regisztráció",
+    "registration": "Regisztráció",
+    "slidingScale": "Csúszó skála",
+    "suggestedDonation": "Javasolt adomány"
+  },
+  "security": {
+    "armedSecurity": "Fegyveres biztonság",
+    "clergyArmed": "Fegyveres papság",
+    "congregantsArmed": "Fegyveres hívek",
+    "extended": "Van-e a gyülekezetében rendőri jelenlét vagy más fegyveres biztonsági szolgálat?",
+    "localPolice": "Helyi rendőrség vagy seriff",
+    "noFirearms": "Lőfegyverek használata tilos",
+    "privateSecurityArmed": "Fegyveres magán biztonsági szolgálat",
+    "privateSecurityUnarmed": "Fegyvertelen magánbiztonság",
+    "security": "Biztonság",
+    "unarmedSecurity": "Fegyvertelen biztonság"
+  },
+  "services": {
+    "extended": "Milyen típusú szolgáltatásokhoz csatlakozhatnak a nem tagok?",
+    "hybrid": "Online hozzáférés a hibrid szolgáltatásokhoz",
+    "inPerson": "Személyesen",
+    "offsite": "Helyszínen kívüli események",
+    "onlineOnly": "Kizárólag online",
+    "services": "Szolgáltatások"
+  },
+  "transferFailure": "Nem sikerült a gyülekezet átadása. Létezik a felhasználó?",
+  "transferSuccess": "A gyülekezet sikeresen átkerült."
+}

@@ -5,7 +5,7 @@ import { log } from '$lib/utils';
 /* endregion imports */
 
 const dicts = ['auth', 'common', 'congregation'];
-const langs = ['en', 'es', 'fr', 'de'];
+const langs = ['en', 'es', 'fr', 'de', 'he', 'nl', 'pt', 'hu', 'ru', 'uk'];
 const loaders: any[] = [];
 
 langs.forEach((lang) =>
