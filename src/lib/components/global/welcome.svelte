@@ -7,7 +7,7 @@
 </script>
 
 <div
-	class="relative mb-16 mt-4 flex h-48 w-full flex-row items-center justify-center rounded-xl bg-slate-200 px-12 sm:mb-24 sm:mt-12"
+	class="relative mb-16 mt-4 flex h-56 w-full flex-row items-center justify-center rounded-xl bg-slate-200 px-12 sm:mb-24 sm:mt-12"
 >
 	<Find class="absolute -left-5 -top-10 w-24 fill-slate-800 sm:w-32 lg:-left-10" />
 	<Inclusive class="absolute -bottom-10 -right-5 w-24 fill-slate-800 sm:w-32 lg:-right-10" />

@@ -2,9 +2,6 @@
 	/* region imports */
 	import { inject } from '@vercel/analytics';
 	import { onMount } from 'svelte';
-	// import { pwaAssetsHead } from 'virtual:pwa-assets/head';
-	// import { pwaInfo } from 'virtual:pwa-info';
-	// import { registerSW } from 'virtual:pwa-register';
 
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';

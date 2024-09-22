@@ -25,7 +25,6 @@
 		? 'mt-8 flex flex-col items-start justify-start'
 		: 'flex flex-row items-center justify-between space-x-2'}
 >
-	{#if dev}<span class="mx-2"><Locale /></span>{/if}
 	{#if $user.congregation && !$user.admin}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'default'}
@@ -74,4 +73,6 @@
 			{mode === 'full' && $state.isMobile ? '' : `/ ${$t('auth.signUp')}`}
 		</Button>
 	{/if}
+
+	{#if dev}<Locale {mode} />{/if}
 </div>
