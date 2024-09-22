@@ -55,6 +55,7 @@
   },
   "http": "A \"http://\" vagy \"https://\" kezdőbetűvel kell kezdődnie.",
   "invalidUrl": "Érvénytelen URL",
+  "language": "Nyelv",
   "location": "Helyszín",
   "menu": "Menü",
   "name": "Név",

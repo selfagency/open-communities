@@ -55,6 +55,7 @@
   },
   "http": "Deve começar por `http://` ou `https://`",
   "invalidUrl": "URL inválido",
+  "language": "Língua",
   "location": "Localização",
   "menu": "Menu",
   "name": "Nome",

@@ -55,6 +55,7 @@
   },
   "http": "Moet beginnen met `http://` of `https://`.",
   "invalidUrl": "Ongeldige URL",
+  "language": "Taal",
   "location": "Locatie",
   "menu": "Menu",
   "name": "Naam",
