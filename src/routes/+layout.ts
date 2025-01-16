@@ -10,15 +10,15 @@ export const load = async ({ data }) => {
 	let u;
 
 	if (browser) {
-		if (isEmpty(state.get())) {
+		if (isEmpty(state?.get())) {
 			initState();
 		}
 
-		u = user.get();
+		u = user?.get();
 
 		if (isEmpty(u)) {
 			initUser();
-			u = user.get();
+			u = user?.get();
 		}
 	}
 

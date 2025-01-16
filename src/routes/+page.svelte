@@ -68,6 +68,7 @@
 {/if}
 
 <Welcome />
+
 {#if congregations}
 	<Congregations {congregations} />
 {/if}

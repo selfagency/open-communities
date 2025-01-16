@@ -47,7 +47,7 @@ function handleError(err) {
 	if (mlc.includes('unexpected')) status = 500;
 	if (mlc.includes('unavailable')) status = 503;
 
-	log.error('Error:', err);
+	log.error('load', err);
 	return error(status, message);
 }
 
