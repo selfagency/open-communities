@@ -1,23 +1,12 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-import html from 'eslint-plugin-html';
+// @ts-check
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import eslintConfigPrettier from 'eslint-config-prettier';
 import perfectionist from 'eslint-plugin-perfectionist';
-import globals from 'globals';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import parser from 'svelte-eslint-parser';
+import html from 'eslint-plugin-html';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-	recommendedConfig: js.configs.recommended,
-	allConfig: js.configs.all
-});
-
-export default [
+export default tseslint.config(
 	{
 		ignores: [
 			'**/.DS_Store',
@@ -34,53 +23,10 @@ export default [
 			'**/package.json'
 		]
 	},
-	...compat.extends(
-		'eslint:recommended',
-		'plugin:@typescript-eslint/recommended',
-		'plugin:svelte/recommended',
-		'prettier'
-	),
-	{
-		plugins: {
-			'@typescript-eslint': typescriptEslint,
-			perfectionist
-		},
-
-		languageOptions: {
-			globals: {
-				...globals.browser,
-				...globals.node
-			},
-
-			parser: tsParser,
-			ecmaVersion: 2020,
-			sourceType: 'module',
-
-			parserOptions: {
-				extraFileExtensions: ['.svelte']
-			}
-		},
-
-		settings: {
-			perfectionist: {
-				type: 'natural',
-				partitionByComment: false
-			}
-		},
-
-		rules: {
-			'@typescript-eslint/no-explicit-any': 'off',
-			'@typescript-eslint/no-unused-vars': 'warn',
-			'svelte/no-at-html-tags': 'off',
-
-			'perfectionist/sort-imports': [
-				'error',
-				{
-					internalPattern: ['$*/**']
-				}
-			]
-		}
-	},
+	eslint.configs.recommended,
+	tseslint.configs.recommended,
+	eslintConfigPrettier,
+	perfectionist.configs['recommended-natural'],
 	{
 		files: ['**/*.svelte'],
 
@@ -95,10 +41,24 @@ export default [
 		}
 	},
 	{
+		rules: {
+			'@typescript-eslint/no-explicit-any': 'off',
+			'@typescript-eslint/no-unused-vars': 'warn',
+			'svelte/no-at-html-tags': 'off',
+
+			'perfectionist/sort-imports': [
+				'error',
+				{
+					internalPattern: ['$*/**']
+				}
+			]
+		}
+	},
+	{
 		files: ['**/*.html'],
 
 		plugins: {
 			html
 		}
 	}
-];
+);

@@ -1,4 +1,7 @@
 {
 	"i18n-ally.localesPaths": ["src/lib/i18n"],
-	"cSpell.words": ["bima", "leeoniya", "maplibre", "sonner", "ufuzzy"]
+	"cSpell.words": ["bima", "leeoniya", "maplibre", "sonner", "ufuzzy"],
+	"eslint.format.enable": true,
+	"eslint.useESLintClass": true,
+	"eslint.useFlatConfig": true
 }

@@ -27,8 +27,7 @@ SENTRY_ORG=""
 PUBLIC_PROSOPO_SITEKEY=""
 PROSOPO_ENDPOINT=""
 PROSOPO_SECRET=""
-VERCEL_ENV="development"
-VERCEL_GIT_COMMIT_SHA="dev"
+NODE_ENV="development"
 ```
 
 ## Development

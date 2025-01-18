@@ -8,7 +8,7 @@ import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-import { VERCEL_ENV, VERCEL_GIT_COMMIT_SHA } from '$env/static/private';
+import { NODE_ENV } from '$env/static/private';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
@@ -18,8 +18,7 @@ import { logEvent, log as logger } from '$lib/server/logger';
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
 	tracesSampleRate: 0.5,
-	environment: VERCEL_ENV,
-	release: VERCEL_GIT_COMMIT_SHA,
+	environment: NODE_ENV,
 	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()]
 });
 /* endregion init */

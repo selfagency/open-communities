@@ -1,10 +1,12 @@
-import adapter from '@sveltejs/adapter-vercel';
+import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import postcssConfig from 'postcss-load-config';
 
 const config = {
 	kit: {
-		adapter: adapter(),
+		adapter: adapter({
+			mode: 'standalone'
+		}),
 		csp: {
 			directives: {
 				'child-src': ['self', 'blob:'],
@@ -13,7 +15,6 @@ const config = {
 					'127.0.0.1:8090',
 					'api.opencommunities.info',
 					'*.prosopo.io',
-					'va.vercel-scripts.com',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
 					'*.sentry.io'
@@ -35,7 +36,6 @@ const config = {
 					'unsafe-eval',
 					'unsafe-inline',
 					'js.prosopo.io',
-					'va.vercel-scripts.com',
 					'*.sentry.io',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
@@ -45,7 +45,6 @@ const config = {
 					'self',
 					'unsafe-inline',
 					'*.sentry.io',
-					'va.vercel-scripts.com',
 					'js.prosopo.io',
 					'nonce-o247950'
 				],

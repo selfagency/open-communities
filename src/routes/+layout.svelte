@@ -1,6 +1,5 @@
 <script lang="ts">
 	/* region imports */
-	import { inject } from '@vercel/analytics';
 	import { onMount } from 'svelte';
 
 	import { browser } from '$app/environment';
