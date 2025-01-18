@@ -1,7 +1,5 @@
 <script lang="ts">
 	/* region imports */
-	import { onMount } from 'svelte';
-
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import Footer from '$lib/components/global/footer.svelte';
@@ -9,6 +7,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { t } from '$lib/i18n';
 	import { setState, user } from '$lib/stores';
+	import { onMount } from 'svelte';
 	// import { log } from '$lib/utils';
 
 	import '../app.css';
@@ -23,6 +22,7 @@
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
+			// @ts-expect-error global
 			inject();
 
 			if ($user?.lang === 'he') {
@@ -49,7 +49,7 @@
 
 	/* region reactivity */
 	$: if (innerWidth > 0) {
-		setState({ offsetWidth: innerWidth, isMobile: innerWidth < 640 });
+		setState({ isMobile: innerWidth < 640, offsetWidth: innerWidth });
 	}
 
 	$: if (innerHeight > 0) {

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { isEmpty } from 'radashi';
 	/* region imports */
+	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
@@ -17,9 +17,6 @@
 	export let data: SuperValidated<any>;
 	export let token: string | null;
 	export let verified: boolean = false;
-
-	// locals
-	let error: string;
 	/* endregion variables */
 
 	/* region form */
@@ -60,11 +57,7 @@
 	out:fade={{ duration: 100, delay: 0 }}
 	class="space-y-4"
 >
-	{#if error}
-		<div>{error}</div>
-	{:else}
-		<div>{$t('auth.verifying')}</div>
-	{/if}
+	<div>{$t('auth.verifying')}</div>
 
 	{#if $formData.token && $formData.type}
 		<form id="verify" method="POST" action="?/acct" use:enhance>
