@@ -41,13 +41,7 @@ const config = {
 					'*.basemaps.cartocdn.com',
 					'nonce-o247950'
 				],
-				'script-src-elem': [
-					'self',
-					'unsafe-inline',
-					'*.sentry.io',
-					'js.prosopo.io',
-					'nonce-o247950'
-				],
+				'script-src-elem': ['self', 'unsafe-inline', '*.sentry.io', 'js.prosopo.io'],
 				'style-src': ['self', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
 				'style-src-elem': ['self', 'unsafe-inline', 'fonts.googleapis.com'],
 				'worker-src': ['self', 'blob:']

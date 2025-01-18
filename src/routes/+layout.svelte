@@ -22,9 +22,6 @@
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
-			// @ts-expect-error global
-			inject();
-
 			if ($user?.lang === 'he') {
 				document.body.setAttribute('dir', 'rtl');
 			} else {
