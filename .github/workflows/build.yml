@@ -26,7 +26,7 @@ jobs:
         with:
           push: true
           env: |
-            PUBLIC_API_ENDPOINT="${{ vars.PUBLIC_API_ENDPOINT }}",PUBLIC_HOSTNAME="${{ vars.PUBLIC_HOSTNAME }}",PUBLIC_PROSOPO_SITEKEY="${{ vars.PUBLIC_PROSOPO_SITEKEY }}",PUBLIC_SENTRY_DSN="${{ vars.PUBLIC_SENTRY_DSN }}",SENTRY_AUTH_TOKEN="${{ secrets.SENTRY_AUTH_TOKEN }}",SENTRY_ORG="${{ vars.SENTRY_ORG }}",SENTRY_PROJECT="${{ vars.SENTRY_PROJECT}}"
+            PUBLIC_API_ENDPOINT="${{ vars.PUBLIC_API_ENDPOINT }}",PUBLIC_HOSTNAME="${{ vars.PUBLIC_HOSTNAME }}",PUBLIC_PROSOPO_SITEKEY="${{ vars.PUBLIC_PROSOPO_SITEKEY }}",PUBLIC_SENTRY_DSN="${{ vars.PUBLIC_SENTRY_DSN }}"
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
