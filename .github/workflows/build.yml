@@ -5,15 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-env:
-  PROSOPO_SECRET: ${{ secrets.PROSOPO_SECRET }}
-  PUBLIC_API_ENDPOINT: ${{ vars.PUBLIC_API_ENDPOINT }}
-  PUBLIC_HOSTNAME: ${{ vars.PUBLIC_HOSTNAME }}
-  PUBLIC_PROSOPO_SITEKEY: ${{ vars.PUBLIC_PROSOPO_SITEKEY }}
-  PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-  SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT}}
 
 jobs:
   build:
@@ -32,6 +23,15 @@ jobs:
 
       - name: Build and push Docker images
         uses: iloveitaly/github-action-nixpacks@main
+        env:
+          PROSOPO_SECRET: ${{ secrets.PROSOPO_SECRET }}
+          PUBLIC_API_ENDPOINT: ${{ vars.PUBLIC_API_ENDPOINT }}
+          PUBLIC_HOSTNAME: ${{ vars.PUBLIC_HOSTNAME }}
+          PUBLIC_PROSOPO_SITEKEY: ${{ vars.PUBLIC_PROSOPO_SITEKEY }}
+          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT}}
         with:
           push: true
           tags: |
