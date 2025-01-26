@@ -24,6 +24,7 @@ jobs:
       - name: Build and push Docker images
         uses: iloveitaly/github-action-nixpacks@main
         with:
+          cache: true
           push: true
           env: |
             PROSOPO_ENDPOINT=${{ vars.PROSOPO_ENDPOINT }},PROSOPO_SECRET="${{ secrets.PROSOPO_SECRET }}",PUBLIC_API_ENDPOINT=${{ vars.PUBLIC_API_ENDPOINT }},PUBLIC_HOSTNAME=${{ vars.PUBLIC_HOSTNAME }},PUBLIC_PROSOPO_SITEKEY=${{ vars.PUBLIC_PROSOPO_SITEKEY }},PUBLIC_SENTRY_DSN=${{ vars.PUBLIC_SENTRY_DSN }},SENTRY_ORG=${{ vars.SENTRY_ORG }},SENTRY_PROJECT=${{ vars.SENTRY_PROJECT}},SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
