@@ -133,8 +133,8 @@ importers:
         specifier: ^0.6.10
         version: 0.6.10(prettier-plugin-organize-attributes@1.0.0(prettier@3.4.2))(prettier-plugin-svelte@3.3.3(prettier@3.4.2)(svelte@4.2.19))(prettier@3.4.2)
       radashi:
-        specifier: 12.1.0
-        version: 12.1.0
+        specifier: 12.5.1
+        version: 12.5.1
       svelte:
         specifier: ^4.2.19
         version: 4.2.19
@@ -4356,9 +4356,9 @@ packages:
   quickselect@3.0.0:
     resolution: {integrity: sha512-XdjUArbK4Bm5fLLvlm5KpTFOiOThgfWWI4axAZDWg4E/0mKdZyI9tNEfds27qCi1ze/vwTR16kvmmGhRra3c2g==}
 
-  radashi@12.1.0:
-    resolution: {integrity: sha512-EB/t8uDEuCzAhWsVzUvI0fK7K0/nCRl0jh7oFUuQUium6zolLjQlaSJGykDdwcarTbmcDy2EHqxFPylOPcoZxQ==}
-    engines: {node: '>=14.18.0'}
+  radashi@12.5.1:
+    resolution: {integrity: sha512-gcznSPJe2SCIuWf6QTqSHZRyMQU6hnUk4NpR7LmmNmdK1BGOXdnHuNIO4VzNw+feu0Wsnv/AYmxqwUYDBatPMA==}
+    engines: {node: '>=16.0.0'}
 
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
@@ -9826,7 +9826,7 @@ snapshots:
 
   quickselect@3.0.0: {}
 
-  radashi@12.1.0: {}
+  radashi@12.5.1: {}
 
   randombytes@2.1.0:
     dependencies:
