@@ -3,7 +3,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 import { shake, uid } from 'radashi';
 
-import { NODE_ENV } from '$env/static/private';
+import { dev } from '$app/environment';
 import { PUBLIC_HOSTNAME } from '$env/static/public';
 import { logger } from '$lib/utils';
 /* endregion imports */
@@ -12,7 +12,7 @@ import { logger } from '$lib/utils';
 // constants
 const log = logger.getSubLogger({
 	name: 'server',
-	type: NODE_ENV === 'production' ? 'json' : 'pretty'
+	type: dev ? 'pretty' : 'json'
 });
 /* endregion variables */
 

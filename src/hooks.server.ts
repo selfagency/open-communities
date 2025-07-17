@@ -6,10 +6,10 @@ import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 
-import { NODE_ENV } from '$env/static/private';
-import { PUBLIC_SENTRY_DSN } from '$env/static/public';
+import { dev } from '$app/environment';
+import { SENTRY_DSN } from '$env/static/private';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 /* endregion imports */
@@ -17,8 +17,8 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* region init */
 if (!Sentry.isInitialized()) {
 	Sentry.init({
-		dsn: PUBLIC_SENTRY_DSN,
-		environment: NODE_ENV,
+		dsn: SENTRY_DSN,
+		environment: dev ? 'development' : 'production',
 		integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()],
 		tracesSampleRate: 0.5
 	});
@@ -32,7 +32,7 @@ const log = logger.getSubLogger({ name: 'hooks' });
 
 /* region methods */
 const validate = async (schema, request) => {
-	return request ? superValidate(request, zod(schema)) : superValidate(zod(schema));
+	return request ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
 };
 /* endregion methods */
 

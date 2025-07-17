@@ -1,11 +1,8 @@
 /* region imports */
 import type { ClientResponseError } from 'pocketbase';
-import type { SuperValidated } from 'sveltekit-superforms';
 
 import { fail } from '@sveltejs/kit';
 import { uid } from 'radashi';
-import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
 
 import type { UsersRecord } from '$lib/types';
 
@@ -29,7 +26,7 @@ export const load = async ({ locals }) => {
 export const actions = {
 	acct: async (event) => {
 		const { api } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, zod(tokenSchema));
+		const form = await event.locals.validate(tokenSchema, event);
 
 		try {
 			if (!form.valid) {
@@ -78,7 +75,7 @@ export const actions = {
 		const { cookies, fetch, locals } = event;
 		const { api, cookieOpts } = locals;
 
-		const form: SuperValidated<any> = await superValidate(event, zod(loginSchema));
+		const form = await locals.validate(loginSchema, event);
 		let user: UsersRecord;
 
 		try {
@@ -127,8 +124,8 @@ export const actions = {
 		return {};
 	},
 	signup: async (event) => {
-		const { api } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, zod(userSchema));
+		const { api, validate } = event.locals;
+		const form = await validate(userSchema, event);
 		let user: UsersRecord;
 
 		try {

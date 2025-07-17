@@ -1,5 +1,5 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 
 import type { UsersRecord } from '$lib/types';
 // import { log } from '$lib/utils';

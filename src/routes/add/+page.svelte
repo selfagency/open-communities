@@ -11,12 +11,12 @@
 	const data: PageData = $props();
 
 	// local vars
-	let userData = $state('');
+	let snapshotData = $state('');
 	/* endregion variables */
 
 	export const snapshot: Snapshot<string> = {
-		capture: () => userData,
-		restore: (value) => (userData = value)
+		capture: () => snapshotData,
+		restore: (value) => (snapshotData = value)
 	};
 </script>
 
@@ -24,4 +24,4 @@
 	<title>{$t('congregation.addCongregation')} &middot; {$t('common.title')}</title>
 </svelte:head>
 
-<AddForm data={data.form} content={data.content} bind:snapshot={userData} />
+<AddForm data={data.form} content={data.content} bind:snapshot={snapshotData} />

@@ -11,11 +11,11 @@
 	/* region variables */
 	// props
 	const data = $props();
-	let userData = $state('');
+	let snapshotData = $state('');
 
 	export const snapshot: Snapshot<string> = {
-		capture: () => userData,
-		restore: (value) => (userData = value)
+		capture: () => snapshotData,
+		restore: (value) => (snapshotData = value)
 	};
 	/* endregion variables */
 
@@ -28,4 +28,4 @@
 	<title>{$t('congregation.editCongregation')} &middot; {$t('common.title')}</title>
 </svelte:head>
 
-<EditForm data={data.form} mode="edit" bind:snapshot={userData} />
+<EditForm data={data.form} mode="edit" bind:snapshot={snapshotData} />

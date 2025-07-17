@@ -1,5 +1,5 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { t } from '$lib/i18n';
 // import { log } from '$lib/utils';

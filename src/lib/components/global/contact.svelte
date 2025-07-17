@@ -123,80 +123,91 @@
 				out:fade={{ delay: 0, duration: 100 }}
 			>
 				<Form.Field {form} name="name">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.name')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.name} required />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('auth.name')}</Form.Label>
+							<Input {...props} bind:value={$formData.name} required />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="email">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('common.email')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.email} required />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('common.email')}</Form.Label>
+							<Input {...props} bind:value={$formData.email} required />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="reason">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('common.contact.reason')}</Form.Label>
-						<Select.Root
-							selected={{
-								label: $t(`common.contact.options.${$formData.reason}`),
-								value: $formData.reason
-							}}
-							onSelectedChange={(v) => {
-								$formData.reason = v?.value;
-							}}
-						>
-							<Select.Trigger class="w-full">
-								<Select.Value />
-							</Select.Trigger>
-							<Select.Content {...attrs}>
-								<Select.Item value="question">{$t('common.contact.options.question')}</Select.Item>
-								<Select.Item value="suggest">{$t('common.contact.options.suggest')}</Select.Item>
-								<Select.Item value="claim">{$t('common.contact.options.claim')}</Select.Item>
-								<Select.Item value="delete">{$t('common.contact.options.delete')}</Select.Item>
-							</Select.Content>
-						</Select.Root>
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('common.contact.reason')}</Form.Label>
+							<Select.Root
+								selected={{
+									label: $t(`common.contact.options.${$formData.reason}`),
+									value: $formData.reason
+								}}
+								onSelectedChange={(v) => {
+									$formData.reason = v?.value;
+								}}
+							>
+								<Select.Trigger class="w-full">
+									<Select.Value />
+								</Select.Trigger>
+								<Select.Content {...props}>
+									<Select.Item value="question">{$t('common.contact.options.question')}</Select.Item
+									>
+									<Select.Item value="suggest">{$t('common.contact.options.suggest')}</Select.Item>
+									<Select.Item value="claim">{$t('common.contact.options.claim')}</Select.Item>
+									<Select.Item value="delete">{$t('common.contact.options.delete')}</Select.Item>
+								</Select.Content>
+							</Select.Root>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				{#if $formData.reason === 'claim' || $formData.reason === 'suggest'}
 					<Form.Field {form} name="record">
-						<Form.Control let:attrs>
-							<Form.Label>{$t('common.contact.record')}</Form.Label>
-							<Combobox
-								items={congregations}
-								{attrs}
-								bind:value={congregation}
-								placeholder={$t('common.selectThing', {
-									thing: $t('congregation.congregation').toLowerCase()
-								})}
-								disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
-								on:change={(e) => {
-									// log.debug(e.detail);
-									$formData.record = e.detail.value;
-								}}
-							/>
+						<Form.Control>
+							{#snippet children(props)}
+								<Form.Label>{$t('common.contact.record')}</Form.Label>
+								<Combobox
+									items={congregations}
+									{...props}
+									bind:value={congregation}
+									placeholder={$t('common.selectThing', {
+										thing: $t('congregation.congregation').toLowerCase()
+									})}
+									disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
+									on:change={(e) => {
+										// log.debug(e.detail);
+										$formData.record = e.detail.value;
+									}}
+								/>
+							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 				{/if}
 
 				<Form.Field {form} name="message">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('common.contact.message')}</Form.Label>
-						<Form.Description class="text-red-500">
-							{#if $formData.reason === 'delete'}
-								{$t('common.contact.account')}
-							{:else if $formData.reason === 'claim'}
-								{$t('common.contact.proof')}
-							{/if}
-						</Form.Description>
-						<Textarea {...attrs} bind:value={$formData.message} rows={8} required />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('common.contact.message')}</Form.Label>
+							<Form.Description class="text-red-500">
+								{#if $formData.reason === 'delete'}
+									{$t('common.contact.account')}
+								{:else if $formData.reason === 'claim'}
+									{$t('common.contact.proof')}
+								{/if}
+							</Form.Description>
+							<Textarea {...props} bind:value={$formData.message} rows={8} required />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>

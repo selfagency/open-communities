@@ -1,5 +1,7 @@
 <script lang="ts">
 	/* region imports */
+	import type { SuperValidated } from 'sveltekit-superforms';
+
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { isEmpty, shake, sleep } from 'radashi';
 	import { getContext, onMount } from 'svelte';
@@ -37,15 +39,29 @@
 
 	/* region variables */
 	// props
-	const {
+	let {
 		content,
 		data,
-		mode = $bindable('add')
-	}: { content?: PagesRecord; data: SuperValidated<any>; mode: 'add' | 'edit' } = $props();
-
-	let userData = $state('');
+		mode = $bindable('add'),
+		snapshot = $bindable()
+	}: {
+		content?: PagesRecord;
+		data: {
+			default?: SuperValidated<any>;
+			delete?: SuperValidated<any>;
+			transfer?: SuperValidated<any>;
+		};
+		mode?: 'add' | 'edit';
+		snapshot: string;
+	} = $props();
 
 	// constants
+	const valueSet = (obj: any): boolean => {
+		if (!obj || isEmpty(obj)) return false;
+		const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));
+		return !isEmpty(shaken);
+	};
+
 	const { load: loadLocation, setCity, setCountry, setState, state: location } = new Location();
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 	const denominations = [
@@ -71,33 +87,24 @@
 	];
 
 	// locals
-	let country: string = $state('country');
-	let province: string = $state('state');
-	let city: string = $state('city');
+	let country: string = $state('');
+	let province: string = $state('');
+	let city: string = $state('');
 
-	let hasErrors: boolean = $state('hasErrors');
-	let addSuccess: boolean = $state('addSuccess');
-	let editSuccess: boolean = $state('editSuccess');
+	let hasErrors: boolean = $state(false);
+	let addSuccess: boolean = $state(false);
+	let editSuccess: boolean = $state(false);
 
-	let title: string = '';
+	let title: string = $state('');
 
-	let view:
-		| 'accessibility'
-		| 'congregation'
-		| 'contact'
-		| 'fit'
-		| 'health'
-		| 'registration'
-		| 'security'
-		| 'services' = $state('congregation');
-
-	const hasFit: boolean = $derived(valueSet($formData.fit));
-	const hasServices: boolean = $derived(valueSet($formData.services));
-	const hasHealth: boolean = $derived(valueSet($formData.health));
-	const hasRegistration: boolean = $derived(valueSet($formData.registration));
+	let view = $state('congregation') as string;
 	/* endregion variables */
 
 	/* region methods */
+	const fixType = (input: any) => {
+		return input as Record<string, unknown> & { _errors?: string[] | undefined };
+	};
+
 	function initData() {
 		formData.set({
 			accessibility: {
@@ -166,12 +173,6 @@
 			visible: false
 		});
 	}
-
-	const valueSet = (obj: any): boolean => {
-		if (!obj || isEmpty(obj)) return false;
-		const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));
-		return !isEmpty(shaken);
-	};
 	/* endregion methods */
 
 	/* region form */
@@ -213,6 +214,10 @@
 
 	const { enhance, errors, form: formData } = form;
 
+	const hasFit: boolean = $derived(valueSet($formData.fit));
+	const hasServices: boolean = $derived(valueSet($formData.services));
+	const hasHealth: boolean = $derived(valueSet($formData.health));
+	const hasRegistration: boolean = $derived(valueSet($formData.registration));
 	/* endregion form */
 
 	/* region lifecycle */
@@ -429,75 +434,85 @@
 								{/if}
 
 								<Form.Field {form} name="contactUrl">
-									<Form.Control let:attrs>
-										<Form.Label>{$t('common.website')}</Form.Label>
-										<div class="text-xs text-slate-500">{$t('common.http')}</div>
-										<Input
-											{...attrs}
-											bind:value={$formData.contactUrl}
-											on:change={() => {
-												$formData.contactUrl = $formData.contactUrl.trim();
-											}}
-										/>
+									<Form.Control>
+										{#snippet children(props)}
+											<Form.Label>{$t('common.website')}</Form.Label>
+											<div class="text-xs text-slate-500">{$t('common.http')}</div>
+											<Input
+												{...props}
+												bind:value={$formData.contactUrl}
+												onchange={() => {
+													$formData.contactUrl = $formData.contactUrl.trim();
+												}}
+											/>
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<Form.Field {form} name="clergy">
-									<Form.Control let:attrs>
-										<Form.Label
-											>{$t('congregation.clergy.extended')}
-											<Required set={!isEmpty($formData.clergy)} /></Form.Label
-										>
-										<Input {...attrs} bind:value={$formData.clergy} required />
+									<Form.Control>
+										{#snippet children(props)}
+											<Form.Label
+												>{$t('congregation.clergy.extended')}
+												<Required set={!isEmpty($formData.clergy)} /></Form.Label
+											>
+											<Input {...props} bind:value={$formData.clergy} required />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<Form.Field {form} name="denomination">
-									<Form.Control let:attrs>
-										<Form.Label>{$t('congregation.denomination.extended')}</Form.Label>
-										<Select.Root
-											name="denomination"
-											selected={$formData.denomination
-												? {
-														label: $t(`congregation.denomination.${$formData.denomination}`),
-														value: $formData.denomination
-													}
-												: undefined}
-											onSelectedChange={(v) => {
-												$formData.denomination = v?.value;
-											}}
-										>
-											<Select.Trigger class="w-full">
-												<Select.Value />
-											</Select.Trigger>
-											<Select.Content {...attrs}>
-												{#each denominations as { label, value }}
-													<Select.Item {value}>{label}</Select.Item>
-												{/each}
-											</Select.Content>
-										</Select.Root>
+									<Form.Control
+										>{#snippet children(props)}
+											<Form.Label>{$t('congregation.denomination.extended')}</Form.Label>
+											<Select.Root
+												name="denomination"
+												selected={$formData.denomination
+													? {
+															label: $t(`congregation.denomination.${$formData.denomination}`),
+															value: $formData.denomination
+														}
+													: undefined}
+												onSelectedChange={(v) => {
+													$formData.denomination = v?.value;
+												}}
+											>
+												<Select.Trigger class="w-full">
+													<Select.Value />
+												</Select.Trigger>
+												<Select.Content {...props}>
+													{#each denominations as { label, value }, i (i)}
+														<Select.Item {value}>{label}</Select.Item>
+													{/each}
+												</Select.Content>
+											</Select.Root>
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<Form.Field {form} name="flavor">
-									<Form.Control let:attrs>
-										<Form.Label
-											>{$t('congregation.flavor.extended')}
-											<Required set={!isEmpty($formData.flavor)} /></Form.Label
-										>
-										<Textarea {...attrs} bind:value={$formData.flavor} required />
+									<Form.Control
+										>{#snippet children(props)}
+											<Form.Label
+												>{$t('congregation.flavor.extended')}
+												<Required set={!isEmpty($formData.flavor)} /></Form.Label
+											>
+											<Textarea {...props} bind:value={$formData.flavor} required />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<Form.Field {form} name="notes">
-									<Form.Control let:attrs>
-										<Form.Label>{$t('congregation.notes.extended')}</Form.Label>
-										<Textarea {...attrs} bind:value={$formData.notes} />
+									<Form.Control
+										>{#snippet children(props)}
+											<Form.Label>{$t('congregation.notes.extended')}</Form.Label>
+											<Textarea {...props} bind:value={$formData.notes} />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button variant="secondary" on:click={() => (view = 'fit')}
+									<Button variant="secondary" onclick={() => (view = 'fit')}
 										>{$t('common.next')} →</Button
 									>
 								</div>
@@ -523,64 +538,75 @@
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="publicStatement">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.fit.publicStatement} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.fit.publicStatement} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.fit.publicStatement')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.fit.publicStatement')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="clergyMember">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.fit.clergyMember} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.fit.clergyMember} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.fit.clergyMember')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.fit.clergyMember')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="multipleClergyMembers">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.fit.multipleClergyMembers}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.fit.multipleClergyMembers}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.fit.multipleClergyMembers')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.fit.multipleClergyMembers')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="fit_other">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.fit.other} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.fit.other} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('common.other')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('common.other')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										{#if $formData.fit.other}
 											<Form.Field {form} name="fit_otherText">
-												<Form.Control let:attrs>
-													<Input {...attrs} bind:value={$formData.fit.otherText} />
+												<Form.Control
+													>{#snippet children(props)}
+														<Input {...props} bind:value={$formData.fit.otherText} />
+													{/snippet}
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
@@ -592,33 +618,41 @@
 
 									<!-- flag -->
 									<Form.Field {form} name="flag">
-										<Form.Control let:attrs>
-											<div class="question my-4 flex flex-col items-start justify-start space-y-2">
-												<span>{$t('congregation.fit.flag.extended')}</span>
-												<small class="leading-1">{$t('congregation.fit.flag.note')}</small>
-											</div>
-											<RadioGroup.Root {...attrs} class="space-y-2" bind:value={$formData.fit.flag}>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="no" id="no" />
-													<Form.Label for="no">{$t('congregation.fit.flag.no')}</Form.Label>
+										<Form.Control
+											>{#snippet children(props)}
+												<div
+													class="question my-4 flex flex-col items-start justify-start space-y-2"
+												>
+													<span>{$t('congregation.fit.flag.extended')}</span>
+													<small class="leading-1">{$t('congregation.fit.flag.note')}</small>
 												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="yes" id="yes" />
-													<Form.Label for="yes">{$t('congregation.fit.flag.yes')}</Form.Label>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="yesBima" id="yesBima" />
-													<Form.Label for="yesBima"
-														>{$t('congregation.fit.flag.yesBima')}</Form.Label
-													>
-												</div>
-											</RadioGroup.Root>
+												<RadioGroup.Root
+													{...props}
+													class="space-y-2"
+													bind:value={$formData.fit.flag}
+												>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="no" id="no" />
+														<Form.Label for="no">{$t('congregation.fit.flag.no')}</Form.Label>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="yes" id="yes" />
+														<Form.Label for="yes">{$t('congregation.fit.flag.yes')}</Form.Label>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="yesBima" id="yesBima" />
+														<Form.Label for="yesBima"
+															>{$t('congregation.fit.flag.yesBima')}</Form.Label
+														>
+													</div>
+												</RadioGroup.Root>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'services')}
+										<Button variant="secondary" onclick={() => (view = 'services')}
 											>{$t('common.next')} →</Button
 										>
 									</div>
@@ -645,74 +679,86 @@
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="inPerson">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.services.inPerson} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.services.inPerson} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.services.inPerson')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.services.inPerson')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="hybrid">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.services.hybrid} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.services.hybrid} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.services.hybrid')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.services.hybrid')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="onlineOnly">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.services.onlineOnly} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.services.onlineOnly} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.services.onlineOnly')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.services.onlineOnly')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="offsite">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.services.offsite} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.services.offsite} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.services.offsite')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.services.offsite')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="services_other">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.services.other} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.services.other} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('common.other')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('common.other')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										{#if $formData.services.other}
 											<Form.Field {form} name="services_otherText">
-												<Form.Control let:attrs>
-													<Input {...attrs} bind:value={$formData.services.otherText} />
+												<Form.Control
+													>{#snippet children(props)}
+														<Input {...props} bind:value={$formData.services.otherText} />
+													{/snippet}
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
@@ -722,7 +768,7 @@
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'accessibility')}>
+										<Button variant="secondary" onclick={() => (view = 'accessibility')}>
 											{$t('common.next')} →
 										</Button>
 									</div>
@@ -748,142 +794,164 @@
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="online_asl">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.online_asl}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.online_asl}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.accessibility.online_asl')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.accessibility.online_asl')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="online_liveCaptions">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.online_liveCaptions}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.online_liveCaptions}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.accessibility.online_liveCaptions')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label
-															>{$t('congregation.accessibility.online_liveCaptions')}</Form.Label
-														>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="online_automatedCaptions">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.online_automatedCaptions}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.online_automatedCaptions}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>
+																{$t('congregation.accessibility.online_automatedCaptions')}
+															</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>
-															{$t('congregation.accessibility.online_automatedCaptions')}
-														</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="inPerson_adaAll">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.inPerson_adaAll}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.inPerson_adaAll}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.accessibility.inPerson_adaAll')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label
-															>{$t('congregation.accessibility.inPerson_adaAll')}</Form.Label
-														>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="inPerson_adaSome">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.inPerson_adaSome}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.inPerson_adaSome}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.accessibility.inPerson_adaSome')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label
-															>{$t('congregation.accessibility.inPerson_adaSome')}</Form.Label
-														>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="inPerson_asl">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.inPerson_asl}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.inPerson_asl}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.accessibility.inPerson_asl')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.accessibility.inPerson_asl')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="inPerson_eva">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.accessibility.inPerson_eva}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.accessibility.inPerson_eva}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.accessibility.inPerson_eva')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.accessibility.inPerson_eva')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="accoms_other">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.accessibility.other} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.accessibility.other} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('common.other')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('common.other')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										{#if $formData.accessibility.other}
 											<Form.Field {form} name="accoms_otherText">
-												<Form.Control let:attrs>
-													<Input {...attrs} bind:value={$formData.accessibility.otherText} />
+												<Form.Control
+													>{#snippet children(props)}
+														<Input {...props} bind:value={$formData.accessibility.otherText} />
+													{/snippet}
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
@@ -891,7 +959,7 @@
 									</div>
 
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'health')}
+										<Button variant="secondary" onclick={() => (view = 'health')}
 											>{$t('common.next')} →</Button
 										>
 									</div>
@@ -913,48 +981,52 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<Form.Field {form} name="protocol">
-										<Form.Control let:attrs>
-											<div class="question mb-4" class:error={healthErrors?.protocol}>
-												{$t('congregation.health.extended')}
-												<Required set={hasHealth} />
-											</div>
-											<RadioGroup.Root
-												{...attrs}
-												class="space-y-2"
-												bind:value={$formData.health.protocol}
-												required
-											>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
-													<Form.Label for="maskingRequired"
-														>{$t('congregation.health.maskingRequired')}</Form.Label
-													>
+										<Form.Control
+											>{#snippet children(props)}
+												<div class="question mb-4" class:error={healthErrors?.protocol}>
+													{$t('congregation.health.extended')}
+													<Required set={hasHealth} />
 												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
-													<Form.Label for="maskingRecommended"
-														>{$t('congregation.health.maskingRecommended')}</Form.Label
-													>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
-													<Form.Label for="noGuidelines"
-														>{$t('congregation.health.noGuidelines')}</Form.Label
-													>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="other" id="other" />
-													<Form.Label for="other">{$t('common.other')}</Form.Label>
-												</div>
-											</RadioGroup.Root>
-											{#if $formData.health.protocol === 'other'}
-												<Form.Field {form} name="health_otherText">
-													<Form.Control let:attrs>
-														<Input {...attrs} bind:value={$formData.health.otherText} />
-													</Form.Control>
-													<Form.FieldErrors />
-												</Form.Field>
-											{/if}
+												<RadioGroup.Root
+													{...props}
+													class="space-y-2"
+													bind:value={$formData.health.protocol}
+													required
+												>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
+														<Form.Label for="maskingRequired"
+															>{$t('congregation.health.maskingRequired')}</Form.Label
+														>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
+														<Form.Label for="maskingRecommended"
+															>{$t('congregation.health.maskingRecommended')}</Form.Label
+														>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
+														<Form.Label for="noGuidelines"
+															>{$t('congregation.health.noGuidelines')}</Form.Label
+														>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="other" id="other" />
+														<Form.Label for="other">{$t('common.other')}</Form.Label>
+													</div>
+												</RadioGroup.Root>
+												{#if $formData.health.protocol === 'other'}
+													<Form.Field {form} name="health_otherText">
+														<Form.Control
+															>{#snippet children(props)}
+																<Input {...props} bind:value={$formData.health.otherText} />
+															{/snippet}
+														</Form.Control>
+														<Form.FieldErrors />
+													</Form.Field>
+												{/if}
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
@@ -964,7 +1036,7 @@
 										>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'security')}>
+										<Button variant="secondary" onclick={() => (view = 'security')}>
 											{$t('common.next')} →
 										</Button>
 									</div>
@@ -990,113 +1062,130 @@
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="localPolice">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.security.localPolice} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.security.localPolice} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.security.localPolice')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.security.localPolice')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="privateSecurityArmed">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.security.privateSecurityArmed}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.security.privateSecurityArmed}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.security.privateSecurityArmed')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label
-															>{$t('congregation.security.privateSecurityArmed')}</Form.Label
-														>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="privateSecurityUnarmed">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.security.privateSecurityUnarmed}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.security.privateSecurityUnarmed}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label
+																>{$t('congregation.security.privateSecurityUnarmed')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label
-															>{$t('congregation.security.privateSecurityUnarmed')}</Form.Label
-														>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="clergyArmed">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.security.clergyArmed} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.security.clergyArmed} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.security.clergyArmed')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.security.clergyArmed')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="congregantsArmed">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox
-															{...attrs}
-															bind:checked={$formData.security.congregantsArmed}
-														/>
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox
+																{...props}
+																bind:checked={$formData.security.congregantsArmed}
+															/>
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.security.congregantsArmed')}</Form.Label
+															>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.security.congregantsArmed')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="noFirearms">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.security.noFirearms} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.security.noFirearms} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('congregation.security.noFirearms')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('congregation.security.noFirearms')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										<Form.Field {form} name="security_other">
-											<Form.Control let:attrs>
-												<span class="flex flex-row items-start justify-start space-x-2">
-													<span>
-														<Checkbox {...attrs} bind:checked={$formData.security.other} />
+											<Form.Control
+												>{#snippet children(props)}
+													<span class="flex flex-row items-start justify-start space-x-2">
+														<span>
+															<Checkbox {...props} bind:checked={$formData.security.other} />
+														</span>
+														<span class="-mt-0.5">
+															<Form.Label>{$t('common.other')}</Form.Label>
+														</span>
 													</span>
-													<span class="-mt-0.5">
-														<Form.Label>{$t('common.other')}</Form.Label>
-													</span>
-												</span>
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
 										{#if $formData.security.other}
 											<Form.Field {form} name="security_otherText">
-												<Form.Control let:attrs>
-													<Input {...attrs} bind:value={$formData.security.otherText} />
+												<Form.Control
+													>{#snippet children(props)}
+														<Input {...props} bind:value={$formData.security.otherText} />
+													{/snippet}
 												</Form.Control>
 												<Form.FieldErrors />
 											</Form.Field>
@@ -1106,7 +1195,7 @@
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'registration')}>
+										<Button variant="secondary" onclick={() => (view = 'registration')}>
 											{$t('common.next')} →
 										</Button>
 									</div>
@@ -1136,47 +1225,53 @@
 										<Required set={hasRegistration} />
 									</div>
 									<Form.Field {form} name="protocol">
-										<Form.Control let:attrs>
-											<RadioGroup.Root
-												{...attrs}
-												class="space-y-2"
-												bind:value={$formData.registration.registrationType}
-												required
-											>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="free" id="free" />
-													<Form.Label for="free">{$t('congregation.registration.free')}</Form.Label>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
-													<Form.Label for="fixedPrice"
-														>{$t('congregation.registration.fixedPrice')}</Form.Label
-													>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="slidingScale" id="slidingScale" />
-													<Form.Label for="slidingScale">
-														{$t('congregation.registration.slidingScale')}
-													</Form.Label>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
-													<Form.Label for="suggestedDonation">
-														{$t('congregation.registration.suggestedDonation')}
-													</Form.Label>
-												</div>
-												<div class="flex items-center space-x-2">
-													<RadioGroup.Item value="other" id="other" />
-													<Form.Label for="other">{$t('common.other')}</Form.Label>
-												</div>
-											</RadioGroup.Root>
+										<Form.Control
+											>{#snippet children(props)}
+												<RadioGroup.Root
+													{...props}
+													class="space-y-2"
+													bind:value={$formData.registration.registrationType}
+													required
+												>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="free" id="free" />
+														<Form.Label for="free"
+															>{$t('congregation.registration.free')}</Form.Label
+														>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
+														<Form.Label for="fixedPrice"
+															>{$t('congregation.registration.fixedPrice')}</Form.Label
+														>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="slidingScale" id="slidingScale" />
+														<Form.Label for="slidingScale">
+															{$t('congregation.registration.slidingScale')}
+														</Form.Label>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
+														<Form.Label for="suggestedDonation">
+															{$t('congregation.registration.suggestedDonation')}
+														</Form.Label>
+													</div>
+													<div class="flex items-center space-x-2">
+														<RadioGroup.Item value="other" id="other" />
+														<Form.Label for="other">{$t('common.other')}</Form.Label>
+													</div>
+												</RadioGroup.Root>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 									{#if $formData.registration.registrationType === 'other'}
 										<Form.Field {form} name="registration_otherText">
-											<Form.Control let:attrs>
-												<Input {...attrs} bind:value={$formData.registration.otherText} />
+											<Form.Control
+												>{#snippet children(props)}
+													<Input {...props} bind:value={$formData.registration.otherText} />
+												{/snippet}
 											</Form.Control>
 											<Form.FieldErrors />
 										</Form.Field>
@@ -1194,29 +1289,33 @@
 										/>
 									</div>
 									<Form.Field {form} name="registration_email">
-										<Form.Control let:attrs>
-											<Form.Label for="registration_email">{$t('common.email')}</Form.Label>
-											<Input
-												{...attrs}
-												bind:value={$formData.registration.email}
-												on:change={() => {
-													$formData.registration.email = $formData.registration.email.trim();
-												}}
-											/>
+										<Form.Control
+											>{#snippet children(props)}
+												<Form.Label for="registration_email">{$t('common.email')}</Form.Label>
+												<Input
+													{...props}
+													bind:value={$formData.registration.email}
+													onchange={() => {
+														$formData.registration.email = $formData.registration.email.trim();
+													}}
+												/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 									<Form.Field {form} name="registration_url">
-										<Form.Control let:attrs>
-											<Form.Label for="registration_url">{$t('common.website')}</Form.Label>
-											<div class="text-xs text-slate-500">{$t('common.http')}</div>
-											<Input
-												{...attrs}
-												bind:value={$formData.registration.url}
-												on:change={() => {
-													$formData.registration.url = $formData.registration.url.trim();
-												}}
-											/>
+										<Form.Control
+											>{#snippet children(props)}
+												<Form.Label for="registration_url">{$t('common.website')}</Form.Label>
+												<div class="text-xs text-slate-500">{$t('common.http')}</div>
+												<Input
+													{...props}
+													bind:value={$formData.registration.url}
+													onchange={() => {
+														$formData.registration.url = $formData.registration.url.trim();
+													}}
+												/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
@@ -1226,7 +1325,7 @@
 										</span>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" on:click={() => (view = 'contact')}
+										<Button variant="secondary" onclick={() => (view = 'contact')}
 											>{$t('common.next')} →</Button
 										>
 									</div>
@@ -1247,21 +1346,25 @@
 							<Accordion.Content>
 								<div class="question mb-4">{$t('congregation.contactName.extended')}</div>
 								<Form.Field {form} name="contactName">
-									<Form.Control let:attrs>
-										<Form.Label for="contactName">
-											{$t('congregation.contactName.contactName')}
-										</Form.Label>
-										<Input {...attrs} bind:value={$formData.contactName} />
+									<Form.Control
+										>{#snippet children(props)}
+											<Form.Label for="contactName">
+												{$t('congregation.contactName.contactName')}
+											</Form.Label>
+											<Input {...props} bind:value={$formData.contactName} />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<div class="question my-4">{$t('congregation.contactEmail.extended')}</div>
 								<Form.Field {form} name="contactEmail">
-									<Form.Control let:attrs>
-										<Form.Label for="contactEmail">
-											{$t('congregation.contactEmail.contactEmail')}
-										</Form.Label>
-										<Input {...attrs} bind:value={$formData.contactEmail} />
+									<Form.Control
+										>{#snippet children(props)}
+											<Form.Label for="contactEmail">
+												{$t('congregation.contactEmail.contactEmail')}
+											</Form.Label>
+											<Input {...props} bind:value={$formData.contactEmail} />
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
@@ -1273,15 +1376,17 @@
 					<div class="mt-8 flex flex-row items-center justify-end">
 						{#if $user.admin}
 							<Form.Field {form} name="visible">
-								<Form.Control let:attrs>
-									<span class="flex flex-row items-start justify-start space-x-2">
-										<span>
-											<Form.Label><strong>{$t('congregation.approved')}</strong></Form.Label>
+								<Form.Control
+									>{#snippet children(props)}
+										<span class="flex flex-row items-start justify-start space-x-2">
+											<span>
+												<Form.Label><strong>{$t('congregation.approved')}</strong></Form.Label>
+											</span>
+											<span>
+												<Switch {...props} bind:checked={$formData.visible} />
+											</span>
 										</span>
-										<span>
-											<Switch {...attrs} bind:checked={$formData.visible} />
-										</span>
-									</span>
+									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
@@ -1318,7 +1423,7 @@
 						<Button
 							variant="outline"
 							type="reset"
-							on:click={(e) => {
+							onclick={(e) => {
 								e.preventDefault();
 								e.stopPropagation();
 
@@ -1332,7 +1437,7 @@
 							{$t('common.reset')}
 						</Button>
 						<Form.Button
-							on:click={(e) => {
+							onclick={(e) => {
 								e.preventDefault();
 								e.stopPropagation();
 								form.submit(document.getElementById('addEdit'));

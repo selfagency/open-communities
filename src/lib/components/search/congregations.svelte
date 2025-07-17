@@ -16,7 +16,7 @@
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import Congregation from '$lib/components/congregation/congregation.svelte';
+	import CongregationCard from '$lib/components/congregation/congregation.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
@@ -151,7 +151,7 @@
 					<Button
 						variant="link"
 						class="text-slate-400 hover:text-slate-500"
-						on:click={() => {
+						onclick={() => {
 							searchTerms = '';
 							search.setSearchTerms(searchTerms);
 						}}
@@ -200,7 +200,7 @@
 			{#each pages[currentPage - 1] as congregation, i (i)}
 				{#key congregation.id}
 					<div class="col-span-1">
-						<Congregation {congregation} open={open[congregation.id]} />
+						<CongregationCard {congregation} open={open[congregation.id]} />
 					</div>
 				{/key}
 			{/each}

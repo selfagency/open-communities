@@ -16,10 +16,17 @@
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let token: null | string;
-	export let reset: boolean = false;
-	export let sent: boolean = false;
+	let {
+		data,
+		reset = $bindable(false),
+		sent = $bindable(false),
+		token
+	}: {
+		data: SuperValidated<any>;
+		reset?: boolean;
+		sent?: boolean;
+		token: null | string;
+	} = $props();
 	/* endregion variables */
 
 	/* region form */
@@ -65,23 +72,32 @@
 
 		{#if $formData.type === 'resetPassword'}
 			<Form.Field {form} name="password">
-				<Form.Control let:attrs>
-					<Form.Label>{$t('auth.password')}</Form.Label>
-					<Input {...attrs} bind:value={$formData.password} required autocomplete="new-password" />
+				<Form.Control>
+					{#snippet children(props)}
+						<Form.Label>{$t('auth.password')}</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.password}
+							required
+							autocomplete="new-password"
+						/>
+					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
 			<Form.Field {form} name="passwordConfirm">
-				<Form.Control let:attrs>
-					<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
-					<Input
-						{...attrs}
-						bind:value={$formData.passwordConfirm}
-						type="password"
-						required
-						autocomplete="new-password"
-					/>
+				<Form.Control>
+					{#snippet children(props)}
+						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.passwordConfirm}
+							type="password"
+							required
+							autocomplete="new-password"
+						/>
+					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
@@ -91,9 +107,11 @@
 			<p class="mb-4">{$t('auth.resetNotice')}</p>
 
 			<Form.Field {form} name="email">
-				<Form.Control let:attrs>
-					<Form.Label>{$t('common.email')}</Form.Label>
-					<Input {...attrs} bind:value={$formData.email} required autocomplete="email" />
+				<Form.Control>
+					{#snippet children(props)}
+						<Form.Label>{$t('common.email')}</Form.Label>
+						<Input {...props} bind:value={$formData.email} required autocomplete="email" />
+					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>

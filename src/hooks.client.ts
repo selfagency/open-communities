@@ -3,13 +3,13 @@ import * as Sentry from '@sentry/sveltekit';
 import { pick } from 'radashi';
 
 import { dev } from '$app/environment';
-import { PUBLIC_SENTRY_DSN } from '$env/static/public';
+import { SENTRY_DSN } from '$env/static/private';
 import { user } from '$lib/stores';
 import { log } from '$lib/utils';
 /* endregion imports */
 
 Sentry.init({
-	dsn: PUBLIC_SENTRY_DSN,
+	dsn: SENTRY_DSN,
 	initialScope: {
 		user: pick(user.get(), ['id', 'email'])
 	},

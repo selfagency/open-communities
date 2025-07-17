@@ -11,7 +11,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { t } from '$lib/i18n';
 	import { user } from '$lib/stores';
-	import { log } from '$lib/utils';
+	// import { log } from '$lib/utils';
 	/*  endregion imports */
 
 	/* region variables */
@@ -32,8 +32,8 @@
 	];
 
 	// locals
-	let lang = ($user.lang || 'en') as UsersLangOptions;
-	let hovering = false;
+	let lang = $state($user.lang || 'en') as UsersLangOptions;
+	let hovering = $state(false);
 	/* endregion variables */
 
 	/* region reactivity */
@@ -48,13 +48,13 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger asChild let:builder>
+	<DropdownMenu.Trigger>
 		<Button
 			variant={mode === 'mini' ? 'link' : 'ghost'}
 			builders={[builder]}
 			class="flex flex-row items-center justify-start space-x-1"
-			on:mouseenter={() => (hovering = true)}
-			on:mouseleave={() => (hovering = false)}
+			mouseenter={() => (hovering = true)}
+			mouseleave={() => (hovering = false)}
 		>
 			{@const locale = locales.find((f) => f.value === lang)?.label}
 			{#if mode === 'mini'}
@@ -70,7 +70,7 @@
 		<DropdownMenu.Label>{$t('common.language')}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.RadioGroup bind:value={lang}>
-			{#each locales as { label, value }}
+			{#each locales as { label, value }, i (i)}
 				<DropdownMenu.RadioItem {value} class="flex flex-row items-center justify-start space-x-2">
 					<Badge variant="outline" class="text-xs font-normal">{value.toUpperCase()}</Badge>
 					<span>{label}</span>

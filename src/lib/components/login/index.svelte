@@ -6,7 +6,7 @@
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Reset from '$lib/components/login/reset.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -19,13 +19,12 @@
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let reset: SuperValidated<any>;
+	const { data, reset }: { data: SuperValidated<any>; reset: SuperValidated<any> } = $props();
 
 	// locals
-	let resetting: boolean = false;
-	let resetSuccess: boolean = false;
-	let sentSuccess: boolean = false;
+	let resetting: boolean = $state(false);
+	let resetSuccess: boolean = $state(false);
+	let sentSuccess: boolean = $state(false);
 	/* endregion variables */
 
 	/* region methods */
@@ -73,7 +72,7 @@
 			{#if !sentSuccess && !resetSuccess}
 				<Reset
 					data={reset}
-					token={$page.url.searchParams.get('resetPassword')}
+					token={page.url.searchParams.get('resetPassword')}
 					bind:reset={resetSuccess}
 					bind:sent={sentSuccess}
 				/>
@@ -86,12 +85,7 @@
 			{#if resetSuccess}
 				<div class="flex flex-col items-center justify-center space-y-4">
 					<span>{$t('auth.passwordSuccess')}</span>
-					<span
-						role="button"
-						tabindex="0"
-						on:click={() => resetter()}
-						on:keypress={() => resetter()}
-					>
+					<span role="button" tabindex="0" onclick={() => resetter()} onkeypress={() => resetter()}>
 						{$t('auth.continueToLogin')} →
 					</span>
 				</div>
@@ -99,28 +93,32 @@
 		{:else}
 			<form method="POST" action="?/login" use:enhance class="space-y-2">
 				<Form.Field {form} name="email">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('common.email')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.email} autocomplete="email" />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('common.email')}</Form.Label>
+							<Input {...props} bind:value={$formData.email} autocomplete="email" />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="password">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.password')}</Form.Label>
-						<Input
-							{...attrs}
-							bind:value={$formData.password}
-							type="password"
-							autocomplete="current-password"
-						/>
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('auth.password')}</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.password}
+								type="password"
+								autocomplete="current-password"
+							/>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Button>{$t('auth.login')}</Form.Button>
-				<Button variant="link" on:click={() => (resetting = true)}
+				<Button variant="link" onclick={() => (resetting = true)}
 					>{$t('auth.forgotPassword')}</Button
 				>
 			</form>

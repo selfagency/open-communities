@@ -19,13 +19,11 @@ Setup a [Sentry](https://sentry.io/) project and get site credentials from [Pros
 
 ```bash
 PUBLIC_HOSTNAME="http://localhost:5173"
-PUBLIC_API_ENDPOINT="http://127.0.0.1:8090"
-PUBLIC_SENTRY_DSN=""
-SENTRY_AUTH_TOKEN=""
+API_ENDPOINT="http://127.0.0.1:8090"
+SENTRY_DSN=""
 PUBLIC_PROSOPO_SITE_KEY=""
 PROSOPO_ENDPOINT=""
 PROSOPO_SECRET=""
-NODE_ENV="development"
 ```
 
 ## Development

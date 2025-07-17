@@ -1,5 +1,5 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 /* endregion imports */
 
 export const contactSchema = z.object({

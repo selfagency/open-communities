@@ -1,10 +1,7 @@
 /* region imports */
 import type { ClientResponseError } from 'pocketbase';
-import type { SuperValidated } from 'sveltekit-superforms';
 
 import { fail } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
 
 import type { LocationMeta } from '$lib/location';
 
@@ -41,7 +38,7 @@ export const load = async ({ fetch, locals }) => {
 export const actions = {
 	default: async (event) => {
 		const { api, log } = event.locals;
-		const form: SuperValidated = await superValidate(event, zod(contactSchema));
+		const form = await event.locals.validate(contactSchema, event);
 
 		try {
 			if (!form.valid) {

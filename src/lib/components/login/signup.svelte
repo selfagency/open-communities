@@ -7,7 +7,7 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { browser, dev } from '$app/environment';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
@@ -19,16 +19,19 @@
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let verify: SuperValidated<any>;
-	export let snapshot: any;
-	// export let active: boolean = false;
+	let {
+		data,
+		snapshot = $bindable({}),
+		verify
+	}: { data: SuperValidated<any>; snapshot: unknown; verify: SuperValidated<any> } = $props();
 
 	// locals
-	let success: boolean = false;
-	let verified: boolean = false;
-	let verifying: boolean = false;
+	let success: boolean = $state(false);
+	let verified: boolean = $state(false);
 	// let captchaLoaded: boolean = false;
+
+	// constants
+	const verifying = $derived(page.url.searchParams.has('verifyEmail'));
 	/* endregion variables */
 
 	/* region form */
@@ -74,12 +77,6 @@
 			$formData.lang = 'en';
 		}
 	});
-
-	/* region reactivity */
-	$: if ($page.url.searchParams.has('verifyEmail')) {
-		verifying = true;
-	}
-	/* endregion reactivity */
 </script>
 
 <svelte:head>
@@ -101,7 +98,7 @@
 	</Card.Header>
 	<Card.Content>
 		{#if verifying && !verified}
-			<Verify data={verify} bind:verified token={$page.url.searchParams.get('verifyEmail')} />
+			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{$t('auth.verified.extended')}
@@ -122,43 +119,51 @@
 				out:fade={{ delay: 0, duration: 100 }}
 			>
 				<Form.Field {form} name="name">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.name')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.name} autocomplete="name" />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('auth.name')}</Form.Label>
+							<Input {...props} bind:value={$formData.name} autocomplete="name" />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="email">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('common.email')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.email} autocomplete="email" />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('common.email')}</Form.Label>
+							<Input {...props} bind:value={$formData.email} autocomplete="email" />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="password">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.password')}</Form.Label>
-						<Input
-							{...attrs}
-							bind:value={$formData.password}
-							type="password"
-							autocomplete="new-password"
-						/>
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('auth.password')}</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.password}
+								type="password"
+								autocomplete="new-password"
+							/>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="passwordConfirm">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
-						<Input
-							{...attrs}
-							bind:value={$formData.passwordConfirm}
-							type="password"
-							autocomplete="new-password"
-						/>
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.passwordConfirm}
+								type="password"
+								autocomplete="new-password"
+							/>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
