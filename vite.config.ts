@@ -1,5 +1,4 @@
 import svg from '@poppanator/sveltekit-svg';
-import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
@@ -16,9 +15,8 @@ export default defineConfig({
 		}
 	},
 	plugins: [
-    devtoolsJson(),
+		devtoolsJson(),
 		tailwindcss(),
-		sentrySvelteKit(),
 		sveltekit(),
 		// SvelteKitPWA({
 		// 	injectRegister: 'auto',

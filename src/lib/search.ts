@@ -6,6 +6,7 @@ import { map } from 'nanostores';
 import { alphabetical, isEmpty, shake, unique } from 'radashi';
 
 import type { LocationMeta } from '$lib/location';
+import type { CongregationMetaRecord } from '$lib/types.d';
 
 // import { log } from '$lib/utils';
 /* endregion imports */
@@ -40,7 +41,7 @@ export class Search {
 	fuzzy: Fuzzy;
 	ids: string[];
 	resultIds: string[];
-	results: MapStore<unknown[]>;
+	results: MapStore<CongregationMetaRecord[]>;
 	state: MapStore<SearchState>;
 
 	constructor(data = [] as SearchData[], debug = false) {

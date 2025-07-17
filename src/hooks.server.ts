@@ -1,28 +1,17 @@
 /* region imports */
 import type { SerializeOptions } from 'cookie';
 
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
-import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
 import { dev } from '$app/environment';
-import { SENTRY_DSN } from '$env/static/private';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 /* endregion imports */
 
 /* region init */
-if (!Sentry.isInitialized()) {
-	Sentry.init({
-		dsn: SENTRY_DSN,
-		environment: dev ? 'development' : 'production',
-		integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()],
-		tracesSampleRate: 0.5
-	});
-}
 /* endregion init */
 
 /* region variables */
@@ -86,9 +75,9 @@ async function customHandler({ event, resolve }) {
 	return response;
 }
 
-export const handle = sequence(Sentry.sentryHandle(), customHandler);
+export const handle = sequence(customHandler);
 
-export const handleError = Sentry.handleErrorWithSentry(async ({ error, event, status }) => {
+export const handleError = async ({ error, event, status }) => {
 	if (status !== 404) {
 		const errorId = uid(32);
 
@@ -103,4 +92,4 @@ export const handleError = Sentry.handleErrorWithSentry(async ({ error, event, s
 			message: (error as Error)?.message || 'An error occurred'
 		};
 	}
-});
+};

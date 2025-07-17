@@ -44,7 +44,7 @@
 	const {
 		results,
 		state: searchState
-	}: { results: MapStore<unknown[]>; state: MapStore<SearchState> } = search;
+	}: { results: MapStore<CongregationMetaRecord[]>; state: MapStore<SearchState> } = search;
 	const location = new LocationService(search);
 	const open = {};
 
@@ -75,22 +75,24 @@
 	results.subscribe((value) => {
 		if (value.length > 0) {
 			locations = value
-				.filter((l) =>
-					[l.location.city.name, l.location.state.name, l.location.country.name].every(
+				.filter((l) => {
+					const location = l.location as LocationMeta;
+					return [location.city?.name, location.state?.name, location.country?.name].every(
 						(l) => !isEmpty(l)
-					)
-				)
-				.map((l) => ({
-					city: l.location.city,
-					country: l.location.country,
-					latitude:
-						l.location.city?.latitude || l.location.state?.latitude || l.location.country?.latitude,
-					longitude:
-						l.location.city?.longitude ||
-						l.location.state?.longitude ||
-						l.location.country?.longitude,
-					state: l.location.state
-				})) as LocationMeta[];
+					);
+				})
+				.map((l) => {
+					const location = l.location as LocationMeta;
+					return {
+						city: location.city,
+						country: location.country,
+						latitude:
+							location.city?.latitude || location.state?.latitude || location.country?.latitude,
+						longitude:
+							location.city?.longitude || location.state?.longitude || location.country?.longitude,
+						state: location.state
+					};
+				}) as LocationMeta[];
 
 			currentPage = 1;
 			pages = paginate(value as Congregation[]);
@@ -214,7 +216,7 @@
 			{onPageChange}
 			siblingCount={$appState.isMobile ? 0 : 1}
 		>
-			{#snippet children(pages, currentPage)}
+			{#snippet children({ currentPage, pages })}
 				<Pagination.Content>
 					<Pagination.Item>
 						<Pagination.PrevButton />

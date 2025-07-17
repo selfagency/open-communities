@@ -131,3 +131,6 @@ yarn-debug.log*
 yarn-error.log*
 !pb_schema.json
 location_data.gz
+
+# Sentry Config File
+.env.sentry-build-plugin
