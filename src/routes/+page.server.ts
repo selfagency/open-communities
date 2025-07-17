@@ -1,9 +1,9 @@
 /* region imports */
 import { handleError } from '$lib/server/api';
-import { loadUser, cleanResponse } from '$lib/server/api';
+import { cleanResponse, loadUser } from '$lib/server/api';
 /* endregion imports */
 
-export async function load({ locals, cookies }) {
+export async function load({ cookies, locals }) {
 	const { api } = locals;
 	const client = loadUser(cookies);
 	const locale = client?.lang || 'en';
@@ -23,8 +23,8 @@ export async function load({ locals, cookies }) {
 		]);
 
 		return {
-			content,
 			congregations: congregations.map((c) => cleanResponse(c)),
+			content,
 			countries: countries.map((c) => cleanResponse(c))
 		};
 	} catch (err) {

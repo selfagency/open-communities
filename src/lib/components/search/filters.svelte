@@ -60,58 +60,58 @@
 
 	const initFilters = () => {
 		filters = {
-			denomination: {
-				orthodox: false,
-				conservative: false,
-				reform: false,
-				reconstructionist: false,
-				renewal: false,
-				humanist: false,
-				postDenominational: false,
-				multiDenominational: false,
-				unaffiliated: false,
-				other: false
-			},
-			services: {
-				inPerson: false,
-				onlineOnly: false,
-				hybrid: false,
-				offsite: false,
-				other: false
-			},
 			accessibility: {
-				inPerson_adaSome: false,
 				inPerson_adaAll: false,
+				inPerson_adaSome: false,
 				inPerson_eva: false,
 				online_automatedCaptions: false,
 				online_liveCaptions: false,
 				other: false
 			},
-			health: {
-				maskingRequired: false,
-				maskingRecommended: false,
-				noGuidelines: false,
-				other: false
-			},
-			security: {
-				localPolice: false,
-				privateSecurityArmed: false,
-				privateSecurityUnarmed: false,
-				clergyArmed: false,
-				congregantsArmed: false,
-				noFirearms: false,
-				other: false
-			},
-			registration: {
-				free: false,
-				fixedPrice: false,
-				slidingScale: false,
-				suggestedDonation: false,
-				other: false
-			},
 			admin: {
 				unapproved: false,
 				unclaimed: false
+			},
+			denomination: {
+				conservative: false,
+				humanist: false,
+				multiDenominational: false,
+				orthodox: false,
+				other: false,
+				postDenominational: false,
+				reconstructionist: false,
+				reform: false,
+				renewal: false,
+				unaffiliated: false
+			},
+			health: {
+				maskingRecommended: false,
+				maskingRequired: false,
+				noGuidelines: false,
+				other: false
+			},
+			registration: {
+				fixedPrice: false,
+				free: false,
+				other: false,
+				slidingScale: false,
+				suggestedDonation: false
+			},
+			security: {
+				clergyArmed: false,
+				congregantsArmed: false,
+				localPolice: false,
+				noFirearms: false,
+				other: false,
+				privateSecurityArmed: false,
+				privateSecurityUnarmed: false
+			},
+			services: {
+				hybrid: false,
+				inPerson: false,
+				offsite: false,
+				onlineOnly: false,
+				other: false
 			}
 		};
 	};

@@ -12,10 +12,10 @@ export type LoginSchema = {
 };
 
 export type TokenSchema = {
-	token: string;
 	email?: string;
 	password?: string;
 	passwordConfirm?: string;
+	token: string;
 	type: string;
 };
 /* endregion types */
@@ -38,14 +38,14 @@ export const loginSchema = z.object({
 
 export const tokenSchema = z
 	.object({
+		email: z.string().email().optional(),
+		password: z.string().optional(),
+		passwordConfirm: z.string().optional(),
 		token: z.string().refine((value) => !!value, {
 			message: t.get('common.thingRequired', {
 				thing: t.get('common.token')
 			})
 		}),
-		email: z.string().email().optional(),
-		password: z.string().optional(),
-		passwordConfirm: z.string().optional(),
 		type: z.string()
 	})
 	.superRefine((data, ctx) => {

@@ -6,14 +6,14 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { t } from '$lib/i18n';
-	import { user, state } from '$lib/stores';
+	import { state, user } from '$lib/stores';
 
 	import Locale from './locale.svelte';
 	/*  endregion imports */
 
 	/* region variables */
 	// props
-	export let mode: 'mini' | 'full' = 'full';
+	export let mode: 'full' | 'mini' = 'full';
 
 	// constants
 	const dispatch = createEventDispatcher();

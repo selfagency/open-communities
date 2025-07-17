@@ -1,11 +1,12 @@
 import type { TransitionConfig } from 'svelte/transition';
 
-import { dev } from '$app/environment';
 import { type ClassValue, clsx } from "clsx";
 import fstw from 'fast-string-truncated-width';
 import { cubicOut } from 'svelte/easing';
 import { twMerge } from "tailwind-merge";
 import { Logger } from 'tslog';
+
+import { dev } from '$app/environment';
 
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: null | U };
 

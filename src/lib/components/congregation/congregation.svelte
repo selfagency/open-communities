@@ -3,21 +3,21 @@
 	import EditIcon from 'lucide-svelte/icons/pencil';
 	import ShareIcon from 'lucide-svelte/icons/share';
 	import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
-	import { omit, isEmpty } from 'radashi';
+	import { isEmpty, omit } from 'radashi';
 	import { copyText } from 'svelte-copy';
 	import { toast } from 'svelte-sonner';
 
 	import type {
-		CongregationMetaRecord,
 		AccessibilityRecord,
-		FitRecord,
-		ServicesRecord,
-		RegistrationRecord,
-		HealthRecord,
-		SecurityRecord,
 		CitiesRecord as City,
-		StatesRecord as State,
-		CountriesRecord as Country
+		CongregationMetaRecord,
+		CountriesRecord as Country,
+		FitRecord,
+		HealthRecord,
+		RegistrationRecord,
+		SecurityRecord,
+		ServicesRecord,
+		StatesRecord as State
 	} from '$lib/types';
 
 	import { goto } from '$app/navigation';
@@ -48,10 +48,10 @@
 	// constants
 	const accessibility = congregation.accessibility as AccessibilityRecord;
 	const fit = congregation.fit as FitRecord;
-	const { city, state, country } = congregation.location as {
+	const { city, country, state } = congregation.location as {
 		city: City;
-		state: State;
 		country: Country;
+		state: State;
 	};
 	const notes = congregation.notes as string;
 	const services = congregation.services as ServicesRecord;
@@ -60,7 +60,7 @@
 	const security = congregation.security as SecurityRecord;
 
 	// locals
-	let tab: 'about' | 'services' | 'details' = 'about';
+	let tab: 'about' | 'details' | 'services' = 'about';
 	/* endregion variables */
 
 	/* region methods */

@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import { isEmpty, isArray } from 'radashi';
+	import { isArray, isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 
 	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
@@ -9,7 +9,7 @@
 	import Congregations from '$lib/components/search/congregations.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { t } from '$lib/i18n';
-	import { state, setState } from '$lib/stores';
+	import { setState, state } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 

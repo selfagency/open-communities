@@ -15,11 +15,11 @@ export async function sendMail(data: any, api: TypedPocketBase) {
 	}
 
 	const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
-		method: 'POST',
+		body: formData,
 		headers: {
 			Accept: 'application/json'
 		},
-		body: formData
+		method: 'POST'
 	});
 
 	if (res.status !== 200) {

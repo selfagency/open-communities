@@ -1,18 +1,30 @@
-import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import perfectionist from 'eslint-plugin-perfectionist'
 import svelte from 'eslint-plugin-svelte';
+import {globalIgnores} from 'eslint/config'
 import globals from 'globals';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript-eslint';
 
 import svelteConfig from './svelte.config.js';
 
-const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
 export default ts.config(
-	includeIgnoreFile(gitignorePath),
+	globalIgnores([
+    '.DS_Store',
+'node_modules',
+'/build',
+'/.svelte-kit',
+'/package',
+'.env',
+'.env.*',
+'!.env.example',
+'pnpm-lock.yaml',
+'package-lock.json',
+'yarn.lock',
+'package.json',
+
+  ]),
 	js.configs.recommended,
 	...ts.configs.recommended,
 	...svelte.configs.recommended,
@@ -23,7 +35,17 @@ export default ts.config(
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
 		},
-		rules: { 'no-undef': 'off' }
+    rules: {
+			'@typescript-eslint/no-unused-vars': 'warn',
+			'no-undef': 'off',
+			'no-unused-vars': 'off',
+			'perfectionist/sort-imports': [
+				'warn',
+				{
+					internalPattern: ['^\\$.+']
+				}
+			]
+		},
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],

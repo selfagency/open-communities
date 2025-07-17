@@ -4,7 +4,7 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -33,8 +33,12 @@
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'deleteCongregation',
 		dataType: 'json',
+		id: 'deleteCongregation',
+		onError({ result }) {
+			log.error(result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
 				toast.success($t('congregation.deleteSuccess'));
@@ -43,14 +47,10 @@
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) toast.error($t('congregation.deleteFailure'));
 			}
-		},
-		onError({ result }) {
-			log.error(result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { enhance, form: formData } = form;
 	/* endregion form */
 
 	/* region lifecycle */

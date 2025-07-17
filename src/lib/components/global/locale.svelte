@@ -16,7 +16,7 @@
 
 	/* region variables */
 	// props
-	export let mode: 'mini' | 'full' = 'full';
+	export let mode: 'full' | 'mini' = 'full';
 
 	// constants
 	const locales = [

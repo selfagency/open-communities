@@ -4,7 +4,7 @@
 	import ClearIcon from 'lucide-svelte/icons/circle-x';
 	import LocationIcon from 'lucide-svelte/icons/globe';
 	import SearchIcon from 'lucide-svelte/icons/search';
-	import { isEmpty, alphabetical } from 'radashi';
+	import { alphabetical, isEmpty } from 'radashi';
 	import { fade } from 'svelte/transition';
 
 	import type { LocationMeta } from '$lib/location';
@@ -38,7 +38,7 @@
 
 	// constants
 	const search = new Search(congregations, dev);
-	const { state: searchState, results } = search;
+	const { results, state: searchState } = search;
 	const location = new LocationService(search);
 	const open = {};
 
@@ -76,14 +76,14 @@
 				)
 				.map((l) => ({
 					city: l.location.city,
-					state: l.location.state,
 					country: l.location.country,
 					latitude:
 						l.location.city?.latitude || l.location.state?.latitude || l.location.country?.latitude,
 					longitude:
 						l.location.city?.longitude ||
 						l.location.state?.longitude ||
-						l.location.country?.longitude
+						l.location.country?.longitude,
+					state: l.location.state
 				})) as LocationMeta[];
 
 			currentPage = 1;

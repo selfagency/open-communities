@@ -1,24 +1,24 @@
 /* region imports */
 import type { ClientResponseError } from 'pocketbase';
 
-import { redirect, fail } from '@sveltejs/kit';
-import { omit, isEmpty } from 'radashi';
+import { fail, redirect } from '@sveltejs/kit';
+import { isEmpty, omit } from 'radashi';
 
-import type { LocationRecord, LocationMeta } from '$lib/location';
+import type { LocationMeta, LocationRecord } from '$lib/location';
 import type {
-	CongregationMetaRecord,
 	AccessibilityRecord,
+	CongregationMetaRecord,
 	FitRecord,
-	RegistrationRecord,
 	HealthRecord,
+	RegistrationRecord,
 	SecurityRecord,
 	ServicesRecord
 } from '$lib/types';
 
-import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
+import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
-import { loadUser, handleError } from '$lib/server/api';
+import { handleError, loadUser } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
@@ -26,9 +26,9 @@ import { sendMail } from '$lib/server/mail';
 type MetaRecord = {
 	accessibility: AccessibilityRecord & { id: string };
 	fit: FitRecord & { id: string };
+	health: HealthRecord & { id: string };
 	location: LocationRecord & { id: string };
 	registration: RegistrationRecord & { id: string };
-	health: HealthRecord & { id: string };
 	security: SecurityRecord & { id: string };
 	services: ServicesRecord & { id: string };
 };
@@ -36,7 +36,7 @@ type MetaRecord = {
 type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
-export const load = async ({ locals, fetch, cookies, url }) => {
+export const load = async ({ cookies, fetch, locals, url }) => {
 	const { api, validate } = locals;
 	const client = loadUser(cookies);
 
@@ -51,22 +51,22 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 			const location = congregation.location as LocationMeta;
 
 			return {
+				congregation,
 				form: {
 					default: await validate(
 						defaultSchema,
 						cleanResponse({
 							...congregation,
 							location: {
+								city: location.city?.id,
 								country: location.country?.id,
-								state: location.state?.id,
-								city: location.city?.id
+								state: location.state?.id
 							}
 						})
 					),
 					delete: await validate(deleteSchema, { id }),
 					transfer: await validate(transferSchema, { id })
-				},
-				congregation
+				}
 			};
 		} else {
 			throw new Error('403');
@@ -81,13 +81,60 @@ export const load = async ({ locals, fetch, cookies, url }) => {
 };
 
 export const actions = {
-	submit: async (event) => {
-		const { fetch, locals, cookies } = event;
-		const { api, validate, log } = locals;
+	delete: async (event) => {
+		const { cookies, fetch, locals } = event;
+		const { api, validate } = locals;
 		const client = loadUser(cookies);
 
 		const form = await validate(defaultSchema, event);
-		const data = form.data as RecordWithId & MetaRecord & { captcha: string };
+		const data = form.data as MetaRecord & RecordWithId;
+
+		try {
+			if (!client?.admin && client?.congregation !== data.id) {
+				const error = new Error('Forbidden') as ClientResponseError;
+				error.status = 403;
+				throw error;
+			}
+
+			if (!form.valid) {
+				throw new Error('Invalid form data');
+			}
+
+			const record = await api.collection('congregationMeta').getOne(data.id, { fetch });
+			const { accessibility, fit, health, registration, security, services } = record as MetaRecord;
+
+			await Promise.all([
+				api.collection('accessibility').delete(accessibility.id, { fetch }),
+				api.collection('fit').delete(fit.id, { fetch }),
+				api.collection('registration').delete(registration.id, { fetch }),
+				api.collection('health').delete(health.id, { fetch }),
+				api.collection('security').delete(security.id, { fetch }),
+				api.collection('services').delete(services.id, { fetch })
+			]);
+
+			await api.collection('congregations').delete(data.id, { fetch });
+
+			return {
+				form
+			};
+		} catch (error) {
+			const err = error as ClientResponseError;
+
+			return fail(err.status ?? 400, {
+				form: {
+					...form,
+					error: err.message
+				}
+			});
+		}
+	},
+	submit: async (event) => {
+		const { cookies, fetch, locals } = event;
+		const { api, log, validate } = locals;
+		const client = loadUser(cookies);
+
+		const form = await validate(defaultSchema, event);
+		const data = form.data as MetaRecord & RecordWithId & { captcha: string };
 
 		try {
 			if (!client?.id) {
@@ -102,14 +149,14 @@ export const actions = {
 
 			const captcha = await (
 				await fetch(PROSOPO_ENDPOINT, {
-					method: 'POST',
+					body: JSON.stringify({
+						secret: PROSOPO_SECRET,
+						token: data.captcha
+					}),
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({
-						token: data.captcha,
-						secret: PROSOPO_SECRET
-					})
+					method: 'POST'
 				})
 			).json();
 
@@ -120,7 +167,7 @@ export const actions = {
 				});
 			}
 
-			const { accessibility, fit, location, registration, health, services, security } = data;
+			const { accessibility, fit, health, location, registration, security, services } = data;
 
 			await Promise.all([
 				api.collection('congregations').update(
@@ -157,13 +204,13 @@ export const actions = {
 			if (!client?.admin) {
 				await sendMail(
 					{
-						name: client.name,
 						email: client.email,
-						title: `${data.name} edited`,
 						message: `
 						${data.name} has been edited. Changes require administrator approval:\n
 						https://opencommunities.info/edit?id=${data.id}
-					`
+					`,
+						name: client.name,
+						title: `${data.name} edited`
 					},
 					api
 				);
@@ -184,7 +231,7 @@ export const actions = {
 		}
 	},
 	transfer: async (event) => {
-		const { fetch, locals, cookies } = event;
+		const { cookies, fetch, locals } = event;
 		const { api, validate } = locals;
 		const client = loadUser(cookies);
 
@@ -213,53 +260,6 @@ export const actions = {
 			await api.collection('users').update(user.id, { congregation: data.id }, { fetch });
 
 			return { form };
-		} catch (error) {
-			const err = error as ClientResponseError;
-
-			return fail(err.status ?? 400, {
-				form: {
-					...form,
-					error: err.message
-				}
-			});
-		}
-	},
-	delete: async (event) => {
-		const { fetch, locals, cookies } = event;
-		const { api, validate } = locals;
-		const client = loadUser(cookies);
-
-		const form = await validate(defaultSchema, event);
-		const data = form.data as RecordWithId & MetaRecord;
-
-		try {
-			if (!client?.admin && client?.congregation !== data.id) {
-				const error = new Error('Forbidden') as ClientResponseError;
-				error.status = 403;
-				throw error;
-			}
-
-			if (!form.valid) {
-				throw new Error('Invalid form data');
-			}
-
-			const record = await api.collection('congregationMeta').getOne(data.id, { fetch });
-			const { accessibility, fit, registration, health, services, security } = record as MetaRecord;
-
-			await Promise.all([
-				api.collection('accessibility').delete(accessibility.id, { fetch }),
-				api.collection('fit').delete(fit.id, { fetch }),
-				api.collection('registration').delete(registration.id, { fetch }),
-				api.collection('health').delete(health.id, { fetch }),
-				api.collection('security').delete(security.id, { fetch }),
-				api.collection('services').delete(services.id, { fetch })
-			]);
-
-			await api.collection('congregations').delete(data.id, { fetch });
-
-			return {
-				form
-			};
 		} catch (error) {
 			const err = error as ClientResponseError;
 

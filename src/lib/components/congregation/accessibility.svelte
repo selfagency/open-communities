@@ -15,7 +15,7 @@
 	/* region variables */
 	// props
 	export let accessibility: AccessibilityRecord;
-	export let mode: 'mini' | 'full' = 'mini';
+	export let mode: 'full' | 'mini' = 'mini';
 
 	// constants
 	const ada = accessibility.inPerson_adaSome || accessibility.inPerson_adaAll;

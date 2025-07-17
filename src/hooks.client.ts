@@ -10,7 +10,6 @@ import { log } from '$lib/utils';
 
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 0.5,
 	initialScope: {
 		user: pick(user.get(), ['id', 'email'] as any)
 	},
@@ -20,10 +19,11 @@ Sentry.init({
 		Sentry.feedbackIntegration({
 			colorScheme: 'light'
 		})
-	]
+	],
+	tracesSampleRate: 0.5
 });
 
-export async function customErrorHandler({ error, event, status, message }) {
+export async function customErrorHandler({ error, event, message, status }) {
 	if (status !== 404) {
 		if (dev) {
 			log.debug('event', event);
@@ -33,8 +33,8 @@ export async function customErrorHandler({ error, event, status, message }) {
 
 	return {
 		message,
-		status,
-		stack: (<Error>error)?.stack
+		stack: (<Error>error)?.stack,
+		status
 	};
 }
 

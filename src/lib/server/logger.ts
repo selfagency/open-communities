@@ -1,7 +1,7 @@
 /* region imports */
 import type { RequestEvent } from '@sveltejs/kit';
 
-import { uid, shake } from 'radashi';
+import { shake, uid } from 'radashi';
 
 import { NODE_ENV } from '$env/static/private';
 import { PUBLIC_HOSTNAME } from '$env/static/public';
@@ -36,14 +36,14 @@ async function logEvent(statusCode: number, event: RequestEvent) {
 		}
 
 		const logData: object = {
-			method: event.request.method,
-			url: event.url.toString(),
-			status: statusCode,
-			timeInMs: Date.now() - (event?.locals?.startTimer as number),
-			referer: referer,
 			error: error,
 			errorId: errorId,
-			errorStackTrace: errorStackTrace
+			errorStackTrace: errorStackTrace,
+			method: event.request.method,
+			referer: referer,
+			status: statusCode,
+			timeInMs: Date.now() - (event?.locals?.startTimer as number),
+			url: event.url.toString()
 		};
 
 		requestLogger[error ? 'error' : 'info']('request', shake(logData));

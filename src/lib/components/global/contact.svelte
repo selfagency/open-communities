@@ -4,8 +4,8 @@
 	/* region imports */
 	import { sleep } from 'radashi';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
+	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
 
 	import { browser, dev } from '$app/environment';
@@ -35,9 +35,13 @@
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'signup',
 		dataType: 'json',
-		async onUpdate({ result, form: f }) {
+		id: 'signup',
+		onError({ result }) {
+			log.error('submission error', result.error.message);
+			toast.error(result.error.message);
+		},
+		async onUpdate({ form: f, result }) {
 			if (!f.valid || result.type !== 'success') {
 				log.error('form error', result.data.form.errors);
 				if (result.data.form.error) {
@@ -48,14 +52,10 @@
 				toast.success($t('common.emailSuccess'));
 				success = true;
 			}
-		},
-		onError({ result }) {
-			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance, capture, restore } = form;
+	const { capture, enhance, form: formData, restore } = form;
 	snapshot = { capture, restore };
 	/* endregion form */
 
@@ -65,12 +65,12 @@
 			await sleep(1500);
 			const captchaContainer = document.getElementById('captcha');
 			window['procaptcha']?.render(captchaContainer, {
-				siteKey: PUBLIC_PROSOPO_SITEKEY,
-				theme: 'light',
-				captchaType: 'frictionless',
 				callback: (token) => {
 					$formData.captcha = token;
-				}
+				},
+				captchaType: 'frictionless',
+				siteKey: PUBLIC_PROSOPO_SITEKEY,
+				theme: 'light'
 			});
 		}
 
@@ -111,7 +111,7 @@
 	</Card.Header>
 	<Card.Content>
 		{#if success}
-			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
+			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{$t('common.emailSuccessNotice')}
 			</span>
 		{:else}
@@ -120,7 +120,7 @@
 				use:enhance
 				class="space-y-2"
 				in:fade={{ delay: 200, duration: 100 }}
-				out:fade={{ duration: 100, delay: 0 }}
+				out:fade={{ delay: 0, duration: 100 }}
 			>
 				<Form.Field {form} name="name">
 					<Form.Control let:attrs>

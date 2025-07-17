@@ -1,5 +1,7 @@
 <script lang="ts">
 	import '../app.css';
+	import { onMount } from 'svelte';
+
 	/* region imports */
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
@@ -8,7 +10,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { t } from '$lib/i18n';
 	import { setState, user } from '$lib/stores';
-	import { onMount } from 'svelte';
+
 	// import { log } from '$lib/utils';
 	import '../app.css';
 

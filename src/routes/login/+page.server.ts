@@ -10,7 +10,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { UsersRecord } from '$lib/types';
 
 // import { dev } from '$app/environment';
-import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
+import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
@@ -20,14 +20,61 @@ export const load = async ({ locals }) => {
 	return {
 		form: {
 			login: await locals.validate(loginSchema),
+			reset: await locals.validate(tokenSchema),
 			signup: await locals.validate(userSchema),
-			verify: await locals.validate(tokenSchema),
-			reset: await locals.validate(tokenSchema)
+			verify: await locals.validate(tokenSchema)
 		}
 	};
 };
 
 export const actions = {
+	acct: async (event) => {
+		const { api } = event.locals;
+		const form: SuperValidated<any> = await superValidate(event, zod(tokenSchema));
+
+		try {
+			if (!form.valid) {
+				return fail(400, {
+					form
+				});
+			}
+
+			// let res;
+			switch (form.data.type) {
+				case 'requestReset':
+					await api.collection('users').requestPasswordReset(form.data.email);
+					break;
+				case 'resetPassword':
+					await api
+						.collection('users')
+						.confirmPasswordReset(form.data.token, form.data.password, form.data.passwordConfirm, {
+							fetch
+						});
+					break;
+				case 'verifyEmail':
+					await api.collection('users').confirmVerification(form.data.token);
+					break;
+			}
+
+			// if (dev) log.debug(`login:${form.data.type}`, res);
+
+			return {
+				form
+			};
+		} catch (error) {
+			const err = error as ClientResponseError;
+
+			return fail(err.status ?? 400, {
+				form: {
+					...form,
+					error: err.message,
+					errors: {
+						...form.errors
+					}
+				}
+			});
+		}
+	},
 	login: async (event) => {
 		const { cookies, fetch, locals } = event;
 		const { api, cookieOpts } = locals;
@@ -94,32 +141,32 @@ export const actions = {
 
 			const captcha = await (
 				await fetch(PROSOPO_ENDPOINT, {
-					method: 'POST',
+					body: JSON.stringify({
+						secret: PROSOPO_SECRET,
+						token: form.data.captcha
+					}),
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({
-						token: form.data.captcha,
-						secret: PROSOPO_SECRET
-					})
+					method: 'POST'
 				})
 			).json();
 
 			if (!captcha.verified) {
 				return fail(400, {
-					form,
 					errors: {
 						captcha: ['Captcha verification failed']
-					}
+					},
+					form
 				});
 			}
 
 			user = (await api.collection('users').create(
 				{
-					name: form.data.name as string,
 					email: form.data.email as string,
-					lang: form.data.lang as string,
 					emailVisibility: form.data.emailVisibility as boolean,
+					lang: form.data.lang as string,
+					name: form.data.name as string,
 					password: form.data.password as string,
 					passwordConfirm: form.data.passwordConfirm as string
 				},
@@ -136,53 +183,6 @@ export const actions = {
 			const err = error as ClientResponseError;
 
 			return fail(err.status || 400, {
-				form: {
-					...form,
-					error: err.message,
-					errors: {
-						...form.errors
-					}
-				}
-			});
-		}
-	},
-	acct: async (event) => {
-		const { api } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, zod(tokenSchema));
-
-		try {
-			if (!form.valid) {
-				return fail(400, {
-					form
-				});
-			}
-
-			// let res;
-			switch (form.data.type) {
-				case 'verifyEmail':
-					await api.collection('users').confirmVerification(form.data.token);
-					break;
-				case 'requestReset':
-					await api.collection('users').requestPasswordReset(form.data.email);
-					break;
-				case 'resetPassword':
-					await api
-						.collection('users')
-						.confirmPasswordReset(form.data.token, form.data.password, form.data.passwordConfirm, {
-							fetch
-						});
-					break;
-			}
-
-			// if (dev) log.debug(`login:${form.data.type}`, res);
-
-			return {
-				form
-			};
-		} catch (error) {
-			const err = error as ClientResponseError;
-
-			return fail(err.status ?? 400, {
 				form: {
 					...form,
 					error: err.message,

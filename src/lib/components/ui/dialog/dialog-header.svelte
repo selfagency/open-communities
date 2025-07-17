@@ -1,14 +1,21 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLAttributes } from "svelte/elements";
 
-	import { cn } from '$lib/utils.js';
+	import { cn, type WithElementRef } from "$lib/utils.js";
 
-	type $$Props = HTMLAttributes<HTMLDivElement>;
-
-	let className: $$Props['class'] = undefined;
-	export { className as class };
+	let {
+		children,
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<div class={cn('flex flex-col space-y-1.5  sm:text-left', className)} {...$$restProps}>
-	<slot />
+<div
+	bind:this={ref}
+	data-slot="dialog-header"
+	class={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+	{...restProps}
+>
+	{@render children?.()}
 </div>

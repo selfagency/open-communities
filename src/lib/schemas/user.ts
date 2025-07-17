@@ -1,19 +1,19 @@
 /* region imports */
 import { z } from 'zod';
 
-import { t } from '$lib/i18n';
+import type { UsersRecord } from '$lib/types';
 // import { log } from '$lib/utils';
 
-import type { UsersRecord } from '$lib/types';
+import { t } from '$lib/i18n';
 /* endregion imports */
 
 /* region types */
 export type UserSchema = UsersRecord & {
-	id?: string;
 	email?: string;
+	id?: string;
+	oldPassword?: string;
 	password?: string;
 	passwordConfirm?: string;
-	oldPassword?: string;
 };
 /* endregion types */
 
@@ -28,7 +28,8 @@ const password = z
 
 export const userSchema = z
 	.object({
-		id: z.string().optional(),
+		captcha: z.string().optional(),
+		congregation: z.string().optional(),
 		email: z
 			.string()
 			.email()
@@ -37,18 +38,17 @@ export const userSchema = z
 					thing: t.get('common.email')
 				})
 			}),
-		congregation: z.string().optional(),
+		emailVisibility: z.boolean().default(true),
+		id: z.string().optional(),
+		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
 		name: z.string().refine((value) => !!value, {
 			message: t.get('common.thingRequired', {
 				thing: t.get('common.name')
 			})
 		}),
-		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
-		emailVisibility: z.boolean().default(true),
-		password,
 		oldPassword: z.string().optional(),
-		passwordConfirm: z.string(),
-		captcha: z.string().optional()
+		password,
+		passwordConfirm: z.string()
 	})
 	.superRefine((data, ctx) => {
 		if (data.passwordConfirm !== data.password) {

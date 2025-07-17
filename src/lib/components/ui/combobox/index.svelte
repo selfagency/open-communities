@@ -2,7 +2,7 @@
 	/* region imports */
 	import Check from 'lucide-svelte/icons/check';
 	import ChevronsUpDown from 'lucide-svelte/icons/chevrons-up-down';
-	import { tick, createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, tick } from 'svelte';
 
 	import { t } from '$lib/i18n';
 	import { cn } from '$lib/utils';
@@ -14,7 +14,7 @@
 
 	/* region variables */
 	// props
-	export let items: { label: string; value: string; id: string }[] = [];
+	export let items: { id: string; label: string; value: string; }[] = [];
 	export let placeholder: string | undefined;
 	export let value: string | undefined;
 	export let attrs: Record<string, any> = {};

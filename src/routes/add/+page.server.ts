@@ -1,26 +1,26 @@
 /* region imports */
 import type { ClientResponseError } from 'pocketbase';
 
-import { redirect, fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { omit } from 'radashi';
 import { setError } from 'sveltekit-superforms';
 
 import type { LocationRecord } from '$lib/location';
 import type {
-	CongregationMetaRecord,
-	PagesRecord,
 	AccessibilityRecord,
+	CongregationMetaRecord,
 	FitRecord,
-	RegistrationRecord,
 	HealthRecord,
+	PagesRecord,
+	RegistrationRecord,
 	SecurityRecord,
 	ServicesRecord
 } from '$lib/types';
 
-import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
+import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { t } from '$lib/i18n';
 import { defaultSchema } from '$lib/schemas/record';
-import { loadUser, handleError } from '$lib/server/api';
+import { handleError, loadUser } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
@@ -28,16 +28,16 @@ import { sendMail } from '$lib/server/mail';
 type MetaRecord = {
 	accessibility: AccessibilityRecord;
 	fit: FitRecord;
+	health: HealthRecord;
 	location: LocationRecord;
 	registration: RegistrationRecord;
-	health: HealthRecord;
 	security: SecurityRecord;
 	services: ServicesRecord;
 	user: string;
 };
 /* endregion types */
 
-export const load = async ({ locals, fetch, cookies }) => {
+export const load = async ({ cookies, fetch, locals }) => {
 	const { api, validate } = locals;
 	const client = loadUser(cookies);
 
@@ -50,7 +50,7 @@ export const load = async ({ locals, fetch, cookies }) => {
 			.collection('pages')
 			.getFirstListItem(`slug="add-${client?.lang || 'en'}"`, { fetch })) as PagesRecord;
 
-		return { form: { default: await validate(defaultSchema) }, content };
+		return { content, form: { default: await validate(defaultSchema) } };
 	} catch (error) {
 		if ((error as Error).message === 'Forbidden') {
 			redirect(302, '/login?signUp=true');
@@ -62,8 +62,8 @@ export const load = async ({ locals, fetch, cookies }) => {
 
 export const actions = {
 	submit: async (event) => {
-		const { fetch, locals, cookies } = event;
-		const { api, validate, log } = locals;
+		const { cookies, fetch, locals } = event;
+		const { api, log, validate } = locals;
 		const client = loadUser(cookies);
 
 		const form = await validate(defaultSchema, event);
@@ -80,14 +80,14 @@ export const actions = {
 
 			const captcha = await (
 				await fetch(PROSOPO_ENDPOINT, {
-					method: 'POST',
+					body: JSON.stringify({
+						secret: PROSOPO_SECRET,
+						token: form.data.captcha
+					}),
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({
-						token: form.data.captcha,
-						secret: PROSOPO_SECRET
-					})
+					method: 'POST'
 				})
 			).json();
 
@@ -97,7 +97,7 @@ export const actions = {
 				});
 			}
 
-			const { accessibility, fit, location, registration, health, security, services, user } =
+			const { accessibility, fit, health, location, registration, security, services, user } =
 				formData as MetaRecord;
 
 			const record = await api.collection('congregations').create(
@@ -136,13 +136,13 @@ export const actions = {
 
 				await sendMail(
 					{
-						name: client.name,
 						email: client.email,
-						title: `New congregation submitted`,
 						message: `
 						A new congregation, ${record.name}, has been submitted and requires approval:\n
 						https://opencommunities.info/edit?id=${record.id}
-					`
+					`,
+						name: client.name,
+						title: `New congregation submitted`
 					},
 					api
 				);

@@ -3,7 +3,7 @@ import type { MapStore } from 'nanostores';
 
 import Fuzzy from '@leeoniya/ufuzzy';
 import { map } from 'nanostores';
-import { isEmpty, unique, alphabetical, shake } from 'radashi';
+import { alphabetical, isEmpty, shake, unique } from 'radashi';
 
 import type { LocationMeta } from '$lib/location';
 
@@ -14,25 +14,25 @@ import type { LocationMeta } from '$lib/location';
 export type SelectOption = { label: string; value: string };
 
 type SearchState = {
-	searchTerms?: string;
-	searchLocation?: LocationMeta;
-	showLocation?: boolean;
 	filters?: {
 		[key: string]: {
 			[key: string]: boolean;
 		};
 	};
+	searchLocation?: LocationMeta;
+	searchTerms?: string;
+	showLocation?: boolean;
 };
 /* endregion types */
 
 export class Search {
-	state: MapStore<SearchState>;
-	debug: boolean;
 	data: any[];
+	debug: boolean;
+	fuzzy: Fuzzy;
 	ids: string[];
 	resultIds: string[];
 	results: MapStore<any[]>;
-	fuzzy: Fuzzy;
+	state: MapStore<SearchState>;
 
 	constructor(data: any[] = [], debug = false) {
 		this.data = alphabetical(data, (i) => i.name);
@@ -79,65 +79,6 @@ export class Search {
 		this.searchText = this.searchText.bind(this);
 	}
 
-	filterByLocation() {
-		const stateObj = this.state.get();
-		if (!stateObj.searchLocation || isEmpty(stateObj.searchLocation)) return;
-
-		const {
-			city: filterCity,
-			country: filterCountry,
-			state: filterState
-		} = stateObj.searchLocation as LocationMeta;
-
-		const ids = this.data
-			.filter((record) => {
-				const { city, country, state } = record.location;
-
-				return (
-					(filterCity ? city.id === filterCity.id : true) &&
-					(filterCountry ? country.id === filterCountry.id : true) &&
-					(filterState ? state.id === filterState.id : true)
-				);
-			})
-			.map((i) => i.id);
-
-		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
-	}
-
-	searchText() {
-		const state = this.state.get();
-		if (!state.searchTerms || isEmpty(state.searchTerms)) return;
-
-		const ids =
-			this.fuzzy
-				?.filter(
-					this.data.map((i) => `${i.name} ${i.flavor} ${i.id}`),
-					(state.searchTerms as string)?.toLowerCase()
-				)
-				?.map((i) => this.data[i].id) || [];
-
-		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
-	}
-
-	boolFilter(filter: string) {
-		const state = this.state.get();
-		const filters = shake(state.filters?.[filter], (f) => !f);
-		if (isEmpty(filters)) return;
-
-		// log.debug('search:filters:bool', filter, filters[filter]);
-
-		const ids = this.data
-			.filter((record) => {
-				return Object.keys(filters).some((key) => {
-					return record[filter]?.[key];
-				});
-			})
-			.map((i) => i.id);
-
-		// if (this.debug) log.debug('search:filters:bool', filter, ids);
-		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
-	}
-
 	adminFilter() {
 		const state = this.state.get();
 		const filters = shake(state.filters?.admin, (f) => !f);
@@ -154,25 +95,6 @@ export class Search {
 		}
 
 		// if (this.debug) log.debug('search:filters:admin', filters, ids);
-		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
-	}
-
-	stringFilter(filter: string, targetKey: string) {
-		const state = this.state.get();
-		const filters = shake(state.filters?.[filter], (f) => !f);
-		if (isEmpty(filters)) return;
-
-		const ids = this.data
-			.filter((record) => {
-				return Object.keys(filters).some((key) => {
-					return targetKey === 'denomination'
-						? record[targetKey] === key
-						: record[filter][targetKey] === key;
-				});
-			})
-			.map((i) => i.id);
-
-		// if (this.debug) log.debug('search:filters:string', filter, targetKey, ids);
 		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
@@ -235,37 +157,53 @@ export class Search {
 		}
 	}
 
-	toggleLocation() {
+	boolFilter(filter: string) {
 		const state = this.state.get();
-		this.state.set({
-			...state,
-			showLocation: !state.showLocation
-		});
-		// if (this.debug) log.debug('search:toggleLocation', this.state.get().showLocation);
+		const filters = shake(state.filters?.[filter], (f) => !f);
+		if (isEmpty(filters)) return;
+
+		// log.debug('search:filters:bool', filter, filters[filter]);
+
+		const ids = this.data
+			.filter((record) => {
+				return Object.keys(filters).some((key) => {
+					return record[filter]?.[key];
+				});
+			})
+			.map((i) => i.id);
+
+		// if (this.debug) log.debug('search:filters:bool', filter, ids);
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
-	setSearchTerms(searchTerms: string) {
-		const state = this.state.get();
-		this.state.set({ ...state, searchTerms });
-		// if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
+	filterByLocation() {
+		const stateObj = this.state.get();
+		if (!stateObj.searchLocation || isEmpty(stateObj.searchLocation)) return;
+
+		const {
+			city: filterCity,
+			country: filterCountry,
+			state: filterState
+		} = stateObj.searchLocation as LocationMeta;
+
+		const ids = this.data
+			.filter((record) => {
+				const { city, country, state } = record.location;
+
+				return (
+					(filterCity ? city.id === filterCity.id : true) &&
+					(filterCountry ? country.id === filterCountry.id : true) &&
+					(filterState ? state.id === filterState.id : true)
+				);
+			})
+			.map((i) => i.id);
+
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
 	}
 
-	setSearchLocation(searchLocation: LocationMeta) {
-		const state = this.state.get();
-		this.state.set({ ...state, searchLocation });
-		// if (this.debug) log.debug('search:location', this.state.get().searchLocation);
-	}
-
-	setFilters(filters: SearchState['filters']) {
-		const state = this.state.get();
-		this.state.set({ ...state, filters });
-		// if (this.debug) log.debug('search:filters', this.state.get().filters);
-	}
-
-	resetSearchTerms() {
-		const state = this.state.get();
-		this.state.set({ ...state, searchTerms: '' });
-		// if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
+	resetAll() {
+		this.state.set({});
+		// if (this.debug) log.debug('search', this.state.get());
 	}
 
 	resetFilters() {
@@ -280,8 +218,70 @@ export class Search {
 		// if (this.debug) log.debug('search:location', this.state.get().searchLocation);
 	}
 
-	resetAll() {
-		this.state.set({});
-		// if (this.debug) log.debug('search', this.state.get());
+	resetSearchTerms() {
+		const state = this.state.get();
+		this.state.set({ ...state, searchTerms: '' });
+		// if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
+	}
+
+	searchText() {
+		const state = this.state.get();
+		if (!state.searchTerms || isEmpty(state.searchTerms)) return;
+
+		const ids =
+			this.fuzzy
+				?.filter(
+					this.data.map((i) => `${i.name} ${i.flavor} ${i.id}`),
+					(state.searchTerms as string)?.toLowerCase()
+				)
+				?.map((i) => this.data[i].id) || [];
+
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
+	}
+
+	setFilters(filters: SearchState['filters']) {
+		const state = this.state.get();
+		this.state.set({ ...state, filters });
+		// if (this.debug) log.debug('search:filters', this.state.get().filters);
+	}
+
+	setSearchLocation(searchLocation: LocationMeta) {
+		const state = this.state.get();
+		this.state.set({ ...state, searchLocation });
+		// if (this.debug) log.debug('search:location', this.state.get().searchLocation);
+	}
+
+	setSearchTerms(searchTerms: string) {
+		const state = this.state.get();
+		this.state.set({ ...state, searchTerms });
+		// if (this.debug) log.debug('search:terms', this.state.get().searchTerms);
+	}
+
+	stringFilter(filter: string, targetKey: string) {
+		const state = this.state.get();
+		const filters = shake(state.filters?.[filter], (f) => !f);
+		if (isEmpty(filters)) return;
+
+		const ids = this.data
+			.filter((record) => {
+				return Object.keys(filters).some((key) => {
+					return targetKey === 'denomination'
+						? record[targetKey] === key
+						: record[filter][targetKey] === key;
+				});
+			})
+			.map((i) => i.id);
+
+		// if (this.debug) log.debug('search:filters:string', filter, targetKey, ids);
+		this.resultIds = this.resultIds.filter((i) => ids.includes(i));
+	}
+
+	toggleLocation() {
+		const state = this.state.get();
+		this.state.set({
+			...state,
+			showLocation: !state.showLocation
+		});
+		// if (this.debug) log.debug('search:toggleLocation', this.state.get().showLocation);
 	}
 }

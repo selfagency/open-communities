@@ -1,14 +1,21 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLAttributes } from "svelte/elements";
 
-	import { cn } from '$lib/utils';
+	import { cn, type WithElementRef } from "$lib/utils.js";
 
-	type $$Props = HTMLAttributes<HTMLDivElement>;
-
-	let className: $$Props['class'] = undefined;
-	export { className as class };
+	let {
+		children,
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<div class={cn('flex w-full items-center p-6 pt-0', className)} {...$$restProps}>
-	<slot />
+<div
+	bind:this={ref}
+	data-slot="card-footer"
+	class={cn("[.border-t]:pt-6 flex items-center px-6", className)}
+	{...restProps}
+>
+	{@render children?.()}
 </div>

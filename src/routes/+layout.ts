@@ -3,7 +3,7 @@ import { isEmpty } from 'radashi';
 
 import { browser } from '$app/environment';
 import { loadTranslations } from '$lib/i18n';
-import { user, state, initState, initUser } from '$lib/stores';
+import { initState, initUser, state, user } from '$lib/stores';
 /* endregion imports */
 
 export const load = async ({ data }) => {

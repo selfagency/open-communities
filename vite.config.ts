@@ -1,11 +1,11 @@
-import tailwindcss from '@tailwindcss/vite';
 import svg from '@poppanator/sveltekit-svg';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
+import tailwindcss from '@tailwindcss/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vite';
-import webfontDownload from 'vite-plugin-webfont-dl';
 import devtoolsJson from 'vite-plugin-devtools-json';
+import webfontDownload from 'vite-plugin-webfont-dl';
 
 export default defineConfig({
 	build: {

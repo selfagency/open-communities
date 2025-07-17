@@ -31,12 +31,12 @@ export const accessibilitySchema = z.object({
 
 export const fitSchema = z
 	.object({
-		id: z.string().optional(),
 		clergyMember: z.boolean(),
 		flag: z.preprocess(
 			(val) => (val === '' ? undefined : val),
 			z.enum(['no', 'yes', 'yesBima']).nullable().optional()
 		),
+		id: z.string().optional(),
 		multipleClergyMembers: z.boolean(),
 		other: z.boolean(),
 		otherText: z.string().optional(),
@@ -48,8 +48,8 @@ export const fitSchema = z
 
 export const registrationSchema = z
 	.object({
-		id: z.string().optional(),
 		email: z.string().optional(),
+		id: z.string().optional(),
 		otherText: z.string().optional(),
 		registrationType: z
 			.enum(['free', 'slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
@@ -67,30 +67,30 @@ export const registrationSchema = z
 
 export const healthSchema = z.object({
 	id: z.string().optional(),
+	otherText: z.string().optional(),
 	protocol: z
 		.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
 		.refine((value) => !!value, {
 			message: t.get('common.requiredResponse')
-		}),
-	otherText: z.string().optional()
+		})
 });
 
 export const securitySchema = z.object({
-	id: z.string().optional(),
-	localPolice: z.boolean(),
-	privateSecurityArmed: z.boolean(),
-	privateSecurityUnarmed: z.boolean(),
 	clergyArmed: z.boolean(),
 	congregantsArmed: z.boolean(),
+	id: z.string().optional(),
+	localPolice: z.boolean(),
 	noFirearms: z.boolean(),
 	other: z.boolean(),
-	otherText: z.string().optional()
+	otherText: z.string().optional(),
+	privateSecurityArmed: z.boolean(),
+	privateSecurityUnarmed: z.boolean()
 });
 
 export const servicesSchema = z
 	.object({
-		id: z.string().optional(),
 		hybrid: z.boolean(),
+		id: z.string().optional(),
 		inPerson: z.boolean(),
 		offsite: z.boolean(),
 		onlineOnly: z.boolean(),

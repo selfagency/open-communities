@@ -1,14 +1,24 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLAttributes } from "svelte/elements";
 
-	import { cn } from '$lib/utils.js';
+	import { cn, type WithElementRef } from "$lib/utils.js";
 
-	type $$Props = HTMLAttributes<HTMLDivElement>;
-
-	let className: $$Props['class'] = undefined;
-	export { className as class };
+	let {
+		children,
+		class: className,
+		ref = $bindable(null),
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<div class={cn('hyphens-auto text-sm [&_p]:leading-relaxed', className)} {...$$restProps}>
-	<slot />
+<div
+	bind:this={ref}
+	data-slot="alert-description"
+	class={cn(
+		"text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
+		className
+	)}
+	{...restProps}
+>
+	{@render children?.()}
 </div>

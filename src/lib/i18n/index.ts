@@ -11,20 +11,20 @@ const loaders: any[] = [];
 langs.forEach((lang) =>
 	dicts.forEach((dict) =>
 		loaders.push({
-			locale: lang,
 			key: dict,
-			loader: async () => (await import(`./${lang}/${dict}.json`)).default
+			loader: async () => (await import(`./${lang}/${dict}.json`)).default,
+			locale: lang
 		})
 	)
 );
 
-export const { t, locale, locales, loading, loadTranslations, translations } = new i18n(<
+export const { loading, loadTranslations, locale, locales, t, translations } = new i18n(<
 	Config<{
 		thing: string;
 	}>
 >{
-	initLocale: 'en',
 	fallbackLocale: 'en',
-	log: { logger: log, level: 'error' },
-	loaders
+	initLocale: 'en',
+	loaders,
+	log: { level: 'error', logger: log }
 });

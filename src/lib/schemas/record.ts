@@ -1,16 +1,16 @@
 /* region imports */
 import { z } from 'zod';
 
-import { t } from '$lib/i18n';
+import type { CongregationMetaRecord } from '$lib/types';
 // import { log } from '$lib/utils';
 
-import type { CongregationMetaRecord } from '$lib/types';
+import { t } from '$lib/i18n';
 
 import {
 	accessibilitySchema as accessibility,
 	fitSchema as fit,
-	registrationSchema as registration,
 	healthSchema as health,
+	registrationSchema as registration,
 	securitySchema as security,
 	servicesSchema as services
 } from './children';
@@ -29,12 +29,6 @@ export const deleteSchema = z.object({
 });
 
 export const transferSchema = z.object({
-	id: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: '`id`'
-		})
-	}),
-	owner: z.string().optional(),
 	email: z
 		.string()
 		.email()
@@ -42,7 +36,13 @@ export const transferSchema = z.object({
 			message: t.get('common.thingRequired', {
 				thing: t.get('common.email')
 			})
+		}),
+	id: z.string().refine((value) => !!value, {
+		message: t.get('common.thingRequired', {
+			thing: '`id`'
 		})
+	}),
+	owner: z.string().optional()
 });
 
 export const defaultSchema = z.object({

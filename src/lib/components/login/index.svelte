@@ -2,7 +2,7 @@
 	/* region imports */
 	import { isEmpty } from 'radashi';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -38,8 +38,12 @@
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'login',
 		dataType: 'json',
+		id: 'login',
+		onError({ result }) {
+			log.error(result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
 				toast.success($t('auth.loginSuccess'));
@@ -50,14 +54,10 @@
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
 				toast.error(result.data.form.error);
 			}
-		},
-		onError({ result }) {
-			log.error(result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { enhance, form: formData } = form;
 	/* endregion form */
 </script>
 

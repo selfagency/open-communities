@@ -17,9 +17,9 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* region init */
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 0.5,
 	environment: NODE_ENV,
-	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()]
+	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()],
+	tracesSampleRate: 0.5
 });
 /* endregion init */
 
@@ -91,7 +91,7 @@ export const handle = sequence(
 	customHandler
 );
 
-export const handleError = Sentry.handleErrorWithSentry(async ({ status, error, event }) => {
+export const handleError = Sentry.handleErrorWithSentry(async ({ error, event, status }) => {
 	if (status !== 404) {
 		const errorId = uid(32);
 
@@ -102,8 +102,8 @@ export const handleError = Sentry.handleErrorWithSentry(async ({ status, error, 
 		logEvent(status, event);
 
 		return {
-			message: (error as Error)?.message || 'An error occurred',
-			errorId
+			errorId,
+			message: (error as Error)?.message || 'An error occurred'
 		};
 	}
 });

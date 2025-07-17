@@ -12,7 +12,7 @@
 	/* region variables */
 	// props
 	export let security: SecurityRecord;
-	export let mode: 'mini' | 'full' = 'mini';
+	export let mode: 'full' | 'mini' = 'mini';
 
 	// constants
 	/* endregion variables */

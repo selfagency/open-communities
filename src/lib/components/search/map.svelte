@@ -2,7 +2,7 @@
 	/* region imports */
 	import { unique } from 'radashi';
 	import { onMount } from 'svelte';
-	import { MapLibre, DefaultMarker, Popup, type LngLatLike } from 'svelte-maplibre';
+	import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
 
 	import type { LocationMeta } from '$lib/location';
 
@@ -65,7 +65,7 @@
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 	attributionControl={false}
 >
-	{#each locations as { city, state, country, longitude, latitude }}
+	{#each locations as { city, country, latitude, longitude, state }}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
 			<Popup offset={[0, -10]}>
 				<Button
@@ -78,8 +78,8 @@
 						});
 						location.load({
 							city: city?.id,
-							state: state?.id,
-							country: country?.id
+							country: country?.id,
+							state: state?.id
 						});
 					}}
 				>

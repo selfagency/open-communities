@@ -1,12 +1,12 @@
 <script lang="ts">
 	/* region imports */
-	import { sleep, isEmpty } from 'radashi';
+	import { isEmpty, sleep } from 'radashi';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { fade } from 'svelte/transition';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
-	import { dev, browser } from '$app/environment';
+	import { browser, dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
 	import Verify from '$lib/components/login/verify.svelte';
@@ -33,8 +33,12 @@
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'signup',
 		dataType: 'json',
+		id: 'signup',
+		onError({ result }) {
+			log.error('submission error', result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
 				success = true;
@@ -43,14 +47,10 @@
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
 				toast.error($t('auth.signUpFailure'));
 			}
-		},
-		onError({ result }) {
-			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance, capture, restore } = form;
+	const { capture, enhance, form: formData, restore } = form;
 	snapshot = { capture, restore };
 	/* endregion form */
 
@@ -61,12 +61,12 @@
 			const captchaContainer = document.getElementById('captcha');
 			if (captchaContainer) {
 				window['procaptcha']?.render(captchaContainer, {
-					siteKey: PUBLIC_PROSOPO_SITEKEY,
-					theme: 'light',
-					captchaType: 'frictionless',
 					callback: (token) => {
 						$formData.captcha = token;
-					}
+					},
+					captchaType: 'frictionless',
+					siteKey: PUBLIC_PROSOPO_SITEKEY,
+					theme: 'light'
 				});
 			}
 
@@ -103,11 +103,11 @@
 		{#if verifying && !verified}
 			<Verify data={verify} bind:verified token={$page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
-			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
+			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{$t('auth.verified.extended')}
 			</span>
 		{:else if success}
-			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
+			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{$t('auth.signUpSuccess')}
 			</span>
 		{:else}
@@ -119,7 +119,7 @@
 				use:enhance
 				class="space-y-2"
 				in:fade={{ delay: 200, duration: 100 }}
-				out:fade={{ duration: 100, delay: 0 }}
+				out:fade={{ delay: 0, duration: 100 }}
 			>
 				<Form.Field {form} name="name">
 					<Form.Control let:attrs>

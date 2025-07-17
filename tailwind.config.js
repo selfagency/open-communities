@@ -1,13 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 import typography from '@tailwindcss/typography';
-import { fontFamily } from 'tailwindcss/defaultTheme';
 import animate from 'tailwindcss-animate';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
 export default {
-	mode: 'jit',
 	content: ['./src/**/*.{html,js,svelte,ts}'],
-	plugins: [typography, animate],
 	darkMode: 'selector',
+	mode: 'jit',
+	plugins: [typography, animate],
 	theme: {
 		container: {
 			center: true,
@@ -17,53 +17,52 @@ export default {
 			}
 		},
 		extend: {
-			screens: {
-				print: { raw: 'print' },
-				screen: { raw: 'screen' },
-				md: '780px'
-			},
-			boxShadow: {
-				top: '0 -4px 12px -1px rgba(0, 0, 0, 0.05), 0 -2px 10px -1px rgba(0, 0, 0, 0.03)'
-			},
-			colors: {
-				border: 'oklch(var(--border))',
-				input: 'oklch(var(--input))',
-				ring: 'oklch(var(--ring))',
-				background: 'oklch(var(--background))',
-				foreground: 'oklch(var(--foreground))',
-				primary: {
-					DEFAULT: 'oklch(var(--primary))',
-					foreground: 'oklch(var(--primary-foreground))'
-				},
-				secondary: {
-					DEFAULT: 'oklch(var(--secondary))',
-					foreground: 'oklch(var(--secondary-foreground))'
-				},
-				destructive: {
-					DEFAULT: 'oklch(var(--destructive))',
-					foreground: 'oklch(var(--destructive-foreground))'
-				},
-				muted: {
-					DEFAULT: 'oklch(var(--muted))',
-					foreground: 'oklch(var(--muted-foreground))'
-				},
-				accent: {
-					DEFAULT: 'oklch(var(--accent))',
-					foreground: 'oklch(var(--accent-foreground))'
-				},
-				popover: {
-					DEFAULT: 'oklch(var(--popover))',
-					foreground: 'oklch(var(--popover-foreground))'
-				},
-				card: {
-					DEFAULT: 'oklch(var(--card))',
-					foreground: 'oklch(var(--card-foreground))'
-				}
+			animation: {
+				'accordion-down': 'accordion-down 0.2s ease-out',
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			},
 			borderRadius: {
 				lg: `var(--radius)`,
 				md: `calc(var(--radius) - 2px)`,
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				top: '0 -4px 12px -1px rgba(0, 0, 0, 0.05), 0 -2px 10px -1px rgba(0, 0, 0, 0.03)'
+			},
+			colors: {
+				accent: {
+					DEFAULT: 'oklch(var(--accent))',
+					foreground: 'oklch(var(--accent-foreground))'
+				},
+				background: 'oklch(var(--background))',
+				border: 'oklch(var(--border))',
+				card: {
+					DEFAULT: 'oklch(var(--card))',
+					foreground: 'oklch(var(--card-foreground))'
+				},
+				destructive: {
+					DEFAULT: 'oklch(var(--destructive))',
+					foreground: 'oklch(var(--destructive-foreground))'
+				},
+				foreground: 'oklch(var(--foreground))',
+				input: 'oklch(var(--input))',
+				muted: {
+					DEFAULT: 'oklch(var(--muted))',
+					foreground: 'oklch(var(--muted-foreground))'
+				},
+				popover: {
+					DEFAULT: 'oklch(var(--popover))',
+					foreground: 'oklch(var(--popover-foreground))'
+				},
+				primary: {
+					DEFAULT: 'oklch(var(--primary))',
+					foreground: 'oklch(var(--primary-foreground))'
+				},
+				ring: 'oklch(var(--ring))',
+				secondary: {
+					DEFAULT: 'oklch(var(--secondary))',
+					foreground: 'oklch(var(--secondary-foreground))'
+				}
 			},
 			fontFamily: {
 				sans: ['var(--font-sans)', ...fontFamily.sans]
@@ -78,9 +77,10 @@ export default {
 					to: { height: '0' }
 				}
 			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+			screens: {
+				md: '780px',
+				print: { raw: 'print' },
+				screen: { raw: 'screen' }
 			}
 		},
 		fontFamily: {

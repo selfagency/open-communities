@@ -1,16 +1,16 @@
 <script lang="ts">
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
-	import { sleep, isEmpty, shake } from 'radashi';
-	import { onMount, getContext } from 'svelte';
-	import { fade } from 'svelte/transition';
+	import { isEmpty, shake, sleep } from 'radashi';
+	import { getContext, onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
 
-	import type { LocationRecord, LocationMeta } from '$lib/location';
-	import type { PagesRecord, CongregationMetaRecord } from '$lib/types';
+	import type { LocationMeta, LocationRecord } from '$lib/location';
+	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
 
-	import { dev, browser } from '$app/environment';
+	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
 	import * as Accordion from '$lib/components/ui/accordion';
@@ -43,7 +43,7 @@
 	export let snapshot: any = {};
 
 	// constants
-	const { state: location, setCountry, setState, setCity, load: loadLocation } = new Location();
+	const { load: loadLocation, setCity, setCountry, setState, state: location } = new Location();
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 	const denominations = [
 		{ label: $t('congregation.denomination.conservative'), value: 'conservative' },
@@ -79,14 +79,14 @@
 	let title: string = '';
 
 	let view:
-		| 'congregation'
-		| 'fit'
-		| 'services'
 		| 'accessibility'
+		| 'congregation'
+		| 'contact'
+		| 'fit'
 		| 'health'
-		| 'security'
 		| 'registration'
-		| 'contact' = 'congregation';
+		| 'security'
+		| 'services' = 'congregation';
 
 	let hasFit: boolean = false;
 	let hasServices: boolean = false;
@@ -109,68 +109,68 @@
 		$formData.captcha = '';
 
 		$formData.fit = {
-			publicStatement: false,
 			clergyMember: false,
 			multipleClergyMembers: false,
 			other: false,
-			otherText: ''
+			otherText: '',
+			publicStatement: false
 		};
 
 		$formData.location = {
 			city: '',
-			state: '',
 			country: '',
 			latitude: 0,
-			longitude: 0
+			longitude: 0,
+			state: ''
 		};
 
 		$formData.services = {
-			inPerson: false,
 			hybrid: false,
-			onlineOnly: false,
+			inPerson: false,
 			offsite: false,
+			onlineOnly: false,
 			other: false,
 			otherText: ''
 		};
 
 		$formData.accessibility = {
-			online_asl: false,
-			online_liveCaptions: false,
-			online_automatedCaptions: false,
 			inPerson_adaAll: false,
 			inPerson_adaSome: false,
 			inPerson_asl: false,
 			inPerson_eva: false,
+			online_asl: false,
+			online_automatedCaptions: false,
+			online_liveCaptions: false,
 			other: false,
 			otherText: ''
 		};
 
 		$formData.health = {
-			protocol: '',
-			otherText: ''
+			otherText: '',
+			protocol: ''
 		};
 
 		$formData.security = {
-			localPolice: false,
-			privateSecurityArmed: false,
-			privateSecurityUnarmed: false,
 			clergyArmed: false,
 			congregantsArmed: false,
+			localPolice: false,
 			noFirearms: false,
 			other: false,
-			otherText: ''
+			otherText: '',
+			privateSecurityArmed: false,
+			privateSecurityUnarmed: false
 		};
 
 		$formData.registration = {
-			registrationType: '',
-			otherText: '',
 			email: '',
+			otherText: '',
+			registrationType: '',
 			url: ''
 		};
 	}
 
 	const fixType = (input: any) => {
-		return input as { _errors?: string[] | undefined } & Record<string, unknown>;
+		return input as Record<string, unknown> & { _errors?: string[] | undefined };
 	};
 
 	const setTitle = () => {
@@ -196,8 +196,12 @@
 
 	/* region form */
 	const form = superForm(data.default, {
-		id: 'addEditCongregation',
 		dataType: 'json',
+		id: 'addEditCongregation',
+		onError({ result }) {
+			log.error(result.error.message);
+			toast.error(result.error.message);
+		},
 		// validators: zod(defaultSchema),
 		async onUpdate({ result }) {
 			hasErrors = false;
@@ -224,14 +228,10 @@
 					mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
 				);
 			}
-		},
-		onError({ result }) {
-			log.error(result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, errors, enhance, capture, restore } = form;
+	const { capture, enhance, errors, form: formData, restore } = form;
 	snapshot = { capture, restore };
 	/* endregion form */
 
@@ -250,8 +250,8 @@
 
 			await loadLocation({
 				city,
-				state,
-				country
+				country,
+				state
 			} as LocationRecord);
 		}
 
@@ -264,12 +264,12 @@
 			await sleep(1500);
 			const captchaContainer = document.getElementById('captcha');
 			window['procaptcha']?.render(captchaContainer, {
-				siteKey: PUBLIC_PROSOPO_SITEKEY,
-				theme: 'light',
-				captchaType: 'frictionless',
 				callback: (token) => {
 					$formData.captcha = token;
-				}
+				},
+				captchaType: 'frictionless',
+				siteKey: PUBLIC_PROSOPO_SITEKEY,
+				theme: 'light'
 			});
 		}
 	});
@@ -280,8 +280,8 @@
 		let loc = ($location.record || congregation.location) as LocationMeta;
 		$formData.location = {
 			city: loc.city?.id,
-			state: loc.state?.id,
-			country: loc.country?.id
+			country: loc.country?.id,
+			state: loc.state?.id
 		};
 	}
 
@@ -343,7 +343,7 @@
 
 				{#if !addSuccess && !editSuccess}
 					{#if hasErrors}
-						<span in:fade={{ duration: 150, delay: 300 }} out:fade={{ duration: 150, delay: 150 }}>
+						<span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
 							<Alert.Root variant="destructive" class="my-4 bg-red-50">
 								<WarningIcon size="18" />
 								<Alert.Description class="mt-0.5">{$t('common.formErrors')}</Alert.Description>

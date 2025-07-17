@@ -17,7 +17,7 @@
 	export let location: Location;
 
 	// constants
-	const { state: locationState, reset, setCountry, setState, setCity } = location;
+	const { reset, setCity, setCountry, setState, state: locationState } = location;
 
 	// locals
 	let country: string = '';

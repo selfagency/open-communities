@@ -4,7 +4,7 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -31,8 +31,12 @@
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'transferCongregation',
 		dataType: 'json',
+		id: 'transferCongregation',
+		onError({ result }) {
+			log.error(result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			// log.debug('result', result.type);
 			if (result.type === 'success') {
@@ -44,14 +48,10 @@
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
 				toast.error($t('congregation.transferFailure'));
 			}
-		},
-		onError({ result }) {
-			log.error(result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { enhance, form: formData } = form;
 	/* endregion form */
 
 	/* region lifecycle */

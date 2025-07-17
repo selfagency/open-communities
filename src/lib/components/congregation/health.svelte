@@ -12,7 +12,7 @@
 	/* region variables */
 	// props
 	export let health: HealthRecord | undefined;
-	export let mode: 'mini' | 'full' = 'full';
+	export let mode: 'full' | 'mini' = 'full';
 	/* endregion variables */
 </script>
 

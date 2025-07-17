@@ -3,14 +3,14 @@
 	import EditIcon from 'lucide-svelte/icons/pencil';
 
 	import type {
-		CongregationMetaRecord,
 		AccessibilityRecord,
 		CitiesRecord as City,
+		CongregationMetaRecord,
 		CountriesRecord as Country,
-		ServicesRecord,
-		StatesRecord as State,
+		HealthRecord,
 		SecurityRecord,
-		HealthRecord
+		ServicesRecord,
+		StatesRecord as State
 	} from '$lib/types';
 
 	import { goto } from '$app/navigation';
@@ -35,7 +35,7 @@
 	const health = congregation?.health as HealthRecord;
 	const services = congregation?.services as ServicesRecord;
 	const security = congregation?.security as SecurityRecord;
-	const location = congregation?.location as { city: City; state: State; country: Country };
+	const location = congregation?.location as { city: City; country: Country; state: State; };
 	/* endregion variables */
 </script>
 

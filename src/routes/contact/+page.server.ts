@@ -8,14 +8,14 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 import type { LocationMeta } from '$lib/location';
 
-import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
+import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { t } from '$lib/i18n';
 import { contactSchema } from '$lib/schemas/contact';
 import { sendMail } from '$lib/server/mail';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 
-export const load = async ({ locals, fetch }) => {
+export const load = async ({ fetch, locals }) => {
 	const { api, validate } = locals;
 
 	const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map(
@@ -26,22 +26,22 @@ export const load = async ({ locals, fetch }) => {
 				38
 			);
 			return {
+				id: c.id,
 				label: truncateText(label, 38),
-				value: label,
-				id: c.id
+				value: label
 			};
 		}
 	);
 
 	return {
-		form: await validate(contactSchema),
-		congregations
+		congregations,
+		form: await validate(contactSchema)
 	};
 };
 
 export const actions = {
 	default: async (event) => {
-		const { log, api } = event.locals;
+		const { api, log } = event.locals;
 		const form: SuperValidated<any> = await superValidate(event, zod(contactSchema));
 
 		try {
@@ -53,14 +53,14 @@ export const actions = {
 
 			const captcha = await (
 				await fetch(PROSOPO_ENDPOINT, {
-					method: 'POST',
+					body: JSON.stringify({
+						secret: PROSOPO_SECRET,
+						token: form.data.captcha
+					}),
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({
-						token: form.data.captcha,
-						secret: PROSOPO_SECRET
-					})
+					method: 'POST'
 				})
 			).json();
 
@@ -73,7 +73,6 @@ export const actions = {
 			try {
 				await sendMail(
 					{
-						name: form.data.name,
 						email: form.data.email,
 						message: `
 						${t.get(`common.contact.options.${form.data.reason}`)}
@@ -81,14 +80,15 @@ export const actions = {
 						${form.data.message}
 
 						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data.email}` : ''}
-						`
+						`,
+						name: form.data.name
 					},
 					api
 				);
 			} catch (error) {
 				return fail(400, {
-					form,
-					error
+					error,
+					form
 				});
 			}
 
