@@ -1,8 +1,8 @@
 <script lang="ts">
+	/* region imports */
 	import '../app.css';
 	import { onMount } from 'svelte';
 
-	/* region imports */
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import Footer from '$lib/components/global/footer.svelte';
@@ -11,16 +11,20 @@
 	import { t } from '$lib/i18n';
 	import { setState, user } from '$lib/stores';
 
+	import type { LayoutProps } from './$types';
+
 	// import { log } from '$lib/utils';
 	import '../app.css';
-
 	/* endregion imports */
-	/* region variables */
-	// locals
-	let innerWidth = 0;
-	let innerHeight = 0;
 
+	/* region variables */
+	let { children }: LayoutProps = $props();
+
+	// locals
+	let innerWidth = $state(0);
+	let innerHeight = $state(0);
 	/* endregion variables */
+
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
@@ -44,19 +48,23 @@
 			});
 		}
 	});
-
 	/* endregion lifecycle */
-	/* region reactivity */
-	$: if (innerWidth > 0) {
-		setState({
-			isMobile: innerWidth < 640,
-			offsetWidth: innerWidth
-		});
-	}
 
-	$: if (innerHeight > 0) {
-		setState({ offsetHeight: innerHeight });
-	}
+	/* region reactivity */
+	$effect(() => {
+		if (innerWidth > 0) {
+			setState({
+				isMobile: innerWidth < 640,
+				offsetWidth: innerWidth
+			});
+		}
+	});
+
+	$effect(() => {
+		if (innerHeight > 0) {
+			setState({ offsetHeight: innerHeight });
+		}
+	});
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -67,7 +75,7 @@
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
 	<Header />
 	<main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px]">
-		<slot />
+		{@render children()}
 	</main>
 	<Footer />
 </div>

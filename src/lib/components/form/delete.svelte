@@ -18,8 +18,7 @@
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let id: string;
+	const { data, id }: { data: SuperValidated<any>; id: string } = $props();
 	/* endregion variables */
 
 	/* region methods */
@@ -63,7 +62,7 @@
 	<AlertDialog.Trigger>
 		<Button
 			class="border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
-			on:click={(e) => {
+			onclick={(e: Event) => {
 				e.preventDefault();
 			}}
 		>
@@ -81,8 +80,10 @@
 					</Alert.Root>
 
 					<Form.Field {form} name="id">
-						<Form.Control let:attrs>
-							<input type="hidden" {...attrs} bind:value={$formData.id} />
+						<Form.Control>
+							{#snippet children(props)}
+								<input type="hidden" {...props} bind:value={$formData.id} />
+							{/snippet}
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
@@ -90,7 +91,7 @@
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
 				<AlertDialog.Cancel>{$t('common.cancel')}</AlertDialog.Cancel>
-				<AlertDialog.Action on:click={deleteCongregation}>
+				<AlertDialog.Action onclick={deleteCongregation}>
 					{$t('common.continue')}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>

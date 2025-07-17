@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { t } from '$lib/i18n';
 	/* endregion imports */
 </script>
@@ -12,12 +12,12 @@
 <section
 	class="mx-auto flex min-h-[70vh] w-full flex-col items-center justify-center space-y-6 sm:w-[50%]"
 >
-	{#if $page.status === 401 || $page.status === 403}
+	{#if page.status === 401 || page.status === 403}
 		{#await import('$lib/assets/401.svg?component') then { default: Error401 }}
 			<Error401 class="mx-auto w-full fill-slate-800" />
 			<h1 class="text-center text-4xl font-bold">{$t('common.errors.401')}</h1>
 		{/await}
-	{:else if $page.status === 404}
+	{:else if page.status === 404}
 		{#await import('$lib/assets/404.svg?component') then { default: Error404 }}
 			<Error404 class="mx-auto w-full fill-slate-800" />
 			<h1 class="text-center text-4xl font-bold">{$t('common.errors.404')}</h1>

@@ -11,7 +11,7 @@
 
 	/* region variables */
 	// props
-	export let registration: RegistrationRecord | undefined;
+	const { registration }: { registration?: RegistrationRecord } = $props();
 	/* endregion variables */
 </script>
 

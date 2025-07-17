@@ -6,14 +6,14 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import { t } from '$lib/i18n';
-	import { state, user } from '$lib/stores';
+	import { state as appState, user } from '$lib/stores';
 
 	import Locale from './locale.svelte';
 	/*  endregion imports */
 
 	/* region variables */
 	// props
-	export let mode: 'full' | 'mini' = 'full';
+	let { mode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props();
 
 	// constants
 	const dispatch = createEventDispatcher();
@@ -28,24 +28,24 @@
 	{#if $user.congregation && !$user.admin}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'default'}
-			on:click={async () => {
+			onclick={async () => {
 				dispatch('close');
 				await goto(`/edit?id=${$user.congregation}`);
 			}}
 		>
-			{mode === 'full' && $state.isMobile
+			{mode === 'full' && $appState.isMobile
 				? $t('congregation.edit')
 				: $t('congregation.editCongregation')}
 		</Button>
 	{:else}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'default'}
-			on:click={async () => {
+			onclick={async () => {
 				dispatch('close');
 				await goto('/add');
 			}}
 		>
-			{mode === 'full' && $state.isMobile
+			{mode === 'full' && $appState.isMobile
 				? $t('congregation.add')
 				: $t('congregation.addCongregation')}
 		</Button>
@@ -54,7 +54,7 @@
 	{#if $user.email}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'outline'}
-			on:click={async () => {
+			onclick={async () => {
 				dispatch('close');
 				await goto('/logout');
 			}}
@@ -64,13 +64,13 @@
 	{:else}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'outline'}
-			on:click={async () => {
+			onclick={async () => {
 				dispatch('close');
 				await goto('/login');
 			}}
 		>
 			{$t('auth.login')}
-			{mode === 'full' && $state.isMobile ? '' : `/ ${$t('auth.signUp')}`}
+			{mode === 'full' && $appState.isMobile ? '' : `/ ${$t('auth.signUp')}`}
 		</Button>
 	{/if}
 

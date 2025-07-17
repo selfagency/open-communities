@@ -8,7 +8,6 @@ import { zod } from 'sveltekit-superforms/adapters';
 
 import type { LocationMeta } from '$lib/location';
 
-import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { t } from '$lib/i18n';
 import { contactSchema } from '$lib/schemas/contact';
 import { sendMail } from '$lib/server/mail';
@@ -42,31 +41,12 @@ export const load = async ({ fetch, locals }) => {
 export const actions = {
 	default: async (event) => {
 		const { api, log } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, zod(contactSchema));
+		const form: SuperValidated = await superValidate(event, zod(contactSchema));
 
 		try {
 			if (!form.valid) {
 				return fail(400, {
 					form
-				});
-			}
-
-			const captcha = await (
-				await fetch(PROSOPO_ENDPOINT, {
-					body: JSON.stringify({
-						secret: PROSOPO_SECRET,
-						token: form.data.captcha
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					method: 'POST'
-				})
-			).json();
-
-			if (!captcha.verified) {
-				return fail(400, {
-					form: { ...form, error: 'Captcha verification failed' }
 				});
 			}
 

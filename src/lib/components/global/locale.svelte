@@ -16,7 +16,7 @@
 
 	/* region variables */
 	// props
-	export let mode: 'full' | 'mini' = 'full';
+	let { mode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props();
 
 	// constants
 	const locales = [
@@ -37,14 +37,13 @@
 	/* endregion variables */
 
 	/* region reactivity */
-	$: if (lang && lang !== $user.lang && browser) {
-		user.set({ ...$user, lang });
-		window.location.reload();
-	}
+	$effect(() => {
+		if (lang && lang !== $user.lang && browser) {
+			user.set({ ...$user, lang });
+			window.location.reload();
+		}
+	});
 
-	$: if (hovering) {
-		log.debug('hovering', hovering);
-	}
 	/* endregion reactivity */
 </script>
 

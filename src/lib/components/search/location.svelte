@@ -13,29 +13,28 @@
 
 	/* region variables */
 	// props
-	export let search: Search;
-	export let location: Location;
+	const { location, search }: { location: Location; search: Search } = $props();
 
 	// constants
-	const { reset, setCity, setCountry, setState, state: locationState } = location;
+	const { reset, setCity, setCountry, setState, state: locationState } = $derived(location);
 
 	// locals
-	let country: string = '';
-	let state: string = '';
-	let city: string = '';
+	let country: string = $state('');
+	let province: string = $state('');
+	let city: string = $state('');
 	/* endregion variables */
 
 	/* region lifecycle */
 	onMount(async () => {
 		country = $locationState.record.country?.id || '';
-		if ($locationState.record.state) state = $locationState.record.state?.id || '';
+		if ($locationState.record.state) province = $locationState.record.state?.id || '';
 		if ($locationState.record.city) city = $locationState.record.city?.id || '';
 
 		locationState.subscribe((value) => {
 			if (value.record.country) {
 				search.setSearchLocation(value.record);
 				country = value.record.country?.id || '';
-				if (value.record.state) state = $locationState.record.state?.id || '';
+				if (value.record.state) province = $locationState.record.state?.id || '';
 				if (value.record.city) city = $locationState.record.city?.id || '';
 			}
 		});
@@ -45,10 +44,10 @@
 
 {#if !isEmpty($locationState.options)}
 	<div
-		class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-x-2 sm:space-y-0"
+		class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-y-0 sm:space-x-2"
 	>
 		<div
-			class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-x-2 sm:space-y-0"
+			class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-2"
 		>
 			<span class="w-full sm:w-1/3">
 				<Combobox
@@ -65,12 +64,12 @@
 			<span class="w-full sm:w-1/3">
 				<Combobox
 					items={$locationState.options.stateOptions}
-					bind:value={state}
+					bind:value={province}
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.state').toLowerCase()
 					})}
 					disabled={!country && !$locationState.options?.stateOptions?.length}
-					on:change={() => setState(state)}
+					on:change={() => setState(province)}
 				/>
 			</span>
 
@@ -81,7 +80,7 @@
 					placeholder={$t('common.selectThing', {
 						thing: $t('congregation.location.city').toLowerCase()
 					})}
-					disabled={!state && !$locationState.options?.cityOptions?.length}
+					disabled={!province && !$locationState.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>
 			</span>
@@ -91,9 +90,9 @@
 			<Button
 				variant="link"
 				class="h-auto"
-				on:click={() => {
+				onclick={() => {
 					country = '';
-					state = '';
+					province = '';
 					city = '';
 					reset();
 				}}

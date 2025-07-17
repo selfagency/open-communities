@@ -28,7 +28,7 @@
 
 	/* region variables */
 	// props
-	export let search: Search;
+	const { search }: { search: Search } = $props();
 
 	// constants
 	const icons = {
@@ -48,8 +48,7 @@
 	};
 
 	// locals
-	let filters: Record<string, Record<string, boolean>>;
-
+	let filters: Record<string, Record<string, boolean>> = $state({});
 	/* endregion variables */
 
 	/* region methods */
@@ -124,7 +123,9 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: search.setFilters(filters);
+	$effect(() => {
+		if (filters) search.setFilters(filters);
+	});
 	/* endregion reactivity */
 </script>
 
@@ -137,7 +138,7 @@
 	</Popover.Trigger>
 	<Popover.Content>
 		<div class="flex flex-col items-start justify-start space-y-2 text-slate-500">
-			{#each Object.keys(filters) as category}
+			{#each Object.keys(filters) as category, i (i)}
 				{#if !isEmpty(filters?.[category]) && !(category === 'admin' && !$user.admin)}
 					<Collapsible.Root>
 						<Collapsible.Trigger>
@@ -173,7 +174,7 @@
 						</Collapsible.Trigger>
 						<Collapsible.Content>
 							<div class="filter-box">
-								{#each Object.keys(filters[category]) as option}
+								{#each Object.keys(filters[category]) as option, i (i)}
 									<span class="filter-item">
 										<Checkbox
 											id={`${category}_${option}`}
@@ -194,11 +195,7 @@
 					</Collapsible.Root>
 				{/if}
 			{/each}
-			<Button
-				class="filter-heading h-auto p-0 text-slate-500"
-				variant="link"
-				on:click={initFilters}
-			>
+			<Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={initFilters}>
 				<span class="filter-icon"><svelte:component this={icons.close} size="16" /></span>
 				<span class="filter-label"><span>{$t('common.reset')}</span></span>
 			</Button>

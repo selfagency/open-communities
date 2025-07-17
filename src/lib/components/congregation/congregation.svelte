@@ -42,25 +42,34 @@
 
 	/* region variables */
 	// props
-	export let congregation: CongregationMetaRecord & { id: string };
-	export let open: boolean = false;
+	let {
+		congregation,
+		open = $bindable(false)
+	}: {
+		congregation: CongregationMetaRecord & { id: string };
+		open?: boolean;
+	} = $props();
 
 	// constants
-	const accessibility = congregation.accessibility as AccessibilityRecord;
-	const fit = congregation.fit as FitRecord;
-	const { city, country, state } = congregation.location as {
+	const accessibility = $derived(congregation.accessibility) as AccessibilityRecord;
+	const fit = $derived(congregation.fit) as FitRecord;
+	const {
+		city,
+		country,
+		state: province
+	} = $derived(congregation.location) as {
 		city: City;
 		country: Country;
 		state: State;
 	};
-	const notes = congregation.notes as string;
-	const services = congregation.services as ServicesRecord;
-	const registration = congregation.registration as RegistrationRecord;
-	const health = congregation.health as HealthRecord;
-	const security = congregation.security as SecurityRecord;
+	const notes = $derived(congregation.notes) as string;
+	const services = $derived(congregation.services) as ServicesRecord;
+	const registration = $derived(congregation.registration) as RegistrationRecord;
+	const health = $derived(congregation.health) as HealthRecord;
+	const security = $derived(congregation.security) as SecurityRecord;
 
 	// locals
-	let tab: 'about' | 'details' | 'services' = 'about';
+	let tab: 'about' | 'details' | 'services' = $state('about');
 	/* endregion variables */
 
 	/* region methods */
@@ -68,7 +77,9 @@
 	/* endregion methods */
 
 	/* region reactivity */
-	$: if (!open) tab = 'about';
+	$effect(() => {
+		if (!open) tab = 'about';
+	});
 	/* endregion reactivity */
 </script>
 
@@ -78,7 +89,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content
 		data-id={congregation.id}
-		class="flex max-h-[85vh] min-h-[35vh] min-w-[360px] max-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 sm:max-w-[540px] sm:p-8"
+		class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 sm:max-w-[540px] sm:p-8"
 	>
 		<Dialog.Header class="w-full rtl:text-right">
 			<Dialog.Title>
@@ -102,9 +113,9 @@
 			</Dialog.Title>
 			<Dialog.Description class="flex w-full flex-row items-center justify-between space-x-2">
 				<span class="w-2/3">
-					{#if city.name || state.name || country.name}
-						{#if city.name}<span>{city.name}</span>{#if state.name || country.name},{/if}{/if}
-						{#if state.name}<span>{state.name}</span
+					{#if city.name || province.name || country.name}
+						{#if city.name}<span>{city.name}</span>{#if province.name || country.name},{/if}{/if}
+						{#if province.name}<span>{province.name}</span
 							>{#if country.name && country.name !== 'United States'},{/if}{/if}
 						{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
 					{:else if services.onlineOnly}
@@ -117,7 +128,7 @@
 						<a href={`/contact?claim=${congregation.id}`}>
 							<Badge
 								variant="outline"
-								class="text-nowrap font-normal text-slate-500 hover:bg-slate-100"
+								class="font-normal text-nowrap text-slate-500 hover:bg-slate-100"
 								>{$t('congregation.claimThis')}</Badge
 							>
 						</a>
@@ -128,7 +139,7 @@
 								<Button
 									variant="ghost"
 									class="h-8 px-2 py-0"
-									on:click={async () => {
+									onclick={async () => {
 										await goto(`/edit?id=${congregation.id}`);
 									}}
 								>
@@ -146,7 +157,7 @@
 							<Button
 								variant="ghost"
 								class="h-8 px-2 py-0"
-								on:click={() => {
+								onclick={() => {
 									copyText(`https://opencommunities.info?id=${congregation.id}`);
 									toast.success($t('common.copied'));
 								}}

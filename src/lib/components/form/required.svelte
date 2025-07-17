@@ -6,7 +6,7 @@
 
 	/* region variables */
 	// props
-	export let set: boolean = false;
+	let { set = $bindable(false) }: { set: boolean } = $props();
 	/* endregion variables */
 </script>
 

@@ -15,7 +15,6 @@ import type {
 	ServicesRecord
 } from '$lib/types';
 
-import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { handleError, loadUser } from '$lib/server/api';
@@ -130,7 +129,7 @@ export const actions = {
 	},
 	submit: async (event) => {
 		const { cookies, fetch, locals } = event;
-		const { api, log, validate } = locals;
+		const { api, validate } = locals;
 		const client = loadUser(cookies);
 
 		const form = await validate(defaultSchema, event);
@@ -145,26 +144,6 @@ export const actions = {
 
 			if (!form.valid) {
 				throw new Error('Invalid form data');
-			}
-
-			const captcha = await (
-				await fetch(PROSOPO_ENDPOINT, {
-					body: JSON.stringify({
-						secret: PROSOPO_SECRET,
-						token: data.captcha
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					method: 'POST'
-				})
-			).json();
-
-			if (!captcha.verified) {
-				log.error('Captcha verification failed', captcha);
-				return fail(400, {
-					form: { ...form, error: 'Captcha verification failed' }
-				});
 			}
 
 			const { accessibility, fit, health, location, registration, security, services } = data;

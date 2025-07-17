@@ -8,7 +8,7 @@
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import * as Alert from '$lib/components/ui/alert';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { Button } from '$lib/components/ui/button';
@@ -21,12 +21,18 @@
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let id: string;
-	export let owner: string | undefined = undefined;
+	const {
+		data,
+		id,
+		owner
+	}: {
+		data: SuperValidated<any>;
+		id: string;
+		owner?: string;
+	} = $props();
 
 	// locals
-	let open: boolean = false;
+	let open: boolean = $derived(page.url.searchParams.has('transfer'));
 	/* endregion variables */
 
 	/* region form */
@@ -56,16 +62,13 @@
 
 	/* region lifecycle */
 	onMount(() => {
-		$formData.id = id;
-		$formData.owner = owner;
-		$formData.email = $page.url.searchParams.get('transfer');
+		formData.set({
+			email: page.url.searchParams.get('transfer'),
+			id,
+			owner
+		});
 	});
 	/* endregion lifecycle */
-
-	/* region reactivity */
-	$: if ($page.url.searchParams.has('transfer')) {
-		open = true;
-	}
 </script>
 
 {#if $user.admin}
@@ -73,7 +76,7 @@
 		<AlertDialog.Trigger>
 			<Button
 				class="border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
-				on:click={(e) => {
+				onclick={(e: Event) => {
 					e.preventDefault();
 				}}
 			>
@@ -93,16 +96,20 @@
 						</Alert.Root>
 
 						<Form.Field {form} name="id">
-							<Form.Control let:attrs>
-								<input type="hidden" {...attrs} bind:value={$formData.id} />
+							<Form.Control>
+								{#snippet children(props)}
+									<input type="hidden" {...props} bind:value={$formData.id} />
+								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
 
 						<Form.Field {form} name="email">
-							<Form.Control let:attrs>
-								<Form.Label for="email">{$t('common.email')}</Form.Label>
-								<Input {...attrs} bind:value={$formData.email} />
+							<Form.Control>
+								{#snippet children(props)}
+									<Form.Label for="email">{$t('common.email')}</Form.Label>
+									<Input {...props} bind:value={$formData.email} />
+								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
@@ -110,13 +117,13 @@
 				</AlertDialog.Header>
 				<AlertDialog.Footer class="mt-4">
 					<AlertDialog.Cancel
-						on:click={async () => {
+						onclick={async () => {
 							open = false;
-							await goto(`${$page.url.pathname}?id=${id}`);
+							await goto(`${page.url.pathname}?id=${id}`);
 						}}>{$t('common.cancel')}</AlertDialog.Cancel
 					>
 					<AlertDialog.Action
-						on:click={(e) => {
+						onclick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
 							form.submit(document.getElementById('transfer'));

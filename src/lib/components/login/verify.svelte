@@ -14,9 +14,11 @@
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let token: null | string;
-	export let verified: boolean = false;
+	let {
+		data,
+		token,
+		verified = $bindable(false)
+	}: { data: SuperValidated<any>; token: null | string; verified: boolean } = $props();
 	/* endregion variables */
 
 	/* region form */

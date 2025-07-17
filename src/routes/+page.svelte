@@ -9,49 +9,35 @@
 	import Congregations from '$lib/components/search/congregations.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { t } from '$lib/i18n';
-	import { setState, state } from '$lib/stores';
+	import { state as appState, setState } from '$lib/stores';
 	import { log } from '$lib/utils';
+
+	import type { PageData } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data;
+	const data: PageData = $props();
 
 	// locals
-	let congregations: CongregationMetaRecord & { id: string }[];
-	let content: PagesRecord;
+	let congregations: CongregationMetaRecord & { id: string }[] = $derived(data.congregations || []);
+	let content: PagesRecord = $derived(data.content || ({} as PagesRecord));
 	/* endregion variables */
 
 	/* region lifecycle */
 	onMount(() => {
-		if (!isEmpty(data)) {
-			if (isArray(data.congregations)) {
-				congregations = data.congregations;
-			} else {
-				log.error($t('common.errors.congregationFailed'));
-			}
-
-			if (!isEmpty(data.content)) {
-				content = data.content;
-			} else {
-				log.error($t('common.errors.pageFailed'));
-			}
-
-			if (isArray(data.countries)) {
-				setState({ countries: data.countries });
-			} else {
-				log.error($t('common.errors.countriesFailed'));
-			}
+		if (!isEmpty(data) && isArray(data.countries)) {
+			setState({ countries: data.countries });
 		} else {
-			log.error($t('common.errors.dataFailed'));
+			log.error($t('common.errors.countriesFailed'));
 		}
 	});
 </script>
 
 {#if content?.content}
-	<Dialog.Root open={$state.showIntro} onOpenChange={() => setState({ showIntro: false })}>
+	<Dialog.Root open={$appState.showIntro} onOpenChange={() => setState({ showIntro: false })}>
 		<Dialog.Content
-			class="max-h-[85vh] min-w-[360px] max-w-[360px] overflow-y-scroll sm:max-w-[540px]"
+			class="max-h-[85vh] max-w-[360px] min-w-[360px] overflow-y-scroll sm:max-w-[540px]"
 		>
 			<Dialog.Header>
 				<Dialog.Title class="font-display text-2xl font-normal">

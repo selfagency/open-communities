@@ -1,7 +1,7 @@
 <script lang="ts">
+	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 
-	/* region imports */
 	import type { HealthRecord } from '$lib/types';
 
 	import MaskIcon from '$lib/assets/mask.svg?component';
@@ -11,8 +11,8 @@
 
 	/* region variables */
 	// props
-	export let health: HealthRecord | undefined;
-	export let mode: 'full' | 'mini' = 'full';
+	const { health, mode = $bindable('full') }: { health?: HealthRecord; mode?: 'full' | 'mini' } =
+		$props();
 	/* endregion variables */
 </script>
 

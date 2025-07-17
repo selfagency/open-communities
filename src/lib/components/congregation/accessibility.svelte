@@ -14,15 +14,17 @@
 
 	/* region variables */
 	// props
-	export let accessibility: AccessibilityRecord;
-	export let mode: 'full' | 'mini' = 'mini';
+	const {
+		accessibility,
+		mode = $bindable('mini')
+	}: { accessibility: AccessibilityRecord; mode?: 'full' | 'mini' } = $props();
 
 	// constants
-	const ada = accessibility.inPerson_adaSome || accessibility.inPerson_adaAll;
-	const cc = accessibility.online_automatedCaptions || accessibility.online_liveCaptions;
-	const eva = accessibility.inPerson_eva;
-	const asl = accessibility.inPerson_asl || accessibility.online_asl;
-	const other = accessibility.otherText;
+	const ada = $derived(accessibility.inPerson_adaSome || accessibility.inPerson_adaAll);
+	const cc = $derived(accessibility.online_automatedCaptions || accessibility.online_liveCaptions);
+	const eva = $derived(accessibility.inPerson_eva);
+	const asl = $derived(accessibility.inPerson_asl || accessibility.online_asl);
+	const other = $derived(accessibility.otherText);
 	/* endregion variables */
 </script>
 

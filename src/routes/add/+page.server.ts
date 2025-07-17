@@ -16,8 +16,8 @@ import type {
 	SecurityRecord,
 	ServicesRecord
 } from '$lib/types';
+import type { CongregationsResponse } from '$lib/types.d';
 
-import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { t } from '$lib/i18n';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError, loadUser } from '$lib/server/api';
@@ -78,29 +78,10 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const captcha = await (
-				await fetch(PROSOPO_ENDPOINT, {
-					body: JSON.stringify({
-						secret: PROSOPO_SECRET,
-						token: form.data.captcha
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					method: 'POST'
-				})
-			).json();
-
-			if (!captcha.verified) {
-				return fail(400, {
-					form: { ...form, error: 'Captcha verification failed' }
-				});
-			}
-
 			const { accessibility, fit, health, location, registration, security, services, user } =
 				formData as MetaRecord;
 
-			const record = await api.collection('congregations').create(
+			const record = (await api.collection('congregations').create(
 				{
 					...omit(formData, [
 						'accessibility',
@@ -116,7 +97,7 @@ export const actions = {
 					visible: client?.admin ? formData.visible : false
 				},
 				{ fetch }
-			);
+			)) as CongregationsResponse;
 
 			await Promise.all([
 				api
@@ -141,7 +122,7 @@ export const actions = {
 						A new congregation, ${record.name}, has been submitted and requires approval:\n
 						https://opencommunities.info/edit?id=${record.id}
 					`,
-						name: client.name,
+						name: client.name as string,
 						title: `New congregation submitted`
 					},
 					api

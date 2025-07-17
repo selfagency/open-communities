@@ -7,7 +7,7 @@
 
 	/* region variables */
 	// props
-	export let services: ServicesRecord | undefined;
+	const { services }: { services?: ServicesRecord } = $props();
 	/* endregion variables */
 </script>
 

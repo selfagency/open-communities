@@ -11,9 +11,7 @@ import type { LocationMeta } from '$lib/location';
 /* endregion imports */
 
 /* region types  */
-export type SelectOption = { label: string; value: string };
-
-type SearchData = {
+export type SearchData = {
 	flavor?: string;
 	id: string;
 	location?: LocationMeta;
@@ -22,7 +20,7 @@ type SearchData = {
 	visible: boolean;
 };
 
-type SearchState = {
+export type SearchState = {
 	filters?: {
 		[key: string]: {
 			[key: string]: boolean;
@@ -32,6 +30,8 @@ type SearchState = {
 	searchTerms?: string;
 	showLocation?: boolean;
 };
+
+export type SelectOption = { label: string; value: string };
 /* endregion types */
 
 export class Search {

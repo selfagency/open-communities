@@ -5,7 +5,7 @@
 
 	/* region variables */
 	// props
-	export let content: any;
+	const { content }: { content: { content: string; title: string } } = $props();
 	/* endregion variables */
 </script>
 

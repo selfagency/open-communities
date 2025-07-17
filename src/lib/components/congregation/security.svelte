@@ -11,8 +11,10 @@
 
 	/* region variables */
 	// props
-	export let security: SecurityRecord;
-	export let mode: 'full' | 'mini' = 'mini';
+	const {
+		mode = $bindable('mini'),
+		security
+	}: { mode?: 'full' | 'mini'; security: SecurityRecord } = $props();
 
 	// constants
 	/* endregion variables */

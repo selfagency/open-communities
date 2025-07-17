@@ -1,5 +1,7 @@
 <script lang="ts">
 	/* region imports */
+	import type { MapStore } from 'nanostores';
+
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import ClearIcon from 'lucide-svelte/icons/circle-x';
 	import LocationIcon from 'lucide-svelte/icons/globe';
@@ -8,11 +10,12 @@
 	import { fade } from 'svelte/transition';
 
 	import type { LocationMeta } from '$lib/location';
+	import type { SearchData, SearchState } from '$lib/search';
 	import type { CongregationMetaRecord } from '$lib/types';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Congregation from '$lib/components/congregation/congregation.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
@@ -21,7 +24,7 @@
 	import { t } from '$lib/i18n';
 	import { Location as LocationService } from '$lib/location';
 	import { Search } from '$lib/search';
-	import { state } from '$lib/stores';
+	import { state as appState } from '$lib/stores';
 
 	import Filters from './filters.svelte';
 	import Location from './location.svelte';
@@ -34,20 +37,23 @@
 
 	/* region variables */
 	// props
-	export let congregations: Congregation[] = [];
+	const { congregations }: { congregations: Congregation[] } = $props();
 
 	// constants
-	const search = new Search(congregations, dev);
-	const { results, state: searchState } = search;
+	const search = new Search(congregations as SearchData[], dev);
+	const {
+		results,
+		state: searchState
+	}: { results: MapStore<unknown[]>; state: MapStore<SearchState> } = search;
 	const location = new LocationService(search);
 	const open = {};
 
 	// locals
-	let searchTerms = '';
-	let locations: LocationMeta[] = [];
-	let currentPage = 1;
-	let perPage = 12;
-	let pages: Congregation[][] = [];
+	let searchTerms = $state('');
+	let locations: LocationMeta[] = $state([]);
+	let currentPage = $state(1);
+	let perPage = $state(12);
+	let pages: Congregation[][] = $state([]);
 	// let reset: boolean = false;
 	/* endregion variables */
 
@@ -91,34 +97,40 @@
 		}
 	});
 
-	$: if (searchTerms) {
-		search.setSearchTerms(searchTerms);
-	}
+	$effect(() => {
+		if (searchTerms) {
+			search.setSearchTerms(searchTerms);
+		}
+	});
 
-	$: if ($page.url.searchParams.has('id')) {
-		const id = $page.url.searchParams.get('id') || '';
-		goto($page.url.pathname, { replaceState: false }).then(() => {
-			searchTerms = id;
-			open[id] = true;
-			searchTerms = '';
-		});
-	}
+	$effect(() => {
+		if (page.url.searchParams.has('id')) {
+			const id = page.url.searchParams.get('id') || '';
+			goto(page.url.pathname, { replaceState: false }).then(() => {
+				searchTerms = id;
+				open[id] = true;
+				searchTerms = '';
+			});
+		}
+	});
 
-	$: if (currentPage) {
-		pages[currentPage]?.reduce(
-			(acc, congregation) => {
-				acc[congregation.id] = false;
-				return acc;
-			},
-			{} as Record<string, boolean>
-		);
-	}
+	$effect(() => {
+		if (currentPage) {
+			pages[currentPage]?.reduce(
+				(acc, congregation) => {
+					acc[congregation.id] = false;
+					return acc;
+				},
+				{} as Record<string, boolean>
+			);
+		}
+	});
 	/* endregion reactivity */
 </script>
 
 <section class="w-full space-y-4">
 	<div
-		class="flex w-full flex-col items-center justify-between space-x-0 space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 rtl:sm:space-x-0"
+		class="flex w-full flex-col items-center justify-between space-y-4 space-x-0 sm:flex-row sm:space-y-0 sm:space-x-4 rtl:sm:space-x-0"
 	>
 		<div
 			class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500"
@@ -155,7 +167,7 @@
 			<Button
 				variant="outline"
 				class={`space-x-2 text-slate-500 rtl:mx-1 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
-				on:click={() => {
+				onclick={() => {
 					search.toggleLocation();
 				}}
 			>
@@ -185,7 +197,7 @@
 				<span>{$t('congregation.nothingFound')}</span>
 			</div>
 		{:else if pages?.length > 0}
-			{#each pages[currentPage - 1] as congregation}
+			{#each pages[currentPage - 1] as congregation, i (i)}
 				{#key congregation.id}
 					<div class="col-span-1">
 						<Congregation {congregation} open={open[congregation.id]} />
@@ -199,32 +211,32 @@
 		<Pagination.Root
 			count={$results?.length || 0}
 			{perPage}
-			let:pages
-			let:currentPage
 			{onPageChange}
-			siblingCount={$state.isMobile ? 0 : 1}
+			siblingCount={$appState.isMobile ? 0 : 1}
 		>
-			<Pagination.Content>
-				<Pagination.Item>
-					<Pagination.PrevButton />
-				</Pagination.Item>
-				{#each pages as page (page.key)}
-					{#if page.type === 'ellipsis'}
-						<Pagination.Item>
-							<Pagination.Ellipsis />
-						</Pagination.Item>
-					{:else}
-						<Pagination.Item>
-							<Pagination.Link {page} isActive={currentPage == page.value}>
-								{page.value}
-							</Pagination.Link>
-						</Pagination.Item>
-					{/if}
-				{/each}
-				<Pagination.Item>
-					<Pagination.NextButton />
-				</Pagination.Item>
-			</Pagination.Content>
+			{#snippet children(pages, currentPage)}
+				<Pagination.Content>
+					<Pagination.Item>
+						<Pagination.PrevButton />
+					</Pagination.Item>
+					{#each pages as page (page.key)}
+						{#if page.type === 'ellipsis'}
+							<Pagination.Item>
+								<Pagination.Ellipsis />
+							</Pagination.Item>
+						{:else}
+							<Pagination.Item>
+								<Pagination.Link {page} isActive={currentPage == page.value}>
+									{page.value}
+								</Pagination.Link>
+							</Pagination.Item>
+						{/if}
+					{/each}
+					<Pagination.Item>
+						<Pagination.NextButton />
+					</Pagination.Item>
+				</Pagination.Content>
+			{/snippet}
 		</Pagination.Root>
 	</div>
 </section>

@@ -1,32 +1,37 @@
-<svelte:options accessors />
-
 <script lang="ts">
 	/* region imports */
 	import { onMount } from 'svelte';
 
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Login from '$lib/components/login/index.svelte';
 	import SignUp from '$lib/components/login/signup.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { t } from '$lib/i18n';
+
+	import type { PageData, Snapshot } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data;
-	export let snapshot;
+	const data: PageData = $props();
 
 	// locals
-	let tab: 'login' | 'signup' = 'login';
+	let tab: 'login' | 'signup' = $state('login');
+	let userData = $state('');
+
+	export const snapshot: Snapshot<string> = {
+		capture: () => userData,
+		restore: (value) => (userData = value)
+	};
 	/* endregion variables */
 
 	/* region lifecycle */
 	onMount(() => {
-		if ($page.url.searchParams.has('signUp') || $page.url.searchParams.has('verifyEmail')) {
+		if (page.url.searchParams.has('signUp') || page.url.searchParams.has('verifyEmail')) {
 			tab = 'signup';
 		}
 
-		if ($page.url.searchParams.has('resetPassword')) {
+		if (page.url.searchParams.has('resetPassword')) {
 			tab = 'login';
 		}
 	});
@@ -48,7 +53,7 @@
 				<Login data={data.form.login} reset={data.form.reset} />
 			</Tabs.Content>
 			<Tabs.Content value="signup">
-				<SignUp data={data.form.signup} verify={data.form.verify} bind:snapshot />
+				<SignUp data={data.form.signup} verify={data.form.verify} bind:snapshot={userData} />
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>

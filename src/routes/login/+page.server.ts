@@ -10,7 +10,6 @@ import { zod } from 'sveltekit-superforms/adapters';
 import type { UsersRecord } from '$lib/types';
 
 // import { dev } from '$app/environment';
-import { PROSOPO_ENDPOINT, PROSOPO_SECRET } from '$env/static/private';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
@@ -135,28 +134,6 @@ export const actions = {
 		try {
 			if (!form.valid) {
 				return fail(400, {
-					form
-				});
-			}
-
-			const captcha = await (
-				await fetch(PROSOPO_ENDPOINT, {
-					body: JSON.stringify({
-						secret: PROSOPO_SECRET,
-						token: form.data.captcha
-					}),
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					method: 'POST'
-				})
-			).json();
-
-			if (!captcha.verified) {
-				return fail(400, {
-					errors: {
-						captcha: ['Captcha verification failed']
-					},
 					form
 				});
 			}

@@ -1,19 +1,17 @@
 <script lang="ts">
 	/* region imports */
 	import Page from '$lib/components/global/page.svelte';
+
+	import type { PageData } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data: any;
+	const data: PageData = $props();
 
 	// locals
-	let content;
+	let content = $derived(data.content);
 	/* endregion variables */
-
-	/* region reactivity */
-	$: if (data.content) content = data.content;
-	/* endregion reactivity */
 </script>
 
 <Page {content} />

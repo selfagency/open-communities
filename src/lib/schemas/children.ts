@@ -7,11 +7,11 @@ import { t } from '$lib/i18n';
 /* endregion imports */
 
 /* region methods */
-const valueSelected = (value: any) => {
+const valueSelected = (value) => {
 	return !listify(value, (_, value) => value).every((value) => !value);
 };
 
-const hasContact = (value: any) => {
+const hasContact = (value) => {
 	return !(isEmpty(value?.email) && isEmpty(value?.url));
 };
 /* endregion methods */

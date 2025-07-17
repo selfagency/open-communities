@@ -28,14 +28,18 @@
 
 	/* region variables */
 	// props
-	export let congregation: CongregationMetaRecord & { id: string };
+	const { congregation }: { congregation: CongregationMetaRecord & { id: string } } = $props();
 
 	// constants
-	const accessibility = congregation?.accessibility as AccessibilityRecord;
-	const health = congregation?.health as HealthRecord;
-	const services = congregation?.services as ServicesRecord;
-	const security = congregation?.security as SecurityRecord;
-	const location = congregation?.location as { city: City; country: Country; state: State; };
+	const accessibility = $derived(congregation?.accessibility) as AccessibilityRecord;
+	const health = $derived(congregation?.health) as HealthRecord;
+	const services = $derived(congregation?.services) as ServicesRecord;
+	const security = $derived(congregation?.security) as SecurityRecord;
+	const location = $derived(congregation?.location) as {
+		city: City;
+		country: Country;
+		state: State;
+	};
 	/* endregion variables */
 </script>
 
@@ -43,9 +47,11 @@
 	class="h-full min-h-max transition-transform hover:scale-105 ltr:text-left rtl:text-right"
 >
 	<Card.Header>
-		<Card.Title tag="h1" class="font-display text-xl font-normal leading-6 tracking-wide"
-			>{congregation.name}</Card.Title
-		>
+		<Card.Title>
+			<h1 class="font-display text-xl leading-6 font-normal tracking-wide">
+				{congregation.name}
+			</h1>
+		</Card.Title>
 		<Card.Description>
 			{#if services.onlineOnly}
 				<span>{$t('congregation.services.onlineOnly')}</span
@@ -75,7 +81,7 @@
 							<Button
 								variant="ghost"
 								class="h-8 px-2 py-0"
-								on:click={async (e) => {
+								onclick={async (e: Event) => {
 									e.preventDefault();
 									e.stopPropagation();
 									await goto(`/edit?id=${congregation.id}`);

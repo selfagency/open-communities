@@ -7,7 +7,7 @@
 
 	/* region variables */
 	// props
-	export let fit: FitRecord;
+	const { fit }: { fit: FitRecord } = $props();
 	/* endregion variables */
 </script>
 

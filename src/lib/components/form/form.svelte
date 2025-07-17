@@ -12,7 +12,7 @@
 
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
+	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
 	import { Button } from '$lib/components/ui/button';
@@ -37,10 +37,13 @@
 
 	/* region variables */
 	// props
-	export let data;
-	export let content: PagesRecord | undefined = undefined;
-	export let mode: 'add' | 'edit' = 'add';
-	export let snapshot: any = {};
+	const {
+		content,
+		data,
+		mode = $bindable('add')
+	}: { content?: PagesRecord; data: SuperValidated<any>; mode: 'add' | 'edit' } = $props();
+
+	let userData = $state('');
 
 	// constants
 	const { load: loadLocation, setCity, setCountry, setState, state: location } = new Location();
@@ -68,13 +71,13 @@
 	];
 
 	// locals
-	let country: string = '';
-	let state: string = '';
-	let city: string = '';
+	let country: string = $state('country');
+	let province: string = $state('state');
+	let city: string = $state('city');
 
-	let hasErrors: boolean = false;
-	let addSuccess: boolean = false;
-	let editSuccess: boolean = false;
+	let hasErrors: boolean = $state('hasErrors');
+	let addSuccess: boolean = $state('addSuccess');
+	let editSuccess: boolean = $state('editSuccess');
 
 	let title: string = '';
 
@@ -86,106 +89,83 @@
 		| 'health'
 		| 'registration'
 		| 'security'
-		| 'services' = 'congregation';
+		| 'services' = $state('congregation');
 
-	let hasFit: boolean = false;
-	let hasServices: boolean = false;
-	let hasHealth: boolean = false;
-	let hasRegistration: boolean = false;
+	const hasFit: boolean = $derived(valueSet($formData.fit));
+	const hasServices: boolean = $derived(valueSet($formData.services));
+	const hasHealth: boolean = $derived(valueSet($formData.health));
+	const hasRegistration: boolean = $derived(valueSet($formData.registration));
 	/* endregion variables */
 
 	/* region methods */
 	function initData() {
-		$formData.clergy = '';
-		$formData.contactEmail = '';
-		$formData.contactName = '';
-		$formData.contactUrl = '';
-		$formData.denomination = '';
-		$formData.flavor = '';
-		$formData.name = '';
-		$formData.notes = '';
-		$formData.visible = false;
-		$formData.user = $user.admin ? '' : $user.id;
-		$formData.captcha = '';
-
-		$formData.fit = {
-			clergyMember: false,
-			multipleClergyMembers: false,
-			other: false,
-			otherText: '',
-			publicStatement: false
-		};
-
-		$formData.location = {
-			city: '',
-			country: '',
-			latitude: 0,
-			longitude: 0,
-			state: ''
-		};
-
-		$formData.services = {
-			hybrid: false,
-			inPerson: false,
-			offsite: false,
-			onlineOnly: false,
-			other: false,
-			otherText: ''
-		};
-
-		$formData.accessibility = {
-			inPerson_adaAll: false,
-			inPerson_adaSome: false,
-			inPerson_asl: false,
-			inPerson_eva: false,
-			online_asl: false,
-			online_automatedCaptions: false,
-			online_liveCaptions: false,
-			other: false,
-			otherText: ''
-		};
-
-		$formData.health = {
-			otherText: '',
-			protocol: ''
-		};
-
-		$formData.security = {
-			clergyArmed: false,
-			congregantsArmed: false,
-			localPolice: false,
-			noFirearms: false,
-			other: false,
-			otherText: '',
-			privateSecurityArmed: false,
-			privateSecurityUnarmed: false
-		};
-
-		$formData.registration = {
-			email: '',
-			otherText: '',
-			registrationType: '',
-			url: ''
-		};
+		formData.set({
+			accessibility: {
+				inPerson_adaAll: false,
+				inPerson_adaSome: false,
+				inPerson_asl: false,
+				inPerson_eva: false,
+				online_asl: false,
+				online_automatedCaptions: false,
+				online_liveCaptions: false,
+				other: false,
+				otherText: ''
+			},
+			captcha: '',
+			cleargy: '',
+			contactEmail: '',
+			contactName: '',
+			contactUrl: '',
+			denomination: '',
+			fit: {
+				clergyMember: false,
+				multipleClergyMembers: false,
+				other: false,
+				otherText: '',
+				publicStatement: false
+			},
+			flavor: '',
+			health: {
+				otherText: '',
+				protocol: ''
+			},
+			location: {
+				city: '',
+				country: '',
+				latitude: 0,
+				longitude: 0,
+				state: ''
+			},
+			name: '',
+			notes: '',
+			registration: {
+				email: '',
+				otherText: '',
+				registrationType: '',
+				url: ''
+			},
+			security: {
+				clergyArmed: false,
+				congregantsArmed: false,
+				localPolice: false,
+				noFirearms: false,
+				other: false,
+				otherText: '',
+				privateSecurityArmed: false,
+				privateSecurityUnarmed: false
+			},
+			services: {
+				hybrid: false,
+				inPerson: false,
+				offsite: false,
+				onlineOnly: false,
+				other: false,
+				otherText: ''
+			},
+			user: $user.admin ? '' : $user.id,
+			visible: false
+		});
 	}
-
-	const fixType = (input: any) => {
-		return input as Record<string, unknown> & { _errors?: string[] | undefined };
-	};
-
-	const setTitle = () => {
-		if (addSuccess || editSuccess) {
-			title = $t('common.success', {
-				thing:
-					mode === 'edit' ? $t('common.edit').toLowerCase() : $t('common.submission').toLowerCase()
-			});
-		} else {
-			title =
-				mode === 'edit'
-					? $t('common.editThing', { thing: $formData.name })
-					: $t('congregation.addCongregation');
-		}
-	};
 
 	const valueSet = (obj: any): boolean => {
 		if (!obj || isEmpty(obj)) return false;
@@ -231,27 +211,25 @@
 		}
 	});
 
-	const { capture, enhance, errors, form: formData, restore } = form;
-	snapshot = { capture, restore };
+	const { enhance, errors, form: formData } = form;
+
 	/* endregion form */
 
 	/* region lifecycle */
 	onMount(async () => {
-		setTitle();
-
 		if (!$formData?.id) {
 			initData();
 		} else {
 			const location = (congregation as CongregationMetaRecord)?.location as LocationMeta;
 
 			city = location.city?.id as string;
-			state = location.state?.id as string;
+			province = location.state?.id as string;
 			country = location.country?.id as string;
 
 			await loadLocation({
 				city,
 				country,
-				state
+				province
 			} as LocationRecord);
 		}
 
@@ -268,7 +246,7 @@
 					$formData.captcha = token;
 				},
 				captchaType: 'frictionless',
-				siteKey: PUBLIC_PROSOPO_SITEKEY,
+				siteKey: PUBLIC_PROSOPO_SITE_KEY,
 				theme: 'light'
 			});
 		}
@@ -276,28 +254,39 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if ($location?.record || congregation?.location) {
-		let loc = ($location.record || congregation.location) as LocationMeta;
-		$formData.location = {
-			city: loc.city?.id,
-			country: loc.country?.id,
-			state: loc.state?.id
-		};
-	}
+	$effect(() => {
+		if (addSuccess || editSuccess) {
+			title = $t('common.success', {
+				thing:
+					mode === 'edit' ? $t('common.edit').toLowerCase() : $t('common.submission').toLowerCase()
+			});
+		} else {
+			title =
+				mode === 'edit'
+					? $t('common.editThing', { thing: $formData.name })
+					: $t('congregation.addCongregation');
+		}
+	});
 
-	$: if ($formData?.services?.onlineOnly) {
-		$formData.health.protocol = 'other';
-		$formData.health.otherText = 'N/A';
-		$formData.security.other = true;
-		$formData.security.otherText = 'N/A';
-	}
+	$effect(() => {
+		if ($location?.record || congregation?.location) {
+			let loc = ($location.record || congregation.location) as LocationMeta;
+			$formData.location = {
+				city: loc.city?.id,
+				country: loc.country?.id,
+				state: loc.state?.id
+			};
+		}
+	});
 
-	$: if (addSuccess || editSuccess) setTitle();
-
-	$: hasFit = valueSet($formData.fit);
-	$: hasServices = valueSet($formData.services);
-	$: hasHealth = valueSet($formData.health);
-	$: hasRegistration = valueSet($formData.registration);
+	$effect(() => {
+		if ($formData?.services?.onlineOnly) {
+			$formData.health.protocol = 'other';
+			$formData.health.otherText = 'N/A';
+			$formData.security.other = true;
+			$formData.security.otherText = 'N/A';
+		}
+	});
 	/* endregion reactivity */
 </script>
 
@@ -315,7 +304,7 @@
 	<Card.Root>
 		<form id="addEdit" method="POST" action="?/submit" use:enhance>
 			<Card.Header>
-				<Card.Title class="-mb-4 font-display text-2xl font-normal">
+				<Card.Title class="font-display -mb-4 text-2xl font-normal">
 					{title}
 				</Card.Title>
 			</Card.Header>
@@ -364,68 +353,76 @@
 							</Accordion.Trigger>
 							<Accordion.Content>
 								<Form.Field {form} name="name">
-									<Form.Control let:attrs>
-										<Form.Label
-											>{$t('congregation.name')}
-											<Required set={!isEmpty($formData.name)} /></Form.Label
-										>
-										<Input
-											{...attrs}
-											bind:value={$formData.name}
-											required
-											on:change={() => {
-												$formData.name = $formData.name.trim();
-											}}
-										/>
+									<Form.Control>
+										{#snippet children(props)}
+											<Form.Label
+												>{$t('congregation.name')}
+												<Required set={!isEmpty($formData.name)} /></Form.Label
+											>
+											<Input
+												{...props}
+												bind:value={$formData.name}
+												required
+												onchange={() => {
+													$formData.name = $formData.name.trim();
+												}}
+											/>
+										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 
 								{#if $formData.location}
 									<Form.Field {form} name="country">
-										<Form.Control let:attrs>
-											<Form.Label>{$t('congregation.location.country')}</Form.Label>
-											<Combobox
-												items={$location.options.countryOptions}
-												{attrs}
-												bind:value={country}
-												placeholder={$t('common.selectThing', {
-													thing: $t('congregation.location.country').toLowerCase()
-												})}
-												on:change={async () => await setCountry(country)}
-											/>
+										<Form.Control>
+											{#snippet children(props)}
+												<Form.Label>{$t('congregation.location.country')}</Form.Label>
+												<Combobox
+													items={$location.options.countryOptions}
+													{...props}
+													bind:value={country}
+													placeholder={$t('common.selectThing', {
+														thing: $t('congregation.location.country').toLowerCase()
+													})}
+													on:change={async () => await setCountry(country)}
+												/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 									<Form.Field {form} name="state">
-										<Form.Control let:attrs>
-											<Form.Label>{$t('congregation.location.state')}</Form.Label>
-											<Combobox
-												items={$location.options.stateOptions}
-												{attrs}
-												bind:value={state}
-												placeholder={$t('common.selectThing', {
-													thing: $t('congregation.location.state').toLowerCase()
-												})}
-												disabled={!country && !$location.options.stateOptions}
-												on:change={async () => await setState(state)}
-											/>
+										<Form.Control>
+											{#snippet children(props)}
+												<Form.Label>{$t('congregation.location.state')}</Form.Label>
+												<Combobox
+													items={$location.options.stateOptions}
+													{...props}
+													bind:value={province}
+													placeholder={$t('common.selectThing', {
+														thing: $t('congregation.location.state').toLowerCase()
+													})}
+													disabled={!country && !$location.options.stateOptions}
+													on:change={async () => await setState(province)}
+												/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
 									<Form.Field {form} name="city">
-										<Form.Control let:attrs>
-											<Form.Label>{$t('congregation.location.city')}</Form.Label>
-											<Combobox
-												items={$location.options.cityOptions}
-												{attrs}
-												bind:value={city}
-												placeholder={$t('common.selectThing', {
-													thing: $t('congregation.location.city').toLowerCase()
-												})}
-												disabled={!state && !$location.options.cityOptions}
-												on:change={() => setCity(city)}
-											/>
+										<Form.Control>
+											{#snippet children(props)}
+												<Form.Label>{$t('congregation.location.city')}</Form.Label>
+												<Combobox
+													items={$location.options.cityOptions}
+													{...props}
+													bind:value={city}
+													placeholder={$t('common.selectThing', {
+														thing: $t('congregation.location.city').toLowerCase()
+													})}
+													disabled={!province && !$location.options.cityOptions}
+													on:change={() => setCity(city)}
+												/>
+											{/snippet}
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
@@ -746,7 +743,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question">{$t('congregation.accessibility.extended')}</div>
-									<div class="mt-2 italic text-slate-500">
+									<div class="mt-2 text-slate-500 italic">
 										{$t('congregation.accessibility.note')}
 									</div>
 									<div class="my-4 space-y-2">

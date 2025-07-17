@@ -14,16 +14,22 @@
 
 	/* region variables */
 	// props
-	export let location: Location;
-	export let locations: LocationMeta[] = [];
-	export let search: Search;
+	let {
+		location,
+		locations = $bindable([] as LocationMeta[]),
+		search
+	}: {
+		location: Location;
+		locations: LocationMeta[];
+		search: Search;
+	} = $props();
 
 	// constants
-	const { state: searchState } = search;
+	const { state: searchState } = $derived(search);
 
 	// locals
-	let center: LngLatLike = [-90, 10];
-	let zoom = 1;
+	let center: LngLatLike = $state([-90, 10]);
+	let zoom = $state(1);
 	/* endregion variables */
 
 	/* region lifecycle */
@@ -53,7 +59,9 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: locations = unique(locations, (l) => l.city?.id as string);
+	$effect(() => {
+		locations = unique(locations, (l) => l.city?.id as string);
+	});
 	/* endregion reactivity */
 </script>
 
@@ -65,13 +73,13 @@
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 	attributionControl={false}
 >
-	{#each locations as { city, country, latitude, longitude, state }}
+	{#each locations as { city, country, latitude, longitude, state }, i (i)}
 		<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
 			<Popup offset={[0, -10]}>
 				<Button
 					variant="ghost"
 					class="h-full min-h-max w-full"
-					on:click={() => {
+					onclick={() => {
 						searchState.set({
 							...searchState.get(),
 							showLocation: true

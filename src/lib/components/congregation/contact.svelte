@@ -7,8 +7,13 @@
 
 	/* region variables */
 	// props
-	export let contactName: string | undefined;
-	export let contactEmail: string | undefined;
+	const {
+		contactEmail,
+		contactName
+	}: {
+		contactEmail?: string;
+		contactName?: string;
+	} = $props();
 	/* endregion variables */
 </script>
 

@@ -10,7 +10,7 @@
 
 	import { browser, dev } from '$app/environment';
 	import { page } from '$app/stores';
-	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
+	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
 	import * as Card from '$lib/components/ui/card';
 	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import * as Form from '$lib/components/ui/form';
@@ -69,7 +69,7 @@
 					$formData.captcha = token;
 				},
 				captchaType: 'frictionless',
-				siteKey: PUBLIC_PROSOPO_SITEKEY,
+				siteKey: PUBLIC_PROSOPO_SITE_KEY,
 				theme: 'light'
 			});
 		}
