@@ -51,10 +51,9 @@
 	<DropdownMenu.Trigger>
 		<Button
 			variant={mode === 'mini' ? 'link' : 'ghost'}
-			builders={[builder]}
 			class="flex flex-row items-center justify-start space-x-1"
-			mouseenter={() => (hovering = true)}
-			mouseleave={() => (hovering = false)}
+			onmouseenter={() => (hovering = true)}
+			onmouseleave={() => (hovering = false)}
 		>
 			{@const locale = locales.find((f) => f.value === lang)?.label}
 			{#if mode === 'mini'}

@@ -9,10 +9,10 @@
 	import { superForm } from 'sveltekit-superforms';
 
 	import { browser, dev } from '$app/environment';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
+	import Combobox from '$lib/components/global/combobox.svelte';
 	import * as Card from '$lib/components/ui/card';
-	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
@@ -84,9 +84,9 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if ($page.url.searchParams.has('claim')) {
+	$: if (page.url.searchParams.has('claim')) {
 		$formData.reason = 'claim';
-		congregation = $page.url.searchParams.get('claim') as string;
+		congregation = page.url.searchParams.get('claim') as string;
 		$formData.record = congregation;
 	}
 	/* endregion reactivity */
@@ -146,17 +146,9 @@
 					<Form.Control>
 						{#snippet children(props)}
 							<Form.Label>{$t('common.contact.reason')}</Form.Label>
-							<Select.Root
-								selected={{
-									label: $t(`common.contact.options.${$formData.reason}`),
-									value: $formData.reason
-								}}
-								onSelectedChange={(v) => {
-									$formData.reason = v?.value;
-								}}
-							>
+							<Select.Root type="single" bind:value={$formData.reason}>
 								<Select.Trigger class="w-full">
-									<Select.Value />
+									{$t(`common.contact.options.${$formData.reason}`)}
 								</Select.Trigger>
 								<Select.Content {...props}>
 									<Select.Item value="question">{$t('common.contact.options.question')}</Select.Item

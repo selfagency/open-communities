@@ -15,12 +15,12 @@
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
+	import Combobox from '$lib/components/global/combobox.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Checkbox } from '$lib/components/ui/checkbox';
-	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
@@ -345,7 +345,7 @@
 						</span>
 					{/if}
 
-					<Accordion.Root value={view}>
+					<Accordion.Root type="single" bind:value={view}>
 						<!-- congregation -->
 						<Accordion.Item value="congregation">
 							<Accordion.Trigger>
@@ -462,23 +462,16 @@
 									<Form.FieldErrors />
 								</Form.Field>
 								<Form.Field {form} name="denomination">
-									<Form.Control
-										>{#snippet children(props)}
+									<Form.Control>
+										{#snippet children(props)}
 											<Form.Label>{$t('congregation.denomination.extended')}</Form.Label>
 											<Select.Root
+												type="single"
 												name="denomination"
-												selected={$formData.denomination
-													? {
-															label: $t(`congregation.denomination.${$formData.denomination}`),
-															value: $formData.denomination
-														}
-													: undefined}
-												onSelectedChange={(v) => {
-													$formData.denomination = v?.value;
-												}}
+												bind:value={$formData.denomination}
 											>
-												<Select.Trigger class="w-full">
-													<Select.Value />
+												<Select.Trigger class="w-full" {...props}>
+													{$t(`congregation.denomination.${$formData.denomination}`)}
 												</Select.Trigger>
 												<Select.Content {...props}>
 													{#each denominations as { label, value }, i (i)}
@@ -1411,8 +1404,12 @@
 				<div class="flex w-full flex-row items-center justify-between space-x-2">
 					{#if mode === 'edit'}
 						<div class="flex flex-row items-center justify-start space-x-2">
-							<Delete data={data.delete} id={$formData?.id} />
-							<Transfer data={data.transfer} id={$formData?.id} owner={congregation.owner} />
+							<Delete data={data.delete as SuperValidated<any>} id={$formData?.id} />
+							<Transfer
+								data={data.transfer as SuperValidated<any>}
+								id={$formData?.id}
+								owner={congregation.owner}
+							/>
 						</div>
 					{/if}
 					<!-- default -->

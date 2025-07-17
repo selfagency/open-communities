@@ -4,8 +4,8 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 
+	import Combobox from '$lib/components/global/combobox.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import Combobox from '$lib/components/ui/combobox/index.svelte';
 	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
 	import { Search } from '$lib/search';

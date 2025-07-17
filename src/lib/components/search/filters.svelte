@@ -140,35 +140,36 @@
 		<div class="flex flex-col items-start justify-start space-y-2 text-slate-500">
 			{#each Object.keys(filters) as category, i (i)}
 				{#if !isEmpty(filters?.[category]) && !(category === 'admin' && !$user.admin)}
+					{@const StatusIcon =
+						icons[
+							every(filters[category])
+								? 'circleCheck'
+								: some(filters[category])
+									? 'circleMinus'
+									: 'circle'
+						]}
 					<Collapsible.Root>
 						<Collapsible.Trigger>
 							<div class="filter-heading">
 								<span class="filter-icon">
 									{#if category === 'denomination' || category === 'health' || category === 'services'}
+										{@const Icon = icons[category]}
 										<span class="h-4 w-5 fill-slate-500">
-											<svelte:component this={icons[category]} />
+											<Icon />
 										</span>
 									{:else}
-										<svelte:component this={icons[category]} size="17" />
+										{@const Icon = icons[category]}
+										<Icon size="17" />
 									{/if}
 								</span>
 								<span class="filter-label">
 									<span>{$t(`congregation.${category}.${category}`)}</span>
 								</span>
 								<span class="filter-status">
-									<svelte:component
-										this={icons[
-											every(filters[category])
-												? 'circleCheck'
-												: some(filters[category])
-													? 'circleMinus'
-													: 'circle'
-										]}
-										class="h-4 w-4"
-									/>
+									<StatusIcon class="h-4 w-4" />
 								</span>
 								<span class="filter-icon">
-									<svelte:component this={icons.open} size="16" />
+									<OpenIcon size="16" />
 								</span>
 							</div>
 						</Collapsible.Trigger>
@@ -196,7 +197,7 @@
 				{/if}
 			{/each}
 			<Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={initFilters}>
-				<span class="filter-icon"><svelte:component this={icons.close} size="16" /></span>
+				<span class="filter-icon"><CloseIcon size="16" /></span>
 				<span class="filter-label"><span>{$t('common.reset')}</span></span>
 			</Button>
 		</div>
