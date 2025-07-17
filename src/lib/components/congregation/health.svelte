@@ -18,15 +18,17 @@
 
 {#if mode === 'mini'}
 	{#if health?.protocol === 'maskingRecommended' || health?.protocol === 'maskingRequired' || (health?.protocol === 'other' && health?.otherText !== 'N/A')}
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-1" /></span>
-				<span class="sr-only">{$t(`congregation.health.${health.protocol}`)}</span>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<span class="text-nowrap">{$t(`congregation.health.${health.protocol}`)}</span>
-			</Tooltip.Content>
-		</Tooltip.Root>
+		<Tooltip.Provider>
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-1" /></span>
+					<span class="sr-only">{$t(`congregation.health.${health.protocol}`)}</span>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<span class="text-nowrap">{$t(`congregation.health.${health.protocol}`)}</span>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</Tooltip.Provider>
 	{/if}
 {:else}
 	<div class="col-span-3">

@@ -23,25 +23,29 @@
 {#if mode === 'mini'}
 	<div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
 		{#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<SecurityIcon size="18" />
-					<span class="sr-only">{$t('congregation.security.armedSecurity')}</span>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.security.armedSecurity')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<SecurityIcon size="18" />
+						<span class="sr-only">{$t('congregation.security.armedSecurity')}</span>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<span class="text-nowrap">{$t('congregation.security.armedSecurity')}</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
 		{:else if security.privateSecurityUnarmed}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<UnarmedIcon size="18" />
-					<span class="sr-only">{$t('congregation.security.unarmedSecurity')}</span>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.security.unarmedSecurity')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<UnarmedIcon size="18" />
+						<span class="sr-only">{$t('congregation.security.unarmedSecurity')}</span>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<span class="text-nowrap">{$t('congregation.security.unarmedSecurity')}</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
 		{/if}
 	</div>
 {/if}

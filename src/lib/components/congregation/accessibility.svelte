@@ -31,48 +31,56 @@
 {#if mode === 'mini'}
 	<div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
 		{#if ada}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<AdaIcon size="18" class="rtl:mx-1" />
-					<span class="sr-only">{$t('congregation.accessibility.ada')}</span>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accessibility.ada')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<AdaIcon size="18" class="rtl:mx-1" />
+						<span class="sr-only">{$t('congregation.accessibility.ada')}</span>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<span class="text-nowrap">{$t('congregation.accessibility.ada')}</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
 		{/if}
 		{#if cc}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<CcIcon size="18" class="rtl:mx-1" />
-					<span class="sr-only">{$t('congregation.accessibility.cc')}</span>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accessibility.cc')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<CcIcon size="18" class="rtl:mx-1" />
+						<span class="sr-only">{$t('congregation.accessibility.cc')}</span>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<span class="text-nowrap">{$t('congregation.accessibility.cc')}</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
 		{/if}
 		{#if eva}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<EvaIcon size="18" class="rtl:mx-1" />
-					<span class="sr-only">{$t('congregation.accessibility.eva')}</span>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accessibility.eva')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<EvaIcon size="18" class="rtl:mx-1" />
+						<span class="sr-only">{$t('congregation.accessibility.eva')}</span>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<span class="text-nowrap">{$t('congregation.accessibility.eva')}</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
 		{/if}
 		{#if asl}
-			<Tooltip.Root>
-				<Tooltip.Trigger>
-					<AslIcon class="h-4 w-4 rtl:mx-1" />
-					<span class="sr-only">{$t('congregation.accessibility.asl')}</span>
-				</Tooltip.Trigger>
-				<Tooltip.Content>
-					<span class="text-nowrap">{$t('congregation.accessibility.asl')}</span>
-				</Tooltip.Content>
-			</Tooltip.Root>
+			<Tooltip.Provider>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						<AslIcon class="h-4 w-4 rtl:mx-1" />
+						<span class="sr-only">{$t('congregation.accessibility.asl')}</span>
+					</Tooltip.Trigger>
+					<Tooltip.Content>
+						<span class="text-nowrap">{$t('congregation.accessibility.asl')}</span>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</Tooltip.Provider>
 		{/if}
 	</div>
 {/if}

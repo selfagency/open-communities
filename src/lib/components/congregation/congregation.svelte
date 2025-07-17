@@ -134,42 +134,46 @@
 						</a>
 					{/if}
 					{#if $user.admin}
+						<Tooltip.Provider>
+							<Tooltip.Root>
+								<Tooltip.Trigger>
+									<Button
+										variant="ghost"
+										class="h-8 px-2 py-0"
+										onclick={async () => {
+											await goto(`/edit?id=${congregation.id}`);
+										}}
+									>
+										<EditIcon size="16" class="text-slate-500 rtl:mx-1" />
+										<span class="sr-only">{$t('common.edit')}</span>
+									</Button>
+								</Tooltip.Trigger>
+								<Tooltip.Content>
+									<span class="text-nowrap">{$t('common.edit')}</span>
+								</Tooltip.Content>
+							</Tooltip.Root>
+						</Tooltip.Provider>
+					{/if}
+					<Tooltip.Provider>
 						<Tooltip.Root>
 							<Tooltip.Trigger>
 								<Button
 									variant="ghost"
 									class="h-8 px-2 py-0"
-									onclick={async () => {
-										await goto(`/edit?id=${congregation.id}`);
+									onclick={() => {
+										copyText(`https://opencommunities.info?id=${congregation.id}`);
+										toast.success($t('common.copied'));
 									}}
 								>
-									<EditIcon size="16" class="text-slate-500 rtl:mx-1" />
-									<span class="sr-only">{$t('common.edit')}</span>
+									<ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
+									<span class="sr-only">{$t('common.share')}</span>
 								</Button>
 							</Tooltip.Trigger>
 							<Tooltip.Content>
-								<span class="text-nowrap">{$t('common.edit')}</span>
+								<span class="text-nowrap">{$t('common.share')}</span>
 							</Tooltip.Content>
 						</Tooltip.Root>
-					{/if}
-					<Tooltip.Root>
-						<Tooltip.Trigger>
-							<Button
-								variant="ghost"
-								class="h-8 px-2 py-0"
-								onclick={() => {
-									copyText(`https://opencommunities.info?id=${congregation.id}`);
-									toast.success($t('common.copied'));
-								}}
-							>
-								<ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
-								<span class="sr-only">{$t('common.share')}</span>
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							<span class="text-nowrap">{$t('common.share')}</span>
-						</Tooltip.Content>
-					</Tooltip.Root>
+					</Tooltip.Provider>
 				</div>
 			</Dialog.Description>
 		</Dialog.Header>

@@ -22,6 +22,8 @@ export async function load({ cookies, locals }) {
 			})
 		]);
 
+		// log.info('homepage data', { congregations, content, countries });
+
 		return {
 			congregations: congregations.map((c) => cleanResponse(c)),
 			content,

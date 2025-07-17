@@ -36,11 +36,9 @@
 	/* endregion types */
 
 	/* region variables */
-	// props
-	const { congregations }: { congregations: Congregation[] } = $props();
-
 	// constants
-	const search = new Search(congregations as SearchData[], dev);
+	const id = $derived(page.url.searchParams.get('id'));
+	const search = new Search(page.data.congregations as SearchData[], dev);
 	const {
 		results,
 		state: searchState
@@ -100,14 +98,11 @@
 	});
 
 	$effect(() => {
-		if (searchTerms) {
-			search.setSearchTerms(searchTerms);
-		}
+		search.setSearchTerms(searchTerms);
 	});
 
 	$effect(() => {
-		if (page.url.searchParams.has('id')) {
-			const id = page.url.searchParams.get('id') || '';
+		if (id) {
 			goto(page.url.pathname, { replaceState: false }).then(() => {
 				searchTerms = id;
 				open[id] = true;
@@ -117,15 +112,13 @@
 	});
 
 	$effect(() => {
-		if (currentPage) {
-			pages[currentPage]?.reduce(
-				(acc, congregation) => {
-					acc[congregation.id] = false;
-					return acc;
-				},
-				{} as Record<string, boolean>
-			);
-		}
+		pages[currentPage]?.reduce(
+			(acc, congregation) => {
+				acc[congregation.id] = false;
+				return acc;
+			},
+			{} as Record<string, boolean>
+		);
 	});
 	/* endregion reactivity */
 </script>
@@ -187,7 +180,7 @@
 	{/if}
 
 	<div class="py-4">
-		<Map {location} {locations} {search} />
+		<!-- <Map {location} {locations} {search} /> -->
 	</div>
 
 	<div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3">

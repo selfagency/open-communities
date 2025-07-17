@@ -76,25 +76,27 @@
 		<Card.Footer>
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
 				{#if $user.admin}
-					<Tooltip.Root>
-						<Tooltip.Trigger>
-							<Button
-								variant="ghost"
-								class="h-8 px-2 py-0"
-								onclick={async (e: Event) => {
-									e.preventDefault();
-									e.stopPropagation();
-									await goto(`/edit?id=${congregation.id}`);
-								}}
-							>
-								<EditIcon size="16" class="text-slate-700" />
-								<span class="sr-only">{$t('common.edit')}</span>
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							<span class="text-nowrap">{$t('common.edit')}</span>
-						</Tooltip.Content>
-					</Tooltip.Root>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<Button
+									variant="ghost"
+									class="h-8 px-2 py-0"
+									onclick={async (e: Event) => {
+										e.preventDefault();
+										e.stopPropagation();
+										await goto(`/edit?id=${congregation.id}`);
+									}}
+								>
+									<EditIcon size="16" class="text-slate-700" />
+									<span class="sr-only">{$t('common.edit')}</span>
+								</Button>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								<span class="text-nowrap">{$t('common.edit')}</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
 				{/if}
 				<div class="flex w-auto flex-row items-center justify-end space-x-1">
 					{#if !congregation.visible}

@@ -1,16 +1,11 @@
 <script lang="ts">
 	/* region imports */
-	import { isArray, isEmpty } from 'radashi';
-	import { onMount } from 'svelte';
-
-	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
-
 	import Welcome from '$lib/components/global/welcome.svelte';
 	import Congregations from '$lib/components/search/congregations.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { t } from '$lib/i18n';
 	import { state as appState, setState } from '$lib/stores';
-	import { log } from '$lib/utils';
+	// import { log } from '$lib/utils';
 
 	import type { PageData } from './$types';
 	/* endregion imports */
@@ -19,19 +14,8 @@
 	// props
 	const data: PageData = $props();
 
-	// locals
-	let congregations: CongregationMetaRecord & { id: string }[] = $derived(data.congregations || []);
-	let content: PagesRecord = $derived(data.content || ({} as PagesRecord));
+	const { content } = $derived(data);
 	/* endregion variables */
-
-	/* region lifecycle */
-	onMount(() => {
-		if (!isEmpty(data) && isArray(data.countries)) {
-			setState({ countries: data.countries });
-		} else {
-			log.error($t('common.errors.countriesFailed'));
-		}
-	});
 </script>
 
 {#if content?.content}
@@ -55,6 +39,4 @@
 
 <Welcome />
 
-{#if congregations}
-	<Congregations {congregations} />
-{/if}
+<Congregations />
