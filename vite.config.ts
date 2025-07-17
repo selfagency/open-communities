@@ -1,10 +1,10 @@
 import svg from '@poppanator/sveltekit-svg';
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
-import webfontDownload from 'vite-plugin-webfont-dl';
 
 export default defineConfig({
 	build: {
@@ -15,10 +15,15 @@ export default defineConfig({
 		}
 	},
 	plugins: [
+		sentrySvelteKit({
+			sourceMapsUploadOptions: {
+				org: 'selfagency',
+				project: 'open-communities'
+			}
+		}),
 		devtoolsJson(),
 		tailwindcss(),
-		sveltekit(),
-		// SvelteKitPWA({
+		sveltekit(), // SvelteKitPWA({
 		// 	injectRegister: 'auto',
 		// 	registerType: 'autoUpdate',
 		// 	workbox: {
@@ -45,9 +50,6 @@ export default defineConfig({
 		// 		]
 		// 	}
 		// }),
-		webfontDownload([
-			'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap'
-		]),
 		svg()
 	]
 });
