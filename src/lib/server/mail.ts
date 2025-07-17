@@ -2,7 +2,7 @@
 import type { TypedPocketBase } from '$lib/types';
 /* endregion imports */
 
-export async function sendMail(data: any, api: TypedPocketBase) {
+export async function sendMail(data: { record: string }, api: TypedPocketBase) {
 	const formData = new FormData();
 	for (const key in data) {
 		formData.append(key, data[key]);

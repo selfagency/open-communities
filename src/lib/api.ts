@@ -35,7 +35,7 @@ function cleanResponse<T>(response: T, keepDate: boolean = false): T {
 	) as T;
 }
 
-function convertBooleans(obj: any): any {
+function convertBooleans(obj) {
 	if (isArray(obj)) {
 		return obj.map(convertBooleans);
 	} else if (obj !== null && typeof obj === 'object') {
@@ -49,7 +49,7 @@ function convertBooleans(obj: any): any {
 				acc[key] = convertBooleans(value);
 			}
 			return acc;
-		}, {} as any);
+		}, {});
 	}
 	return obj;
 }

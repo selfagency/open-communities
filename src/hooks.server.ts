@@ -1,5 +1,5 @@
 /* region imports */
-import type { CookieSerializeOptions } from 'cookie';
+import type { SerializeOptions } from 'cookie';
 
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import * as Sentry from '@sentry/sveltekit';
@@ -15,12 +15,14 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* endregion imports */
 
 /* region init */
-Sentry.init({
-	dsn: PUBLIC_SENTRY_DSN,
-	environment: NODE_ENV,
-	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()],
-	tracesSampleRate: 0.5
-});
+if (!Sentry.isInitialized()) {
+	Sentry.init({
+		dsn: PUBLIC_SENTRY_DSN,
+		environment: NODE_ENV,
+		integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()],
+		tracesSampleRate: 0.5
+	});
+}
 /* endregion init */
 
 /* region variables */
@@ -29,7 +31,7 @@ const log = logger.getSubLogger({ name: 'hooks' });
 /* endregion variables */
 
 /* region methods */
-const validate = async (schema: any, request: any = undefined) => {
+const validate = async (schema, request) => {
 	return request ? superValidate(request, zod(schema)) : superValidate(zod(schema));
 };
 /* endregion methods */
@@ -46,7 +48,7 @@ async function customHandler({ event, resolve }) {
 		path: '/',
 		sameSite: 'strict',
 		secure: true
-	} as CookieSerializeOptions & { path: string };
+	} as SerializeOptions & { path: string };
 
 	// auth
 	event.locals.api.authStore.loadFromCookie(event.cookies.get('auth') ?? '');
@@ -84,12 +86,7 @@ async function customHandler({ event, resolve }) {
 	return response;
 }
 
-export const handle = sequence(
-	Sentry.sentryHandle({
-		fetchProxyScriptNonce: 'o247950'
-	}),
-	customHandler
-);
+export const handle = sequence(Sentry.sentryHandle(), customHandler);
 
 export const handleError = Sentry.handleErrorWithSentry(async ({ error, event, status }) => {
 	if (status !== 404) {

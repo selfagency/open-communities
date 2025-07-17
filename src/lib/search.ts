@@ -13,6 +13,15 @@ import type { LocationMeta } from '$lib/location';
 /* region types  */
 export type SelectOption = { label: string; value: string };
 
+type SearchData = {
+	flavor?: string;
+	id: string;
+	location?: LocationMeta;
+	name: string;
+	owner?: string;
+	visible: boolean;
+};
+
 type SearchState = {
 	filters?: {
 		[key: string]: {
@@ -26,20 +35,20 @@ type SearchState = {
 /* endregion types */
 
 export class Search {
-	data: any[];
+	data: SearchData[];
 	debug: boolean;
 	fuzzy: Fuzzy;
 	ids: string[];
 	resultIds: string[];
-	results: MapStore<any[]>;
+	results: MapStore<unknown[]>;
 	state: MapStore<SearchState>;
 
-	constructor(data: any[] = [], debug = false) {
+	constructor(data = [] as SearchData[], debug = false) {
 		this.data = alphabetical(data, (i) => i.name);
 		this.debug = debug;
 
 		this.state = map<SearchState>();
-		this.results = map<any[]>();
+		this.results = map<SearchData[]>();
 		this.fuzzy = new Fuzzy();
 
 		this.ids = this.data.map((i) => i.id);
@@ -81,7 +90,7 @@ export class Search {
 
 	adminFilter() {
 		const state = this.state.get();
-		const filters = shake(state.filters?.admin, (f) => !f);
+		const filters = shake(state.filters?.admin as object, (f) => !f);
 		if (isEmpty(filters)) return;
 
 		let ids: string[] = [];
@@ -101,7 +110,7 @@ export class Search {
 	applyFilters() {
 		const state = this.state.get();
 
-		const hasFilter = (filters: any): boolean => {
+		const hasFilter = (filters): boolean => {
 			if (!filters || isEmpty(filters)) return false;
 			return !isEmpty(shake(filters, (f) => (typeof f === 'boolean' ? f !== true : isEmpty(f))));
 		};
@@ -159,7 +168,7 @@ export class Search {
 
 	boolFilter(filter: string) {
 		const state = this.state.get();
-		const filters = shake(state.filters?.[filter], (f) => !f);
+		const filters = shake(state.filters?.[filter] as object, (f) => !f);
 		if (isEmpty(filters)) return;
 
 		// log.debug('search:filters:bool', filter, filters[filter]);
@@ -188,12 +197,12 @@ export class Search {
 
 		const ids = this.data
 			.filter((record) => {
-				const { city, country, state } = record.location;
+				const { city, country, state } = record.location as LocationMeta;
 
 				return (
-					(filterCity ? city.id === filterCity.id : true) &&
-					(filterCountry ? country.id === filterCountry.id : true) &&
-					(filterState ? state.id === filterState.id : true)
+					(filterCity ? city?.id === filterCity.id : true) &&
+					(filterCountry ? country?.id === filterCountry.id : true) &&
+					(filterState ? state?.id === filterState.id : true)
 				);
 			})
 			.map((i) => i.id);
@@ -259,7 +268,7 @@ export class Search {
 
 	stringFilter(filter: string, targetKey: string) {
 		const state = this.state.get();
-		const filters = shake(state.filters?.[filter], (f) => !f);
+		const filters = shake(state.filters?.[filter] as object, (f) => !f);
 		if (isEmpty(filters)) return;
 
 		const ids = this.data

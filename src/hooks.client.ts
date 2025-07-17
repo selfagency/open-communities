@@ -11,7 +11,7 @@ import { log } from '$lib/utils';
 Sentry.init({
 	dsn: PUBLIC_SENTRY_DSN,
 	initialScope: {
-		user: pick(user.get(), ['id', 'email'] as any)
+		user: pick(user.get(), ['id', 'email'])
 	},
 	integrations: [
 		Sentry.browserTracingIntegration(),
