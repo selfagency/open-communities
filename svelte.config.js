@@ -1,6 +1,5 @@
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import postcssConfig from 'postcss-load-config';
 
 const config = {
 	kit: {
@@ -51,10 +50,7 @@ const config = {
 			register: false
 		}
 	},
-	preprocess: vitePreprocess({
-		postcss: true,
-		postcssConfig
-	})
+	preprocess: [vitePreprocess()]
 };
 
 export default config;

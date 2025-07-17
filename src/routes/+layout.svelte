@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../app.css';
 	/* region imports */
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
@@ -9,16 +10,15 @@
 	import { setState, user } from '$lib/stores';
 	import { onMount } from 'svelte';
 	// import { log } from '$lib/utils';
-
 	import '../app.css';
-	/* endregion imports */
 
+	/* endregion imports */
 	/* region variables */
 	// locals
 	let innerWidth = 0;
 	let innerHeight = 0;
-	/* endregion variables */
 
+	/* endregion variables */
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
@@ -42,17 +42,19 @@
 			});
 		}
 	});
-	/* endregion lifecycle */
 
+	/* endregion lifecycle */
 	/* region reactivity */
 	$: if (innerWidth > 0) {
-		setState({ isMobile: innerWidth < 640, offsetWidth: innerWidth });
+		setState({
+			isMobile: innerWidth < 640,
+			offsetWidth: innerWidth
+		});
 	}
 
 	$: if (innerHeight > 0) {
 		setState({ offsetHeight: innerHeight });
 	}
-	/* endregion reactivity */
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -62,7 +64,7 @@
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
 	<Header />
-	<main class="container mx-auto mt-24 min-w-[300px] max-w-[1024px]">
+	<main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px]">
 		<slot />
 	</main>
 	<Footer />

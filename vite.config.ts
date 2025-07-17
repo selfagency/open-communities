@@ -1,22 +1,23 @@
+import tailwindcss from '@tailwindcss/vite';
 import svg from '@poppanator/sveltekit-svg';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
-
 import { defineConfig } from 'vite';
 import webfontDownload from 'vite-plugin-webfont-dl';
+import devtoolsJson from 'vite-plugin-devtools-json';
 
 export default defineConfig({
 	build: {
 		rollupOptions: {
 			output: {
-				manualChunks: {
-					'svelte-maplibre': ['svelte-maplibre']
-				}
+				manualChunks: { 'svelte-maplibre': ['svelte-maplibre'] }
 			}
 		}
 	},
 	plugins: [
+    devtoolsJson(),
+		tailwindcss(),
 		sentrySvelteKit(),
 		sveltekit(),
 		// SvelteKitPWA({

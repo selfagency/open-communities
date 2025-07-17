@@ -1,41 +1,47 @@
-/* region imports */
 import type { TransitionConfig } from 'svelte/transition';
 
-import { type ClassValue, clsx } from 'clsx';
+import { dev } from '$app/environment';
+import { type ClassValue, clsx } from "clsx";
 import fstw from 'fast-string-truncated-width';
 import { cubicOut } from 'svelte/easing';
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from "tailwind-merge";
 import { Logger } from 'tslog';
 
-import { dev } from '$app/environment';
-/* endregion imports */
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: null | U };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 
 /* region types */
 type FlyAndScaleParams = {
-	y?: number;
-	x?: number;
-	start?: number;
 	duration?: number;
+	start?: number;
+	x?: number;
+	y?: number;
 };
+
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}
 /* endregion types */
 
 export function truncateText(text: unknown, limit: number = 32, ellipses: boolean = true) {
 	if (!text || typeof text !== 'string') {
 		return '';
 	} else {
-		const opts = { limit, ellipsis: '…' };
+		const opts = { ellipsis: '…', limit };
 		const sliced = fstw(text, opts);
 		return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
 	}
 }
 
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
-}
-
 export const flyAndScale = (
 	node: Element,
-	params: FlyAndScaleParams = { y: -8, x: 0, start: 0.95, duration: 150 }
+	params: FlyAndScaleParams = { duration: 150, start: 0.95, x: 0, y: -8 }
 ): TransitionConfig => {
 	const style = getComputedStyle(node);
 	const transform = style.transform === 'none' ? '' : style.transform;
@@ -58,29 +64,29 @@ export const flyAndScale = (
 	};
 
 	return {
-		duration: params.duration ?? 200,
-		delay: 0,
 		css: (t) => {
 			const y = scaleConversion(t, [0, 1], [params.y ?? 5, 0]);
 			const x = scaleConversion(t, [0, 1], [params.x ?? 0, 0]);
 			const scale = scaleConversion(t, [0, 1], [params.start ?? 0.95, 1]);
 
 			return styleToString({
-				transform: `${transform} translate3d(${x}px, ${y}px, 0) scale(${scale})`,
-				opacity: t
+				opacity: t,
+				transform: `${transform} translate3d(${x}px, ${y}px, 0) scale(${scale})`
 			});
 		},
+		delay: 0,
+		duration: params.duration ?? 200,
 		easing: cubicOut
 	};
 };
 
 export const logger = new Logger(
 	{
-		type: 'pretty',
 		hideLogPositionForProduction: dev,
-		prettyLogTemplate: '{{yyyy}}/{{mm}}/{{dd}} {{hh}}:{{MM}}:{{ss}} {{logLevelName}} [{{name}}] ',
+		prettyErrorStackTemplate: '{{method}} - {{filePathWithLine}}',
 		prettyErrorTemplate: '{{errorName}}: {{errorMessage}}\n{{errorStack}}',
-		prettyErrorStackTemplate: '{{method}} - {{filePathWithLine}}'
+		prettyLogTemplate: '{{yyyy}}/{{mm}}/{{dd}} {{hh}}:{{MM}}:{{ss}} {{logLevelName}} [{{name}}] ',
+		type: 'pretty'
 	},
 	{ main: true, sub: false }
 );
