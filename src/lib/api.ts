@@ -4,12 +4,12 @@ import { assign, isArray, omit } from 'radashi';
 
 import type { TypedPocketBase } from '$lib/types.d';
 
-import { API_ENDPOINT } from '$env/static/private';
+import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 /* endregion imports */
 
 // instantiate pocketbase api service
 
-const api = new PocketBase(API_ENDPOINT) as TypedPocketBase;
+const api = new PocketBase(PUBLIC_API_ENDPOINT) as TypedPocketBase;
 api.autoCancellation(false);
 
 async function authenticate(auth: string) {

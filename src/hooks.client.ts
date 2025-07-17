@@ -3,12 +3,13 @@ import { handleErrorWithSentry } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 
 import { dev } from '$app/environment';
+import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { log } from '$lib/utils';
 /* endregion imports */
 
 if (!Sentry.isInitialized()) {
 	Sentry.init({
-		dsn: 'https://304d7d493ffd890f8928c8fa11a5007e@o247950.ingest.us.sentry.io/4507958645948416',
+		dsn: PUBLIC_SENTRY_DSN,
 		tracesSampleRate: 1.0
 	});
 }

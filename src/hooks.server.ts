@@ -8,6 +8,7 @@ import { uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
+import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 /* endregion imports */
@@ -15,7 +16,7 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* region init */
 if (!Sentry.isInitialized()) {
 	Sentry.init({
-		dsn: 'https://304d7d493ffd890f8928c8fa11a5007e@o247950.ingest.us.sentry.io/4507958645948416',
+		dsn: PUBLIC_SENTRY_DSN,
 		tracesSampleRate: 1.0
 	});
 }
