@@ -73,25 +73,25 @@
 	} = new Location({ countries: page.data.countries });
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 	const denominations = [
-		{ label: m.denomination.conservative, value: 'conservative' },
+		{ label: m['denomination.conservative'](), value: 'conservative' },
 		{
-			label: m.denomination.reconstructionist,
+			label: m['denomination.reconstructionist'](),
 			value: 'reconstructionist'
 		},
-		{ label: m.denomination.reform, value: 'reform' },
-		{ label: m.denomination.renewal, value: 'renewal' },
-		{ label: m.denomination.humanist, value: 'humanist' },
-		{ label: m.denomination.orthodox, value: 'orthodox' },
+		{ label: m['denomination.reform'](), value: 'reform' },
+		{ label: m['denomination.renewal'](), value: 'renewal' },
+		{ label: m['denomination.humanist'](), value: 'humanist' },
+		{ label: m['denomination.orthodox'](), value: 'orthodox' },
 		{
-			label: m.denomination.postDenominational,
+			label: m['denomination.postDenominational'](),
 			value: 'postDenominational'
 		},
 		{
-			label: m.denomination.multiDenominational,
+			label: m['denomination.multiDenominational'](),
 			value: 'multiDenominational'
 		},
-		{ label: m.denomination.unaffiliated, value: 'unaffiliated' },
-		{ label: m.other, value: 'other' }
+		{ label: m['denomination.unaffiliated'](), value: 'unaffiliated' },
+		{ label: m['other'](), value: 'other' }
 	];
 
 	// locals
@@ -266,10 +266,10 @@
 	$effect(() => {
 		if (addSuccess || editSuccess) {
 			title = m.success({
-				thing: mode === 'edit' ? m.edit.toLowerCase() : m.submission.toLowerCase()
+				thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission().toLowerCase()
 			});
 		} else {
-			title = mode === 'edit' ? m.editThing({ thing: $formData.name }) : m.addCongregation;
+			title = mode === 'edit' ? m.editThing({ thing: $formData.name }) : m.addCongregation();
 		}
 	});
 
@@ -371,13 +371,13 @@
 									<Form.Field {form} name="country">
 										<Form.Control>
 											{#snippet children(props)}
-												<Form.Label>{m.location.country}</Form.Label>
+												<Form.Label>{m['location.location']()}</Form.Label>
 												<Combobox
 													items={$location.options.countryOptions}
 													{...props}
 													bind:value={country}
 													placeholder={m.selectThing({
-														thing: m.location.country.toLowerCase()
+														thing: m['location.country']().toLowerCase()
 													})}
 													on:change={async () => await setCountry(country)}
 												/>
@@ -388,13 +388,13 @@
 									<Form.Field {form} name="state">
 										<Form.Control>
 											{#snippet children(props)}
-												<Form.Label>{m.location.state}</Form.Label>
+												<Form.Label>{m['location.state']()}</Form.Label>
 												<Combobox
 													items={$location.options.stateOptions}
 													{...props}
 													bind:value={province}
 													placeholder={m.selectThing({
-														thing: m.location.state.toLowerCase()
+														thing: m['location.state']().toLowerCase()
 													})}
 													disabled={!country && !$location.options.stateOptions}
 													on:change={async () => await setState(province)}
@@ -406,13 +406,13 @@
 									<Form.Field {form} name="city">
 										<Form.Control>
 											{#snippet children(props)}
-												<Form.Label>{m.location.city}</Form.Label>
+												<Form.Label>{m['location.city']()}</Form.Label>
 												<Combobox
 													items={$location.options.cityOptions}
 													{...props}
 													bind:value={city}
 													placeholder={m.selectThing({
-														thing: m.location.city.toLowerCase()
+														thing: m['location.city']().toLowerCase()
 													})}
 													disabled={!province && !$location.options.cityOptions}
 													on:change={() => setCity(city)}
@@ -443,7 +443,7 @@
 									<Form.Control>
 										{#snippet children(props)}
 											<Form.Label
-												>{m.clergy.extended}
+												>{m['clergy.extended']()}
 												<Required set={!isEmpty($formData.clergy)} /></Form.Label
 											>
 											<Input {...props} bind:value={$formData.clergy} required />
@@ -454,14 +454,14 @@
 								<Form.Field {form} name="denomination">
 									<Form.Control>
 										{#snippet children(props)}
-											<Form.Label>{m.denomination.extended}</Form.Label>
+											<Form.Label>{m['denomination.extended']()}</Form.Label>
 											<Select.Root
 												type="single"
 												name="denomination"
 												bind:value={$formData.denomination}
 											>
 												<Select.Trigger class="w-full" {...props}>
-													{m.denomination[$formData.denomination]}
+													{m[`denomination.${$formData.denomination}`]()}
 												</Select.Trigger>
 												<Select.Content {...props}>
 													{#each denominations as { label, value }, i (i)}
@@ -477,7 +477,7 @@
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label
-												>{m.flavor.extended}
+												>{m['flavor.extended']()}
 												<Required set={!isEmpty($formData.flavor)} /></Form.Label
 											>
 											<Textarea {...props} bind:value={$formData.flavor} required />
@@ -506,7 +506,7 @@
 							<Accordion.Item value="fit">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m.fit.fit}
+										{m['fit.fit']}
 										{#if !hasFit || fitErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -514,7 +514,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question" class:error={fitErrors}>
-										{m.fit.extended}
+										{m['fit.extended']()}
 										<Required set={hasFit} />
 									</div>
 									<div class="my-4 space-y-2">
@@ -526,7 +526,7 @@
 															<Checkbox {...props} bind:checked={$formData.fit.publicStatement} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.fit.publicStatement}</Form.Label>
+															<Form.Label>{m['fit.publicStatement']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -541,7 +541,7 @@
 															<Checkbox {...props} bind:checked={$formData.fit.clergyMember} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.fit.clergyMember}</Form.Label>
+															<Form.Label>{m['fit.clergyMember']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -559,7 +559,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.fit.multipleClergyMembers}</Form.Label>
+															<Form.Label>{m['fit.multipleClergyMembers']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -574,7 +574,7 @@
 															<Checkbox {...props} bind:checked={$formData.fit.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.other}</Form.Label>
+															<Form.Label>{m.other()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -603,8 +603,8 @@
 												<div
 													class="question my-4 flex flex-col items-start justify-start space-y-2"
 												>
-													<span>{m.fit.flag.extended}</span>
-													<small class="leading-1">{m.fit.flag.note}</small>
+													<span>{m['fit.flag.extended']()}</span>
+													<small class="leading-1">{m['fit.flag.note']()}</small>
 												</div>
 												<RadioGroup.Root
 													{...props}
@@ -613,15 +613,15 @@
 												>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="no" id="no" />
-														<Form.Label for="no">{m.fit.flag.no}</Form.Label>
+														<Form.Label for="no">{m['fit.flag.no']()}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="yes" id="yes" />
-														<Form.Label for="yes">{m.fit.flag.yes}</Form.Label>
+														<Form.Label for="yes">{m['fit.flag.yes']()}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="yesBima" id="yesBima" />
-														<Form.Label for="yesBima">{m.fit.flag.yesBima}</Form.Label>
+														<Form.Label for="yesBima">{m['fit.flag.yesBima']()}</Form.Label>
 													</div>
 												</RadioGroup.Root>
 											{/snippet}
@@ -644,7 +644,7 @@
 							<Accordion.Item value="services">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m.services.services}
+										{m['services.services']()}
 										{#if !hasServices || servicesErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -652,7 +652,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question" class:error={servicesErrors}>
-										{m.services.extended}
+										{m['services.extended']()}
 										<Required set={hasServices} />
 									</div>
 									<div class="my-4 space-y-2">
@@ -664,7 +664,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.inPerson} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.services.inPerson}</Form.Label>
+															<Form.Label>{m['services.inPerson']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -679,7 +679,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.hybrid} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.services.hybrid}</Form.Label>
+															<Form.Label>{m['services.hybrid']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -694,7 +694,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.onlineOnly} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.services.onlineOnly}</Form.Label>
+															<Form.Label>{m['services.onlineOnly']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -709,7 +709,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.offsite} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.services.offsite}</Form.Label>
+															<Form.Label>{m['services.offsite']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -759,16 +759,16 @@
 							<Accordion.Item value="accessibility">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m.accessibility.accessibility}
+										{m['accessibility.accessibility']()}
 										{#if $errors.accessibility}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
 								</Accordion.Trigger>
 								<Accordion.Content>
-									<div class="question">{m.accessibility.extended}</div>
+									<div class="question">{m['accessibility.extended']()}</div>
 									<div class="mt-2 text-slate-500 italic">
-										{m.accessibility.note}
+										{m['accessibility.note']()}
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="online_asl">
@@ -782,7 +782,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.accessibility.online_asl}</Form.Label>
+															<Form.Label>{m['accessibility.online_asl']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -800,7 +800,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.accessibility.online_liveCaptions}</Form.Label>
+															<Form.Label>{m['accessibility.online_liveCaptions']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -819,7 +819,7 @@
 														</span>
 														<span class="-mt-0.5">
 															<Form.Label>
-																{m.accessibility.online_automatedCaptions}
+																{m['accessibility.online_automatedCaptions']()}
 															</Form.Label>
 														</span>
 													</span>
@@ -838,7 +838,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.accessibility.inPerson_adaAll}</Form.Label>
+															<Form.Label>{m['accessibility.inPerson_adaAll']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -856,7 +856,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.accessibility.inPerson_adaSome}</Form.Label>
+															<Form.Label>{m['accessibility.inPerson_adaSome']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -874,7 +874,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.accessibility.inPerson_asl}</Form.Label>
+															<Form.Label>{m['accessibility.inPerson_asl']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -892,7 +892,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.accessibility.inPerson_eva}</Form.Label>
+															<Form.Label>{m['accessibility.inPerson_eva']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -940,7 +940,7 @@
 							<Accordion.Item value="health">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m.health.health}
+										{m['health.health']()}
 										{#if !hasHealth || healthErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -951,7 +951,7 @@
 										<Form.Control
 											>{#snippet children(props)}
 												<div class="question mb-4" class:error={healthErrors?.protocol}>
-													{m.health.extended}
+													{m['health.extended']()}
 													<Required set={hasHealth} />
 												</div>
 												<RadioGroup.Root
@@ -962,22 +962,23 @@
 												>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
-														<Form.Label for="maskingRequired">{m.health.maskingRequired}</Form.Label
+														<Form.Label for="maskingRequired"
+															>{m['health.maskingRequired']()}</Form.Label
 														>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
 														<Form.Label for="maskingRecommended"
-															>{m.health.maskingRecommended}</Form.Label
+															>{m['health.maskingRecommended']()}</Form.Label
 														>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
-														<Form.Label for="noGuidelines">{m.health.noGuidelines}</Form.Label>
+														<Form.Label for="noGuidelines">{m['health.noGuidelines']()}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="other" id="other" />
-														<Form.Label for="other">{m.other}</Form.Label>
+														<Form.Label for="other">{m.other()}</Form.Label>
 													</div>
 												</RadioGroup.Root>
 												{#if $formData.health.protocol === 'other'}
@@ -995,10 +996,10 @@
 										<Form.FieldErrors />
 									</Form.Field>
 									{#if healthErrors?.protocol}
-										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse}</span>
+										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse()}</span>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" onclick={() => (view = 'security')}>
+										<Button variant="secondary" onclick={() => (view = 'sescurity')}>
 											{m.next} →
 										</Button>
 									</div>
@@ -1012,7 +1013,7 @@
 							<Accordion.Item value="security">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m.security.security}
+										{m['security.security']()}
 										{#if securityErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -1020,7 +1021,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question" class:error={securityErrors}>
-										{m.security.extended}
+										{m['security.extended']()}
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="localPolice">
@@ -1031,7 +1032,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.localPolice} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.security.localPolice}</Form.Label>
+															<Form.Label>{m['security.localPolice']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1049,7 +1050,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.security.privateSecurityArmed}</Form.Label>
+															<Form.Label>{m['security.privateSecurityArmed']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1067,7 +1068,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.security.privateSecurityUnarmed}</Form.Label>
+															<Form.Label>{m['security.privateSecurityUnarmed']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1082,7 +1083,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.clergyArmed} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.security.clergyArmed}</Form.Label>
+															<Form.Label>{m['security.clergyArmed']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1100,7 +1101,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.security.congregantsArmed}</Form.Label>
+															<Form.Label>{m['security.congregantsArmed']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1115,7 +1116,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.noFirearms} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.security.noFirearms}</Form.Label>
+															<Form.Label>{m['security.noFirearms']()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1170,7 +1171,7 @@
 							<Accordion.Item value="registration">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m.registration.registration}
+										{m['registration.registration']()}
 										{#if !hasRegistration || registrationErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -1178,7 +1179,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question mb-4" class:error={registrationErrors?.registrationType}>
-										{m.registration.extended}
+										{m['registration.extended']()}
 										<Required set={hasRegistration} />
 									</div>
 									<Form.Field {form} name="protocol">
@@ -1192,27 +1193,29 @@
 												>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="free" id="free" />
-														<Form.Label for="free">{m.registration.free}</Form.Label>
+														<Form.Label for="free">{m['registration.free']()}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
-														<Form.Label for="fixedPrice">{m.registration.fixedPrice}</Form.Label>
+														<Form.Label for="fixedPrice"
+															>{m['registration.fixedPrice']()}</Form.Label
+														>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="slidingScale" id="slidingScale" />
 														<Form.Label for="slidingScale">
-															{m.registration.slidingScale}
+															{m['registration.slidingScale']()}
 														</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
 														<Form.Label for="suggestedDonation">
-															{m.registration.suggestedDonation}
+															{m['registration.suggestedDonation']()}
 														</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="other" id="other" />
-														<Form.Label for="other">{m.other}</Form.Label>
+														<Form.Label for="other">{m.other()}</Form.Label>
 													</div>
 												</RadioGroup.Root>
 											{/snippet}
@@ -1233,7 +1236,7 @@
 										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse}</span>
 									{/if}
 									<div class="question my-4" class:error={registrationInvalid}>
-										{m.registration.contact}
+										{m['registration.contact']()}
 										<Required
 											set={!isEmpty($formData.registration.email) ||
 												!isEmpty($formData.registration.url)}
@@ -1257,8 +1260,8 @@
 									<Form.Field {form} name="registration_url">
 										<Form.Control
 											>{#snippet children(props)}
-												<Form.Label for="registration_url">{m.website}</Form.Label>
-												<div class="text-xs text-slate-500">{m.http}</div>
+												<Form.Label for="registration_url">{m.website()}</Form.Label>
+												<div class="text-xs text-slate-500">{m.http()}</div>
 												<Input
 													{...props}
 													bind:value={$formData.registration.url}
@@ -1296,24 +1299,24 @@
 								</span>
 							</Accordion.Trigger>
 							<Accordion.Content>
-								<div class="question mb-4">{m.contactName().extended}</div>
+								<div class="question mb-4">{m['contactName.extended']()}</div>
 								<Form.Field {form} name="contactName">
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label for="contactName">
-												{m.contactName()().contactName}
+												{m['contactName.contactName']()}
 											</Form.Label>
 											<Input {...props} bind:value={$formData.contactName} />
 										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
-								<div class="question my-4">{m.contactEmail.extended}</div>
+								<div class="question my-4">{m['contactEmail.extended']()}</div>
 								<Form.Field {form} name="contactEmail">
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label for="contactEmail">
-												{m.contactEmail.contactEmail}
+												{m['contactEmail.contactEmail']()}
 											</Form.Label>
 											<Input {...props} bind:value={$formData.contactEmail} />
 										{/snippet}

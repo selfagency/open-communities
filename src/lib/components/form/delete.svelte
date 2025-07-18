@@ -59,15 +59,13 @@
 </script>
 
 <AlertDialog.Root>
-	<AlertDialog.Trigger>
-		<Button
-			class="border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
-			onclick={(e: Event) => {
-				e.preventDefault();
-			}}
-		>
-			{m.delete()}
-		</Button>
+	<AlertDialog.Trigger
+		class="button border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
+		onclick={(e: Event) => {
+			e.preventDefault();
+		}}
+	>
+		{m.delete()}
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<form id="delete" method="POST" action="?/delete" use:enhance>
