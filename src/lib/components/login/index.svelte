@@ -61,7 +61,7 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal">
-			<span>{resetting ? m.resetPassword') : $t('auth.login}</span>
+			<span>{resetting ? m.resetPassword : m.login}</span>
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
@@ -116,9 +116,7 @@
 				</Form.Field>
 
 				<Form.Button>{m.login}</Form.Button>
-				<Button variant="link" onclick={() => (resetting = true)}
-					>{m.forgotPassword}</Button
-				>
+				<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword}</Button>
 			</form>
 
 			{#if dev}

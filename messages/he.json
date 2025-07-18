@@ -37,7 +37,6 @@
     "extended": "רשמו את צוות הקלריקאל שיביא להובלה במהלך ימים נוראים."
   },
   "confirmPassword": "אישור סיסמה",
-  "congreationName": "שם הקהלה",
   "congregation": "קהל",
   "contact": {
     "account": "אנא ספק את כתובת הדוא\"ל המשויכת לחשבונך.",
@@ -93,7 +92,7 @@
   "editNotice": "עריכות יגרמו להסרת הקהל הזה מהרשימה עד שמנהל יאשר את השינויים שלך.",
   "editSuccess": "הקהל נערך בהצלחה.",
   "editSuccessNotice": "תודה על העדכון! מישהו יבחן את זה בקרוב ויאשר, או שייצור איתך קשר במידת הצורך.",
-  "editThing": "ערוך '{{thing}}'",
+  "editThing": "ערוך '{thing}'",
   "email": "דוא\"ל",
   "emailFailure": "נכשל בשליחת ההודעה",
   "emailOrUrl": "דוא\"ל או כתובת אינטרנט",
@@ -151,7 +150,7 @@
     "author": "רבנים למען הפסקת אש",
     "blurb": "חגוג את החגים הגדולים עם קהל יהודי שמאמין בשוויון, תומך בשלום.",
     "ceasefire": "הפסקת אש עכשיו",
-    "credit": "אתר על ידי {{thing}}",
+    "credit": "אתר על ידי {thing}",
     "dialogTitle": "הודעה מרבנים למען הפסקת אש",
     "project": "יוזמה של",
     "subtitle": "חגים גדולים 5785",
@@ -175,6 +174,7 @@
   "loginSuccess": "נכנסת בהצלחה.",
   "logout": "התנתק",
   "menu": "תפריט",
+  "congreationName": "שם הקהלה",
   "name": "שם",
   "next": "הבא",
   "notes": {
@@ -225,7 +225,7 @@
     "security": "ביטחון",
     "unarmedSecurity": "אבטחה ללא נשק"
   },
-  "selectThing": "בחר {{thing}}...",
+  "selectThing": "בחר {thing}...",
   "sendResetEmail": "שלח אימייל לאיפוס",
   "services": {
     "extended": "איזה סוגי שירותים מוזמנים לא-חברים להצטרף אליהם?",
@@ -243,9 +243,9 @@
   "siteCredits": "קרדיטים",
   "submission": "הגשה",
   "submit": "שלח",
-  "success": "ה{{thing}} שלך הצליח",
+  "success": "ה{thing} שלך הצליח",
   "termsOfService": "תנאי שירות",
-  "thingRequired": "נדרש {{thing}}",
+  "thingRequired": "נדרש {thing}",
   "title": "קהילות פתוחות",
   "token": "אסימון",
   "transfer": {

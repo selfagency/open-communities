@@ -28,8 +28,8 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 
 	import Delete from './delete.svelte';
@@ -73,25 +73,25 @@
 	} = new Location({ countries: page.data.countries });
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 	const denominations = [
-		{ label: $t('congregation.denomination.conservative'), value: 'conservative' },
+		{ label: m.denomination.conservative, value: 'conservative' },
 		{
-			label: $t('congregation.denomination.reconstructionist'),
+			label: m.denomination.reconstructionist,
 			value: 'reconstructionist'
 		},
-		{ label: $t('congregation.denomination.reform'), value: 'reform' },
-		{ label: $t('congregation.denomination.renewal'), value: 'renewal' },
-		{ label: $t('congregation.denomination.humanist'), value: 'humanist' },
-		{ label: $t('congregation.denomination.orthodox'), value: 'orthodox' },
+		{ label: m.denomination.reform, value: 'reform' },
+		{ label: m.denomination.renewal, value: 'renewal' },
+		{ label: m.denomination.humanist, value: 'humanist' },
+		{ label: m.denomination.orthodox, value: 'orthodox' },
 		{
-			label: $t('congregation.denomination.postDenominational'),
+			label: m.denomination.postDenominational,
 			value: 'postDenominational'
 		},
 		{
-			label: $t('congregation.denomination.multiDenominational'),
+			label: m.denomination.multiDenominational,
 			value: 'multiDenominational'
 		},
-		{ label: $t('congregation.denomination.unaffiliated'), value: 'unaffiliated' },
-		{ label: $t('common.other'), value: 'other' }
+		{ label: m.denomination.unaffiliated, value: 'unaffiliated' },
+		{ label: m.other, value: 'other' }
 	];
 
 	// locals
@@ -196,9 +196,7 @@
 			hasErrors = false;
 
 			if (result.type === 'success') {
-				toast.success(
-					mode === 'edit' ? $t('congregation.editSuccess') : $t('congregation.addSuccess')
-				);
+				toast.success(mode === 'edit' ? m.editSuccess : m.addSuccess);
 				if (user?.admin) {
 					await goto('/', { invalidateAll: true });
 				} else {
@@ -213,9 +211,7 @@
 				errors.set(result.data.form.errors);
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error(
-					mode === 'edit' ? $t('congregation.editFailure') : $t('congregation.addFailure')
-				);
+				toast.error(mode === 'edit' ? m.editFailure : m.addFailure);
 			}
 		}
 	});
@@ -269,15 +265,11 @@
 	/* region reactivity */
 	$effect(() => {
 		if (addSuccess || editSuccess) {
-			title = $t('common.success', {
-				thing:
-					mode === 'edit' ? $t('common.edit').toLowerCase() : $t('common.submission').toLowerCase()
+			title = m.success({
+				thing: mode === 'edit' ? m.edit.toLowerCase() : m.submission.toLowerCase()
 			});
 		} else {
-			title =
-				mode === 'edit'
-					? $t('common.editThing', { thing: $formData.name })
-					: $t('congregation.addCongregation');
+			title = mode === 'edit' ? m.editThing({ thing: $formData.name }) : m.addCongregation;
 		}
 	});
 
@@ -320,17 +312,17 @@
 					<Alert.Root class="bg-slate-50">
 						<WarningIcon size="18" />
 						<Alert.Description class="mt-0.5">
-							{$t('congregation.editNotice')}
+							{m.editNotice}
 						</Alert.Description>
 					</Alert.Root>
 				{/if}
 
 				{#if mode === 'add' && addSuccess}
-					<p>{$t('congregation.addSuccessNotice')}</p>
+					<p>{m.addSuccessNotice}</p>
 				{/if}
 
 				{#if mode === 'edit' && editSuccess}
-					<p>{$t('congregation.editSuccessNotice')}</p>
+					<p>{m.editSuccessNotice}</p>
 				{/if}
 
 				{#if !addSuccess && !editSuccess}
@@ -338,7 +330,7 @@
 						<span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
 							<Alert.Root variant="destructive" class="my-4 bg-red-50">
 								<WarningIcon size="18" />
-								<Alert.Description class="mt-0.5">{$t('common.formErrors')}</Alert.Description>
+								<Alert.Description class="mt-0.5">{m.formErrors}</Alert.Description>
 							</Alert.Root>
 						</span>
 					{/if}
@@ -348,7 +340,7 @@
 						<Accordion.Item value="congregation">
 							<Accordion.Trigger>
 								<span class="font-display text-lg font-normal">
-									{$t('congregation.congregation')}
+									{m}
 									{#if isEmpty($formData.name) || isEmpty($formData.clergy) || isEmpty($formData.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
 										<span class="text-red-500">*</span>
 									{/if}
@@ -359,7 +351,7 @@
 									<Form.Control>
 										{#snippet children(props)}
 											<Form.Label
-												>{$t('congregation.name')}
+												>{m.name}
 												<Required set={!isEmpty($formData.name)} /></Form.Label
 											>
 											<Input
@@ -379,13 +371,13 @@
 									<Form.Field {form} name="country">
 										<Form.Control>
 											{#snippet children(props)}
-												<Form.Label>{$t('congregation.location.country')}</Form.Label>
+												<Form.Label>{m.location.country}</Form.Label>
 												<Combobox
 													items={$location.options.countryOptions}
 													{...props}
 													bind:value={country}
-													placeholder={$t('common.selectThing', {
-														thing: $t('congregation.location.country').toLowerCase()
+													placeholder={m.selectThing({
+														thing: m.location.country.toLowerCase()
 													})}
 													on:change={async () => await setCountry(country)}
 												/>
@@ -396,13 +388,13 @@
 									<Form.Field {form} name="state">
 										<Form.Control>
 											{#snippet children(props)}
-												<Form.Label>{$t('congregation.location.state')}</Form.Label>
+												<Form.Label>{m.location.state}</Form.Label>
 												<Combobox
 													items={$location.options.stateOptions}
 													{...props}
 													bind:value={province}
-													placeholder={$t('common.selectThing', {
-														thing: $t('congregation.location.state').toLowerCase()
+													placeholder={m.selectThing({
+														thing: m.location.state.toLowerCase()
 													})}
 													disabled={!country && !$location.options.stateOptions}
 													on:change={async () => await setState(province)}
@@ -414,13 +406,13 @@
 									<Form.Field {form} name="city">
 										<Form.Control>
 											{#snippet children(props)}
-												<Form.Label>{$t('congregation.location.city')}</Form.Label>
+												<Form.Label>{m.location.city}</Form.Label>
 												<Combobox
 													items={$location.options.cityOptions}
 													{...props}
 													bind:value={city}
-													placeholder={$t('common.selectThing', {
-														thing: $t('congregation.location.city').toLowerCase()
+													placeholder={m.selectThing({
+														thing: m.location.city.toLowerCase()
 													})}
 													disabled={!province && !$location.options.cityOptions}
 													on:change={() => setCity(city)}
@@ -434,8 +426,8 @@
 								<Form.Field {form} name="contactUrl">
 									<Form.Control>
 										{#snippet children(props)}
-											<Form.Label>{$t('common.website')}</Form.Label>
-											<div class="text-xs text-slate-500">{$t('common.http')}</div>
+											<Form.Label>{m.website}</Form.Label>
+											<div class="text-xs text-slate-500">{m.http}</div>
 											<Input
 												{...props}
 												bind:value={$formData.contactUrl}
@@ -451,7 +443,7 @@
 									<Form.Control>
 										{#snippet children(props)}
 											<Form.Label
-												>{$t('congregation.clergy.extended')}
+												>{m.clergy.extended}
 												<Required set={!isEmpty($formData.clergy)} /></Form.Label
 											>
 											<Input {...props} bind:value={$formData.clergy} required />
@@ -462,14 +454,14 @@
 								<Form.Field {form} name="denomination">
 									<Form.Control>
 										{#snippet children(props)}
-											<Form.Label>{$t('congregation.denomination.extended')}</Form.Label>
+											<Form.Label>{m.denomination.extended}</Form.Label>
 											<Select.Root
 												type="single"
 												name="denomination"
 												bind:value={$formData.denomination}
 											>
 												<Select.Trigger class="w-full" {...props}>
-													{$t(`congregation.denomination.${$formData.denomination}`)}
+													{m.denomination[$formData.denomination]}
 												</Select.Trigger>
 												<Select.Content {...props}>
 													{#each denominations as { label, value }, i (i)}
@@ -485,7 +477,7 @@
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label
-												>{$t('congregation.flavor.extended')}
+												>{m.flavor.extended}
 												<Required set={!isEmpty($formData.flavor)} /></Form.Label
 											>
 											<Textarea {...props} bind:value={$formData.flavor} required />
@@ -496,16 +488,14 @@
 								<Form.Field {form} name="notes">
 									<Form.Control
 										>{#snippet children(props)}
-											<Form.Label>{$t('congregation.notes.extended')}</Form.Label>
+											<Form.Label>{m.notes.extended}</Form.Label>
 											<Textarea {...props} bind:value={$formData.notes} />
 										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button variant="secondary" onclick={() => (view = 'fit')}
-										>{$t('common.next')} →</Button
-									>
+									<Button variant="secondary" onclick={() => (view = 'fit')}>{m.next} →</Button>
 								</div>
 							</Accordion.Content>
 						</Accordion.Item>
@@ -516,7 +506,7 @@
 							<Accordion.Item value="fit">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{$t('congregation.fit.fit')}
+										{m.fit.fit}
 										{#if !hasFit || fitErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -524,7 +514,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question" class:error={fitErrors}>
-										{$t('congregation.fit.extended')}
+										{m.fit.extended}
 										<Required set={hasFit} />
 									</div>
 									<div class="my-4 space-y-2">
@@ -536,7 +526,7 @@
 															<Checkbox {...props} bind:checked={$formData.fit.publicStatement} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.fit.publicStatement')}</Form.Label>
+															<Form.Label>{m.fit.publicStatement}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -551,7 +541,7 @@
 															<Checkbox {...props} bind:checked={$formData.fit.clergyMember} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.fit.clergyMember')}</Form.Label>
+															<Form.Label>{m.fit.clergyMember}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -569,8 +559,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.fit.multipleClergyMembers')}</Form.Label
-															>
+															<Form.Label>{m.fit.multipleClergyMembers}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -585,7 +574,7 @@
 															<Checkbox {...props} bind:checked={$formData.fit.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('common.other')}</Form.Label>
+															<Form.Label>{m.other}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -603,7 +592,7 @@
 											</Form.Field>
 										{/if}
 										{#if fitErrors}
-											<span class="text-xs text-red-500">{$t('common.requiredResponse')}</span>
+											<span class="text-xs text-red-500">{m.requiredResponse}</span>
 										{/if}
 									</div>
 
@@ -614,8 +603,8 @@
 												<div
 													class="question my-4 flex flex-col items-start justify-start space-y-2"
 												>
-													<span>{$t('congregation.fit.flag.extended')}</span>
-													<small class="leading-1">{$t('congregation.fit.flag.note')}</small>
+													<span>{m.fit.flag.extended}</span>
+													<small class="leading-1">{m.fit.flag.note}</small>
 												</div>
 												<RadioGroup.Root
 													{...props}
@@ -624,17 +613,15 @@
 												>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="no" id="no" />
-														<Form.Label for="no">{$t('congregation.fit.flag.no')}</Form.Label>
+														<Form.Label for="no">{m.fit.flag.no}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="yes" id="yes" />
-														<Form.Label for="yes">{$t('congregation.fit.flag.yes')}</Form.Label>
+														<Form.Label for="yes">{m.fit.flag.yes}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="yesBima" id="yesBima" />
-														<Form.Label for="yesBima"
-															>{$t('congregation.fit.flag.yesBima')}</Form.Label
-														>
+														<Form.Label for="yesBima">{m.fit.flag.yesBima}</Form.Label>
 													</div>
 												</RadioGroup.Root>
 											{/snippet}
@@ -644,7 +631,7 @@
 
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'services')}
-											>{$t('common.next')} →</Button
+											>{m.next} →</Button
 										>
 									</div>
 								</Accordion.Content>
@@ -657,7 +644,7 @@
 							<Accordion.Item value="services">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{$t('congregation.services.services')}
+										{m.services.services}
 										{#if !hasServices || servicesErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -665,7 +652,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question" class:error={servicesErrors}>
-										{$t('congregation.services.extended')}
+										{m.services.extended}
 										<Required set={hasServices} />
 									</div>
 									<div class="my-4 space-y-2">
@@ -677,7 +664,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.inPerson} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.services.inPerson')}</Form.Label>
+															<Form.Label>{m.services.inPerson}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -692,7 +679,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.hybrid} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.services.hybrid')}</Form.Label>
+															<Form.Label>{m.services.hybrid}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -707,7 +694,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.onlineOnly} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.services.onlineOnly')}</Form.Label>
+															<Form.Label>{m.services.onlineOnly}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -722,7 +709,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.offsite} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.services.offsite')}</Form.Label>
+															<Form.Label>{m.services.offsite}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -737,7 +724,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('common.other')}</Form.Label>
+															<Form.Label>{m.other}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -755,12 +742,12 @@
 											</Form.Field>
 										{/if}
 										{#if servicesErrors}
-											<span class="text-xs text-red-500">{$t('common.requiredResponse')}</span>
+											<span class="text-xs text-red-500">{m.requiredResponse}</span>
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'accessibility')}>
-											{$t('common.next')} →
+											{m.next} →
 										</Button>
 									</div>
 								</Accordion.Content>
@@ -772,16 +759,16 @@
 							<Accordion.Item value="accessibility">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{$t('congregation.accessibility.accessibility')}
+										{m.accessibility.accessibility}
 										{#if $errors.accessibility}
 											<span class="text-red-500">*</span>
 										{/if}
 									</span>
 								</Accordion.Trigger>
 								<Accordion.Content>
-									<div class="question">{$t('congregation.accessibility.extended')}</div>
+									<div class="question">{m.accessibility.extended}</div>
 									<div class="mt-2 text-slate-500 italic">
-										{$t('congregation.accessibility.note')}
+										{m.accessibility.note}
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="online_asl">
@@ -795,7 +782,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.accessibility.online_asl')}</Form.Label>
+															<Form.Label>{m.accessibility.online_asl}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -813,9 +800,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.accessibility.online_liveCaptions')}</Form.Label
-															>
+															<Form.Label>{m.accessibility.online_liveCaptions}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -834,7 +819,7 @@
 														</span>
 														<span class="-mt-0.5">
 															<Form.Label>
-																{$t('congregation.accessibility.online_automatedCaptions')}
+																{m.accessibility.online_automatedCaptions}
 															</Form.Label>
 														</span>
 													</span>
@@ -853,9 +838,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.accessibility.inPerson_adaAll')}</Form.Label
-															>
+															<Form.Label>{m.accessibility.inPerson_adaAll}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -873,9 +856,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.accessibility.inPerson_adaSome')}</Form.Label
-															>
+															<Form.Label>{m.accessibility.inPerson_adaSome}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -893,9 +874,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.accessibility.inPerson_asl')}</Form.Label
-															>
+															<Form.Label>{m.accessibility.inPerson_asl}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -913,9 +892,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.accessibility.inPerson_eva')}</Form.Label
-															>
+															<Form.Label>{m.accessibility.inPerson_eva}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -930,7 +907,7 @@
 															<Checkbox {...props} bind:checked={$formData.accessibility.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('common.other')}</Form.Label>
+															<Form.Label>{m.other}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -950,8 +927,7 @@
 									</div>
 
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" onclick={() => (view = 'health')}
-											>{$t('common.next')} →</Button
+										<Button variant="secondary" onclick={() => (view = 'health')}>{m.next} →</Button
 										>
 									</div>
 								</Accordion.Content>
@@ -964,7 +940,7 @@
 							<Accordion.Item value="health">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{$t('congregation.health.health')}
+										{m.health.health}
 										{#if !hasHealth || healthErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -975,7 +951,7 @@
 										<Form.Control
 											>{#snippet children(props)}
 												<div class="question mb-4" class:error={healthErrors?.protocol}>
-													{$t('congregation.health.extended')}
+													{m.health.extended}
 													<Required set={hasHealth} />
 												</div>
 												<RadioGroup.Root
@@ -986,25 +962,22 @@
 												>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
-														<Form.Label for="maskingRequired"
-															>{$t('congregation.health.maskingRequired')}</Form.Label
+														<Form.Label for="maskingRequired">{m.health.maskingRequired}</Form.Label
 														>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
 														<Form.Label for="maskingRecommended"
-															>{$t('congregation.health.maskingRecommended')}</Form.Label
+															>{m.health.maskingRecommended}</Form.Label
 														>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
-														<Form.Label for="noGuidelines"
-															>{$t('congregation.health.noGuidelines')}</Form.Label
-														>
+														<Form.Label for="noGuidelines">{m.health.noGuidelines}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="other" id="other" />
-														<Form.Label for="other">{$t('common.other')}</Form.Label>
+														<Form.Label for="other">{m.other}</Form.Label>
 													</div>
 												</RadioGroup.Root>
 												{#if $formData.health.protocol === 'other'}
@@ -1022,13 +995,11 @@
 										<Form.FieldErrors />
 									</Form.Field>
 									{#if healthErrors?.protocol}
-										<span class="mt-4 block text-xs text-red-500"
-											>{$t('common.requiredResponse')}</span
-										>
+										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse}</span>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'security')}>
-											{$t('common.next')} →
+											{m.next} →
 										</Button>
 									</div>
 								</Accordion.Content>
@@ -1041,7 +1012,7 @@
 							<Accordion.Item value="security">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{$t('congregation.security.security')}
+										{m.security.security}
 										{#if securityErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -1049,7 +1020,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question" class:error={securityErrors}>
-										{$t('congregation.security.extended')}
+										{m.security.extended}
 									</div>
 									<div class="my-4 space-y-2">
 										<Form.Field {form} name="localPolice">
@@ -1060,7 +1031,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.localPolice} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.security.localPolice')}</Form.Label>
+															<Form.Label>{m.security.localPolice}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1078,9 +1049,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.security.privateSecurityArmed')}</Form.Label
-															>
+															<Form.Label>{m.security.privateSecurityArmed}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1098,9 +1067,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label
-																>{$t('congregation.security.privateSecurityUnarmed')}</Form.Label
-															>
+															<Form.Label>{m.security.privateSecurityUnarmed}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1115,7 +1082,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.clergyArmed} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.security.clergyArmed')}</Form.Label>
+															<Form.Label>{m.security.clergyArmed}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1133,8 +1100,7 @@
 															/>
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.security.congregantsArmed')}</Form.Label
-															>
+															<Form.Label>{m.security.congregantsArmed}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1149,7 +1115,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.noFirearms} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('congregation.security.noFirearms')}</Form.Label>
+															<Form.Label>{m.security.noFirearms}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1164,7 +1130,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{$t('common.other')}</Form.Label>
+															<Form.Label>{m.other}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1182,12 +1148,12 @@
 											</Form.Field>
 										{/if}
 										{#if securityErrors}
-											<span class="text-xs text-red-500">{$t('common.requiredResponse')}</span>
+											<span class="text-xs text-red-500">{m.requiredResponse}</span>
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'registration')}>
-											{$t('common.next')} →
+											{m.next} →
 										</Button>
 									</div>
 								</Accordion.Content>
@@ -1204,7 +1170,7 @@
 							<Accordion.Item value="registration">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{$t('congregation.registration.registration')}
+										{m.registration.registration}
 										{#if !hasRegistration || registrationErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -1212,7 +1178,7 @@
 								</Accordion.Trigger>
 								<Accordion.Content>
 									<div class="question mb-4" class:error={registrationErrors?.registrationType}>
-										{$t('congregation.registration.extended')}
+										{m.registration.extended}
 										<Required set={hasRegistration} />
 									</div>
 									<Form.Field {form} name="protocol">
@@ -1226,31 +1192,27 @@
 												>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="free" id="free" />
-														<Form.Label for="free"
-															>{$t('congregation.registration.free')}</Form.Label
-														>
+														<Form.Label for="free">{m.registration.free}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
-														<Form.Label for="fixedPrice"
-															>{$t('congregation.registration.fixedPrice')}</Form.Label
-														>
+														<Form.Label for="fixedPrice">{m.registration.fixedPrice}</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="slidingScale" id="slidingScale" />
 														<Form.Label for="slidingScale">
-															{$t('congregation.registration.slidingScale')}
+															{m.registration.slidingScale}
 														</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
 														<Form.Label for="suggestedDonation">
-															{$t('congregation.registration.suggestedDonation')}
+															{m.registration.suggestedDonation}
 														</Form.Label>
 													</div>
 													<div class="flex items-center space-x-2">
 														<RadioGroup.Item value="other" id="other" />
-														<Form.Label for="other">{$t('common.other')}</Form.Label>
+														<Form.Label for="other">{m.other}</Form.Label>
 													</div>
 												</RadioGroup.Root>
 											{/snippet}
@@ -1268,12 +1230,10 @@
 										</Form.Field>
 									{/if}
 									{#if registrationErrors?.registrationType}
-										<span class="mt-4 block text-xs text-red-500"
-											>{$t('common.requiredResponse')}</span
-										>
+										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse}</span>
 									{/if}
 									<div class="question my-4" class:error={registrationInvalid}>
-										{$t('congregation.registration.contact')}
+										{m.registration.contact}
 										<Required
 											set={!isEmpty($formData.registration.email) ||
 												!isEmpty($formData.registration.url)}
@@ -1282,7 +1242,7 @@
 									<Form.Field {form} name="registration_email">
 										<Form.Control
 											>{#snippet children(props)}
-												<Form.Label for="registration_email">{$t('common.email')}</Form.Label>
+												<Form.Label for="registration_email">{m.email}</Form.Label>
 												<Input
 													{...props}
 													bind:value={$formData.registration.email}
@@ -1297,8 +1257,8 @@
 									<Form.Field {form} name="registration_url">
 										<Form.Control
 											>{#snippet children(props)}
-												<Form.Label for="registration_url">{$t('common.website')}</Form.Label>
-												<div class="text-xs text-slate-500">{$t('common.http')}</div>
+												<Form.Label for="registration_url">{m.website}</Form.Label>
+												<div class="text-xs text-slate-500">{m.http}</div>
 												<Input
 													{...props}
 													bind:value={$formData.registration.url}
@@ -1310,14 +1270,15 @@
 										</Form.Control>
 										<Form.FieldErrors />
 									</Form.Field>
+
 									{#if registrationInvalid}
 										<span class="mt-4 block text-xs text-red-500">
-											{$t('common.thingRequired', { thing: $t('common.emailOrUrl') })}
+											{m.thingRequired({ thing: m.emailOrUrl })}
 										</span>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'contact')}
-											>{$t('common.next')} →</Button
+											>{m.next} →</Button
 										>
 									</div>
 								</Accordion.Content>
@@ -1328,31 +1289,31 @@
 						<Accordion.Item value="contact">
 							<Accordion.Trigger>
 								<span class="font-display text-lg font-normal">
-									{$t('congregation.contact')}
+									{m.contact}
 									{#if $errors.contactName || $errors.contactEmail}
 										<span class="text-red-500">*</span>
 									{/if}
 								</span>
 							</Accordion.Trigger>
 							<Accordion.Content>
-								<div class="question mb-4">{$t('congregation.contactName.extended')}</div>
+								<div class="question mb-4">{m.contactName.extended}</div>
 								<Form.Field {form} name="contactName">
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label for="contactName">
-												{$t('congregation.contactName.contactName')}
+												{m.contactName.contactName}
 											</Form.Label>
 											<Input {...props} bind:value={$formData.contactName} />
 										{/snippet}
 									</Form.Control>
 									<Form.FieldErrors />
 								</Form.Field>
-								<div class="question my-4">{$t('congregation.contactEmail.extended')}</div>
+								<div class="question my-4">{m.contactEmail.extended}</div>
 								<Form.Field {form} name="contactEmail">
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label for="contactEmail">
-												{$t('congregation.contactEmail.contactEmail')}
+												{m.contactEmail.contactEmail}
 											</Form.Label>
 											<Input {...props} bind:value={$formData.contactEmail} />
 										{/snippet}
@@ -1371,7 +1332,7 @@
 									>{#snippet children(props)}
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Form.Label><strong>{$t('congregation.approved')}</strong></Form.Label>
+												<Form.Label><strong>{m.approved}</strong></Form.Label>
 											</span>
 											<span>
 												<Switch {...props} bind:checked={$formData.visible} />
@@ -1429,14 +1390,14 @@
 								}
 							}}
 						>
-							{$t('common.reset')}
+							{m.reset}
 						</Button>
 						<Form.Button
 							onclick={(e) => {
 								e.preventDefault();
 								e.stopPropagation();
 								form.submit(document.getElementById('addEdit'));
-							}}>{$t('common.submit')}</Form.Button
+							}}>{m.submit}</Form.Button
 						>
 					</div>
 				</div>

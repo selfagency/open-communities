@@ -93,7 +93,7 @@
   "editNotice": "Si vous apportez des modifications, cette congrégation sera retirée de la liste jusqu'à ce qu'un administrateur puisse approuver vos modifications.",
   "editSuccess": "Congrégation éditée avec succès.",
   "editSuccessNotice": "Merci pour cette mise à jour ! Quelqu'un l'examinera et l'approuvera sous peu ou nous contactera si nécessaire.",
-  "editThing": "Modifier '{{chose}}'",
+  "editThing": "Modifier '{thing}'",
   "email": "Courriel",
   "emailFailure": "Échec de l'envoi du message",
   "emailOrUrl": "Courriel ou URL",
@@ -151,7 +151,7 @@
     "author": "Rabbins pour le cessez-le-feu",
     "blurb": "Célébrez les fêtes de fin d'année au sein d'une communauté juive inclusive et favorable à la paix.",
     "ceasefire": "Cessez-le-feu maintenant",
-    "credit": "Site de {{chose}}",
+    "credit": "Site de {thing}",
     "dialogTitle": "Un message des rabbins pour le cessez-le-feu",
     "project": "Une initiative de",
     "subtitle": "Fêtes de fin d'année 5785",
@@ -224,7 +224,7 @@
     "security": "Sécurité",
     "unarmedSecurity": "Sécurité non armée"
   },
-  "selectThing": "Sélectionner {{chose}}...",
+  "selectThing": "Sélectionner {thing}...",
   "sendResetEmail": "Envoyer un courriel de réinitialisation",
   "services": {
     "extended": "Quels sont les types de services auxquels les non-membres sont invités à participer ?",
@@ -242,9 +242,9 @@
   "siteCredits": "Crédits",
   "submission": "Soumission",
   "submit": "Soumettre",
-  "success": "Votre {{chose}} a réussi",
+  "success": "Votre {thing} a réussi",
   "termsOfService": "Conditions d'utilisation",
-  "thingRequired": "{{chose}} est nécessaire",
+  "thingRequired": "{thing} est nécessaire",
   "title": "Communautés ouvertes",
   "token": "Jeton",
   "transfer": {

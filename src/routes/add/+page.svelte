@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>{m.addCongregation')} &middot; {$t('common.title}</title>
+	<title>{m.addCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
 <AddForm data={data.form} content={data.content} bind:snapshot={snapshotData} />

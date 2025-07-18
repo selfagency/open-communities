@@ -166,7 +166,7 @@
 									{...props}
 									bind:value={congregation}
 									placeholder={m.selectThing({
-										thing: m.congregation.congregation.toLowerCase()
+										thing: m.congregation.toLowerCase()
 									})}
 									disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
 									on:change={(e) => {

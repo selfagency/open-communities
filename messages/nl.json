@@ -93,7 +93,7 @@
   "editNotice": "Als je wijzigingen aanbrengt, wordt deze gemeente van de lijst verwijderd totdat een beheerder je wijzigingen kan goedkeuren.",
   "editSuccess": "Gemeente met succes bewerkt.",
   "editSuccessNotice": "Bedankt voor de update! Iemand zal het binnenkort bekijken en goedkeuren of indien nodig contact met je opnemen.",
-  "editThing": "Bewerk '{{thing}}'",
+  "editThing": "Bewerk '{thing}'",
   "email": "E-mail",
   "emailFailure": "Bericht niet verzonden",
   "emailOrUrl": "E-mail of URL",
@@ -151,7 +151,7 @@
     "author": "Rabbijnen voor wapenstilstand",
     "blurb": "Vier de Hoge Feestdagen met een inclusieve, vredesondersteunende Joodse gemeenschap.",
     "ceasefire": "Staakt-het-vuren nu",
-    "credit": "Site door {{thing}}",
+    "credit": "Site door {thing}",
     "dialogTitle": "Een boodschap van Rabbijnen voor Staakt-het-vuren",
     "project": "Een initiatief van",
     "subtitle": "Feestdagen 5785",
@@ -225,7 +225,7 @@
     "security": "Beveiliging",
     "unarmedSecurity": "Ongewapende beveiliging"
   },
-  "selectThing": "Selecteer {{thing}}...",
+  "selectThing": "Selecteer {thing}...",
   "sendResetEmail": "Reset e-mail verzenden",
   "services": {
     "extended": "Voor welk soort diensten worden niet-leden uitgenodigd?",
@@ -243,9 +243,9 @@
   "siteCredits": "Credits",
   "submission": "Inzending",
   "submit": "Stuur  in",
-  "success": "Je {{ding}} was succesvol",
+  "success": "Je {thing} was succesvol",
   "termsOfService": "Servicevoorwaarden",
-  "thingRequired": "{{thing}} is vereist",
+  "thingRequired": "{thing} is vereist",
   "title": "Open gemeenschappen",
   "token": "Penning",
   "transfer": {

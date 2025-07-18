@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>{m.contact.contactUs')} &middot; {$t('common.title}</title>
+	<title>{m.contact.contactUs()} &middot; {m.title()}</title>
 </svelte:head>
 
 <section class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">

@@ -29,7 +29,7 @@ export type DeleteSchema = z.infer<typeof deleteSchema>;
 export const transferSchema = z.object({
 	email: z.email().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
-			thing: t.get('common.email')
+			thing: m.email
 		})
 	}),
 	id: z.string().refine((value) => !!value, {
@@ -47,7 +47,7 @@ export const defaultSchema = z.object({
 	captcha: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
-			thing: t.get('congregation.clergy.clergy')
+			thing: m.clergy.clergy
 		})
 	}),
 	contactEmail: z.preprocess(
@@ -80,7 +80,7 @@ export const defaultSchema = z.object({
 	fit,
 	flavor: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
-			thing: t.get('congregation.flavor.flavor')
+			thing: m.flavor.flavor
 		})
 	}),
 	health,
@@ -92,7 +92,7 @@ export const defaultSchema = z.object({
 	}),
 	name: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
-			thing: t.get('common.name')
+			thing: m.name
 		})
 	}),
 	notes: z.string().optional(),

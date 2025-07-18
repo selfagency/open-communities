@@ -11,12 +11,12 @@ export const loginSchema = z.object({
 		.email()
 		.refine((value) => !!value, {
 			message: t.get('common.thingRequired', {
-				thing: t.get('common.email')
+				thing: m.email
 			})
 		}),
 	password: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
-			thing: t.get('auth.password')
+			thing: m.password
 		})
 	})
 });
@@ -30,7 +30,7 @@ export const tokenSchema = z
 		passwordConfirm: z.string().optional(),
 		token: z.string().refine((value) => !!value, {
 			message: t.get('common.thingRequired', {
-				thing: t.get('common.token')
+				thing: m.token
 			})
 		}),
 		type: z.string()
@@ -39,7 +39,7 @@ export const tokenSchema = z
 		if (data.passwordConfirm !== data.password) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: t.get('auth.passwordMismatch'),
+				message: m.passwordMismatch,
 				path: ['passwordConfirm']
 			});
 		}

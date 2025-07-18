@@ -93,7 +93,7 @@
   "editNotice": "Al realizar modificaciones, la congregación dejará de estar en la lista hasta que un administrador apruebe los cambios.",
   "editSuccess": "Congregación editada con éxito.",
   "editSuccessNotice": "Gracias por la actualización. Alguien lo revisará y aprobará en breve o se pondrá en contacto si es necesario.",
-  "editThing": "Editar '{{cosa}}'",
+  "editThing": "Editar '{thing}'",
   "email": "Correo electrónico",
   "emailFailure": "Error al enviar el mensaje",
   "emailOrUrl": "Correo electrónico o URL",
@@ -151,7 +151,7 @@
     "author": "Rabinos por el alto el fuego",
     "blurb": "Celebre las Altas Fiestas con una comunidad judía integradora que apoya la paz.",
     "ceasefire": "Alto el fuego ya",
-    "credit": "Sitio de {{thing}}",
+    "credit": "Sitio de {thing}",
     "dialogTitle": "Un mensaje de Rabinos por el alto el fuego",
     "project": "Una iniciativa de",
     "subtitle": "Altas Fiestas 5785",
@@ -224,7 +224,7 @@
     "security": "Seguridad",
     "unarmedSecurity": "Seguridad sin armas"
   },
-  "selectThing": "Selecciona {{cosa}}...",
+  "selectThing": "Selecciona {thing}...",
   "sendResetEmail": "Enviar correo electrónico de restablecimiento",
   "services": {
     "extended": "¿A qué tipo de servicios se invita a los no afiliados?",
@@ -242,9 +242,9 @@
   "siteCredits": "Créditos",
   "submission": "Presentación",
   "submit": "Enviar",
-  "success": "Tu {{cosa}} tuvo éxito",
+  "success": "Tu {thing} tuvo éxito",
   "termsOfService": "Condiciones de uso",
-  "thingRequired": "{{thing}} es necesario",
+  "thingRequired": "{thing} es necesario",
   "title": "Comunidades abiertas",
   "token": "Ficha",
   "transfer": {

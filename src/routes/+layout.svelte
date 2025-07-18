@@ -71,7 +71,7 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 <svelte:head>
-	<title>{m.title}</title>
+	<title>{m.title()}</title>
 </svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">

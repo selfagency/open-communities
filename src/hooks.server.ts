@@ -1,14 +1,16 @@
 import type { Handle } from '@sveltejs/kit';
-import { paraglideMiddleware } from '$lib/paraglide/server';
 /* region imports */
 import type { SerializeOptions } from 'cookie';
+
 import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
+import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 
@@ -17,8 +19,8 @@ import { logEvent, log as logger } from '$lib/server/logger';
 if (!Sentry.isInitialized()) {
 	Sentry.init({ dsn: PUBLIC_SENTRY_DSN, tracesSampleRate: 1.0 });
 }
-
 /* endregion init */
+
 /* region variables */
 // constants;
 const log = logger.getSubLogger({ name: 'hooks' });
@@ -95,10 +97,8 @@ export const handleError = handleErrorWithSentry(async ({ error, event, status }
 	}
 });
 
-const originalHandle = sequence(sentryHandle(), customHandler, handleParaglide);
-
 const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ request, locale }) => {
+	paraglideMiddleware(event.request, ({ locale, request }) => {
 		event.request = request;
 
 		return resolve(event, {
@@ -106,4 +106,4 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		});
 	});
 
-export const handle = sequence(originalHandle, handleParaglide);
+export const handle = sequence(sentryHandle(), customHandler, handleParaglide);

@@ -20,7 +20,7 @@ export const userSchema = z
 		congregation: z.string().optional(),
 		email: z.email().refine((value) => !!value, {
 			message: t.get('common.thingRequired', {
-				thing: t.get('common.email')
+				thing: m.email
 			})
 		}),
 		emailVisibility: z.boolean().default(true),
@@ -28,7 +28,7 @@ export const userSchema = z
 		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
 		name: z.string().refine((value) => !!value, {
 			message: t.get('common.thingRequired', {
-				thing: t.get('common.name')
+				thing: m.name
 			})
 		}),
 		oldPassword: z.string().optional(),
@@ -39,7 +39,7 @@ export const userSchema = z
 		if (data.passwordConfirm !== data.password) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: t.get('auth.passwordMismatch'),
+				message: m.passwordMismatch,
 				path: ['passwordConfirm']
 			});
 		}

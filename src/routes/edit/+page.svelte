@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>{m.editCongregation')} &middot; {$t('common.title}</title>
+	<title>{m.editCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
 <EditForm data={data.form} mode="edit" bind:snapshot={snapshotData} />

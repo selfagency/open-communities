@@ -45,7 +45,7 @@
 				target="_blank"
 			>
 				<span>
-					{@html $t('common.home.credit', {
+					{@html m.home.credit({
 						thing: 'The Self Agency, LLC'
 					})}
 				</span>

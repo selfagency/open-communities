@@ -5,7 +5,7 @@ import { fail } from '@sveltejs/kit';
 
 import type { LocationMeta } from '$lib/types.d';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 import { contactSchema } from '$lib/schemas/contact';
 import { sendMail } from '$lib/server/mail';
 import { truncateText } from '$lib/utils';
@@ -52,7 +52,7 @@ export const actions = {
 					{
 						email: form.data.email,
 						message: `
-						${t.get(`common.contact.options.${form.data.reason}`)}
+						${m.contact.options[form.data.reason]()}
 
 						${form.data.message}
 

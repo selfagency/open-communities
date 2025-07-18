@@ -16,15 +16,21 @@ export default defineConfig({
 		}
 	},
 	plugins: [
+		devtoolsJson(),
 		sentrySvelteKit({
 			sourceMapsUploadOptions: {
 				org: 'selfagency',
 				project: 'open-communities'
 			}
 		}),
-		devtoolsJson(),
+		paraglideVitePlugin({
+			outdir: './src/lib/paraglide',
+			project: './project.inlang'
+		}),
 		tailwindcss(),
-		sveltekit(), // SvelteKitPWA({
+		sveltekit(),
+		svg()
+		// SvelteKitPWA({
 		// 	injectRegister: 'auto',
 		// 	registerType: 'autoUpdate',
 		// 	workbox: {
@@ -50,11 +56,6 @@ export default defineConfig({
 		// 			}
 		// 		]
 		// 	}
-		// }),
-		svg(),
-		paraglideVitePlugin({
-			project: './project.inlang',
-			outdir: './src/lib/paraglide'
-		})
+		// })
 	]
 });

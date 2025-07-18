@@ -18,7 +18,7 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationRecord } from '$lib/types.d';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';
@@ -137,7 +137,7 @@ export const actions = {
 			const err = error as ClientResponseError;
 
 			if (err.message === 'Failed to create record.') {
-				setError(form, 'name', t.get('congregation.exists'));
+				setError(form, 'name', m.exists());
 			}
 
 			return fail(err.status ?? 400, {

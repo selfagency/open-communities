@@ -93,7 +93,7 @@
   "editNotice": "Wenn Sie Änderungen vornehmen, wird diese Gemeinde von der Liste gestrichen, bis ein Administrator Ihre Änderungen genehmigen kann.",
   "editSuccess": "Kongregation erfolgreich bearbeitet.",
   "editSuccessNotice": "Vielen Dank für die Aktualisierung! Jemand wird es in Kürze überprüfen und genehmigen oder sich bei Bedarf melden.",
-  "editThing": "Bearbeiten Sie '{{Ding}}'.",
+  "editThing": "Bearbeiten Sie '{thing}'.",
   "email": "E-Mail",
   "emailFailure": "Nachricht konnte nicht gesendet werden",
   "emailOrUrl": "E-Mail oder URL",
@@ -151,7 +151,7 @@
     "author": "Rabbiner für Waffenstillstand",
     "blurb": "Feiern Sie die Hohen Feiertage mit einer integrativen, friedensfördernden jüdischen Gemeinschaft.",
     "ceasefire": "Waffenstillstand jetzt",
-    "credit": "Seite von {{thing}}",
+    "credit": "Seite von {thing}",
     "dialogTitle": "Eine Botschaft von Rabbis for Ceasefire",
     "project": "Eine Initiative von",
     "subtitle": "Hohe Feiertage 5785",
@@ -225,7 +225,7 @@
     "security": "Sicherheit",
     "unarmedSecurity": "Unbewaffnete Sicherheit"
   },
-  "selectThing": "Wählen Sie {{Ding}}...",
+  "selectThing": "Wählen Sie {thing}...",
   "sendResetEmail": "E-Mail zum Zurücksetzen senden",
   "services": {
     "extended": "Welche Arten von Diensten können von Nichtmitgliedern in Anspruch genommen werden?",
@@ -243,9 +243,9 @@
   "siteCredits": "Kredite",
   "submission": "Einreichung",
   "submit": "Einreichen",
-  "success": "Ihr {{Ding}} war erfolgreich",
+  "success": "Ihr {thing} war erfolgreich",
   "termsOfService": "Bedingungen der Dienstleistung",
-  "thingRequired": "{{Ding}} ist erforderlich",
+  "thingRequired": "{thing} ist erforderlich",
   "title": "Offene Gemeinschaften",
   "token": "Token",
   "transfer": {

@@ -93,7 +93,7 @@
   "editNotice": "Ao fazer edições, esta congregação será retirada da lista até que um administrador possa aprovar as alterações.",
   "editSuccess": "A congregação foi editada com sucesso.",
   "editSuccessNotice": "Obrigado pela atualização! Alguém irá analisá-la e aprová-la em breve ou entrará em contacto com ela, se necessário.",
-  "editThing": "Editar '{{coisa}}'",
+  "editThing": "Editar '{thing}'",
   "email": "Correio eletrónico",
   "emailFailure": "Falha no envio da mensagem",
   "emailOrUrl": "Correio eletrónico ou URL",
@@ -151,7 +151,7 @@
     "author": "Rabinos pelo cessar-fogo",
     "blurb": "Comemore as Festas Festivas com uma comunidade judaica inclusiva e que apoia a paz.",
     "ceasefire": "Cessar-fogo agora",
-    "credit": "Site por {{coisa}}",
+    "credit": "Site por {thing}",
     "dialogTitle": "Uma mensagem dos Rabinos para o Cessar-Fogo",
     "project": "Uma iniciativa de",
     "subtitle": "Festas Grandes 5785",
@@ -225,7 +225,7 @@
     "security": "Segurança",
     "unarmedSecurity": "Segurança desarmada"
   },
-  "selectThing": "Selecionar {{coisa}}...",
+  "selectThing": "Selecionar {thing}...",
   "sendResetEmail": "Enviar e-mail de reposição",
   "services": {
     "extended": "A que tipos de serviços são convidados os não membros?",
@@ -243,9 +243,9 @@
   "siteCredits": "Créditos",
   "submission": "Apresentação",
   "submit": "Enviar",
-  "success": "A sua {{coisa}} foi bem sucedida",
+  "success": "A sua {thing} foi bem sucedida",
   "termsOfService": "Termos do serviço",
-  "thingRequired": "{{coisa}} é necessário",
+  "thingRequired": "{thing} é necessário",
   "title": "Comunidades abertas",
   "token": "Ficha",
   "transfer": {
