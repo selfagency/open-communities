@@ -13,7 +13,8 @@
     "format": "eslint --fix . && prettier --write .",
     "lint": "prettier --check . && eslint .",
     "preview": "vite preview",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "machine-translate": "inlang machine translate --project project.inlang"
   },
   "dependencies": {
     "@inlang/paraglide-js": "^2.2.0",
@@ -79,7 +80,9 @@
     "vite-plugin-devtools-json": "^0.3.0",
     "vite-plugin-pwa": "1.0.1",
     "wait-for-the-element": "^4.0.2",
-    "zod": "4.0.5"
+    "zod": "4.0.5",
+    "@inlang/paraglide-js": "2.2.0",
+    "@inlang/cli": "^3.0.0"
   },
   "engines": {
     "node": "20.19"

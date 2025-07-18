@@ -53,7 +53,7 @@
 				<Combobox
 					items={$locationState.options.countryOptions}
 					bind:value={country}
-					placeholder={m.selectThing(m.location.country.toLowerCase())}
+					placeholder={m.selectThing(m.location.country().toLowerCase())}
 					disabled={!$locationState.options?.countryOptions?.length}
 					on:change={() => setCountry(country)}
 				/>
@@ -63,7 +63,7 @@
 				<Combobox
 					items={$locationState.options.stateOptions}
 					bind:value={province}
-					placeholder={m.selectThing(m.location.state.toLowerCase())}
+					placeholder={m.selectThing(m.location.state().toLowerCase())}
 					disabled={!country && !$locationState.options?.stateOptions?.length}
 					on:change={() => setState(province)}
 				/>
@@ -73,7 +73,7 @@
 				<Combobox
 					items={$locationState.options.cityOptions}
 					bind:value={city}
-					placeholder={m.selectThing(m.location.city.toLowerCase())}
+					placeholder={m.selectThing(m.location.city().toLowerCase())}
 					disabled={!province && !$locationState.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>
@@ -95,7 +95,7 @@
 					class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700"
 				>
 					<ResetIcon size="16" class="rtl:mx-1" />
-					<span>{m.reset}</span>
+					<span>{m.reset()}</span>
 				</span>
 			</Button>
 		</span>

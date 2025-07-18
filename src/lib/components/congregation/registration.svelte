@@ -16,24 +16,24 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{m.registration.registration}</h2>
+	<h2 class="label">{m.registration.registration()}</h2>
 </div>
 
 <div class="col-span-9 flex flex-col items-start justify-between space-y-2">
 	{#if registration?.registrationType}
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
-				<span>{m.registration.fixedPrice}</span>
+				<span>{m.registration.fixedPrice()}</span>
 			{:else if registration.registrationType === 'free'}
-				<span>{m.registration.free}</span>
+				<span>{m.registration.free()}</span>
 			{:else if registration.registrationType === 'slidingScale'}
-				<span>{m.registration.slidingScale}</span>
+				<span>{m.registration.slidingScale()}</span>
 			{:else if registration.registrationType === 'suggestedDonation'}
 				<span>{m.registration.suggestedDonation}</span>
 			{:else if registration.registrationType === 'other'}
 				<span>{registration.otherText}</span>
 			{:else}
-				{m.unspecified}
+				{m.unspecified()}
 			{/if}
 		</div>
 	{/if}
@@ -46,7 +46,7 @@
 				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
 				<span><EmailIcon size="16" /></span>
-				<span>{m.email}</span>
+				<span>{m.email()}</span>
 			</Button>
 		{/if}
 		{#if registration?.url}
@@ -57,7 +57,7 @@
 				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
 				<span><WebIcon size="16" /></span>
-				<span>{m.website}</span>
+				<span>{m.website()}</span>
 			</Button>
 		{/if}
 	</div>

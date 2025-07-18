@@ -23,12 +23,12 @@ export default defineConfig({
 				project: 'open-communities'
 			}
 		}),
+		tailwindcss(),
+		sveltekit(),
 		paraglideVitePlugin({
 			outdir: './src/lib/paraglide',
 			project: './project.inlang'
 		}),
-		tailwindcss(),
-		sveltekit(),
 		svg()
 		// SvelteKitPWA({
 		// 	injectRegister: 'auto',

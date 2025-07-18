@@ -91,14 +91,14 @@
 			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-				{m.verified.extended}
+				{m.verified.extended()}
 			</span>
 		{:else if success}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-				{m.signUpSuccess}
+				{m.signUpSuccess()}
 			</span>
 		{:else}
-			<div class="mb-4">{m.signUpInfo}</div>
+			<div class="mb-4">{m.signUpInfo()}</div>
 
 			<form
 				method="POST"
@@ -111,7 +111,7 @@
 				<Form.Field {form} name="name">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.name}</Form.Label>
+							<Form.Label>{m.name()}</Form.Label>
 							<Input {...props} bind:value={$formData.name} autocomplete="name" />
 						{/snippet}
 					</Form.Control>
@@ -121,7 +121,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.email}</Form.Label>
+							<Form.Label>{m.email()}</Form.Label>
 							<Input {...props} bind:value={$formData.email} autocomplete="email" />
 						{/snippet}
 					</Form.Control>
@@ -131,7 +131,7 @@
 				<Form.Field {form} name="password">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.password}</Form.Label>
+							<Form.Label>{m.password()}</Form.Label>
 							<Input
 								{...props}
 								bind:value={$formData.password}
@@ -146,7 +146,7 @@
 				<Form.Field {form} name="passwordConfirm">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.confirmPassword}</Form.Label>
+							<Form.Label>{m.confirmPassword()}</Form.Label>
 							<Input
 								{...props}
 								bind:value={$formData.passwordConfirm}
@@ -165,7 +165,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m.signUp}</Form.Button>
+				<Form.Button>{m.signUp()}</Form.Button>
 			</form>
 
 			{#if dev}

@@ -15,6 +15,6 @@
 	<h1
 		class="pointer-events-none w-full text-center text-xl sm:max-w-[80%] sm:text-3xl md:text-4xl lg:text-5xl"
 	>
-		{m.home.blurb}
+		{m.home.blurb()}
 	</h1>
 </div>

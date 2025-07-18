@@ -11,17 +11,17 @@
 	>
 		<span
 			class="pointer-events-none flex flex-row items-center justify-center sm:w-1/3 sm:justify-end"
-			>{m.home.project}</span
+			>{m.home.project()}</span
 		>
 		<span class="flex flex-col items-center justify-center">
 			<a href="https://rabbis4ceasefire.com/" target="_blank">
 				<RabbisLogo class="w-24 fill-slate-700 hover:fill-slate-900 sm:w-36" />
-				<span class="sr-only">{m.home.author}</span>
+				<span class="sr-only">{m.home.author()}</span>
 			</a>
 		</span>
 		<span
 			class="pointer-events-none flex flex-row items-center justify-center font-bold sm:w-1/3 sm:justify-start"
-			>{m.home.ceasefire}
+			>{m.home.ceasefire()}
 		</span>
 	</div>
 	<div class="flex w-full flex-row items-center justify-center">
@@ -30,13 +30,13 @@
 		>
 			<span class="flex flex-row items-center justify-center space-x-4">
 				<a class="text-xs text-slate-500 hover:text-slate-500" href="/contact">
-					<span>{m.contact.contactUs}</span>
+					<span>{m.contact.contactUs()}</span>
 				</a>
 				<a class="text-xs text-slate-500 hover:text-slate-500" href="/privacy">
-					<span>{m.privacyPolicy}</span>
+					<span>{m.privacyPolicy()}</span>
 				</a>
 				<a class="text-xs text-slate-500 hover:text-slate-500" href="/terms">
-					<span>{m.termsOfService}</span>
+					<span>{m.termsOfService()}</span>
 				</a>
 			</span>
 			<a
@@ -52,7 +52,7 @@
 			</a>
 			<a class="text-xs text-slate-500 hover:text-slate-500" href="/site-credits">
 				<span>
-					{m.siteCredits}
+					{m.siteCredits()}
 				</span>
 			</a>
 		</span>

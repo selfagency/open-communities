@@ -59,7 +59,7 @@
 	out:fade={{ delay: 0, duration: 100 }}
 	class="space-y-4"
 >
-	<div>{m.verifying}</div>
+	<div>{m.verifying()}</div>
 
 	{#if $formData.token && $formData.type}
 		<form id="verify" method="POST" action="?/acct" use:enhance>

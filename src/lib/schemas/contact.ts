@@ -4,7 +4,7 @@ import * as z from 'zod';
 
 export const contactSchema = z.object({
 	captcha: z.string().optional(),
-	email: z.string().email(),
+	email: z.email(),
 	message: z.string(),
 	name: z.string(),
 	reason: z.enum(['question', 'claim', 'delete', 'suggest']),

@@ -14,5 +14,5 @@
 	variant="outline"
 	class={set ? 'bg-slate-50 text-slate-500' : 'border-red-100 bg-red-50 text-red-400'}
 >
-	<span class="font-normal">{m.required}</span>
+	<span class="font-normal">{m.required()}</span>
 </Badge>

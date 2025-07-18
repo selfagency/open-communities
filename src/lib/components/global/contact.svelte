@@ -99,14 +99,14 @@
 <Card.Root class="mx-auto w-full max-w-md">
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal">
-			{m.contact.contactUs}
+			{m.contact.contactUs()}
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
 		{#if success}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-				{m.emailSuccessNotice}
+				{m.emailSuccessNotice()}
 			</span>
 		{:else}
 			<form
@@ -119,7 +119,7 @@
 				<Form.Field {form} name="name">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.name}</Form.Label>
+							<Form.Label>{m.name()}</Form.Label>
 							<Input {...props} bind:value={$formData.name} required />
 						{/snippet}
 					</Form.Control>
@@ -129,7 +129,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.email}</Form.Label>
+							<Form.Label>{m.email()}</Form.Label>
 							<Input {...props} bind:value={$formData.email} required />
 						{/snippet}
 					</Form.Control>
@@ -139,16 +139,16 @@
 				<Form.Field {form} name="reason">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.contact.reason}</Form.Label>
+							<Form.Label>{m.contact.reason()}</Form.Label>
 							<Select.Root type="single" bind:value={$formData.reason}>
 								<Select.Trigger class="w-full">
-									{m.contact.options[$formData.reason]}
+									{m.contact.options[$formData.reason]()}
 								</Select.Trigger>
 								<Select.Content {...props}>
-									<Select.Item value="question">{m.contact.options.question}</Select.Item>
-									<Select.Item value="suggest">{m.contact.options.suggest}</Select.Item>
-									<Select.Item value="claim">{m.contact.options.claim}</Select.Item>
-									<Select.Item value="delete">{m.contact.options.delete}</Select.Item>
+									<Select.Item value="question">{m.contact.options.question()}</Select.Item>
+									<Select.Item value="suggest">{m.contact.options.suggest()}</Select.Item>
+									<Select.Item value="claim">{m.contact.options.claim()}</Select.Item>
+									<Select.Item value="delete">{m.contact.options.delete()}</Select.Item>
 								</Select.Content>
 							</Select.Root>
 						{/snippet}
@@ -160,13 +160,13 @@
 					<Form.Field {form} name="record">
 						<Form.Control>
 							{#snippet children(props)}
-								<Form.Label>{m.contact.record}</Form.Label>
+								<Form.Label>{m.contact.record()}</Form.Label>
 								<Combobox
 									items={congregations}
 									{...props}
 									bind:value={congregation}
 									placeholder={m.selectThing({
-										thing: m.congregation.toLowerCase()
+										thing: m.congregation().toLowerCase()
 									})}
 									disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
 									on:change={(e) => {
@@ -183,12 +183,12 @@
 				<Form.Field {form} name="message">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.contact.message}</Form.Label>
+							<Form.Label>{m.contact.message()}</Form.Label>
 							<Form.Description class="text-red-500">
 								{#if $formData.reason === 'delete'}
-									{m.contact.account}
+									{m.contact.account()}
 								{:else if $formData.reason === 'claim'}
-									{m.contact.proof}
+									{m.contact.proof()}
 								{/if}
 							</Form.Description>
 							<Textarea {...props} bind:value={$formData.message} rows={8} required />
@@ -204,7 +204,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m.contact.send}</Form.Button>
+				<Form.Button>{m.contact.send()}</Form.Button>
 			</form>
 
 			{#if dev}

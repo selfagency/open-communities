@@ -35,7 +35,7 @@
 				await goto(`/edit?id=${user?.congregation}`);
 			}}
 		>
-			{mode === 'full' && $appState.isMobile ? m.edit : m.editCongregation}
+			{mode === 'full' && $appState.isMobile ? m.edit() : m.editCongregation()}
 		</Button>
 	{:else}
 		<Button
@@ -45,7 +45,7 @@
 				await goto('/add');
 			}}
 		>
-			{mode === 'full' && $appState.isMobile ? m.add : m.addCongregation}
+			{mode === 'full' && $appState.isMobile ? m.add() : m.addCongregation()}
 		</Button>
 	{/if}
 
@@ -57,7 +57,7 @@
 				await goto('/logout');
 			}}
 		>
-			{m.logout}
+			{m.logout()}
 		</Button>
 	{:else}
 		<Button
@@ -67,8 +67,8 @@
 				await goto('/login');
 			}}
 		>
-			{m.login}
-			{mode === 'full' && $appState.isMobile ? '' : `/ ${m.signUp}`}
+			{m.login()}
+			{mode === 'full' && $appState.isMobile ? '' : `/ ${m.signUp()}`}
 		</Button>
 	{/if}
 

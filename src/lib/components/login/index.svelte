@@ -61,7 +61,7 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal">
-			<span>{resetting ? m.resetPassword : m.login}</span>
+			<span>{resetting ? m.resetPassword() : m.login()}</span>
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
@@ -77,12 +77,12 @@
 			{/if}
 			{#if sentSuccess && !resetSuccess}
 				<div class="flex flex-col items-center justify-center space-y-4">
-					<span>{m.emailSent}</span>
+					<span>{m.emailSent()}</span>
 				</div>
 			{/if}
 			{#if resetSuccess}
 				<div class="flex flex-col items-center justify-center space-y-4">
-					<span>{m.passwordSuccess}</span>
+					<span>{m.passwordSuccess()}</span>
 					<span role="button" tabindex="0" onclick={() => resetter()} onkeypress={() => resetter()}>
 						{m.continueToLogin} →
 					</span>
@@ -93,7 +93,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.email}</Form.Label>
+							<Form.Label>{m.email()}</Form.Label>
 							<Input {...props} bind:value={$formData.email} autocomplete="email" />
 						{/snippet}
 					</Form.Control>
@@ -103,7 +103,7 @@
 				<Form.Field {form} name="password">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.password}</Form.Label>
+							<Form.Label>{m.password()}</Form.Label>
 							<Input
 								{...props}
 								bind:value={$formData.password}
@@ -115,8 +115,8 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m.login}</Form.Button>
-				<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword}</Button>
+				<Form.Button>{m.login()}</Form.Button>
+				<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword()}</Button>
 			</form>
 
 			{#if dev}

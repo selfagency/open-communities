@@ -135,7 +135,7 @@
 	<Popover.Trigger>
 		<Button variant="outline" class="space-x-2 text-slate-500 rtl:mx-1">
 			<FilterIcon size="18" class="rtl:mx-1" />
-			<span>{m.filter}</span>
+			<span>{m.filter()}</span>
 		</Button>
 	</Popover.Trigger>
 	<Popover.Content>
@@ -198,7 +198,7 @@
 			{/each}
 			<Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={initFilters}>
 				<span class="filter-icon"><CloseIcon size="16" /></span>
-				<span class="filter-label"><span>{m.reset}</span></span>
+				<span class="filter-label"><span>{m.reset()}</span></span>
 			</Button>
 		</div>
 	</Popover.Content>

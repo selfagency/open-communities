@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-	<title>{content.title} &middot; {m.title}</title>
+	<title>{content.title} &middot; {m.title()}</title>
 </svelte:head>
 
 <section>

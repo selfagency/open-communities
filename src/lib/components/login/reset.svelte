@@ -74,7 +74,7 @@
 			<Form.Field {form} name="password">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.password}</Form.Label>
+						<Form.Label>{m.password()}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.password}
@@ -89,7 +89,7 @@
 			<Form.Field {form} name="passwordConfirm">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.confirmPassword}</Form.Label>
+						<Form.Label>{m.confirmPassword()}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.passwordConfirm}
@@ -102,21 +102,21 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{m.resetPassword}</Form.Button>
+			<Form.Button>{m.resetPassword()}</Form.Button>
 		{:else}
-			<p class="mb-4">{m.resetNotice}</p>
+			<p class="mb-4">{m.resetNotice()}</p>
 
 			<Form.Field {form} name="email">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.email}</Form.Label>
+						<Form.Label>{m.email()}</Form.Label>
 						<Input {...props} bind:value={$formData.email} required autocomplete="email" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{m.sendResetEmail}</Form.Button>
+			<Form.Button>{m.sendResetEmail()}</Form.Button>
 		{/if}
 	</form>
 

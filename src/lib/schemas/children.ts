@@ -45,7 +45,7 @@ export const fitSchema = z
 		publicStatement: z.boolean()
 	})
 	.refine(valueSelected, {
-		message: m.requiredResponse
+		message: m.requiredResponse()
 	});
 
 export type FitSchema = z.infer<typeof fitSchema>;
@@ -58,7 +58,7 @@ export const registrationSchema = z
 		registrationType: z
 			.enum(['free', 'slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
 			.refine((value) => !!value, {
-				message: m.requiredResponse
+				message: m.requiredResponse()
 			}),
 		url: z.preprocess(
 			(val) => (val === '' ? undefined : val),
@@ -66,7 +66,7 @@ export const registrationSchema = z
 		)
 	})
 	.refine(hasContact, {
-		message: m.thingRequired({ thing: m.emailOrUrl })
+		message: m.thingRequired({ thing: m.emailOrUrl() })
 	});
 
 export type RegistrationSchema = z.infer<typeof registrationSchema>;
@@ -77,7 +77,7 @@ export const healthSchema = z.object({
 	protocol: z
 		.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
 		.refine((value) => !!value, {
-			message: m.requiredResponse
+			message: m.requiredResponse()
 		})
 });
 
@@ -108,7 +108,7 @@ export const servicesSchema = z
 		otherText: z.string().optional()
 	})
 	.refine(valueSelected, {
-		message: m.requiredResponse
+		message: m.requiredResponse()
 	});
 
 export type ServicesSchema = z.infer<typeof servicesSchema>;

@@ -18,9 +18,7 @@ import {
 
 export const deleteSchema = z.object({
 	id: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: '`id`'
-		})
+		message: m.thingRequired({ thing: '`id`' })
 	})
 });
 
@@ -28,14 +26,10 @@ export type DeleteSchema = z.infer<typeof deleteSchema>;
 
 export const transferSchema = z.object({
 	email: z.email().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: m.email
-		})
+		message: m.thingRequired({ thing: m.email() })
 	}),
 	id: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: '`id`'
-		})
+		message: m.thingRequired({ thing: '`id`' })
 	}),
 	owner: z.string().optional()
 });
@@ -46,9 +40,7 @@ export const defaultSchema = z.object({
 	accessibility,
 	captcha: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: m.clergy.clergy
-		})
+		message: m.thingRequired({ thing: m.clergy.clergy() })
 	}),
 	contactEmail: z.preprocess(
 		(val) => (val === '' ? undefined : val),
@@ -79,9 +71,7 @@ export const defaultSchema = z.object({
 	),
 	fit,
 	flavor: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: m.flavor.flavor
-		})
+		message: m.thingRequired({ thing: m.flavor.flavor() })
 	}),
 	health,
 	id: z.string().optional(),
@@ -91,9 +81,7 @@ export const defaultSchema = z.object({
 		state: z.string().optional()
 	}),
 	name: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: m.name
-		})
+		message: m.thingRequired({ thing: m.name() })
 	}),
 	notes: z.string().optional(),
 	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),

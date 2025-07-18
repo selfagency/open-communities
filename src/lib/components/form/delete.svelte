@@ -40,11 +40,11 @@
 		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
-				toast.success(m.deleteSuccess);
+				toast.success(m.deleteSuccess());
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) toast.error(m.deleteFailure);
+				if (!isEmpty(result.data.form.error)) toast.error(m.deleteFailure());
 			}
 		}
 	});
@@ -66,17 +66,17 @@
 				e.preventDefault();
 			}}
 		>
-			{m.delete}
+			{m.delete()}
 		</Button>
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<form id="delete" method="POST" action="?/delete" use:enhance>
 			<AlertDialog.Header>
-				<AlertDialog.Title>{m.warning}</AlertDialog.Title>
+				<AlertDialog.Title>{m.warning()}</AlertDialog.Title>
 				<AlertDialog.Description>
 					<Alert.Root variant="destructive" class="my-4 bg-red-50">
 						<WarningIcon size="18" />
-						<Alert.Description class="mt-0.5">{m.warningNote}</Alert.Description>
+						<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
 					</Alert.Root>
 
 					<Form.Field {form} name="id">
@@ -90,9 +90,9 @@
 				</AlertDialog.Description>
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
-				<AlertDialog.Cancel>{m.cancel}</AlertDialog.Cancel>
+				<AlertDialog.Cancel>{m.cancel()}</AlertDialog.Cancel>
 				<AlertDialog.Action onclick={deleteCongregation}>
-					{m.continue}
+					{m.continue()}
 				</AlertDialog.Action>
 			</AlertDialog.Footer>
 		</form>

@@ -55,7 +55,7 @@
 		</Card.Title>
 		<Card.Description>
 			{#if services.onlineOnly}
-				<span>{m.services.onlineOnly}</span
+				<span>{m.services.onlineOnly()}</span
 				>{#if location.country.name && location.country.name !== 'United States'}<span
 						>, {location.country.name}</span
 					>{/if}
@@ -90,18 +90,18 @@
 									}}
 								>
 									<EditIcon size="16" class="text-slate-700" />
-									<span class="sr-only">{m.edit}</span>
+									<span class="sr-only">{m.edit()}</span>
 								</Button>
 							</Tooltip.Trigger>
 							<Tooltip.Content>
-								<span class="text-nowrap">{m.edit}</span>
+								<span class="text-nowrap">{m.edit()}</span>
 							</Tooltip.Content>
 						</Tooltip.Root>
 					</Tooltip.Provider>
 				{/if}
 				<div class="flex w-auto flex-row items-center justify-end space-x-1">
 					{#if !congregation.visible}
-						<Badge variant="outline">{m.pending}</Badge>
+						<Badge variant="outline">{m.pending()}</Badge>
 					{:else}
 						{#if security}
 							<Security {security} mode="mini" />

@@ -10,13 +10,13 @@ export const loginSchema = z.object({
 		.string()
 		.email()
 		.refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: m.email
+			message: m.thingRequired({
+				thing: m.email()
 			})
 		}),
 	password: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: m.password
+		message: m.thingRequired({
+			thing: m.password()
 		})
 	})
 });
@@ -29,8 +29,8 @@ export const tokenSchema = z
 		password: z.string().optional(),
 		passwordConfirm: z.string().optional(),
 		token: z.string().refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: m.token
+			message: m.thingRequired({
+				thing: m.token()
 			})
 		}),
 		type: z.string()
@@ -39,7 +39,7 @@ export const tokenSchema = z
 		if (data.passwordConfirm !== data.password) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: m.passwordMismatch,
+				message: m.passwordMismatch(),
 				path: ['passwordConfirm']
 			});
 		}

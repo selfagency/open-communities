@@ -131,10 +131,10 @@
 		>
 			<Label for="search" class="flex w-8 items-center justify-center">
 				<SearchIcon size="20" />
-				<span class="sr-only">{m.search}</span>
+				<span class="sr-only">{m.search()}</span>
 			</Label>
 			<span class="w-full">
-				<Input placeholder={m.search} bind:value={searchTerms} id="search" class="w-full" />
+				<Input placeholder={m.search()} bind:value={searchTerms} id="search" class="w-full" />
 
 				<span class="absolute top-0 z-10 h-10 w-10 ltr:right-1 rtl:left-1 rtl:mx-1">
 					<Button
@@ -146,7 +146,7 @@
 						}}
 					>
 						<ClearIcon size="16" />
-						<span class="sr-only">{m.clear}</span>
+						<span class="sr-only">{m.clear()}</span>
 					</Button>
 				</span>
 			</span>
@@ -183,7 +183,7 @@
 				class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
 			>
 				<WarningIcon size="20" />
-				<span>{m.nothingFound}</span>
+				<span>{m.nothingFound()}</span>
 			</div>
 		{:else if pages?.length > 0}
 			{#each pages[currentPage - 1] as congregation, i (i)}

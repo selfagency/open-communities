@@ -49,12 +49,12 @@
 			// log.debug('result', result.type);
 			if (result.type === 'success') {
 				open = false;
-				toast.success(m.transferSuccess);
+				toast.success(m.transferSuccess());
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error(m.transferFailure);
+				toast.error(m.transferFailure());
 			}
 		}
 	});
@@ -82,19 +82,19 @@
 					e.preventDefault();
 				}}
 			>
-				{m.transfer.transfer}
+				{m.transfer.transfer()}
 			</Button>
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
 			<form id="transfer" method="POST" action="?/transfer" use:enhance>
 				<AlertDialog.Header>
-					<AlertDialog.Title>{m.transfer.transfer}</AlertDialog.Title>
+					<AlertDialog.Title>{m.transfer.transfer()}</AlertDialog.Title>
 					<AlertDialog.Description class="space-y-4">
-						<div>{m.transfer.desc}</div>
+						<div>{m.transfer.desc()}</div>
 
 						<Alert.Root variant="destructive" class="my-4 bg-red-50">
 							<WarningIcon size="18" />
-							<Alert.Description class="mt-0.5">{m.warningNote}</Alert.Description>
+							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
 						</Alert.Root>
 
 						<Form.Field {form} name="id">
@@ -109,7 +109,7 @@
 						<Form.Field {form} name="email">
 							<Form.Control>
 								{#snippet children(props)}
-									<Form.Label for="email">{m.email}</Form.Label>
+									<Form.Label for="email">{m.email()}</Form.Label>
 									<Input {...props} bind:value={$formData.email} />
 								{/snippet}
 							</Form.Control>
@@ -122,7 +122,7 @@
 						onclick={async () => {
 							open = false;
 							await goto(`${page.url.pathname}?id=${id}`);
-						}}>{m.cancel}</AlertDialog.Cancel
+						}}>{m.cancel()}</AlertDialog.Cancel
 					>
 					<AlertDialog.Action
 						onclick={(e) => {
@@ -131,7 +131,7 @@
 							form.submit(document.getElementById('transfer'));
 						}}
 					>
-						{m.continue}
+						{m.continue()}
 					</AlertDialog.Action>
 				</AlertDialog.Footer>
 			</form>
