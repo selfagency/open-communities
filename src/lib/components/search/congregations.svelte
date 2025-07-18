@@ -1,12 +1,12 @@
 <script lang="ts">
 	/* region imports */
-	import type { MapStore } from 'nanostores';
+	import type { MapStore, ReadableAtom } from 'nanostores';
 
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import ClearIcon from 'lucide-svelte/icons/circle-x';
 	import LocationIcon from 'lucide-svelte/icons/globe';
 	import SearchIcon from 'lucide-svelte/icons/search';
-	import { alphabetical, isEmpty } from 'radashi';
+	import { alphabetical, isEmpty, unique } from 'radashi';
 	import { fade } from 'svelte/transition';
 
 	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
@@ -41,37 +41,28 @@
 	const {
 		results,
 		state: searchState
-	}: { results: MapStore<CongregationMetaRecord[]>; state: MapStore<SearchState> } = search;
+	}: { results: ReadableAtom<CongregationMetaRecord[]>; state: MapStore<SearchState> } = search;
 	const location = new LocationService({ countries: page.data.countries, search: search });
 	const open = {};
 
 	// locals
 	let searchTerms = $state('');
-	let locations: LocationMeta[] = $state([]);
 	let currentPage = $state(1);
 	let perPage = $state(12);
-	let pages: Congregation[][] = $state([]);
 	// let reset: boolean = false;
 	/* endregion variables */
 
 	/* region methods */
-	function paginate(items: Congregation[]) {
-		const result: Congregation[][] = [];
-		for (let i = 0; i < items.length; i += perPage) {
-			result.push(alphabetical(items, (i) => i.name as string).slice(i, i + perPage));
-		}
-		return result;
-	}
-
 	function onPageChange(pageNo: number) {
 		currentPage = pageNo;
 	}
 	/*endregion methods */
 
 	/* region reactivity */
-	results.subscribe((value) => {
-		if (value.length > 0) {
-			locations = value
+	const locations = $derived.by(() => {
+		const resultsValue = $results;
+		if (resultsValue.length && resultsValue.length > 0) {
+			const allLocations = resultsValue
 				.filter((l) => {
 					const location = l.location as LocationMeta;
 					return [location.city?.name, location.state?.name, location.country?.name].every(
@@ -90,14 +81,32 @@
 						state: location.state
 					};
 				}) as LocationMeta[];
+			return unique(allLocations, (l) => l.city?.id as string);
+		}
+		return [];
+	});
 
+	const pages = $derived.by(() => {
+		const result: Congregation[][] = [];
+		const items = $results as Congregation[];
+		if (items.length > 0) {
+			for (let i = 0; i < items.length; i += perPage) {
+				result.push(alphabetical(items, (i) => i.name as string).slice(i, i + perPage));
+			}
+		}
+		return result;
+	});
+
+	$effect(() => {
+		if ($results) {
 			currentPage = 1;
-			pages = paginate(value as Congregation[]);
 		}
 	});
 
 	$effect(() => {
-		search.setSearchTerms(searchTerms);
+		if (searchTerms) {
+			search.setSearchTerms(searchTerms);
+		}
 	});
 
 	$effect(() => {
@@ -111,13 +120,15 @@
 	});
 
 	$effect(() => {
-		pages[currentPage]?.reduce(
-			(acc, congregation) => {
-				acc[congregation.id] = false;
-				return acc;
-			},
-			{} as Record<string, boolean>
-		);
+		if (currentPage) {
+			pages[currentPage]?.reduce(
+				(acc, congregation) => {
+					acc[congregation.id] = false;
+					return acc;
+				},
+				{} as Record<string, boolean>
+			);
+		}
 	});
 	/* endregion reactivity */
 </script>
@@ -174,7 +185,7 @@
 	{/if}
 
 	<div class="py-4">
-		<!-- <Map {location} {locations} {search} /> -->
+		<Map {location} {locations} {search} />
 	</div>
 
 	<div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3">
@@ -186,7 +197,7 @@
 				<span>{m.nothingFound()}</span>
 			</div>
 		{:else if pages?.length > 0}
-			{#each pages[currentPage - 1] as congregation, i (i)}
+			{#each pages[currentPage - 1] as congregation (congregation.id)}
 				{#key congregation.id}
 					<div class="col-span-1">
 						<CongregationCard {congregation} open={open[congregation.id]} />

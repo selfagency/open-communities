@@ -2,7 +2,7 @@
 	/* region imports */
 	import ResetIcon from 'lucide-svelte/icons/circle-x';
 	import { isEmpty } from 'radashi';
-	import { onMount } from 'svelte';
+	import { untrack } from 'svelte';
 
 	import Combobox from '$lib/components/global/combobox.svelte';
 	import { Button } from '$lib/components/ui/button';
@@ -16,30 +16,53 @@
 	const { location, search }: { location: Location; search: Search } = $props();
 
 	// constants
-	const { reset, setCity, setCountry, setState, state: locationState } = $derived(location);
+	const { reset, setCity, setCountry, setState, state: locationState } = location;
 
 	// locals
-	let country: string = $state('');
-	let province: string = $state('');
-	let city: string = $state('');
-	/* endregion variables */
+	// Initialize state from the store without creating a subscription.
+	let country = $state(untrack(() => $locationState.record.country?.id ?? ''));
+	let province = $state(untrack(() => $locationState.record.state?.id ?? ''));
+	let city = $state(untrack(() => $locationState.record.city?.id ?? ''));
 
-	/* region lifecycle */
-	onMount(async () => {
-		country = $locationState.record.country?.id || '';
-		if ($locationState.record.state) province = $locationState.record.state?.id || '';
-		if ($locationState.record.city) city = $locationState.record.city?.id || '';
+	/* region methods */
+	function handleCountryChange(event: CustomEvent) {
+		const selectedId = event.detail.value;
+		country = selectedId;
+		setCountry(selectedId);
+	}
 
-		locationState.subscribe((value) => {
-			if (value.record.country) {
-				search.setSearchLocation(value.record);
-				country = value.record.country?.id || '';
-				if (value.record.state) province = $locationState.record.state?.id || '';
-				if (value.record.city) city = $locationState.record.city?.id || '';
+	function handleStateChange(event: CustomEvent) {
+		const selectedId = event.detail.value;
+		province = selectedId;
+		setState(selectedId);
+	}
+
+	function handleCityChange(event: CustomEvent) {
+		const selectedId = event.detail.value;
+		city = selectedId;
+		setCity(selectedId);
+	}
+	/* endregion methods */
+
+	/* region reactivity */
+	$effect(() => {
+		const loc = $locationState.record;
+		search.setSearchLocation(loc);
+
+		// Sync local state from the store only if it differs
+		untrack(() => {
+			if (country !== (loc.country?.id ?? '')) {
+				country = loc.country?.id ?? '';
+			}
+			if (province !== (loc.state?.id ?? '')) {
+				province = loc.state?.id ?? '';
+			}
+			if (city !== (loc.city?.id ?? '')) {
+				city = loc.city?.id ?? '';
 			}
 		});
 	});
-	/* endregion lifecycle */
+	/* endregion reactivity */
 </script>
 
 {#if !isEmpty($locationState.options)}
@@ -52,30 +75,30 @@
 			<span class="w-full sm:w-1/3">
 				<Combobox
 					items={$locationState.options.countryOptions}
-					bind:value={country}
+					value={country}
+					on:change={handleCountryChange}
 					placeholder={m.selectThing({ thing: m['location.country']().toLowerCase() })}
 					disabled={!$locationState.options?.countryOptions?.length}
-					on:change={() => setCountry(country)}
 				/>
 			</span>
 
 			<span class="w-full sm:w-1/3">
 				<Combobox
 					items={$locationState.options.stateOptions}
-					bind:value={province}
+					value={province}
+					on:change={handleStateChange}
 					placeholder={m.selectThing({ thing: m['location.state']().toLowerCase() })}
-					disabled={!country && !$locationState.options?.stateOptions?.length}
-					on:change={() => setState(province)}
+					disabled={!country || !$locationState.options?.stateOptions?.length}
 				/>
 			</span>
 
 			<span class="w-full sm:w-1/3">
 				<Combobox
 					items={$locationState.options.cityOptions}
-					bind:value={city}
+					value={city}
+					on:change={handleCityChange}
 					placeholder={m.selectThing({ thing: m['location.city']().toLowerCase() })}
-					disabled={!province && !$locationState.options?.cityOptions?.length}
-					on:change={() => setCity(city)}
+					disabled={!province || !$locationState.options?.cityOptions?.length}
 				/>
 			</span>
 		</div>
@@ -85,9 +108,6 @@
 				variant="link"
 				class="h-auto"
 				onclick={() => {
-					country = '';
-					province = '';
-					city = '';
 					reset();
 				}}
 			>

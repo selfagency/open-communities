@@ -6,7 +6,6 @@
 
 	import { cn } from '$lib/utils.js';
 
-	import { Button } from '../ui/button/index.js';
 	import * as Command from '../ui/command/index.js';
 	import * as Popover from '../ui/popover/index.js';
 	/*  endregion imports */
@@ -27,57 +26,74 @@
 
 	// constants
 	const dispatch = createEventDispatcher();
-	const selectedValue = $derived(items?.find((f) => f.id === value)?.label ?? placeholder);
 
 	// local variables
 	let open = $state(false);
 	let triggerRef = $state<HTMLButtonElement>(null!);
-
+	let currentItems = $state(items || []);
+	let selectedValueLabel = $state(placeholder || '');
 	/* endregion variables */
 
 	/* region methods */
 	function closeAndFocusTrigger() {
 		open = false;
 		tick().then(() => {
-			triggerRef.focus();
+			triggerRef?.focus();
 		});
 	}
+
+	function handleSelect(itemId: string) {
+		dispatch('change', { value: itemId });
+		closeAndFocusTrigger();
+	}
+
+	function updateSelectedValue() {
+		const selected = items?.find((item) => item.id === value);
+		selectedValueLabel = selected?.label ?? placeholder ?? '';
+	}
 	/* endregion methods */
+
+	/* region reactivity */
+	$effect(() => {
+		// Update the items list when items prop changes
+		if (items) {
+			currentItems = [...items];
+			updateSelectedValue();
+		}
+	});
+	/* endregion reactivity */
 </script>
 
 <div class="w-full" class:pointer-events-none={disabled} class:opacity-50={disabled}>
 	<Popover.Root bind:open>
 		<Popover.Trigger
 			bind:ref={triggerRef}
-			class="button w-[200px] justify-between"
+			class="button w-full justify-between"
 			role="combobox"
 			aria-expanded={open}
 		>
-			{selectedValue || 'Select a framework...'}
+			{selectedValueLabel}
 			<ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
 		</Popover.Trigger>
-		<Popover.Content class="w-[200px] p-0">
-			<Command.Root>
-				<Command.Input placeholder="Search framework..." />
-				<Command.List>
-					<Command.Empty>No framework found.</Command.Empty>
-					<Command.Group>
-						{#each items as item, i (i)}
-							<Command.Item
-								value={item.value}
-								onSelect={() => {
-									value = item.value;
-									dispatch('change', { value: items.find((i) => i.value === item.value)?.id });
-									closeAndFocusTrigger();
-								}}
-							>
-								<CheckIcon class={cn('mr-2 size-4', value !== item.value && 'text-transparent')} />
-								{item.label}
-							</Command.Item>
-						{/each}
-					</Command.Group>
-				</Command.List>
-			</Command.Root>
+		<Popover.Content class="w-full p-0">
+			{#if currentItems.length > 0}
+				<Command.Root>
+					<Command.Input {placeholder} />
+					<Command.List>
+						<Command.Empty>No results found.</Command.Empty>
+						<Command.Group>
+							{#each currentItems as item (item.id)}
+								<Command.Item value={item.label} onSelect={() => handleSelect(item.id)}>
+									<CheckIcon class={cn('mr-2 size-4', value !== item.id && 'text-transparent')} />
+									{item.label}
+								</Command.Item>
+							{/each}
+						</Command.Group>
+					</Command.List>
+				</Command.Root>
+			{:else}
+				<div class="p-2 text-center text-sm">No options available</div>
+			{/if}
 		</Popover.Content>
 	</Popover.Root>
 </div>
