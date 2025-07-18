@@ -82,15 +82,15 @@
 					e.preventDefault();
 				}}
 			>
-				{m.transfer.transfer()}
+				{m['transfer.transfer']()}
 			</Button>
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
 			<form id="transfer" method="POST" action="?/transfer" use:enhance>
 				<AlertDialog.Header>
-					<AlertDialog.Title>{m.transfer.transfer()}</AlertDialog.Title>
+					<AlertDialog.Title>{m['transfer.transfer']()}</AlertDialog.Title>
 					<AlertDialog.Description class="space-y-4">
-						<div>{m.transfer.desc()}</div>
+						<div>{m['transfer.desc']()}</div>
 
 						<Alert.Root variant="destructive" class="my-4 bg-red-50">
 							<WarningIcon size="18" />

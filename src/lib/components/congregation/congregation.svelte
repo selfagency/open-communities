@@ -120,7 +120,7 @@
 							>{#if country.name && country.name !== 'United States'},{/if}{/if}
 						{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
 					{:else if services.onlineOnly}
-						{m.services.onlineOnly()}
+						{m['services.onlineOnly']()}
 					{/if}
 				</span>
 
@@ -182,7 +182,7 @@
 		<Tabs.Root bind:value={tab} class="w-full">
 			<Tabs.List class="my-4 w-full">
 				<Tabs.Trigger value="about" class="w-1/2">{m.about}</Tabs.Trigger>
-				<Tabs.Trigger value="services" class="w-1/2">{m.services.services()}</Tabs.Trigger>
+				<Tabs.Trigger value="services" class="w-1/2">{m['services.services']()}</Tabs.Trigger>
 				<Tabs.Trigger value="details" class="w-1/2">{m.details}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="about">
@@ -193,10 +193,10 @@
 				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if congregation.denomination}
 						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{m.denomination.affiliation()}</h2>
+							<h2 class="label">{m['denomination.affiliation']()}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
-							{m.denomination[congregation.denomination]()}
+							{m[`denomination[${congregation.denomination}]`]()}
 						</div>
 					{/if}
 
@@ -220,7 +220,7 @@
 				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if congregation.clergy}
 						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{m.clergy.clergy()}</h2>
+							<h2 class="label">{m['clergy.clergy']()}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
 							{congregation.clergy}
@@ -242,10 +242,10 @@
 				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if fit.flag}
 						<div class="col-span-3">
-							<h2 class="label">{m.fit.flag.short()}</h2>
+							<h2 class="label">{m['fit.flag.short']()}</h2>
 						</div>
 						<div class="col-span-9">
-							{m.fit.flag[fit.flag]()}
+							{m['fit.flag[fit.flag]']()}
 						</div>
 					{/if}
 
@@ -271,7 +271,7 @@
 							<Separator class="col-span-12" />
 						{/if}
 						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{m.notes.notes()}</h2>
+							<h2 class="label">{m['notes.notes']()}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
 							<p>{@html notes}</p>

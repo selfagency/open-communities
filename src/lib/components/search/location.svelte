@@ -53,7 +53,7 @@
 				<Combobox
 					items={$locationState.options.countryOptions}
 					bind:value={country}
-					placeholder={m.selectThing(m.location.country().toLowerCase())}
+					placeholder={m.selectThing({ thing: m['location.country']().toLowerCase() })}
 					disabled={!$locationState.options?.countryOptions?.length}
 					on:change={() => setCountry(country)}
 				/>
@@ -63,7 +63,7 @@
 				<Combobox
 					items={$locationState.options.stateOptions}
 					bind:value={province}
-					placeholder={m.selectThing(m.location.state().toLowerCase())}
+					placeholder={m.selectThing({ thing: m['location.state']().toLowerCase() })}
 					disabled={!country && !$locationState.options?.stateOptions?.length}
 					on:change={() => setState(province)}
 				/>
@@ -73,7 +73,7 @@
 				<Combobox
 					items={$locationState.options.cityOptions}
 					bind:value={city}
-					placeholder={m.selectThing(m.location.city().toLowerCase())}
+					placeholder={m.selectThing({ thing: m['location.city']().toLowerCase() })}
 					disabled={!province && !$locationState.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>

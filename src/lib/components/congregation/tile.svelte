@@ -55,7 +55,7 @@
 		</Card.Title>
 		<Card.Description>
 			{#if services.onlineOnly}
-				<span>{m.services.onlineOnly()}</span
+				<span>{m['services.onlineOnly']()}</span
 				>{#if location.country.name && location.country.name !== 'United States'}<span
 						>, {location.country.name}</span
 					>{/if}

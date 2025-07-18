@@ -25,7 +25,7 @@
 		>
 			<Dialog.Header>
 				<Dialog.Title class="font-display text-2xl font-normal">
-					{m.home.dialogTitle()}
+					{m['home.dialogTitle']()}
 				</Dialog.Title>
 				<Dialog.Description>
 					<section class="prose mx-auto my-4">

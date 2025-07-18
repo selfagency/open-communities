@@ -12,20 +12,20 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{m.fit.fit()}</h2>
+	<h2 class="label">{m['fit.fit']()}</h2>
 </div>
 <div class="col-span-9">
 	<ul class="w-full space-y-2">
 		{#if fit.publicStatement}
-			<li>{m.fit.publicStatement()}</li>
+			<li>{m['fit.publicStatement']()}</li>
 		{/if}
 
 		{#if fit.clergyMember}
-			<li>{m.fit.clergyMember()}</li>
+			<li>{m['fit.clergyMember']()}</li>
 		{/if}
 
 		{#if fit.multipleClergyMembers}
-			<li>{m.fit.multipleClergyMembers()}</li>
+			<li>{m['fit.multipleClergyMembers']()}</li>
 		{/if}
 
 		{#if fit.other}

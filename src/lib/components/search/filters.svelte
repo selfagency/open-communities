@@ -165,7 +165,7 @@
 									{/if}
 								</span>
 								<span class="filter-label">
-									<span>{m[category][category]}</span>
+									<span>{m[`${category}.${category}`]()}</span>
 								</span>
 								<span class="filter-status">
 									<StatusIcon class="h-4 w-4" />
@@ -186,7 +186,7 @@
 										/>
 										<Label for={`${category}_${option}`}>
 											<span class="filter-label text-slate-500">
-												{option === 'other' ? m.other : m[category][option]}
+												{option === 'other' ? m.other() : m[`${category}.${option}`]()}
 											</span>
 										</Label>
 									</span>

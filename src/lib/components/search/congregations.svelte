@@ -161,7 +161,7 @@
 				}}
 			>
 				<LocationIcon size="20" class="rtl:mx-1" />
-				<span>{m.location}</span>
+				<span>{m['location.location']()}</span>
 			</Button>
 			<Filters {search} />
 		</div>

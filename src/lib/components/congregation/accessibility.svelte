@@ -35,10 +35,10 @@
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						<AdaIcon size="18" class="rtl:mx-1" />
-						<span class="sr-only">{m.accessibility.ada()}</span>
+						<span class="sr-only">{m['accessibility.ada']()}</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<span class="text-nowrap">{m.accessibility.ada()}</span>
+						<span class="text-nowrap">{m['accessibility.ada']()}</span>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>
@@ -48,10 +48,10 @@
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						<CcIcon size="18" class="rtl:mx-1" />
-						<span class="sr-only">{m.accessibility.cc()}</span>
+						<span class="sr-only">{m['accessibility.cc']()}</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<span class="text-nowrap">{m.accessibility.cc()}</span>
+						<span class="text-nowrap">{m['accessibility.cc']()}</span>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>
@@ -61,10 +61,10 @@
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						<EvaIcon size="18" class="rtl:mx-1" />
-						<span class="sr-only">{m.accessibility.eva()}</span>
+						<span class="sr-only">{m['accessibility.eva']()}</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<span class="text-nowrap">{m.accessibility.eva()}</span>
+						<span class="text-nowrap">{m['accessibility.eva']()}</span>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>
@@ -74,10 +74,10 @@
 				<Tooltip.Root>
 					<Tooltip.Trigger>
 						<AslIcon class="h-4 w-4 rtl:mx-1" />
-						<span class="sr-only">{m.accessibility.asl()}</span>
+						<span class="sr-only">{m['accessibility.asl']()}</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<span class="text-nowrap">{m.accessibility.asl()}</span>
+						<span class="text-nowrap">{m['accessibility.asl']()}</span>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>
@@ -87,21 +87,21 @@
 
 {#if mode === 'full'}
 	<div class="col-span-3">
-		<h2 class="label">{m.accessibility.accessibility()}</h2>
+		<h2 class="label">{m['accessibility.accessibility']()}</h2>
 	</div>
 	<ul class="col-span-9 space-y-2">
 		{#if ada}
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<AdaIcon size="18" class="rtl:mx-2" />
-					<span class="sr-only">{m.accessibility.ada()}</span>
+					<span class="sr-only">{m['accessibility.ada']()}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
 					{#if accessibility.inPerson_adaSome}
-						{m.accessibility.inPerson_adaSome()}
+						{m['accessibility.inPerson_adaSome']()}
 					{/if}
 					{#if accessibility.inPerson_adaAll}
-						{m.accessibility.inPerson_adaAll()}
+						{m['accessibility.inPerson_adaAll']()}
 					{/if}
 				</span>
 			</li>
@@ -111,14 +111,14 @@
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<CcIcon size="18" class="rtl:mx-2" />
-					<span class="sr-only">{m.accessibility.cc()}</span>
+					<span class="sr-only">{m['accessibility.cc']()}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
 					{#if accessibility.online_automatedCaptions}
-						{m.accessibility.online_automatedCaptions()}
+						{m['accessibility.online_automatedCaptions']()}
 					{/if}
 					{#if accessibility.online_liveCaptions}
-						{m.accessibility.online_liveCaptions()}
+						{m['accessibility.online_liveCaptions']()}
 					{/if}
 				</span>
 			</li>
@@ -128,14 +128,14 @@
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<AslIcon class="h-4 w-4 rtl:mx-2" />
-					<span class="sr-only">{m.accessibility.asl()}</span>
+					<span class="sr-only">{m['accessibility.asl']()}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
 					{#if accessibility.inPerson_asl}
-						{m.accessibility.inPerson_asl()}
+						{m['accessibility.inPerson_asl']()}
 					{/if}
 					{#if accessibility.online_asl}
-						{m.accessibility.online_asl()}
+						{m['accessibility.online_asl']()}
 					{/if}
 				</span>
 			</li>
@@ -145,11 +145,11 @@
 			<li class="flex flex-row items-start justify-start space-x-1">
 				<span class="flex flex-col items-start justify-start">
 					<EvaIcon size="18" class="rtl:mx-2" />
-					<span class="sr-only">{m.accessibility.eva()}</span>
+					<span class="sr-only">{m['accessibility.eva']()}</span>
 				</span>
 				<span class="flex flex-col items-start justify-start">
 					{#if accessibility.inPerson_eva}
-						{m.accessibility.inPerson_eva()}
+						{m['accessibility.inPerson_eva']()}
 					{/if}
 				</span>
 			</li>

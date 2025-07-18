@@ -40,7 +40,7 @@ export const defaultSchema = z.object({
 	accessibility,
 	captcha: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m.clergy.clergy() })
+		message: m.thingRequired({ thing: m['clergy.clergy']() })
 	}),
 	contactEmail: z.preprocess(
 		(val) => (val === '' ? undefined : val),
@@ -71,7 +71,7 @@ export const defaultSchema = z.object({
 	),
 	fit,
 	flavor: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m.flavor.flavor() })
+		message: m.thingRequired({ thing: m['flavor.flavor']() })
 	}),
 	health,
 	id: z.string().optional(),
