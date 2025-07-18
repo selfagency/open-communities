@@ -10,16 +10,17 @@ import type { UsersRecord } from '$lib/types';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
+
+import type { PageServerLoad } from './$types';
+// import { log } from '$lib/server/logger';
 /* endregion imports */
 
-export const load = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals }) => {
 	return {
-		form: {
-			login: await locals.validate(loginSchema),
-			reset: await locals.validate(tokenSchema),
-			signup: await locals.validate(userSchema),
-			verify: await locals.validate(tokenSchema)
-		}
+		login: await locals.validate(loginSchema),
+		reset: await locals.validate(tokenSchema),
+		signup: await locals.validate(userSchema),
+		verify: await locals.validate(tokenSchema)
 	};
 };
 

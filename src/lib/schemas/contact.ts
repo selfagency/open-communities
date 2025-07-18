@@ -10,3 +10,5 @@ export const contactSchema = z.object({
 	reason: z.enum(['question', 'claim', 'delete', 'suggest']),
 	record: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional())
 });
+
+export type ContactSchema = z.infer<typeof contactSchema>;

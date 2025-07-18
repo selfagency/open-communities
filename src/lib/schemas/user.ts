@@ -1,21 +1,9 @@
 /* region imports */
 import * as z from 'zod';
 
-import type { UsersRecord } from '$lib/types';
 // import { log } from '$lib/utils';
-
 import { t } from '$lib/i18n';
 /* endregion imports */
-
-/* region types */
-export type UserSchema = UsersRecord & {
-	email?: string;
-	id?: string;
-	oldPassword?: string;
-	password?: string;
-	passwordConfirm?: string;
-};
-/* endregion types */
 
 /* region variables */
 // constants
@@ -30,14 +18,11 @@ export const userSchema = z
 	.object({
 		captcha: z.string().optional(),
 		congregation: z.string().optional(),
-		email: z
-			.string()
-			.email()
-			.refine((value) => !!value, {
-				message: t.get('common.thingRequired', {
-					thing: t.get('common.email')
-				})
-			}),
+		email: z.email().refine((value) => !!value, {
+			message: t.get('common.thingRequired', {
+				thing: t.get('common.email')
+			})
+		}),
 		emailVisibility: z.boolean().default(true),
 		id: z.string().optional(),
 		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
@@ -59,3 +44,5 @@ export const userSchema = z
 			});
 		}
 	});
+
+export type UserSchema = z.infer<typeof userSchema>;

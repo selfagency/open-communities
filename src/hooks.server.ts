@@ -4,7 +4,7 @@ import type { SerializeOptions } from 'cookie';
 import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { uid } from 'radashi';
+import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
@@ -27,19 +27,15 @@ if (!Sentry.isInitialized()) {
 const log = logger.getSubLogger({ name: 'hooks' });
 /* endregion variables */
 
-/* region methods */
-const validate = async (schema, request) => {
-	return request ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
-};
-/* endregion methods */
-
 async function customHandler({ event, resolve }) {
 	const startTimer = Date.now();
 
 	// services
 	event.locals.api = api;
 	event.locals.log = log;
-	event.locals.validate = validate;
+	event.locals.validate = async (schema, request) => {
+		return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
+	};
 	event.locals.cookieOpts = {
 		maxAge: 60 * 60 * 24 * 1, // 1 day
 		path: '/',

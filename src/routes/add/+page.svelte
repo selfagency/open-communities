@@ -3,12 +3,12 @@
 	import AddForm from '$lib/components/form/form.svelte';
 	import { t } from '$lib/i18n';
 
-	import type { PageData, Snapshot } from './$types';
+	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	const data: PageData = $props();
+	const { data }: PageProps = $props();
 
 	// local vars
 	let snapshotData = $state('');

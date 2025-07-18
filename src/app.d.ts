@@ -6,7 +6,7 @@ import type { ObjectSchema } from 'zod';
 import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
 
-import type { DefaultSchema, LoginSchema, UserSchema } from '$lib/schemas';
+import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
 import type { CongregationMetaRecord, TypedPocketBase } from '$lib/types';
 
 /* endregion imports */
@@ -40,12 +40,17 @@ declare global {
 			validate: (
 				request: unknown,
 				schema?: unknown
-			) => Promise<SuperValidated<Infer<ObjectSchema<DefaultSchema | LoginSchema | UserSchema>>>>;
+			) => Promise<
+				SuperValidated<Infer<ObjectSchema<DefaultSchema | LoginSchema | TokenSchema | UserSchema>>>
+			>;
 		}
 
 		interface PageData {
-			congregations: CongregationMetaRecord[];
-			form: SuperValidated<Infer<ObjectSchema<DefaultSchema | LoginSchema | UserSchema>>>;
+			congregations?: CongregationMetaRecord[];
+			default?: SuperValidated<DefaultSchema>;
+			login?: SuperValidated<LoginSchema>;
+			signup?: SuperValidated<UserSchema>;
+			verify?: SuperValidated<TokenSchema>;
 		}
 
 		// interface PageState {}

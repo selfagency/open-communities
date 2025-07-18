@@ -5,12 +5,12 @@
 	import EditForm from '$lib/components/form/form.svelte';
 	import { t } from '$lib/i18n';
 
-	import type { Snapshot } from './$types';
+	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	const data = $props();
+	const { data }: PageProps = $props();
 	let snapshotData = $state('');
 
 	export const snapshot: Snapshot<string> = {

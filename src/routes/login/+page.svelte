@@ -7,26 +7,28 @@
 	import SignUp from '$lib/components/login/signup.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { t } from '$lib/i18n';
+	// import { log } from '$lib/utils';
 
-	import type { PageData, Snapshot } from './$types';
+	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	const data: PageData = $props();
+	const { data }: PageProps = $props();
 
 	// locals
 	let tab: 'login' | 'signup' = $state('login');
-	let userData = $state('');
+	let snapshotData = $state('');
 
 	export const snapshot: Snapshot<string> = {
-		capture: () => userData,
-		restore: (value) => (userData = value)
+		capture: () => snapshotData,
+		restore: (value) => (snapshotData = value)
 	};
 	/* endregion variables */
 
 	/* region lifecycle */
 	onMount(() => {
+		// log.info('login', data);
 		if (page.url.searchParams.has('signUp') || page.url.searchParams.has('verifyEmail')) {
 			tab = 'signup';
 		}
@@ -50,10 +52,14 @@
 				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="login">
-				<Login data={data.form.login} reset={data.form.reset} />
+				{#if tab === 'login' && data.login && data.reset}
+					<Login data={data.login} reset={data.reset} />
+				{/if}
 			</Tabs.Content>
 			<Tabs.Content value="signup">
-				<SignUp data={data.form.signup} verify={data.form.verify} bind:snapshot={userData} />
+				{#if tab === 'signup' && data.signup && data.verify}
+					<SignUp data={data.signup} verify={data.verify} bind:snapshot={snapshotData} />
+				{/if}
 			</Tabs.Content>
 		</Tabs.Root>
 	</div>

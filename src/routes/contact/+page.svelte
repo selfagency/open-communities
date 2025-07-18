@@ -3,20 +3,20 @@
 	import Contact from '$lib/components/global/contact.svelte';
 	import { t } from '$lib/i18n';
 
-	import type { PageData, Snapshot } from './$types';
+	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	const data: PageData = $props();
+	const { data }: PageProps = $props();
 
 	// local vars
-	let userData = $state('');
+	let snapshotData = $state('');
 	/* endregion variables */
 
 	export const snapshot: Snapshot<string> = {
-		capture: () => userData,
-		restore: (value) => (userData = value)
+		capture: () => snapshotData,
+		restore: (value) => (snapshotData = value)
 	};
 </script>
 
@@ -25,5 +25,5 @@
 </svelte:head>
 
 <section class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
-	<Contact data={data.form} congregations={data.congregations} bind:snapshot={userData} />
+	<Contact data={data.form} congregations={data.congregations} bind:snapshot={snapshotData} />
 </section>

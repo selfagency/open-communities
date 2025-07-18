@@ -5,21 +5,6 @@ import { t } from '$lib/i18n';
 // import { log } from '$lib/utils';
 /* endregion imports */
 
-/* region types */
-export type LoginSchema = {
-	email: string;
-	password: string;
-};
-
-export type TokenSchema = {
-	email?: string;
-	password?: string;
-	passwordConfirm?: string;
-	token: string;
-	type: string;
-};
-/* endregion types */
-
 export const loginSchema = z.object({
 	email: z
 		.string()
@@ -35,6 +20,8 @@ export const loginSchema = z.object({
 		})
 	})
 });
+
+export type LoginSchema = z.infer<typeof loginSchema>;
 
 export const tokenSchema = z
 	.object({
@@ -57,3 +44,5 @@ export const tokenSchema = z
 			});
 		}
 	});
+
+export type TokenSchema = z.infer<typeof tokenSchema>;

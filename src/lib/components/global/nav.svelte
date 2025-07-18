@@ -21,7 +21,9 @@
 			<span class="sr-only">{$t('common.menu')}</span>
 		</Sheet.Trigger>
 		<Sheet.Content>
-			<Menu mode="mini" on:close={() => (open = false)} />
+			<Sheet.Description>
+				<Menu mode="mini" on:close={() => (open = false)} />
+			</Sheet.Description>
 		</Sheet.Content>
 	</Sheet.Root>
 {:else}

@@ -29,6 +29,8 @@ export const accessibilitySchema = z.object({
 	otherText: z.string().optional()
 });
 
+export type AccessibilitySchema = z.infer<typeof accessibilitySchema>;
+
 export const fitSchema = z
 	.object({
 		clergyMember: z.boolean(),
@@ -45,6 +47,8 @@ export const fitSchema = z
 	.refine(valueSelected, {
 		message: t.get('common.requiredResponse')
 	});
+
+export type FitSchema = z.infer<typeof fitSchema>;
 
 export const registrationSchema = z
 	.object({
@@ -65,6 +69,8 @@ export const registrationSchema = z
 		message: t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') })
 	});
 
+export type RegistrationSchema = z.infer<typeof registrationSchema>;
+
 export const healthSchema = z.object({
 	id: z.string().optional(),
 	otherText: z.string().optional(),
@@ -74,6 +80,8 @@ export const healthSchema = z.object({
 			message: t.get('common.requiredResponse')
 		})
 });
+
+export type HealthSchema = z.infer<typeof healthSchema>;
 
 export const securitySchema = z.object({
 	clergyArmed: z.boolean(),
@@ -86,6 +94,8 @@ export const securitySchema = z.object({
 	privateSecurityArmed: z.boolean(),
 	privateSecurityUnarmed: z.boolean()
 });
+
+export type SecuritySchema = z.infer<typeof securitySchema>;
 
 export const servicesSchema = z
 	.object({
@@ -100,3 +110,5 @@ export const servicesSchema = z
 	.refine(valueSelected, {
 		message: t.get('common.requiredResponse')
 	});
+
+export type ServicesSchema = z.infer<typeof servicesSchema>;

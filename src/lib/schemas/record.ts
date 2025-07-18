@@ -16,10 +16,6 @@ import {
 } from './children';
 /* endregion imports */
 
-/* region types */
-export type DefaultSchema = CongregationMetaRecord;
-/* endregion types */
-
 export const deleteSchema = z.object({
 	id: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
@@ -28,15 +24,14 @@ export const deleteSchema = z.object({
 	})
 });
 
+export type DeleteSchema = z.infer<typeof deleteSchema>;
+
 export const transferSchema = z.object({
-	email: z
-		.string()
-		.email()
-		.refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: t.get('common.email')
-			})
-		}),
+	email: z.email().refine((value) => !!value, {
+		message: t.get('common.thingRequired', {
+			thing: t.get('common.email')
+		})
+	}),
 	id: z.string().refine((value) => !!value, {
 		message: t.get('common.thingRequired', {
 			thing: '`id`'
@@ -44,6 +39,8 @@ export const transferSchema = z.object({
 	}),
 	owner: z.string().optional()
 });
+
+export type TransferSchema = z.infer<typeof transferSchema>;
 
 export const defaultSchema = z.object({
 	accessibility,
@@ -105,3 +102,5 @@ export const defaultSchema = z.object({
 	services,
 	visible: z.boolean()
 });
+
+export type DefaultSchema = CongregationMetaRecord;
