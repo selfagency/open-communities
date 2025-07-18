@@ -1,11 +1,11 @@
 /* region imports */
 import { handleError } from '$lib/server/api';
-import { cleanResponse, loadUser } from '$lib/server/api';
+import { cleanResponse } from '$lib/server/api';
 /* endregion imports */
 
-export async function load({ cookies, locals }) {
+export async function load({ locals }) {
 	const { api } = locals;
-	const client = loadUser(cookies);
+	const client = api.authStore.record;
 	const locale = client?.lang || 'en';
 
 	try {

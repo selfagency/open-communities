@@ -20,7 +20,7 @@ import type { LocationRecord } from '$lib/types.d';
 
 import { t } from '$lib/i18n';
 import { defaultSchema } from '$lib/schemas/record';
-import { handleError, loadUser } from '$lib/server/api';
+import { handleError } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
@@ -37,9 +37,9 @@ type MetaRecord = {
 };
 /* endregion types */
 
-export const load = async ({ cookies, fetch, locals }) => {
+export const load = async ({ fetch, locals }) => {
 	const { api, validate } = locals;
-	const client = loadUser(cookies);
+	const client = api.authStore.record;
 
 	try {
 		if (!client?.id) {
@@ -62,9 +62,9 @@ export const load = async ({ cookies, fetch, locals }) => {
 
 export const actions = {
 	submit: async (event) => {
-		const { cookies, fetch, locals } = event;
+		const { fetch, locals } = event;
 		const { api, log, validate } = locals;
-		const client = loadUser(cookies);
+		const client = api.authStore.record;
 
 		const form = await validate(defaultSchema, event);
 		const formData = form.data as CongregationMetaRecord & MetaRecord;

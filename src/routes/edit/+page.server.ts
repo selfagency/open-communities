@@ -17,7 +17,7 @@ import type { LocationMeta, LocationRecord } from '$lib/types.d';
 
 import { cleanResponse } from '$lib/api';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
-import { handleError, loadUser } from '$lib/server/api';
+import { handleError } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
@@ -35,9 +35,9 @@ type MetaRecord = {
 type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
-export const load = async ({ cookies, fetch, locals, url }) => {
+export const load = async ({ fetch, locals, url }) => {
 	const { api, validate } = locals;
-	const client = loadUser(cookies);
+	const client = api.authStore.record;
 
 	try {
 		if (client?.id) {
@@ -81,9 +81,9 @@ export const load = async ({ cookies, fetch, locals, url }) => {
 
 export const actions = {
 	delete: async (event) => {
-		const { cookies, fetch, locals } = event;
+		const { fetch, locals } = event;
 		const { api, validate } = locals;
-		const client = loadUser(cookies);
+		const client = api.authStore.record;
 
 		const form = await validate(defaultSchema, event);
 		const data = form.data as MetaRecord & RecordWithId;
@@ -128,9 +128,9 @@ export const actions = {
 		}
 	},
 	submit: async (event) => {
-		const { cookies, fetch, locals } = event;
+		const { fetch, locals } = event;
 		const { api, validate } = locals;
-		const client = loadUser(cookies);
+		const client = api.authStore.record;
 
 		const form = await validate(defaultSchema, event);
 		const data = form.data as MetaRecord & RecordWithId & { captcha: string };
@@ -210,9 +210,9 @@ export const actions = {
 		}
 	},
 	transfer: async (event) => {
-		const { cookies, fetch, locals } = event;
+		const { fetch, locals } = event;
 		const { api, validate } = locals;
-		const client = loadUser(cookies);
+		const client = api.authStore.record;
 
 		const form = await validate(transferSchema, event);
 		const data = form.data;

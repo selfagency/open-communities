@@ -4,6 +4,7 @@ export const actions = {
 
 		cookies.set('auth', '', locals.cookieOpts);
 		cookies.set('session', '', locals.cookieOpts);
+		locals.api.authStore.clear();
 
 		return {};
 	}

@@ -11,8 +11,11 @@ const config = {
 				'child-src': ['self', 'blob:'],
 				'connect-src': [
 					'self',
+          'ws:',
+          'wss:',
 					'127.0.0.1:8090',
 					'api.opencommunities.info',
+					'opencommunities-new.pockethost.io',
 					'*.prosopo.io',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
