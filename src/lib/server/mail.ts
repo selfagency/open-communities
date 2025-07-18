@@ -1,5 +1,5 @@
 /* region imports */
-import type { TypedPocketBase } from '$lib/types';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 /* endregion imports */
 
 export async function sendMail(

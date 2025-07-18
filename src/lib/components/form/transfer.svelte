@@ -15,7 +15,6 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -30,6 +29,9 @@
 		id: string;
 		owner?: string;
 	} = $props();
+
+	// derived
+	const user = $derived(page.data.user);
 
 	// locals
 	let open: boolean = $derived(page.url.searchParams.has('transfer'));
@@ -71,7 +73,7 @@
 	/* endregion lifecycle */
 </script>
 
-{#if $user.admin}
+{#if user?.admin}
 	<AlertDialog.Root bind:open>
 		<AlertDialog.Trigger>
 			<Button

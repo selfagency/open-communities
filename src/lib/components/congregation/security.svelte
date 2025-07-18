@@ -3,7 +3,7 @@
 	import SecurityIcon from 'lucide-svelte/icons/shield';
 	import UnarmedIcon from 'lucide-svelte/icons/shield-ban';
 
-	import type { SecurityRecord } from '$lib/types';
+	import type { SecurityRecord } from '$lib/pocketbase.d';
 
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';

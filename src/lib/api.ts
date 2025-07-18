@@ -2,7 +2,7 @@
 import PocketBase from 'pocketbase';
 import { assign, isArray, omit } from 'radashi';
 
-import type { TypedPocketBase } from '$lib/types.d';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 
 import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 /* endregion imports */

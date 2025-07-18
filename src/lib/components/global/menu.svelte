@@ -4,9 +4,10 @@
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
 	import { t } from '$lib/i18n';
-	import { state as appState, user } from '$lib/stores';
+	import { state as appState } from '$lib/stores';
 
 	import Locale from './locale.svelte';
 	/*  endregion imports */
@@ -17,6 +18,7 @@
 
 	// constants
 	const dispatch = createEventDispatcher();
+	const user = $derived(page.data.user);
 	/* endregion variables */
 </script>
 
@@ -25,12 +27,12 @@
 		? 'mt-8 flex flex-col items-start justify-start'
 		: 'flex flex-row items-center justify-between space-x-2'}
 >
-	{#if $user.congregation && !$user.admin}
+	{#if user?.congregation && !user?.admin}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'default'}
 			onclick={async () => {
 				dispatch('close');
-				await goto(`/edit?id=${$user.congregation}`);
+				await goto(`/edit?id=${user?.congregation}`);
 			}}
 		>
 			{mode === 'full' && $appState.isMobile
@@ -51,7 +53,7 @@
 		</Button>
 	{/if}
 
-	{#if $user.email}
+	{#if user?.email}
 		<Button
 			variant={mode === 'mini' ? 'link' : 'outline'}
 			onclick={async () => {

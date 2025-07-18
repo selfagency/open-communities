@@ -4,7 +4,7 @@ import type { ClientResponseError } from 'pocketbase';
 import { fail } from '@sveltejs/kit';
 import { uid } from 'radashi';
 
-import type { UsersRecord } from '$lib/types';
+import type { UsersRecord } from '$lib/pocketbase.d';
 
 // import { dev } from '$app/environment';
 import { cleanResponse } from '$lib/api';

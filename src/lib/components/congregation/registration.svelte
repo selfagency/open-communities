@@ -3,7 +3,7 @@
 	import WebIcon from 'lucide-svelte/icons/globe';
 	import EmailIcon from 'lucide-svelte/icons/mail';
 
-	import type { RegistrationRecord } from '$lib/types';
+	import type { RegistrationRecord } from '$lib/pocketbase.d';
 
 	import { Button } from '$lib/components/ui/button';
 	import { t } from '$lib/i18n';

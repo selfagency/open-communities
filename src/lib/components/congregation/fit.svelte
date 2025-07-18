@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import type { FitRecord } from '$lib/types';
+	import type { FitRecord } from '$lib/pocketbase.d';
 
 	import { t } from '$lib/i18n';
 	/* endregion imports */

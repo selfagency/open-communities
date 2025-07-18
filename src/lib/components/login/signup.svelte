@@ -79,16 +79,6 @@
 	});
 </script>
 
-<svelte:head>
-	<script
-		type="module"
-		id="procaptcha-script"
-		src="https://js.prosopo.io/js/procaptcha.bundle.js"
-		async
-		defer
-	></script>
-</svelte:head>
-
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal"

@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
 
-	import type { LocationMeta } from '$lib/location';
+	import type { LocationMeta } from '$lib/types.d';
 
 	import { Button } from '$lib/components/ui/button';
 	import { Location } from '$lib/location';

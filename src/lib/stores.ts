@@ -2,7 +2,7 @@
 import * as persistent from '@nanostores/persistent';
 import { assign } from 'radashi';
 
-import type { CountriesRecord, UsersLangOptions, UsersRecord } from '$lib/types';
+import { page } from '$app/state';
 
 // import { log } from '$lib/utils';
 /* endregion imports */
@@ -11,8 +11,8 @@ import type { CountriesRecord, UsersLangOptions, UsersRecord } from '$lib/types'
 export type SelectOption = { label: string; value: string };
 
 export type State = {
-	countries?: CountriesRecord[];
 	isMobile?: boolean;
+	lang?: string;
 	offsetHeight?: number;
 	offsetWidth?: number;
 	showIntro?: boolean;
@@ -31,32 +31,15 @@ const encoder = {
 
 /* region state */
 export const state = persistentMap<State>('state_', {} as State, encoder);
-
-export const user = persistentMap<UsersRecord & { email: string; id: string }>(
-	'user_',
-	{} as UsersRecord & { email: string; id: string },
-	encoder
-);
 /* endregion state */
 
 export function initState() {
 	setState({
-		countries: [],
 		isMobile: window.innerWidth < 640,
+		lang: page.data.user?.lang || 'en',
 		offsetHeight: window.innerHeight,
 		offsetWidth: window.innerWidth,
 		showIntro: true
-	});
-}
-
-export function initUser() {
-	user.set({
-		admin: false,
-		congregation: undefined,
-		email: '',
-		id: '',
-		lang: 'en' as UsersLangOptions,
-		name: undefined
 	});
 }
 

@@ -1,7 +1,7 @@
 /* region imports */
 import * as z from 'zod';
 
-import type { CongregationMetaRecord } from '$lib/types';
+import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 // import { log } from '$lib/utils';
 
 import { t } from '$lib/i18n';

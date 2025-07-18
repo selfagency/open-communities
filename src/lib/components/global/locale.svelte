@@ -3,14 +3,14 @@
 	import LocaleIcon from 'lucide-svelte/icons/languages';
 	import { fade } from 'svelte/transition';
 
-	import type { UsersLangOptions } from '$lib/types';
+	import type { UsersLangOptions } from '$lib/pocketbase.d';
 
-	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
+	import { setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 	/*  endregion imports */
 
@@ -32,15 +32,14 @@
 	];
 
 	// locals
-	let lang = $state($user.lang || 'en') as UsersLangOptions;
 	let hovering = $state(false);
+	let lang = $state(page.data.user?.lang || 'en') as UsersLangOptions;
 	/* endregion variables */
 
 	/* region reactivity */
 	$effect(() => {
-		if (lang && lang !== $user.lang && browser) {
-			user.set({ ...$user, lang });
-			window.location.reload();
+		if (lang !== page.data.user?.lang) {
+			setState({ lang });
 		}
 	});
 

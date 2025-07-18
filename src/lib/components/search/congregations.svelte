@@ -9,9 +9,8 @@
 	import { alphabetical, isEmpty } from 'radashi';
 	import { fade } from 'svelte/transition';
 
-	import type { LocationMeta } from '$lib/location';
-	import type { SearchData, SearchState } from '$lib/search';
-	import type { CongregationMetaRecord } from '$lib/types';
+	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
+	import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -43,7 +42,7 @@
 		results,
 		state: searchState
 	}: { results: MapStore<CongregationMetaRecord[]>; state: MapStore<SearchState> } = search;
-	const location = new LocationService(search);
+	const location = new LocationService({ countries: page.data.countries, search: search });
 	const open = {};
 
 	// locals

@@ -1,6 +1,8 @@
 <script lang="ts">
 	/* region imports */
 	import '../app.css';
+	import type { Snippet } from 'svelte';
+
 	import { onMount } from 'svelte';
 
 	import { browser } from '$app/environment';
@@ -9,16 +11,16 @@
 	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { t } from '$lib/i18n';
-	import { setState, user } from '$lib/stores';
+	import { setState } from '$lib/stores';
 
-	import type { LayoutProps } from './$types';
+	import type { LayoutData } from './$types';
 
 	// import { log } from '$lib/utils';
 	import '../app.css';
 	/* endregion imports */
 
 	/* region variables */
-	let { children }: LayoutProps = $props();
+	let { children, data }: { children: Snippet; data: LayoutData } = $props();
 
 	// locals
 	let innerWidth = $state(0);
@@ -28,7 +30,7 @@
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
-			if ($user?.lang === 'he') {
+			if (data.user?.lang === 'he') {
 				document.body.setAttribute('dir', 'rtl');
 			} else {
 				document.body.setAttribute('dir', 'ltr');

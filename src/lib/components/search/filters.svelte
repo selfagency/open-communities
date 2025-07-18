@@ -13,6 +13,7 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 
+	import { page } from '$app/state';
 	import MaskIcon from '$lib/assets/mask.svg?component';
 	import DenominationIcon from '$lib/assets/menorah.svg?component';
 	import SiddurIcon from '$lib/assets/siddur.svg?component';
@@ -23,7 +24,6 @@
 	import * as Popover from '$lib/components/ui/popover';
 	import { t } from '$lib/i18n';
 	import { Search } from '$lib/search';
-	import { user } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */
@@ -46,6 +46,8 @@
 		security: SecurityIcon,
 		services: SiddurIcon
 	};
+
+	const user = $derived(page.data.user);
 
 	// locals
 	let filters: Record<string, Record<string, boolean>> = $state({});
@@ -139,7 +141,7 @@
 	<Popover.Content>
 		<div class="flex flex-col items-start justify-start space-y-2 text-slate-500">
 			{#each Object.keys(filters) as category, i (i)}
-				{#if !isEmpty(filters?.[category]) && !(category === 'admin' && !$user.admin)}
+				{#if !isEmpty(filters?.[category]) && !(category === 'admin' && !user?.admin)}
 					{@const StatusIcon =
 						icons[
 							every(filters[category])

@@ -3,7 +3,7 @@ import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
 
-import type { LocationMeta } from '$lib/location';
+import type { LocationMeta } from '$lib/types.d';
 
 import { t } from '$lib/i18n';
 import { contactSchema } from '$lib/schemas/contact';

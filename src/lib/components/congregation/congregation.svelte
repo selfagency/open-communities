@@ -18,9 +18,10 @@
 		SecurityRecord,
 		ServicesRecord,
 		StatesRecord as State
-	} from '$lib/types';
+	} from '$lib/pocketbase.d';
 
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -28,7 +29,6 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
 
 	import Accessibility from './accessibility.svelte';
 	import Contact from './contact.svelte';
@@ -67,6 +67,7 @@
 	const registration = $derived(congregation.registration) as RegistrationRecord;
 	const health = $derived(congregation.health) as HealthRecord;
 	const security = $derived(congregation.security) as SecurityRecord;
+	const user = $derived(page.data.user);
 
 	// locals
 	let tab: 'about' | 'details' | 'services' = $state('about');
@@ -124,7 +125,7 @@
 				</span>
 
 				<div class="flex w-1/3 flex-row items-center justify-end space-x-2">
-					{#if isEmpty(congregation.owner) && !$user.admin}
+					{#if isEmpty(congregation.owner) && !user?.admin}
 						<a href={`/contact?claim=${congregation.id}`}>
 							<Badge
 								variant="outline"
@@ -133,7 +134,7 @@
 							>
 						</a>
 					{/if}
-					{#if $user.admin}
+					{#if user?.admin}
 						<Tooltip.Provider>
 							<Tooltip.Root>
 								<Tooltip.Trigger>
@@ -208,7 +209,7 @@
 						<Fit {fit} />
 					{/if}
 
-					{#if $user.admin && (congregation.contactName || congregation.contactEmail)}
+					{#if user?.admin && (congregation.contactName || congregation.contactEmail)}
 						<Separator class="col-span-12" />
 						<Contact
 							contactName={congregation.contactName}

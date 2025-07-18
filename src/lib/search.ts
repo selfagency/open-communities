@@ -5,35 +5,11 @@ import Fuzzy from '@leeoniya/ufuzzy';
 import { map } from 'nanostores';
 import { alphabetical, isEmpty, shake, unique } from 'radashi';
 
-import type { LocationMeta } from '$lib/location';
-import type { CongregationMetaRecord } from '$lib/types.d';
+import type { CongregationMetaRecord } from '$lib/pocketbase.d';
+import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 // import { log } from '$lib/utils';
 /* endregion imports */
-
-/* region types  */
-export type SearchData = {
-	flavor?: string;
-	id: string;
-	location?: LocationMeta;
-	name: string;
-	owner?: string;
-	visible: boolean;
-};
-
-export type SearchState = {
-	filters?: {
-		[key: string]: {
-			[key: string]: boolean;
-		};
-	};
-	searchLocation?: LocationMeta;
-	searchTerms?: string;
-	showLocation?: boolean;
-};
-
-export type SelectOption = { label: string; value: string };
-/* endregion types */
 
 export class Search {
 	data: SearchData[];

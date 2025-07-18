@@ -7,7 +7,7 @@ import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
 
 import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
-import type { CongregationMetaRecord, TypedPocketBase } from '$lib/types';
+import type { CongregationMetaRecord, TypedPocketBase } from '$lib/pocketbase.d';
 
 /* endregion imports */
 

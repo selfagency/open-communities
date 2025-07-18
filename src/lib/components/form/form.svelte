@@ -9,11 +9,12 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
 
-	import type { LocationMeta, LocationRecord } from '$lib/location';
-	import type { CongregationMetaRecord, PagesRecord } from '$lib/types';
+	import type { CongregationMetaRecord, PagesRecord } from '$lib/pocketbase.d';
+	import type { LocationMeta, LocationRecord } from '$lib/types.d';
 
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
 	import Combobox from '$lib/components/global/combobox.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
@@ -29,7 +30,6 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
-	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 
 	import Delete from './delete.svelte';
@@ -56,13 +56,21 @@
 	} = $props();
 
 	// constants
+	const user = $derived(page.data.user);
+
 	const valueSet = (obj: any): boolean => {
 		if (!obj || isEmpty(obj)) return false;
 		const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));
 		return !isEmpty(shaken);
 	};
 
-	const { load: loadLocation, setCity, setCountry, setState, state: location } = new Location();
+	const {
+		load: loadLocation,
+		setCity,
+		setCountry,
+		setState,
+		state: location
+	} = new Location({ countries: page.data.countries });
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 	const denominations = [
 		{ label: $t('congregation.denomination.conservative'), value: 'conservative' },
@@ -169,7 +177,7 @@
 				other: false,
 				otherText: ''
 			},
-			user: $user.admin ? '' : $user.id,
+			user: user?.admin ? '' : user?.id,
 			visible: false
 		});
 	}
@@ -191,7 +199,7 @@
 				toast.success(
 					mode === 'edit' ? $t('congregation.editSuccess') : $t('congregation.addSuccess')
 				);
-				if ($user.admin) {
+				if (user?.admin) {
 					await goto('/', { invalidateAll: true });
 				} else {
 					if (mode === 'add') {
@@ -238,7 +246,7 @@
 			} as LocationRecord);
 		}
 
-		if (!$user.admin) {
+		if (!user?.admin) {
 			$formData.visible = false;
 		}
 
@@ -295,16 +303,6 @@
 	/* endregion reactivity */
 </script>
 
-<svelte:head>
-	<script
-		type="module"
-		id="procaptcha-script"
-		src="https://js.prosopo.io/js/procaptcha.bundle.js"
-		async
-		defer
-	></script>
-</svelte:head>
-
 <section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
 		<form id="addEdit" method="POST" action="?/submit" use:enhance>
@@ -318,7 +316,7 @@
 					<div class="prose">{@html content.content}</div>
 				{/if}
 
-				{#if mode === 'edit' && !$user.admin}
+				{#if mode === 'edit' && !user?.admin}
 					<Alert.Root class="bg-slate-50">
 						<WarningIcon size="18" />
 						<Alert.Description class="mt-0.5">
@@ -1367,7 +1365,7 @@
 
 					<!-- visibiliy -->
 					<div class="mt-8 flex flex-row items-center justify-end">
-						{#if $user.admin}
+						{#if user?.admin}
 							<Form.Field {form} name="visible">
 								<Form.Control
 									>{#snippet children(props)}

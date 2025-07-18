@@ -13,7 +13,6 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -46,7 +45,6 @@
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
 				toast.success($t('auth.loginSuccess'));
-				user.set(result.data.user);
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);

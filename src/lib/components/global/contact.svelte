@@ -1,5 +1,3 @@
-<svelte:options accessors />
-
 <script lang="ts">
 	/* region imports */
 	import { sleep } from 'radashi';
@@ -18,19 +16,23 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data: any;
-	export let snapshot: any;
-	export let congregations: any;
+	let {
+		congregations,
+		data,
+		snapshot = $bindable()
+	}: { congregations: any; data: any; snapshot: any } = $props();
+
+	// derived
+	const user = $derived(page.data.user);
 
 	// locals
-	let success: boolean = false;
-	let congregation: string = '';
+	let success: boolean = $state(false);
+	let congregation: string = $state('');
 	/* endregion variables */
 
 	/* region form */
@@ -75,8 +77,8 @@
 		}
 
 		if (!$formData.reason) $formData.reason = 'question';
-		if (!$formData.name) $formData.name = $user.name ?? '';
-		if (!$formData.email) $formData.email = $user.email ?? '';
+		if (!$formData.name) $formData.name = user?.name || '';
+		if (!$formData.email) $formData.email = user?.email || '';
 		if (!$formData.record) $formData.record = '';
 		if (!$formData.message) $formData.message = '';
 		if (!$formData.captcha) $formData.captcha = '';
@@ -84,23 +86,15 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: if (page.url.searchParams.has('claim')) {
-		$formData.reason = 'claim';
-		congregation = page.url.searchParams.get('claim') as string;
-		$formData.record = congregation;
-	}
+	$effect(() => {
+		if (page.url.searchParams.has('claim')) {
+			$formData.reason = 'claim';
+			congregation = page.url.searchParams.get('claim') as string;
+			$formData.record = congregation;
+		}
+	});
 	/* endregion reactivity */
 </script>
-
-<svelte:head>
-	<script
-		type="module"
-		id="procaptcha-script"
-		src="https://js.prosopo.io/js/procaptcha.bundle.js"
-		async
-		defer
-	></script>
-</svelte:head>
 
 <Card.Root class="mx-auto w-full max-w-md">
 	<Card.Header>

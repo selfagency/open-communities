@@ -5,18 +5,18 @@ import { fail, redirect } from '@sveltejs/kit';
 import { omit } from 'radashi';
 import { setError } from 'sveltekit-superforms';
 
-import type { LocationRecord } from '$lib/location';
 import type {
 	AccessibilityRecord,
 	CongregationMetaRecord,
+	CongregationsResponse,
 	FitRecord,
 	HealthRecord,
 	PagesRecord,
 	RegistrationRecord,
 	SecurityRecord,
 	ServicesRecord
-} from '$lib/types';
-import type { CongregationsResponse } from '$lib/types.d';
+} from '$lib/pocketbase.d';
+import type { LocationRecord } from '$lib/types.d';
 
 import { t } from '$lib/i18n';
 import { defaultSchema } from '$lib/schemas/record';

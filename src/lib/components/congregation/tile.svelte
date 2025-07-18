@@ -11,15 +11,15 @@
 		SecurityRecord,
 		ServicesRecord,
 		StatesRecord as State
-	} from '$lib/types';
+	} from '$lib/pocketbase.d';
 
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
 
 	import Accessibility from './accessibility.svelte';
 	import Health from './health.svelte';
@@ -31,6 +31,7 @@
 	const { congregation }: { congregation: CongregationMetaRecord & { id: string } } = $props();
 
 	// constants
+	const user = $derived(page.data.user);
 	const accessibility = $derived(congregation?.accessibility) as AccessibilityRecord;
 	const health = $derived(congregation?.health) as HealthRecord;
 	const services = $derived(congregation?.services) as ServicesRecord;
@@ -72,10 +73,10 @@
 	<Card.Content>
 		<p class="line-clamp-3 text-sm">{congregation.flavor}</p>
 	</Card.Content>
-	{#if accessibility || $user.admin}
+	{#if accessibility || user?.admin}
 		<Card.Footer>
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
-				{#if $user.admin}
+				{#if user?.admin}
 					<Tooltip.Provider>
 						<Tooltip.Root>
 							<Tooltip.Trigger>

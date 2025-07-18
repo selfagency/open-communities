@@ -4,7 +4,6 @@ import type { ClientResponseError } from 'pocketbase';
 import { fail, redirect } from '@sveltejs/kit';
 import { isEmpty, omit } from 'radashi';
 
-import type { LocationMeta, LocationRecord } from '$lib/location';
 import type {
 	AccessibilityRecord,
 	CongregationMetaRecord,
@@ -13,7 +12,8 @@ import type {
 	RegistrationRecord,
 	SecurityRecord,
 	ServicesRecord
-} from '$lib/types';
+} from '$lib/pocketbase.d';
+import type { LocationMeta, LocationRecord } from '$lib/types.d';
 
 import { cleanResponse } from '$lib/api';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
@@ -236,7 +236,7 @@ export const actions = {
 				await api.collection('users').update(data.owner, { congregation: '' }, { fetch });
 			}
 
-			await api.collection('users').update(user.id, { congregation: data.id }, { fetch });
+			await api.collection('users').update(user?.id, { congregation: data.id }, { fetch });
 
 			return { form };
 		} catch (error) {

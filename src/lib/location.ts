@@ -4,62 +4,13 @@ import type { MapStore } from 'nanostores';
 import { map } from 'nanostores';
 
 import { api } from '$lib/api';
-import { state as appState } from '$lib/stores';
 import { log } from '$lib/utils';
 
-import type { CitiesRecord, CountriesRecord, StatesRecord, TypedPocketBase } from './types';
+import type { TypedPocketBase } from './pocketbase.d';
+import type { City, Country, LocationRecord, LocationState, State } from './types.d';
 
 import { Search } from './search';
 /* endregion imports */
-
-export type City = CitiesRecord & { id: string };
-
-export type Country = CountriesRecord & { id: string };
-export type LocationMeta = {
-	city?: City;
-	country?: Country;
-	latitude?: number;
-	longitude?: number;
-	state?: State;
-};
-export type LocationRecord = {
-	city?: string;
-	country?: string;
-	latitude?: number;
-	longitude?: number;
-	state?: string;
-};
-
-/* region types  */
-export type SelectOption = { id: string; label: string; value: string; };
-
-export type State = StatesRecord & { id: string };
-
-type Localities = {
-	cities?: City[];
-	countries: Country[];
-	states?: State[];
-};
-
-type Locality = {
-	city?: City;
-	country?: Country;
-	state?: State;
-};
-
-type LocationOptions = {
-	cityOptions: SelectOption[];
-	countryOptions: SelectOption[];
-	stateOptions: SelectOption[];
-};
-
-type LocationState = {
-	localities: Localities;
-	locality: Locality;
-	options: LocationOptions;
-	record: LocationMeta;
-};
-/* endregion types */
 
 export class Location {
 	api?: TypedPocketBase;
@@ -68,11 +19,11 @@ export class Location {
 	search?: Search;
 	state: MapStore<LocationState>;
 
-	constructor(search?: Search) {
+	constructor({ countries, search }: { countries: Country[]; search?: Search }) {
 		if (search) this.search = search;
 		this.api = api;
 
-		this.countries = appState.get().countries as Country[];
+		this.countries = countries as Country[];
 
 		this.default = {
 			localities: { countries: this.countries },

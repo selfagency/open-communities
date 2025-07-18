@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import cookie from 'cookie';
 import PocketBase from 'pocketbase';
 
-import type { TypedPocketBase, UsersRecord } from '$lib/types.d';
+import type { TypedPocketBase, UsersRecord } from '$lib/pocketbase.d';
 
 import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 import { cleanResponse, expand } from '$lib/api';
