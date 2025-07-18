@@ -47,19 +47,14 @@
 
 <div class="w-full" class:pointer-events-none={disabled} class:opacity-50={disabled}>
 	<Popover.Root bind:open>
-		<Popover.Trigger bind:ref={triggerRef}>
-			{#snippet child({ props })}
-				<Button
-					variant="outline"
-					class="w-[200px] justify-between"
-					{...props}
-					role="combobox"
-					aria-expanded={open}
-				>
-					{selectedValue || 'Select a framework...'}
-					<ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
-				</Button>
-			{/snippet}
+		<Popover.Trigger
+			bind:ref={triggerRef}
+			class="button w-[200px] justify-between"
+			role="combobox"
+			aria-expanded={open}
+		>
+			{selectedValue || 'Select a framework...'}
+			<ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
 		</Popover.Trigger>
 		<Popover.Content class="w-[200px] p-0">
 			<Command.Root>

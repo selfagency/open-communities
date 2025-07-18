@@ -132,11 +132,9 @@
 </script>
 
 <Popover.Root>
-	<Popover.Trigger>
-		<Button variant="outline" class="space-x-2 text-slate-500 rtl:mx-1">
-			<FilterIcon size="18" class="rtl:mx-1" />
-			<span>{m.filter()}</span>
-		</Button>
+	<Popover.Trigger class="button space-x-2 text-slate-500 outline rtl:mx-1">
+		<FilterIcon size="18" class="rtl:mx-1" />
+		<span>{m.filter()}</span>
 	</Popover.Trigger>
 	<Popover.Content>
 		<div class="flex flex-col items-start justify-start space-y-2 text-slate-500">

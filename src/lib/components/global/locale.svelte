@@ -7,7 +7,6 @@
 
 	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import * as m from '$lib/paraglide/messages';
 	import { setState } from '$lib/stores';
@@ -47,22 +46,21 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger>
-		<Button
-			variant={mode === 'mini' ? 'link' : 'ghost'}
-			class="flex flex-row items-center justify-start space-x-1"
-			onmouseenter={() => (hovering = true)}
-			onmouseleave={() => (hovering = false)}
-		>
-			{@const locale = locales.find((f) => f.value === lang)?.label}
-			{#if mode === 'mini'}
-				<LocaleIcon class="h-4 w-4 text-slate-500" />
-				<span>{locale}</span>
-			{:else}
-				<LocaleIcon class="h-4 w-4 text-slate-500" />
-				{#if hovering}<span transition:fade>{locale}</span>{/if}
-			{/if}
-		</Button>
+	<DropdownMenu.Trigger
+		class="button {mode === 'mini'
+			? 'link'
+			: 'ghost'} flex flex-row items-center justify-start space-x-1"
+		onmouseenter={() => (hovering = true)}
+		onmouseleave={() => (hovering = false)}
+	>
+		{@const locale = locales.find((f) => f.value === lang)?.label}
+		{#if mode === 'mini'}
+			<LocaleIcon class="h-4 w-4 text-slate-500" />
+			<span>{locale}</span>
+		{:else}
+			<LocaleIcon class="h-4 w-4 text-slate-500" />
+			{#if hovering}<span transition:fade>{locale}</span>{/if}
+		{/if}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56">
 		<DropdownMenu.Label>{m.language()}</DropdownMenu.Label>

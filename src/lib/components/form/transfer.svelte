@@ -11,7 +11,6 @@
 	import { page } from '$app/state';
 	import * as Alert from '$lib/components/ui/alert';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Button } from '$lib/components/ui/button';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as m from '$lib/paraglide/messages';
@@ -75,15 +74,13 @@
 
 {#if user?.admin}
 	<AlertDialog.Root bind:open>
-		<AlertDialog.Trigger>
-			<Button
-				class="border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
-				onclick={(e: Event) => {
-					e.preventDefault();
-				}}
-			>
-				{m['transfer.transfer']()}
-			</Button>
+		<AlertDialog.Trigger
+			class="button border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
+			onclick={(e: Event) => {
+				e.preventDefault();
+			}}
+		>
+			{m['transfer.transfer']()}
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
 			<form id="transfer" method="POST" action="?/transfer" use:enhance>

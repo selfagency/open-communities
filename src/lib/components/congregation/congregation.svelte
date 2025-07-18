@@ -23,7 +23,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Tabs from '$lib/components/ui/tabs';
@@ -130,48 +129,42 @@
 							<Badge
 								variant="outline"
 								class="font-normal text-nowrap text-slate-500 hover:bg-slate-100"
-								>{m.claimThis}</Badge
+								>{m.claimThis()}</Badge
 							>
 						</a>
 					{/if}
 					{#if user?.admin}
 						<Tooltip.Provider>
 							<Tooltip.Root>
-								<Tooltip.Trigger>
-									<Button
-										variant="ghost"
-										class="h-8 px-2 py-0"
-										onclick={async () => {
-											await goto(`/edit?id=${congregation.id}`);
-										}}
-									>
-										<EditIcon size="16" class="text-slate-500 rtl:mx-1" />
-										<span class="sr-only">{m.edit}</span>
-									</Button>
+								<Tooltip.Trigger
+									class="button h-8 px-2 py-0 outline"
+									onclick={async () => {
+										await goto(`/edit?id=${congregation.id}`);
+									}}
+								>
+									<EditIcon size="16" class="text-slate-500 rtl:mx-1" />
+									<span class="sr-only">{m.edit()}</span>
 								</Tooltip.Trigger>
 								<Tooltip.Content>
-									<span class="text-nowrap">{m.edit}</span>
+									<span class="text-nowrap">{m.edit()}</span>
 								</Tooltip.Content>
 							</Tooltip.Root>
 						</Tooltip.Provider>
 					{/if}
 					<Tooltip.Provider>
 						<Tooltip.Root>
-							<Tooltip.Trigger>
-								<Button
-									variant="ghost"
-									class="h-8 px-2 py-0"
-									onclick={() => {
-										copyText(`https://opencommunities.info?id=${congregation.id}`);
-										toast.success(m.copied);
-									}}
-								>
-									<ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
-									<span class="sr-only">{m.share}</span>
-								</Button>
+							<Tooltip.Trigger
+								class="button ghost h-8 px-2 py-0"
+								onclick={() => {
+									copyText(`https://opencommunities.info?id=${congregation.id}`);
+									toast.success(m.copied());
+								}}
+							>
+								<ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
+								<span class="sr-only">{m.share()}</span>
 							</Tooltip.Trigger>
 							<Tooltip.Content>
-								<span class="text-nowrap">{m.share}</span>
+								<span class="text-nowrap">{m.share()}</span>
 							</Tooltip.Content>
 						</Tooltip.Root>
 					</Tooltip.Provider>
@@ -181,9 +174,9 @@
 
 		<Tabs.Root bind:value={tab} class="w-full">
 			<Tabs.List class="my-4 w-full">
-				<Tabs.Trigger value="about" class="w-1/2">{m.about}</Tabs.Trigger>
+				<Tabs.Trigger value="about" class="w-1/2">{m.about()}</Tabs.Trigger>
 				<Tabs.Trigger value="services" class="w-1/2">{m['services.services']()}</Tabs.Trigger>
-				<Tabs.Trigger value="details" class="w-1/2">{m.details}</Tabs.Trigger>
+				<Tabs.Trigger value="details" class="w-1/2">{m.details()}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="about">
 				{#if congregation.flavor}
@@ -196,7 +189,7 @@
 							<h2 class="label">{m['denomination.affiliation']()}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
-							{m[`denomination[${congregation.denomination}]`]()}
+							{m[`denomination.${congregation.denomination}`]()}
 						</div>
 					{/if}
 
@@ -245,7 +238,7 @@
 							<h2 class="label">{m['fit.flag.short']()}</h2>
 						</div>
 						<div class="col-span-9">
-							{m['fit.flag[fit.flag]']()}
+							{m[`fit.flag.${fit.flag}`]()}
 						</div>
 					{/if}
 

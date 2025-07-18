@@ -106,4 +106,4 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		});
 	});
 
-export const handle = sequence(sentryHandle(), customHandler, handleParaglide);
+export const handle = sequence(sentryHandle(), handleParaglide, customHandler);

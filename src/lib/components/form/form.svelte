@@ -488,7 +488,7 @@
 								<Form.Field {form} name="notes">
 									<Form.Control
 										>{#snippet children(props)}
-											<Form.Label>{m.notes.extended}</Form.Label>
+											<Form.Label>{m['notes.extended']()}</Form.Label>
 											<Textarea {...props} bind:value={$formData.notes} />
 										{/snippet}
 									</Form.Control>
@@ -1289,19 +1289,19 @@
 						<Accordion.Item value="contact">
 							<Accordion.Trigger>
 								<span class="font-display text-lg font-normal">
-									{m.contact}
+									{m['contact.contact']()}
 									{#if $errors.contactName || $errors.contactEmail}
 										<span class="text-red-500">*</span>
 									{/if}
 								</span>
 							</Accordion.Trigger>
 							<Accordion.Content>
-								<div class="question mb-4">{m.contactName.extended}</div>
+								<div class="question mb-4">{m.contactName().extended}</div>
 								<Form.Field {form} name="contactName">
 									<Form.Control
 										>{#snippet children(props)}
 											<Form.Label for="contactName">
-												{m.contactName.contactName}
+												{m.contactName()().contactName}
 											</Form.Label>
 											<Input {...props} bind:value={$formData.contactName} />
 										{/snippet}

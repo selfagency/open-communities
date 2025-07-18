@@ -16,7 +16,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as m from '$lib/paraglide/messages';
@@ -79,19 +78,16 @@
 				{#if user?.admin}
 					<Tooltip.Provider>
 						<Tooltip.Root>
-							<Tooltip.Trigger>
-								<Button
-									variant="ghost"
-									class="h-8 px-2 py-0"
-									onclick={async (e: Event) => {
-										e.preventDefault();
-										e.stopPropagation();
-										await goto(`/edit?id=${congregation.id}`);
-									}}
-								>
-									<EditIcon size="16" class="text-slate-700" />
-									<span class="sr-only">{m.edit()}</span>
-								</Button>
+							<Tooltip.Trigger
+								class="button ghost h-8 px-2 py-0"
+								onclick={async (e: Event) => {
+									e.preventDefault();
+									e.stopPropagation();
+									await goto(`/edit?id=${congregation.id}`);
+								}}
+							>
+								<EditIcon size="16" class="text-slate-700" />
+								<span class="sr-only">{m.edit()}</span>
 							</Tooltip.Trigger>
 							<Tooltip.Content>
 								<span class="text-nowrap">{m.edit()}</span>
