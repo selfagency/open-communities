@@ -44,12 +44,6 @@
     "contact": "Póngase en contacto con",
     "contactUs": "Contacte con nosotros",
     "message": "Mensaje",
-    "options": {
-      "claim": "Quiero reclamar una congregación",
-      "delete": "Quiero eliminar mi cuenta",
-      "question": "Tengo una pregunta o comentario",
-      "suggest": "Quiero sugerir una edición"
-    },
     "proof": "Proporcione una prueba de su conexión con esta congregación y la dirección de correo electrónico de la cuenta de Open Communities a la que desea asociar la congregación. Si no tiene una cuenta, regístrese primero.",
     "reason": "Motivo del contacto",
     "record": "¿Por qué congregación se pone en contacto con nosotros?",
@@ -62,6 +56,12 @@
   "contactName": {
     "contactName": "Nombre de contacto",
     "extended": "Nombre de la mejor persona de contacto para las comunicaciones de Rabbis for Ceasefire"
+  },
+  "contactOptions": {
+    "claim": "Quiero reclamar una congregación",
+    "delete": "Quiero eliminar mi cuenta",
+    "question": "Tengo una pregunta o comentario",
+    "suggest": "Quiero sugerir una edición"
   },
   "contactUrl": "URL de contacto",
   "continue": "Continúe en",

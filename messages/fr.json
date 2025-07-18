@@ -44,12 +44,6 @@
     "contact": "Contact",
     "contactUs": "Nous contacter",
     "message": "Message",
-    "options": {
-      "claim": "Je veux revendiquer une congrégation",
-      "delete": "Je souhaite supprimer mon compte",
-      "question": "J'ai une question ou un commentaire",
-      "suggest": "Je souhaite suggérer une modification"
-    },
     "proof": "Veuillez fournir une preuve de votre lien avec cette congrégation et l'adresse électronique du compte Open Communities auquel vous souhaitez associer la congrégation. Si vous n'avez pas de compte, veuillez d'abord vous inscrire.",
     "reason": "Motif du contact",
     "record": "Quelle est la congrégation pour laquelle vous nous contactez ?",
@@ -62,6 +56,12 @@
   "contactName": {
     "contactName": "Nom du contact",
     "extended": "Nom de la meilleure personne à contacter pour les communications de Rabbis for Ceasefire"
+  },
+  "contactOptions": {
+    "claim": "Je veux revendiquer une congrégation",
+    "delete": "Je souhaite supprimer mon compte",
+    "question": "J'ai une question ou un commentaire",
+    "suggest": "Je souhaite suggérer une modification"
   },
   "contactUrl": "URL de contact",
   "continue": "Continuer",

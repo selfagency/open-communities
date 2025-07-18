@@ -44,12 +44,6 @@
     "contact": "Kapcsolat",
     "contactUs": "Kapcsolatfelvétel",
     "message": "Üzenet",
-    "options": {
-      "claim": "Szeretnék egy gyülekezetet igényelni",
-      "delete": "Szeretném törölni a fiókomat",
-      "question": "Kérdésem vagy megjegyzésem van",
-      "suggest": "Szerkesztést szeretnék javasolni"
-    },
     "proof": "Kérjük, adja meg a gyülekezettel való kapcsolatát igazoló bizonyítékot, valamint annak az Open Communities fióknak az e-mail címét, amelyhez a gyülekezetet társítani szeretné. Ha még nincs fiókja, kérjük, először regisztráljon.",
     "reason": "A kapcsolatfelvétel oka",
     "record": "Melyik gyülekezettel kapcsolatban keres minket?",
@@ -62,6 +56,12 @@
   "contactName": {
     "contactName": "Kapcsolattartó neve",
     "extended": "A Rabbis for Ceasefire legjobb kapcsolattartójának neve a kommunikációra vonatkozóan"
+  },
+  "contactOptions": {
+    "claim": "Szeretnék egy gyülekezetet igényelni",
+    "delete": "Szeretném törölni a fiókomat",
+    "question": "Kérdésem vagy megjegyzésem van",
+    "suggest": "Szerkesztést szeretnék javasolni"
   },
   "contactUrl": "Kapcsolat URL",
   "continue": "Folytatás",

@@ -142,13 +142,13 @@
 							<Form.Label>{m['contact.reason']()}</Form.Label>
 							<Select.Root type="single" bind:value={$formData.reason}>
 								<Select.Trigger class="w-full">
-									{m['contact.options'][$formData.reason]()}
+									{m[`contactOptions.${$formData.reason}`]()}
 								</Select.Trigger>
 								<Select.Content {...props}>
-									<Select.Item value="question">{m['contact.options.question']()}</Select.Item>
-									<Select.Item value="suggest">{m['contact.options.suggest']()}</Select.Item>
-									<Select.Item value="claim">{m['contact.options.claim']()}</Select.Item>
-									<Select.Item value="delete">{m['contact.options.delete']()}</Select.Item>
+									<Select.Item value="question">{m['contactOptions.question']()}</Select.Item>
+									<Select.Item value="suggest">{m['contactOptions.suggest']()}</Select.Item>
+									<Select.Item value="claim">{m['contactOptions.claim']()}</Select.Item>
+									<Select.Item value="delete">{m['contactOptions.delete']()}</Select.Item>
 								</Select.Content>
 							</Select.Root>
 						{/snippet}

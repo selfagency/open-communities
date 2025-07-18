@@ -44,12 +44,6 @@
     "contact": "Contact",
     "contactUs": "Contact Us",
     "message": "Message",
-    "options": {
-      "claim": "I want to claim a congregation",
-      "delete": "I want to delete my account",
-      "question": "I have a question or comment",
-      "suggest": "I want to suggest an edit"
-    },
     "proof": "Please provide proof of your connection to this congregation and the email address of the Open Communities account you want to associate the congregation with. If you do not have an account, please sign up first.",
     "reason": "Reason for contact",
     "record": "Which congregation are you contacting us about?",
@@ -62,6 +56,12 @@
   "contactName": {
     "contactName": "Contact name",
     "extended": "Name of best contact person for communications from Rabbis for Ceasefire"
+  },
+  "contactOptions": {
+    "claim": "I want to claim a congregation",
+    "delete": "I want to delete my account",
+    "question": "I have a question or comment",
+    "suggest": "I want to suggest an edit"
   },
   "contactUrl": "Contact URL",
   "continue": "Continue",
@@ -258,8 +258,10 @@
   "unverified": "Unverified",
   "updateFailure": "Failed to update account.",
   "updateSuccess": "Account updated successfully.",
-  "verified.extended": "Your email address has been verified. You may now log in.",
-  "verified.verified": "Verified",
+  "verified": {
+    "extended": "Your email address has been verified. You may now log in.",
+    "verified": "Verified"
+  },
   "verifyEmail": "Verify email",
   "verifyFailure": "Failed to verify email.",
   "verifyFailureNotice": "Verification token has already been used or has expired.",

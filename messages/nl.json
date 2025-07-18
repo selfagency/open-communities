@@ -44,12 +44,6 @@
     "contact": "Neem contact op met",
     "contactUs": "Neem contact met ons op",
     "message": "Bericht",
-    "options": {
-      "claim": "Ik wil een gemeente claimen",
-      "delete": "Ik wil mijn account verwijderen",
-      "question": "Ik heb een vraag of opmerking",
-      "suggest": "Ik wil een bewerking voorstellen"
-    },
     "proof": "Geef een bewijs van je band met deze gemeente en het e-mailadres van de Open Communities account waarmee je de gemeente wilt verbinden. Als je nog geen account hebt, meld je dan eerst aan.",
     "reason": "Reden voor contact",
     "record": "Over welke gemeente neem je contact met ons op?",
@@ -62,6 +56,12 @@
   "contactName": {
     "contactName": "Naam contactpersoon",
     "extended": "Naam van beste contactpersoon voor communicatie van Rabbis for Ceasefire"
+  },
+  "contactOptions": {
+    "claim": "Ik wil een gemeente claimen",
+    "delete": "Ik wil mijn account verwijderen",
+    "question": "Ik heb een vraag of opmerking",
+    "suggest": "Ik wil een bewerking voorstellen"
   },
   "contactUrl": "Contact URL",
   "continue": "Ga verder",

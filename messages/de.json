@@ -44,12 +44,6 @@
     "contact": "Kontakt",
     "contactUs": "Kontakt",
     "message": "Nachricht",
-    "options": {
-      "claim": "Ich möchte eine Gemeinde beanspruchen",
-      "delete": "Ich möchte mein Konto löschen",
-      "question": "Ich habe eine Frage oder einen Kommentar",
-      "suggest": "Ich möchte eine Änderung vorschlagen"
-    },
     "proof": "Bitte geben Sie einen Nachweis über Ihre Verbindung zu dieser Gemeinde und die E-Mail-Adresse des Open Communities-Kontos an, mit dem Sie die Gemeinde verknüpfen möchten. Wenn Sie noch kein Konto haben, melden Sie sich bitte zuerst an.",
     "reason": "Grund der Kontaktaufnahme",
     "record": "Wegen welcher Gemeinde wenden Sie sich an uns?",
@@ -62,6 +56,12 @@
   "contactName": {
     "contactName": "Name der Kontaktperson",
     "extended": "Name des besten Ansprechpartners für Mitteilungen von Rabbis for Ceasefire"
+  },
+  "contactOptions": {
+    "claim": "Ich möchte eine Gemeinde beanspruchen",
+    "delete": "Ich möchte mein Konto löschen",
+    "question": "Ich habe eine Frage oder einen Kommentar",
+    "suggest": "Ich möchte eine Änderung vorschlagen"
   },
   "contactUrl": "Kontakt-URL",
   "continue": "Weiter",
