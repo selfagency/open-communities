@@ -134,3 +134,6 @@ location_data.gz
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Paraglide
+src/lib/paraglide

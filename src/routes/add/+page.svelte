@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import AddForm from '$lib/components/form/form.svelte';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 
 	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>{$t('congregation.addCongregation')} &middot; {$t('common.title')}</title>
+	<title>{m.addCongregation')} &middot; {$t('common.title}</title>
 </svelte:head>
 
 <AddForm data={data.form} content={data.content} bind:snapshot={snapshotData} />

@@ -2,7 +2,7 @@
 	/* region imports */
 	import type { FitRecord } from '$lib/pocketbase.d';
 
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
@@ -12,20 +12,20 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('congregation.fit.fit')}</h2>
+	<h2 class="label">{m.fit.fit}</h2>
 </div>
 <div class="col-span-9">
 	<ul class="w-full space-y-2">
 		{#if fit.publicStatement}
-			<li>{$t('congregation.fit.publicStatement')}</li>
+			<li>{m.fit.publicStatement}</li>
 		{/if}
 
 		{#if fit.clergyMember}
-			<li>{$t('congregation.fit.clergyMember')}</li>
+			<li>{m.fit.clergyMember}</li>
 		{/if}
 
 		{#if fit.multipleClergyMembers}
-			<li>{$t('congregation.fit.multipleClergyMembers')}</li>
+			<li>{m.fit.multipleClergyMembers}</li>
 		{/if}
 
 		{#if fit.other}

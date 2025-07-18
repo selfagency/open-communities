@@ -18,7 +18,7 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationRecord } from '$lib/types.d';
 
-import { t } from '$lib/i18n';
+import * as m from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';

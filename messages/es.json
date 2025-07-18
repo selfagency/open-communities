@@ -1,4 +1,5 @@
 {
+  "$schema": "https://inlang.com/schema/inlang-message-format",
   "about": "Acerca de",
   "accessHealthSafety": "Acceso, salud y seguridad",
   "accessibility": {
@@ -28,13 +29,32 @@
     "unclaimed": "No reclamado"
   },
   "approved": "Aprobado",
+  "cancel": "Cancelar",
   "claimThis": "Reclamación congregación",
+  "clear": "Claro",
   "clergy": {
     "clergy": "Clero",
     "extended": "Enumere a continuación el equipo del clero que dirigirá durante los Yamim Noraim."
   },
+  "confirmPassword": "Confirmar contraseña",
   "congregation": "Congregación",
-  "contact": "Póngase en contacto con",
+  "congregationName": "Nombre de la congregación",
+  "contact": {
+    "account": "Indique la dirección de correo electrónico asociada a su cuenta.",
+    "contact": "Póngase en contacto con",
+    "contactUs": "Contacte con nosotros",
+    "message": "Mensaje",
+    "options": {
+      "claim": "Quiero reclamar una congregación",
+      "delete": "Quiero eliminar mi cuenta",
+      "question": "Tengo una pregunta o comentario",
+      "suggest": "Quiero sugerir una edición"
+    },
+    "proof": "Proporcione una prueba de su conexión con esta congregación y la dirección de correo electrónico de la cuenta de Open Communities a la que desea asociar la congregación. Si no tiene una cuenta, regístrese primero.",
+    "reason": "Motivo del contacto",
+    "record": "¿Por qué congregación se pone en contacto con nosotros?",
+    "send": "Enviar"
+  },
   "contactEmail": {
     "contactEmail": "Correo electrónico de contacto",
     "extended": "Dirección de correo electrónico de la persona de contacto"
@@ -44,7 +64,10 @@
     "extended": "Nombre de la mejor persona de contacto para las comunicaciones de Rabbis for Ceasefire"
   },
   "contactUrl": "URL de contacto",
-  "delete": "Suprimir congregación",
+  "continue": "Continúe en",
+  "continueToLogin": "Continuar para iniciar sesión",
+  "copied": "Enlace copiado en el portapapeles",
+  "delete": "Borrar",
   "deleteFailure": "Error al borrar la congregación.",
   "deleteSuccess": "Congregación eliminada con éxito.",
   "denomination": {
@@ -70,7 +93,29 @@
   "editNotice": "Al realizar modificaciones, la congregación dejará de estar en la lista hasta que un administrador apruebe los cambios.",
   "editSuccess": "Congregación editada con éxito.",
   "editSuccessNotice": "Gracias por la actualización. Alguien lo revisará y aprobará en breve o se pondrá en contacto si es necesario.",
+  "editThing": "Editar '{{cosa}}'",
+  "email": "Correo electrónico",
+  "emailFailure": "Error al enviar el mensaje",
+  "emailOrUrl": "Correo electrónico o URL",
+  "emailSent": "Se ha enviado un correo electrónico de restablecimiento. Por favor, revise su correo electrónico para obtener instrucciones.",
+  "emailSuccess": "Mensaje enviado correctamente",
+  "emailSuccessNotice": "Gracias por ponerse en contacto con nosotros. Alguien revisará su mensaje y le responderá si es necesario.",
+  "errors": {
+    "401": "No está autorizado a ver esta página",
+    "404": "Página no encontrada",
+    "500": "Se ha producido un error inesperado",
+    "congregationFailed": "Error al cargar los datos de la congregación",
+    "countriesFailed": "Error al cargar los datos de localización",
+    "dataFailed": "Error al cargar datos",
+    "email": "Dirección de correo electrónico no válida",
+    "error": "Error",
+    "pageFailed": "Error al cargar los datos de la página",
+    "required": "Este campo es obligatorio",
+    "url": "URL no válida"
+  },
   "exists": "Ya existe una congregación con este nombre en esta localidad",
+  "filter": "Filtro",
+  "filterBy": "Filtrar por",
   "fit": {
     "clergyMember": "Un miembro del clero está afiliado a Rabinos por el Alto el Fuego.",
     "extended": "¿Por qué su congregación sería una buena opción para los judíos del movimiento de alto el fuego? Por favor, indique otras razones en el campo \"Otros\".",
@@ -91,6 +136,8 @@
     "extended": "En 50 palabras o menos, describa la congregación y el \"sabor\" ritual que experimentarán los invitados.",
     "flavor": "Sabor"
   },
+  "forgotPassword": "Contraseña olvidada",
+  "formErrors": "Compruebe si hay errores en el formulario.",
   "health": {
     "extended": "Para los servicios en persona, describa brevemente los protocolos de salud y enmascaramiento de COVID en su congregación, o enlace a las directrices de la congregación.",
     "health": "Salud",
@@ -100,21 +147,52 @@
     "notApplicable": "No aplicable, sólo en línea",
     "other": "Otra política de COVID"
   },
+  "home": {
+    "author": "Rabinos por el alto el fuego",
+    "blurb": "Celebre las Altas Fiestas con una comunidad judía integradora que apoya la paz.",
+    "ceasefire": "Alto el fuego ya",
+    "credit": "Sitio de {{thing}}",
+    "dialogTitle": "Un mensaje de Rabinos por el alto el fuego",
+    "project": "Una iniciativa de",
+    "subtitle": "Altas Fiestas 5785",
+    "title": "Comunidades abiertas"
+  },
+  "http": "Debe comenzar por `http://` o `https://`.",
+  "invalidUrl": "URL no válida",
+  "language": "Idioma",
   "location": {
     "city": "Ciudad",
     "country": "País",
     "countryCode": "Código del país",
     "latitude": "Latitud",
+    "location": "Ubicación",
     "longitude": "Longitud",
     "state": "Estado/Provincia",
     "stateCode": "Estado/Código provincial"
   },
-  "name": "Nombre de la congregación",
+  "login": "Inicio de sesión",
+  "loginFailure": "No se ha podido iniciar sesión.",
+  "loginSuccess": "Se ha conectado correctamente.",
+  "logout": "Cierre de sesión",
+  "menu": "Menú",
+  "next": "Siguiente",
   "notes": {
     "extended": "¿Algo más que debamos saber?",
     "notes": "Notas"
   },
   "nothingFound": "No se han encontrado congregaciones.",
+  "nothingFoundShort": "No se ha encontrado nada",
+  "notice": "Aviso",
+  "oldPassword": "Contraseña antigua",
+  "other": "Otros",
+  "otherText": "Otros textos",
+  "password": "Contraseña",
+  "passwordMismatch": "Las contraseñas no coinciden.",
+  "passwordSuccess": "Contraseña actualizada correctamente.",
+  "pending": "Pendiente de aprobación",
+  "prev": "Anterior.",
+  "previous": "Anterior",
+  "privacyPolicy": "Política de privacidad",
   "registration": {
     "contact": "Indique una dirección de correo electrónico o la URL de un sitio web en el que puedan inscribirse los interesados.",
     "extended": "¿Qué tipo de registro ofrecen a los huéspedes?",
@@ -125,6 +203,15 @@
     "slidingScale": "Escala móvil",
     "suggestedDonation": "Donación sugerida"
   },
+  "reloadPage": "Recargar página",
+  "required": "Requerido",
+  "requiredResponse": "Se requiere respuesta",
+  "reset": "Restablecer",
+  "resetFailure": "No se ha podido restablecer la contraseña.",
+  "resetNotice": "Introduce tu dirección de correo electrónico y, si existe en nuestro sistema, te enviaremos un enlace para restablecer tu contraseña.",
+  "resetPassword": "Restablecer contraseña",
+  "resettingPassword": "Restablecer contraseña...",
+  "search": "Buscar en",
   "security": {
     "armedSecurity": "Seguridad armada",
     "clergyArmed": "Clero armado",
@@ -137,6 +224,8 @@
     "security": "Seguridad",
     "unarmedSecurity": "Seguridad sin armas"
   },
+  "selectThing": "Selecciona {{cosa}}...",
+  "sendResetEmail": "Enviar correo electrónico de restablecimiento",
   "services": {
     "extended": "¿A qué tipo de servicios se invita a los no afiliados?",
     "hybrid": "Acceso en línea a servicios híbridos",
@@ -145,6 +234,38 @@
     "onlineOnly": "Sólo en línea",
     "services": "Servicios"
   },
+  "share": "Compartir",
+  "signUp": "Inscribirse",
+  "signUpFailure": "No se ha inscrito.",
+  "signUpInfo": "Cree una cuenta para añadir y gestionar la información de su congregación.",
+  "signUpSuccess": "La inscripción se ha realizado correctamente. Consulta tu correo electrónico para ver las instrucciones de verificación.",
+  "siteCredits": "Créditos",
+  "submission": "Presentación",
+  "submit": "Enviar",
+  "success": "Tu {{cosa}} tuvo éxito",
+  "termsOfService": "Condiciones de uso",
+  "thingRequired": "{{thing}} es necesario",
+  "title": "Comunidades abiertas",
+  "token": "Ficha",
+  "transfer": {
+    "desc": "Transferir la propiedad de esta congregación a otro usuario.",
+    "transfer": "Transferencia"
+  },
   "transferFailure": "Error al transferir la congregación. ¿Existe el usuario?",
-  "transferSuccess": "Congregación transferida con éxito."
+  "transferSuccess": "Congregación transferida con éxito.",
+  "unspecified": "Sin especificar",
+  "unverified": "Sin verificar",
+  "updateFailure": "No se ha podido actualizar la cuenta.",
+  "updateSuccess": "Cuenta actualizada correctamente.",
+  "verified": {
+    "extended": "Su dirección de correo electrónico ha sido verificada. Ya puede iniciar sesión.",
+    "verified": "Verificado"
+  },
+  "verifyEmail": "Verificar correo electrónico",
+  "verifyFailure": "No se ha podido verificar el correo electrónico.",
+  "verifyFailureNotice": "El token de verificación ya ha sido utilizado o ha caducado.",
+  "verifying": "Verificando la dirección de correo electrónico...",
+  "warning": "¿Seguro que quieres continuar?",
+  "warningNote": "Esta acción no puede deshacerse.",
+  "website": "Página web"
 }

@@ -2,7 +2,7 @@
 import { isEmpty, listify } from 'radashi';
 import * as z from 'zod';
 
-import { t } from '$lib/i18n';
+import * as m from '$lib/paraglide/messages';
 // import { log } from '$lib/utils';
 /* endregion imports */
 

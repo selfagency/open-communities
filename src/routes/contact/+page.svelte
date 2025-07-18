@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import Contact from '$lib/components/global/contact.svelte';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 
 	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
@@ -21,7 +21,7 @@
 </script>
 
 <svelte:head>
-	<title>{$t('common.contact.contactUs')} &middot; {$t('common.title')}</title>
+	<title>{m.contact.contactUs')} &middot; {$t('common.title}</title>
 </svelte:head>
 
 <section class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">

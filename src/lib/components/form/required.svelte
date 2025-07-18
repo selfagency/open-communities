@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import { Badge } from '$lib/components/ui/badge';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
@@ -14,5 +14,5 @@
 	variant="outline"
 	class={set ? 'bg-slate-50 text-slate-500' : 'border-red-100 bg-red-50 text-red-400'}
 >
-	<span class="font-normal">{$t('common.required')}</span>
+	<span class="font-normal">{m.required}</span>
 </Badge>

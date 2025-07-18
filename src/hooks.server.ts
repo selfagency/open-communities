@@ -1,41 +1,40 @@
+import type { Handle } from '@sveltejs/kit';
+import { paraglideMiddleware } from '$lib/paraglide/server';
 /* region imports */
 import type { SerializeOptions } from 'cookie';
-
 import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
-/* endregion imports */
 
+/* endregion imports */
 /* region init */
 if (!Sentry.isInitialized()) {
-	Sentry.init({
-		dsn: PUBLIC_SENTRY_DSN,
-		tracesSampleRate: 1.0
-	});
+	Sentry.init({ dsn: PUBLIC_SENTRY_DSN, tracesSampleRate: 1.0 });
 }
-/* endregion init */
 
+/* endregion init */
 /* region variables */
 // constants;
 const log = logger.getSubLogger({ name: 'hooks' });
-/* endregion variables */
 
+/* endregion variables */
 async function customHandler({ event, resolve }) {
 	const startTimer = Date.now();
 
 	// services
 	event.locals.api = api;
 	event.locals.log = log;
+
 	event.locals.validate = async (schema, request) => {
 		return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
 	};
+
 	event.locals.cookieOpts = {
 		maxAge: 60 * 60 * 24 * 1, // 1 day
 		path: '/',
@@ -74,12 +73,11 @@ async function customHandler({ event, resolve }) {
 
 	// response
 	const response = await resolve(event);
+
 	event.locals.startTimer = startTimer;
 	logEvent(response.status, event);
 	return response;
 }
-
-export const handle = sequence(sentryHandle(), customHandler);
 
 export const handleError = handleErrorWithSentry(async ({ error, event, status }) => {
 	if (status !== 404) {
@@ -88,7 +86,6 @@ export const handleError = handleErrorWithSentry(async ({ error, event, status }
 		event.locals.error = error?.toString() || undefined;
 		event.locals.errorStackTrace = (error as Error)?.stack || undefined;
 		event.locals.errorId = errorId;
-
 		logEvent(status, event);
 
 		return {
@@ -97,3 +94,16 @@ export const handleError = handleErrorWithSentry(async ({ error, event, status }
 		};
 	}
 });
+
+const originalHandle = sequence(sentryHandle(), customHandler, handleParaglide);
+
+const handleParaglide: Handle = ({ event, resolve }) =>
+	paraglideMiddleware(event.request, ({ request, locale }) => {
+		event.request = request;
+
+		return resolve(event, {
+			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale)
+		});
+	});
+
+export const handle = sequence(originalHandle, handleParaglide);

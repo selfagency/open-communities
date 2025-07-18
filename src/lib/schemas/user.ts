@@ -2,7 +2,7 @@
 import * as z from 'zod';
 
 // import { log } from '$lib/utils';
-import { t } from '$lib/i18n';
+import * as m from '$lib/paraglide/messages';
 /* endregion imports */
 
 /* region variables */

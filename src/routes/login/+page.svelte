@@ -6,7 +6,7 @@
 	import Login from '$lib/components/login/index.svelte';
 	import SignUp from '$lib/components/login/signup.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	// import { log } from '$lib/utils';
 
 	import type { PageProps, Snapshot } from './$types';
@@ -41,15 +41,15 @@
 </script>
 
 <svelte:head>
-	<title>{$t('auth.login')} &middot; {$t('common.title')}</title>
+	<title>{m.login')} &middot; {$t('common.title}</title>
 </svelte:head>
 
 <div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
 	<div class="w-full max-w-96">
 		<Tabs.Root bind:value={tab}>
 			<Tabs.List class="w-full">
-				<Tabs.Trigger value="login" class="w-1/2">{$t('auth.login')}</Tabs.Trigger>
-				<Tabs.Trigger value="signup" class="w-1/2">{$t('auth.signUp')}</Tabs.Trigger>
+				<Tabs.Trigger value="login" class="w-1/2">{m.login}</Tabs.Trigger>
+				<Tabs.Trigger value="signup" class="w-1/2">{m.signUp}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="login">
 				{#if tab === 'login' && data.login && data.reset}

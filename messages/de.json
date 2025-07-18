@@ -1,4 +1,5 @@
 {
+  "$schema": "https://inlang.com/schema/inlang-message-format",
   "about": "Über",
   "accessHealthSafety": "Zugang, Gesundheit und Sicherheit",
   "accessibility": {
@@ -28,13 +29,32 @@
     "unclaimed": "Nicht beanspruchte"
   },
   "approved": "Genehmigt",
+  "cancel": "Abbrechen",
   "claimThis": "Anspruchskongregation",
+  "clear": "Klar",
   "clergy": {
     "clergy": "Klerus",
     "extended": "Geben Sie unten das Geistlichen-Team an, das während der Yamim Noraim die Leitung übernimmt."
   },
+  "confirmPassword": "Bestätigen Sie das Passwort",
   "congregation": "Kongregation",
-  "contact": "Kontakt",
+  "congregationName": "Name der Kongregation",
+  "contact": {
+    "account": "Bitte geben Sie die mit Ihrem Konto verbundene E-Mail-Adresse an.",
+    "contact": "Kontakt",
+    "contactUs": "Kontakt",
+    "message": "Nachricht",
+    "options": {
+      "claim": "Ich möchte eine Gemeinde beanspruchen",
+      "delete": "Ich möchte mein Konto löschen",
+      "question": "Ich habe eine Frage oder einen Kommentar",
+      "suggest": "Ich möchte eine Änderung vorschlagen"
+    },
+    "proof": "Bitte geben Sie einen Nachweis über Ihre Verbindung zu dieser Gemeinde und die E-Mail-Adresse des Open Communities-Kontos an, mit dem Sie die Gemeinde verknüpfen möchten. Wenn Sie noch kein Konto haben, melden Sie sich bitte zuerst an.",
+    "reason": "Grund der Kontaktaufnahme",
+    "record": "Wegen welcher Gemeinde wenden Sie sich an uns?",
+    "send": "Senden Sie"
+  },
   "contactEmail": {
     "contactEmail": "Kontakt E-Mail",
     "extended": "E-Mail Adresse der oben genannten Kontaktperson"
@@ -44,7 +64,10 @@
     "extended": "Name des besten Ansprechpartners für Mitteilungen von Rabbis for Ceasefire"
   },
   "contactUrl": "Kontakt-URL",
-  "delete": "Gemeinde löschen",
+  "continue": "Weiter",
+  "continueToLogin": "Weiter zur Anmeldung",
+  "copied": "Link in die Zwischenablage kopiert",
+  "delete": "Löschen",
   "deleteFailure": "Gemeinde konnte nicht gelöscht werden.",
   "deleteSuccess": "Kongregation erfolgreich gelöscht.",
   "denomination": {
@@ -70,7 +93,29 @@
   "editNotice": "Wenn Sie Änderungen vornehmen, wird diese Gemeinde von der Liste gestrichen, bis ein Administrator Ihre Änderungen genehmigen kann.",
   "editSuccess": "Kongregation erfolgreich bearbeitet.",
   "editSuccessNotice": "Vielen Dank für die Aktualisierung! Jemand wird es in Kürze überprüfen und genehmigen oder sich bei Bedarf melden.",
+  "editThing": "Bearbeiten Sie '{{Ding}}'.",
+  "email": "E-Mail",
+  "emailFailure": "Nachricht konnte nicht gesendet werden",
+  "emailOrUrl": "E-Mail oder URL",
+  "emailSent": "E-Mail zum Zurücksetzen gesendet. Bitte prüfen Sie Ihre E-Mail für Anweisungen.",
+  "emailSuccess": "Nachricht erfolgreich gesendet",
+  "emailSuccessNotice": "Danke, dass Sie sich gemeldet haben. Jemand wird Ihre Nachricht prüfen und bei Bedarf antworten.",
+  "errors": {
+    "401": "Sie sind nicht berechtigt, diese Seite zu sehen",
+    "404": "Seite nicht gefunden",
+    "500": "Ein unerwarteter Fehler ist aufgetreten",
+    "congregationFailed": "Das Laden der Gemeindedaten ist fehlgeschlagen",
+    "countriesFailed": "Standortdaten konnten nicht geladen werden",
+    "dataFailed": "Daten konnten nicht geladen werden",
+    "email": "Ungültige E-Mail Adresse",
+    "error": "Fehler",
+    "pageFailed": "Die Seitendaten konnten nicht geladen werden",
+    "required": "Dieses Feld ist erforderlich",
+    "url": "Ungültige URL"
+  },
   "exists": "Eine Gemeinde mit diesem Namen existiert bereits an diesem Ort",
+  "filter": "Filter",
+  "filterBy": "Filtern nach",
   "fit": {
     "clergyMember": "Ein Mitglied des Geistlichen-Teams ist Mitglied von Rabbis for Ceasefire",
     "extended": "Warum wäre Ihre Gemeinde ein guter Partner für Juden in der Waffenstillstandsbewegung? Bitte nennen Sie weitere Gründe im Feld \"Sonstiges\".",
@@ -91,6 +136,8 @@
     "extended": "Beschreiben Sie in 50 Worten oder weniger die Gemeinde und den rituellen \"Geschmack\", den die Gäste erleben werden.",
     "flavor": "Geschmack"
   },
+  "forgotPassword": "Passwort vergessen",
+  "formErrors": "Prüfen Sie das Formular auf Fehler.",
   "health": {
     "extended": "Für persönliche Gottesdienste beschreiben Sie bitte kurz die COVID-Gesundheits- und Maskierungsprotokolle in Ihrer Gemeinde oder verlinken Sie auf die Richtlinien Ihrer Gemeinde.",
     "health": "Gesundheit",
@@ -100,21 +147,53 @@
     "notApplicable": "Nicht anwendbar, nur online",
     "other": "Andere COVID-Politik"
   },
+  "home": {
+    "author": "Rabbiner für Waffenstillstand",
+    "blurb": "Feiern Sie die Hohen Feiertage mit einer integrativen, friedensfördernden jüdischen Gemeinschaft.",
+    "ceasefire": "Waffenstillstand jetzt",
+    "credit": "Seite von {{thing}}",
+    "dialogTitle": "Eine Botschaft von Rabbis for Ceasefire",
+    "project": "Eine Initiative von",
+    "subtitle": "Hohe Feiertage 5785",
+    "title": "Offene Gemeinschaften"
+  },
+  "http": "Muss mit `http://` oder `https://` beginnen",
+  "invalidUrl": "Ungültige URL",
+  "language": "Sprache",
   "location": {
     "city": "Stadt",
     "country": "Land",
     "countryCode": "Ländercode",
     "latitude": "Breitengrad",
+    "location": "Standort",
     "longitude": "Längengrad",
     "state": "Staat/Provinz",
     "stateCode": "Bundesland/Provinz Code"
   },
-  "name": "Name der Kongregation",
+  "login": "Anmeldung",
+  "loginFailure": "Anmeldung fehlgeschlagen.",
+  "loginSuccess": "Erfolgreich eingeloggt.",
+  "logout": "Abmeldung",
+  "menu": "Menü",
+  "name": "Name",
+  "next": "Weiter",
   "notes": {
     "extended": "Gibt es sonst noch etwas, das wir wissen sollten?",
     "notes": "Anmerkungen"
   },
   "nothingFound": "Keine Kirchengemeinden gefunden.",
+  "nothingFoundShort": "Nichts gefunden",
+  "notice": "Hinweis",
+  "oldPassword": "Altes Passwort",
+  "other": "Andere",
+  "otherText": "Anderer Text",
+  "password": "Passwort",
+  "passwordMismatch": "Die Kennwörter stimmen nicht überein.",
+  "passwordSuccess": "Passwort erfolgreich aktualisiert.",
+  "pending": "Genehmigung ausstehend",
+  "prev": "Prev.",
+  "previous": "Vorherige",
+  "privacyPolicy": "Datenschutzbestimmungen",
   "registration": {
     "contact": "Bitte geben Sie eine E-Mail-Adresse oder eine Website-URL an, unter der man sich anmelden kann.",
     "extended": "Welche Art von Registrierung bieten Sie Ihren Gästen an?",
@@ -125,6 +204,15 @@
     "slidingScale": "Gleitende Skala",
     "suggestedDonation": "Empfohlene Spende"
   },
+  "reloadPage": "Seite neu laden",
+  "required": "Erforderlich",
+  "requiredResponse": "Antwort ist erforderlich",
+  "reset": "Zurücksetzen",
+  "resetFailure": "Das Passwort konnte nicht zurückgesetzt werden.",
+  "resetNotice": "Geben Sie Ihre E-Mail-Adresse ein. Wenn sie in unserem System vorhanden ist, senden wir Ihnen einen Link, mit dem Sie Ihr Passwort zurücksetzen können.",
+  "resetPassword": "Passwort zurücksetzen",
+  "resettingPassword": "Passwort zurücksetzen...",
+  "search": "Suche",
   "security": {
     "armedSecurity": "Bewaffnete Sicherheit",
     "clergyArmed": "Bewaffneter Klerus",
@@ -137,6 +225,8 @@
     "security": "Sicherheit",
     "unarmedSecurity": "Unbewaffnete Sicherheit"
   },
+  "selectThing": "Wählen Sie {{Ding}}...",
+  "sendResetEmail": "E-Mail zum Zurücksetzen senden",
   "services": {
     "extended": "Welche Arten von Diensten können von Nichtmitgliedern in Anspruch genommen werden?",
     "hybrid": "Online-Zugang zu hybriden Diensten",
@@ -145,6 +235,38 @@
     "onlineOnly": "Nur online",
     "services": "Dienstleistungen"
   },
+  "share": "Teilen Sie",
+  "signUp": "Anmeldung",
+  "signUpFailure": "Die Anmeldung ist fehlgeschlagen.",
+  "signUpInfo": "Erstellen Sie ein Konto, um die Daten Ihrer Gemeinde hinzuzufügen und zu verwalten.",
+  "signUpSuccess": "Anmeldung erfolgreich. Bitte prüfen Sie Ihre E-Mail auf Verifizierungsanweisungen.",
+  "siteCredits": "Kredite",
+  "submission": "Einreichung",
+  "submit": "Einreichen",
+  "success": "Ihr {{Ding}} war erfolgreich",
+  "termsOfService": "Bedingungen der Dienstleistung",
+  "thingRequired": "{{Ding}} ist erforderlich",
+  "title": "Offene Gemeinschaften",
+  "token": "Token",
+  "transfer": {
+    "desc": "Übertragen Sie das Eigentum an dieser Gemeinde auf einen anderen Benutzer.",
+    "transfer": "Übertragung"
+  },
   "transferFailure": "Übertragung der Versammlung fehlgeschlagen. Existiert der Benutzer?",
-  "transferSuccess": "Kongregation erfolgreich verlegt."
+  "transferSuccess": "Kongregation erfolgreich verlegt.",
+  "unspecified": "Nicht spezifiziert",
+  "unverified": "Unverifiziert",
+  "updateFailure": "Das Konto konnte nicht aktualisiert werden.",
+  "updateSuccess": "Konto erfolgreich aktualisiert.",
+  "verified": {
+    "extended": "Ihre E-Mail Adresse wurde verifiziert. Sie können sich jetzt einloggen.",
+    "verified": "Geprüft"
+  },
+  "verifyEmail": "E-Mail verifizieren",
+  "verifyFailure": "E-Mail konnte nicht verifiziert werden.",
+  "verifyFailureNotice": "Das Verifizierungs-Token wurde bereits verwendet oder ist abgelaufen.",
+  "verifying": "Überprüfung der E-Mail-Adresse...",
+  "warning": "Sind Sie sicher, dass Sie weitermachen wollen?",
+  "warningNote": "Diese Aktion kann nicht rückgängig gemacht werden.",
+  "website": "Website"
 }

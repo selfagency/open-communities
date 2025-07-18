@@ -4,7 +4,7 @@ import * as z from 'zod';
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 // import { log } from '$lib/utils';
 
-import { t } from '$lib/i18n';
+import * as m from '$lib/paraglide/messages';
 
 import {
 	accessibilitySchema as accessibility,

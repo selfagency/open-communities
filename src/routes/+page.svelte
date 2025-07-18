@@ -3,7 +3,7 @@
 	import Welcome from '$lib/components/global/welcome.svelte';
 	import Congregations from '$lib/components/search/congregations.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { state as appState, setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
@@ -25,7 +25,7 @@
 		>
 			<Dialog.Header>
 				<Dialog.Title class="font-display text-2xl font-normal">
-					{$t('common.home.dialogTitle')}
+					{m.home.dialogTitle}
 				</Dialog.Title>
 				<Dialog.Description>
 					<section class="prose mx-auto my-4">

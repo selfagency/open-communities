@@ -1,4 +1,5 @@
 {
+  "$schema": "https://inlang.com/schema/inlang-message-format",
   "about": "A propos de",
   "accessHealthSafety": "Accès, santé et sécurité",
   "accessibility": {
@@ -28,13 +29,32 @@
     "unclaimed": "Non réclamé"
   },
   "approved": "Approuvé",
+  "cancel": "Annuler",
   "claimThis": "Congrégation des réclamations",
+  "clear": "Clair",
   "clergy": {
     "clergy": "Le clergé",
     "extended": "Dressez la liste de l'équipe du clergé ci-dessous qui dirigera la cérémonie pendant les Yamim Noraim."
   },
+  "confirmPassword": "Confirmer le mot de passe",
   "congregation": "Congrégation",
-  "contact": "Contact",
+  "congregationName": "Nom de la congrégation",
+  "contact": {
+    "account": "Veuillez indiquer l'adresse électronique associée à votre compte.",
+    "contact": "Contact",
+    "contactUs": "Nous contacter",
+    "message": "Message",
+    "options": {
+      "claim": "Je veux revendiquer une congrégation",
+      "delete": "Je souhaite supprimer mon compte",
+      "question": "J'ai une question ou un commentaire",
+      "suggest": "Je souhaite suggérer une modification"
+    },
+    "proof": "Veuillez fournir une preuve de votre lien avec cette congrégation et l'adresse électronique du compte Open Communities auquel vous souhaitez associer la congrégation. Si vous n'avez pas de compte, veuillez d'abord vous inscrire.",
+    "reason": "Motif du contact",
+    "record": "Quelle est la congrégation pour laquelle vous nous contactez ?",
+    "send": "Envoyer"
+  },
   "contactEmail": {
     "contactEmail": "Courriel de contact",
     "extended": "Adresse électronique de la personne de contact mentionnée ci-dessus"
@@ -44,7 +64,10 @@
     "extended": "Nom de la meilleure personne à contacter pour les communications de Rabbis for Ceasefire"
   },
   "contactUrl": "URL de contact",
-  "delete": "Supprimer la congrégation",
+  "continue": "Continuer",
+  "continueToLogin": "Continuer à se connecter",
+  "copied": "Lien copié dans le presse-papiers",
+  "delete": "Supprimer",
   "deleteFailure": "Échec de la suppression de la congrégation.",
   "deleteSuccess": "Congrégation supprimée avec succès.",
   "denomination": {
@@ -70,7 +93,29 @@
   "editNotice": "Si vous apportez des modifications, cette congrégation sera retirée de la liste jusqu'à ce qu'un administrateur puisse approuver vos modifications.",
   "editSuccess": "Congrégation éditée avec succès.",
   "editSuccessNotice": "Merci pour cette mise à jour ! Quelqu'un l'examinera et l'approuvera sous peu ou nous contactera si nécessaire.",
+  "editThing": "Modifier '{{chose}}'",
+  "email": "Courriel",
+  "emailFailure": "Échec de l'envoi du message",
+  "emailOrUrl": "Courriel ou URL",
+  "emailSent": "L'email de réinitialisation a été envoyé. Veuillez vérifier votre courrier électronique pour obtenir des instructions.",
+  "emailSuccess": "Message envoyé avec succès",
+  "emailSuccessNotice": "Merci de nous avoir contactés. Une personne examinera votre message et vous répondra si nécessaire.",
+  "errors": {
+    "401": "Vous n'êtes pas autorisé à consulter cette page",
+    "404": "Page non trouvée",
+    "500": "Une erreur inattendue s'est produite",
+    "congregationFailed": "Échec du chargement des données de congrégation",
+    "countriesFailed": "Échec du chargement des données de localisation",
+    "dataFailed": "Échec du chargement des données",
+    "email": "Adresse électronique invalide",
+    "error": "Erreur",
+    "pageFailed": "Échec du chargement des données de la page",
+    "required": "Ce champ est obligatoire",
+    "url": "URL invalide"
+  },
   "exists": "Une congrégation portant ce nom existe déjà dans cette localité",
+  "filter": "Filtre",
+  "filterBy": "Filtrer par",
   "fit": {
     "clergyMember": "Un membre du clergé est affilié à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
     "extended": "Pourquoi votre congrégation conviendrait-elle aux juifs qui participent au mouvement pour le cessez-le-feu ? Veuillez indiquer d'autres raisons dans le champ \"Autres\".",
@@ -91,6 +136,8 @@
     "extended": "En 50 mots ou moins, décrivez la congrégation et la \"saveur\" rituelle dont les invités feront l'expérience.",
     "flavor": "Saveur"
   },
+  "forgotPassword": "Mot de passe oublié",
+  "formErrors": "Vérifier que le formulaire ne comporte pas d'erreurs.",
   "health": {
     "extended": "Pour les services en personne, veuillez décrire brièvement les protocoles de santé et de masquage COVID dans votre congrégation, ou renvoyer aux directives de la congrégation.",
     "health": "Santé",
@@ -100,21 +147,52 @@
     "notApplicable": "Sans objet, uniquement en ligne",
     "other": "Autre politique COVID"
   },
+  "home": {
+    "author": "Rabbins pour le cessez-le-feu",
+    "blurb": "Célébrez les fêtes de fin d'année au sein d'une communauté juive inclusive et favorable à la paix.",
+    "ceasefire": "Cessez-le-feu maintenant",
+    "credit": "Site de {{chose}}",
+    "dialogTitle": "Un message des rabbins pour le cessez-le-feu",
+    "project": "Une initiative de",
+    "subtitle": "Fêtes de fin d'année 5785",
+    "title": "Communautés ouvertes"
+  },
+  "http": "Doit commencer par `http://` ou `https://`.",
+  "invalidUrl": "URL invalide",
+  "language": "Langue",
   "location": {
     "city": "Ville",
     "country": "Pays",
     "countryCode": "Code pays",
     "latitude": "Latitude",
+    "location": "Localisation",
     "longitude": "Longitude",
     "state": "État/Province",
     "stateCode": "Code de l'État ou de la province"
   },
-  "name": "Nom de la congrégation",
+  "login": "Connexion",
+  "loginFailure": "Échec de la connexion.",
+  "loginSuccess": "Connexion réussie.",
+  "logout": "Déconnexion",
+  "menu": "Menu",
+  "next": "Suivant",
   "notes": {
     "extended": "Y a-t-il autre chose que nous devrions savoir ?",
     "notes": "Notes"
   },
   "nothingFound": "Aucune congrégation n'a été trouvée.",
+  "nothingFoundShort": "Rien n'a été trouvé",
+  "notice": "Avis",
+  "oldPassword": "Ancien mot de passe",
+  "other": "Autres",
+  "otherText": "Autre texte",
+  "password": "Mot de passe",
+  "passwordMismatch": "Les mots de passe ne correspondent pas.",
+  "passwordSuccess": "Le mot de passe a été mis à jour avec succès.",
+  "pending": "En attente d'approbation",
+  "prev": "Prev.",
+  "previous": "Précédent",
+  "privacyPolicy": "Politique de confidentialité",
   "registration": {
     "contact": "Veuillez fournir une adresse électronique ou une URL de site web où les personnes peuvent s'inscrire.",
     "extended": "Quel type d'enregistrement proposez-vous aux invités ?",
@@ -125,6 +203,15 @@
     "slidingScale": "Barème dégressif",
     "suggestedDonation": "Don suggéré"
   },
+  "reloadPage": "Recharger la page",
+  "required": "Exigée",
+  "requiredResponse": "Une réponse est requise",
+  "reset": "Remise à zéro",
+  "resetFailure": "Échec de la réinitialisation du mot de passe.",
+  "resetNotice": "Saisissez votre adresse électronique et si elle existe dans notre système, nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+  "resetPassword": "Réinitialiser le mot de passe",
+  "resettingPassword": "Réinitialisation du mot de passe...",
+  "search": "Recherche",
   "security": {
     "armedSecurity": "Sécurité armée",
     "clergyArmed": "Clergé armé",
@@ -137,6 +224,8 @@
     "security": "Sécurité",
     "unarmedSecurity": "Sécurité non armée"
   },
+  "selectThing": "Sélectionner {{chose}}...",
+  "sendResetEmail": "Envoyer un courriel de réinitialisation",
   "services": {
     "extended": "Quels sont les types de services auxquels les non-membres sont invités à participer ?",
     "hybrid": "Accès en ligne aux services hybrides",
@@ -145,6 +234,38 @@
     "onlineOnly": "En ligne uniquement",
     "services": "Services"
   },
+  "share": "Partager",
+  "signUp": "S'inscrire",
+  "signUpFailure": "N'a pas réussi à s'inscrire.",
+  "signUpInfo": "Créez un compte pour ajouter et gérer les informations de votre congrégation.",
+  "signUpSuccess": "Inscription réussie. Veuillez vérifier votre e-mail pour les instructions de vérification.",
+  "siteCredits": "Crédits",
+  "submission": "Soumission",
+  "submit": "Soumettre",
+  "success": "Votre {{chose}} a réussi",
+  "termsOfService": "Conditions d'utilisation",
+  "thingRequired": "{{chose}} est nécessaire",
+  "title": "Communautés ouvertes",
+  "token": "Jeton",
+  "transfer": {
+    "desc": "Transférer la propriété de cette congrégation à un autre utilisateur.",
+    "transfer": "Transfert"
+  },
   "transferFailure": "Échec du transfert d'une congrégation. L'utilisateur existe-t-il ?",
-  "transferSuccess": "La congrégation a été transférée avec succès."
+  "transferSuccess": "La congrégation a été transférée avec succès.",
+  "unspecified": "Non spécifié",
+  "unverified": "Non vérifié",
+  "updateFailure": "Échec de la mise à jour du compte.",
+  "updateSuccess": "Compte mis à jour avec succès.",
+  "verified": {
+    "extended": "Votre adresse électronique a été vérifiée. Vous pouvez maintenant vous connecter.",
+    "verified": "Vérifié"
+  },
+  "verifyEmail": "Vérifier l'email",
+  "verifyFailure": "Échec de la vérification de l'email.",
+  "verifyFailureNotice": "Le jeton de vérification a déjà été utilisé ou a expiré.",
+  "verifying": "Vérification de l'adresse électronique...",
+  "warning": "Êtes-vous sûr de vouloir continuer ?",
+  "warningNote": "Cette action ne peut être annulée.",
+  "website": "Site web"
 }

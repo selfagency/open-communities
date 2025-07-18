@@ -28,7 +28,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 
 	import Accessibility from './accessibility.svelte';
 	import Contact from './contact.svelte';
@@ -120,7 +120,7 @@
 							>{#if country.name && country.name !== 'United States'},{/if}{/if}
 						{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
 					{:else if services.onlineOnly}
-						{$t('congregation.services.onlineOnly')}
+						{m.services.onlineOnly}
 					{/if}
 				</span>
 
@@ -130,7 +130,7 @@
 							<Badge
 								variant="outline"
 								class="font-normal text-nowrap text-slate-500 hover:bg-slate-100"
-								>{$t('congregation.claimThis')}</Badge
+								>{m.claimThis}</Badge
 							>
 						</a>
 					{/if}
@@ -146,11 +146,11 @@
 										}}
 									>
 										<EditIcon size="16" class="text-slate-500 rtl:mx-1" />
-										<span class="sr-only">{$t('common.edit')}</span>
+										<span class="sr-only">{m.edit}</span>
 									</Button>
 								</Tooltip.Trigger>
 								<Tooltip.Content>
-									<span class="text-nowrap">{$t('common.edit')}</span>
+									<span class="text-nowrap">{m.edit}</span>
 								</Tooltip.Content>
 							</Tooltip.Root>
 						</Tooltip.Provider>
@@ -163,15 +163,15 @@
 									class="h-8 px-2 py-0"
 									onclick={() => {
 										copyText(`https://opencommunities.info?id=${congregation.id}`);
-										toast.success($t('common.copied'));
+										toast.success(m.copied);
 									}}
 								>
 									<ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
-									<span class="sr-only">{$t('common.share')}</span>
+									<span class="sr-only">{m.share}</span>
 								</Button>
 							</Tooltip.Trigger>
 							<Tooltip.Content>
-								<span class="text-nowrap">{$t('common.share')}</span>
+								<span class="text-nowrap">{m.share}</span>
 							</Tooltip.Content>
 						</Tooltip.Root>
 					</Tooltip.Provider>
@@ -181,11 +181,9 @@
 
 		<Tabs.Root bind:value={tab} class="w-full">
 			<Tabs.List class="my-4 w-full">
-				<Tabs.Trigger value="about" class="w-1/2">{$t('congregation.about')}</Tabs.Trigger>
-				<Tabs.Trigger value="services" class="w-1/2"
-					>{$t('congregation.services.services')}</Tabs.Trigger
-				>
-				<Tabs.Trigger value="details" class="w-1/2">{$t('congregation.details')}</Tabs.Trigger>
+				<Tabs.Trigger value="about" class="w-1/2">{m.about}</Tabs.Trigger>
+				<Tabs.Trigger value="services" class="w-1/2">{m.services.services}</Tabs.Trigger>
+				<Tabs.Trigger value="details" class="w-1/2">{m.details}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="about">
 				{#if congregation.flavor}
@@ -195,10 +193,10 @@
 				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if congregation.denomination}
 						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{$t('congregation.denomination.affiliation')}</h2>
+							<h2 class="label">{m.denomination.affiliation}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
-							{$t(`congregation.denomination.${congregation.denomination}`)}
+							{m.denomination[congregation.denomination]}
 						</div>
 					{/if}
 
@@ -222,7 +220,7 @@
 				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if congregation.clergy}
 						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{$t('congregation.clergy.clergy')}</h2>
+							<h2 class="label">{m.clergy.clergy}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
 							{congregation.clergy}
@@ -244,10 +242,10 @@
 				<div class="grid grid-cols-12 gap-4 text-sm">
 					{#if fit.flag}
 						<div class="col-span-3">
-							<h2 class="label">{$t('congregation.fit.flag.short')}</h2>
+							<h2 class="label">{m.fit.flag.short}</h2>
 						</div>
 						<div class="col-span-9">
-							{$t(`congregation.fit.flag.${fit.flag}`)}
+							{m.fit.flag[fit.flag]}
 						</div>
 					{/if}
 
@@ -273,7 +271,7 @@
 							<Separator class="col-span-12" />
 						{/if}
 						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{$t('congregation.notes.notes')}</h2>
+							<h2 class="label">{m.notes.notes}</h2>
 						</div>
 						<div class="col-span-9 flex flex-row items-start justify-start">
 							<p>{@html notes}</p>

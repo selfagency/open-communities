@@ -8,7 +8,7 @@
 	import { waitForTheElement } from 'wait-for-the-element';
 
 	import { dev } from '$app/environment';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -35,7 +35,7 @@
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error($t('auth.verifyFailure'));
+				toast.error(m.verifyFailure);
 			}
 		}
 	});
@@ -59,7 +59,7 @@
 	out:fade={{ delay: 0, duration: 100 }}
 	class="space-y-4"
 >
-	<div>{$t('auth.verifying')}</div>
+	<div>{m.verifying}</div>
 
 	{#if $formData.token && $formData.type}
 		<form id="verify" method="POST" action="?/acct" use:enhance>

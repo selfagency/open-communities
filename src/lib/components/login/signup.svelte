@@ -13,7 +13,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -48,7 +48,7 @@
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error($t('auth.signUpFailure'));
+				toast.error(m.signUpFailure);
 			}
 		}
 	});
@@ -82,7 +82,7 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal"
-			>{verifying ? $t('auth.verifyEmail') : $t('auth.signUp')}</Card.Title
+			>{verifying ? m.verifyEmail') : $t('auth.signUp}</Card.Title
 		>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
@@ -91,14 +91,14 @@
 			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-				{$t('auth.verified.extended')}
+				{m.verified.extended}
 			</span>
 		{:else if success}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-				{$t('auth.signUpSuccess')}
+				{m.signUpSuccess}
 			</span>
 		{:else}
-			<div class="mb-4">{$t('auth.signUpInfo')}</div>
+			<div class="mb-4">{m.signUpInfo}</div>
 
 			<form
 				method="POST"
@@ -111,7 +111,7 @@
 				<Form.Field {form} name="name">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{$t('auth.name')}</Form.Label>
+							<Form.Label>{m.name}</Form.Label>
 							<Input {...props} bind:value={$formData.name} autocomplete="name" />
 						{/snippet}
 					</Form.Control>
@@ -121,7 +121,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{$t('common.email')}</Form.Label>
+							<Form.Label>{m.email}</Form.Label>
 							<Input {...props} bind:value={$formData.email} autocomplete="email" />
 						{/snippet}
 					</Form.Control>
@@ -131,7 +131,7 @@
 				<Form.Field {form} name="password">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{$t('auth.password')}</Form.Label>
+							<Form.Label>{m.password}</Form.Label>
 							<Input
 								{...props}
 								bind:value={$formData.password}
@@ -146,7 +146,7 @@
 				<Form.Field {form} name="passwordConfirm">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
+							<Form.Label>{m.confirmPassword}</Form.Label>
 							<Input
 								{...props}
 								bind:value={$formData.passwordConfirm}
@@ -165,7 +165,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{$t('auth.signUp')}</Form.Button>
+				<Form.Button>{m.signUp}</Form.Button>
 			</form>
 
 			{#if dev}

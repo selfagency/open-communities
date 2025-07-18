@@ -12,7 +12,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -44,7 +44,7 @@
 		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
-				toast.success($t('auth.loginSuccess'));
+				toast.success(m.loginSuccess);
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
@@ -61,7 +61,7 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal">
-			<span>{resetting ? $t('auth.resetPassword') : $t('auth.login')}</span>
+			<span>{resetting ? m.resetPassword') : $t('auth.login}</span>
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
@@ -77,14 +77,14 @@
 			{/if}
 			{#if sentSuccess && !resetSuccess}
 				<div class="flex flex-col items-center justify-center space-y-4">
-					<span>{$t('auth.emailSent')}</span>
+					<span>{m.emailSent}</span>
 				</div>
 			{/if}
 			{#if resetSuccess}
 				<div class="flex flex-col items-center justify-center space-y-4">
-					<span>{$t('auth.passwordSuccess')}</span>
+					<span>{m.passwordSuccess}</span>
 					<span role="button" tabindex="0" onclick={() => resetter()} onkeypress={() => resetter()}>
-						{$t('auth.continueToLogin')} →
+						{m.continueToLogin} →
 					</span>
 				</div>
 			{/if}
@@ -93,7 +93,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{$t('common.email')}</Form.Label>
+							<Form.Label>{m.email}</Form.Label>
 							<Input {...props} bind:value={$formData.email} autocomplete="email" />
 						{/snippet}
 					</Form.Control>
@@ -103,7 +103,7 @@
 				<Form.Field {form} name="password">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{$t('auth.password')}</Form.Label>
+							<Form.Label>{m.password}</Form.Label>
 							<Input
 								{...props}
 								bind:value={$formData.password}
@@ -115,9 +115,9 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{$t('auth.login')}</Form.Button>
+				<Form.Button>{m.login}</Form.Button>
 				<Button variant="link" onclick={() => (resetting = true)}
-					>{$t('auth.forgotPassword')}</Button
+					>{m.forgotPassword}</Button
 				>
 			</form>
 

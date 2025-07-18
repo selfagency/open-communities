@@ -6,8 +6,8 @@
 
 	import Combobox from '$lib/components/global/combobox.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { t } from '$lib/i18n';
 	import { Location } from '$lib/location';
+	import * as m from '$lib/paraglide/messages';
 	import { Search } from '$lib/search';
 	/* endregion imports */
 
@@ -53,9 +53,7 @@
 				<Combobox
 					items={$locationState.options.countryOptions}
 					bind:value={country}
-					placeholder={$t('common.selectThing', {
-						thing: $t('congregation.location.country').toLowerCase()
-					})}
+					placeholder={m.selectThing(m.location.country.toLowerCase())}
 					disabled={!$locationState.options?.countryOptions?.length}
 					on:change={() => setCountry(country)}
 				/>
@@ -65,9 +63,7 @@
 				<Combobox
 					items={$locationState.options.stateOptions}
 					bind:value={province}
-					placeholder={$t('common.selectThing', {
-						thing: $t('congregation.location.state').toLowerCase()
-					})}
+					placeholder={m.selectThing(m.location.state.toLowerCase())}
 					disabled={!country && !$locationState.options?.stateOptions?.length}
 					on:change={() => setState(province)}
 				/>
@@ -77,9 +73,7 @@
 				<Combobox
 					items={$locationState.options.cityOptions}
 					bind:value={city}
-					placeholder={$t('common.selectThing', {
-						thing: $t('congregation.location.city').toLowerCase()
-					})}
+					placeholder={m.selectThing(m.location.city.toLowerCase())}
 					disabled={!province && !$locationState.options?.cityOptions?.length}
 					on:change={() => setCity(city)}
 				/>
@@ -101,7 +95,7 @@
 					class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700"
 				>
 					<ResetIcon size="16" class="rtl:mx-1" />
-					<span>{$t('common.reset')}</span>
+					<span>{m.reset}</span>
 				</span>
 			</Button>
 		</span>

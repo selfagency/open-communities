@@ -9,7 +9,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 	/*  endregion imports */
@@ -65,7 +65,7 @@
 		</Button>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56">
-		<DropdownMenu.Label>{$t('common.language')}</DropdownMenu.Label>
+		<DropdownMenu.Label>{m.language}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.RadioGroup bind:value={lang}>
 			{#each locales as { label, value }, i (i)}

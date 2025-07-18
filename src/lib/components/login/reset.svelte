@@ -10,7 +10,7 @@
 	import { dev } from '$app/environment';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -46,7 +46,7 @@
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error($t('auth.resetFailure'));
+				toast.error(m.resetFailure);
 			}
 		}
 	});
@@ -74,7 +74,7 @@
 			<Form.Field {form} name="password">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{$t('auth.password')}</Form.Label>
+						<Form.Label>{m.password}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.password}
@@ -89,7 +89,7 @@
 			<Form.Field {form} name="passwordConfirm">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
+						<Form.Label>{m.confirmPassword}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.passwordConfirm}
@@ -102,21 +102,21 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{$t('auth.resetPassword')}</Form.Button>
+			<Form.Button>{m.resetPassword}</Form.Button>
 		{:else}
-			<p class="mb-4">{$t('auth.resetNotice')}</p>
+			<p class="mb-4">{m.resetNotice}</p>
 
 			<Form.Field {form} name="email">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{$t('common.email')}</Form.Label>
+						<Form.Label>{m.email}</Form.Label>
 						<Input {...props} bind:value={$formData.email} required autocomplete="email" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{$t('auth.sendResetEmail')}</Form.Button>
+			<Form.Button>{m.sendResetEmail}</Form.Button>
 		{/if}
 	</form>
 

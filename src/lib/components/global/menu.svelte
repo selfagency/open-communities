@@ -6,7 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Button } from '$lib/components/ui/button';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { state as appState } from '$lib/stores';
 
 	import Locale from './locale.svelte';
@@ -35,9 +35,7 @@
 				await goto(`/edit?id=${user?.congregation}`);
 			}}
 		>
-			{mode === 'full' && $appState.isMobile
-				? $t('congregation.edit')
-				: $t('congregation.editCongregation')}
+			{mode === 'full' && $appState.isMobile ? m.edit : m.editCongregation}
 		</Button>
 	{:else}
 		<Button
@@ -47,9 +45,7 @@
 				await goto('/add');
 			}}
 		>
-			{mode === 'full' && $appState.isMobile
-				? $t('congregation.add')
-				: $t('congregation.addCongregation')}
+			{mode === 'full' && $appState.isMobile ? m.add : m.addCongregation}
 		</Button>
 	{/if}
 
@@ -61,7 +57,7 @@
 				await goto('/logout');
 			}}
 		>
-			{$t('auth.logout')}
+			{m.logout}
 		</Button>
 	{:else}
 		<Button
@@ -71,8 +67,8 @@
 				await goto('/login');
 			}}
 		>
-			{$t('auth.login')}
-			{mode === 'full' && $appState.isMobile ? '' : `/ ${$t('auth.signUp')}`}
+			{m.login}
+			{mode === 'full' && $appState.isMobile ? '' : `/ ${m.signUp}`}
 		</Button>
 	{/if}
 

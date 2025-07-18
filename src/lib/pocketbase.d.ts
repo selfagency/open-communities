@@ -21,7 +21,7 @@ export enum Collections {
 	Users = "users",
 }
 
-export enum CongregationMetaDenominationOptions {
+export enumMetaDenominationOptions {
 	"conservative" = "conservative",
 	"humanist" = "humanist",
 	"multiDenominational" = "multiDenominational",
@@ -33,7 +33,7 @@ export enum CongregationMetaDenominationOptions {
 	"renewal" = "renewal",
 	"unaffiliated" = "unaffiliated",
 }
-export enum CongregationsDenominationOptions {
+export enumsDenominationOptions {
 	"conservative" = "conservative",
 	"humanist" = "humanist",
 	"multiDenominational" = "multiDenominational",

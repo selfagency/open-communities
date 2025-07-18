@@ -22,7 +22,7 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { Search } from '$lib/search';
 	/* endregion imports */
 
@@ -135,7 +135,7 @@
 	<Popover.Trigger>
 		<Button variant="outline" class="space-x-2 text-slate-500 rtl:mx-1">
 			<FilterIcon size="18" class="rtl:mx-1" />
-			<span>{$t('common.filter')}</span>
+			<span>{m.filter}</span>
 		</Button>
 	</Popover.Trigger>
 	<Popover.Content>
@@ -165,7 +165,7 @@
 									{/if}
 								</span>
 								<span class="filter-label">
-									<span>{$t(`congregation.${category}.${category}`)}</span>
+									<span>{m[category][category]}</span>
 								</span>
 								<span class="filter-status">
 									<StatusIcon class="h-4 w-4" />
@@ -186,9 +186,7 @@
 										/>
 										<Label for={`${category}_${option}`}>
 											<span class="filter-label text-slate-500">
-												{option === 'other'
-													? $t('common.other')
-													: $t(`congregation.${category}.${option}`)}
+												{option === 'other' ? m.other : m[category][option]}
 											</span>
 										</Label>
 									</span>
@@ -200,7 +198,7 @@
 			{/each}
 			<Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={initFilters}>
 				<span class="filter-icon"><CloseIcon size="16" /></span>
-				<span class="filter-label"><span>{$t('common.reset')}</span></span>
+				<span class="filter-label"><span>{m.reset}</span></span>
 			</Button>
 		</div>
 	</Popover.Content>
