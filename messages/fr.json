@@ -101,9 +101,9 @@
   "emailSuccess": "Message envoyé avec succès",
   "emailSuccessNotice": "Merci de nous avoir contactés. Une personne examinera votre message et vous répondra si nécessaire.",
   "errors": {
-    "401": "Vous n'êtes pas autorisé à consulter cette page",
-    "404": "Page non trouvée",
-    "500": "Une erreur inattendue s'est produite",
+    "_401": "Vous n'êtes pas autorisé à consulter cette page",
+    "_404": "Page non trouvée",
+    "_500": "Une erreur inattendue s'est produite",
     "congregationFailed": "Échec du chargement des données de congrégation",
     "countriesFailed": "Échec du chargement des données de localisation",
     "dataFailed": "Échec du chargement des données",

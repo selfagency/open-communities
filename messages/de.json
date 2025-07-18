@@ -101,9 +101,9 @@
   "emailSuccess": "Nachricht erfolgreich gesendet",
   "emailSuccessNotice": "Danke, dass Sie sich gemeldet haben. Jemand wird Ihre Nachricht prüfen und bei Bedarf antworten.",
   "errors": {
-    "401": "Sie sind nicht berechtigt, diese Seite zu sehen",
-    "404": "Seite nicht gefunden",
-    "500": "Ein unerwarteter Fehler ist aufgetreten",
+    "_401": "Sie sind nicht berechtigt, diese Seite zu sehen",
+    "_404": "Seite nicht gefunden",
+    "_500": "Ein unerwarteter Fehler ist aufgetreten",
     "congregationFailed": "Das Laden der Gemeindedaten ist fehlgeschlagen",
     "countriesFailed": "Standortdaten konnten nicht geladen werden",
     "dataFailed": "Daten konnten nicht geladen werden",

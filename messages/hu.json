@@ -101,9 +101,9 @@
   "emailSuccess": "Sikeresen elküldött üzenet",
   "emailSuccessNotice": "Köszönjük, hogy felkeresett. Valaki átnézi az üzenetét, és szükség szerint válaszol.",
   "errors": {
-    "401": "Ön nem jogosult az oldal megtekintésére",
-    "404": "Az oldal nem található",
-    "500": "Váratlan hiba történt",
+    "_401": "Ön nem jogosult az oldal megtekintésére",
+    "_404": "Az oldal nem található",
+    "_500": "Váratlan hiba történt",
     "congregationFailed": "Nem sikerült betölteni a gyülekezet adatait",
     "countriesFailed": "Nem sikerült betölteni a helyadatokat",
     "dataFailed": "Sikertelen adatbetöltés",

@@ -101,9 +101,9 @@
   "emailSuccess": "Bericht succesvol verzonden",
   "emailSuccessNotice": "Bedankt voor het contact. Iemand zal je bericht bekijken en indien nodig reageren.",
   "errors": {
-    "401": "U bent niet bevoegd om deze pagina te bekijken",
-    "404": "Pagina niet gevonden",
-    "500": "Er is een onverwachte fout opgetreden",
+    "_401": "U bent niet bevoegd om deze pagina te bekijken",
+    "_404": "Pagina niet gevonden",
+    "_500": "Er is een onverwachte fout opgetreden",
     "congregationFailed": "Mislukt bij het laden van gemeentegegevens",
     "countriesFailed": "Locatiegegevens zijn niet geladen",
     "dataFailed": "Geen gegevens geladen",
