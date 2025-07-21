@@ -68,14 +68,14 @@
 	<Popover.Root bind:open>
 		<Popover.Trigger
 			bind:ref={triggerRef}
-			class="button w-full justify-between"
+			class="button w-full flex-row items-center !justify-between outline"
 			role="combobox"
 			aria-expanded={open}
 		>
-			{selectedValueLabel}
+			<span>{selectedValueLabel}</span>
 			<ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
 		</Popover.Trigger>
-		<Popover.Content class="w-full p-0">
+		<Popover.Content style="width: {triggerRef?.offsetWidth}px;" class="p-0">
 			{#if currentItems.length > 0}
 				<Command.Root>
 					<Command.Input {placeholder} />

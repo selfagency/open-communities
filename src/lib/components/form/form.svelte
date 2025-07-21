@@ -196,7 +196,7 @@
 			hasErrors = false;
 
 			if (result.type === 'success') {
-				toast.success(mode === 'edit' ? m.editSuccess : m.addSuccess);
+				toast.success(mode === 'edit' ? m.editSuccess() : m.addSuccess());
 				if (user?.admin) {
 					await goto('/', { invalidateAll: true });
 				} else {
@@ -211,7 +211,7 @@
 				errors.set(result.data.form.errors);
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error(mode === 'edit' ? m.editFailure : m.addFailure);
+				toast.error(mode === 'edit' ? m.editFailure() : m.addFailure());
 			}
 		}
 	});
@@ -312,17 +312,17 @@
 					<Alert.Root class="bg-slate-50">
 						<WarningIcon size="18" />
 						<Alert.Description class="mt-0.5">
-							{m.editNotice}
+							{m.editNotice()}
 						</Alert.Description>
 					</Alert.Root>
 				{/if}
 
 				{#if mode === 'add' && addSuccess}
-					<p>{m.addSuccessNotice}</p>
+					<p>{m.addSuccessNotice()}</p>
 				{/if}
 
 				{#if mode === 'edit' && editSuccess}
-					<p>{m.editSuccessNotice}</p>
+					<p>{m.editSuccessNotice()}</p>
 				{/if}
 
 				{#if !addSuccess && !editSuccess}
@@ -330,7 +330,7 @@
 						<span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
 							<Alert.Root variant="destructive" class="my-4 bg-red-50">
 								<WarningIcon size="18" />
-								<Alert.Description class="mt-0.5">{m.formErrors}</Alert.Description>
+								<Alert.Description class="mt-0.5">{m.formErrors()}</Alert.Description>
 							</Alert.Root>
 						</span>
 					{/if}
@@ -340,7 +340,7 @@
 						<Accordion.Item value="congregation">
 							<Accordion.Trigger>
 								<span class="font-display text-lg font-normal">
-									{m}
+									{m.congregation()}
 									{#if isEmpty($formData.name) || isEmpty($formData.clergy) || isEmpty($formData.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
 										<span class="text-red-500">*</span>
 									{/if}
@@ -351,7 +351,7 @@
 									<Form.Control>
 										{#snippet children(props)}
 											<Form.Label
-												>{m.name}
+												>{m.name()}
 												<Required set={!isEmpty($formData.name)} /></Form.Label
 											>
 											<Input
@@ -426,8 +426,8 @@
 								<Form.Field {form} name="contactUrl">
 									<Form.Control>
 										{#snippet children(props)}
-											<Form.Label>{m.website}</Form.Label>
-											<div class="text-xs text-slate-500">{m.http}</div>
+											<Form.Label>{m.website()}</Form.Label>
+											<div class="text-xs text-slate-500">{m.http()}</div>
 											<Input
 												{...props}
 												bind:value={$formData.contactUrl}
@@ -461,7 +461,10 @@
 												bind:value={$formData.denomination}
 											>
 												<Select.Trigger class="w-full" {...props}>
-													{m[`denomination.${$formData.denomination}`]()}
+													{#if $formData?.denomination}
+														{@const denom = `denomination.${$formData.denomination}`}
+														{m[denom]()}
+													{/if}
 												</Select.Trigger>
 												<Select.Content {...props}>
 													{#each denominations as { label, value }, i (i)}
@@ -495,7 +498,7 @@
 									<Form.FieldErrors />
 								</Form.Field>
 								<div class="mt-4 flex flex-row items-center justify-end">
-									<Button variant="secondary" onclick={() => (view = 'fit')}>{m.next} →</Button>
+									<Button variant="secondary" onclick={() => (view = 'fit')}>{m.next()} →</Button>
 								</div>
 							</Accordion.Content>
 						</Accordion.Item>
@@ -506,7 +509,7 @@
 							<Accordion.Item value="fit">
 								<Accordion.Trigger>
 									<span class="font-display text-lg font-normal">
-										{m['fit.fit']}
+										{m['fit.fit']()}
 										{#if !hasFit || fitErrors}
 											<span class="text-red-500">*</span>
 										{/if}
@@ -592,7 +595,7 @@
 											</Form.Field>
 										{/if}
 										{#if fitErrors}
-											<span class="text-xs text-red-500">{m.requiredResponse}</span>
+											<span class="text-xs text-red-500">{m.requiredResponse()}</span>
 										{/if}
 									</div>
 
@@ -604,7 +607,7 @@
 													class="question my-4 flex flex-col items-start justify-start space-y-2"
 												>
 													<span>{m['fit.flag.extended']()}</span>
-													<small class="leading-1">{m['fit.flag.note']()}</small>
+													<small>{m['fit.flag.note']()}</small>
 												</div>
 												<RadioGroup.Root
 													{...props}
@@ -631,7 +634,7 @@
 
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'services')}
-											>{m.next} →</Button
+											>{m.next()} →</Button
 										>
 									</div>
 								</Accordion.Content>
@@ -724,7 +727,7 @@
 															<Checkbox {...props} bind:checked={$formData.services.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.other}</Form.Label>
+															<Form.Label>{m.other()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -742,12 +745,12 @@
 											</Form.Field>
 										{/if}
 										{#if servicesErrors}
-											<span class="text-xs text-red-500">{m.requiredResponse}</span>
+											<span class="text-xs text-red-500">{m.requiredResponse()}</span>
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'accessibility')}>
-											{m.next} →
+											{m.next()} →
 										</Button>
 									</div>
 								</Accordion.Content>
@@ -907,7 +910,7 @@
 															<Checkbox {...props} bind:checked={$formData.accessibility.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.other}</Form.Label>
+															<Form.Label>{m.other()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -927,7 +930,8 @@
 									</div>
 
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" onclick={() => (view = 'health')}>{m.next} →</Button
+										<Button variant="secondary" onclick={() => (view = 'health')}
+											>{m.next()} →</Button
 										>
 									</div>
 								</Accordion.Content>
@@ -1000,7 +1004,7 @@
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'sescurity')}>
-											{m.next} →
+											{m.next()} →
 										</Button>
 									</div>
 								</Accordion.Content>
@@ -1131,7 +1135,7 @@
 															<Checkbox {...props} bind:checked={$formData.security.other} />
 														</span>
 														<span class="-mt-0.5">
-															<Form.Label>{m.other}</Form.Label>
+															<Form.Label>{m.other()}</Form.Label>
 														</span>
 													</span>
 												{/snippet}
@@ -1149,7 +1153,7 @@
 											</Form.Field>
 										{/if}
 										{#if securityErrors}
-											<span class="text-xs text-red-500">{m.requiredResponse}</span>
+											<span class="text-xs text-red-500">{m.requiredResponse()}</span>
 										{/if}
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
@@ -1233,7 +1237,7 @@
 										</Form.Field>
 									{/if}
 									{#if registrationErrors?.registrationType}
-										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse}</span>
+										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse()}</span>
 									{/if}
 									<div class="question my-4" class:error={registrationInvalid}>
 										{m['registration.contact']()}
@@ -1245,7 +1249,7 @@
 									<Form.Field {form} name="registration_email">
 										<Form.Control
 											>{#snippet children(props)}
-												<Form.Label for="registration_email">{m.email}</Form.Label>
+												<Form.Label for="registration_email">{m.email()}</Form.Label>
 												<Input
 													{...props}
 													bind:value={$formData.registration.email}
@@ -1276,12 +1280,12 @@
 
 									{#if registrationInvalid}
 										<span class="mt-4 block text-xs text-red-500">
-											{m.thingRequired({ thing: m.emailOrUrl })}
+											{m.thingRequired({ thing: m.emailOrUrl() })}
 										</span>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'contact')}
-											>{m.next} →</Button
+											>{m.next()} →</Button
 										>
 									</div>
 								</Accordion.Content>
@@ -1335,7 +1339,7 @@
 									>{#snippet children(props)}
 										<span class="flex flex-row items-start justify-start space-x-2">
 											<span>
-												<Form.Label><strong>{m.approved}</strong></Form.Label>
+												<Form.Label><strong>{m.approved()}</strong></Form.Label>
 											</span>
 											<span>
 												<Switch {...props} bind:checked={$formData.visible} />
@@ -1393,14 +1397,14 @@
 								}
 							}}
 						>
-							{m.reset}
+							{m.reset()}
 						</Button>
 						<Form.Button
 							onclick={(e) => {
 								e.preventDefault();
 								e.stopPropagation();
 								form.submit(document.getElementById('addEdit'));
-							}}>{m.submit}</Form.Button
+							}}>{m.submit()}</Form.Button
 						>
 					</div>
 				</div>

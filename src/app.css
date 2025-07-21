@@ -121,10 +121,13 @@
 		@apply border-border;
 	}
 	body {
-		@apply text-foreground max-w-[100vw] min-w-[320px] bg-slate-50 pt-4;
+		@apply text-foreground max-w-[100vw] min-w-[320px] bg-slate-50 pt-4 leading-6;
 	}
 	.label {
-		@apply font-display pointer-events-none leading-6 text-slate-600;
+		@apply font-display pointer-events-none text-slate-600;
+	}
+	label {
+		@apply !leading-6;
 	}
 }
 

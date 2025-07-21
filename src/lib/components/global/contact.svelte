@@ -112,7 +112,7 @@
 			<form
 				method="POST"
 				use:enhance
-				class="space-y-2"
+				class="space-y-4"
 				in:fade={{ delay: 200, duration: 100 }}
 				out:fade={{ delay: 0, duration: 100 }}
 			>

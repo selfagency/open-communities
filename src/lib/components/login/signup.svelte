@@ -82,7 +82,7 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal"
-			>{verifying ? m.verifyEmail : m.signUp}</Card.Title
+			>{verifying ? m.verifyEmail() : m.signUp()}</Card.Title
 		>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
