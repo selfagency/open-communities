@@ -268,5 +268,6 @@
   "verifying": "E-mail cím ellenőrzése...",
   "warning": "Biztos, hogy folytatni akarod?",
   "warningNote": "Ezt a műveletet nem lehet visszacsinálni.",
-  "website": "Honlap"
+  "website": "Honlap",
+  "languageChanged": "Nyelvváltás sikeresen megtörtént"
 }

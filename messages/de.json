@@ -268,5 +268,6 @@
   "verifying": "Überprüfung der E-Mail-Adresse...",
   "warning": "Sind Sie sicher, dass Sie weitermachen wollen?",
   "warningNote": "Diese Aktion kann nicht rückgängig gemacht werden.",
-  "website": "Website"
+  "website": "Website",
+  "languageChanged": "Sprache erfolgreich geändert"
 }

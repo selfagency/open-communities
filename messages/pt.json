@@ -268,5 +268,6 @@
   "verifying": "Verificar o endereço de correio eletrónico...",
   "warning": "Tens a certeza de que queres continuar?",
   "warningNote": "Esta ação não pode ser anulada.",
-  "website": "Sítio Web"
+  "website": "Sítio Web",
+  "languageChanged": "Pomyślnie zmieniono język"
 }

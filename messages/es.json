@@ -267,5 +267,6 @@
   "verifying": "Verificando la dirección de correo electrónico...",
   "warning": "¿Seguro que quieres continuar?",
   "warningNote": "Esta acción no puede deshacerse.",
-  "website": "Página web"
+  "website": "Página web",
+  "languageChanged": "El idioma se cambió exitosamente"
 }

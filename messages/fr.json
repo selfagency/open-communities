@@ -267,5 +267,6 @@
   "verifying": "Vérification de l'adresse électronique...",
   "warning": "Êtes-vous sûr de vouloir continuer ?",
   "warningNote": "Cette action ne peut être annulée.",
-  "website": "Site web"
+  "website": "Site web",
+  "languageChanged": "Langue modifiée avec succès"
 }

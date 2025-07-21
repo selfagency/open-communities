@@ -1,16 +1,19 @@
 <script lang="ts">
 	/* region imports */
 	import LocaleIcon from 'lucide-svelte/icons/languages';
+	import { onMount, tick } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
 	import type { UsersLangOptions } from '$lib/pocketbase.d';
 
+	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import * as m from '$lib/paraglide/messages';
-	import { setState } from '$lib/stores';
-	// import { log } from '$lib/utils';
+	import { setLocale } from '$lib/paraglide/runtime';
+	import { log } from '$lib/utils';
 	/*  endregion imports */
 
 	/* region variables */
@@ -32,17 +35,45 @@
 
 	// locals
 	let hovering = $state(false);
-	let lang = $state(page.data.user?.lang || 'en') as UsersLangOptions;
+	let newLang = $state('en' as UsersLangOptions);
+
+	const lang = $derived(page.data.lang);
 	/* endregion variables */
+
+	/* region lifecycle */
+	onMount(async () => {
+		await tick();
+		newLang = lang;
+	});
 
 	/* region reactivity */
 	$effect(() => {
-		if (lang !== page.data.user?.lang) {
-			setState({ lang });
+		if (newLang !== lang) {
+			updateLang();
 		}
 	});
-
 	/* endregion reactivity */
+
+	/* region methods */
+	async function updateLang() {
+		try {
+			await fetch('/user/lang', {
+				body: JSON.stringify({ lang: newLang, user: page.data.user?.id }),
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: 'POST'
+			});
+
+			toast.success(m.languageChanged());
+			await invalidateAll();
+			setLocale(newLang);
+		} catch (error) {
+			log.error('failed to update user language', error);
+		}
+	}
+
+	/* endregion methods */
 </script>
 
 <DropdownMenu.Root>
@@ -65,7 +96,7 @@
 	<DropdownMenu.Content class="w-56">
 		<DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.RadioGroup bind:value={lang}>
+		<DropdownMenu.RadioGroup bind:value={newLang}>
 			{#each locales as { label, value }, i (i)}
 				<DropdownMenu.RadioItem {value} class="flex flex-row items-center justify-start space-x-2">
 					<Badge variant="outline" class="text-xs font-normal">{value.toUpperCase()}</Badge>

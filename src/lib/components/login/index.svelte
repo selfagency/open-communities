@@ -44,7 +44,7 @@
 		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
-				toast.success(m.loginSuccess);
+				toast.success(m.loginSuccess());
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);

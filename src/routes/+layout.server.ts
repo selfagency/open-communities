@@ -1,15 +1,16 @@
 /* region imports */
 import { handleError } from '$lib/server/api';
+// import { log } from '$lib/server/logger';
 /* endregion imports */
 
-export async function load({ locals }) {
+export async function load({ cookies, locals }) {
 	const { api } = locals;
 	const user = api.authStore.record;
-
-	locals.log.info('user', user);
+	const lang = cookies.get('lang') || user?.lang || 'en';
 
 	try {
 		return {
+			lang,
 			user
 		};
 	} catch (err) {

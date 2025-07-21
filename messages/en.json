@@ -268,5 +268,6 @@
   "verifying": "Verifying email address…",
   "warning": "Are you sure you want to continue?",
   "warningNote": "This action cannot be undone.",
-  "website": "Website"
+  "website": "Website",
+  "languageChanged": "Successfully changed language"
 }
