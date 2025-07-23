@@ -83,7 +83,12 @@
 						<Command.Empty>No results found.</Command.Empty>
 						<Command.Group>
 							{#each currentItems as item (item.id)}
-								<Command.Item value={item.label} onSelect={() => handleSelect(item.id)}>
+								<Command.Item
+									value={item.label}
+									onSelect={() => {
+										handleSelect(item.id);
+									}}
+								>
 									<CheckIcon class={cn('mr-2 size-4', value !== item.id && 'text-transparent')} />
 									{item.label}
 								</Command.Item>

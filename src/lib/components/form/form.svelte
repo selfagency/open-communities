@@ -117,20 +117,20 @@
 
 	async function handleCountryChange(e: CustomEvent) {
 		country = e.detail.value;
-		await setCountry(country);
+		await setCountry(e.detail.value);
 		province = '';
 		city = '';
 	}
 
 	async function handleStateChange(e: CustomEvent) {
 		province = e.detail.value;
-		await setState(province);
+		await setState(e.detail.value);
 		city = '';
 	}
 
 	function handleCityChange(e: CustomEvent) {
 		city = e.detail.value;
-		setCity(city);
+		setCity(e.detail.value);
 	}
 
 	function initData() {
@@ -251,31 +251,17 @@
 			initData();
 			loading = false;
 		} else {
-			const location = (congregation as CongregationMetaRecord)?.location as LocationMeta;
+			if (!user?.admin) {
+				$formData.visible = false;
+			}
 
-			city = location.city?.id as string;
-			province = location.state?.id as string;
-			country = location.country?.id as string;
-
-			await loadLocation({
-				city,
-				country,
-				state: province
-			} as LocationRecord);
-
-			loading = false;
-		}
-
-		if (!user?.admin) {
-			$formData.visible = false;
-		}
-
-		if (browser) {
-			await sleep(500);
-			const widget = document.querySelector('cap-widget');
-			widget?.addEventListener('solve', function (e) {
-				$formData.captcha = e.detail.token;
-			});
+			if (browser) {
+				await sleep(500);
+				const widget = document.querySelector('cap-widget');
+				widget?.addEventListener('solve', function (e) {
+					$formData.captcha = e.detail.token;
+				});
+			}
 		}
 	});
 	/* endregion lifecycle */
@@ -288,17 +274,6 @@
 			});
 		} else {
 			title = mode === 'edit' ? m.editThing({ thing: $formData.name }) : m.addCongregation();
-		}
-	});
-
-	$effect(() => {
-		if ($location?.record || congregation?.location) {
-			let loc = ($location.record || congregation.location) as LocationMeta;
-			$formData.location = {
-				city: loc.city?.id,
-				country: loc.country?.id,
-				state: loc.state?.id
-			};
 		}
 	});
 
