@@ -39,7 +39,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@types/eslint": "^9.6.1",
     "@types/node": "^20.19.9",
-    "@types/web": "^0.0.249",
+    "@types/web": "^0.0.253",
     "@vite-pwa/sveltekit": "1.0.0",
     "bits-ui": "2.8.11",
     "clsx": "^2.1.1",
@@ -63,7 +63,7 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "radashi": "12.6.0",
     "sqlite3": "^5.1.7",
-    "svelte": "5.36.7",
+    "svelte": "5.36.13",
     "svelte-check": "^4.3.0",
     "svelte-copy": "2.0.0",
     "svelte-maplibre": "1.2.0",
@@ -85,7 +85,7 @@
     "zod": "4.0.5"
   },
   "engines": {
-    "node": "20.19"
+    "node": "20"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
