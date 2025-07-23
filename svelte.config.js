@@ -15,7 +15,7 @@ const config = {
           'wss:',
 					'127.0.0.1:8090',
 					'api.opencommunities.info',
-					'opencommunities-new.pockethost.io',
+					'*.pockethost.io',
 					'captcha.selfagency.dev',
 					'cdn.jsdelivr.net',
 					'basemaps.cartocdn.com',
