@@ -1,31 +1,29 @@
 /* region imports */
 import { handleError } from '$lib/server/api';
-import { loadUser, cleanResponse } from '$lib/server/api';
+import { cleanResponse } from '$lib/server/api';
 /* endregion imports */
 
-export async function load({ locals, cookies }) {
+export async function load({ locals }) {
 	const { api } = locals;
-	const client = loadUser(cookies);
-	const locale = client?.lang || 'en';
+	const client = api.authStore.record;
+	// const locale = client?.lang || 'en';
 
 	try {
-		const [content, congregations, countries] = await Promise.all([
-			api.collection('pages').getFirstListItem(`slug="home-${locale}"`, { fetch }),
+		const [content, congregations] = await Promise.all([
+			// api.collection('pages').getFirstListItem(`slug="home-${locale}"`, { fetch }),
+			api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch }),
 
 			api.collection('congregationMeta').getFullList({
 				fetch,
 				filter: client?.admin ? '' : 'visible=1'
-			}),
-
-			api.collection('countries').getFullList({
-				fetch
 			})
 		]);
 
+		// log.info('homepage data', { congregations, content, countries });
+
 		return {
-			content,
 			congregations: congregations.map((c) => cleanResponse(c)),
-			countries: countries.map((c) => cleanResponse(c))
+			content
 		};
 	} catch (err) {
 		return handleError(err as Error);

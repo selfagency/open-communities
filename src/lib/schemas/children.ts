@@ -1,17 +1,17 @@
 /* region imports */
 import { isEmpty, listify } from 'radashi';
-import { z } from 'zod';
+import * as z from 'zod';
 
-import { t } from '$lib/i18n';
+import * as m from '$lib/paraglide/messages';
 // import { log } from '$lib/utils';
 /* endregion imports */
 
 /* region methods */
-const valueSelected = (value: any) => {
+const valueSelected = (value) => {
 	return !listify(value, (_, value) => value).every((value) => !value);
 };
 
-const hasContact = (value: any) => {
+const hasContact = (value) => {
 	return !(isEmpty(value?.email) && isEmpty(value?.url));
 };
 /* endregion methods */
@@ -29,32 +29,36 @@ export const accessibilitySchema = z.object({
 	otherText: z.string().optional()
 });
 
+export type AccessibilitySchema = z.infer<typeof accessibilitySchema>;
+
 export const fitSchema = z
 	.object({
-		id: z.string().optional(),
 		clergyMember: z.boolean(),
 		flag: z.preprocess(
 			(val) => (val === '' ? undefined : val),
 			z.enum(['no', 'yes', 'yesBima']).nullable().optional()
 		),
+		id: z.string().optional(),
 		multipleClergyMembers: z.boolean(),
 		other: z.boolean(),
 		otherText: z.string().optional(),
 		publicStatement: z.boolean()
 	})
 	.refine(valueSelected, {
-		message: t.get('common.requiredResponse')
+		message: m.requiredResponse()
 	});
+
+export type FitSchema = z.infer<typeof fitSchema>;
 
 export const registrationSchema = z
 	.object({
-		id: z.string().optional(),
 		email: z.string().optional(),
+		id: z.string().optional(),
 		otherText: z.string().optional(),
 		registrationType: z
 			.enum(['free', 'slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
 			.refine((value) => !!value, {
-				message: t.get('common.requiredResponse')
+				message: m.requiredResponse()
 			}),
 		url: z.preprocess(
 			(val) => (val === '' ? undefined : val),
@@ -62,35 +66,41 @@ export const registrationSchema = z
 		)
 	})
 	.refine(hasContact, {
-		message: t.get('common.thingRequired', { thing: t.get('common.emailOrUrl') })
+		message: m.thingRequired({ thing: m.emailOrUrl() })
 	});
+
+export type RegistrationSchema = z.infer<typeof registrationSchema>;
 
 export const healthSchema = z.object({
 	id: z.string().optional(),
+	otherText: z.string().optional(),
 	protocol: z
 		.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other'])
 		.refine((value) => !!value, {
-			message: t.get('common.requiredResponse')
-		}),
-	otherText: z.string().optional()
+			message: m.requiredResponse()
+		})
 });
 
+export type HealthSchema = z.infer<typeof healthSchema>;
+
 export const securitySchema = z.object({
-	id: z.string().optional(),
-	localPolice: z.boolean(),
-	privateSecurityArmed: z.boolean(),
-	privateSecurityUnarmed: z.boolean(),
 	clergyArmed: z.boolean(),
 	congregantsArmed: z.boolean(),
+	id: z.string().optional(),
+	localPolice: z.boolean(),
 	noFirearms: z.boolean(),
 	other: z.boolean(),
-	otherText: z.string().optional()
+	otherText: z.string().optional(),
+	privateSecurityArmed: z.boolean(),
+	privateSecurityUnarmed: z.boolean()
 });
+
+export type SecuritySchema = z.infer<typeof securitySchema>;
 
 export const servicesSchema = z
 	.object({
-		id: z.string().optional(),
 		hybrid: z.boolean(),
+		id: z.string().optional(),
 		inPerson: z.boolean(),
 		offsite: z.boolean(),
 		onlineOnly: z.boolean(),
@@ -98,5 +108,7 @@ export const servicesSchema = z
 		otherText: z.string().optional()
 	})
 	.refine(valueSelected, {
-		message: t.get('common.requiredResponse')
+		message: m.requiredResponse()
 	});
+
+export type ServicesSchema = z.infer<typeof servicesSchema>;

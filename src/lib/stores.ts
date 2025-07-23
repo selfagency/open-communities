@@ -2,7 +2,7 @@
 import * as persistent from '@nanostores/persistent';
 import { assign } from 'radashi';
 
-import type { CountriesRecord, UsersRecord, UsersLangOptions } from '$lib/types';
+import { page } from '$app/state';
 
 // import { log } from '$lib/utils';
 /* endregion imports */
@@ -11,11 +11,11 @@ import type { CountriesRecord, UsersRecord, UsersLangOptions } from '$lib/types'
 export type SelectOption = { label: string; value: string };
 
 export type State = {
-	showIntro?: boolean;
-	offsetWidth?: number;
-	offsetHeight?: number;
 	isMobile?: boolean;
-	countries?: CountriesRecord[];
+	lang?: string;
+	offsetHeight?: number;
+	offsetWidth?: number;
+	showIntro?: boolean;
 };
 /* endregion types */
 
@@ -24,44 +24,27 @@ export type State = {
 const { persistentMap } = persistent;
 
 const encoder = {
-	encode: JSON.stringify,
-	decode: JSON.parse
+	decode: JSON.parse,
+	encode: JSON.stringify
 };
 /* endregion variables */
 
 /* region state */
 export const state = persistentMap<State>('state_', {} as State, encoder);
-
-export const user = persistentMap<UsersRecord & { id: string; email: string }>(
-	'user_',
-	{} as UsersRecord & { id: string; email: string },
-	encoder
-);
 /* endregion state */
+
+export function initState() {
+	setState({
+		isMobile: window.innerWidth < 640,
+		lang: page.data.user?.lang || 'en',
+		offsetHeight: window.innerHeight,
+		offsetWidth: window.innerWidth,
+		showIntro: true
+	});
+}
 
 /* region methods */
 export function setState(newState: Partial<State>) {
 	state.set(assign(state.get(), newState));
-}
-
-export function initUser() {
-	user.set({
-		id: '',
-		email: '',
-		admin: false,
-		congregation: undefined,
-		lang: 'en' as UsersLangOptions,
-		name: undefined
-	});
-}
-
-export function initState() {
-	setState({
-		showIntro: true,
-		offsetWidth: window.innerWidth,
-		offsetHeight: window.innerHeight,
-		isMobile: window.innerWidth < 640,
-		countries: []
-	});
 }
 /* endregion methods */

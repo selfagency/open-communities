@@ -1,26 +1,28 @@
 /* region imports */
 import type { ClientResponseError } from 'pocketbase';
 
-import { redirect, fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import { omit } from 'radashi';
 import { setError } from 'sveltekit-superforms';
 
-import type { LocationRecord } from '$lib/location';
 import type {
-	CongregationMetaRecord,
-	PagesRecord,
 	AccessibilityRecord,
+	CongregationMetaRecord,
+	CongregationsResponse,
 	FitRecord,
-	RegistrationRecord,
 	HealthRecord,
+	PagesRecord,
+	RegistrationRecord,
 	SecurityRecord,
 	ServicesRecord
-} from '$lib/types';
+} from '$lib/pocketbase.d';
+import type { LocationRecord } from '$lib/types.d';
 
-import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
-import { t } from '$lib/i18n';
+import { CAPTCHA_SITE_SECRET } from '$env/static/private';
+import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
+import { m } from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
-import { loadUser, handleError } from '$lib/server/api';
+import { handleError } from '$lib/server/api';
 import { sendMail } from '$lib/server/mail';
 /* endregion imports */
 
@@ -28,18 +30,18 @@ import { sendMail } from '$lib/server/mail';
 type MetaRecord = {
 	accessibility: AccessibilityRecord;
 	fit: FitRecord;
+	health: HealthRecord;
 	location: LocationRecord;
 	registration: RegistrationRecord;
-	health: HealthRecord;
 	security: SecurityRecord;
 	services: ServicesRecord;
 	user: string;
 };
 /* endregion types */
 
-export const load = async ({ locals, fetch, cookies }) => {
+export const load = async ({ fetch, locals }) => {
 	const { api, validate } = locals;
-	const client = loadUser(cookies);
+	const client = api.authStore.record;
 
 	try {
 		if (!client?.id) {
@@ -50,7 +52,7 @@ export const load = async ({ locals, fetch, cookies }) => {
 			.collection('pages')
 			.getFirstListItem(`slug="add-${client?.lang || 'en'}"`, { fetch })) as PagesRecord;
 
-		return { form: { default: await validate(defaultSchema) }, content };
+		return { content, form: { default: await validate(defaultSchema) } };
 	} catch (error) {
 		if ((error as Error).message === 'Forbidden') {
 			redirect(302, '/login?signUp=true');
@@ -62,9 +64,9 @@ export const load = async ({ locals, fetch, cookies }) => {
 
 export const actions = {
 	submit: async (event) => {
-		const { fetch, locals, cookies } = event;
-		const { api, validate, log } = locals;
-		const client = loadUser(cookies);
+		const { fetch, locals } = event;
+		const { api, log, validate } = locals;
+		const client = api.authStore.record;
 
 		const form = await validate(defaultSchema, event);
 		const formData = form.data as CongregationMetaRecord & MetaRecord;
@@ -78,29 +80,33 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			const captcha = await (
-				await fetch(PROSOPO_ENDPOINT, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						token: form.data.captcha,
-						secret: PROSOPO_SECRET
-					})
-				})
-			).json();
+			if (!form.data.captcha) {
+				throw new Error('Invalid captcha');
+			} else {
+				const captchaValid = (
+					await (
+						await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
+							body: JSON.stringify({
+								response: form.data.captcha as string,
+								secret: CAPTCHA_SITE_SECRET as string
+							}),
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							method: 'POST'
+						})
+					)?.json()
+				)?.success;
 
-			if (!captcha.verified) {
-				return fail(400, {
-					form: { ...form, error: 'Captcha verification failed' }
-				});
+				if (!captchaValid) {
+					throw new Error('Invalid captcha');
+				}
 			}
 
-			const { accessibility, fit, location, registration, health, security, services, user } =
+			const { accessibility, fit, health, location, registration, security, services, user } =
 				formData as MetaRecord;
 
-			const record = await api.collection('congregations').create(
+			const record = (await api.collection('congregations').create(
 				{
 					...omit(formData, [
 						'accessibility',
@@ -116,7 +122,7 @@ export const actions = {
 					visible: client?.admin ? formData.visible : false
 				},
 				{ fetch }
-			);
+			)) as CongregationsResponse;
 
 			await Promise.all([
 				api
@@ -136,13 +142,13 @@ export const actions = {
 
 				await sendMail(
 					{
-						name: client.name,
 						email: client.email,
-						title: `New congregation submitted`,
 						message: `
 						A new congregation, ${record.name}, has been submitted and requires approval:\n
 						https://opencommunities.info/edit?id=${record.id}
-					`
+					`,
+						name: client.name as string,
+						title: `New congregation submitted`
 					},
 					api
 				);
@@ -155,8 +161,12 @@ export const actions = {
 			log.error('add:submit:error', error);
 			const err = error as ClientResponseError;
 
+			if (err.message === 'Invalid captcha') {
+				setError(form, 'captcha', m.invalidCaptcha());
+			}
+
 			if (err.message === 'Failed to create record.') {
-				setError(form, 'name', t.get('congregation.exists'));
+				setError(form, 'name', m.exists());
 			}
 
 			return fail(err.status ?? 400, {

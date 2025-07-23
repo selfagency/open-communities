@@ -1,21 +1,9 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 
-import { t } from '$lib/i18n';
 // import { log } from '$lib/utils';
-
-import type { UsersRecord } from '$lib/types';
+import * as m from '$lib/paraglide/messages';
 /* endregion imports */
-
-/* region types */
-export type UserSchema = UsersRecord & {
-	id?: string;
-	email?: string;
-	password?: string;
-	passwordConfirm?: string;
-	oldPassword?: string;
-};
-/* endregion types */
 
 /* region variables */
 // constants
@@ -28,34 +16,29 @@ const password = z
 
 export const userSchema = z
 	.object({
-		id: z.string().optional(),
-		email: z
-			.string()
-			.email()
-			.refine((value) => !!value, {
-				message: t.get('common.thingRequired', {
-					thing: t.get('common.email')
-				})
-			}),
+		captcha: z.string().optional(),
 		congregation: z.string().optional(),
-		name: z.string().refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: t.get('common.name')
-			})
+		email: z.email().refine((value) => !!value, {
+			message: m.thingRequired({ thing: m.email() })
 		}),
-		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
 		emailVisibility: z.boolean().default(true),
-		password,
+		id: z.string().optional(),
+		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
+		name: z.string().refine((value) => !!value, {
+			message: m.thingRequired({ thing: m.name() })
+		}),
 		oldPassword: z.string().optional(),
-		passwordConfirm: z.string(),
-		captcha: z.string().optional()
+		password,
+		passwordConfirm: z.string()
 	})
 	.superRefine((data, ctx) => {
 		if (data.passwordConfirm !== data.password) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: t.get('auth.passwordMismatch'),
+				message: m.passwordMismatch(),
 				path: ['passwordConfirm']
 			});
 		}
 	});
+
+export type UserSchema = z.infer<typeof userSchema>;

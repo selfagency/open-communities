@@ -1,57 +1,46 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 
-import { t } from '$lib/i18n';
+import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 // import { log } from '$lib/utils';
 
-import type { CongregationMetaRecord } from '$lib/types';
+import * as m from '$lib/paraglide/messages';
 
 import {
 	accessibilitySchema as accessibility,
 	fitSchema as fit,
-	registrationSchema as registration,
 	healthSchema as health,
+	registrationSchema as registration,
 	securitySchema as security,
 	servicesSchema as services
 } from './children';
 /* endregion imports */
 
-/* region types */
-export type DefaultSchema = CongregationMetaRecord;
-/* endregion types */
-
 export const deleteSchema = z.object({
 	id: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: '`id`'
-		})
+		message: m.thingRequired({ thing: '`id`' })
 	})
 });
 
+export type DeleteSchema = z.infer<typeof deleteSchema>;
+
 export const transferSchema = z.object({
-	id: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: '`id`'
-		})
+	email: z.email().refine((value) => !!value, {
+		message: m.thingRequired({ thing: m.email() })
 	}),
-	owner: z.string().optional(),
-	email: z
-		.string()
-		.email()
-		.refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: t.get('common.email')
-			})
-		})
+	id: z.string().refine((value) => !!value, {
+		message: m.thingRequired({ thing: '`id`' })
+	}),
+	owner: z.string().optional()
 });
+
+export type TransferSchema = z.infer<typeof transferSchema>;
 
 export const defaultSchema = z.object({
 	accessibility,
 	captcha: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: t.get('congregation.clergy.clergy')
-		})
+		message: m.thingRequired({ thing: m['clergy.clergy']() })
 	}),
 	contactEmail: z.preprocess(
 		(val) => (val === '' ? undefined : val),
@@ -82,9 +71,7 @@ export const defaultSchema = z.object({
 	),
 	fit,
 	flavor: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: t.get('congregation.flavor.flavor')
-		})
+		message: m.thingRequired({ thing: m['flavor.flavor']() })
 	}),
 	health,
 	id: z.string().optional(),
@@ -94,9 +81,7 @@ export const defaultSchema = z.object({
 		state: z.string().optional()
 	}),
 	name: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: t.get('common.name')
-		})
+		message: m.thingRequired({ thing: m.name() })
 	}),
 	notes: z.string().optional(),
 	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
@@ -105,3 +90,5 @@ export const defaultSchema = z.object({
 	services,
 	visible: z.boolean()
 });
+
+export type DefaultSchema = CongregationMetaRecord;

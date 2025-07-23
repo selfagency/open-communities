@@ -15,19 +15,12 @@ pb serve
 
 Log into PocketBase, create an admin account, then import `pb_schema.json`. You can also create a user account and grant it 'admin' privileges. Admins can only be enabled through the backend, not through the frontend app. You'll also need to import a dump of the location data, which is a little large to contain in the repo, so be in touch. I may switch to using an external API in the near future.
 
-Setup a [Sentry](https://sentry.io/) project and get site credentials from [Prosopo](https://prosopo.io/) for captcha. Then create a `.env` file containing:
+Setup a [Sentry](https://sentry.io/) project. Then create a `.env` file containing:
 
 ```bash
 PUBLIC_HOSTNAME="http://localhost:5173"
 PUBLIC_API_ENDPOINT="http://127.0.0.1:8090"
-PUBLIC_SENTRY_DSN=""
-SENTRY_AUTH_TOKEN=""
-SENTRY_PROJECT=""
-SENTRY_ORG=""
-PUBLIC_PROSOPO_SITEKEY=""
-PROSOPO_ENDPOINT=""
-PROSOPO_SECRET=""
-NODE_ENV="development"
+PUBLIC_SENTRY_DSN="{SENTRY_DSN}"
 ```
 
 ## Development

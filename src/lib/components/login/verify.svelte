@@ -2,43 +2,45 @@
 	/* region imports */
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { fade } from 'svelte/transition';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { waitForTheElement } from 'wait-for-the-element';
 
 	import { dev } from '$app/environment';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let token: string | null;
-	export let verified: boolean = false;
+	let {
+		data,
+		token,
+		verified = $bindable(false)
+	}: { data: SuperValidated<any>; token: null | string; verified: boolean } = $props();
 	/* endregion variables */
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'verify',
 		dataType: 'json',
+		id: 'verify',
+		onError({ result }) {
+			log.error('submission error', result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
 				verified = true;
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error($t('auth.verifyFailure'));
+				toast.error(m.verifyFailure);
 			}
-		},
-		onError({ result }) {
-			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { enhance, form: formData } = form;
 	/* endregion form */
 
 	/* region lifecycle */
@@ -54,10 +56,10 @@
 
 <div
 	in:fade={{ delay: 200, duration: 100 }}
-	out:fade={{ duration: 100, delay: 0 }}
+	out:fade={{ delay: 0, duration: 100 }}
 	class="space-y-4"
 >
-	<div>{$t('auth.verifying')}</div>
+	<div>{m.verifying()}</div>
 
 	{#if $formData.token && $formData.type}
 		<form id="verify" method="POST" action="?/acct" use:enhance>

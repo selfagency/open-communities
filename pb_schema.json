@@ -55,7 +55,12 @@
 				"unique": false,
 				"options": {
 					"maxSelect": 1,
-					"values": ["en", "es", "fr", "he"]
+					"values": [
+						"en",
+						"es",
+						"fr",
+						"he"
+					]
 				}
 			}
 		],
@@ -68,7 +73,7 @@
 		"options": {
 			"allowEmailAuth": true,
 			"allowOAuth2Auth": false,
-			"allowUsernameAuth": false,
+			"allowUsernam": false,
 			"exceptEmailDomains": null,
 			"manageRule": null,
 			"minPasswordLength": 12,
@@ -194,7 +199,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -283,7 +290,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
+		"indexes": [
+			"CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": null,
@@ -476,7 +485,9 @@
 				"options": {}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -561,7 +572,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": null,
@@ -639,7 +652,11 @@
 				"unique": false,
 				"options": {
 					"maxSelect": 1,
-					"values": ["no", "yes", "yesBima"]
+					"values": [
+						"no",
+						"yes",
+						"yesBima"
+					]
 				}
 			},
 			{
@@ -659,7 +676,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -683,7 +702,12 @@
 				"unique": false,
 				"options": {
 					"maxSelect": 1,
-					"values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
+					"values": [
+						"maskingRequired",
+						"maskingRecommended",
+						"noGuidelines",
+						"other"
+					]
 				}
 			},
 			{
@@ -717,7 +741,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -795,7 +821,13 @@
 				"unique": false,
 				"options": {
 					"maxSelect": 1,
-					"values": ["en", "de", "es", "fr", "he"]
+					"values": [
+						"en",
+						"de",
+						"es",
+						"fr",
+						"he"
+					]
 				}
 			},
 			{
@@ -815,7 +847,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.admin = true",
@@ -865,7 +899,13 @@
 				"unique": false,
 				"options": {
 					"maxSelect": 1,
-					"values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
+					"values": [
+						"free",
+						"fixedPrice",
+						"slidingScale",
+						"suggestedDonation",
+						"other"
+					]
 				}
 			},
 			{
@@ -899,7 +939,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -1014,7 +1056,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -1109,7 +1153,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
+		"indexes": [
+			"CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": "@request.auth.verified = true",
@@ -1196,7 +1242,9 @@
 				}
 			}
 		],
-		"indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
+		"indexes": [
+			"CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
+		],
 		"listRule": "",
 		"viewRule": "",
 		"createRule": null,

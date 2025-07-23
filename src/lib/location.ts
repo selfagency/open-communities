@@ -4,84 +4,35 @@ import type { MapStore } from 'nanostores';
 import { map } from 'nanostores';
 
 import { api } from '$lib/api';
-import { state as appState } from '$lib/stores';
 import { log } from '$lib/utils';
 
-import type { CountriesRecord, StatesRecord, CitiesRecord, TypedPocketBase } from './types';
+import type { TypedPocketBase } from './pocketbase.d';
+import type { City, Country, LocationRecord, LocationState, State } from './types.d';
 
 import { Search } from './search';
 /* endregion imports */
 
-/* region types  */
-export type SelectOption = { label: string; value: string; id: string };
-
-export type Country = CountriesRecord & { id: string };
-export type State = StatesRecord & { id: string };
-export type City = CitiesRecord & { id: string };
-
-type LocationOptions = {
-	countryOptions: SelectOption[];
-	stateOptions: SelectOption[];
-	cityOptions: SelectOption[];
-};
-
-type Localities = {
-	countries: Country[];
-	states?: State[];
-	cities?: City[];
-};
-
-type Locality = {
-	country?: Country;
-	state?: State;
-	city?: City;
-};
-
-export type LocationRecord = {
-	country?: string;
-	state?: string;
-	city?: string;
-	longitude?: number;
-	latitude?: number;
-};
-
-export type LocationMeta = {
-	country?: Country;
-	state?: State;
-	city?: City;
-	longitude?: number;
-	latitude?: number;
-};
-
-type LocationState = {
-	options: LocationOptions;
-	localities: Localities;
-	locality: Locality;
-	record: LocationMeta;
-};
-/* endregion types */
-
 export class Location {
-	state: MapStore<LocationState>;
-	default: LocationState;
-	countries: Country[];
-	search?: Search;
 	api?: TypedPocketBase;
+	countries: Country[];
+	default: LocationState;
+	search?: Search;
+	state: MapStore<LocationState>;
 
-	constructor(search?: Search) {
+	constructor({ countries, search }: { countries: Country[]; search?: Search }) {
 		if (search) this.search = search;
 		this.api = api;
 
-		this.countries = appState.get().countries as Country[];
+		this.countries = countries as Country[];
 
 		this.default = {
-			locality: {},
 			localities: { countries: this.countries },
+			locality: {},
 			options: {
 				countryOptions: this.countries?.map((c) => ({
+					id: c?.id,
 					label: c?.name,
-					value: `${c?.name} (${c?.code})`,
-					id: c?.id
+					value: `${c?.name} (${c?.code})`
 				}))
 			},
 			record: {}
@@ -100,10 +51,10 @@ export class Location {
 			await this.setCountry(record.country);
 
 			if (record.state) {
-				await this.setState(record.state);
+				await this.setState(record.state, true);
 
 				if (record.city) {
-					this.setCity(record.city);
+					this.setCity(record.city as string);
 				}
 			}
 		}
@@ -112,93 +63,6 @@ export class Location {
 	reset() {
 		this.state.set(this.default);
 		if (this.search) this.search.resetLocation();
-	}
-
-	async setCountry(input: string) {
-		const state = this.state.get();
-		const country = this.countries?.find((c) => c?.id === input) as Country;
-		const api = this.api as TypedPocketBase;
-
-		let states: State[] = [];
-		try {
-			states = await api?.collection('states')?.getFullList({
-				filter: `country="${country?.id}"`
-			});
-
-			if (states)
-				this.state.set({
-					...state,
-					locality: {
-						country
-					},
-					localities: {
-						countries: state.localities.countries,
-						states,
-						cities: []
-					},
-					options: {
-						countryOptions: state.options.countryOptions,
-						stateOptions: states?.map((s) => ({
-							label: s?.name as string,
-							value: `${s?.name} (${s.code})`,
-							id: s?.id
-						})),
-						cityOptions: []
-					},
-					record: {
-						country,
-						state: undefined,
-						city: undefined,
-						latitude: country?.latitude,
-						longitude: country?.longitude
-					}
-				});
-		} catch (err) {
-			log.error(err);
-		}
-	}
-
-	async setState(input: string) {
-		const objState = this.state.get();
-		const state = objState.localities?.states?.find((s) => s?.id === input) as State;
-		const api = this.api as TypedPocketBase;
-
-		let cities: City[] = [];
-		try {
-			cities = await api?.collection('cities')?.getFullList({
-				filter: `state="${state?.id}"`
-			});
-
-			if (cities)
-				this.state.set({
-					...objState,
-					locality: {
-						country: objState.locality.country,
-						state
-					},
-					localities: {
-						...objState.localities,
-						cities
-					},
-					options: {
-						...objState.options,
-						cityOptions: cities?.map((c) => ({
-							label: c?.name as string,
-							value: c?.name as string,
-							id: c?.id
-						}))
-					},
-					record: {
-						country: objState.locality.country as Country,
-						state: state as State,
-						city: undefined,
-						latitude: state?.latitude,
-						longitude: state?.longitude
-					}
-				});
-		} catch (err) {
-			log.error(err);
-		}
 	}
 
 	setCity(input: string) {
@@ -215,12 +79,100 @@ export class Location {
 					city
 				},
 				record: {
-					country: objState.locality.country as Country,
-					state: objState.locality.state as State,
 					city: city as City,
+					country: objState.record.country as Country,
 					latitude: city?.latitude,
-					longitude: city?.longitude
+					longitude: city?.longitude,
+					state: objState.record.state as State
 				}
 			});
+	}
+
+	async setCountry(input: string) {
+		const state = this.state.get();
+		const country = this.countries?.find((c) => c?.id === input) as Country;
+		const api = this.api as TypedPocketBase;
+
+		let states: State[] = [];
+		try {
+			states = await api?.collection('states')?.getFullList({
+				filter: `country="${country?.id}"`
+			});
+
+			if (states)
+				this.state.set({
+					...state,
+					localities: {
+						cities: [],
+						countries: state.localities.countries,
+						states
+					},
+					locality: {
+						country
+					},
+					options: {
+						cityOptions: [],
+						countryOptions: state.options.countryOptions,
+						stateOptions: states?.map((s) => ({
+							id: s?.id,
+							label: s?.name as string,
+							value: `${s?.name} (${s.code})`
+						}))
+					},
+					record: {
+						city: undefined,
+						country,
+						latitude: country?.latitude,
+						longitude: country?.longitude,
+						state: undefined
+					}
+				});
+		} catch (err) {
+			log.error(err);
+		}
+	}
+
+	async setState(input: string, loadFn?: boolean) {
+		const objState = this.state.get();
+		const state = objState.localities?.states?.find((s) => s?.id === input) as State;
+		const api = this.api as TypedPocketBase;
+
+		let cities: City[] = [];
+
+		try {
+			cities = await api?.collection('cities')?.getFullList({
+				filter: `state="${state?.id}"`
+			});
+
+			if (cities)
+				this.state.set({
+					...objState,
+					localities: {
+						...objState.localities,
+						cities
+					},
+					locality: {
+						country: objState.locality.country,
+						state
+					},
+					options: {
+						...objState.options,
+						cityOptions: cities?.map((c) => ({
+							id: c?.id,
+							label: c?.name as string,
+							value: c?.name as string
+						}))
+					},
+					record: {
+						city: loadFn ? objState.record.city : undefined,
+						country: objState.record.country as Country,
+						latitude: state?.latitude,
+						longitude: state?.longitude,
+						state: state as State
+					}
+				});
+		} catch (err) {
+			log.error(err);
+		}
 	}
 }

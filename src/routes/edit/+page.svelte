@@ -1,17 +1,22 @@
-<svelte:options accessors />
-
 <script lang="ts">
 	/* region imports */
 	import { setContext } from 'svelte';
 
 	import EditForm from '$lib/components/form/form.svelte';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
+
+	import type { PageProps, Snapshot } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data;
-	export let snapshot;
+	const { data }: PageProps = $props();
+	let snapshotData = $state('');
+
+	export const snapshot: Snapshot<string> = {
+		capture: () => snapshotData,
+		restore: (value) => (snapshotData = value)
+	};
 	/* endregion variables */
 
 	/* region lifecycle */
@@ -20,7 +25,7 @@
 </script>
 
 <svelte:head>
-	<title>{$t('congregation.editCongregation')} &middot; {$t('common.title')}</title>
+	<title>{m.editCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
-<EditForm data={data.form} mode="edit" bind:snapshot />
+<EditForm data={data.form} mode="edit" bind:snapshot={snapshotData} />

@@ -1,22 +1,24 @@
 <script lang="ts">
 	/* region imports */
 	import LocaleIcon from 'lucide-svelte/icons/languages';
+	import { onMount, tick } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 
-	import type { UsersLangOptions } from '$lib/types';
+	import type { UsersLangOptions } from '$lib/pocketbase.d';
 
-	import { browser } from '$app/environment';
+	import { invalidateAll } from '$app/navigation';
+	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
+	import * as m from '$lib/paraglide/messages';
+	import { setLocale } from '$lib/paraglide/runtime';
 	import { log } from '$lib/utils';
 	/*  endregion imports */
 
 	/* region variables */
 	// props
-	export let mode: 'mini' | 'full' = 'full';
+	let { mode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props();
 
 	// constants
 	const locales = [
@@ -32,46 +34,62 @@
 	];
 
 	// locals
-	let lang = ($user.lang || 'en') as UsersLangOptions;
-	let hovering = false;
+	let hovering = $state(false);
+	let lang = $state('en' as UsersLangOptions);
+
+	const serverLang = $derived(page.data.lang);
 	/* endregion variables */
 
-	/* region reactivity */
-	$: if (lang && lang !== $user.lang && browser) {
-		user.set({ ...$user, lang });
-		window.location.reload();
+	/* region lifecycle */
+	onMount(async () => {
+		await tick();
+		lang = serverLang;
+	});
+
+	/* region methods */
+	async function updateLang() {
+		try {
+			await fetch('/user/lang', {
+				body: JSON.stringify({ lang, user: page.data.user?.id }),
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				method: 'POST'
+			});
+
+			invalidateAll();
+			setLocale(lang, { reload: true });
+			toast.success(m.languageChanged());
+		} catch (error) {
+			log.error('failed to update user language', error);
+		}
 	}
 
-	$: if (hovering) {
-		log.debug('hovering', hovering);
-	}
-	/* endregion reactivity */
+	/* endregion methods */
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger asChild let:builder>
-		<Button
-			variant={mode === 'mini' ? 'link' : 'ghost'}
-			builders={[builder]}
-			class="flex flex-row items-center justify-start space-x-1"
-			on:mouseenter={() => (hovering = true)}
-			on:mouseleave={() => (hovering = false)}
-		>
-			{@const locale = locales.find((f) => f.value === lang)?.label}
-			{#if mode === 'mini'}
-				<LocaleIcon class="h-4 w-4 text-slate-500" />
-				<span>{locale}</span>
-			{:else}
-				<LocaleIcon class="h-4 w-4 text-slate-500" />
-				{#if hovering}<span transition:fade>{locale}</span>{/if}
-			{/if}
-		</Button>
+	<DropdownMenu.Trigger
+		class="button {mode === 'mini'
+			? 'link'
+			: 'ghost'} flex flex-row items-center justify-start space-x-1"
+		onmouseenter={() => (hovering = true)}
+		onmouseleave={() => (hovering = false)}
+	>
+		{@const locale = locales.find((f) => f.value === lang)?.label}
+		{#if mode === 'mini'}
+			<LocaleIcon class="h-4 w-4 text-slate-500" />
+			<span>{locale}</span>
+		{:else}
+			<LocaleIcon class="h-4 w-4 text-slate-500" />
+			{#if hovering}<span transition:fade>{locale}</span>{/if}
+		{/if}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56">
-		<DropdownMenu.Label>{$t('common.language')}</DropdownMenu.Label>
+		<DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.RadioGroup bind:value={lang}>
-			{#each locales as { label, value }}
+		<DropdownMenu.RadioGroup bind:value={lang} onValueChange={() => updateLang()}>
+			{#each locales as { label, value }, i (i)}
 				<DropdownMenu.RadioItem {value} class="flex flex-row items-center justify-start space-x-2">
 					<Badge variant="outline" class="text-xs font-normal">{value.toUpperCase()}</Badge>
 					<span>{label}</span>

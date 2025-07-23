@@ -1,6 +1,7 @@
-import { Country, State, City } from 'country-state-city';
-import Fuse from 'fuse.js';
-import latinize from 'latinize';
+// import { City, Country, State } from 'country-state-city';
+import { City } from 'country-state-city';
+// import Fuse from 'fuse.js';
+// import latinize from 'latinize';
 import Pocketbase from 'pocketbase';
 import { sleep } from 'radashi';
 
@@ -12,23 +13,6 @@ export async function search(query, options) {
 	);
 	return await result.json();
 }
-
-async function reverse(lat, lon, options) {
-	const queryOptions = parseOptions(options);
-	const result = await fetch(
-		`https://nominatim.openstreetmap.org/reverse.php?lat=${lat}&lon=${lon}&format=jsonv2${queryOptions}`
-	);
-	const json = await result.json();
-	if ('error' in json) {
-		json.is_error = true;
-		return json;
-	} else {
-		json.is_error = false;
-		return json;
-	}
-}
-
-// INTERNAL: UTILITY FUNCTIONS
 
 function parseOptions(opt) {
 	let options = [];
@@ -63,11 +47,28 @@ function parseOptions(opt) {
 	return '';
 }
 
+// INTERNAL: UTILITY FUNCTIONS
+
 function parseQuery(query) {
 	if (typeof query === 'string') {
 		return `q=${query}`;
 	} else {
 		return '';
+	}
+}
+
+async function reverse(lat, lon, options) {
+	const queryOptions = parseOptions(options);
+	const result = await fetch(
+		`https://nominatim.openstreetmap.org/reverse.php?lat=${lat}&lon=${lon}&format=jsonv2${queryOptions}`
+	);
+	const json = await result.json();
+	if ('error' in json) {
+		json.is_error = true;
+		return json;
+	} else {
+		json.is_error = false;
+		return json;
 	}
 }
 
@@ -131,11 +132,11 @@ const cities = City.getAllCities();
 
 				if (stateData) {
 					state = await pb.collection('states').create({
-						name: stateData.names.state,
 						code: stateData.names.ref,
 						country: country.id,
 						latitude: stateData.centroid.coordinates[1],
-						longitude: stateData.centroid.coordinates[0]
+						longitude: stateData.centroid.coordinates[0],
+						name: stateData.names.state
 					});
 
 					states = await pb.collection('states').getFullList();
@@ -144,10 +145,10 @@ const cities = City.getAllCities();
 
 			const record = {
 				country: country?.id,
-				state: state?.id,
-				name: city.name,
+				latitude: city.latitude,
 				longitude: city.longitude,
-				latitude: city.latitude
+				name: city.name,
+				state: state?.id
 			};
 
 			await pb.collection('cities').create(record);

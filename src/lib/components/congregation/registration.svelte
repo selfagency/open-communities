@@ -3,37 +3,37 @@
 	import WebIcon from 'lucide-svelte/icons/globe';
 	import EmailIcon from 'lucide-svelte/icons/mail';
 
-	import type { RegistrationRecord } from '$lib/types';
+	import type { RegistrationRecord } from '$lib/pocketbase.d';
 
 	import { Button } from '$lib/components/ui/button';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let registration: RegistrationRecord | undefined;
+	const { registration }: { registration?: RegistrationRecord } = $props();
 	/* endregion variables */
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{$t('congregation.registration.registration')}</h2>
+	<h2 class="label">{m['registration.registration']()}</h2>
 </div>
 
 <div class="col-span-9 flex flex-col items-start justify-between space-y-2">
 	{#if registration?.registrationType}
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
-				<span>{$t('congregation.registration.fixedPrice')}</span>
+				<span>{m['registration.fixedPrice']()}</span>
 			{:else if registration.registrationType === 'free'}
-				<span>{$t('congregation.registration.free')}</span>
+				<span>{m['registration.free']()}</span>
 			{:else if registration.registrationType === 'slidingScale'}
-				<span>{$t('congregation.registration.slidingScale')}</span>
+				<span>{m['registration.slidingScale']()}</span>
 			{:else if registration.registrationType === 'suggestedDonation'}
-				<span>{$t('congregation.registration.suggestedDonation')}</span>
+				<span>{m['registration.suggestedDonation']()}</span>
 			{:else if registration.registrationType === 'other'}
 				<span>{registration.otherText}</span>
 			{:else}
-				{$t('common.unspecified')}
+				{m.unspecified()}
 			{/if}
 		</div>
 	{/if}
@@ -46,7 +46,7 @@
 				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
 				<span><EmailIcon size="16" /></span>
-				<span>{$t('common.email')}</span>
+				<span>{m.email()}</span>
 			</Button>
 		{/if}
 		{#if registration?.url}
@@ -57,7 +57,7 @@
 				class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
 			>
 				<span><WebIcon size="16" /></span>
-				<span>{$t('common.website')}</span>
+				<span>{m.website()}</span>
 			</Button>
 		{/if}
 	</div>

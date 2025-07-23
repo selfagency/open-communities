@@ -1,12 +1,14 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 /* endregion imports */
 
 export const contactSchema = z.object({
-	reason: z.enum(['question', 'claim', 'delete', 'suggest']),
-	record: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
-	email: z.string().email(),
-	name: z.string(),
+	captcha: z.string().optional(),
+	email: z.email(),
 	message: z.string(),
-	captcha: z.string().optional()
+	name: z.string(),
+	reason: z.enum(['question', 'claim', 'delete', 'suggest']),
+	record: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional())
 });
+
+export type ContactSchema = z.infer<typeof contactSchema>;

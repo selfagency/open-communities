@@ -13,6 +13,7 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 
+	import { page } from '$app/state';
 	import MaskIcon from '$lib/assets/mask.svg?component';
 	import DenominationIcon from '$lib/assets/menorah.svg?component';
 	import SiddurIcon from '$lib/assets/siddur.svg?component';
@@ -21,14 +22,13 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { Search } from '$lib/search';
-	import { user } from '$lib/stores';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let search: Search;
+	const { search }: { search: Search } = $props();
 
 	// constants
 	const icons = {
@@ -47,9 +47,10 @@
 		services: SiddurIcon
 	};
 
-	// locals
-	let filters: Record<string, Record<string, boolean>>;
+	const user = $derived(page.data.user);
 
+	// locals
+	let filters: Record<string, Record<string, boolean>> = $state({});
 	/* endregion variables */
 
 	/* region methods */
@@ -60,58 +61,58 @@
 
 	const initFilters = () => {
 		filters = {
-			denomination: {
-				orthodox: false,
-				conservative: false,
-				reform: false,
-				reconstructionist: false,
-				renewal: false,
-				humanist: false,
-				postDenominational: false,
-				multiDenominational: false,
-				unaffiliated: false,
-				other: false
-			},
-			services: {
-				inPerson: false,
-				onlineOnly: false,
-				hybrid: false,
-				offsite: false,
-				other: false
-			},
 			accessibility: {
-				inPerson_adaSome: false,
 				inPerson_adaAll: false,
+				inPerson_adaSome: false,
 				inPerson_eva: false,
 				online_automatedCaptions: false,
 				online_liveCaptions: false,
 				other: false
 			},
-			health: {
-				maskingRequired: false,
-				maskingRecommended: false,
-				noGuidelines: false,
-				other: false
-			},
-			security: {
-				localPolice: false,
-				privateSecurityArmed: false,
-				privateSecurityUnarmed: false,
-				clergyArmed: false,
-				congregantsArmed: false,
-				noFirearms: false,
-				other: false
-			},
-			registration: {
-				free: false,
-				fixedPrice: false,
-				slidingScale: false,
-				suggestedDonation: false,
-				other: false
-			},
 			admin: {
 				unapproved: false,
 				unclaimed: false
+			},
+			denomination: {
+				conservative: false,
+				humanist: false,
+				multiDenominational: false,
+				orthodox: false,
+				other: false,
+				postDenominational: false,
+				reconstructionist: false,
+				reform: false,
+				renewal: false,
+				unaffiliated: false
+			},
+			health: {
+				maskingRecommended: false,
+				maskingRequired: false,
+				noGuidelines: false,
+				other: false
+			},
+			registration: {
+				fixedPrice: false,
+				free: false,
+				other: false,
+				slidingScale: false,
+				suggestedDonation: false
+			},
+			security: {
+				clergyArmed: false,
+				congregantsArmed: false,
+				localPolice: false,
+				noFirearms: false,
+				other: false,
+				privateSecurityArmed: false,
+				privateSecurityUnarmed: false
+			},
+			services: {
+				hybrid: false,
+				inPerson: false,
+				offsite: false,
+				onlineOnly: false,
+				other: false
 			}
 		};
 	};
@@ -124,56 +125,57 @@
 	/* endregion lifecycle */
 
 	/* region reactivity */
-	$: search.setFilters(filters);
+	$effect(() => {
+		if (filters) search.setFilters(filters);
+	});
 	/* endregion reactivity */
 </script>
 
 <Popover.Root>
-	<Popover.Trigger>
-		<Button variant="outline" class="space-x-2 text-slate-500 rtl:mx-1">
-			<FilterIcon size="18" class="rtl:mx-1" />
-			<span>{$t('common.filter')}</span>
-		</Button>
+	<Popover.Trigger class="button space-x-2 text-slate-500 outline rtl:mx-1">
+		<FilterIcon size="18" class="rtl:mx-1" />
+		<span>{m.filter()}</span>
 	</Popover.Trigger>
 	<Popover.Content>
 		<div class="flex flex-col items-start justify-start space-y-2 text-slate-500">
-			{#each Object.keys(filters) as category}
-				{#if !isEmpty(filters?.[category]) && !(category === 'admin' && !$user.admin)}
+			{#each Object.keys(filters) as category, i (i)}
+				{#if !isEmpty(filters?.[category]) && !(category === 'admin' && !user?.admin)}
+					{@const StatusIcon =
+						icons[
+							every(filters[category])
+								? 'circleCheck'
+								: some(filters[category])
+									? 'circleMinus'
+									: 'circle'
+						]}
 					<Collapsible.Root>
 						<Collapsible.Trigger>
 							<div class="filter-heading">
 								<span class="filter-icon">
 									{#if category === 'denomination' || category === 'health' || category === 'services'}
+										{@const Icon = icons[category]}
 										<span class="h-4 w-5 fill-slate-500">
-											<svelte:component this={icons[category]} />
+											<Icon />
 										</span>
 									{:else}
-										<svelte:component this={icons[category]} size="17" />
+										{@const Icon = icons[category]}
+										<Icon size="17" />
 									{/if}
 								</span>
 								<span class="filter-label">
-									<span>{$t(`congregation.${category}.${category}`)}</span>
+									<span>{m[`${category}.${category}`]()}</span>
 								</span>
 								<span class="filter-status">
-									<svelte:component
-										this={icons[
-											every(filters[category])
-												? 'circleCheck'
-												: some(filters[category])
-													? 'circleMinus'
-													: 'circle'
-										]}
-										class="h-4 w-4"
-									/>
+									<StatusIcon class="h-4 w-4" />
 								</span>
 								<span class="filter-icon">
-									<svelte:component this={icons.open} size="16" />
+									<OpenIcon size="16" />
 								</span>
 							</div>
 						</Collapsible.Trigger>
 						<Collapsible.Content>
 							<div class="filter-box">
-								{#each Object.keys(filters[category]) as option}
+								{#each Object.keys(filters[category]) as option, i (i)}
 									<span class="filter-item">
 										<Checkbox
 											id={`${category}_${option}`}
@@ -182,9 +184,7 @@
 										/>
 										<Label for={`${category}_${option}`}>
 											<span class="filter-label text-slate-500">
-												{option === 'other'
-													? $t('common.other')
-													: $t(`congregation.${category}.${option}`)}
+												{option === 'other' ? m.other() : m[`${category}.${option}`]()}
 											</span>
 										</Label>
 									</span>
@@ -194,13 +194,9 @@
 					</Collapsible.Root>
 				{/if}
 			{/each}
-			<Button
-				class="filter-heading h-auto p-0 text-slate-500"
-				variant="link"
-				on:click={initFilters}
-			>
-				<span class="filter-icon"><svelte:component this={icons.close} size="16" /></span>
-				<span class="filter-label"><span>{$t('common.reset')}</span></span>
+			<Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={initFilters}>
+				<span class="filter-icon"><CloseIcon size="16" /></span>
+				<span class="filter-label"><span>{m.reset()}</span></span>
 			</Button>
 		</div>
 	</Popover.Content>

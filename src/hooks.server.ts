@@ -1,59 +1,57 @@
+import type { Handle } from '@sveltejs/kit';
 /* region imports */
-import type { CookieSerializeOptions } from 'cookie';
+import type { SerializeOptions } from 'cookie';
 
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { uid } from 'radashi';
+import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 
-import { NODE_ENV } from '$env/static/private';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
+import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
-/* endregion imports */
 
+/* endregion imports */
 /* region init */
-Sentry.init({
-	dsn: PUBLIC_SENTRY_DSN,
-	tracesSampleRate: 0.5,
-	environment: NODE_ENV,
-	integrations: [Sentry.nativeNodeFetchIntegration(), nodeProfilingIntegration()]
-});
+if (!Sentry.isInitialized()) {
+	Sentry.init({ dsn: PUBLIC_SENTRY_DSN, tracesSampleRate: 1.0 });
+}
 /* endregion init */
 
 /* region variables */
 // constants;
 const log = logger.getSubLogger({ name: 'hooks' });
+
 /* endregion variables */
-
-/* region methods */
-const validate = async (schema: any, request: any = undefined) => {
-	return request ? superValidate(request, zod(schema)) : superValidate(zod(schema));
-};
-/* endregion methods */
-
 async function customHandler({ event, resolve }) {
 	const startTimer = Date.now();
 
 	// services
 	event.locals.api = api;
 	event.locals.log = log;
-	event.locals.validate = validate;
+
+	event.locals.validate = async (schema, request) => {
+		return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
+	};
+
 	event.locals.cookieOpts = {
 		maxAge: 60 * 60 * 24 * 1, // 1 day
 		path: '/',
 		sameSite: 'strict',
 		secure: true
-	} as CookieSerializeOptions & { path: string };
+	} as SerializeOptions & { path: string };
 
 	// auth
 	event.locals.api.authStore.loadFromCookie(event.cookies.get('auth') ?? '');
 
 	// i18n
+	const lang = event.cookies.get('lang') || event.locals.api.authStore.model?.lang || 'en';
+
 	event.locals.i18n = {
-		locale: event.locals.api.authStore.model?.lang || 'en',
+		locale: lang,
 		route: `${event.url.pathname}${event.url.search}`
 	};
 
@@ -79,31 +77,38 @@ async function customHandler({ event, resolve }) {
 
 	// response
 	const response = await resolve(event);
+
 	event.locals.startTimer = startTimer;
 	logEvent(response.status, event);
 	return response;
 }
 
-export const handle = sequence(
-	Sentry.sentryHandle({
-		fetchProxyScriptNonce: 'o247950'
-	}),
-	customHandler
-);
-
-export const handleError = Sentry.handleErrorWithSentry(async ({ status, error, event }) => {
+export const handleError = handleErrorWithSentry(async ({ error, event, status }) => {
 	if (status !== 404) {
 		const errorId = uid(32);
 
 		event.locals.error = error?.toString() || undefined;
 		event.locals.errorStackTrace = (error as Error)?.stack || undefined;
 		event.locals.errorId = errorId;
-
 		logEvent(status, event);
 
 		return {
-			message: (error as Error)?.message || 'An error occurred',
-			errorId
+			errorId,
+			message: (error as Error)?.message || 'An error occurred'
 		};
 	}
 });
+
+const handleParaglide: Handle = ({ event, resolve }) =>
+	paraglideMiddleware(event.request, ({ locale, request }) => {
+		event.request = request;
+
+		return resolve(event, {
+			transformPageChunk: ({ html }) =>
+				html
+					.replace('%paraglide.lang%', locale)
+					.replace('%paraglide.dir%', locale === 'he' ? 'rtl' : 'ltr')
+		});
+	});
+
+export const handle = sequence(sentryHandle(), handleParaglide, customHandler);

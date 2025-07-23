@@ -1,59 +1,48 @@
 /* region imports */
-import { z } from 'zod';
+import * as z from 'zod';
 
-import { t } from '$lib/i18n';
+import * as m from '$lib/paraglide/messages';
 // import { log } from '$lib/utils';
 /* endregion imports */
-
-/* region types */
-export type LoginSchema = {
-	email: string;
-	password: string;
-};
-
-export type TokenSchema = {
-	token: string;
-	email?: string;
-	password?: string;
-	passwordConfirm?: string;
-	type: string;
-};
-/* endregion types */
 
 export const loginSchema = z.object({
 	email: z
 		.string()
 		.email()
 		.refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: t.get('common.email')
+			message: m.thingRequired({
+				thing: m.email()
 			})
 		}),
 	password: z.string().refine((value) => !!value, {
-		message: t.get('common.thingRequired', {
-			thing: t.get('auth.password')
+		message: m.thingRequired({
+			thing: m.password()
 		})
 	})
 });
 
+export type LoginSchema = z.infer<typeof loginSchema>;
+
 export const tokenSchema = z
 	.object({
-		token: z.string().refine((value) => !!value, {
-			message: t.get('common.thingRequired', {
-				thing: t.get('common.token')
-			})
-		}),
 		email: z.string().email().optional(),
 		password: z.string().optional(),
 		passwordConfirm: z.string().optional(),
+		token: z.string().refine((value) => !!value, {
+			message: m.thingRequired({
+				thing: m.token()
+			})
+		}),
 		type: z.string()
 	})
 	.superRefine((data, ctx) => {
 		if (data.passwordConfirm !== data.password) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
-				message: t.get('auth.passwordMismatch'),
+				message: m.passwordMismatch(),
 				path: ['passwordConfirm']
 			});
 		}
 	});
+
+export type TokenSchema = z.infer<typeof tokenSchema>;

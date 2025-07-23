@@ -4,105 +4,111 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import * as Alert from '$lib/components/ui/alert';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Button } from '$lib/components/ui/button';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let id: string;
-	export let owner: string | undefined = undefined;
+	const {
+		data,
+		id,
+		owner
+	}: {
+		data: SuperValidated<any>;
+		id: string;
+		owner?: string;
+	} = $props();
+
+	// derived
+	const user = $derived(page.data.user);
 
 	// locals
-	let open: boolean = false;
+	let open: boolean = $derived(page.url.searchParams.has('transfer'));
 	/* endregion variables */
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'transferCongregation',
 		dataType: 'json',
+		id: 'transferCongregation',
+		onError({ result }) {
+			log.error(result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			// log.debug('result', result.type);
 			if (result.type === 'success') {
 				open = false;
-				toast.success($t('congregation.transferSuccess'));
+				toast.success(m.transferSuccess());
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error($t('congregation.transferFailure'));
+				toast.error(m.transferFailure());
 			}
-		},
-		onError({ result }) {
-			log.error(result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { enhance, form: formData } = form;
 	/* endregion form */
 
 	/* region lifecycle */
 	onMount(() => {
-		$formData.id = id;
-		$formData.owner = owner;
-		$formData.email = $page.url.searchParams.get('transfer');
+		formData.set({
+			email: page.url.searchParams.get('transfer'),
+			id,
+			owner
+		});
 	});
 	/* endregion lifecycle */
-
-	/* region reactivity */
-	$: if ($page.url.searchParams.has('transfer')) {
-		open = true;
-	}
 </script>
 
-{#if $user.admin}
+{#if user?.admin}
 	<AlertDialog.Root bind:open>
-		<AlertDialog.Trigger>
-			<Button
-				class="border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
-				on:click={(e) => {
-					e.preventDefault();
-				}}
-			>
-				{$t('common.transfer.transfer')}
-			</Button>
+		<AlertDialog.Trigger
+			class="button border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
+			onclick={(e: Event) => {
+				e.preventDefault();
+			}}
+		>
+			{m['transfer.transfer']()}
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
 			<form id="transfer" method="POST" action="?/transfer" use:enhance>
 				<AlertDialog.Header>
-					<AlertDialog.Title>{$t('common.transfer.transfer')}</AlertDialog.Title>
+					<AlertDialog.Title>{m['transfer.transfer']()}</AlertDialog.Title>
 					<AlertDialog.Description class="space-y-4">
-						<div>{$t('common.transfer.desc')}</div>
+						<div>{m['transfer.desc']()}</div>
 
 						<Alert.Root variant="destructive" class="my-4 bg-red-50">
 							<WarningIcon size="18" />
-							<Alert.Description class="mt-0.5">{$t('common.warningNote')}</Alert.Description>
+							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
 						</Alert.Root>
 
 						<Form.Field {form} name="id">
-							<Form.Control let:attrs>
-								<input type="hidden" {...attrs} bind:value={$formData.id} />
+							<Form.Control>
+								{#snippet children(props)}
+									<input type="hidden" {...props} bind:value={$formData.id} />
+								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
 
 						<Form.Field {form} name="email">
-							<Form.Control let:attrs>
-								<Form.Label for="email">{$t('common.email')}</Form.Label>
-								<Input {...attrs} bind:value={$formData.email} />
+							<Form.Control>
+								{#snippet children(props)}
+									<Form.Label for="email">{m.email()}</Form.Label>
+									<Input {...props} bind:value={$formData.email} />
+								{/snippet}
 							</Form.Control>
 							<Form.FieldErrors />
 						</Form.Field>
@@ -110,19 +116,19 @@
 				</AlertDialog.Header>
 				<AlertDialog.Footer class="mt-4">
 					<AlertDialog.Cancel
-						on:click={async () => {
+						onclick={async () => {
 							open = false;
-							await goto(`${$page.url.pathname}?id=${id}`);
-						}}>{$t('common.cancel')}</AlertDialog.Cancel
+							await goto(`${page.url.pathname}?id=${id}`);
+						}}>{m.cancel()}</AlertDialog.Cancel
 					>
 					<AlertDialog.Action
-						on:click={(e) => {
+						onclick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
 							form.submit(document.getElementById('transfer'));
 						}}
 					>
-						{$t('common.continue')}
+						{m.continue()}
 					</AlertDialog.Action>
 				</AlertDialog.Footer>
 			</form>

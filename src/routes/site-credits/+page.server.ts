@@ -2,7 +2,7 @@
 import { handleError } from '$lib/server/api';
 /* endregion imports */
 
-export async function load({ locals, fetch }) {
+export async function load({ fetch, locals }) {
 	const { api } = locals;
 
 	try {

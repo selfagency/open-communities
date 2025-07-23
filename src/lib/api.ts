@@ -1,8 +1,8 @@
 /* region imports */
 import PocketBase from 'pocketbase';
-import { assign, omit, isArray } from 'radashi';
+import { assign, isArray, omit } from 'radashi';
 
-import type { TypedPocketBase } from '$lib/types.d';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 
 import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 /* endregion imports */
@@ -24,7 +24,18 @@ async function authenticate(auth: string) {
 	return api;
 }
 
-function convertBooleans(obj: any): any {
+function cleanResponse<T>(response: T, keepDate: boolean = false): T {
+	return convertBooleans(
+		omit(response, [
+			'collectionId' as keyof T,
+			'collectionName' as keyof T,
+			'updated' as keyof T,
+			keepDate ? ('' as keyof T) : ('created' as keyof T)
+		])
+	) as T;
+}
+
+function convertBooleans(obj) {
 	if (isArray(obj)) {
 		return obj.map(convertBooleans);
 	} else if (obj !== null && typeof obj === 'object') {
@@ -38,20 +49,9 @@ function convertBooleans(obj: any): any {
 				acc[key] = convertBooleans(value);
 			}
 			return acc;
-		}, {} as any);
+		}, {});
 	}
 	return obj;
-}
-
-function cleanResponse<T>(response: T, keepDate: boolean = false): T {
-	return convertBooleans(
-		omit(response, [
-			'collectionId' as keyof T,
-			'collectionName' as keyof T,
-			'updated' as keyof T,
-			keepDate ? ('' as keyof T) : ('created' as keyof T)
-		])
-	) as T;
 }
 
 function expand(item) {

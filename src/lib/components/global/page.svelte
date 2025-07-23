@@ -1,16 +1,16 @@
 <script lang="ts">
 	/* region imports */
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let content: any;
+	const { content }: { content: { content: string; title: string } } = $props();
 	/* endregion variables */
 </script>
 
 <svelte:head>
-	<title>{content.title} &middot; {$t('common.title')}</title>
+	<title>{content.title} &middot; {m.title()}</title>
 </svelte:head>
 
 <section>

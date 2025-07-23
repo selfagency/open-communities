@@ -3,23 +3,22 @@
 	import EditIcon from 'lucide-svelte/icons/pencil';
 
 	import type {
-		CongregationMetaRecord,
 		AccessibilityRecord,
 		CitiesRecord as City,
+		CongregationMetaRecord,
 		CountriesRecord as Country,
-		ServicesRecord,
-		StatesRecord as State,
+		HealthRecord,
 		SecurityRecord,
-		HealthRecord
-	} from '$lib/types';
+		ServicesRecord,
+		StatesRecord as State
+	} from '$lib/pocketbase.d';
 
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { t } from '$lib/i18n';
-	import { user } from '$lib/stores';
+	import * as m from '$lib/paraglide/messages';
 
 	import Accessibility from './accessibility.svelte';
 	import Health from './health.svelte';
@@ -28,27 +27,34 @@
 
 	/* region variables */
 	// props
-	export let congregation: CongregationMetaRecord & { id: string };
+	const { congregation }: { congregation: CongregationMetaRecord & { id: string } } = $props();
 
 	// constants
-	const accessibility = congregation?.accessibility as AccessibilityRecord;
-	const health = congregation?.health as HealthRecord;
-	const services = congregation?.services as ServicesRecord;
-	const security = congregation?.security as SecurityRecord;
-	const location = congregation?.location as { city: City; state: State; country: Country };
+	const user = $derived(page.data.user);
+	const accessibility = $derived(congregation?.accessibility) as AccessibilityRecord;
+	const health = $derived(congregation?.health) as HealthRecord;
+	const services = $derived(congregation?.services) as ServicesRecord;
+	const security = $derived(congregation?.security) as SecurityRecord;
+	const location = $derived(congregation?.location) as {
+		city: City;
+		country: Country;
+		state: State;
+	};
 	/* endregion variables */
 </script>
 
 <Card.Root
-	class="h-full min-h-max transition-transform hover:scale-105 ltr:text-left rtl:text-right"
+	class="flex h-full min-h-max flex-col justify-between transition-transform hover:scale-105 ltr:text-left rtl:text-right"
 >
 	<Card.Header>
-		<Card.Title tag="h1" class="font-display text-xl font-normal leading-6 tracking-wide"
-			>{congregation.name}</Card.Title
-		>
+		<Card.Title>
+			<h1 class="font-display text-xl leading-6 font-normal tracking-wide">
+				{congregation.name}
+			</h1>
+		</Card.Title>
 		<Card.Description>
 			{#if services.onlineOnly}
-				<span>{$t('congregation.services.onlineOnly')}</span
+				<span>{m['services.onlineOnly']()}</span
 				>{#if location.country.name && location.country.name !== 'United States'}<span
 						>, {location.country.name}</span
 					>{/if}
@@ -66,33 +72,12 @@
 	<Card.Content>
 		<p class="line-clamp-3 text-sm">{congregation.flavor}</p>
 	</Card.Content>
-	{#if accessibility || $user.admin}
-		<Card.Footer>
+	{#if accessibility || user?.admin}
+		<Card.Footer class="">
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
-				{#if $user.admin}
-					<Tooltip.Root>
-						<Tooltip.Trigger>
-							<Button
-								variant="ghost"
-								class="h-8 px-2 py-0"
-								on:click={async (e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									await goto(`/edit?id=${congregation.id}`);
-								}}
-							>
-								<EditIcon size="16" class="text-slate-700" />
-								<span class="sr-only">{$t('common.edit')}</span>
-							</Button>
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							<span class="text-nowrap">{$t('common.edit')}</span>
-						</Tooltip.Content>
-					</Tooltip.Root>
-				{/if}
 				<div class="flex w-auto flex-row items-center justify-end space-x-1">
 					{#if !congregation.visible}
-						<Badge variant="outline">{$t('common.pending')}</Badge>
+						<Badge variant="outline">{m.pending()}</Badge>
 					{:else}
 						{#if security}
 							<Security {security} mode="mini" />
@@ -105,6 +90,26 @@
 						{/if}
 					{/if}
 				</div>
+				{#if user?.admin}
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger
+								class="button ghost h-8 px-2 py-0"
+								onclick={async (e: Event) => {
+									e.preventDefault();
+									e.stopPropagation();
+									await goto(`/edit?id=${congregation.id}`);
+								}}
+							>
+								<EditIcon size="16" class="text-slate-700" />
+								<span class="sr-only">{m.edit()}</span>
+							</Tooltip.Trigger>
+							<Tooltip.Content>
+								<span class="text-nowrap">{m.edit()}</span>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
+				{/if}
 			</div>
 		</Card.Footer>
 	{/if}

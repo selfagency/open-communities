@@ -2,18 +2,23 @@
 	/* region imports */
 	import EmailIcon from 'lucide-svelte/icons/mail';
 
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let contactName: string | undefined;
-	export let contactEmail: string | undefined;
+	const {
+		contactEmail,
+		contactName
+	}: {
+		contactEmail?: string;
+		contactName?: string;
+	} = $props();
 	/* endregion variables */
 </script>
 
 <div class="col-span-3 flex flex-row items-center justify-start">
-	<h2 class="label">{$t('congregation.contact')}</h2>
+	<h2 class="label">{m['contact.contact']()}</h2>
 </div>
 <div class="col-span-9 flex flex-row items-center justify-start">
 	{#if contactEmail}

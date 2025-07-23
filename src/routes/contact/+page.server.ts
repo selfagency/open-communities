@@ -1,21 +1,20 @@
 /* region imports */
 import type { ClientResponseError } from 'pocketbase';
-import type { SuperValidated } from 'sveltekit-superforms';
 
 import { fail } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { setError } from 'sveltekit-superforms';
 
-import type { LocationMeta } from '$lib/location';
+import type { LocationMeta } from '$lib/types.d';
 
-import { PROSOPO_SECRET, PROSOPO_ENDPOINT } from '$env/static/private';
-import { t } from '$lib/i18n';
+import { CAPTCHA_SITE_SECRET } from '$env/static/private';
+import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
+import { m } from '$lib/paraglide/messages';
 import { contactSchema } from '$lib/schemas/contact';
 import { sendMail } from '$lib/server/mail';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 
-export const load = async ({ locals, fetch }) => {
+export const load = async ({ fetch, locals }) => {
 	const { api, validate } = locals;
 
 	const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map(
@@ -26,23 +25,23 @@ export const load = async ({ locals, fetch }) => {
 				38
 			);
 			return {
+				id: c.id,
 				label: truncateText(label, 38),
-				value: label,
-				id: c.id
+				value: label
 			};
 		}
 	);
 
 	return {
-		form: await validate(contactSchema),
-		congregations
+		congregations,
+		form: await validate(contactSchema)
 	};
 };
 
 export const actions = {
 	default: async (event) => {
-		const { log, api } = event.locals;
-		const form: SuperValidated<any> = await superValidate(event, zod(contactSchema));
+		const { api, log } = event.locals;
+		const form = await event.locals.validate(contactSchema, event);
 
 		try {
 			if (!form.valid) {
@@ -51,44 +50,50 @@ export const actions = {
 				});
 			}
 
-			const captcha = await (
-				await fetch(PROSOPO_ENDPOINT, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						token: form.data.captcha,
-						secret: PROSOPO_SECRET
-					})
-				})
-			).json();
+			if (!form.data.captcha) {
+				setError(form, 'captcha', m.invalidCaptcha());
+				return fail(400, { form });
+			} else {
+				const captchaValid = (
+					await (
+						await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
+							body: JSON.stringify({
+								response: form.data.captcha as string,
+								secret: CAPTCHA_SITE_SECRET as string
+							}),
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							method: 'POST'
+						})
+					)?.json()
+				)?.success;
 
-			if (!captcha.verified) {
-				return fail(400, {
-					form: { ...form, error: 'Captcha verification failed' }
-				});
+				if (!captchaValid) {
+					setError(form, 'captcha', m.invalidCaptcha());
+					return fail(400, { form });
+				}
 			}
 
 			try {
 				await sendMail(
 					{
-						name: form.data.name,
 						email: form.data.email,
 						message: `
-						${t.get(`common.contact.options.${form.data.reason}`)}
+						${m[`contact.options.${form.data.reason}`]()}
 
 						${form.data.message}
 
 						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data.email}` : ''}
-						`
+						`,
+						name: form.data.name
 					},
 					api
 				);
 			} catch (error) {
 				return fail(400, {
-					form,
-					error
+					error,
+					form
 				});
 			}
 

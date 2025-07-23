@@ -1,8 +1,11 @@
 /* region imports */
-import type { TypedPocketBase } from '$lib/types';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 /* endregion imports */
 
-export async function sendMail(data: any, api: TypedPocketBase) {
+export async function sendMail(
+	data: { email?: string; message?: string; name?: string; record?: string; title?: string },
+	api: TypedPocketBase
+) {
 	const formData = new FormData();
 	for (const key in data) {
 		formData.append(key, data[key]);
@@ -15,11 +18,11 @@ export async function sendMail(data: any, api: TypedPocketBase) {
 	}
 
 	const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
-		method: 'POST',
+		body: formData,
 		headers: {
 			Accept: 'application/json'
 		},
-		body: formData
+		method: 'POST'
 	});
 
 	if (res.status !== 200) {

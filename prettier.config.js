@@ -1,7 +1,8 @@
 /** @type {import("prettier").Config} */
 
 const config = {
-	plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
+	arrowParens: 'avoid',
+	bracketSpacing: true,
 	overrides: [
 		{
 			files: '*.svelte',
@@ -10,8 +11,7 @@ const config = {
 			}
 		}
 	],
-	arrowParens: 'avoid',
-	bracketSpacing: true,
+	plugins: ['prettier-plugin-tailwindcss', 'prettier-plugin-svelte'],
 	printWidth: 120,
 	proseWrap: 'preserve',
 	semi: true,

@@ -1,117 +1,97 @@
 <script lang="ts">
 	/* region imports */
-	import { sleep, isEmpty } from 'radashi';
+	import { isEmpty, sleep } from 'radashi';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
 	import { toast } from 'svelte-sonner';
-	import { type SuperValidated, superForm } from 'sveltekit-superforms';
+	import { fade } from 'svelte/transition';
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
-	import { dev, browser } from '$app/environment';
-	import { page } from '$app/stores';
-	import { PUBLIC_PROSOPO_SITEKEY } from '$env/static/public';
+	import { browser, dev } from '$app/environment';
+	import { page } from '$app/state';
+	import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { t } from '$lib/i18n';
+	import * as m from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	export let data: SuperValidated<any>;
-	export let verify: SuperValidated<any>;
-	export let snapshot: any;
-	// export let active: boolean = false;
+	let {
+		data,
+		snapshot = $bindable({}),
+		verify
+	}: { data: SuperValidated<any>; snapshot: unknown; verify: SuperValidated<any> } = $props();
 
 	// locals
-	let success: boolean = false;
-	let verified: boolean = false;
-	let verifying: boolean = false;
+	let success: boolean = $state(false);
+	let verified: boolean = $state(false);
 	// let captchaLoaded: boolean = false;
+
+	// constants
+	const verifying = $derived(page.url.searchParams.has('verifyEmail'));
 	/* endregion variables */
 
 	/* region form */
 	const form = superForm(data, {
-		id: 'signup',
 		dataType: 'json',
+		id: 'signup',
+		onError({ result }) {
+			log.error('submission error', result.error.message);
+			toast.error(result.error.message);
+		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
 				success = true;
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
 				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error($t('auth.signUpFailure'));
+				toast.error(m.signUpFailure);
 			}
-		},
-		onError({ result }) {
-			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
 		}
 	});
 
-	const { form: formData, enhance, capture, restore } = form;
+	const { capture, enhance, form: formData, restore } = form;
 	snapshot = { capture, restore };
 	/* endregion form */
 
 	/* region lifecycle */
 	onMount(async () => {
 		if (browser) {
-			await sleep(1500);
-			const captchaContainer = document.getElementById('captcha');
-			if (captchaContainer) {
-				window['procaptcha']?.render(captchaContainer, {
-					siteKey: PUBLIC_PROSOPO_SITEKEY,
-					theme: 'light',
-					captchaType: 'frictionless',
-					callback: (token) => {
-						$formData.captcha = token;
-					}
-				});
-			}
-
-			$formData.emailVisibility = true;
-			$formData.lang = 'en';
+			await sleep(500);
+			const widget = document.querySelector('cap-widget');
+			widget?.addEventListener('solve', function (e) {
+				$formData.captcha = e.detail.token;
+			});
 		}
+
+		$formData.emailVisibility = true;
+		$formData.lang = 'en';
 	});
-
-	/* region reactivity */
-	$: if ($page.url.searchParams.has('verifyEmail')) {
-		verifying = true;
-	}
-	/* endregion reactivity */
 </script>
-
-<svelte:head>
-	<script
-		type="module"
-		id="procaptcha-script"
-		src="https://js.prosopo.io/js/procaptcha.bundle.js"
-		async
-		defer
-	></script>
-</svelte:head>
 
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal"
-			>{verifying ? $t('auth.verifyEmail') : $t('auth.signUp')}</Card.Title
+			>{verifying ? m.verifyEmail() : m.signUp()}</Card.Title
 		>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
 		{#if verifying && !verified}
-			<Verify data={verify} bind:verified token={$page.url.searchParams.get('verifyEmail')} />
+			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
-			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-				{$t('auth.verified.extended')}
+			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
+				{m['verified.extended']()}
 			</span>
 		{:else if success}
-			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ duration: 100, delay: 0 }}>
-				{$t('auth.signUpSuccess')}
+			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
+				{m.signUpSuccess()}
 			</span>
 		{:else}
-			<div class="mb-4">{$t('auth.signUpInfo')}</div>
+			<div class="mb-4">{m.signUpInfo()}</div>
 
 			<form
 				method="POST"
@@ -119,58 +99,70 @@
 				use:enhance
 				class="space-y-2"
 				in:fade={{ delay: 200, duration: 100 }}
-				out:fade={{ duration: 100, delay: 0 }}
+				out:fade={{ delay: 0, duration: 100 }}
 			>
 				<Form.Field {form} name="name">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.name')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.name} autocomplete="name" />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{m.name()}</Form.Label>
+							<Input {...props} bind:value={$formData.name} autocomplete="name" />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="email">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('common.email')}</Form.Label>
-						<Input {...attrs} bind:value={$formData.email} autocomplete="email" />
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{m.email()}</Form.Label>
+							<Input {...props} bind:value={$formData.email} autocomplete="email" />
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="password">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.password')}</Form.Label>
-						<Input
-							{...attrs}
-							bind:value={$formData.password}
-							type="password"
-							autocomplete="new-password"
-						/>
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{m.password()}</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.password}
+								type="password"
+								autocomplete="new-password"
+							/>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="passwordConfirm">
-					<Form.Control let:attrs>
-						<Form.Label>{$t('auth.confirmPassword')}</Form.Label>
-						<Input
-							{...attrs}
-							bind:value={$formData.passwordConfirm}
-							type="password"
-							autocomplete="new-password"
-						/>
+					<Form.Control>
+						{#snippet children(props)}
+							<Form.Label>{m.confirmPassword()}</Form.Label>
+							<Input
+								{...props}
+								bind:value={$formData.passwordConfirm}
+								type="password"
+								autocomplete="new-password"
+							/>
+						{/snippet}
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
 				<Form.Field {form} name="captcha">
 					<Form.Control>
-						<div id="captcha" class="w-full pt-3"></div>
+						<div class="my-4 w-full">
+							<cap-widget
+								data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
+							></cap-widget>
+						</div>
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{$t('auth.signUp')}</Form.Button>
+				<div class="mt-4"><Form.Button>{m.signUp()}</Form.Button></div>
 			</form>
 
 			{#if dev}
