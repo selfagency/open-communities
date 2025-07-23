@@ -2,7 +2,8 @@
 	/* region imports */
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
-	import { createEventDispatcher, tick } from 'svelte';
+	import { useId } from 'bits-ui';
+	import { createEventDispatcher, onMount, tick } from 'svelte';
 
 	import { cn } from '$lib/utils.js';
 
@@ -26,12 +27,15 @@
 
 	// constants
 	const dispatch = createEventDispatcher();
+	const commandGroupId = useId();
 
 	// local variables
 	let open = $state(false);
 	let triggerRef = $state<HTMLButtonElement>(null!);
 	let currentItems = $state(items || []);
 	let selectedValueLabel = $state(placeholder || '');
+	let commandsInitialized = $state(false);
+	let commandValue = $state('');
 	/* endregion variables */
 
 	/* region methods */
@@ -40,6 +44,10 @@
 		tick().then(() => {
 			triggerRef?.focus();
 		});
+	}
+
+	function handleCommandValueChange(newValue) {
+		commandValue = newValue;
 	}
 
 	function handleSelect(itemId: string) {
@@ -52,6 +60,15 @@
 		selectedValueLabel = selected?.label ?? placeholder ?? '';
 	}
 	/* endregion methods */
+
+	/* region lifecycle */
+	onMount(() => {
+		// Delay initialization to prevent reactivity issues during initial render
+		setTimeout(() => {
+			commandsInitialized = true;
+		}, 0);
+	});
+	/* endregion lifecycle */
 
 	/* region reactivity */
 	$effect(() => {
@@ -76,19 +93,14 @@
 			<ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
 		</Popover.Trigger>
 		<Popover.Content style="width: {triggerRef?.offsetWidth}px;" class="p-0">
-			{#if currentItems.length > 0}
-				<Command.Root>
+			{#if commandsInitialized && currentItems?.length > 0}
+				<Command.Root value={commandValue} onValueChange={handleCommandValueChange}>
 					<Command.Input {placeholder} />
 					<Command.List>
 						<Command.Empty>No results found.</Command.Empty>
-						<Command.Group>
+						<Command.Group value={commandGroupId}>
 							{#each currentItems as item (item.id)}
-								<Command.Item
-									value={item.label}
-									onSelect={() => {
-										handleSelect(item.id);
-									}}
-								>
+								<Command.Item value={item.label} onSelect={() => handleSelect(item.id)}>
 									<CheckIcon class={cn('mr-2 size-4', value !== item.id && 'text-transparent')} />
 									{item.label}
 								</Command.Item>

@@ -1,7 +1,6 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { sleep } from 'radashi';
 	import { getContext, onMount } from 'svelte';
 
 	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
@@ -243,6 +242,8 @@
 							{#if $formData?.denomination}
 								{@const denom = `denomination.${$formData.denomination}`}
 								{m[denom]()}
+							{:else}
+								{m.selectThing({ thing: m['denomination.denomination']().toLowerCase() })}
 							{/if}
 						</Select.Trigger>
 						<Select.Content {...props}>

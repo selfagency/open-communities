@@ -120,9 +120,11 @@ export class Location {
 						}))
 					},
 					record: {
+						city: undefined,
 						country,
 						latitude: country?.latitude,
-						longitude: country?.longitude
+						longitude: country?.longitude,
+						state: undefined
 					}
 				});
 		} catch (err) {

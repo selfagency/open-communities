@@ -281,13 +281,13 @@
 
 								<Accordion.Root type="single" bind:value={view}>
 									<Congregation {errors} {form} {formData} bind:view />
-									<Contact {errors} {form} {formData} bind:view />
-									<Accessibility {errors} {form} {formData} bind:view />
 									<Fit {errors} {form} {formData} bind:view />
-									<Health {errors} {form} {formData} bind:view />
-									<Registration {errors} {form} {formData} bind:view />
 									<Services {errors} {form} {formData} bind:view />
+									<Accessibility {errors} {form} {formData} bind:view />
+									<Health {errors} {form} {formData} bind:view />
 									<Security {errors} {form} {formData} bind:view />
+									<Registration {errors} {form} {formData} bind:view />
+									<Contact {errors} {form} {formData} bind:view />
 								</Accordion.Root>
 
 								<!-- visibility -->
@@ -378,8 +378,7 @@
 
 	{#if dev}
 		{#await import('sveltekit-superforms') then { default: SuperDebug }}
-			<div class="mt-4"><SuperDebug data={$formData} /></div>
-			<div class="mt-4"><SuperDebug data={$errors} /></div>
+			<div class="mt-4"><SuperDebug data={form} collapsible collapsed /></div>
 		{/await}
 	{/if}
 </section>
