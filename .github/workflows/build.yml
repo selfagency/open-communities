@@ -27,7 +27,7 @@ jobs:
           cache: true
           push: true
           env: |
-            PROSOPO_ENDPOINT=${{ vars.PROSOPO_ENDPOINT }},PROSOPO_SECRET="${{ secrets.PROSOPO_SECRET }}",PUBLIC_API_ENDPOINT=${{ vars.PUBLIC_API_ENDPOINT }},PUBLIC_HOSTNAME=${{ vars.PUBLIC_HOSTNAME }},PUBLIC_PROSOPO_SITEKEY=${{ vars.PUBLIC_PROSOPO_SITEKEY }},PUBLIC_SENTRY_DSN=${{ vars.PUBLIC_SENTRY_DSN }},SENTRY_ORG=${{ vars.SENTRY_ORG }},SENTRY_PROJECT=${{ vars.SENTRY_PROJECT}},SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            CAPTCHA_SITE_SECRET=${{ secrets.CAPTCHA_SITE_SECRET }}, PUBLIC_CAPTCHA_SITE_KEY=${{ secrets.PUBLIC_CAPTCHA_SITE_KEY }}, PUBLIC_API_ENDPOINT=${{ secrets.PUBLIC_API_ENDPOINT }}, PUBLIC_HOSTNAME=${{ secrets.PUBLIC_HOSTNAME }}, PUBLIC_SENTRY_DSN=${{ secrets.PUBLIC_SENTRY_DSN }}, SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
