@@ -1,7 +1,8 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { getContext } from 'svelte';
+	import { sleep } from 'radashi';
+	import { getContext, onMount } from 'svelte';
 
 	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 	import type { LocationMeta, LocationRecord } from '$lib/types.d';
@@ -23,7 +24,7 @@
 
 	/* region variables */
 	// props
-	let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+	let { errors, form, formData, view = $bindable() } = $props();
 
 	// contstants
 	const {
@@ -82,26 +83,29 @@
 		setCity(e.detail.value);
 	}
 
-	// reactivity
-	$effect(() => {
-		if (loading === true) {
-			log.info('Loading congregation location...');
+	// lifecycle
+
+	onMount(async () => {
+		if (congregation) {
 			const location = (congregation as CongregationMetaRecord)?.location as LocationMeta;
 
 			city = location.city?.id as string;
 			province = location.state?.id as string;
 			country = location.country?.id as string;
 
-			loadLocation({
-				city,
-				country,
-				state: province
-			} as LocationRecord).then(() => {
-				loading = false;
-			});
+			try {
+				await loadLocation({
+					city,
+					country,
+					state: province
+				} as LocationRecord);
+			} catch (error) {
+				log.error('Error loading location:', error);
+			}
 		}
 	});
 
+	// reactivity
 	$effect(() => {
 		if ($location?.record || congregation?.location) {
 			let loc = ($location.record || congregation.location) as LocationMeta;

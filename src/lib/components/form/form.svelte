@@ -196,6 +196,8 @@
 					$formData.captcha = e.detail.token;
 				});
 			}
+
+			loading = false;
 		}
 	});
 	/* endregion lifecycle */
@@ -278,7 +280,7 @@
 								{/if}
 
 								<Accordion.Root type="single" bind:value={view}>
-									<Congregation {errors} {form} {formData} bind:loading bind:view />
+									<Congregation {errors} {form} {formData} bind:view />
 									<Contact {errors} {form} {formData} bind:view />
 									<Accessibility {errors} {form} {formData} bind:view />
 									<Fit {errors} {form} {formData} bind:view />
