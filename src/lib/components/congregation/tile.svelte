@@ -75,6 +75,21 @@
 	{#if accessibility || user?.admin}
 		<Card.Footer class="">
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
+				<div class="flex w-auto flex-row items-center justify-end space-x-1">
+					{#if !congregation.visible}
+						<Badge variant="outline">{m.pending()}</Badge>
+					{:else}
+						{#if security}
+							<Security {security} mode="mini" />
+						{/if}
+						{#if health}
+							<Health {health} mode="mini" />
+						{/if}
+						{#if accessibility}
+							<Accessibility {accessibility} mode="mini" />
+						{/if}
+					{/if}
+				</div>
 				{#if user?.admin}
 					<Tooltip.Provider>
 						<Tooltip.Root>
@@ -95,21 +110,6 @@
 						</Tooltip.Root>
 					</Tooltip.Provider>
 				{/if}
-				<div class="flex w-auto flex-row items-center justify-end space-x-1">
-					{#if !congregation.visible}
-						<Badge variant="outline">{m.pending()}</Badge>
-					{:else}
-						{#if security}
-							<Security {security} mode="mini" />
-						{/if}
-						{#if health}
-							<Health {health} mode="mini" />
-						{/if}
-						{#if accessibility}
-							<Accessibility {accessibility} mode="mini" />
-						{/if}
-					{/if}
-				</div>
 			</div>
 		</Card.Footer>
 	{/if}

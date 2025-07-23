@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { getContext, onMount } from 'svelte';
+	import { getContext } from 'svelte';
 
 	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 	import type { LocationMeta, LocationRecord } from '$lib/types.d';
@@ -16,6 +16,7 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Location } from '$lib/location';
 	import * as m from '$lib/paraglide/messages';
+	import { log } from '$lib/utils';
 
 	import Required from '../required.svelte';
 	/* endregion imports */
@@ -81,27 +82,26 @@
 		setCity(e.detail.value);
 	}
 
-	// lifecycle
-
-	onMount(async () => {
-		if (loading) {
+	// reactivity
+	$effect(() => {
+		if (loading === true) {
+			log.info('Loading congregation location...');
 			const location = (congregation as CongregationMetaRecord)?.location as LocationMeta;
 
 			city = location.city?.id as string;
 			province = location.state?.id as string;
 			country = location.country?.id as string;
 
-			await loadLocation({
+			loadLocation({
 				city,
 				country,
 				state: province
-			} as LocationRecord);
-
-			loading = false;
+			} as LocationRecord).then(() => {
+				loading = false;
+			});
 		}
 	});
 
-	// reactivity
 	$effect(() => {
 		if ($location?.record || congregation?.location) {
 			let loc = ($location.record || congregation.location) as LocationMeta;

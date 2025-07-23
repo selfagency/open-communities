@@ -9,8 +9,6 @@
 
 <div
 	class:min-h-[50vh]={variant === 'full'}
-	class:absolute={variant === 'full'}
-	class:top-100={variant === 'full'}
 	class={`my-4 flex h-full w-full flex-col items-center justify-center ${className}`}
 	in:fade={{ duration: 300 }}
 	out:fade={{ duration: 300 }}

@@ -1,9 +1,10 @@
 import type { TransitionConfig } from 'svelte/transition';
 
-import { type ClassValue, clsx } from "clsx";
+import { type ClassValue, clsx } from 'clsx';
 import fstw from 'fast-string-truncated-width';
+import { isEmpty, shake } from 'radashi';
 import { cubicOut } from 'svelte/easing';
-import { twMerge } from "tailwind-merge";
+import { twMerge } from 'tailwind-merge';
 import { Logger } from 'tslog';
 
 import { dev } from '$app/environment';
@@ -11,9 +12,9 @@ import { dev } from '$app/environment';
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: null | U };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T;
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 
 /* region types */
@@ -23,7 +24,6 @@ type FlyAndScaleParams = {
 	x?: number;
 	y?: number;
 };
-
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -93,3 +93,9 @@ export const logger = new Logger(
 );
 
 export const log = logger.getSubLogger({ name: 'frontend' });
+
+export const valueSet = (obj: Record<string, unknown>): boolean => {
+	if (!obj || isEmpty(obj)) return false;
+	const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));
+	return !isEmpty(shaken);
+};

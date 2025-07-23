@@ -1,0 +1,144 @@
+<script lang="ts">
+	/* region imports */
+	import * as Accordion from '$lib/components/ui/accordion';
+	import { Button } from '$lib/components/ui/button';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import * as Form from '$lib/components/ui/form';
+	import { Input } from '$lib/components/ui/input';
+	import * as m from '$lib/paraglide/messages';
+	import { valueSet } from '$lib/utils';
+
+	import Required from '../required.svelte';
+	/* endregion imports */
+
+	/* region variables */
+	// props
+	let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+
+	// constants
+	const hasServices: boolean = $derived(valueSet($formData.services));
+
+	/* region methods */
+	const fixType = (input: any) => {
+		return input as Record<string, unknown> & { _errors?: string[] | undefined };
+	};
+	/* endregion methods */
+</script>
+
+<!-- services -->
+{#if $formData.services}
+	{@const servicesErrors = fixType($errors.services)?._errors}
+	<Accordion.Item value="services">
+		<Accordion.Trigger class="flex w-full flex-row items-center justify-between">
+			<div
+				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
+			>
+				<span>{m['services.services']()}</span>
+				{#if !hasServices || servicesErrors}
+					<span class="text-red-500">*</span>
+				{/if}
+			</div>
+		</Accordion.Trigger>
+		<Accordion.Content>
+			<div class="question" class:error={servicesErrors}>
+				{m['services.extended']()}
+				<Required set={hasServices} />
+			</div>
+			<div class="my-4 space-y-2">
+				<Form.Field {form} name="inPerson">
+					<Form.Control
+						>{#snippet children(props)}
+							<span class="flex flex-row items-start justify-start space-x-2">
+								<span>
+									<Checkbox {...props} bind:checked={$formData.services.inPerson} />
+								</span>
+								<span class="-mt-0.5">
+									<Form.Label>{m['services.inPerson']()}</Form.Label>
+								</span>
+							</span>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="hybrid">
+					<Form.Control
+						>{#snippet children(props)}
+							<span class="flex flex-row items-start justify-start space-x-2">
+								<span>
+									<Checkbox {...props} bind:checked={$formData.services.hybrid} />
+								</span>
+								<span class="-mt-0.5">
+									<Form.Label>{m['services.hybrid']()}</Form.Label>
+								</span>
+							</span>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="onlineOnly">
+					<Form.Control
+						>{#snippet children(props)}
+							<span class="flex flex-row items-start justify-start space-x-2">
+								<span>
+									<Checkbox {...props} bind:checked={$formData.services.onlineOnly} />
+								</span>
+								<span class="-mt-0.5">
+									<Form.Label>{m['services.onlineOnly']()}</Form.Label>
+								</span>
+							</span>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="offsite">
+					<Form.Control
+						>{#snippet children(props)}
+							<span class="flex flex-row items-start justify-start space-x-2">
+								<span>
+									<Checkbox {...props} bind:checked={$formData.services.offsite} />
+								</span>
+								<span class="-mt-0.5">
+									<Form.Label>{m['services.offsite']()}</Form.Label>
+								</span>
+							</span>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				<Form.Field {form} name="services_other">
+					<Form.Control
+						>{#snippet children(props)}
+							<span class="flex flex-row items-start justify-start space-x-2">
+								<span>
+									<Checkbox {...props} bind:checked={$formData.services.other} />
+								</span>
+								<span class="-mt-0.5">
+									<Form.Label>{m.other()}</Form.Label>
+								</span>
+							</span>
+						{/snippet}
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
+				{#if $formData.services.other}
+					<Form.Field {form} name="services_otherText">
+						<Form.Control
+							>{#snippet children(props)}
+								<Input {...props} bind:value={$formData.services.otherText} />
+							{/snippet}
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+				{/if}
+				{#if servicesErrors}
+					<span class="text-xs text-red-500">{m.requiredResponse()}</span>
+				{/if}
+			</div>
+			<div class="mt-4 flex flex-row items-center justify-end">
+				<Button variant="secondary" onclick={() => (view = 'accessibility')}>
+					{m.next()} →
+				</Button>
+			</div>
+		</Accordion.Content>
+	</Accordion.Item>
+{/if}
