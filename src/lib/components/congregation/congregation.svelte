@@ -90,7 +90,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content
 		data-id={congregation.id}
-		class="flex max-h-[85vh] min-h-[50vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-all sm:max-w-[540px] sm:p-8"
+		class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-all sm:max-w-[540px] sm:p-8"
 	>
 		<Dialog.Header class="w-full rtl:text-right">
 			<Dialog.Title>
@@ -124,7 +124,7 @@
 					{/if}
 				</span>
 
-				<div class="flex w-1/3 flex-row items-center justify-end space-x-2">
+				<div class="flex w-1/3 flex-row items-center justify-end space-x-1">
 					{#if isEmpty(congregation.owner) && !user?.admin}
 						<a href={`/contact?claim=${congregation.id}`}>
 							<Badge

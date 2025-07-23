@@ -44,7 +44,7 @@
 </script>
 
 <Card.Root
-	class="h-full min-h-max transition-transform hover:scale-105 ltr:text-left rtl:text-right"
+	class="flex h-full min-h-max flex-col justify-between transition-transform hover:scale-105 ltr:text-left rtl:text-right"
 >
 	<Card.Header>
 		<Card.Title>
@@ -73,7 +73,7 @@
 		<p class="line-clamp-3 text-sm">{congregation.flavor}</p>
 	</Card.Content>
 	{#if accessibility || user?.admin}
-		<Card.Footer>
+		<Card.Footer class="">
 			<div class="flex w-full flex-row items-center justify-between space-x-2">
 				{#if user?.admin}
 					<Tooltip.Provider>
