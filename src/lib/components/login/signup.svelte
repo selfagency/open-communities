@@ -8,7 +8,7 @@
 
 	import { browser, dev } from '$app/environment';
 	import { page } from '$app/state';
-	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
+	import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
@@ -60,22 +60,15 @@
 	/* region lifecycle */
 	onMount(async () => {
 		if (browser) {
-			await sleep(1500);
-			const captchaContainer = document.getElementById('captcha');
-			if (captchaContainer) {
-				window['procaptcha']?.render(captchaContainer, {
-					callback: (token) => {
-						$formData.captcha = token;
-					},
-					captchaType: 'frictionless',
-					siteKey: PUBLIC_PROSOPO_SITE_KEY,
-					theme: 'light'
-				});
-			}
-
-			$formData.emailVisibility = true;
-			$formData.lang = 'en';
+			await sleep(500);
+			const widget = document.querySelector('cap-widget');
+			widget?.addEventListener('solve', function (e) {
+				$formData.captcha = e.detail.token;
+			});
 		}
+
+		$formData.emailVisibility = true;
+		$formData.lang = 'en';
 	});
 </script>
 
@@ -160,12 +153,16 @@
 
 				<Form.Field {form} name="captcha">
 					<Form.Control>
-						<div id="captcha" class="w-full pt-3"></div>
+						<div class="my-4 w-full">
+							<cap-widget
+								data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
+							></cap-widget>
+						</div>
 					</Form.Control>
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m.signUp()}</Form.Button>
+				<div class="mt-4"><Form.Button>{m.signUp()}</Form.Button></div>
 			</form>
 
 			{#if dev}

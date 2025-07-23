@@ -51,10 +51,10 @@ export class Location {
 			await this.setCountry(record.country);
 
 			if (record.state) {
-				await this.setState(record.state);
+				await this.setState(record.state, true);
 
 				if (record.city) {
-					this.setCity(record.city);
+					this.setCity(record.city as string);
 				}
 			}
 		}
@@ -80,10 +80,10 @@ export class Location {
 				},
 				record: {
 					city: city as City,
-					country: objState.locality.country as Country,
+					country: objState.record.country as Country,
 					latitude: city?.latitude,
 					longitude: city?.longitude,
-					state: objState.locality.state as State
+					state: objState.record.state as State
 				}
 			});
 	}
@@ -120,11 +120,9 @@ export class Location {
 						}))
 					},
 					record: {
-						city: undefined,
 						country,
 						latitude: country?.latitude,
-						longitude: country?.longitude,
-						state: undefined
+						longitude: country?.longitude
 					}
 				});
 		} catch (err) {
@@ -132,12 +130,13 @@ export class Location {
 		}
 	}
 
-	async setState(input: string) {
+	async setState(input: string, loadFn?: boolean) {
 		const objState = this.state.get();
 		const state = objState.localities?.states?.find((s) => s?.id === input) as State;
 		const api = this.api as TypedPocketBase;
 
 		let cities: City[] = [];
+
 		try {
 			cities = await api?.collection('cities')?.getFullList({
 				filter: `state="${state?.id}"`
@@ -163,8 +162,8 @@ export class Location {
 						}))
 					},
 					record: {
-						city: undefined,
-						country: objState.locality.country as Country,
+						city: loadFn ? objState.record.city : undefined,
+						country: objState.record.country as Country,
 						latitude: state?.latitude,
 						longitude: state?.longitude,
 						state: state as State

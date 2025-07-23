@@ -35,39 +35,31 @@
 
 	// locals
 	let hovering = $state(false);
-	let newLang = $state('en' as UsersLangOptions);
+	let lang = $state('en' as UsersLangOptions);
 
-	const lang = $derived(page.data.lang);
+	const serverLang = $derived(page.data.lang);
 	/* endregion variables */
 
 	/* region lifecycle */
 	onMount(async () => {
 		await tick();
-		newLang = lang;
+		lang = serverLang;
 	});
-
-	/* region reactivity */
-	$effect(() => {
-		if (newLang !== lang) {
-			updateLang();
-		}
-	});
-	/* endregion reactivity */
 
 	/* region methods */
 	async function updateLang() {
 		try {
 			await fetch('/user/lang', {
-				body: JSON.stringify({ lang: newLang, user: page.data.user?.id }),
+				body: JSON.stringify({ lang, user: page.data.user?.id }),
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				method: 'POST'
 			});
 
+			invalidateAll();
+			setLocale(lang, { reload: true });
 			toast.success(m.languageChanged());
-			await invalidateAll();
-			setLocale(newLang);
 		} catch (error) {
 			log.error('failed to update user language', error);
 		}
@@ -96,7 +88,7 @@
 	<DropdownMenu.Content class="w-56">
 		<DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.RadioGroup bind:value={newLang}>
+		<DropdownMenu.RadioGroup bind:value={lang} onValueChange={() => updateLang()}>
 			{#each locales as { label, value }, i (i)}
 				<DropdownMenu.RadioItem {value} class="flex flex-row items-center justify-start space-x-2">
 					<Badge variant="outline" class="text-xs font-normal">{value.toUpperCase()}</Badge>

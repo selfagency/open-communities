@@ -16,7 +16,8 @@ const config = {
 					'127.0.0.1:8090',
 					'api.opencommunities.info',
 					'opencommunities-new.pockethost.io',
-					'*.prosopo.io',
+					'captcha.selfagency.dev',
+					'cdn.jsdelivr.net',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
 					'*.sentry.io'
@@ -37,15 +38,16 @@ const config = {
 					'self',
 					'unsafe-eval',
 					'unsafe-inline',
-					'js.prosopo.io',
-					'*.sentry.io',
+					'captcha.selfagency.dev',
+          'cdn.jsdelivr.net',
+          '*.sentry.io',
 					'basemaps.cartocdn.com',
 					'*.basemaps.cartocdn.com',
 					'nonce-o247950'
 				],
-				'script-src-elem': ['self', 'unsafe-inline', '*.sentry.io', 'js.prosopo.io'],
-				'style-src': ['self', 'unsafe-inline', 'js.prosopo.io', 'fonts.googleapis.com'],
-				'style-src-elem': ['self', 'unsafe-inline', 'fonts.googleapis.com'],
+				'script-src-elem': ['self', 'unsafe-inline', '*.sentry.io', 'captcha.selfagency.dev',  'cdn.jsdelivr.net'],
+				'style-src': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'fonts.googleapis.com'],
+				'style-src-elem': ['self', 'unsafe-inline', 'fonts.googleapis.com',  ],
 				'worker-src': ['self', 'blob:']
 			}
 		},

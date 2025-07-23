@@ -269,5 +269,6 @@
   "warning": "Are you sure you want to continue?",
   "warningNote": "This action cannot be undone.",
   "website": "Website",
-  "languageChanged": "Successfully changed language"
+  "languageChanged": "Successfully changed language",
+  "invalidCaptcha": "Invalid captcha"
 }

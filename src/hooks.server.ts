@@ -55,8 +55,6 @@ async function customHandler({ event, resolve }) {
 		route: `${event.url.pathname}${event.url.search}`
 	};
 
-	log.info('locale set', lang);
-
 	// auth
 	try {
 		if (event.url.pathname === '/logout') {
@@ -104,7 +102,6 @@ export const handleError = handleErrorWithSentry(async ({ error, event, status }
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(event.request, ({ locale, request }) => {
 		event.request = request;
-		log.info('Paraglide locale set:', locale);
 
 		return resolve(event, {
 			transformPageChunk: ({ html }) =>

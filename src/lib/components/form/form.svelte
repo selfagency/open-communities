@@ -15,7 +15,7 @@
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { PUBLIC_PROSOPO_SITE_KEY } from '$env/static/public';
+	import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
 	import Combobox from '$lib/components/global/combobox.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
@@ -112,6 +112,24 @@
 	const fixType = (input: any) => {
 		return input as Record<string, unknown> & { _errors?: string[] | undefined };
 	};
+
+	async function handleCountryChange(e: CustomEvent) {
+		country = e.detail.value;
+		await setCountry(country);
+		province = '';
+		city = '';
+	}
+
+	async function handleStateChange(e: CustomEvent) {
+		province = e.detail.value;
+		await setState(province);
+		city = '';
+	}
+
+	function handleCityChange(e: CustomEvent) {
+		city = e.detail.value;
+		setCity(city);
+	}
 
 	function initData() {
 		formData.set({
@@ -238,7 +256,7 @@
 			await loadLocation({
 				city,
 				country,
-				province
+				state: province
 			} as LocationRecord);
 		}
 
@@ -247,16 +265,10 @@
 		}
 
 		if (browser) {
-			$formData.captcha = '';
-			await sleep(1500);
-			const captchaContainer = document.getElementById('captcha');
-			window['procaptcha']?.render(captchaContainer, {
-				callback: (token) => {
-					$formData.captcha = token;
-				},
-				captchaType: 'frictionless',
-				siteKey: PUBLIC_PROSOPO_SITE_KEY,
-				theme: 'light'
+			await sleep(500);
+			const widget = document.querySelector('cap-widget');
+			widget?.addEventListener('solve', function (e) {
+				$formData.captcha = e.detail.token;
 			});
 		}
 	});
@@ -375,11 +387,11 @@
 												<Combobox
 													items={$location.options.countryOptions}
 													{...props}
-													bind:value={country}
+													value={country}
 													placeholder={m.selectThing({
 														thing: m['location.country']().toLowerCase()
 													})}
-													on:change={async () => await setCountry(country)}
+													on:change={handleCountryChange}
 												/>
 											{/snippet}
 										</Form.Control>
@@ -392,12 +404,12 @@
 												<Combobox
 													items={$location.options.stateOptions}
 													{...props}
-													bind:value={province}
+													value={province}
 													placeholder={m.selectThing({
 														thing: m['location.state']().toLowerCase()
 													})}
-													disabled={!country && !$location.options.stateOptions}
-													on:change={async () => await setState(province)}
+													disabled={!country || !$location.options.stateOptions}
+													on:change={handleStateChange}
 												/>
 											{/snippet}
 										</Form.Control>
@@ -410,12 +422,12 @@
 												<Combobox
 													items={$location.options.cityOptions}
 													{...props}
-													bind:value={city}
+													value={city}
 													placeholder={m.selectThing({
 														thing: m['location.city']().toLowerCase()
 													})}
-													disabled={!province && !$location.options.cityOptions}
-													on:change={() => setCity(city)}
+													disabled={!province || !$location.options.cityOptions}
+													on:change={handleCityChange}
 												/>
 											{/snippet}
 										</Form.Control>
@@ -1003,7 +1015,7 @@
 										<span class="mt-4 block text-xs text-red-500">{m.requiredResponse()}</span>
 									{/if}
 									<div class="mt-4 flex flex-row items-center justify-end">
-										<Button variant="secondary" onclick={() => (view = 'sescurity')}>
+										<Button variant="secondary" onclick={() => (view = 'security')}>
 											{m.next()} →
 										</Button>
 									</div>
@@ -1158,7 +1170,7 @@
 									</div>
 									<div class="mt-4 flex flex-row items-center justify-end">
 										<Button variant="secondary" onclick={() => (view = 'registration')}>
-											{m.next} →
+											{m.next()} →
 										</Button>
 									</div>
 								</Accordion.Content>
@@ -1353,14 +1365,16 @@
 					</div>
 				{/if}
 
-				<div class="w-full">
-					<Form.Field {form} name="captcha">
-						<Form.Control>
-							<div id="captcha" class="w-full pt-3"></div>
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-				</div>
+				<Form.Field {form} name="captcha">
+					<Form.Control>
+						<div class="my-2 w-full">
+							<cap-widget
+								data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
+							></cap-widget>
+						</div>
+					</Form.Control>
+					<Form.FieldErrors />
+				</Form.Field>
 			</Card.Content>
 		</form>
 

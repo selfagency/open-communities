@@ -18,6 +18,8 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationRecord } from '$lib/types.d';
 
+import { CAPTCHA_SITE_SECRET } from '$env/static/private';
+import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
 import { m } from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
@@ -78,6 +80,29 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
+			if (!form.data.captcha) {
+				throw new Error('Invalid captcha');
+			} else {
+				const captchaValid = (
+					await (
+						await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
+							body: JSON.stringify({
+								response: form.data.captcha as string,
+								secret: CAPTCHA_SITE_SECRET as string
+							}),
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							method: 'POST'
+						})
+					)?.json()
+				)?.success;
+
+				if (!captchaValid) {
+					throw new Error('Invalid captcha');
+				}
+			}
+
 			const { accessibility, fit, health, location, registration, security, services, user } =
 				formData as MetaRecord;
 
@@ -135,6 +160,10 @@ export const actions = {
 		} catch (error) {
 			log.error('add:submit:error', error);
 			const err = error as ClientResponseError;
+
+			if (err.message === 'Invalid captcha') {
+				setError(form, 'captcha', m.invalidCaptcha());
+			}
 
 			if (err.message === 'Failed to create record.') {
 				setError(form, 'name', m.exists());

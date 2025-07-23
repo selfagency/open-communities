@@ -115,8 +115,10 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m.login()}</Form.Button>
-				<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword()}</Button>
+				<div class="mt-4">
+					<Form.Button>{m.login()}</Form.Button>
+					<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword()}</Button>
+				</div>
 			</form>
 
 			{#if dev}

@@ -6,6 +6,7 @@
 	import { isEmpty, omit } from 'radashi';
 	import { copyText } from 'svelte-copy';
 	import { toast } from 'svelte-sonner';
+	import { fade } from 'svelte/transition';
 
 	import type {
 		AccessibilityRecord,
@@ -89,7 +90,7 @@
 	</Dialog.Trigger>
 	<Dialog.Content
 		data-id={congregation.id}
-		class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 sm:max-w-[540px] sm:p-8"
+		class="flex max-h-[85vh] min-h-[50vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-all sm:max-w-[540px] sm:p-8"
 	>
 		<Dialog.Header class="w-full rtl:text-right">
 			<Dialog.Title>
@@ -137,7 +138,7 @@
 						<Tooltip.Provider>
 							<Tooltip.Root>
 								<Tooltip.Trigger
-									class="button h-8 px-2 py-0 outline"
+									class="button ghost h-8 px-2 py-0"
 									onclick={async () => {
 										await goto(`/edit?id=${congregation.id}`);
 									}}
@@ -174,103 +175,119 @@
 
 		<Tabs.Root bind:value={tab} class="w-full">
 			<Tabs.List class="my-4 w-full">
-				<Tabs.Trigger value="about" class="w-1/2">{m.about()}</Tabs.Trigger>
-				<Tabs.Trigger value="services" class="w-1/2">{m['services.services']()}</Tabs.Trigger>
-				<Tabs.Trigger value="details" class="w-1/2">{m.details()}</Tabs.Trigger>
+				<Tabs.Trigger value="about" class="w-1/2 transition-all">{m.about()}</Tabs.Trigger>
+				<Tabs.Trigger value="services" class="w-1/2 transition-all"
+					>{m['services.services']()}</Tabs.Trigger
+				>
+				<Tabs.Trigger value="details" class="w-1/2 transition-all">{m.details()}</Tabs.Trigger>
 			</Tabs.List>
-			<Tabs.Content value="about">
-				{#if congregation.flavor}
-					<p class="mb-6 text-sm">{@html congregation.flavor}</p>
+			<Tabs.Content value="about" class="transition-all duration-300">
+				{#if tab === 'about'}
+					<div transition:fade>
+						{#if congregation.flavor}
+							<p class="mb-6 text-sm">{@html congregation.flavor}</p>
+						{/if}
+
+						<div class="grid grid-cols-12 gap-4 text-sm">
+							{#if congregation.denomination}
+								<div class="col-span-3 flex flex-row items-start justify-start">
+									<h2 class="label">{m['denomination.affiliation']()}</h2>
+								</div>
+								<div class="col-span-9 flex flex-row items-start justify-start">
+									{m[`denomination.${congregation.denomination}`]()}
+								</div>
+							{/if}
+
+							{#if !allFalse(fit)}
+								{#if congregation.denomination || congregation.flavor}<Separator
+										class="col-span-12"
+									/>{/if}
+								<Fit {fit} />
+							{/if}
+
+							{#if user?.admin && (congregation.contactName || congregation.contactEmail)}
+								<Separator class="col-span-12" />
+								<Contact
+									contactName={congregation.contactName}
+									contactEmail={congregation.contactEmail}
+								/>
+							{/if}
+						</div>
+					</div>
 				{/if}
-
-				<div class="grid grid-cols-12 gap-4 text-sm">
-					{#if congregation.denomination}
-						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{m['denomination.affiliation']()}</h2>
-						</div>
-						<div class="col-span-9 flex flex-row items-start justify-start">
-							{m[`denomination.${congregation.denomination}`]()}
-						</div>
-					{/if}
-
-					{#if !allFalse(fit)}
-						{#if congregation.denomination || congregation.flavor}<Separator
-								class="col-span-12"
-							/>{/if}
-						<Fit {fit} />
-					{/if}
-
-					{#if user?.admin && (congregation.contactName || congregation.contactEmail)}
-						<Separator class="col-span-12" />
-						<Contact
-							contactName={congregation.contactName}
-							contactEmail={congregation.contactEmail}
-						/>
-					{/if}
-				</div>
 			</Tabs.Content>
 			<Tabs.Content value="services">
-				<div class="grid grid-cols-12 gap-4 text-sm">
-					{#if congregation.clergy}
-						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{m['clergy.clergy']()}</h2>
-						</div>
-						<div class="col-span-9 flex flex-row items-start justify-start">
-							{congregation.clergy}
-						</div>
-					{/if}
+				{#if tab === 'services'}
+					<div transition:fade>
+						<div class="grid grid-cols-12 gap-4 text-sm">
+							{#if congregation.clergy}
+								<div class="col-span-3 flex flex-row items-start justify-start">
+									<h2 class="label">{m['clergy.clergy']()}</h2>
+								</div>
+								<div class="col-span-9 flex flex-row items-start justify-start">
+									{congregation.clergy}
+								</div>
+							{/if}
 
-					{#if !allFalse(services)}
-						{#if congregation.clergy}<Separator class="col-span-12" />{/if}
-						<Services {services} />
-					{/if}
+							{#if !allFalse(services)}
+								{#if congregation.clergy}<Separator class="col-span-12" />{/if}
+								<Services {services} />
+							{/if}
 
-					{#if !allFalse(registration)}
-						{#if congregation.clergy || !allFalse(services)}<Separator class="col-span-12" />{/if}
-						<Registration {registration} />
-					{/if}
-				</div>
+							{#if !allFalse(registration)}
+								{#if congregation.clergy || !allFalse(services)}<Separator
+										class="col-span-12"
+									/>{/if}
+								<Registration {registration} />
+							{/if}
+						</div>
+					</div>
+				{/if}
 			</Tabs.Content>
 			<Tabs.Content value="details">
-				<div class="grid grid-cols-12 gap-4 text-sm">
-					{#if fit.flag}
-						<div class="col-span-3">
-							<h2 class="label">{m['fit.flag.short']()}</h2>
-						</div>
-						<div class="col-span-9">
-							{m[`fit.flag.${fit.flag}`]()}
-						</div>
-					{/if}
+				{#if tab === 'details'}
+					<div transition:fade>
+						<div class="grid grid-cols-12 gap-4 text-sm">
+							{#if fit.flag}
+								<div class="col-span-3">
+									<h2 class="label">{m['fit.flag.short']()}</h2>
+								</div>
+								<div class="col-span-9">
+									{m[`fit.flag.${fit.flag}`]()}
+								</div>
+							{/if}
 
-					{#if !allFalse(accessibility)}
-						{#if fit.flag}<Separator class="col-span-12" />{/if}
-						<Accessibility {accessibility} mode="full" />
-					{/if}
+							{#if !allFalse(accessibility)}
+								{#if fit.flag}<Separator class="col-span-12" />{/if}
+								<Accessibility {accessibility} mode="full" />
+							{/if}
 
-					{#if health.protocol}
-						{#if fit.flag || !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
-						<Health {health} />
-					{/if}
+							{#if health.protocol}
+								{#if fit.flag || !allFalse(accessibility)}<Separator class="col-span-12" />{/if}
+								<Health {health} />
+							{/if}
 
-					{#if !allFalse(security)}
-						{#if fit.flag || health.protocol || !allFalse(accessibility)}<Separator
-								class="col-span-12"
-							/>{/if}
-						<Security {security} />
-					{/if}
+							{#if !allFalse(security)}
+								{#if fit.flag || health.protocol || !allFalse(accessibility)}<Separator
+										class="col-span-12"
+									/>{/if}
+								<Security {security} />
+							{/if}
 
-					{#if notes}
-						{#if fit.flag || health.protocol || !allFalse(accessibility) || !allFalse(security)}
-							<Separator class="col-span-12" />
-						{/if}
-						<div class="col-span-3 flex flex-row items-start justify-start">
-							<h2 class="label">{m['notes.notes']()}</h2>
+							{#if notes}
+								{#if fit.flag || health.protocol || !allFalse(accessibility) || !allFalse(security)}
+									<Separator class="col-span-12" />
+								{/if}
+								<div class="col-span-3 flex flex-row items-start justify-start">
+									<h2 class="label">{m['notes.notes']()}</h2>
+								</div>
+								<div class="col-span-9 flex flex-row items-start justify-start">
+									<p>{@html notes}</p>
+								</div>
+							{/if}
 						</div>
-						<div class="col-span-9 flex flex-row items-start justify-start">
-							<p>{@html notes}</p>
-						</div>
-					{/if}
-				</div>
+					</div>
+				{/if}
 			</Tabs.Content>
 		</Tabs.Root>
 	</Dialog.Content>

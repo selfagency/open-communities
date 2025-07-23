@@ -7,6 +7,8 @@ import { uid } from 'radashi';
 import type { UsersRecord } from '$lib/pocketbase.d';
 
 // import { dev } from '$app/environment';
+import { CAPTCHA_SITE_SECRET } from '$env/static/private';
+import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';

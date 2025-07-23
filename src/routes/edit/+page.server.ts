@@ -15,6 +15,8 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationMeta, LocationRecord } from '$lib/types.d';
 
+import { CAPTCHA_SITE_SECRET } from '$env/static/private';
+import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
 import { cleanResponse } from '$lib/api';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';

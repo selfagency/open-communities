@@ -11,18 +11,18 @@ export async function POST({ cookies, locals, request }) {
 	let result: null | UsersRecord = null;
 
 	try {
+		cookies.set('lang', lang, locals.cookieOpts);
+
 		if (user) {
-			api.authStore.loadFromCookie(cookies.get('auth') as string);
+			// api.authStore.loadFromCookie(cookies.get('auth') as string);
 			result = await api.collection('users').update(user, {
 				lang
 			});
-		} else {
-			cookies.set('lang', lang, locals.cookieOpts);
 		}
+
+		return json({ result, status: 201 });
 	} catch (error) {
 		log.error('Error updating user:', error);
 		return json({ error: 'Failed to update user language' }, { status: 500 });
 	}
-
-	return json({ result, status: 201 });
 }
