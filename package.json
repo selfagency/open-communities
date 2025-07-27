@@ -18,34 +18,34 @@
   },
   "dependencies": {
     "@inlang/paraglide-js": "^2.2.0",
-    "@sentry/sveltekit": "^9.41.0"
+    "@sentry/sveltekit": "^9.42.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.3.1",
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.31.0",
+    "@eslint/js": "^9.32.0",
     "@inlang/cli": "^3.0.12",
     "@inlang/paraglide-js": "2.2.0",
     "@internationalized/date": "^3.8.2",
     "@leeoniya/ufuzzy": "^1.0.18",
-    "@lucide/svelte": "^0.525.0",
+    "@lucide/svelte": "^0.526.0",
     "@nanostores/persistent": "1.1.0",
     "@poppanator/sveltekit-svg": "5.0.1",
     "@sveltejs/adapter-node": "5.2.13",
-    "@sveltejs/kit": "^2.25.2",
+    "@sveltejs/kit": "^2.26.1",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.11",
     "@types/eslint": "^9.6.1",
     "@types/node": "^20.19.9",
-    "@types/web": "^0.0.253",
+    "@types/web": "^0.0.255",
     "@vite-pwa/sveltekit": "1.0.0",
-    "bits-ui": "2.8.11",
+    "bits-ui": "2.8.13",
     "clsx": "^2.1.1",
     "cmdk-sv": "^0.0.19",
     "cookie": "1.0.2",
-    "eslint": "^9.31.0",
+    "eslint": "^9.32.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-html": "^8.1.3",
     "eslint-plugin-perfectionist": "^4.15.0",
@@ -54,7 +54,7 @@
     "fast-string-truncated-width": "^1.2.1",
     "formsnap": "2.0.1",
     "globals": "16.3.0",
-    "lucide-svelte": "^0.525.0",
+    "lucide-svelte": "^0.526.0",
     "mode-watcher": "1.1.0",
     "nanostores": "1.0.1",
     "pocketbase": "^0.26.2",
@@ -63,7 +63,7 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "radashi": "12.6.0",
     "sqlite3": "^5.1.7",
-    "svelte": "5.36.15",
+    "svelte": "5.36.17",
     "svelte-check": "^4.3.0",
     "svelte-copy": "2.0.0",
     "svelte-maplibre": "1.2.0",
@@ -75,13 +75,13 @@
     "tailwindcss-animate": "^1.0.7",
     "tslib": "^2.8.1",
     "tslog": "^4.9.3",
-    "tw-animate-css": "^1.3.5",
+    "tw-animate-css": "^1.3.6",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^6.3.5",
     "vite-plugin-devtools-json": "^0.3.0",
     "wait-for-the-element": "^4.0.2",
-    "zod": "4.0.5"
+    "zod": "4.0.10"
   },
   "engines": {
     "node": "20"
@@ -94,5 +94,5 @@
       "sqlite3"
     ]
   },
-  "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912"
+  "packageManager": "pnpm@10.13.1"
 }
