@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
+import { ViteMcp } from 'vite-plugin-mcp';
 
 export default defineConfig({
 	build: {
@@ -16,6 +17,7 @@ export default defineConfig({
 		}
 	},
 	plugins: [
+		ViteMcp(),
 		sentrySvelteKit({
 			sourceMapsUploadOptions: {
 				org: 'selfagency',
