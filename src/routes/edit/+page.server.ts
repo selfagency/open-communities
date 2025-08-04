@@ -148,6 +148,29 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
+			if (!form.data.captcha) {
+				throw new Error('Invalid captcha');
+			} else {
+				const captchaValid = (
+					await (
+						await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
+							body: JSON.stringify({
+								response: form.data.captcha as string,
+								secret: CAPTCHA_SITE_SECRET as string
+							}),
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							method: 'POST'
+						})
+					)?.json()
+				)?.success;
+
+				if (!captchaValid) {
+					throw new Error('Invalid captcha');
+				}
+			}
+
 			const { accessibility, fit, health, location, registration, security, services } = data;
 
 			await Promise.all([
@@ -229,6 +252,29 @@ export const actions = {
 				error.status = 403;
 				throw error;
 			}
+
+			// if (!form.data.captcha) {
+			// 	throw new Error('Invalid captcha');
+			// } else {
+			// 	const captchaValid = (
+			// 		await (
+			// 			await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
+			// 				body: JSON.stringify({
+			// 					response: form.data.captcha as string,
+			// 					secret: CAPTCHA_SITE_SECRET as string
+			// 				}),
+			// 				headers: {
+			// 					'Content-Type': 'application/json'
+			// 				},
+			// 				method: 'POST'
+			// 			})
+			// 		)?.json()
+			// 	)?.success;
+
+			// 	if (!captchaValid) {
+			// 		throw new Error('Invalid captcha');
+			// 	}
+			// }
 
 			const user = await api
 				.collection('users')
