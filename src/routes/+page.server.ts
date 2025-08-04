@@ -1,6 +1,5 @@
 /* region imports */
-import { handleError } from '$lib/server/api';
-import { cleanResponse } from '$lib/server/api';
+import { cleanResponse, handleError } from '$lib/server/api';
 /* endregion imports */
 
 export async function load({ locals }) {
