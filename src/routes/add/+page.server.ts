@@ -79,7 +79,7 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			await validateCaptcha(form.data.captcha);
+			await validateCaptcha(form);
 
 			const { accessibility, fit, health, location, registration, security, services, user } =
 				formData as MetaRecord;
