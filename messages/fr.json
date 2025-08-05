@@ -120,15 +120,6 @@
     "clergyMember": "Un membre du clergé est affilié à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
     "extended": "Pourquoi votre congrégation conviendrait-elle aux juifs qui participent au mouvement pour le cessez-le-feu ? Veuillez indiquer d'autres raisons dans le champ \"Autres\".",
     "fit": "En forme",
-    "flag": {
-      "extended": "Votre congrégation arbore-t-elle un drapeau israélien ?",
-      "flag": "Drapeau israélien déployé",
-      "no": "Aucun drapeau israélien n'est déployé",
-      "note": "Dans l'affirmative, nous l'indiquerons dans la liste de votre congrégation afin que les gens puissent décider en toute connaissance de cause de l'endroit où ils se rendent.",
-      "short": "Drapeau israélien",
-      "yes": "Un drapeau israélien est déployé, mais pas sur la bima.",
-      "yesBima": "Un drapeau israélien est déployé sur la bima"
-    },
     "multipleClergyMembers": "Plusieurs membres du clergé sont affiliés à Rabbis for Ceasefire (Rabbins pour le cessez-le-feu).",
     "publicStatement": "La congrégation a fait une déclaration publique en faveur d'un cessez-le-feu permanent."
   },
@@ -268,5 +259,14 @@
   "warning": "Êtes-vous sûr de vouloir continuer ?",
   "warningNote": "Cette action ne peut être annulée.",
   "website": "Site web",
-  "languageChanged": "Langue modifiée avec succès"
+  "languageChanged": "Langue modifiée avec succès",
+  "flag": {
+    "extended": "Votre congrégation arbore-t-elle un drapeau israélien ?",
+    "flag": "Drapeau israélien déployé",
+    "no": "Aucun drapeau israélien n'est déployé",
+    "note": "Dans l'affirmative, nous l'indiquerons dans la liste de votre congrégation afin que les gens puissent décider en toute connaissance de cause de l'endroit où ils se rendent.",
+    "short": "Drapeau israélien",
+    "yes": "Un drapeau israélien est déployé, mais pas sur la bima.",
+    "yesBima": "Un drapeau israélien est déployé sur la bima"
+  }
 }

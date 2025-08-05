@@ -120,15 +120,6 @@
     "clergyMember": "Een lid van het team van geestelijken is aangesloten bij Rabbis for Ceasefire",
     "extended": "Waarom zou jouw gemeente goed passen bij Joden in de staakt-het-vuren beweging? Geef a.u.b. aanvullende redenen op in het veld 'Overig'.",
     "fit": "Pas",
-    "flag": {
-      "extended": "Hangt er in jouw gemeente een Israëlische vlag?",
-      "flag": "Israëlische vlag getoond",
-      "no": "Er wordt geen Israëlische vlag getoond",
-      "note": "Zo ja, dan vermelden we dat in de lijst van je gemeente, zodat mensen een geïnformeerde beslissing kunnen nemen over waar ze naartoe gaan.",
-      "short": "Israëlische vlag",
-      "yes": "Er hangt een Israëlische vlag, maar niet op de bima",
-      "yesBima": "Op de bima hangt een Israëlische vlag"
-    },
     "multipleClergyMembers": "Meerdere leden van het team van geestelijken zijn aangesloten bij Rabbis for Ceasefire",
     "publicStatement": "De congregatie heeft een publieke verklaring afgelegd ter ondersteuning van een permanent staakt-het-vuren"
   },
@@ -269,5 +260,14 @@
   "warning": "Weet je zeker dat je wilt doorgaan?",
   "warningNote": "Deze actie kan niet ongedaan worden gemaakt.",
   "website": "Website",
-  "languageChanged": "Taal succesvol gewijzigd"
+  "languageChanged": "Taal succesvol gewijzigd",
+  "flag": {
+    "extended": "Hangt er in jouw gemeente een Israëlische vlag?",
+    "flag": "Israëlische vlag getoond",
+    "no": "Er wordt geen Israëlische vlag getoond",
+    "note": "Zo ja, dan vermelden we dat in de lijst van je gemeente, zodat mensen een geïnformeerde beslissing kunnen nemen over waar ze naartoe gaan.",
+    "short": "Israëlische vlag",
+    "yes": "Er hangt een Israëlische vlag, maar niet op de bima",
+    "yesBima": "Op de bima hangt een Israëlische vlag"
+  }
 }

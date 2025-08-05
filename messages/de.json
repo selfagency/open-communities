@@ -120,15 +120,6 @@
     "clergyMember": "Ein Mitglied des Geistlichen-Teams ist Mitglied von Rabbis for Ceasefire",
     "extended": "Warum wäre Ihre Gemeinde ein guter Partner für Juden in der Waffenstillstandsbewegung? Bitte nennen Sie weitere Gründe im Feld \"Sonstiges\".",
     "fit": "Fit",
-    "flag": {
-      "extended": "Trägt Ihre Gemeinde eine israelische Flagge?",
-      "flag": "Ausgestellte israelische Flagge",
-      "no": "Keine israelische Flagge wird gezeigt",
-      "note": "Wenn ja, werden wir dies in der Auflistung Ihrer Gemeinde vermerken, damit die Menschen eine fundierte Entscheidung treffen können, wo sie hingehen.",
-      "short": "Israelische Flagge",
-      "yes": "Eine israelische Flagge wird gezeigt, aber nicht auf der Bima",
-      "yesBima": "Eine israelische Flagge wird auf der Bima gehisst"
-    },
     "multipleClergyMembers": "Mehrere Mitglieder des Geistlichen-Teams sind mit Rabbis for Ceasefire verbunden",
     "publicStatement": "Die Gemeinde hat eine öffentliche Erklärung zur Unterstützung eines dauerhaften Waffenstillstands abgegeben"
   },
@@ -269,5 +260,14 @@
   "warning": "Sind Sie sicher, dass Sie weitermachen wollen?",
   "warningNote": "Diese Aktion kann nicht rückgängig gemacht werden.",
   "website": "Website",
-  "languageChanged": "Sprache erfolgreich geändert"
+  "languageChanged": "Sprache erfolgreich geändert",
+  "flag": {
+    "extended": "Trägt Ihre Gemeinde eine israelische Flagge?",
+    "flag": "Ausgestellte israelische Flagge",
+    "no": "Keine israelische Flagge wird gezeigt",
+    "note": "Wenn ja, werden wir dies in der Auflistung Ihrer Gemeinde vermerken, damit die Menschen eine fundierte Entscheidung treffen können, wo sie hingehen.",
+    "short": "Israelische Flagge",
+    "yes": "Eine israelische Flagge wird gezeigt, aber nicht auf der Bima",
+    "yesBima": "Eine israelische Flagge wird auf der Bima gehisst"
+  }
 }

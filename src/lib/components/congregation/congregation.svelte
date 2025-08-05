@@ -33,6 +33,7 @@
 	import Accessibility from './accessibility.svelte';
 	import Contact from './contact.svelte';
 	import Fit from './fit.svelte';
+	import Flag from './flag.svelte';
 	import Health from './health.svelte';
 	import Registration from './registration.svelte';
 	import Security from './security.svelte';
@@ -249,12 +250,7 @@
 					<div transition:fade>
 						<div class="grid grid-cols-12 gap-4 text-sm">
 							{#if fit.flag}
-								<div class="col-span-3">
-									<h2 class="label">{m['fit.flag.short']()}</h2>
-								</div>
-								<div class="col-span-9">
-									{m[`fit.flag.${fit.flag}`]()}
-								</div>
+								<Flag flag={fit.flag} mode="full" />
 							{/if}
 
 							{#if !allFalse(accessibility)}
