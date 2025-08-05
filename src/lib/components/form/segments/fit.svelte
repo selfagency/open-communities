@@ -128,21 +128,21 @@
 					<Form.Control
 						>{#snippet children(props)}
 							<div class="question my-4 flex flex-col items-start justify-start space-y-2">
-								<span>{m['fit.flag.extended']()}</span>
-								<small>{m['fit.flag.note']()}</small>
+								<span>{m['flag.extended']()}</span>
+								<small>{m['flag.note']()}</small>
 							</div>
 							<RadioGroup.Root {...props} class="space-y-2" bind:value={$formData.fit.flag}>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="no" id="no" />
-									<Form.Label for="no">{m['fit.flag.no']()}</Form.Label>
+									<Form.Label for="no">{m['flag.no']()}</Form.Label>
 								</div>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="yes" id="yes" />
-									<Form.Label for="yes">{m['fit.flag.yes']()}</Form.Label>
+									<Form.Label for="yes">{m['flag.yes']()}</Form.Label>
 								</div>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="yesBima" id="yesBima" />
-									<Form.Label for="yesBima">{m['fit.flag.yesBima']()}</Form.Label>
+									<Form.Label for="yesBima">{m['flag.yesBima']()}</Form.Label>
 								</div>
 							</RadioGroup.Root>
 						{/snippet}
