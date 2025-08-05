@@ -7,6 +7,7 @@
 		CitiesRecord as City,
 		CongregationMetaRecord,
 		CountriesRecord as Country,
+		FitRecord,
 		HealthRecord,
 		SecurityRecord,
 		ServicesRecord,
@@ -21,6 +22,7 @@
 	import * as m from '$lib/paraglide/messages';
 
 	import Accessibility from './accessibility.svelte';
+	import Flag from './flag.svelte';
 	import Health from './health.svelte';
 	import Security from './security.svelte';
 	/* endregion imports */
@@ -40,6 +42,7 @@
 		country: Country;
 		state: State;
 	};
+	const flag = $derived((congregation?.fit as FitRecord)?.flag);
 	/* endregion variables */
 </script>
 
@@ -87,6 +90,9 @@
 						{/if}
 						{#if accessibility}
 							<Accessibility {accessibility} mode="mini" />
+						{/if}
+						{#if flag}
+							<Flag {flag} mode="mini" />
 						{/if}
 					{/if}
 				</div>

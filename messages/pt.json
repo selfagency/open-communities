@@ -120,15 +120,6 @@
     "clergyMember": "Um membro da equipa de clérigos está filiado na Rabbis for Ceasefire",
     "extended": "Porque é que a sua congregação seria uma boa opção para os judeus do movimento de cessar-fogo? Por favor, partilhe outras razões no campo \"Outros\".",
     "fit": "Em forma",
-    "flag": {
-      "extended": "A sua congregação exibe uma bandeira israelita?",
-      "flag": "Bandeira israelita exposta",
-      "no": "Não é exibida qualquer bandeira israelita",
-      "note": "Em caso afirmativo, registaremos esse facto na listagem da sua congregação para que as pessoas possam tomar uma decisão informada sobre o local que frequentam.",
-      "short": "Bandeira israelita",
-      "yes": "É exibida uma bandeira israelita, mas não no bima",
-      "yesBima": "Uma bandeira israelita está exposta no bima"
-    },
     "multipleClergyMembers": "Vários membros da equipa de clérigos estão ligados à Rabbis for Ceasefire",
     "publicStatement": "A congregação fez uma declaração pública de apoio ao cessar-fogo permanente"
   },
@@ -269,5 +260,14 @@
   "warning": "Tens a certeza de que queres continuar?",
   "warningNote": "Esta ação não pode ser anulada.",
   "website": "Sítio Web",
-  "languageChanged": "Pomyślnie zmieniono język"
+  "languageChanged": "Pomyślnie zmieniono język",
+  "flag": {
+    "extended": "A sua congregação exibe uma bandeira israelita?",
+    "flag": "Bandeira israelita exposta",
+    "no": "Não é exibida qualquer bandeira israelita",
+    "note": "Em caso afirmativo, registaremos esse facto na listagem da sua congregação para que as pessoas possam tomar uma decisão informada sobre o local que frequentam.",
+    "short": "Bandeira israelita",
+    "yes": "É exibida uma bandeira israelita, mas não no bima",
+    "yesBima": "Uma bandeira israelita está exposta no bima"
+  }
 }

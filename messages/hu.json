@@ -120,15 +120,6 @@
     "clergyMember": "A lelkészi csapat egyik tagja a Rabbik a tűzszünetért szervezet tagja",
     "extended": "Miért lenne az Ön gyülekezete jó választás a tűzszüneti mozgalomban részt vevő zsidók számára? Kérjük, az \"Egyéb\" mezőben ossza meg további okait.",
     "fit": "Fit",
-    "flag": {
-      "extended": "Az Ön gyülekezete kitűzi az izraeli zászlót?",
-      "flag": "Izraeli zászló kitűzve",
-      "no": "Izraeli zászló nincs kitűzve",
-      "note": "Ha igen, akkor ezt fel fogjuk tüntetni a gyülekezetének listáján, hogy az emberek megalapozott döntést hozhassanak arról, hogy hova járjanak.",
-      "short": "Izraeli zászló",
-      "yes": "Izraeli zászlót tűztek ki, de nem a bimán.",
-      "yesBima": "Egy izraeli zászló van kitűzve a bimára"
-    },
     "multipleClergyMembers": "A lelkészi csapat több tagja a Rabbik a tűzszünetért szervezethez tartozik.",
     "publicStatement": "A gyülekezet nyilvános nyilatkozatot tett a tartós tűzszünet támogatásáról."
   },
@@ -269,5 +260,14 @@
   "warning": "Biztos, hogy folytatni akarod?",
   "warningNote": "Ezt a műveletet nem lehet visszacsinálni.",
   "website": "Honlap",
-  "languageChanged": "Nyelvváltás sikeresen megtörtént"
+  "languageChanged": "Nyelvváltás sikeresen megtörtént",
+  "flag": {
+    "extended": "Az Ön gyülekezete kitűzi az izraeli zászlót?",
+    "flag": "Izraeli zászló kitűzve",
+    "no": "Izraeli zászló nincs kitűzve",
+    "note": "Ha igen, akkor ezt fel fogjuk tüntetni a gyülekezetének listáján, hogy az emberek megalapozott döntést hozhassanak arról, hogy hova járjanak.",
+    "short": "Izraeli zászló",
+    "yes": "Izraeli zászlót tűztek ki, de nem a bimán.",
+    "yesBima": "Egy izraeli zászló van kitűzve a bimára"
+  }
 }
