@@ -1,27 +1,30 @@
 <script lang="ts">
+	import type { UsersRecord } from '$lib/pocketbase.d';
+
 	/* region imports */
 	import AddForm from '$lib/components/form/form.svelte';
+	import { initForm } from '$lib/form';
 	import * as m from '$lib/paraglide/messages';
 
-	import type { PageProps, Snapshot } from './$types';
+	import type { PageProps } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
 	const { data }: PageProps = $props();
 
-	// local vars
-	let snapshotData = $state('');
-	/* endregion variables */
+	const form = initForm(data.form.default, 'add', data.user?.admin);
 
-	export const snapshot: Snapshot<string> = {
-		capture: () => snapshotData,
-		restore: (value) => (snapshotData = value)
-	};
+	export const snapshot = { capture: form.capture, restore: form.restore };
 </script>
 
 <svelte:head>
 	<title>{m.addCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
-<AddForm data={data.form} content={data.content} bind:snapshot={snapshotData} />
+<AddForm
+	{form}
+	content={data.content}
+	mode="add"
+	user={data.user as UsersRecord & { id: string }}
+/>

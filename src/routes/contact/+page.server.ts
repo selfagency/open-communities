@@ -5,9 +5,9 @@ import { fail } from '@sveltejs/kit';
 
 import type { LocationMeta } from '$lib/types.d';
 
-import { m } from '$lib/paraglide/messages';
+import * as m from '$lib/paraglide/messages';
 import { contactSchema } from '$lib/schemas/contact';
-import { sendMail } from '$lib/server/mail';
+import { adminMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
@@ -51,7 +51,7 @@ export const actions = {
 			await validateCaptcha(form);
 
 			try {
-				await sendMail(
+				await adminMail(
 					{
 						email: form.data.email,
 						message: `

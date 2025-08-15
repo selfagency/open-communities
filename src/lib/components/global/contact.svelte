@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import { sleep } from 'radashi';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
@@ -83,9 +83,11 @@
 	/* region reactivity */
 	$effect(() => {
 		if (page.url.searchParams.has('claim')) {
-			$formData.reason = 'claim';
-			congregation = page.url.searchParams.get('claim') as string;
-			$formData.record = congregation;
+			untrack(() => {
+				$formData.reason = 'claim';
+				congregation = page.url.searchParams.get('claim') as string;
+				$formData.record = congregation;
+			});
 		}
 	});
 	/* endregion reactivity */

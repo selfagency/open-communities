@@ -18,10 +18,10 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationRecord } from '$lib/types.d';
 
-import { m } from '$lib/paraglide/messages';
+import * as m from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
-import { sendMail } from '$lib/server/mail';
+import { adminMail, transactionalMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 /* endregion imports */
 
@@ -79,46 +79,55 @@ export const actions = {
 				throw new Error('Invalid form data');
 			}
 
-			await validateCaptcha(form);
+			const captchaValid = await validateCaptcha(form);
 
-			const { accessibility, fit, health, location, registration, security, services, user } =
-				formData as MetaRecord;
+			if (captchaValid) {
+				const { accessibility, fit, health, location, registration, security, services, user } =
+					formData as MetaRecord;
 
-			const record = (await api.collection('congregations').create(
-				{
-					...omit(formData, [
-						'accessibility',
-						'fit',
-						'location',
-						'registration',
-						'health',
-						'security',
-						'services',
-						'user'
-					]),
-					...location,
-					visible: client?.admin ? formData.visible : false
-				},
-				{ fetch }
-			)) as CongregationsResponse;
+				const record = (await api.collection('congregations').create(
+					{
+						...omit(formData, [
+							'accessibility',
+							'fit',
+							'location',
+							'registration',
+							'health',
+							'security',
+							'services',
+							'user'
+						]),
+						...location,
+						visible: client?.admin ? formData.visible : false
+					},
+					{ fetch }
+				)) as CongregationsResponse;
 
-			await Promise.all([
-				api
+				const batch = api.createBatch();
+				batch
 					.collection('accessibility')
-					.create({ ...accessibility, congregation: record.id }, { fetch }),
-				api.collection('fit').create({ ...fit, congregation: record.id }, { fetch }),
-				api
+					.create({ ...accessibility, congregation: record.id }, { fetch });
+				batch.collection('fit').create({ ...fit, congregation: record.id }, { fetch });
+				batch
 					.collection('registration')
-					.create({ ...registration, congregation: record.id }, { fetch }),
-				api.collection('health').create({ ...health, congregation: record.id }, { fetch }),
-				api.collection('security').create({ ...security, congregation: record.id }, { fetch }),
-				api.collection('services').create({ ...services, congregation: record.id }, { fetch })
-			]);
+					.create({ ...registration, congregation: record.id }, { fetch });
+				batch.collection('health').create({ ...health, congregation: record.id }, { fetch });
+				batch.collection('security').create({ ...security, congregation: record.id }, { fetch });
+				batch.collection('services').create({ ...services, congregation: record.id }, { fetch });
+				await batch.send();
 
-			if (!client?.admin) {
 				await api.collection('users').update(user, { congregation: record.id }, { fetch });
 
-				await sendMail(
+				if (!client?.admin) {
+					await transactionalMail({
+						email: client.email,
+						message: `${m['transactional.submitted']({ locale: client.lang || 'en' })} ${m['transactional.confirmation']({ locale: client.lang || 'en' })}`,
+						name: client.name as string,
+						subject: `${m['transactional.subject']({ locale: client.lang || 'en' })}`
+					});
+				}
+
+				await adminMail(
 					{
 						email: client.email,
 						message: `
@@ -130,6 +139,8 @@ export const actions = {
 					},
 					api
 				);
+			} else {
+				throw new Error('Invalid captcha');
 			}
 
 			return {

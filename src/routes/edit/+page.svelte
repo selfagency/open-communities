@@ -2,30 +2,37 @@
 	/* region imports */
 	import { setContext } from 'svelte';
 
+	import type { UsersRecord } from '$lib/pocketbase.d';
+
 	import EditForm from '$lib/components/form/form.svelte';
+	import { initForm } from '$lib/form';
 	import * as m from '$lib/paraglide/messages';
 
-	import type { PageProps, Snapshot } from './$types';
+	import type { PageProps } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
 	const { data }: PageProps = $props();
-	let snapshotData = $state('');
-
-	export const snapshot: Snapshot<string> = {
-		capture: () => snapshotData,
-		restore: (value) => (snapshotData = value)
-	};
 	/* endregion variables */
 
 	/* region lifecycle */
 	setContext('congregation', data.congregation);
 	/* endregion lifecycle */
+
+	const form = initForm(data.form.default, 'edit', data.user?.admin);
+
+	export const snapshot = { capture: form.capture, restore: form.restore };
 </script>
 
 <svelte:head>
 	<title>{m.editCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
-<EditForm data={data.form} mode="edit" bind:snapshot={snapshotData} />
+<EditForm
+	{form}
+	mode="edit"
+	deletion={data.form.delete}
+	transfer={data.form.transfer}
+	user={data.user as UsersRecord & { id: string }}
+/>

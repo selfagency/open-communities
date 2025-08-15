@@ -11,6 +11,10 @@ import { page } from '$app/state';
 export type SelectOption = { label: string; value: string };
 
 export type State = {
+	form?: {
+		hasErrors: boolean;
+		success: boolean;
+	};
 	isMobile?: boolean;
 	lang?: string;
 	offsetHeight?: number;
@@ -35,6 +39,10 @@ export const state = persistentMap<State>('state_', {} as State, encoder);
 
 export function initState() {
 	setState({
+		form: {
+			hasErrors: false,
+			success: false
+		},
 		isMobile: window.innerWidth < 640,
 		lang: page.data.user?.lang || 'en',
 		offsetHeight: window.innerHeight,

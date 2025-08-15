@@ -43,7 +43,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.localPolice} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.localPolice}
+										onCheckedChange={(checked) => {
+											$formData.security.localPolice = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['security.localPolice']()}</Form.Label>
@@ -58,7 +64,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.privateSecurityArmed} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.privateSecurityArmed}
+										onCheckedChange={(checked) => {
+											$formData.security.privateSecurityArmed = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['security.privateSecurityArmed']()}</Form.Label>
@@ -73,7 +85,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.privateSecurityUnarmed} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.privateSecurityUnarmed}
+										onCheckedChange={(checked) => {
+											$formData.security.privateSecurityUnarmed = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['security.privateSecurityUnarmed']()}</Form.Label>
@@ -88,7 +106,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.clergyArmed} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.clergyArmed}
+										onCheckedChange={(checked) => {
+											$formData.security.clergyArmed = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['security.clergyArmed']()}</Form.Label>
@@ -103,7 +127,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.congregantsArmed} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.congregantsArmed}
+										onCheckedChange={(checked) => {
+											$formData.security.congregantsArmed = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['security.congregantsArmed']()}</Form.Label>
@@ -118,7 +148,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.noFirearms} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.noFirearms}
+										onCheckedChange={(checked) => {
+											$formData.security.noFirearms = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['security.noFirearms']()}</Form.Label>
@@ -133,7 +169,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.security.other} />
+									<Checkbox
+										{...props}
+										checked={$formData.security.other}
+										onCheckedChange={(checked) => {
+											$formData.security.other = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m.other()}</Form.Label>

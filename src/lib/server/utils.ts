@@ -5,7 +5,7 @@ import { setError } from 'sveltekit-superforms';
 
 import { CAPTCHA_SITE_SECRET } from '$env/static/private';
 import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
-import { m } from '$lib/paraglide/messages';
+import * as m from '$lib/paraglide/messages';
 
 export async function validateCaptcha(form: SuperValidated<Record<string, unknown>>) {
 	if (!PUBLIC_CAPTCHA_SITE_KEY || !CAPTCHA_SITE_SECRET) {
@@ -21,7 +21,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 				await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
 					body: JSON.stringify({
 						response: form.data.captcha as string,
-						secret: CAPTCHA_SITE_SECRET as string
+						secret: CAPTCHA_SITE_SECRET
 					}),
 					headers: {
 						'Content-Type': 'application/json'
@@ -34,6 +34,8 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 		if (!captchaValid) {
 			setError(form, 'captcha', m.invalidCaptcha());
 			return fail(400, { form });
+		} else {
+			return captchaValid;
 		}
 	}
 }

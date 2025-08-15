@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 
 	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 	import type { LocationMeta, LocationRecord } from '$lib/types.d';
@@ -107,12 +107,14 @@
 	// reactivity
 	$effect(() => {
 		if ($location?.record || congregation?.location) {
-			let loc = ($location.record || congregation.location) as LocationMeta;
-			$formData.location = {
-				city: loc.city?.id,
-				country: loc.country?.id,
-				state: loc.state?.id
-			};
+			untrack(() => {
+				let loc = ($location.record || congregation.location) as LocationMeta;
+				$formData.location = {
+					city: loc.city?.id,
+					country: loc.country?.id,
+					state: loc.state?.id
+				};
+			});
 		}
 	});
 </script>
