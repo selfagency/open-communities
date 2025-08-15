@@ -33,7 +33,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m.services_services()}</span>
+				<span>{m.services()}</span>
 				{#if !hasServices || servicesErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -59,7 +59,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.services.inPerson()}</Form_Label>
+									<Form.Label>{m.services_inPerson()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -80,7 +80,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.services.hybrid()}</Form_Label>
+									<Form.Label>{m.services_hybrid()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -109,7 +109,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.services.onlineOnly()}</Form_Label>
+									<Form.Label>{m.services_onlineOnly()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -130,7 +130,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.services.offsite()}</Form_Label>
+									<Form.Label>{m.services_offsite()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -151,7 +151,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form_Label>
+									<Form.Label>{m.other()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}

@@ -35,7 +35,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m.fit_fit()}</span>
+				<span>{m.fit()}</span>
 				{#if !hasFit || fitErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -61,7 +61,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.fit.publicStatement()}</Form_Label>
+									<Form.Label>{m.fit_publicStatement()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -82,7 +82,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.fit.clergyMember()}</Form_Label>
+									<Form.Label>{m.fit_clergyMember()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -103,7 +103,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.fit.multipleClergyMembers()}</Form_Label>
+									<Form.Label>{m.fit_multipleClergyMembers()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -124,7 +124,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form_Label>
+									<Form.Label>{m.other()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -158,15 +158,15 @@
 							<RadioGroup.Root {...props} class="space-y-2" bind:value={$formData.fit.flag}>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="no" id="no" />
-									<Form.Label for="no">{m.flag.no()}</Form_Label>
+									<Form.Label for="no">{m.flag_no()}</Form.Label>
 								</div>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="yes" id="yes" />
-									<Form.Label for="yes">{m.flag.yes()}</Form_Label>
+									<Form.Label for="yes">{m.flag_yes()}</Form.Label>
 								</div>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="yesBima" id="yesBima" />
-									<Form.Label for="yesBima">{m.flag.yesBima()}</Form_Label>
+									<Form.Label for="yesBima">{m.flag_yesBima()}</Form.Label>
 								</div>
 							</RadioGroup.Root>
 						{/snippet}

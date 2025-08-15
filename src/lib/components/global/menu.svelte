@@ -35,7 +35,7 @@
 				await goto(`/edit?id=${user?.congregation}`);
 			}}
 		>
-			{mode === 'full' && $appState.isMobile ? m.edit() : m_editCongregation()}
+			{mode === 'full' && $appState.isMobile ? m.edit() : m.editCongregation()}
 		</Button>
 	{:else}
 		<Button
@@ -45,7 +45,7 @@
 				await goto('/add');
 			}}
 		>
-			{mode === 'full' && $appState.isMobile ? m.add() : m_addCongregation()}
+			{mode === 'full' && $appState.isMobile ? m.add() : m.addCongregation()}
 		</Button>
 	{/if}
 

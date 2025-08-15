@@ -40,7 +40,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m.registration_registration()}</span>
+				<span>{m.registration()}</span>
 				{#if !hasRegistration || registrationErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -62,11 +62,11 @@
 						>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="free" id="free" />
-								<Form.Label for="free">{m.registration.free()}</Form_Label>
+								<Form.Label for="free">{m.registration_free()}</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
-								<Form.Label for="fixedPrice">{m.registration.fixedPrice()}</Form_Label>
+								<Form.Label for="fixedPrice">{m.registration_fixedPrice()}</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="slidingScale" id="slidingScale" />
@@ -82,7 +82,7 @@
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="other" id="other" />
-								<Form.Label for="other">{m.other()}</Form_Label>
+								<Form.Label for="other">{m.other()}</Form.Label>
 							</div>
 						</RadioGroup.Root>
 					{/snippet}
@@ -111,7 +111,7 @@
 			<Form.Field {form} name="registration_email">
 				<Form.Control
 					>{#snippet children(props)}
-						<Form.Label for="registration_email">{m.email()}</Form_Label>
+						<Form.Label for="registration_email">{m.email()}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.registration.email}
@@ -126,7 +126,7 @@
 			<Form.Field {form} name="registration_url">
 				<Form.Control
 					>{#snippet children(props)}
-						<Form.Label for="registration_url">{m.website()}</Form_Label>
+						<Form.Label for="registration_url">{m.website()}</Form.Label>
 						<div class="text-xs text-slate-500">{m.http()}</div>
 						<Input
 							{...props}
@@ -142,7 +142,7 @@
 
 			{#if registrationInvalid}
 				<span class="mt-4 block text-xs text-red-500">
-					{m.thingRequired({ thing: m_emailOrUrl() })}
+					{m.thingRequired({ thing: m.emailOrUrl() })}
 				</span>
 			{/if}
 			<div class="mt-4 flex flex-row items-center justify-end">

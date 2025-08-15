@@ -46,8 +46,8 @@
 		async onUpdate({ form: f, result }) {
 			if (!f.valid || result.type !== 'success') {
 				log.error('form error', result.data.form.errors);
-				if (result.data.form.error) {
-					log.error('submission error', result.data.form.error);
+				if (result.data.form.errors) {
+					log.error('submission error', result.data.form.errors);
 					toast.error(m.emailFailure);
 				}
 			} else if (result.type === 'success') {
@@ -116,7 +116,7 @@
 				<Form.Field {form} name="name">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.name()}</Form_Label>
+							<Form.Label>{m.name()}</Form.Label>
 							<Input {...props} bind:value={$formData.name} required />
 						{/snippet}
 					</Form.Control>
@@ -126,7 +126,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.email()}</Form_Label>
+							<Form.Label>{m.email()}</Form.Label>
 							<Input {...props} bind:value={$formData.email} required />
 						{/snippet}
 					</Form.Control>
@@ -136,16 +136,16 @@
 				<Form.Field {form} name="reason">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.contact.reason()}</Form_Label>
+							<Form.Label>{m.contact_reason()}</Form.Label>
 							<Select.Root type="single" bind:value={$formData.reason}>
 								<Select.Trigger class="w-full">
 									{m[`contactOptions.${$formData.reason}`]()}
 								</Select.Trigger>
 								<Select.Content {...props}>
-									<Select.Item value="question">{m.contactOptions.question()}</Select_Item>
-									<Select.Item value="suggest">{m.contactOptions.suggest()}</Select_Item>
-									<Select.Item value="claim">{m.contactOptions.claim()}</Select_Item>
-									<Select.Item value="delete">{m.contactOptions.delete()}</Select_Item>
+									<Select.Item value="question">{m.contactOptions_question()}</Select.Item>
+									<Select.Item value="suggest">{m.contactOptions_suggest()}</Select.Item>
+									<Select.Item value="claim">{m.contactOptions_claim()}</Select.Item>
+									<Select.Item value="delete">{m.contactOptions_delete()}</Select.Item>
 								</Select.Content>
 							</Select.Root>
 						{/snippet}
@@ -157,13 +157,13 @@
 					<Form.Field {form} name="record">
 						<Form.Control>
 							{#snippet children(props)}
-								<Form.Label>{m.contact.record()}</Form_Label>
+								<Form.Label>{m.contact_record()}</Form.Label>
 								<Combobox
 									items={congregations}
 									{...props}
 									bind:value={congregation}
 									placeholder={m.selectThing({
-										thing: m.congregation()_toLowerCase()
+										thing: m.congregation().toLowerCase()
 									})}
 									disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
 									on:change={(e) => {
@@ -180,7 +180,7 @@
 				<Form.Field {form} name="message">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.contact.message()}</Form_Label>
+							<Form.Label>{m.contact_message()}</Form.Label>
 							<Form.Description class="text-red-500">
 								{#if $formData.reason === 'delete'}
 									{m.contact_account()}
@@ -205,7 +205,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m.contact.send()}</Form_Button>
+				<Form.Button>{m.contact_send()}</Form.Button>
 			</form>
 
 			{#if dev}

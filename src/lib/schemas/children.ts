@@ -66,7 +66,7 @@ export const registrationSchema = z
 		)
 	})
 	.refine(hasContact, {
-		message: m.thingRequired({ thing: m_emailOrUrl() })
+		message: m.thingRequired({ thing: m.emailOrUrl() })
 	});
 
 export type RegistrationSchema = z.infer<typeof registrationSchema>;

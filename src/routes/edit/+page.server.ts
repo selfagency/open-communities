@@ -117,9 +117,9 @@ export const actions = {
 			if (!client?.admin) {
 				await transactionalMail({
 					email: client.email,
-					message: m.transactional.deleted({ locale: client_lang || 'en' }),
+					message: m.transactional_deleted({ locale: client.lang || 'en' }),
 					name: client.name,
-					subject: m.transactional.subject({ locale: client_lang || 'en' })
+					subject: m.transactional_subject({ locale: client.lang || 'en' })
 				});
 			}
 
@@ -199,21 +199,21 @@ export const actions = {
 
 				await transactionalMail({
 					email: client.email,
-					message: `${m.transactional.updated({ locale: client_lang || 'en' })} ${m[
-						'transactional.confirmation'
+					message: `${m.transactional_updated({ locale: client.lang || 'en' })} ${m[
+						'transactional_confirmation'
 					]({
 						locale: client.lang || 'en'
 					})}`,
 					name: client.name,
-					subject: m.transactional.subject({ locale: client_lang || 'en' })
+					subject: m.transactional_subject({ locale: client.lang || 'en' })
 				});
-			} else if (client?.admin && data.owner && form.data.visible && !priorToChange_visible) {
+			} else if (client?.admin && data.owner && form.data.visible && !priorToChange.visible) {
 				const owner = await api.collection('users').getOne(data.owner, { fetch });
 				await transactionalMail({
 					email: owner.email,
-					message: m.transactional.updateApproved({ locale: owner_lang || 'en' }),
+					message: m.transactional_updateApproved({ locale: owner.lang || 'en' }),
 					name: owner.name,
-					subject: m.transactional.subject({ locale: owner_lang || 'en' })
+					subject: m.transactional_subject({ locale: owner.lang || 'en' })
 				});
 			}
 
@@ -264,9 +264,9 @@ export const actions = {
 
 			await transactionalMail({
 				email: user.email,
-				message: m.transactional.claimedSuccess({ locale: user_lang || 'en' }),
+				message: m.transactional_claimedSuccess({ locale: user.lang || 'en' }),
 				name: user.name,
-				subject: m.transactional.subject({ locale: user_lang || 'en' })
+				subject: m.transactional_subject({ locale: user.lang || 'en' })
 			});
 
 			return { form };

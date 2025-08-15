@@ -13,13 +13,13 @@
 	// props
 	const { data }: PageProps = $props();
 
-	const form = initForm(data.form.default, 'add', data.user?_admin);
+	const form = initForm(data.form.default, 'add', data.user?.admin);
 
-	export const snapshot = { capture: form.capture, restore: form_restore };
+	export const snapshot = { capture: form.capture, restore: form.restore };
 </script>
 
 <svelte:head>
-	<title>{m.addCongregation()} &middot; {m_title()}</title>
+	<title>{m.addCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
 <AddForm

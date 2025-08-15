@@ -52,7 +52,8 @@
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
+				if (!isEmpty(result.data.form.errors))
+					log.error('submission error', result.data.form_error);
 				toast.error(m.transferFailure());
 			}
 		}
@@ -80,18 +81,18 @@
 				e.preventDefault();
 			}}
 		>
-			{m.transfer_transfer()}
+			{m.transfer()}
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
 			<form id="transfer" method="POST" action="?/transfer" use:enhance>
 				<AlertDialog.Header>
-					<AlertDialog.Title>{m.transfer.transfer()}</AlertDialog_Title>
+					<AlertDialog.Title>{m.transfer()}</AlertDialog.Title>
 					<AlertDialog.Description class="space-y-4">
 						<div>{m.transfer_desc()}</div>
 
 						<Alert.Root variant="destructive" class="my-4 bg-red-50">
 							<WarningIcon size="18" />
-							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert_Description>
+							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
 						</Alert.Root>
 
 						<Form.Field {form} name="id">
@@ -106,7 +107,7 @@
 						<Form.Field {form} name="email">
 							<Form.Control>
 								{#snippet children(props)}
-									<Form.Label for="email">{m.email()}</Form_Label>
+									<Form.Label for="email">{m.email()}</Form.Label>
 									<Input {...props} bind:value={$formData.email} />
 								{/snippet}
 							</Form.Control>
@@ -119,13 +120,13 @@
 						onclick={async () => {
 							open = false;
 							await goto(`${page.url.pathname}?id=${id}`);
-						}}>{m.cancel()}</AlertDialog_Cancel
+						}}>{m.cancel()}</AlertDialog.Cancel
 					>
 					<AlertDialog.Action
 						onclick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							form.submit(document_getElementById('transfer'));
+							form.submit(document.getElementById('transfer'));
 						}}
 					>
 						{m.continue()}

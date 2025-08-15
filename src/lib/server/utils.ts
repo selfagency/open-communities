@@ -12,7 +12,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 		throw new Error('Captcha validation is not configured');
 	}
 
-	if (!form.data_captcha) {
+	if (!form.data.captcha) {
 		setError(form, 'captcha', m.invalidCaptcha());
 		return fail(400, { form });
 	} else {
@@ -20,7 +20,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 			await (
 				await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
 					body: JSON.stringify({
-						response: form.data_captcha as string,
+						response: form.data.captcha as string,
 						secret: CAPTCHA_SITE_SECRET
 					}),
 					headers: {

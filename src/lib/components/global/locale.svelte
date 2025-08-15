@@ -86,7 +86,7 @@
 		{/if}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56">
-		<DropdownMenu.Label>{m.language()}</DropdownMenu_Label>
+		<DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.RadioGroup bind:value={lang} onValueChange={() => updateLang()}>
 			{#each locales as { label, value }, i (i)}

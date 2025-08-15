@@ -16,7 +16,7 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{m.registration_registration()}</h2>
+	<h2 class="label">{m.registration()}</h2>
 </div>
 
 <div class="col-span-9 flex flex-col items-start justify-between space-y-2">

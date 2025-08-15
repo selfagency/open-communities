@@ -26,7 +26,7 @@ export type DeleteSchema = z.infer<typeof deleteSchema>;
 
 export const transferSchema = z.object({
 	email: z.email().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m_email() })
+		message: m.thingRequired({ thing: m.email() })
 	}),
 	id: z.string().refine((value) => !!value, {
 		message: m.thingRequired({ thing: '`id`' })
@@ -71,7 +71,7 @@ export const defaultSchema = z.object({
 	),
 	fit,
 	flavor: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m.flavor_flavor() })
+		message: m.thingRequired({ thing: m.flavor() })
 	}),
 	health,
 	id: z.string().optional(),
@@ -81,7 +81,7 @@ export const defaultSchema = z.object({
 		state: z.string().optional()
 	}),
 	name: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m_name() })
+		message: m.thingRequired({ thing: m.name() })
 	}),
 	notes: z.string().optional(),
 	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),

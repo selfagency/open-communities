@@ -155,13 +155,13 @@
 			<Form.Field {form} name="country">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.location.location()}</Form_Label>
+						<Form.Label>{m.location()}</Form.Label>
 						<Combobox
 							items={$location.options.countryOptions}
 							{...props}
 							value={country}
 							placeholder={m.selectThing({
-								thing: m.location.country()_toLowerCase()
+								thing: m.location_country().toLowerCase()
 							})}
 							on:change={handleCountryChange}
 						/>
@@ -172,13 +172,13 @@
 			<Form.Field {form} name="state">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.location.state()}</Form_Label>
+						<Form.Label>{m.location_state()}</Form.Label>
 						<Combobox
 							items={$location.options.stateOptions}
 							{...props}
 							value={province}
 							placeholder={m.selectThing({
-								thing: m.location.state()_toLowerCase()
+								thing: m.location_state().toLowerCase()
 							})}
 							disabled={!country || !$location.options.stateOptions}
 							on:change={handleStateChange}
@@ -190,13 +190,13 @@
 			<Form.Field {form} name="city">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.location.city()}</Form_Label>
+						<Form.Label>{m.location_city()}</Form.Label>
 						<Combobox
 							items={$location.options.cityOptions}
 							{...props}
 							value={city}
 							placeholder={m.selectThing({
-								thing: m.location.city()_toLowerCase()
+								thing: m.location_city().toLowerCase()
 							})}
 							disabled={!province || !$location.options.cityOptions}
 							on:change={handleCityChange}
@@ -210,7 +210,7 @@
 		<Form.Field {form} name="contactUrl">
 			<Form.Control>
 				{#snippet children(props)}
-					<Form.Label>{m.website()}</Form_Label>
+					<Form.Label>{m.website()}</Form.Label>
 					<div class="text-xs text-slate-500">{m.http()}</div>
 					<Input
 						{...props}
@@ -238,14 +238,14 @@
 		<Form.Field {form} name="denomination">
 			<Form.Control>
 				{#snippet children(props)}
-					<Form.Label>{m.denomination.extended()}</Form_Label>
+					<Form.Label>{m.denomination_extended()}</Form.Label>
 					<Select.Root type="single" name="denomination" bind:value={$formData.denomination}>
 						<Select.Trigger class="w-full" {...props}>
 							{#if $formData?.denomination}
 								{@const denom = `denomination.${$formData.denomination}`}
 								{m[denom]()}
 							{:else}
-								{m.selectThing({ thing: m.denomination.denomination()_toLowerCase() })}
+								{m.selectThing({ thing: m.denomination().toLowerCase() })}
 							{/if}
 						</Select.Trigger>
 						<Select.Content {...props}>
@@ -273,7 +273,7 @@
 		<Form.Field {form} name="notes">
 			<Form.Control
 				>{#snippet children(props)}
-					<Form.Label>{m.notes.extended()}</Form_Label>
+					<Form.Label>{m.notes_extended()}</Form.Label>
 					<Textarea {...props} bind:value={$formData.notes} />
 				{/snippet}
 			</Form.Control>

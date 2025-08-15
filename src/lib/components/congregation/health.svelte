@@ -32,7 +32,7 @@
 	{/if}
 {:else}
 	<div class="col-span-3">
-		<h2 class="label">{m.health_health()}</h2>
+		<h2 class="label">{m.health()}</h2>
 	</div>
 
 	<ul class="col-span-9 space-y-2">

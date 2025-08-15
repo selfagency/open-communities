@@ -20,7 +20,7 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
 			setState({ form: { hasErrors: false, success: false } });
 
 			if (result.type === 'success') {
-				toast.success(mode === 'edit' ? m.editSuccess() : m_addSuccess());
+				toast.success(mode === 'edit' ? m.editSuccess() : m.addSuccess());
 				if (isAdmin) {
 					await goto('/', { invalidateAll: true });
 				} else {
@@ -30,8 +30,9 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
 				setState({ form: { hasErrors: true, success: false } });
 				form.errors.set(result.data.form_errors);
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
-				toast.error(mode === 'edit' ? m.editFailure() : m_addFailure());
+				if (!isEmpty(result.data.form.errors))
+					log.error('submission error', result.data.form_error);
+				toast.error(mode === 'edit' ? m.editFailure() : m.addFailure());
 			}
 		}
 	});

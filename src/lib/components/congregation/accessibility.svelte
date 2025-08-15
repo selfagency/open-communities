@@ -87,7 +87,7 @@
 
 {#if mode === 'full'}
 	<div class="col-span-3">
-		<h2 class="label">{m.accessibility_accessibility()}</h2>
+		<h2 class="label">{m.accessibility()}</h2>
 	</div>
 	<ul class="col-span-9 space-y-2">
 		{#if ada}

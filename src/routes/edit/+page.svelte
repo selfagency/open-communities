@@ -20,13 +20,13 @@
 	setContext('congregation', data.congregation);
 	/* endregion lifecycle */
 
-	const form = initForm(data.form.default, 'edit', data.user?_admin);
+	const form = initForm(data.form.default, 'edit', data.user?.admin);
 
-	export const snapshot = { capture: form.capture, restore: form_restore };
+	export const snapshot = { capture: form.capture, restore: form.restore };
 </script>
 
 <svelte:head>
-	<title>{m.editCongregation()} &middot; {m_title()}</title>
+	<title>{m.editCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
 <EditForm

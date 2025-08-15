@@ -12,7 +12,7 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{m.fit_fit()}</h2>
+	<h2 class="label">{m.fit()}</h2>
 </div>
 <div class="col-span-9">
 	<ul class="w-full space-y-2">

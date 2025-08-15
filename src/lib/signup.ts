@@ -22,7 +22,8 @@ export const initForm = (data: Record<string, unknown>) => {
 			} else {
 				setState({ form: { hasErrors: true, success: false } });
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
+				if (!isEmpty(result.data.form.errors))
+					log.error('submission error', result.data.form_error);
 				toast.error(m.signUpFailure);
 			}
 		}

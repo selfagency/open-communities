@@ -35,7 +35,7 @@
 				await goto('/');
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.error)) toast.error(m_deleteFailure());
+				if (!isEmpty(result.data.form.errors)) toast.error(m.deleteFailure());
 			}
 		}
 	});
@@ -59,11 +59,11 @@
 	<AlertDialog.Content>
 		<form id="delete" method="POST" action="?/delete" use:enhance>
 			<AlertDialog.Header>
-				<AlertDialog.Title>{m.warning()}</AlertDialog_Title>
+				<AlertDialog.Title>{m.warning()}</AlertDialog.Title>
 				<AlertDialog.Description>
 					<Alert.Root variant="destructive" class="my-4 bg-red-50">
 						<WarningIcon size="18" />
-						<Alert.Description class="mt-0.5">{m.warningNote()}</Alert_Description>
+						<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
 					</Alert.Root>
 
 					<Form.Field {form} name="id">
@@ -77,7 +77,7 @@
 				</AlertDialog.Description>
 			</AlertDialog.Header>
 			<AlertDialog.Footer>
-				<AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog_Cancel>
+				<AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
 				<AlertDialog.Action
 					type="submit"
 					onclick={(e) => {

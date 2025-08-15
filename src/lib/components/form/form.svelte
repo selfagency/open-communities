@@ -175,11 +175,11 @@
 	$effect(() => {
 		if ($appState.form?.success) {
 			title = m.success({
-				thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission()_toLowerCase()
+				thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission().toLowerCase()
 			});
 		} else {
 			title =
-				mode === 'edit' ? m.editThing({ thing: $formData.name as string }) : m_addCongregation();
+				mode === 'edit' ? m.editThing({ thing: $formData.name as string }) : m.addCongregation();
 		}
 	});
 	/* endregion reactivity */
@@ -235,7 +235,7 @@
 									>
 										<Alert.Root variant="destructive" class="my-4 bg-red-50">
 											<WarningIcon size="18" />
-											<Alert.Description class="mt-0.5">{m.formErrors()}</Alert_Description>
+											<Alert.Description class="mt-0.5">{m.formErrors()}</Alert.Description>
 										</Alert.Root>
 									</span>
 								{/if}
@@ -259,7 +259,7 @@
 												>{#snippet children(props)}
 													<span class="flex flex-row items-start justify-start space-x-2">
 														<span>
-															<Form.Label><strong>{m.approved()}</strong></Form_Label>
+															<Form.Label><strong>{m.approved()}</strong></Form.Label>
 														</span>
 														<span>
 															<Switch {...props} bind:checked={$formData.visible as boolean} />
@@ -330,8 +330,8 @@
 										onclick={(e) => {
 											e.preventDefault();
 											e.stopPropagation();
-											form.submit(document_getElementById('addEdit'));
-										}}>{m.submit()}</Form_Button
+											form.submit(document.getElementById('addEdit'));
+										}}>{m.submit()}</Form.Button
 									>
 								</div>
 							</div>

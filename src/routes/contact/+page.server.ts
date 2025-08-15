@@ -53,15 +53,15 @@ export const actions = {
 			try {
 				await adminMail(
 					{
-						email: form.data_email,
+						email: form.data.email,
 						message: `
-						${m[`contact.options.${form.data_reason}`]()}
+						${m[`contact.options.${form.data.reason}`]()}
 
-						${form.data_message}
+						${form.data.message}
 
-						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data_email}` : ''}
+						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data.email}` : ''}
 						`,
-						name: form.data_name
+						name: form.data.name
 					},
 					api
 				);

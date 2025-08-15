@@ -27,7 +27,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m.security_security()}</span>
+				<span>{m.security()}</span>
 				{#if securityErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -52,7 +52,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.security.localPolice()}</Form_Label>
+									<Form.Label>{m.security_localPolice()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -73,7 +73,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.security.privateSecurityArmed()}</Form_Label>
+									<Form.Label>{m.security_privateSecurityArmed()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -94,7 +94,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.security.privateSecurityUnarmed()}</Form_Label>
+									<Form.Label>{m.security_privateSecurityUnarmed()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -115,7 +115,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.security.clergyArmed()}</Form_Label>
+									<Form.Label>{m.security_clergyArmed()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -136,7 +136,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.security.congregantsArmed()}</Form_Label>
+									<Form.Label>{m.security_congregantsArmed()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -157,7 +157,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.security.noFirearms()}</Form_Label>
+									<Form.Label>{m.security_noFirearms()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -178,7 +178,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form_Label>
+									<Form.Label>{m.other()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}

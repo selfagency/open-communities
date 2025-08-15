@@ -19,13 +19,13 @@ export const userSchema = z
 		captcha: z.string().optional(),
 		congregation: z.string().optional(),
 		email: z.email().refine((value) => !!value, {
-			message: m.thingRequired({ thing: m_email() })
+			message: m.thingRequired({ thing: m.email() })
 		}),
 		emailVisibility: z.boolean().default(true),
 		id: z.string().optional(),
 		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
 		name: z.string().refine((value) => !!value, {
-			message: m.thingRequired({ thing: m_name() })
+			message: m.thingRequired({ thing: m.name() })
 		}),
 		oldPassword: z.string().optional(),
 		password,

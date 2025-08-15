@@ -35,7 +35,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m.health_health()}</span>
+				<span>{m.health()}</span>
 				{#if !hasHealth || healthErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -57,19 +57,19 @@
 						>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
-								<Form.Label for="maskingRequired">{m.health.maskingRequired()}</Form_Label>
+								<Form.Label for="maskingRequired">{m.health_maskingRequired()}</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
-								<Form.Label for="maskingRecommended">{m.health.maskingRecommended()}</Form_Label>
+								<Form.Label for="maskingRecommended">{m.health_maskingRecommended()}</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
-								<Form.Label for="noGuidelines">{m.health.noGuidelines()}</Form_Label>
+								<Form.Label for="noGuidelines">{m.health_noGuidelines()}</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="other" id="other" />
-								<Form.Label for="other">{m.other()}</Form_Label>
+								<Form.Label for="other">{m.other()}</Form.Label>
 							</div>
 						</RadioGroup.Root>
 						{#if $formData.health.protocol === 'other'}

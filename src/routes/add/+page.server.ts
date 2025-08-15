@@ -118,9 +118,9 @@ export const actions = {
 				if (!client?.admin) {
 					await transactionalMail({
 						email: client.email,
-						message: `${m.transactional.submitted']({ locale: client.lang || 'en' })} ${m['transactional.confirmation({ locale: client_lang || 'en' })}`,
+						message: `${m.transactional_submitted({ locale: client.lang || 'en' })} ${m.transactional_confirmation({ locale: client.lang || 'en' })}`,
 						name: client.name as string,
-						subject: `${m.transactional.subject({ locale: client_lang || 'en' })}`
+						subject: `${m.transactional_subject({ locale: client.lang || 'en' })}`
 					});
 				}
 

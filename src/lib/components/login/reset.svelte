@@ -45,7 +45,8 @@
 				if ($formData.type === 'requestReset') sent = true;
 			} else {
 				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
+				if (!isEmpty(result.data.form.errors))
+					log.error('submission error', result.data.form_error);
 				toast.error(m.resetFailure);
 			}
 		}
@@ -74,7 +75,7 @@
 			<Form.Field {form} name="password">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.password()}</Form_Label>
+						<Form.Label>{m.password()}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.password}
@@ -89,7 +90,7 @@
 			<Form.Field {form} name="passwordConfirm">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.confirmPassword()}</Form_Label>
+						<Form.Label>{m.confirmPassword()}</Form.Label>
 						<Input
 							{...props}
 							bind:value={$formData.passwordConfirm}
@@ -102,21 +103,21 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{m.resetPassword()}</Form_Button>
+			<Form.Button>{m.resetPassword()}</Form.Button>
 		{:else}
 			<p class="mb-4">{m.resetNotice()}</p>
 
 			<Form.Field {form} name="email">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.email()}</Form_Label>
+						<Form.Label>{m.email()}</Form.Label>
 						<Input {...props} bind:value={$formData.email} required autocomplete="email" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{m.sendResetEmail()}</Form_Button>
+			<Form.Button>{m.sendResetEmail()}</Form.Button>
 		{/if}
 	</form>
 

@@ -38,23 +38,23 @@ export const actions = {
 			}
 
 			// let res;
-			switch (form.data_type) {
+			switch (form.data.type) {
 				case 'requestReset':
-					await api.collection('users').requestPasswordReset(form.data_email);
+					await api.collection('users').requestPasswordReset(form.data.email);
 					break;
 				case 'resetPassword':
 					await api
 						.collection('users')
-						.confirmPasswordReset(form.data.token, form.data.password, form.data_passwordConfirm, {
+						.confirmPasswordReset(form.data.token, form.data.password, form.data.passwordConfirm, {
 							fetch
 						});
 					break;
 				case 'verifyEmail':
-					await api.collection('users').confirmVerification(form.data_token);
+					await api.collection('users').confirmVerification(form.data.token);
 					break;
 			}
 
-			// if (dev) log.debug(`login:${form.data_type}`, res);
+			// if (dev) log.debug(`login:${form.data.type}`, res);
 
 			return {
 				form
@@ -91,7 +91,7 @@ export const actions = {
 				(
 					await api
 						.collection('users')
-						.authWithPassword(form.data.email as string, form.data_password as string, { fetch })
+						.authWithPassword(form.data.email as string, form.data.password as string, { fetch })
 				).record
 			) as UsersRecord;
 
@@ -141,17 +141,17 @@ export const actions = {
 
 			user = (await api.collection('users').create(
 				{
-					email: form.data_email as string,
-					emailVisibility: form.data_emailVisibility as boolean,
-					lang: form.data_lang as string,
-					name: form.data_name as string,
-					password: form.data_password as string,
-					passwordConfirm: form.data_passwordConfirm as string
+					email: form.data.email as string,
+					emailVisibility: form.data.emailVisibility as boolean,
+					lang: form.data.lang as string,
+					name: form.data.name as string,
+					password: form.data.password as string,
+					passwordConfirm: form.data.passwordConfirm as string
 				},
 				{ fetch }
 			)) as UsersRecord;
 
-			await api.collection('users').requestVerification(form.data_email as string, { fetch });
+			await api.collection('users').requestVerification(form.data.email as string, { fetch });
 
 			return {
 				form,

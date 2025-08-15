@@ -18,7 +18,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m.accessibility_accessibility()}</span>
+				<span>{m.accessibility()}</span>
 				{#if $errors.accessibility}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -44,7 +44,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.accessibility.online_asl()}</Form_Label>
+									<Form.Label>{m.accessibility_online_asl()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -65,7 +65,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.accessibility.online_liveCaptions()}</Form_Label>
+									<Form.Label>{m.accessibility_online_liveCaptions()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -109,7 +109,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.accessibility.inPerson_adaAll()}</Form_Label>
+									<Form.Label>{m.accessibility_inPerson_adaAll()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -130,7 +130,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.accessibility.inPerson_adaSome()}</Form_Label>
+									<Form.Label>{m.accessibility_inPerson_adaSome()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -151,7 +151,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.accessibility.inPerson_asl()}</Form_Label>
+									<Form.Label>{m.accessibility_inPerson_asl()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -172,7 +172,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.accessibility.inPerson_eva()}</Form_Label>
+									<Form.Label>{m.accessibility_inPerson_eva()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}
@@ -193,7 +193,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form_Label>
+									<Form.Label>{m.other()}</Form.Label>
 								</span>
 							</span>
 						{/snippet}

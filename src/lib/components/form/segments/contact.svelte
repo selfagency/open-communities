@@ -16,7 +16,7 @@
 		<div
 			class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 		>
-			<span>{m.contact_contact()}</span>
+			<span>{m.contact()}</span>
 			{#if $errors.contactName || $errors.contactEmail}
 				<span class="text-red-500">*</span>
 			{/if}
@@ -28,7 +28,7 @@
 			<Form.Control
 				>{#snippet children(props)}
 					<Form.Label for="contactName">
-						{m.contactName_contactName()}
+						{m.contactName()}
 					</Form.Label>
 					<Input {...props} bind:value={$formData.contactName} />
 				{/snippet}
@@ -40,7 +40,7 @@
 			<Form.Control
 				>{#snippet children(props)}
 					<Form.Label for="contactEmail">
-						{m.contactEmail_contactEmail()}
+						{m.contactEmail()}
 					</Form.Label>
 					<Input {...props} bind:value={$formData.contactEmail} />
 				{/snippet}
