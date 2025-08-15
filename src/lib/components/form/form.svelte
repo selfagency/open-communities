@@ -4,7 +4,7 @@
 
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { isEmpty, sleep } from 'radashi';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
@@ -215,10 +215,12 @@
 
 	$effect(() => {
 		if ($formData?.services?.onlineOnly) {
-			$formData.health.protocol = 'other';
-			$formData.health.otherText = 'N/A';
-			$formData.security.other = true;
-			$formData.security.otherText = 'N/A';
+			untrack(() => {
+				$formData.health.protocol = 'other';
+				$formData.health.otherText = 'N/A';
+				$formData.security.other = true;
+				$formData.security.otherText = 'N/A';
+			});
 		}
 	});
 	/* endregion reactivity */

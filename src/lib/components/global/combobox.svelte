@@ -3,7 +3,7 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import { useId } from 'bits-ui';
-	import { createEventDispatcher, onMount, tick } from 'svelte';
+	import { createEventDispatcher, onMount, tick, untrack } from 'svelte';
 
 	import { cn } from '$lib/utils.js';
 
@@ -74,8 +74,10 @@
 	$effect(() => {
 		// Update the items list when items prop changes
 		if (items) {
-			currentItems = [...items];
-			updateSelectedValue();
+			untrack(() => {
+				currentItems = [...items];
+				updateSelectedValue();
+			});
 		}
 	});
 	/* endregion reactivity */

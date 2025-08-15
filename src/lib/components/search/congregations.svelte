@@ -7,7 +7,7 @@
 	import LocationIcon from 'lucide-svelte/icons/globe';
 	import SearchIcon from 'lucide-svelte/icons/search';
 	import { alphabetical, isEmpty, sleep, unique } from 'radashi';
-	import { onMount, tick } from 'svelte';
+	import { onMount, tick, untrack } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import type { CongregationMetaRecord } from '$lib/pocketbase.d';
@@ -108,35 +108,43 @@
 
 	$effect(() => {
 		if ($results) {
-			currentPage = 1;
+			untrack(() => {
+				currentPage = 1;
+			});
 		}
 	});
 
 	$effect(() => {
 		if (searchTerms) {
-			search.setSearchTerms(searchTerms);
+			untrack(() => {
+				search.setSearchTerms(searchTerms);
+			});
 		}
 	});
 
 	$effect(() => {
 		if (id) {
-			goto(page.url.pathname, { replaceState: false }).then(() => {
-				searchTerms = id;
-				open[id] = true;
-				searchTerms = '';
+			untrack(() => {
+				goto(page.url.pathname, { replaceState: false }).then(() => {
+					searchTerms = id;
+					open[id] = true;
+					searchTerms = '';
+				});
 			});
 		}
 	});
 
 	$effect(() => {
 		if (currentPage) {
-			pages[currentPage]?.reduce(
-				(acc, congregation) => {
-					acc[congregation.id] = false;
-					return acc;
-				},
-				{} as Record<string, boolean>
-			);
+			untrack(() => {
+				pages[currentPage]?.reduce(
+					(acc, congregation) => {
+						acc[congregation.id] = false;
+						return acc;
+					},
+					{} as Record<string, boolean>
+				);
+			});
 		}
 	});
 	/* endregion reactivity */
