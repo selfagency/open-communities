@@ -1,12 +1,13 @@
 <script lang="ts">
 	/* region imports */
-	import { setContext } from 'svelte';
+	import { onMount, setContext } from 'svelte';
 
 	import type { UsersRecord } from '$lib/pocketbase.d';
 
 	import EditForm from '$lib/components/form/form.svelte';
 	import { initForm } from '$lib/form';
 	import { m } from '$lib/paraglide/messages';
+	import { setState } from '$lib/stores';
 
 	import type { PageProps } from './$types';
 	/* endregion imports */
@@ -18,6 +19,10 @@
 
 	/* region lifecycle */
 	setContext('congregation', data.congregation);
+
+	onMount(() => {
+		setState({ form: { hasErrors: false, success: false } });
+	});
 	/* endregion lifecycle */
 
 	const form = initForm(data.form.default, 'edit', data.user?.admin);
