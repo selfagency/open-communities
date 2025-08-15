@@ -1,5 +1,4 @@
 /* region imports */
-import FormData from 'form-data';
 import Mailgun from 'mailgun.js';
 
 import type { TypedPocketBase } from '$lib/pocketbase.d';
