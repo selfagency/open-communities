@@ -193,7 +193,7 @@
 									<h2 class="label">{m.denomination_affiliation()}</h2>
 								</div>
 								<div class="col-span-9 flex flex-row items-start justify-start">
-									{m[`denomination.${congregation.denomination}`]()}
+									{m[`denomination_${congregation.denomination}`]()}
 								</div>
 							{/if}
 

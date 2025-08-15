@@ -242,7 +242,7 @@
 					<Select.Root type="single" name="denomination" bind:value={$formData.denomination}>
 						<Select.Trigger class="w-full" {...props}>
 							{#if $formData?.denomination}
-								{@const denom = `denomination.${$formData.denomination}`}
+								{@const denom = `denomination_${$formData.denomination}`}
 								{m[denom]()}
 							{:else}
 								{m.selectThing({ thing: m.denomination().toLowerCase() })}

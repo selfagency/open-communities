@@ -27,10 +27,10 @@
 						{:else}
 							<Flag size="16" class="rtl:mx-1" />
 						{/if}
-						<span class="sr-only">{m[`flag.${flag}`]()}</span>
+						<span class="sr-only">{m[`flag_${flag}`]()}</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<span class="text-nowrap">{m[`flag.${flag}`]()}</span>
+						<span class="text-nowrap">{m[`flag_${flag}`]()}</span>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Tooltip.Provider>

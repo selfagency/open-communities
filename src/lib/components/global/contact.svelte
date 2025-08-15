@@ -139,7 +139,7 @@
 							<Form.Label>{m.contact_reason()}</Form.Label>
 							<Select.Root type="single" bind:value={$formData.reason}>
 								<Select.Trigger class="w-full">
-									{m[`contactOptions.${$formData.reason}`]()}
+									{m[`contactOptions_${$formData.reason}`]()}
 								</Select.Trigger>
 								<Select.Content {...props}>
 									<Select.Item value="question">{m.contactOptions_question()}</Select.Item>

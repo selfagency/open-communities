@@ -55,7 +55,7 @@ export const actions = {
 					{
 						email: form.data.email,
 						message: `
-						${m[`contact.options.${form.data.reason}`]()}
+						${m[`contactOptions_${form.data.reason}`]()}
 
 						${form.data.message}
 

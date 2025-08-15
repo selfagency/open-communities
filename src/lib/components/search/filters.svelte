@@ -163,7 +163,7 @@
 									{/if}
 								</span>
 								<span class="filter-label">
-									<span>{m[`${category}.${category}`]()}</span>
+									<span>{m[category]()}</span>
 								</span>
 								<span class="filter-status">
 									<StatusIcon class="h-4 w-4" />

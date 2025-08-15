@@ -22,10 +22,10 @@
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-1" /></span>
-					<span class="sr-only">{m[`health.${health.protocol}`]()}</span>
+					<span class="sr-only">{m[`health_${health.protocol}`]()}</span>
 				</Tooltip.Trigger>
 				<Tooltip.Content>
-					<span class="text-nowrap">{m[`health.${health.protocol}`]()}</span>
+					<span class="text-nowrap">{m[`health_${health.protocol}`]()}</span>
 				</Tooltip.Content>
 			</Tooltip.Root>
 		</Tooltip.Provider>
