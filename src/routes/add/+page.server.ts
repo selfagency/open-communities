@@ -135,7 +135,7 @@ export const actions = {
 						https://opencommunities.info/edit?id=${record.id}
 					`,
 						name: client.name as string,
-						title: `New congregation submitted`
+						subject: `New congregation submitted`
 					},
 					api
 				);
