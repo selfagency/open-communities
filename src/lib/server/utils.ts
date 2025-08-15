@@ -33,7 +33,9 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 
 		if (!captchaValid) {
 			setError(form, 'captcha', m.invalidCaptcha());
-			return fail(400, { form });
+			throw fail(400, { form });
+		} else {
+			return captchaValid;
 		}
 	}
 }

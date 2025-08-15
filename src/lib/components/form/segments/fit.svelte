@@ -52,7 +52,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.fit.publicStatement} />
+									<Checkbox
+										{...props}
+										checked={$formData.fit.publicStatement}
+										onCheckedChange={(checked) => {
+											$formData.fit.publicStatement = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['fit.publicStatement']()}</Form.Label>
@@ -67,7 +73,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.fit.clergyMember} />
+									<Checkbox
+										{...props}
+										checked={$formData.fit.clergyMember}
+										onCheckedChange={(checked) => {
+											$formData.fit.clergyMember = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['fit.clergyMember']()}</Form.Label>
@@ -82,7 +94,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.fit.multipleClergyMembers} />
+									<Checkbox
+										{...props}
+										checked={$formData.fit.multipleClergyMembers}
+										onCheckedChange={(checked) => {
+											$formData.fit.multipleClergyMembers = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['fit.multipleClergyMembers']()}</Form.Label>
@@ -97,7 +115,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.fit.other} />
+									<Checkbox
+										{...props}
+										checked={$formData.fit.other}
+										onCheckedChange={(checked) => {
+											$formData.fit.other = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m.other()}</Form.Label>

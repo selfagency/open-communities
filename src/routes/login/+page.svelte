@@ -7,9 +7,10 @@
 	import SignUp from '$lib/components/login/signup.svelte';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as m from '$lib/paraglide/messages';
+	import { initForm } from '$lib/signup';
 	// import { log } from '$lib/utils';
 
-	import type { PageProps, Snapshot } from './$types';
+	import type { PageProps } from './$types';
 	/* endregion imports */
 
 	/* region variables */
@@ -18,12 +19,6 @@
 
 	// locals
 	let tab: 'login' | 'signup' = $state('login');
-	let snapshotData = $state('');
-
-	export const snapshot: Snapshot<string> = {
-		capture: () => snapshotData,
-		restore: (value) => (snapshotData = value)
-	};
 	/* endregion variables */
 
 	/* region lifecycle */
@@ -38,6 +33,11 @@
 		}
 	});
 	/* endregion lifecycle */
+
+	/* region form */
+	const form = initForm(data.signup);
+	export const snapshot = { capture: form.capture, restore: form.restore };
+	/*endregion form */
 </script>
 
 <svelte:head>
@@ -58,7 +58,7 @@
 			</Tabs.Content>
 			<Tabs.Content value="signup">
 				{#if tab === 'signup' && data.signup && data.verify}
-					<SignUp data={data.signup} verify={data.verify} bind:snapshot={snapshotData} />
+					<SignUp {form} verify={data.verify} />
 				{/if}
 			</Tabs.Content>
 		</Tabs.Root>

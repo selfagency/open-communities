@@ -35,7 +35,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.online_asl} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.online_asl}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.online_asl = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['accessibility.online_asl']()}</Form.Label>
@@ -50,7 +56,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.online_liveCaptions} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.online_liveCaptions}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.online_liveCaptions = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['accessibility.online_liveCaptions']()}</Form.Label>
@@ -67,7 +79,10 @@
 								<span>
 									<Checkbox
 										{...props}
-										bind:checked={$formData.accessibility.online_automatedCaptions}
+										checked={$formData.accessibility.online_automatedCaptions}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.online_automatedCaptions = checked ?? false;
+										}}
 									/>
 								</span>
 								<span class="-mt-0.5">
@@ -85,7 +100,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.inPerson_adaAll} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.inPerson_adaAll}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.inPerson_adaAll = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['accessibility.inPerson_adaAll']()}</Form.Label>
@@ -100,7 +121,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.inPerson_adaSome} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.inPerson_adaSome}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.inPerson_adaSome = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['accessibility.inPerson_adaSome']()}</Form.Label>
@@ -115,7 +142,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.inPerson_asl} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.inPerson_asl}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.inPerson_asl = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['accessibility.inPerson_asl']()}</Form.Label>
@@ -130,7 +163,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.inPerson_eva} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.inPerson_eva}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.inPerson_eva = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['accessibility.inPerson_eva']()}</Form.Label>
@@ -145,7 +184,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.accessibility.other} />
+									<Checkbox
+										{...props}
+										checked={$formData.accessibility.other}
+										onCheckedChange={(checked) => {
+											$formData.accessibility.other = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m.other()}</Form.Label>

@@ -15,27 +15,26 @@ const mg = mailgun.client({
 });
 
 export async function adminMail(data: Record<string, string | undefined>, api: TypedPocketBase) {
-	const formData = new FormData();
-	for (const key in data) {
-		formData.append(key, data[key]);
-	}
+	try {
+		if (data?.record && data.record !== '') {
+			const record = await api.collection('congregationMeta').getOne(data.record, { fetch });
+			data.congregation = record.name;
+			data.congregationUrl = `https://opencommunities.info/edit?id=${record.id}`;
+		}
 
-	if (data?.record && data.record !== '') {
-		const record = await api.collection('congregationMeta').getOne(data.record, { fetch });
-		formData.append('congregation', record.name);
-		formData.append('congregationUrl', `https://opencommunities.info/edit?id=${record.id}`);
-	}
+		const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
+			body: JSON.stringify(data),
+			headers: {
+				Accept: 'application/json'
+			},
+			method: 'POST'
+		});
 
-	const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
-		body: formData.toString(),
-		headers: {
-			Accept: 'application/json'
-		},
-		method: 'POST'
-	});
-
-	if (res.status !== 200) {
-		throw new Error(await res.json());
+		if (res.status !== 200) {
+			throw new Error(JSON.stringify(await res.json()));
+		}
+	} catch (e) {
+		log.error('Error sending admin email', e);
 	}
 }
 
@@ -53,6 +52,5 @@ export async function transactionalMail({ email, message, name, subject }: Recor
 		});
 	} catch (e) {
 		log.error('Error sending transactional email', e);
-		throw e;
 	}
 }

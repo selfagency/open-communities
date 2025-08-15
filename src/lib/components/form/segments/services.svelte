@@ -50,7 +50,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.services.inPerson} />
+									<Checkbox
+										{...props}
+										checked={$formData.services.inPerson}
+										onCheckedChange={(checked) => {
+											$formData.services.inPerson = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['services.inPerson']()}</Form.Label>
@@ -65,7 +71,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.services.hybrid} />
+									<Checkbox
+										{...props}
+										checked={$formData.services.hybrid}
+										onCheckedChange={(checked) => {
+											$formData.services.hybrid = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['services.hybrid']()}</Form.Label>
@@ -80,7 +92,21 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.services.onlineOnly} />
+									<Checkbox
+										{...props}
+										checked={$formData.services.onlineOnly}
+										onCheckedChange={(checked) => {
+											$formData.services.onlineOnly = checked ?? false;
+
+											// If onlineOnly is checked, set health and security to N/A
+											if (checked) {
+												$formData.health.protocol = 'other';
+												$formData.health.otherText = 'N/A';
+												$formData.security.other = true;
+												$formData.security.otherText = 'N/A';
+											}
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['services.onlineOnly']()}</Form.Label>
@@ -95,7 +121,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.services.offsite} />
+									<Checkbox
+										{...props}
+										checked={$formData.services.offsite}
+										onCheckedChange={(checked) => {
+											$formData.services.offsite = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m['services.offsite']()}</Form.Label>
@@ -110,7 +142,13 @@
 						>{#snippet children(props)}
 							<span class="flex flex-row items-start justify-start space-x-2">
 								<span>
-									<Checkbox {...props} bind:checked={$formData.services.other} />
+									<Checkbox
+										{...props}
+										checked={$formData.services.other}
+										onCheckedChange={(checked) => {
+											$formData.services.other = checked ?? false;
+										}}
+									/>
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>{m.other()}</Form.Label>

@@ -1,10 +1,10 @@
 <script lang="ts">
 	/* region imports */
-	import { isEmpty, sleep } from 'radashi';
-	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
+	import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
+
+	import { sleep } from 'radashi';
+	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { browser, dev } from '$app/environment';
 	import { page } from '$app/state';
@@ -14,20 +14,17 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as m from '$lib/paraglide/messages';
-	import { log } from '$lib/utils';
+	import { state as appState, setState } from '$lib/stores';
+	// import { log } from '$lib/utils';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	let {
-		data,
-		snapshot = $bindable({}),
-		verify
-	}: { data: SuperValidated<any>; snapshot: unknown; verify: SuperValidated<any> } = $props();
+	let { form, verify }: { form: SuperForm<any>; verify: SuperValidated<any> } = $props();
 
 	// locals
-	let success: boolean = $state(false);
 	let verified: boolean = $state(false);
+	let widget: HTMLElement | null = $state(null);
 	// let captchaLoaded: boolean = false;
 
 	// constants
@@ -35,41 +32,30 @@
 	/* endregion variables */
 
 	/* region form */
-	const form = superForm(data, {
-		dataType: 'json',
-		id: 'signup',
-		onError({ result }) {
-			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
-		},
-		async onUpdate({ result }) {
-			if (result.type === 'success') {
-				success = true;
-			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
-				toast.error(m.signUpFailure);
-			}
-		}
-	});
-
-	const { capture, enhance, form: formData, restore } = form;
-	snapshot = { capture, restore };
+	const { enhance, form: formData } = form;
 	/* endregion form */
 
 	/* region lifecycle */
 	onMount(async () => {
 		if (browser) {
 			await sleep(500);
-			const widget = document.querySelector('cap-widget');
+			widget = document.getElementById('captcha');
 			widget?.addEventListener('solve', function (e) {
 				$formData.captcha = e.detail.token;
 			});
 		}
 
+		setState({ form: { hasErrors: false, success: false } });
 		$formData.emailVisibility = true;
 		$formData.lang = 'en';
 	});
+
+	onDestroy(() => {
+		if (widget) {
+			widget.removeEventListener('solve', () => {});
+		}
+	});
+	/* endregion lifecycle */
 </script>
 
 <Card.Root>
@@ -86,7 +72,7 @@
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{m['verified.extended']()}
 			</span>
-		{:else if success}
+		{:else if $appState.form?.success}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{m.signUpSuccess()}
 			</span>
@@ -155,6 +141,7 @@
 					<Form.Control>
 						<div class="my-4 w-full">
 							<cap-widget
+								id="captcha"
 								data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
 							></cap-widget>
 						</div>
