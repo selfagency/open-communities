@@ -4,7 +4,7 @@
 	/* region imports */
 	import AddForm from '$lib/components/form/form.svelte';
 	import { initForm } from '$lib/form';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 
 	import type { PageProps } from './$types';
 	/* endregion imports */
@@ -13,13 +13,13 @@
 	// props
 	const { data }: PageProps = $props();
 
-	const form = initForm(data.form.default, 'add', data.user?.admin);
+	const form = initForm(data.form.default, 'add', data.user?_admin);
 
-	export const snapshot = { capture: form.capture, restore: form.restore };
+	export const snapshot = { capture: form.capture, restore: form_restore };
 </script>
 
 <svelte:head>
-	<title>{m.addCongregation()} &middot; {m.title()}</title>
+	<title>{m.addCongregation()} &middot; {m_title()}</title>
 </svelte:head>
 
 <AddForm

@@ -22,7 +22,7 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { Search } from '$lib/search';
 	/* endregion imports */
 
@@ -184,7 +184,7 @@
 										/>
 										<Label for={`${category}_${option}`}>
 											<span class="filter-label text-slate-500">
-												{option === 'other' ? m.other() : m[`${category}.${option}`]()}
+												{option === 'other' ? m.other() : m[`${category}_${option}`]()}
 											</span>
 										</Label>
 									</span>

@@ -10,7 +10,7 @@
 	import { dev } from '$app/environment';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -44,8 +44,8 @@
 				}
 				if ($formData.type === 'requestReset') sent = true;
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
 				toast.error(m.resetFailure);
 			}
 		}
@@ -74,7 +74,7 @@
 			<Form.Field {form} name="password">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.password()}</Form.Label>
+						<Form.Label>{m.password()}</Form_Label>
 						<Input
 							{...props}
 							bind:value={$formData.password}
@@ -89,7 +89,7 @@
 			<Form.Field {form} name="passwordConfirm">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.confirmPassword()}</Form.Label>
+						<Form.Label>{m.confirmPassword()}</Form_Label>
 						<Input
 							{...props}
 							bind:value={$formData.passwordConfirm}
@@ -102,21 +102,21 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{m.resetPassword()}</Form.Button>
+			<Form.Button>{m.resetPassword()}</Form_Button>
 		{:else}
 			<p class="mb-4">{m.resetNotice()}</p>
 
 			<Form.Field {form} name="email">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m.email()}</Form.Label>
+						<Form.Label>{m.email()}</Form_Label>
 						<Input {...props} bind:value={$formData.email} required autocomplete="email" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>{m.sendResetEmail()}</Form.Button>
+			<Form.Button>{m.sendResetEmail()}</Form_Button>
 		{/if}
 	</form>
 

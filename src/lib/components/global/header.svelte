@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* region imports */
 	import Tent from '$lib/assets/tent.svg?component';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 
 	import Nav from './nav.svelte';
 	/*  endregion imports */

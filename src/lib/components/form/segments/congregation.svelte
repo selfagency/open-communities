@@ -15,7 +15,7 @@
 	import * as Select from '$lib/components/ui/select';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Location } from '$lib/location';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 
 	import Required from '../required.svelte';
@@ -37,25 +37,25 @@
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 
 	const denominations = [
-		{ label: m['denomination.conservative'](), value: 'conservative' },
+		{ label: m.denomination_conservative(), value: 'conservative' },
 		{
-			label: m['denomination.reconstructionist'](),
+			label: m.denomination_reconstructionist(),
 			value: 'reconstructionist'
 		},
-		{ label: m['denomination.reform'](), value: 'reform' },
-		{ label: m['denomination.renewal'](), value: 'renewal' },
-		{ label: m['denomination.humanist'](), value: 'humanist' },
-		{ label: m['denomination.orthodox'](), value: 'orthodox' },
+		{ label: m.denomination_reform(), value: 'reform' },
+		{ label: m.denomination_renewal(), value: 'renewal' },
+		{ label: m.denomination_humanist(), value: 'humanist' },
+		{ label: m.denomination_orthodox(), value: 'orthodox' },
 		{
-			label: m['denomination.postDenominational'](),
+			label: m.denomination_postDenominational(),
 			value: 'postDenominational'
 		},
 		{
-			label: m['denomination.multiDenominational'](),
+			label: m.denomination_multiDenominational(),
 			value: 'multiDenominational'
 		},
-		{ label: m['denomination.unaffiliated'](), value: 'unaffiliated' },
-		{ label: m['other'](), value: 'other' }
+		{ label: m.denomination_unaffiliated(), value: 'unaffiliated' },
+		{ label: m.other(), value: 'other' }
 	];
 
 	// locals
@@ -155,13 +155,13 @@
 			<Form.Field {form} name="country">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m['location.location']()}</Form.Label>
+						<Form.Label>{m.location.location()}</Form_Label>
 						<Combobox
 							items={$location.options.countryOptions}
 							{...props}
 							value={country}
 							placeholder={m.selectThing({
-								thing: m['location.country']().toLowerCase()
+								thing: m.location.country()_toLowerCase()
 							})}
 							on:change={handleCountryChange}
 						/>
@@ -172,13 +172,13 @@
 			<Form.Field {form} name="state">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m['location.state']()}</Form.Label>
+						<Form.Label>{m.location.state()}</Form_Label>
 						<Combobox
 							items={$location.options.stateOptions}
 							{...props}
 							value={province}
 							placeholder={m.selectThing({
-								thing: m['location.state']().toLowerCase()
+								thing: m.location.state()_toLowerCase()
 							})}
 							disabled={!country || !$location.options.stateOptions}
 							on:change={handleStateChange}
@@ -190,13 +190,13 @@
 			<Form.Field {form} name="city">
 				<Form.Control>
 					{#snippet children(props)}
-						<Form.Label>{m['location.city']()}</Form.Label>
+						<Form.Label>{m.location.city()}</Form_Label>
 						<Combobox
 							items={$location.options.cityOptions}
 							{...props}
 							value={city}
 							placeholder={m.selectThing({
-								thing: m['location.city']().toLowerCase()
+								thing: m.location.city()_toLowerCase()
 							})}
 							disabled={!province || !$location.options.cityOptions}
 							on:change={handleCityChange}
@@ -210,7 +210,7 @@
 		<Form.Field {form} name="contactUrl">
 			<Form.Control>
 				{#snippet children(props)}
-					<Form.Label>{m.website()}</Form.Label>
+					<Form.Label>{m.website()}</Form_Label>
 					<div class="text-xs text-slate-500">{m.http()}</div>
 					<Input
 						{...props}
@@ -227,7 +227,7 @@
 			<Form.Control>
 				{#snippet children(props)}
 					<Form.Label
-						>{m['clergy.extended']()}
+						>{m.clergy_extended()}
 						<Required set={!isEmpty($formData.clergy)} /></Form.Label
 					>
 					<Input {...props} bind:value={$formData.clergy} required />
@@ -238,14 +238,14 @@
 		<Form.Field {form} name="denomination">
 			<Form.Control>
 				{#snippet children(props)}
-					<Form.Label>{m['denomination.extended']()}</Form.Label>
+					<Form.Label>{m.denomination.extended()}</Form_Label>
 					<Select.Root type="single" name="denomination" bind:value={$formData.denomination}>
 						<Select.Trigger class="w-full" {...props}>
 							{#if $formData?.denomination}
 								{@const denom = `denomination.${$formData.denomination}`}
 								{m[denom]()}
 							{:else}
-								{m.selectThing({ thing: m['denomination.denomination']().toLowerCase() })}
+								{m.selectThing({ thing: m.denomination.denomination()_toLowerCase() })}
 							{/if}
 						</Select.Trigger>
 						<Select.Content {...props}>
@@ -262,7 +262,7 @@
 			<Form.Control
 				>{#snippet children(props)}
 					<Form.Label
-						>{m['flavor.extended']()}
+						>{m.flavor_extended()}
 						<Required set={!isEmpty($formData.flavor)} /></Form.Label
 					>
 					<Textarea {...props} bind:value={$formData.flavor} required />
@@ -273,7 +273,7 @@
 		<Form.Field {form} name="notes">
 			<Form.Control
 				>{#snippet children(props)}
-					<Form.Label>{m['notes.extended']()}</Form.Label>
+					<Form.Label>{m.notes.extended()}</Form_Label>
 					<Textarea {...props} bind:value={$formData.notes} />
 				{/snippet}
 			</Form.Control>

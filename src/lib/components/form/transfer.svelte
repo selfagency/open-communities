@@ -13,7 +13,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -51,8 +51,8 @@
 				toast.success(m.transferSuccess());
 				await goto('/');
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
 				toast.error(m.transferFailure());
 			}
 		}
@@ -80,18 +80,18 @@
 				e.preventDefault();
 			}}
 		>
-			{m['transfer.transfer']()}
+			{m.transfer_transfer()}
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
 			<form id="transfer" method="POST" action="?/transfer" use:enhance>
 				<AlertDialog.Header>
-					<AlertDialog.Title>{m['transfer.transfer']()}</AlertDialog.Title>
+					<AlertDialog.Title>{m.transfer.transfer()}</AlertDialog_Title>
 					<AlertDialog.Description class="space-y-4">
-						<div>{m['transfer.desc']()}</div>
+						<div>{m.transfer_desc()}</div>
 
 						<Alert.Root variant="destructive" class="my-4 bg-red-50">
 							<WarningIcon size="18" />
-							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
+							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert_Description>
 						</Alert.Root>
 
 						<Form.Field {form} name="id">
@@ -106,7 +106,7 @@
 						<Form.Field {form} name="email">
 							<Form.Control>
 								{#snippet children(props)}
-									<Form.Label for="email">{m.email()}</Form.Label>
+									<Form.Label for="email">{m.email()}</Form_Label>
 									<Input {...props} bind:value={$formData.email} />
 								{/snippet}
 							</Form.Control>
@@ -119,13 +119,13 @@
 						onclick={async () => {
 							open = false;
 							await goto(`${page.url.pathname}?id=${id}`);
-						}}>{m.cancel()}</AlertDialog.Cancel
+						}}>{m.cancel()}</AlertDialog_Cancel
 					>
 					<AlertDialog.Action
 						onclick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							form.submit(document.getElementById('transfer'));
+							form.submit(document_getElementById('transfer'));
 						}}
 					>
 						{m.continue()}

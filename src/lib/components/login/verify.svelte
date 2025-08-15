@@ -8,7 +8,7 @@
 	import { waitForTheElement } from 'wait-for-the-element';
 
 	import { dev } from '$app/environment';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -33,8 +33,8 @@
 			if (result.type === 'success') {
 				verified = true;
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
 				toast.error(m.verifyFailure);
 			}
 		}

@@ -5,7 +5,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
@@ -27,7 +27,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m['security.security']()}</span>
+				<span>{m.security_security()}</span>
 				{#if securityErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -35,7 +35,7 @@
 		</Accordion.Trigger>
 		<Accordion.Content>
 			<div class="question" class:error={securityErrors}>
-				{m['security.extended']()}
+				{m.security_extended()}
 			</div>
 			<div class="my-4 space-y-2">
 				<Form.Field {form} name="localPolice">
@@ -52,7 +52,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['security.localPolice']()}</Form.Label>
+									<Form.Label>{m.security.localPolice()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -73,7 +73,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['security.privateSecurityArmed']()}</Form.Label>
+									<Form.Label>{m.security.privateSecurityArmed()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -94,7 +94,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['security.privateSecurityUnarmed']()}</Form.Label>
+									<Form.Label>{m.security.privateSecurityUnarmed()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -115,7 +115,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['security.clergyArmed']()}</Form.Label>
+									<Form.Label>{m.security.clergyArmed()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -136,7 +136,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['security.congregantsArmed']()}</Form.Label>
+									<Form.Label>{m.security.congregantsArmed()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -157,7 +157,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['security.noFirearms']()}</Form.Label>
+									<Form.Label>{m.security.noFirearms()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -178,7 +178,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form.Label>
+									<Form.Label>{m.other()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}

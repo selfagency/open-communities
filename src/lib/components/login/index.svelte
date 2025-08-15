@@ -12,7 +12,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -47,8 +47,8 @@
 				toast.success(m.loginSuccess());
 				await goto('/');
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
 				toast.error(result.data.form.error);
 			}
 		}
@@ -61,7 +61,7 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal">
-			<span>{resetting ? m.resetPassword() : m.login()}</span>
+			<span>{resetting ? m.resetPassword() : m_login()}</span>
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
@@ -93,7 +93,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.email()}</Form.Label>
+							<Form.Label>{m.email()}</Form_Label>
 							<Input {...props} bind:value={$formData.email} autocomplete="email" />
 						{/snippet}
 					</Form.Control>
@@ -103,7 +103,7 @@
 				<Form.Field {form} name="password">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.password()}</Form.Label>
+							<Form.Label>{m.password()}</Form_Label>
 							<Input
 								{...props}
 								bind:value={$formData.password}
@@ -116,7 +116,7 @@
 				</Form.Field>
 
 				<div class="mt-4">
-					<Form.Button>{m.login()}</Form.Button>
+					<Form.Button>{m.login()}</Form_Button>
 					<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword()}</Button>
 				</div>
 			</form>

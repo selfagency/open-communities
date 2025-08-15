@@ -6,7 +6,7 @@
 
 	import EditForm from '$lib/components/form/form.svelte';
 	import { initForm } from '$lib/form';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 
 	import type { PageProps } from './$types';
 	/* endregion imports */
@@ -20,13 +20,13 @@
 	setContext('congregation', data.congregation);
 	/* endregion lifecycle */
 
-	const form = initForm(data.form.default, 'edit', data.user?.admin);
+	const form = initForm(data.form.default, 'edit', data.user?_admin);
 
-	export const snapshot = { capture: form.capture, restore: form.restore };
+	export const snapshot = { capture: form.capture, restore: form_restore };
 </script>
 
 <svelte:head>
-	<title>{m.editCongregation()} &middot; {m.title()}</title>
+	<title>{m.editCongregation()} &middot; {m_title()}</title>
 </svelte:head>
 
 <EditForm

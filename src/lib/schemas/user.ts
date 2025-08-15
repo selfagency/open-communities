@@ -2,7 +2,7 @@
 import * as z from 'zod';
 
 // import { log } from '$lib/utils';
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 /* endregion imports */
 
 /* region variables */
@@ -19,13 +19,13 @@ export const userSchema = z
 		captcha: z.string().optional(),
 		congregation: z.string().optional(),
 		email: z.email().refine((value) => !!value, {
-			message: m.thingRequired({ thing: m.email() })
+			message: m.thingRequired({ thing: m_email() })
 		}),
 		emailVisibility: z.boolean().default(true),
 		id: z.string().optional(),
 		lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
 		name: z.string().refine((value) => !!value, {
-			message: m.thingRequired({ thing: m.name() })
+			message: m.thingRequired({ thing: m_name() })
 		}),
 		oldPassword: z.string().optional(),
 		password,

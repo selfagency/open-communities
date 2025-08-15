@@ -2,7 +2,7 @@
 	/* region imports */
 	import Find from '$lib/assets/find.svg?component';
 	import Inclusive from '$lib/assets/inclusive.svg?component';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 </script>
 
@@ -15,6 +15,6 @@
 	<h1
 		class="pointer-events-none w-full text-center text-xl sm:max-w-[80%] sm:text-3xl md:text-4xl lg:text-5xl"
 	>
-		{m['home.blurb']()}
+		{m.home_blurb()}
 	</h1>
 </div>

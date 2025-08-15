@@ -18,7 +18,7 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationRecord } from '$lib/types.d';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
 import { adminMail, transactionalMail } from '$lib/server/mail';
@@ -103,27 +103,24 @@ export const actions = {
 					{ fetch }
 				)) as CongregationsResponse;
 
+				const congregation = record.id;
 				const batch = api.createBatch();
-				batch
-					.collection('accessibility')
-					.create({ ...accessibility, congregation: record.id }, { fetch });
-				batch.collection('fit').create({ ...fit, congregation: record.id }, { fetch });
-				batch
-					.collection('registration')
-					.create({ ...registration, congregation: record.id }, { fetch });
-				batch.collection('health').create({ ...health, congregation: record.id }, { fetch });
-				batch.collection('security').create({ ...security, congregation: record.id }, { fetch });
-				batch.collection('services').create({ ...services, congregation: record.id }, { fetch });
-				await batch.send();
+				batch.collection('accessibility').create({ ...accessibility, congregation });
+				batch.collection('fit').create({ ...fit, congregation });
+				batch.collection('registration').create({ ...registration, congregation });
+				batch.collection('health').create({ ...health, congregation });
+				batch.collection('security').create({ ...security, congregation });
+				batch.collection('services').create({ ...services, congregation });
+				await batch.send({ fetch });
 
-				await api.collection('users').update(user, { congregation: record.id }, { fetch });
+				await api.collection('users').update(user, { congregation });
 
 				if (!client?.admin) {
 					await transactionalMail({
 						email: client.email,
-						message: `${m['transactional.submitted']({ locale: client.lang || 'en' })} ${m['transactional.confirmation']({ locale: client.lang || 'en' })}`,
+						message: `${m.transactional.submitted']({ locale: client.lang || 'en' })} ${m['transactional.confirmation({ locale: client_lang || 'en' })}`,
 						name: client.name as string,
-						subject: `${m['transactional.subject']({ locale: client.lang || 'en' })}`
+						subject: `${m.transactional.subject({ locale: client_lang || 'en' })}`
 					});
 				}
 

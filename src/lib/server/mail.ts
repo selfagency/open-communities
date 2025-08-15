@@ -42,7 +42,7 @@ export async function adminMail(
 			const html = emailTemplate.replace('%MESSAGE%', `<p>${message.replace('\n', '<br />')}</p>`);
 			const text = message;
 
-			await mg.messages.create('m.opencommunities.info', {
+			await mg.messages.create('m.opencommunities_info', {
 				from: `${name} via Open Communities <${email}>`,
 				html,
 				subject,
@@ -63,8 +63,8 @@ export async function transactionalMail({ email, message, name, subject }: Recor
 
 	if (mg) {
 		try {
-			await mg.messages.create('m.opencommunities.info', {
-				from: 'Open Communities <no-reply@m.opencommunities.info>',
+			await mg.messages.create('m.opencommunities_info', {
+				from: 'Open Communities <no-reply@m.opencommunities_info>',
 				html,
 				subject,
 				text,

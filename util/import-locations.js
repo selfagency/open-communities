@@ -9,7 +9,7 @@ export async function search(query, options) {
 	const queryOptions = parseOptions(options);
 	const queryString = parseQuery(query);
 	const result = await fetch(
-		`https://nominatim.openstreetmap.org/search.php?${queryString}&format=jsonv2${queryOptions}`
+		`https://nominatim.openstreetmap.org/search_php?${queryString}&format=jsonv2${queryOptions}`
 	);
 	return await result.json();
 }
@@ -60,7 +60,7 @@ function parseQuery(query) {
 async function reverse(lat, lon, options) {
 	const queryOptions = parseOptions(options);
 	const result = await fetch(
-		`https://nominatim.openstreetmap.org/reverse.php?lat=${lat}&lon=${lon}&format=jsonv2${queryOptions}`
+		`https://nominatim.openstreetmap.org/reverse_php?lat=${lat}&lon=${lon}&format=jsonv2${queryOptions}`
 	);
 	const json = await result.json();
 	if ('error' in json) {
@@ -243,8 +243,8 @@ const cities = City.getAllCities();
 // 							result.filter(
 // 								(state) =>
 // 									(state.country = city?.country) ||
-// 									response.address.country_code.startsWith(state.item.expand.country.code) ||
-// 									response.address.country === state.item.expand.country.name
+// 									response.address.country_code.startsWith(state.item.expand.country_code) ||
+// 									response.address.country === state.item.expand.country_name
 // 							);
 // 						}
 

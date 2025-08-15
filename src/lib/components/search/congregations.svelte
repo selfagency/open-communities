@@ -23,7 +23,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import * as Pagination from '$lib/components/ui/pagination';
 	import { Location as LocationService } from '$lib/location';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { Search } from '$lib/search';
 	import { state as appState } from '$lib/stores';
 
@@ -195,7 +195,7 @@
 					}}
 				>
 					<LocationIcon size="20" class="rtl:mx-1" />
-					<span>{m['location.location']()}</span>
+					<span>{m.location()}</span>
 				</Button>
 				<Filters {search} />
 			</div>

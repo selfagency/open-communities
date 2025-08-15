@@ -19,7 +19,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import * as Card from '$lib/components/ui/card';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 
 	import Accessibility from './accessibility.svelte';
 	import Flag from './flag.svelte';
@@ -57,7 +57,7 @@
 		</Card.Title>
 		<Card.Description>
 			{#if services.onlineOnly}
-				<span>{m['services.onlineOnly']()}</span
+				<span>{m.services_onlineOnly()}</span
 				>{#if location.country.name && location.country.name !== 'United States'}<span
 						>, {location.country.name}</span
 					>{/if}

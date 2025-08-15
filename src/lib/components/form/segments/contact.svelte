@@ -3,7 +3,7 @@
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
@@ -16,31 +16,31 @@
 		<div
 			class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 		>
-			<span>{m['contact.contact']()}</span>
+			<span>{m.contact_contact()}</span>
 			{#if $errors.contactName || $errors.contactEmail}
 				<span class="text-red-500">*</span>
 			{/if}
 		</div>
 	</Accordion.Trigger>
 	<Accordion.Content>
-		<div class="question mb-4">{m['contactName.extended']()}</div>
+		<div class="question mb-4">{m.contactName_extended()}</div>
 		<Form.Field {form} name="contactName">
 			<Form.Control
 				>{#snippet children(props)}
 					<Form.Label for="contactName">
-						{m['contactName.contactName']()}
+						{m.contactName_contactName()}
 					</Form.Label>
 					<Input {...props} bind:value={$formData.contactName} />
 				{/snippet}
 			</Form.Control>
 			<Form.FieldErrors />
 		</Form.Field>
-		<div class="question my-4">{m['contactEmail.extended']()}</div>
+		<div class="question my-4">{m.contactEmail_extended()}</div>
 		<Form.Field {form} name="contactEmail">
 			<Form.Control
 				>{#snippet children(props)}
 					<Form.Label for="contactEmail">
-						{m['contactEmail.contactEmail']()}
+						{m.contactEmail_contactEmail()}
 					</Form.Label>
 					<Input {...props} bind:value={$formData.contactEmail} />
 				{/snippet}

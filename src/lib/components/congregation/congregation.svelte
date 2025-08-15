@@ -28,7 +28,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 
 	import Accessibility from './accessibility.svelte';
 	import Contact from './contact.svelte';
@@ -121,7 +121,7 @@
 							>{#if country.name && country.name !== 'United States'},{/if}{/if}
 						{#if country.name && country.name !== 'United States'}<span>{country.name}</span>{/if}
 					{:else if services.onlineOnly}
-						{m['services.onlineOnly']()}
+						{m.services_onlineOnly()}
 					{/if}
 				</span>
 
@@ -177,9 +177,7 @@
 		<Tabs.Root bind:value={tab} class="w-full">
 			<Tabs.List class="my-4 w-full">
 				<Tabs.Trigger value="about" class="w-1/2 transition-all">{m.about()}</Tabs.Trigger>
-				<Tabs.Trigger value="services" class="w-1/2 transition-all"
-					>{m['services.services']()}</Tabs.Trigger
-				>
+				<Tabs.Trigger value="services" class="w-1/2 transition-all">{m.services()}</Tabs.Trigger>
 				<Tabs.Trigger value="details" class="w-1/2 transition-all">{m.details()}</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="about" class="transition-all duration-300">
@@ -192,7 +190,7 @@
 						<div class="grid grid-cols-12 gap-4 text-sm">
 							{#if congregation.denomination}
 								<div class="col-span-3 flex flex-row items-start justify-start">
-									<h2 class="label">{m['denomination.affiliation']()}</h2>
+									<h2 class="label">{m.denomination_affiliation()}</h2>
 								</div>
 								<div class="col-span-9 flex flex-row items-start justify-start">
 									{m[`denomination.${congregation.denomination}`]()}
@@ -223,7 +221,7 @@
 						<div class="grid grid-cols-12 gap-4 text-sm">
 							{#if congregation.clergy}
 								<div class="col-span-3 flex flex-row items-start justify-start">
-									<h2 class="label">{m['clergy.clergy']()}</h2>
+									<h2 class="label">{m.clergy_clergy()}</h2>
 								</div>
 								<div class="col-span-9 flex flex-row items-start justify-start">
 									{congregation.clergy}
@@ -275,7 +273,7 @@
 									<Separator class="col-span-12" />
 								{/if}
 								<div class="col-span-3 flex flex-row items-start justify-start">
-									<h2 class="label">{m['notes.notes']()}</h2>
+									<h2 class="label">{m.notes()}</h2>
 								</div>
 								<div class="col-span-9 flex flex-row items-start justify-start">
 									<p>{@html notes}</p>

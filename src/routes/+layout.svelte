@@ -10,7 +10,7 @@
 	import Footer from '$lib/components/global/footer.svelte';
 	import Header from '$lib/components/global/header.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { setState } from '$lib/stores';
 
 	import type { LayoutData } from './$types';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* region imports */
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */

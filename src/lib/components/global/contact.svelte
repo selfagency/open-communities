@@ -15,7 +15,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import * as Select from '$lib/components/ui/select';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -96,7 +96,7 @@
 <Card.Root class="mx-auto w-full max-w-md">
 	<Card.Header>
 		<Card.Title class="font-display text-2xl font-normal">
-			{m['contact.contactUs']()}
+			{m.contact_contactUs()}
 		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
@@ -116,7 +116,7 @@
 				<Form.Field {form} name="name">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.name()}</Form.Label>
+							<Form.Label>{m.name()}</Form_Label>
 							<Input {...props} bind:value={$formData.name} required />
 						{/snippet}
 					</Form.Control>
@@ -126,7 +126,7 @@
 				<Form.Field {form} name="email">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m.email()}</Form.Label>
+							<Form.Label>{m.email()}</Form_Label>
 							<Input {...props} bind:value={$formData.email} required />
 						{/snippet}
 					</Form.Control>
@@ -136,16 +136,16 @@
 				<Form.Field {form} name="reason">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m['contact.reason']()}</Form.Label>
+							<Form.Label>{m.contact.reason()}</Form_Label>
 							<Select.Root type="single" bind:value={$formData.reason}>
 								<Select.Trigger class="w-full">
 									{m[`contactOptions.${$formData.reason}`]()}
 								</Select.Trigger>
 								<Select.Content {...props}>
-									<Select.Item value="question">{m['contactOptions.question']()}</Select.Item>
-									<Select.Item value="suggest">{m['contactOptions.suggest']()}</Select.Item>
-									<Select.Item value="claim">{m['contactOptions.claim']()}</Select.Item>
-									<Select.Item value="delete">{m['contactOptions.delete']()}</Select.Item>
+									<Select.Item value="question">{m.contactOptions.question()}</Select_Item>
+									<Select.Item value="suggest">{m.contactOptions.suggest()}</Select_Item>
+									<Select.Item value="claim">{m.contactOptions.claim()}</Select_Item>
+									<Select.Item value="delete">{m.contactOptions.delete()}</Select_Item>
 								</Select.Content>
 							</Select.Root>
 						{/snippet}
@@ -157,13 +157,13 @@
 					<Form.Field {form} name="record">
 						<Form.Control>
 							{#snippet children(props)}
-								<Form.Label>{m['contact.record']()}</Form.Label>
+								<Form.Label>{m.contact.record()}</Form_Label>
 								<Combobox
 									items={congregations}
 									{...props}
 									bind:value={congregation}
 									placeholder={m.selectThing({
-										thing: m.congregation().toLowerCase()
+										thing: m.congregation()_toLowerCase()
 									})}
 									disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
 									on:change={(e) => {
@@ -180,12 +180,12 @@
 				<Form.Field {form} name="message">
 					<Form.Control>
 						{#snippet children(props)}
-							<Form.Label>{m['contact.message']()}</Form.Label>
+							<Form.Label>{m.contact.message()}</Form_Label>
 							<Form.Description class="text-red-500">
 								{#if $formData.reason === 'delete'}
-									{m['contact.account']()}
+									{m.contact_account()}
 								{:else if $formData.reason === 'claim'}
-									{m['contact.proof']()}
+									{m.contact_proof()}
 								{/if}
 							</Form.Description>
 							<Textarea {...props} bind:value={$formData.message} rows={8} required />
@@ -205,7 +205,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Button>{m['contact.send']()}</Form.Button>
+				<Form.Button>{m.contact.send()}</Form_Button>
 			</form>
 
 			{#if dev}

@@ -7,7 +7,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { valueSet } from '$lib/utils';
 
 	import Required from '../required.svelte';
@@ -40,7 +40,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m['registration.registration']()}</span>
+				<span>{m.registration_registration()}</span>
 				{#if !hasRegistration || registrationErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -48,7 +48,7 @@
 		</Accordion.Trigger>
 		<Accordion.Content>
 			<div class="question mb-4" class:error={registrationErrors?.registrationType}>
-				{m['registration.extended']()}
+				{m.registration_extended()}
 				<Required set={hasRegistration} />
 			</div>
 			<Form.Field {form} name="protocol">
@@ -62,27 +62,27 @@
 						>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="free" id="free" />
-								<Form.Label for="free">{m['registration.free']()}</Form.Label>
+								<Form.Label for="free">{m.registration.free()}</Form_Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="fixedPrice" id="fixedPrice" />
-								<Form.Label for="fixedPrice">{m['registration.fixedPrice']()}</Form.Label>
+								<Form.Label for="fixedPrice">{m.registration.fixedPrice()}</Form_Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="slidingScale" id="slidingScale" />
 								<Form.Label for="slidingScale">
-									{m['registration.slidingScale']()}
+									{m.registration_slidingScale()}
 								</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
 								<Form.Label for="suggestedDonation">
-									{m['registration.suggestedDonation']()}
+									{m.registration_suggestedDonation()}
 								</Form.Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="other" id="other" />
-								<Form.Label for="other">{m.other()}</Form.Label>
+								<Form.Label for="other">{m.other()}</Form_Label>
 							</div>
 						</RadioGroup.Root>
 					{/snippet}
@@ -103,7 +103,7 @@
 				<span class="mt-4 block text-xs text-red-500">{m.requiredResponse()}</span>
 			{/if}
 			<div class="question my-4" class:error={registrationInvalid}>
-				{m['registration.contact']()}
+				{m.registration_contact()}
 				<Required
 					set={!isEmpty($formData.registration.email) || !isEmpty($formData.registration.url)}
 				/>
@@ -111,7 +111,7 @@
 			<Form.Field {form} name="registration_email">
 				<Form.Control
 					>{#snippet children(props)}
-						<Form.Label for="registration_email">{m.email()}</Form.Label>
+						<Form.Label for="registration_email">{m.email()}</Form_Label>
 						<Input
 							{...props}
 							bind:value={$formData.registration.email}
@@ -126,7 +126,7 @@
 			<Form.Field {form} name="registration_url">
 				<Form.Control
 					>{#snippet children(props)}
-						<Form.Label for="registration_url">{m.website()}</Form.Label>
+						<Form.Label for="registration_url">{m.website()}</Form_Label>
 						<div class="text-xs text-slate-500">{m.http()}</div>
 						<Input
 							{...props}
@@ -142,7 +142,7 @@
 
 			{#if registrationInvalid}
 				<span class="mt-4 block text-xs text-red-500">
-					{m.thingRequired({ thing: m.emailOrUrl() })}
+					{m.thingRequired({ thing: m_emailOrUrl() })}
 				</span>
 			{/if}
 			<div class="mt-4 flex flex-row items-center justify-end">

@@ -4,7 +4,7 @@ import * as z from 'zod';
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 // import { log } from '$lib/utils';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 
 import {
 	accessibilitySchema as accessibility,
@@ -26,7 +26,7 @@ export type DeleteSchema = z.infer<typeof deleteSchema>;
 
 export const transferSchema = z.object({
 	email: z.email().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m.email() })
+		message: m.thingRequired({ thing: m_email() })
 	}),
 	id: z.string().refine((value) => !!value, {
 		message: m.thingRequired({ thing: '`id`' })
@@ -40,7 +40,7 @@ export const defaultSchema = z.object({
 	accessibility,
 	captcha: z.string().optional(),
 	clergy: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m['clergy.clergy']() })
+		message: m.thingRequired({ thing: m.clergy_clergy() })
 	}),
 	contactEmail: z.preprocess(
 		(val) => (val === '' ? undefined : val),
@@ -71,7 +71,7 @@ export const defaultSchema = z.object({
 	),
 	fit,
 	flavor: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m['flavor.flavor']() })
+		message: m.thingRequired({ thing: m.flavor_flavor() })
 	}),
 	health,
 	id: z.string().optional(),
@@ -81,7 +81,7 @@ export const defaultSchema = z.object({
 		state: z.string().optional()
 	}),
 	name: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: m.name() })
+		message: m.thingRequired({ thing: m_name() })
 	}),
 	notes: z.string().optional(),
 	owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),

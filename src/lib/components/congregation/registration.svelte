@@ -6,7 +6,7 @@
 	import type { RegistrationRecord } from '$lib/pocketbase.d';
 
 	import { Button } from '$lib/components/ui/button';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
@@ -16,20 +16,20 @@
 </script>
 
 <div class="col-span-3">
-	<h2 class="label">{m['registration.registration']()}</h2>
+	<h2 class="label">{m.registration_registration()}</h2>
 </div>
 
 <div class="col-span-9 flex flex-col items-start justify-between space-y-2">
 	{#if registration?.registrationType}
 		<div class="flex flex-row items-center justify-start space-x-4">
 			{#if registration.registrationType === 'fixedPrice'}
-				<span>{m['registration.fixedPrice']()}</span>
+				<span>{m.registration_fixedPrice()}</span>
 			{:else if registration.registrationType === 'free'}
-				<span>{m['registration.free']()}</span>
+				<span>{m.registration_free()}</span>
 			{:else if registration.registrationType === 'slidingScale'}
-				<span>{m['registration.slidingScale']()}</span>
+				<span>{m.registration_slidingScale()}</span>
 			{:else if registration.registrationType === 'suggestedDonation'}
-				<span>{m['registration.suggestedDonation']()}</span>
+				<span>{m.registration_suggestedDonation()}</span>
 			{:else if registration.registrationType === 'other'}
 				<span>{registration.otherText}</span>
 			{:else}

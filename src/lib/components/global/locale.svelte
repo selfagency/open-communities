@@ -11,7 +11,7 @@
 	import { page } from '$app/state';
 	import { Badge } from '$lib/components/ui/badge';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { setLocale } from '$lib/paraglide/runtime';
 	import { log } from '$lib/utils';
 	/*  endregion imports */
@@ -86,7 +86,7 @@
 		{/if}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56">
-		<DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
+		<DropdownMenu.Label>{m.language()}</DropdownMenu_Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.RadioGroup bind:value={lang} onValueChange={() => updateLang()}>
 			{#each locales as { label, value }, i (i)}

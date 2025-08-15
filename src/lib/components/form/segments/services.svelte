@@ -5,7 +5,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { valueSet } from '$lib/utils';
 
 	import Required from '../required.svelte';
@@ -33,7 +33,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m['services.services']()}</span>
+				<span>{m.services_services()}</span>
 				{#if !hasServices || servicesErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -41,7 +41,7 @@
 		</Accordion.Trigger>
 		<Accordion.Content>
 			<div class="question" class:error={servicesErrors}>
-				{m['services.extended']()}
+				{m.services_extended()}
 				<Required set={hasServices} />
 			</div>
 			<div class="my-4 space-y-2">
@@ -59,7 +59,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['services.inPerson']()}</Form.Label>
+									<Form.Label>{m.services.inPerson()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -80,7 +80,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['services.hybrid']()}</Form.Label>
+									<Form.Label>{m.services.hybrid()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -109,7 +109,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['services.onlineOnly']()}</Form.Label>
+									<Form.Label>{m.services.onlineOnly()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -130,7 +130,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['services.offsite']()}</Form.Label>
+									<Form.Label>{m.services.offsite()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -151,7 +151,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form.Label>
+									<Form.Label>{m.other()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}

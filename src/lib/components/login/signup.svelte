@@ -13,7 +13,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { state as appState, setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 	/* endregion imports */
@@ -60,9 +60,9 @@
 
 <Card.Root>
 	<Card.Header>
-		<Card.Title class="font-display text-2xl font-normal"
-			>{verifying ? m.verifyEmail() : m.signUp()}</Card.Title
-		>
+		<Card.Title class="font-display text-2xl font-normal">
+			{verifying ? m.verifyEmail() : m.signUp()}
+		</Card.Title>
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
@@ -70,7 +70,7 @@
 			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-				{m['verified.extended']()}
+				{m.verified_extended()}
 			</span>
 		{:else if $appState.form?.success}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>

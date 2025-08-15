@@ -6,7 +6,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { valueSet } from '$lib/utils';
 
 	import Required from '../required.svelte';
@@ -35,7 +35,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m['fit.fit']()}</span>
+				<span>{m.fit_fit()}</span>
 				{#if !hasFit || fitErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -43,7 +43,7 @@
 		</Accordion.Trigger>
 		<Accordion.Content>
 			<div class="question" class:error={fitErrors}>
-				{m['fit.extended']()}
+				{m.fit_extended()}
 				<Required set={hasFit} />
 			</div>
 			<div class="my-4 space-y-2">
@@ -61,7 +61,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['fit.publicStatement']()}</Form.Label>
+									<Form.Label>{m.fit.publicStatement()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -82,7 +82,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['fit.clergyMember']()}</Form.Label>
+									<Form.Label>{m.fit.clergyMember()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -103,7 +103,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['fit.multipleClergyMembers']()}</Form.Label>
+									<Form.Label>{m.fit.multipleClergyMembers()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -124,7 +124,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form.Label>
+									<Form.Label>{m.other()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -152,21 +152,21 @@
 					<Form.Control
 						>{#snippet children(props)}
 							<div class="question my-4 flex flex-col items-start justify-start space-y-2">
-								<span>{m['flag.extended']()}</span>
-								<small>{m['flag.note']()}</small>
+								<span>{m.flag_extended()}</span>
+								<small>{m.flag_note()}</small>
 							</div>
 							<RadioGroup.Root {...props} class="space-y-2" bind:value={$formData.fit.flag}>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="no" id="no" />
-									<Form.Label for="no">{m['flag.no']()}</Form.Label>
+									<Form.Label for="no">{m.flag.no()}</Form_Label>
 								</div>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="yes" id="yes" />
-									<Form.Label for="yes">{m['flag.yes']()}</Form.Label>
+									<Form.Label for="yes">{m.flag.yes()}</Form_Label>
 								</div>
 								<div class="flex items-center space-x-2">
 									<RadioGroup.Item value="yesBima" id="yesBima" />
-									<Form.Label for="yesBima">{m['flag.yesBima']()}</Form.Label>
+									<Form.Label for="yesBima">{m.flag.yesBima()}</Form_Label>
 								</div>
 							</RadioGroup.Root>
 						{/snippet}

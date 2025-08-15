@@ -5,7 +5,7 @@ import { fail } from '@sveltejs/kit';
 
 import type { LocationMeta } from '$lib/types.d';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 import { contactSchema } from '$lib/schemas/contact';
 import { adminMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
@@ -53,15 +53,15 @@ export const actions = {
 			try {
 				await adminMail(
 					{
-						email: form.data.email,
+						email: form.data_email,
 						message: `
-						${m[`contact.options.${form.data.reason}`]()}
+						${m[`contact.options.${form.data_reason}`]()}
 
-						${form.data.message}
+						${form.data_message}
 
-						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data.email}` : ''}
+						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data_email}` : ''}
 						`,
-						name: form.data.name
+						name: form.data_name
 					},
 					api
 				);

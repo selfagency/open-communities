@@ -6,7 +6,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { valueSet } from '$lib/utils';
 
 	import Required from '../required.svelte';
@@ -35,7 +35,7 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m['health.health']()}</span>
+				<span>{m.health_health()}</span>
 				{#if !hasHealth || healthErrors}
 					<span class="text-red-500">*</span>
 				{/if}
@@ -46,7 +46,7 @@
 				<Form.Control
 					>{#snippet children(props)}
 						<div class="question mb-4" class:error={healthErrors?.protocol}>
-							{m['health.extended']()}
+							{m.health_extended()}
 							<Required set={hasHealth} />
 						</div>
 						<RadioGroup.Root
@@ -57,19 +57,19 @@
 						>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="maskingRequired" id="maskingRequired" />
-								<Form.Label for="maskingRequired">{m['health.maskingRequired']()}</Form.Label>
+								<Form.Label for="maskingRequired">{m.health.maskingRequired()}</Form_Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
-								<Form.Label for="maskingRecommended">{m['health.maskingRecommended']()}</Form.Label>
+								<Form.Label for="maskingRecommended">{m.health.maskingRecommended()}</Form_Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="noGuidelines" id="noGuidelines" />
-								<Form.Label for="noGuidelines">{m['health.noGuidelines']()}</Form.Label>
+								<Form.Label for="noGuidelines">{m.health.noGuidelines()}</Form_Label>
 							</div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="other" id="other" />
-								<Form.Label for="other">{m.other()}</Form.Label>
+								<Form.Label for="other">{m.other()}</Form_Label>
 							</div>
 						</RadioGroup.Root>
 						{#if $formData.health.protocol === 'other'}

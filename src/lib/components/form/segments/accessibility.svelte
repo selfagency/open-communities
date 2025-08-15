@@ -5,7 +5,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	let { errors, form, formData, view = $bindable() } = $props();
@@ -18,16 +18,16 @@
 			<div
 				class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 			>
-				<span>{m['accessibility.accessibility']()}</span>
+				<span>{m.accessibility_accessibility()}</span>
 				{#if $errors.accessibility}
 					<span class="text-red-500">*</span>
 				{/if}
 			</div>
 		</Accordion.Trigger>
 		<Accordion.Content>
-			<div class="question">{m['accessibility.extended']()}</div>
+			<div class="question">{m.accessibility_extended()}</div>
 			<div class="mt-2 text-slate-500 italic">
-				{m['accessibility.note']()}
+				{m.accessibility_note()}
 			</div>
 			<div class="my-4 space-y-2">
 				<Form.Field {form} name="online_asl">
@@ -44,7 +44,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['accessibility.online_asl']()}</Form.Label>
+									<Form.Label>{m.accessibility.online_asl()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -65,7 +65,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['accessibility.online_liveCaptions']()}</Form.Label>
+									<Form.Label>{m.accessibility.online_liveCaptions()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -87,7 +87,7 @@
 								</span>
 								<span class="-mt-0.5">
 									<Form.Label>
-										{m['accessibility.online_automatedCaptions']()}
+										{m.accessibility_online_automatedCaptions()}
 									</Form.Label>
 								</span>
 							</span>
@@ -109,7 +109,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['accessibility.inPerson_adaAll']()}</Form.Label>
+									<Form.Label>{m.accessibility.inPerson_adaAll()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -130,7 +130,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['accessibility.inPerson_adaSome']()}</Form.Label>
+									<Form.Label>{m.accessibility.inPerson_adaSome()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -151,7 +151,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['accessibility.inPerson_asl']()}</Form.Label>
+									<Form.Label>{m.accessibility.inPerson_asl()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -172,7 +172,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m['accessibility.inPerson_eva']()}</Form.Label>
+									<Form.Label>{m.accessibility.inPerson_eva()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}
@@ -193,7 +193,7 @@
 									/>
 								</span>
 								<span class="-mt-0.5">
-									<Form.Label>{m.other()}</Form.Label>
+									<Form.Label>{m.other()}</Form_Label>
 								</span>
 							</span>
 						{/snippet}

@@ -2,7 +2,7 @@ import { isEmpty } from 'radashi';
 import { toast } from 'svelte-sonner';
 import { superForm } from 'sveltekit-superforms';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 import { setState } from '$lib/stores';
 import { log } from '$lib/utils';
 
@@ -21,8 +21,8 @@ export const initForm = (data: Record<string, unknown>) => {
 				setState({ form: { hasErrors: false, success: true } });
 			} else {
 				setState({ form: { hasErrors: true, success: false } });
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form.error);
+				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
+				if (!isEmpty(result.data.form.error)) log.error('submission error', result.data.form_error);
 				toast.error(m.signUpFailure);
 			}
 		}

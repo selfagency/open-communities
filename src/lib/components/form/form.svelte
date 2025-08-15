@@ -18,7 +18,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Switch } from '$lib/components/ui/switch';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { state as appState, setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
@@ -175,11 +175,11 @@
 	$effect(() => {
 		if ($appState.form?.success) {
 			title = m.success({
-				thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission().toLowerCase()
+				thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission()_toLowerCase()
 			});
 		} else {
 			title =
-				mode === 'edit' ? m.editThing({ thing: $formData.name as string }) : m.addCongregation();
+				mode === 'edit' ? m.editThing({ thing: $formData.name as string }) : m_addCongregation();
 		}
 	});
 	/* endregion reactivity */
@@ -235,7 +235,7 @@
 									>
 										<Alert.Root variant="destructive" class="my-4 bg-red-50">
 											<WarningIcon size="18" />
-											<Alert.Description class="mt-0.5">{m.formErrors()}</Alert.Description>
+											<Alert.Description class="mt-0.5">{m.formErrors()}</Alert_Description>
 										</Alert.Root>
 									</span>
 								{/if}
@@ -259,7 +259,7 @@
 												>{#snippet children(props)}
 													<span class="flex flex-row items-start justify-start space-x-2">
 														<span>
-															<Form.Label><strong>{m.approved()}</strong></Form.Label>
+															<Form.Label><strong>{m.approved()}</strong></Form_Label>
 														</span>
 														<span>
 															<Switch {...props} bind:checked={$formData.visible as boolean} />
@@ -330,8 +330,8 @@
 										onclick={(e) => {
 											e.preventDefault();
 											e.stopPropagation();
-											form.submit(document.getElementById('addEdit'));
-										}}>{m.submit()}</Form.Button
+											form.submit(document_getElementById('addEdit'));
+										}}>{m.submit()}</Form_Button
 									>
 								</div>
 							</div>
@@ -339,8 +339,8 @@
 					</Card.Footer>
 				</div>
 			{/if}
-		</div></Card.Root
-	>
+		</div>
+	</Card.Root>
 
 	{#if dev}
 		{#await import('sveltekit-superforms') then { default: SuperDebug }}

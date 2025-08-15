@@ -6,7 +6,7 @@
 
 	import MaskIcon from '$lib/assets/mask.svg?component';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	/* endregion imports */
 
 	/* region variables */
@@ -32,31 +32,31 @@
 	{/if}
 {:else}
 	<div class="col-span-3">
-		<h2 class="label">{m['health.health']()}</h2>
+		<h2 class="label">{m.health_health()}</h2>
 	</div>
 
 	<ul class="col-span-9 space-y-2">
 		{#if health?.protocol === 'other' && health?.otherText === 'N/A'}
-			{m['health.notApplicable']()}
+			{m.health_notApplicable()}
 		{:else}
 			{#if health?.protocol === 'maskingRecommended'}
 				<li class="flex flex-row items-center justify-start space-x-1">
 					<span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-2" /></span>
-					<span>{m['health.maskingRecommended']()}</span>
+					<span>{m.health_maskingRecommended()}</span>
 				</li>
 			{/if}
 
 			{#if health?.protocol === 'maskingRequired'}
 				<li class="flex flex-row items-center justify-start space-x-1">
 					<span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-2" /></span>
-					<span>{m['health.maskingRequired']()}</span>
+					<span>{m.health_maskingRequired()}</span>
 				</li>
 			{/if}
 
 			{#if health?.protocol === 'noGuidelines'}
 				<li class="flex flex-row items-center justify-start space-x-1">
 					<span><WarningIcon size="18" class="rtl:mx-2" /></span>
-					<span>{m['health.noGuidelines']()}</span>
+					<span>{m.health_noGuidelines()}</span>
 				</li>
 			{/if}
 

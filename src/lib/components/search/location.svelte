@@ -7,7 +7,7 @@
 	import Combobox from '$lib/components/global/combobox.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Location } from '$lib/location';
-	import * as m from '$lib/paraglide/messages';
+	import { m } from '$lib/paraglide/messages';
 	import { Search } from '$lib/search';
 	/* endregion imports */
 
@@ -77,7 +77,7 @@
 					items={$locationState.options.countryOptions}
 					value={country}
 					on:change={handleCountryChange}
-					placeholder={m.selectThing({ thing: m['location.country']().toLowerCase() })}
+					placeholder={m.selectThing({ thing: m.location_country().toLowerCase() })}
 					disabled={!$locationState.options?.countryOptions?.length}
 				/>
 			</span>
@@ -87,7 +87,7 @@
 					items={$locationState.options.stateOptions}
 					value={province}
 					on:change={handleStateChange}
-					placeholder={m.selectThing({ thing: m['location.state']().toLowerCase() })}
+					placeholder={m.selectThing({ thing: m.location_state().toLowerCase() })}
 					disabled={!country || !$locationState.options?.stateOptions?.length}
 				/>
 			</span>
@@ -97,7 +97,7 @@
 					items={$locationState.options.cityOptions}
 					value={city}
 					on:change={handleCityChange}
-					placeholder={m.selectThing({ thing: m['location.city']().toLowerCase() })}
+					placeholder={m.selectThing({ thing: m.location_city().toLowerCase() })}
 					disabled={!province || !$locationState.options?.cityOptions?.length}
 				/>
 			</span>

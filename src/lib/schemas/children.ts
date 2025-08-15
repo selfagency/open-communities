@@ -2,7 +2,7 @@
 import { isEmpty, listify } from 'radashi';
 import * as z from 'zod';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 // import { log } from '$lib/utils';
 /* endregion imports */
 
@@ -66,7 +66,7 @@ export const registrationSchema = z
 		)
 	})
 	.refine(hasContact, {
-		message: m.thingRequired({ thing: m.emailOrUrl() })
+		message: m.thingRequired({ thing: m_emailOrUrl() })
 	});
 
 export type RegistrationSchema = z.infer<typeof registrationSchema>;

@@ -1,7 +1,7 @@
 /* region imports */
 import * as z from 'zod';
 
-import * as m from '$lib/paraglide/messages';
+import { m } from '$lib/paraglide/messages';
 // import { log } from '$lib/utils';
 /* endregion imports */
 
