@@ -51,7 +51,7 @@
 	let loading = $state(true);
 	let searchTerms = $state('');
 	let currentPage = $state(1);
-	let perPage = $state(12);
+	let perPage = $state(9);
 	// let reset: boolean = false;
 	/* endregion variables */
 
