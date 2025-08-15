@@ -16,9 +16,10 @@ import type {
 import type { LocationMeta, LocationRecord } from '$lib/types.d';
 
 import { cleanResponse } from '$lib/api';
+import * as m from '$lib/paraglide/messages';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
-import { sendMail } from '$lib/server/mail';
+import { adminMail, transactionalMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 /* endregion imports */
 
@@ -103,16 +104,25 @@ export const actions = {
 			const record = await api.collection('congregationMeta').getOne(data.id, { fetch });
 			const { accessibility, fit, health, registration, security, services } = record as MetaRecord;
 
-			await Promise.all([
-				api.collection('accessibility').delete(accessibility.id, { fetch }),
-				api.collection('fit').delete(fit.id, { fetch }),
-				api.collection('registration').delete(registration.id, { fetch }),
-				api.collection('health').delete(health.id, { fetch }),
-				api.collection('security').delete(security.id, { fetch }),
-				api.collection('services').delete(services.id, { fetch })
-			]);
+			const batch = api.createBatch();
 
-			await api.collection('congregations').delete(data.id, { fetch });
+			batch.collection('accessibility').delete(accessibility.id, { fetch });
+			batch.collection('fit').delete(fit.id, { fetch });
+			batch.collection('registration').delete(registration.id, { fetch });
+			batch.collection('health').delete(health.id, { fetch });
+			batch.collection('security').delete(security.id, { fetch });
+			batch.collection('services').delete(services.id, { fetch });
+			batch.collection('congregations').delete(data.id, { fetch });
+			await batch.send();
+
+			if (!client?.admin) {
+				await transactionalMail({
+					email: client.email,
+					message: m['transactional.deleted']({ locale: client.lang || 'en' }),
+					name: client.name,
+					subject: m['transactional.subject']({ locale: client.lang || 'en' })
+				});
+			}
 
 			return {
 				form
@@ -149,42 +159,43 @@ export const actions = {
 
 			await validateCaptcha(form);
 
+			const priorToChange = await api.collection('congregationMeta').getOne(data.id, { fetch });
 			const { accessibility, fit, health, location, registration, security, services } = data;
+			const batch = api.createBatch();
 
-			await Promise.all([
-				api.collection('congregations').update(
-					data.id,
-					{
-						...omit(data, [
-							'id',
-							'accessibility',
-							'fit',
-							'location',
-							'registration',
-							'owner',
-							'health',
-							'security',
-							'services'
-						]),
-						visible: client?.admin ? data.visible : false,
-						...location
-					},
-					{ fetch }
-				),
-				api
-					.collection('accessibility')
-					.update(accessibility.id, omit(accessibility, ['id']), { fetch }),
-				api.collection('fit').update(fit.id, omit(fit, ['id']), { fetch }),
-				api
-					.collection('registration')
-					.update(registration.id, omit(registration, ['id']), { fetch }),
-				api.collection('health').update(health.id, omit(health, ['id']), { fetch }),
-				api.collection('security').update(security.id, omit(security, ['id']), { fetch }),
-				api.collection('services').update(services.id, omit(services, ['id']), { fetch })
-			]);
+			batch.collection('congregations').update(
+				data.id,
+				{
+					...omit(data, [
+						'id',
+						'accessibility',
+						'fit',
+						'location',
+						'registration',
+						'owner',
+						'health',
+						'security',
+						'services'
+					]),
+					visible: client?.admin ? data.visible : false,
+					...location
+				},
+				{ fetch }
+			);
+			batch
+				.collection('accessibility')
+				.update(accessibility.id, omit(accessibility, ['id']), { fetch });
+			batch.collection('fit').update(fit.id, omit(fit, ['id']), { fetch });
+			batch
+				.collection('registration')
+				.update(registration.id, omit(registration, ['id']), { fetch });
+			batch.collection('health').update(health.id, omit(health, ['id']), { fetch });
+			batch.collection('security').update(security.id, omit(security, ['id']), { fetch });
+			batch.collection('services').update(services.id, omit(services, ['id']), { fetch });
+			await batch.send();
 
 			if (!client?.admin) {
-				await sendMail(
+				await adminMail(
 					{
 						email: client.email,
 						message: `
@@ -196,6 +207,25 @@ export const actions = {
 					},
 					api
 				);
+
+				await transactionalMail({
+					email: client.email,
+					message: `${m['transactional.updated']({ locale: client.lang || 'en' })} ${m[
+						'transactional.confirmation'
+					]({
+						locale: client.lang || 'en'
+					})}`,
+					name: client.name,
+					subject: m['transactional.subject']({ locale: client.lang || 'en' })
+				});
+			} else if (client?.admin && data.owner && form.data.visible && !priorToChange.visible) {
+				const owner = await api.collection('users').getOne(data.owner, { fetch });
+				await transactionalMail({
+					email: owner.email,
+					message: m['transactional.updateApproved']({ locale: owner.lang || 'en' }),
+					name: owner.name,
+					subject: m['transactional.subject']({ locale: owner.lang || 'en' })
+				});
 			}
 
 			return {
@@ -231,17 +261,26 @@ export const actions = {
 				throw error;
 			}
 
-			// await validateCaptcha(form);
+			const batch = api.createBatch();
 
 			const user = await api
 				.collection('users')
 				.getFirstListItem(`email="${data.email}"`, { fetch });
 
 			if (!isEmpty(data.owner)) {
-				await api.collection('users').update(data.owner, { congregation: '' }, { fetch });
+				batch.collection('users').update(data.owner, { congregation: '' }, { fetch });
 			}
 
-			await api.collection('users').update(user?.id, { congregation: data.id }, { fetch });
+			batch.collection('users').update(user?.id, { congregation: data.id }, { fetch });
+
+			await batch.send();
+
+			await transactionalMail({
+				email: user.email,
+				message: m['transactional.claimedSuccess']({ locale: user.lang || 'en' }),
+				name: user.name,
+				subject: m['transactional.subject']({ locale: user.lang || 'en' })
+			});
 
 			return { form };
 		} catch (error) {

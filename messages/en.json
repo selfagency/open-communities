@@ -260,7 +260,7 @@
   "warning": "Are you sure you want to continue?",
   "warningNote": "This action cannot be undone.",
   "website": "Website",
-  "languageChanged": "Successfully changed language",
+  "languageChanged": "Language changed successfully.",
   "invalidCaptcha": "Invalid captcha",
   "flag": {
     "extended": "Does your congregation display an Israeli flag?",
@@ -270,5 +270,20 @@
     "short": "Israeli flag",
     "yes": "An Israeli flag is displayed, but not on the bima",
     "yesBima": "An Israeli flag is displayed on the bima"
+  },
+  "transactional": {
+    "submitted": "Your submission was successfully received.",
+    "updated": "Your update was successfully received.",
+    "deleted": "Your listing has been successfully deleted.",
+    "claimed": "Your claim request was successfully received.",
+    "contactUs": "Please contact us if you have questions.",
+    "confirmation": "You will receive a confirmation email when it has been approved by an administrator.",
+    "submissionRejected": "Your submission has been rejected.",
+    "submissionApproved": "Your submission has been approved and is now live.",
+    "subject": "Re: Your Open Communities listing",
+    "updateRejected": "Your update has been rejected.",
+    "updateApproved": "Your update has been approved and is now live.",
+    "claimedSuccess": "Your claim request has been approved. You may now login and edit your listing. ",
+    "claimedRejected": "Your claim request has been rejected."
   }
 }

@@ -1,11 +1,20 @@
 /* region imports */
+import FormData from 'form-data';
+import Mailgun from 'mailgun.js';
+
 import type { TypedPocketBase } from '$lib/pocketbase.d';
+
+import { MAILGUN_API_KEY } from '$env/static/private';
+import { log } from '$lib/server/logger';
 /* endregion imports */
 
-export async function sendMail(
-	data: { email?: string; message?: string; name?: string; record?: string; title?: string },
-	api: TypedPocketBase
-) {
+const mailgun = new Mailgun(FormData);
+const mg = mailgun.client({
+	key: MAILGUN_API_KEY,
+	username: 'api'
+});
+
+export async function adminMail(data: Record<string, string | undefined>, api: TypedPocketBase) {
 	const formData = new FormData();
 	for (const key in data) {
 		formData.append(key, data[key]);
@@ -18,7 +27,7 @@ export async function sendMail(
 	}
 
 	const res = await fetch('https://usebasin.com/f/a0498e979c2a', {
-		body: formData,
+		body: formData.toString(),
 		headers: {
 			Accept: 'application/json'
 		},
@@ -27,5 +36,23 @@ export async function sendMail(
 
 	if (res.status !== 200) {
 		throw new Error(await res.json());
+	}
+}
+
+export async function transactionalMail({ email, message, name, subject }: Record<string, string>) {
+	const html = message;
+	const text = message;
+
+	try {
+		await mg.messages.create('m.opencommunities.info', {
+			from: 'Open Communities <no-reply@m.opencommunities.info>',
+			html,
+			subject,
+			text,
+			to: [`${name} <${email}>`]
+		});
+	} catch (e) {
+		log.error('Error sending transactional email', e);
+		throw e;
 	}
 }

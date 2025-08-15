@@ -18,10 +18,10 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationRecord } from '$lib/types.d';
 
-import { m } from '$lib/paraglide/messages';
+import * as m from '$lib/paraglide/messages';
 import { defaultSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
-import { sendMail } from '$lib/server/mail';
+import { adminMail, transactionalMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 /* endregion imports */
 
@@ -102,35 +102,42 @@ export const actions = {
 				{ fetch }
 			)) as CongregationsResponse;
 
-			await Promise.all([
-				api
-					.collection('accessibility')
-					.create({ ...accessibility, congregation: record.id }, { fetch }),
-				api.collection('fit').create({ ...fit, congregation: record.id }, { fetch }),
-				api
-					.collection('registration')
-					.create({ ...registration, congregation: record.id }, { fetch }),
-				api.collection('health').create({ ...health, congregation: record.id }, { fetch }),
-				api.collection('security').create({ ...security, congregation: record.id }, { fetch }),
-				api.collection('services').create({ ...services, congregation: record.id }, { fetch })
-			]);
+			const batch = api.createBatch();
+			batch
+				.collection('accessibility')
+				.create({ ...accessibility, congregation: record.id }, { fetch });
+			batch.collection('fit').create({ ...fit, congregation: record.id }, { fetch });
+			batch
+				.collection('registration')
+				.create({ ...registration, congregation: record.id }, { fetch });
+			batch.collection('health').create({ ...health, congregation: record.id }, { fetch });
+			batch.collection('security').create({ ...security, congregation: record.id }, { fetch });
+			batch.collection('services').create({ ...services, congregation: record.id }, { fetch });
+			await batch.send();
+
+			await api.collection('users').update(user, { congregation: record.id }, { fetch });
 
 			if (!client?.admin) {
-				await api.collection('users').update(user, { congregation: record.id }, { fetch });
+				await transactionalMail({
+					email: client.email,
+					message: `${m['transactional.submitted']({ locale: client.lang || 'en' })} ${m['transactional.confirmation']({ locale: client.lang || 'en' })}`,
+					name: client.name as string,
+					subject: `${m['transactional.subject']({ locale: client.lang || 'en' })}`
+				});
+			}
 
-				await sendMail(
-					{
-						email: client.email,
-						message: `
+			await adminMail(
+				{
+					email: client.email,
+					message: `
 						A new congregation, ${record.name}, has been submitted and requires approval:\n
 						https://opencommunities.info/edit?id=${record.id}
 					`,
-						name: client.name as string,
-						title: `New congregation submitted`
-					},
-					api
-				);
-			}
+					name: client.name as string,
+					title: `New congregation submitted`
+				},
+				api
+			);
 
 			return {
 				form
