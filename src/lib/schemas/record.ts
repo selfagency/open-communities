@@ -88,9 +88,12 @@ export const defaultSchema = z.object({
 	registration,
 	security,
 	services,
-	user: z.string().refine((value) => !!value, {
-		message: m.thingRequired({ thing: 'user' })
-	}),
+	user: z
+		.string()
+		.min(1)
+		.refine((value) => !!value, {
+			message: m.thingRequired({ thing: 'user' })
+		}),
 	visible: z.boolean()
 });
 

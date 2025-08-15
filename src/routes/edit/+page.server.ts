@@ -20,7 +20,6 @@ import * as m from '$lib/paraglide/messages';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { handleError } from '$lib/server/api';
 import { adminMail, transactionalMail } from '$lib/server/mail';
-import { validateCaptcha } from '$lib/server/utils';
 /* endregion imports */
 
 /* region types */
@@ -144,7 +143,7 @@ export const actions = {
 		const client = api.authStore.record;
 
 		const form = await validate(defaultSchema, event);
-		const data = form.data as MetaRecord & RecordWithId & { captcha: string };
+		const data = form.data as MetaRecord & RecordWithId;
 
 		try {
 			if (!client?.id) {
@@ -156,8 +155,6 @@ export const actions = {
 			if (!form.valid) {
 				throw new Error('Invalid form data');
 			}
-
-			await validateCaptcha(form);
 
 			const priorToChange = await api.collection('congregationMeta').getOne(data.id, { fetch });
 			const { accessibility, fit, health, location, registration, security, services } = data;

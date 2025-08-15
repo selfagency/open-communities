@@ -8,11 +8,17 @@ import { MAILGUN_API_KEY } from '$env/static/private';
 import { log } from '$lib/server/logger';
 /* endregion imports */
 
-const mailgun = new Mailgun(FormData);
-const mg = mailgun.client({
-	key: MAILGUN_API_KEY,
-	username: 'api'
-});
+let mg: null | ReturnType<Mailgun['client']> = null;
+
+if (!MAILGUN_API_KEY || MAILGUN_API_KEY.trim() === '') {
+	log.warn('Mailgun API key is not set');
+} else {
+	const mailgun = new Mailgun(FormData);
+	mg = mailgun.client({
+		key: MAILGUN_API_KEY,
+		username: 'api'
+	});
+}
 
 export async function adminMail(data: Record<string, string | undefined>, api: TypedPocketBase) {
 	try {
@@ -42,15 +48,19 @@ export async function transactionalMail({ email, message, name, subject }: Recor
 	const html = message;
 	const text = message;
 
-	try {
-		await mg.messages.create('m.opencommunities.info', {
-			from: 'Open Communities <no-reply@m.opencommunities.info>',
-			html,
-			subject,
-			text,
-			to: [`${name} <${email}>`]
-		});
-	} catch (e) {
-		log.error('Error sending transactional email', e);
+	if (mg) {
+		try {
+			await mg.messages.create('m.opencommunities.info', {
+				from: 'Open Communities <no-reply@m.opencommunities.info>',
+				html,
+				subject,
+				text,
+				to: [`${name} <${email}>`]
+			});
+		} catch (e) {
+			log.error('Error sending transactional email', e);
+		}
+	} else {
+		log.warn('Mailgun client is not initialized');
 	}
 }

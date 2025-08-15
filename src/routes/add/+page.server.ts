@@ -139,6 +139,8 @@ export const actions = {
 					},
 					api
 				);
+			} else {
+				throw new Error('Invalid captcha');
 			}
 
 			return {
