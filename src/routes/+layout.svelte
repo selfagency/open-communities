@@ -9,6 +9,7 @@
 	import { onNavigate } from '$app/navigation';
 	import Footer from '$lib/components/global/footer.svelte';
 	import Header from '$lib/components/global/header.svelte';
+	import Progress from '$lib/components/global/progress.svelte';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { m } from '$lib/paraglide/messages';
 	import { setState } from '$lib/stores';
@@ -30,22 +31,20 @@
 	/* region lifecycle */
 	onMount(() => {
 		if (browser) {
-			if (data.user?.lang === 'he') {
-				document.body.setAttribute('dir', 'rtl');
-			} else {
-				document.body.setAttribute('dir', 'ltr');
-			}
+			document.body.setAttribute('dir', data.user?.lang === 'he' ? 'rtl' : 'ltr');
 		}
 	});
 
 	onNavigate((navigation) => {
 		if (browser) {
+			setState({ loading: true });
 			if (!document.startViewTransition) return;
 
 			return new Promise((resolve) => {
 				document.startViewTransition(async () => {
 					resolve();
 					await navigation.complete;
+					setState({ loading: false });
 				});
 			});
 		}
@@ -75,6 +74,7 @@
 </svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between">
+	<Progress />
 	<Header />
 	<main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px]">
 		{@render children()}

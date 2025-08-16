@@ -17,6 +17,7 @@ export type State = {
 	};
 	isMobile?: boolean;
 	lang?: string;
+	loading?: boolean;
 	offsetHeight?: number;
 	offsetWidth?: number;
 	showIntro?: boolean;
@@ -45,6 +46,7 @@ export function initState() {
 		},
 		isMobile: window.innerWidth < 640,
 		lang: page.data.user?.lang || 'en',
+		loading: false,
 		offsetHeight: window.innerHeight,
 		offsetWidth: window.innerWidth,
 		showIntro: true
