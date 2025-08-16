@@ -125,7 +125,7 @@
 			class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal"
 		>
 			<span>{m.congregation()}</span>
-			{#if isEmpty($formData.name) || isEmpty($formData.clergy) || isEmpty($formData.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
+			{#if isEmpty($formData?.name) || isEmpty($formData?.clergy) || isEmpty($formData?.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
 				<span class="text-red-500">*</span>
 			{/if}
 		</div>
@@ -136,14 +136,14 @@
 				{#snippet children(props)}
 					<Form.Label
 						>{m.name()}
-						<Required set={!isEmpty($formData.name)} /></Form.Label
+						<Required set={!isEmpty($formData?.name)} /></Form.Label
 					>
 					<Input
 						{...props}
 						bind:value={$formData.name}
 						required
 						onchange={() => {
-							$formData.name = $formData.name.trim();
+							$formData.name = $formData?.name?.trim();
 						}}
 					/>
 				{/snippet}
@@ -151,7 +151,7 @@
 			<Form.FieldErrors />
 		</Form.Field>
 
-		{#if $formData.location}
+		{#if $formData?.location}
 			<Form.Field {form} name="country">
 				<Form.Control>
 					{#snippet children(props)}
@@ -216,7 +216,7 @@
 						{...props}
 						bind:value={$formData.contactUrl}
 						onchange={() => {
-							$formData.contactUrl = $formData.contactUrl.trim();
+							$formData.contactUrl = $formData?.contactUrl.trim();
 						}}
 					/>
 				{/snippet}
@@ -228,7 +228,7 @@
 				{#snippet children(props)}
 					<Form.Label
 						>{m.clergy_extended()}
-						<Required set={!isEmpty($formData.clergy)} /></Form.Label
+						<Required set={!isEmpty($formData?.clergy)} /></Form.Label
 					>
 					<Input {...props} bind:value={$formData.clergy} required />
 				{/snippet}
@@ -242,7 +242,7 @@
 					<Select.Root type="single" name="denomination" bind:value={$formData.denomination}>
 						<Select.Trigger class="w-full" {...props}>
 							{#if $formData?.denomination}
-								{@const denom = `denomination_${$formData.denomination}`}
+								{@const denom = `denomination_${$formData?.denomination}`}
 								{m[denom]()}
 							{:else}
 								{m.selectThing({ thing: m.denomination().toLowerCase() })}
@@ -263,7 +263,7 @@
 				>{#snippet children(props)}
 					<Form.Label
 						>{m.flavor_extended()}
-						<Required set={!isEmpty($formData.flavor)} /></Form.Label
+						<Required set={!isEmpty($formData?.flavor)} /></Form.Label
 					>
 					<Textarea {...props} bind:value={$formData.flavor} required />
 				{/snippet}
