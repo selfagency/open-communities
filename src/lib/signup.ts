@@ -14,8 +14,14 @@ export const initForm = (data: Record<string, unknown>) => {
 			log.error('submission error', result.error.message);
 			toast.error(result.error.message);
 		},
+		onResult() {
+			setState({ loading: false });
+		},
+		onSubmit() {
+			setState({ loading: true });
+		},
 		async onUpdate({ result }) {
-			setState({ form: { hasErrors: false, success: false } });
+			setState({ form: { hasErrors: false, success: false }, loading: false });
 
 			if (result.type === 'success') {
 				setState({ form: { hasErrors: false, success: true } });

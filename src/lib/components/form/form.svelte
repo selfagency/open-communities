@@ -59,7 +59,6 @@
 	let widget: HTMLElement | null = $state(null);
 	let title: string = $state('');
 	let view = $state('congregation') as string;
-	let loading = $state(true);
 	/* endregion variables */
 
 	/* region methods */
@@ -143,24 +142,26 @@
 	/* region lifecycle */
 	onMount(async () => {
 		if (browser) {
+			setState({ form: { hasErrors: false, success: false }, loading: true });
+
 			if (!$formData?.id) {
 				initData();
-				loading = false;
-				setState({ form: { hasErrors: false, success: false } });
 			} else {
 				if (!user?.admin) {
 					$formData.visible = false;
 				}
-				loading = false;
 			}
 
 			await sleep(500);
+
 			if (mode === 'add') {
 				widget = document.getElementById('captcha');
 				widget?.addEventListener('solve', function (e) {
 					$formData.captcha = e.detail.token;
 				});
 			}
+
+			setState({ loading: false });
 		}
 	});
 
@@ -188,9 +189,9 @@
 <section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
 		<div class="min-h-96">
-			{#if loading}
+			{#if $appState.loading}
 				<div
-					transition:fade={{ duration: 300 }}
+					transition:fade={{ delay: 300, duration: 100 }}
 					class="flex h-full min-h-96 w-full flex-col items-center justify-center"
 				>
 					<Card.Content>
@@ -198,7 +199,7 @@
 					</Card.Content>
 				</div>
 			{:else}
-				<div transition:fade={{ delay: 300, duration: 300 }}>
+				<div transition:fade={{ delay: 300, duration: 100 }}>
 					<form id="addEdit" method="POST" action="?/submit" use:enhance class="min-h-[200px]">
 						<Card.Header>
 							<Card.Title class="font-display text-2xl font-normal">

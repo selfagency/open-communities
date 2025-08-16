@@ -9,6 +9,7 @@
 
 	import { dev } from '$app/environment';
 	import { m } from '$lib/paraglide/messages';
+	import { setState } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -29,7 +30,14 @@
 			log.error('submission error', result.error.message);
 			toast.error(result.error.message);
 		},
+		onResult() {
+			setState({ loading: false });
+		},
+		onSubmit() {
+			setState({ loading: true });
+		},
 		async onUpdate({ result }) {
+			setState({ loading: false });
 			if (result.type === 'success') {
 				verified = true;
 			} else {

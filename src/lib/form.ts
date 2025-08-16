@@ -16,8 +16,14 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
 			log.error(result.error.message);
 			toast.error(result.error.message);
 		},
+		onResult() {
+			setState({ loading: false });
+		},
+		onSubmit() {
+			setState({ loading: true });
+		},
 		async onUpdate({ result }) {
-			setState({ form: { hasErrors: false, success: false } });
+			setState({ form: { hasErrors: false, success: false }, loading: false });
 
 			if (result.type === 'success') {
 				toast.success(mode === 'edit' ? m.editSuccess() : m.addSuccess());

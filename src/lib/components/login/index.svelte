@@ -2,17 +2,20 @@
 	/* region imports */
 	import { isEmpty } from 'radashi';
 	import { toast } from 'svelte-sonner';
+	import { fade } from 'svelte/transition';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import Loading from '$lib/components/global/loading.svelte';
 	import Reset from '$lib/components/login/reset.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { m } from '$lib/paraglide/messages';
+	import { state as appState, setState } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -42,7 +45,14 @@
 			log.error(result.error.message);
 			toast.error(result.error.message);
 		},
+		onResult() {
+			setState({ loading: false });
+		},
+		onSubmit() {
+			setState({ loading: true });
+		},
 		async onUpdate({ result }) {
+			setState({ loading: false });
 			if (result.type === 'success') {
 				toast.success(m.loginSuccess());
 				await goto('/');
@@ -67,7 +77,14 @@
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
-		{#if resetting}
+		{#if $appState.loading}
+			<div
+				transition:fade={{ delay: 300, duration: 100 }}
+				class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+			>
+				<Loading />
+			</div>
+		{:else if resetting}
 			{#if !sentSuccess && !resetSuccess}
 				<Reset
 					data={reset}
@@ -121,12 +138,12 @@
 					<Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword()}</Button>
 				</div>
 			</form>
+		{/if}
 
-			{#if dev}
-				{#await import('sveltekit-superforms') then { default: SuperDebug }}
-					<div class="mt-4"><SuperDebug data={$formData} /></div>
-				{/await}
-			{/if}
+		{#if dev}
+			{#await import('sveltekit-superforms') then { default: SuperDebug }}
+				<div class="mt-4"><SuperDebug data={$formData} /></div>
+			{/await}
 		{/if}
 	</Card.Content>
 	<!-- <Card.Footer></Card.Footer> -->

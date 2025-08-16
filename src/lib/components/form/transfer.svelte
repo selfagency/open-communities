@@ -4,16 +4,19 @@
 	import { isEmpty } from 'radashi';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { fade } from 'svelte/transition';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import Loading from '$lib/components/global/loading.svelte';
 	import * as Alert from '$lib/components/ui/alert';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { m } from '$lib/paraglide/messages';
+	import { state as appState, setState } from '$lib/stores';
 	import { log } from '$lib/utils';
 	/* endregion imports */
 
@@ -44,8 +47,15 @@
 			log.error(result.error.message);
 			toast.error(result.error.message);
 		},
+		onResult() {
+			setState({ loading: false });
+		},
+		onSubmit() {
+			setState({ loading: true });
+		},
 		async onUpdate({ result }) {
-			// log.debug('result', result.type);
+			setState({ loading: false });
+
 			if (result.type === 'success') {
 				open = false;
 				toast.success(m.transferSuccess());
@@ -84,56 +94,70 @@
 			{m.transfer()}
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
-			<form id="transfer" method="POST" action="?/transfer" use:enhance>
-				<AlertDialog.Header>
-					<AlertDialog.Title>{m.transfer()}</AlertDialog.Title>
-					<AlertDialog.Description class="space-y-4">
-						<div>{m.transfer_desc()}</div>
+			{#if $appState.loading}
+				<div
+					transition:fade={{ delay: 300, duration: 100 }}
+					class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+				>
+					<Loading />
+				</div>
+			{:else}
+				<form
+					id="transfer"
+					method="POST"
+					action="?/transfer"
+					use:enhance
+					transition:fade={{ delay: 300, duration: 100 }}
+				>
+					<AlertDialog.Header>
+						<AlertDialog.Title>{m.transfer()}</AlertDialog.Title>
+						<AlertDialog.Description class="space-y-4">
+							<div>{m.transfer_desc()}</div>
 
-						<Alert.Root variant="destructive" class="my-4 bg-red-50">
-							<WarningIcon size="18" />
-							<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
-						</Alert.Root>
+							<Alert.Root variant="destructive" class="my-4 bg-red-50">
+								<WarningIcon size="18" />
+								<Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
+							</Alert.Root>
 
-						<Form.Field {form} name="id">
-							<Form.Control>
-								{#snippet children(props)}
-									<input type="hidden" {...props} bind:value={$formData.id} />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
+							<Form.Field {form} name="id">
+								<Form.Control>
+									{#snippet children(props)}
+										<input type="hidden" {...props} bind:value={$formData.id} />
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
 
-						<Form.Field {form} name="email">
-							<Form.Control>
-								{#snippet children(props)}
-									<Form.Label for="email">{m.email()}</Form.Label>
-									<Input {...props} bind:value={$formData.email} />
-								{/snippet}
-							</Form.Control>
-							<Form.FieldErrors />
-						</Form.Field>
-					</AlertDialog.Description>
-				</AlertDialog.Header>
-				<AlertDialog.Footer class="mt-4">
-					<AlertDialog.Cancel
-						onclick={async () => {
-							open = false;
-							await goto(`${page.url.pathname}?id=${id}`);
-						}}>{m.cancel()}</AlertDialog.Cancel
-					>
-					<AlertDialog.Action
-						onclick={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							form.submit(document.getElementById('transfer'));
-						}}
-					>
-						{m.continue()}
-					</AlertDialog.Action>
-				</AlertDialog.Footer>
-			</form>
-
+							<Form.Field {form} name="email">
+								<Form.Control>
+									{#snippet children(props)}
+										<Form.Label for="email">{m.email()}</Form.Label>
+										<Input {...props} bind:value={$formData.email} />
+									{/snippet}
+								</Form.Control>
+								<Form.FieldErrors />
+							</Form.Field>
+						</AlertDialog.Description>
+					</AlertDialog.Header>
+					<AlertDialog.Footer class="mt-4">
+						<AlertDialog.Cancel
+							onclick={async () => {
+								open = false;
+								await goto(`${page.url.pathname}?id=${id}`);
+							}}>{m.cancel()}</AlertDialog.Cancel
+						>
+						<AlertDialog.Action
+							onclick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								form.submit(document.getElementById('transfer'));
+							}}
+						>
+							{m.continue()}
+						</AlertDialog.Action>
+					</AlertDialog.Footer>
+				</form>
+			{/if}
 			{#if dev}
 				{#await import('sveltekit-superforms') then { default: SuperDebug }}
 					<div class="mt-4"><SuperDebug data={$formData} /></div>
