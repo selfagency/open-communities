@@ -51,6 +51,7 @@
 <MapLibre
 	center={center()}
 	zoom={zoom()}
+	minZoom={1}
 	class="h-96"
 	standardControls
 	style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"

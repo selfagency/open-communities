@@ -52,12 +52,22 @@
 	let searchTerms = $state('');
 	let currentPage = $state(1);
 	let perPage = $state(9);
+	let isPaging = $state(false);
 	// let reset: boolean = false;
 	/* endregion variables */
 
 	/* region methods */
-	function onPageChange(pageNo: number) {
+	async function onPageChange(pageNo: number) {
+		// Blur the grid, wait for the blur to take effect, swap page, then unblur
+		isPaging = true;
+		await tick();
+		// give the CSS a moment to start the blur
+		await sleep(80);
 		currentPage = pageNo;
+		await tick();
+		// wait for the blur duration to finish before removing it
+		await sleep(320);
+		isPaging = false;
 	}
 	/*endregion methods */
 
@@ -211,24 +221,25 @@
 			<Map {location} {locations} {search} />
 		</div>
 
-		<div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3">
-			{#if $results?.length === 0}
-				<div
-					class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
-				>
-					<WarningIcon size="20" />
-					<span>{m.nothingFound()}</span>
-				</div>
-			{:else if pages?.length > 0}
-				{#each pages[currentPage - 1] as congregation (congregation.id)}
-					{#key congregation.id}
-						<div class="col-span-1">
-							<CongregationCard {congregation} open={open[congregation.id]} />
-						</div>
-					{/key}
+		{#if $results?.length === 0}
+			<div
+				class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
+			>
+				<WarningIcon size="20" />
+				<span>{m.nothingFound()}</span>
+			</div>
+		{:else if pages?.length > 0}
+			<div
+				class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3"
+				class:blurred={isPaging}
+			>
+				{#each pages[currentPage - 1] as congregation (congregation.id + '-' + currentPage)}
+					<div class="col-span-1">
+						<CongregationCard {congregation} open={open[congregation.id]} />
+					</div>
 				{/each}
-			{/if}
-		</div>
+			</div>
+		{/if}
 
 		<div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
 			<Pagination.Root
@@ -264,3 +275,17 @@
 		</div>
 	{/if}
 </section>
+
+<style>
+	/* scoped: smooth CSS-only blur during page swaps without affecting layout */
+	.grid.blurred {
+		filter: blur(8px);
+		opacity: 0.65;
+		transform: scale(0.996);
+		will-change: filter, opacity, transform;
+		transition:
+			filter 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+			opacity 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+			transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+</style>
