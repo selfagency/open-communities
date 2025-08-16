@@ -73,6 +73,6 @@
 
 {#if isProgressVisible}
 	<div id="nav-progress" in:fade class="fixed top-0 left-0 z-50 w-screen">
-		<Progress value={progress} />
+		<Progress value={progress} class="rounded-none" />
 	</div>
 {/if}
