@@ -272,20 +272,20 @@
 										</Form.Field>
 									{/if}
 								</div>
-							{/if}
 
-							{#if mode === 'add'}
-								<Form.Field {form} name="captcha">
-									<Form.Control>
-										<div class="mt-4 mb-8 w-full">
-											<cap-widget
-												id="captcha"
-												data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
-											></cap-widget>
-										</div>
-									</Form.Control>
-									<Form.FieldErrors />
-								</Form.Field>
+								{#if mode === 'add'}
+									<Form.Field {form} name="captcha">
+										<Form.Control>
+											<div class="mt-4 mb-8 w-full">
+												<cap-widget
+													id="captcha"
+													data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
+												></cap-widget>
+											</div>
+										</Form.Control>
+										<Form.FieldErrors />
+									</Form.Field>
+								{/if}
 							{/if}
 						</Card.Content>
 					</form>
