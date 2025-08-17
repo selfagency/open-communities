@@ -7,35 +7,32 @@
 	import { state as appState, setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
 
-	import type { PageData } from './$types';
 	/* endregion imports */
 
 	/* region variables */
 	// props
-	const data: PageData = $props();
+	const { data } = $props();
 
-	const { content } = $derived(data);
+	const open = $derived($appState?.showIntro);
 	/* endregion variables */
 </script>
 
-{#if content?.content}
-	<Dialog.Root open={$appState.showIntro} onOpenChange={() => setState({ showIntro: false })}>
-		<Dialog.Content
-			class="max-h-[85vh] max-w-[360px] min-w-[360px] overflow-y-scroll sm:max-w-[540px]"
-		>
-			<Dialog.Header>
-				<Dialog.Title class="font-display text-2xl font-normal">
-					{m.home_dialogTitle()}
-				</Dialog.Title>
-				<Dialog.Description>
-					<section class="prose mx-auto my-4">
-						{@html content?.content}
-					</section>
-				</Dialog.Description>
-			</Dialog.Header>
-		</Dialog.Content>
-	</Dialog.Root>
-{/if}
+<Dialog.Root {open} onOpenChange={(value) => setState({ showIntro: value })}>
+	<Dialog.Content
+		class="max-h-[85vh] max-w-[360px] min-w-[360px] overflow-y-scroll sm:max-w-[540px]"
+	>
+		<Dialog.Header>
+			<Dialog.Title class="font-display text-2xl font-normal">
+				{m.home_dialogTitle()}
+			</Dialog.Title>
+			<Dialog.Description>
+				<section class="prose mx-auto my-4">
+					{@html data.content.content}
+				</section>
+			</Dialog.Description>
+		</Dialog.Header>
+	</Dialog.Content>
+</Dialog.Root>
 
 <Welcome />
 
