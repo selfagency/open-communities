@@ -59,7 +59,7 @@ export const actions = {
 
 						${form.data.message}
 
-						https://opencommunities.info/edit?id=${form.data.record}${form.data.reason === 'transfer' ? `&transfer=${form.data.email}` : ''}
+						https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
 						`,
 						name: form.data.name
 					},

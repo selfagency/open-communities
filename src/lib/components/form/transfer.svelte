@@ -89,6 +89,7 @@
 			class="button border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
 			onclick={(e: Event) => {
 				e.preventDefault();
+				open = true;
 			}}
 		>
 			{m.transfer()}
