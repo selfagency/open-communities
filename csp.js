@@ -14,7 +14,7 @@ export default {
 			'*.basemaps.cartocdn.com',
 			'*.sentry.io'
 		],
-		'default-src': ['self'],
+		'default-src': ['self', 'cdn.jsdelivr.net', 'captcha.selfagency.dev', 'api.opencommunities.info'],
 		'font-src': [
 			'self',
 			'data:',

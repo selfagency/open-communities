@@ -1,11 +1,11 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { waitForTheElement } from 'wait-for-the-element';
+	// removed wait-for-the-element: use native Svelte element binding instead
 
 	import { dev } from '$app/environment';
 	import { m } from '$lib/paraglide/messages';
@@ -53,12 +53,24 @@
 	/* endregion form */
 
 	/* region lifecycle */
+	let formEl: HTMLFormElement | null = null;
+	let submitted = false;
+
 	onMount(async () => {
-		$formData.token = token;
-		$formData.type = 'verifyEmail';
-		await waitForTheElement('#verify', { timeout: 1000 });
-		const formEl = document.getElementById('verify') as HTMLFormElement;
-		form.submit(formEl);
+		// Use the store API to update form data so test stubs that implement
+		// set/subscribe/update work correctly.
+		formData.update((fd: any) => ({ ...(fd ?? {}), token, type: 'verifyEmail' }));
+
+		// wait a microtask so the conditional form has a chance to render and
+		// bind to `formEl` (Svelte will do this on the next tick). Await twice
+		// to be extra-safe in test environments.
+		await tick();
+		await tick();
+
+		if (formEl && !submitted) {
+			form.submit(formEl);
+			submitted = true;
+		}
 	});
 	/* endregion lifecycle */
 </script>

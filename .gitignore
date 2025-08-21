@@ -4,6 +4,7 @@
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
+!pb_schema.json
 ._*
 .apdisk
 .AppleDB
@@ -22,6 +23,7 @@
 .env.development.local
 .env.local
 .env.production.local
+.env.sentry-build-plugin
 .env.test.local
 .eslintcache
 .fseventsd
@@ -107,6 +109,7 @@ Icon
 jspm_packages/
 lerna-debug.log*
 lib-cov
+location_data.gz
 logs
 Network Trash Folder
 node_modules
@@ -121,7 +124,9 @@ pb_data.zip
 pb_data/*
 pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+src/lib/paraglide
 Temporary Items
+test-results
 Thumbs.db
 Thumbs.db:encryptable
 vite.config.js.timestamp-*
@@ -129,11 +134,3 @@ vite.config.ts.timestamp-*
 web_modules/
 yarn-debug.log*
 yarn-error.log*
-!pb_schema.json
-location_data.gz
-
-# Sentry Config File
-.env.sentry-build-plugin
-
-# Paraglide
-src/lib/paraglide

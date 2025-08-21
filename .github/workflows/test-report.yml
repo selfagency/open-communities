@@ -1,0 +1,55 @@
+name: Test Report
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository (default branch context)
+        uses: actions/checkout@v4
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+
+      - name: Download test-results artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+          path: test-results
+
+      - name: Report coverage (step summary + PR comment)
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          # point to the json summary produced by vitest
+          json-summary-path: './coverage/coverage-summary.json'
+          json-final-path: './coverage/coverage-final.json'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on: pr
+
+      - name: Publish test report (create check run)
+        if: always()
+        uses: dorny/test-reporter@v2
+        with:
+          artifact: test-results
+          path: '*.xml'
+          reporter: junit
+          name: Vitest Tests
+          use-actions-summary: 'true'
+          fail-on-empty: 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

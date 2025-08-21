@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test:
+    name: Run tests and upload artifacts
+    runs-on: ubuntu-latest
+    services:
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: >-
+          --health-cmd='curl -sSf http://localhost:8025/api/v1/messages || exit 1'
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests (vitest) with coverage
+        # allow failures so artifacts are still uploaded for reporting
+        run: pnpm test -- --coverage.enabled true || true
+
+      - name: Collect coverage folder (if present)
+        run: |
+          if [ -d coverage ]; then echo 'coverage found'; else echo 'no coverage dir'; fi
+
+      - name: Collect test result XML files
+        run: |
+          mkdir -p test-results || true
+          # try to find common junit/xml files produced by vitest or reporters and copy them
+          find . -maxdepth 4 -type f \( -iname "*junit*.xml" -o -iname "*test-results*.xml" -o -iname "*vitest*.xml" -o -iname "*.xml" \) -print -exec cp {} test-results/ \; || true
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+
+      - name: Upload test results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results

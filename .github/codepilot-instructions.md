@@ -10,7 +10,7 @@ Please use the new Svelte 5 syntax when working in .svelte and .svelte.ts files.
 
 Some key points include:
 
-- Using the new runes syntax ($state, $derived, etc.) to manage reactive state variables instead of the `$: ` syntax of Svelte 4.
+- Using the new runes syntax ($state, $derived, etc.) to manage reactive state variables instead of the `$:` syntax of Svelte 4.
 - Using the new event handler syntax (onclick instead of on:click - the colon should not be included)
 - Using snippets instead of slots.
 - Using the $props() syntax to extract props, avoid using the old `export let props` syntax.
@@ -32,7 +32,7 @@ Current Path Aliases:
 
 Please read the file `ai-docs/svelte.txt` at the root of this project which includes the full svelte 5 documentation if you are unsure or notice that you made a lint error while writing some code. This should help you with the correct syntax.
 
-## Below is a cheat sheet that explains all the features of Svelte 5 in a concise way.
+## Below is a cheat sheet that explains all the features of Svelte 5 in a concise way
 
 # Svelte 5 Cheat Sheet
 
@@ -722,12 +722,16 @@ unmount(appInstance);
 
 ## TypeScript
 
-Svelte has built-in TypeScript support. Use `<script lang="ts">` to enable TypeScript in `.svelte` files. You can use type annotations, interfaces, and generics. For more advanced TypeScript features, you might need to set up a preprocessor like `svelte-preprocess` with `vitePreprocess`. Type `$props` and `$state` variables just like regular TypeScript variables. Use `Component` and `ComponentProps` types from `svelte` for component typing.
+Svelte has built-in TypeScript support. Use `<script lang="ts">` to enable TypeScript in `.svelte` files. You can use type annotations, interfaces, and generics. For more advanced TypeScript features, you might need to set up a preprocessor like `svelte-preprocess` with `vitePreprocess`. Type `$props` and `$state` variables just like regular TypeScript variables. Use `Component` and `ComponentProps` types from `svelte` for component typing. Never, ever use `any` as a type. Prefer `unknown` if necessary or better `Record<string, unknown>` if an object, but you'll find most types in `src/lib/pocketbase.d.ts` and `src/lib/types.d.ts`.
 
 ```svelte
 <script lang="ts">
 	let name: string = $state<string>('World');
 </script>
 ```
+
+## Tests
+
+Svelte uses Vitest for a test suite. We are also using happy-dom with @testing-library/svelte, @testing-library/jest-dom, @testing-library/user-event, and vite-plugin-svelte-inline-component ([instructions here](https://github.com/hanielu/vite-plugin-svelte-inline-component)). Prefer using the internal MCP tools runTests and testFailure instead of running tests in the terminal. Make use of the Vite MCP server to inspect configuration and component rendering.
 
 ---
