@@ -56,7 +56,6 @@
 		},
 		async onUpdate({ result }) {
 			setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
-			log.info('result', result);
 
 			if (result.type === 'success') {
 				setState({ form: { hasErrors: false, success: true } });

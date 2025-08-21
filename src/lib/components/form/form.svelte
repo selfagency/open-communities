@@ -104,6 +104,7 @@
 				},
 				name: '',
 				notes: '',
+				owner: user?.admin ? '' : user?.id,
 				registration: {
 					email: '',
 					otherText: '',
@@ -128,7 +129,6 @@
 					other: false,
 					otherText: ''
 				},
-				user: user?.admin ? '' : user?.id,
 				visible: false
 			});
 		});
@@ -345,7 +345,7 @@
 
 	{#if dev}
 		{#await import('sveltekit-superforms') then { default: SuperDebug }}
-			<div class="mt-4"><SuperDebug data={form} collapsible collapsed /></div>
+			<div class="mt-4"><SuperDebug data={$formData} collapsible collapsed /></div>
 		{/await}
 	{/if}
 </section>

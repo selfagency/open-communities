@@ -233,7 +233,7 @@ export const actions = {
 	},
 	transfer: async (event) => {
 		const { fetch, locals } = event;
-		const { api, validate } = locals;
+		const { api, log, validate } = locals;
 		const client = api.authStore.record;
 
 		const form = await validate(transferSchema, event);
@@ -241,6 +241,7 @@ export const actions = {
 
 		try {
 			if (!form.valid) {
+				log.error('form', form);
 				throw new Error('Invalid form data');
 			}
 

@@ -38,19 +38,13 @@ export type TransferSchema = z.infer<typeof transferSchema>;
 
 export const defaultSchema = z.object({
 	accessibility,
-	captcha: z.string().optional(),
+	captcha: z.string().nullable().optional(),
 	clergy: z.string().refine((value) => !!value, {
 		message: m.thingRequired({ thing: m.clergy_clergy() })
 	}),
-	contactEmail: z.preprocess(
-		(val) => (val === '' ? undefined : val),
-		z.string().email().optional()
-	),
+	contactEmail: z.preprocess((val) => (val === '' ? undefined : val), z.email().optional()),
 	contactName: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
-	contactUrl: z.preprocess(
-		(val) => (val === '' ? undefined : val),
-		z.string().url().nullable().optional()
-	),
+	contactUrl: z.preprocess((val) => (val === '' ? undefined : val), z.url().nullable().optional()),
 	denomination: z.preprocess(
 		(val) => (val === '' ? undefined : val),
 		z
@@ -88,12 +82,6 @@ export const defaultSchema = z.object({
 	registration,
 	security,
 	services,
-	user: z
-		.string()
-		.min(1)
-		.refine((value) => !!value, {
-			message: m.thingRequired({ thing: 'user' })
-		}),
 	visible: z.boolean()
 });
 
