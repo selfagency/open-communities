@@ -46,13 +46,13 @@
 			toast.error(result.error.message);
 		},
 		onResult() {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		},
 		onSubmit() {
-			setState({ loading: true });
+			setState({ loadingSecondary: true });
 		},
 		async onUpdate({ result }) {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 			if (result.type === 'success') {
 				toast.success(m.loginSuccess());
 				await goto('/');
@@ -77,7 +77,7 @@
 		<!-- <Card.Description></Card.Description> -->
 	</Card.Header>
 	<Card.Content>
-		{#if $appState.loading}
+		{#if $appState.loading || $appState.loadingSecondary}
 			<div
 				transition:fade={{ delay: 300, duration: 100 }}
 				class="flex h-full min-h-96 w-full flex-col items-center justify-center"

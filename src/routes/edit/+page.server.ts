@@ -250,12 +250,11 @@ export const actions = {
 				throw error;
 			}
 
-			const batch = api.createBatch();
-
 			const user = await api
 				.collection('users')
 				.getFirstListItem(`email="${data.email}"`, { fetch });
 
+			const batch = api.createBatch();
 			if (!isEmpty(data.owner)) {
 				batch.collection('users').update(data.owner, { congregation: '' });
 			}

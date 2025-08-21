@@ -65,7 +65,7 @@
 		{m.delete()}
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
-		{#if $appState.loading}
+		{#if $appState.loadingSecondary}
 			<div
 				transition:fade={{ delay: 300, duration: 100 }}
 				class="flex h-full min-h-96 w-full flex-col items-center justify-center"

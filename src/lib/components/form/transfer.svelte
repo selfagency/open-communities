@@ -2,7 +2,7 @@
 	/* region imports */
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { isEmpty } from 'radashi';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
@@ -44,26 +44,32 @@
 		dataType: 'json',
 		id: 'transferCongregation',
 		onError({ result }) {
+			setState({ loadingSecondary: false });
 			log.error(result.error.message);
 			toast.error(result.error.message);
 		},
 		onResult() {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		},
 		onSubmit() {
-			setState({ loading: true });
+			setState({ loadingSecondary: true });
 		},
 		async onUpdate({ result }) {
-			setState({ loading: false });
+			setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
+			log.info('result', result);
 
 			if (result.type === 'success') {
-				open = false;
+				setState({ form: { hasErrors: false, success: true } });
 				toast.success(m.transferSuccess());
-				await goto('/');
+				open = false;
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.errors))
+				setState({ form: { hasErrors: true, success: false } });
+				if (!isEmpty(result.data.form.errors)) {
+					log.error('form errors', result.data.form_errors);
+				}
+				if (!isEmpty(result.data.form.errors)) {
 					log.error('submission error', result.data.form_error);
+				}
 				toast.error(m.transferFailure());
 			}
 		}
@@ -80,6 +86,10 @@
 			owner
 		});
 	});
+
+	onDestroy(() => {
+		setState({ loadingSecondary: false });
+	});
 	/* endregion lifecycle */
 </script>
 
@@ -95,7 +105,7 @@
 			{m.transfer()}
 		</AlertDialog.Trigger>
 		<AlertDialog.Content>
-			{#if $appState.loading}
+			{#if $appState.loadingSecondary}
 				<div
 					transition:fade={{ delay: 300, duration: 100 }}
 					class="flex h-full min-h-96 w-full flex-col items-center justify-center"
@@ -142,7 +152,8 @@
 					</AlertDialog.Header>
 					<AlertDialog.Footer class="mt-4">
 						<AlertDialog.Cancel
-							onclick={async () => {
+							onclick={async (event) => {
+								event.preventDefault();
 								open = false;
 								await goto(`${page.url.pathname}?id=${id}`);
 							}}>{m.cancel()}</AlertDialog.Cancel

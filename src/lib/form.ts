@@ -13,6 +13,7 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
 		dataType: 'json',
 		id: 'addEditCongregation',
 		onError({ result }) {
+			setState({ form: { hasErrors: true, success: false }, loading: false });
 			log.error(result.error.message);
 			toast.error(result.error.message);
 		},
@@ -35,9 +36,12 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
 			} else {
 				setState({ form: { hasErrors: true, success: false } });
 				form.errors.set(result.data.form_errors);
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.errors))
+				if (!isEmpty(result.data.form.errors)) {
+					log.error('form errors', result.data.form_errors);
+				}
+				if (!isEmpty(result.data.form.errors)) {
 					log.error('submission error', result.data.form_error);
+				}
 				toast.error(mode === 'edit' ? m.editFailure() : m.addFailure());
 			}
 		}

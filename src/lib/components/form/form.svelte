@@ -188,7 +188,7 @@
 
 <section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
-		<div class="min-h-96">
+		<div>
 			{#if $appState.loading}
 				<div
 					transition:fade={{ delay: 300, duration: 100 }}
@@ -345,7 +345,7 @@
 
 	{#if dev}
 		{#await import('sveltekit-superforms') then { default: SuperDebug }}
-			<div class="mt-4"><SuperDebug data={$formData} collapsible collapsed /></div>
+			<div class="mt-4"><SuperDebug data={form} collapsible collapsed /></div>
 		{/await}
 	{/if}
 </section>
