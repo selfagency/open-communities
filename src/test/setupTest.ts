@@ -223,3 +223,51 @@ vi.mock('$lib/components/ui/sheet', () => testApi.sheet);
 afterEach(() => {
 	cleanup();
 });
+
+// ---------------------------------------------------------------------------
+// Map `$lib/assets/*.svg?component` imports to our test mocks.
+//
+// Many components import SVGs with the `?component` query (handled by a
+// Vite plugin in the app). During tests those imports may resolve to raw
+// assets instead of Svelte components which causes runtime errors like
+// "X is not a function". To avoid having to mock every asset by hand,
+// glob-load the prepared JS mocks under `src/test/mocks/assets/*.svg.js`
+// and register them with Vitest so an import like
+// `$lib/assets/find.svg?component` returns the component constructor.
+//
+// This uses Vite's import.meta.glob to eagerly load the mock modules at
+// setup-time and then calls `vi.doMock` for each corresponding
+// `$lib/assets/<name>.svg?component` specifier.
+try {
+	// import.meta.glob is available in Vite-run tests; use eager to get modules
+	const modules = import.meta.glob('../test/mocks/assets/*.svg.js', { eager: true });
+
+	for (const p of Object.keys(modules)) {
+		// p looks like '../test/mocks/assets/find.svg.js'
+		const match = p.match(/\.\.\/test\/mocks\/assets\/(.+)\.svg\.js$/);
+		if (!match) continue;
+		const name = match[1];
+
+		// map to the same specifier used in app code
+		const spec = `$lib/assets/${name}.svg?component`;
+
+		// capture the actual module object
+		const mod = modules[p];
+
+		// Ensure we provide an ES module shape: default + named exports.
+		const esm = {
+			default: mod && (mod.default || mod),
+			...(mod && typeof mod === 'object' ? mod : {})
+		};
+
+		// Register the mock eagerly so importing modules receive the mocked
+		// Svelte component constructor as the default export.
+		try {
+			vi.mock(spec, () => esm);
+		} catch {
+			// some runners may disallow mocking here; fail silently
+		}
+	}
+} catch {
+	// be defensive in environments where import.meta.glob isn't available
+}

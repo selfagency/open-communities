@@ -6,7 +6,7 @@ import AslComponentMod from './asl.svelte';
 // Some bundlers wrap the Svelte component under a `.default` property.
 // Normalize to the actual component constructor/function so imports like
 // `import AslIcon from '...svg?component'` yield a callable component.
-const AslComponent = (AslComponentMod && (AslComponentMod.default || AslComponentMod)) as any;
+const AslComponent = (AslComponentMod && (AslComponentMod.default || AslComponentMod));
 
 export default AslComponent;
 export { AslComponent as AslIcon };
