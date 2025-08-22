@@ -4,6 +4,8 @@
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
+!pb_data/data.db
+!pb_data/types.d.ts
 !pb_schema.json
 ._*
 .apdisk
@@ -119,8 +121,6 @@ old_data/
 out
 package
 package/
-pb_*
-pb_data.zip
 pb_data/*
 pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

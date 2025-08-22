@@ -13,6 +13,5 @@
 			<!-- dynamic components are default in runes mode -->
 			<Child {...childPropsAny} />
 		{/if}
-		<slot />
 	</div>
 </Accordion.Root>
