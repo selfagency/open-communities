@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Command as CommandPrimitive } from "bits-ui";
+	import { Command as CommandPrimitive } from 'bits-ui';
 
-	import { cn } from "$lib/utils.js";
+	import { cn } from '$lib/utils.js';
 
 	let {
 		class: className,
@@ -13,6 +13,6 @@
 <CommandPrimitive.Empty
 	bind:ref
 	data-slot="command-empty"
-	class={cn("py-6 text-center text-sm", className)}
+	class={cn('py-6 text-center text-sm', className)}
 	{...restProps}
 />

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { HTMLLiAttributes } from "svelte/elements";
+	import type { HTMLLiAttributes } from 'svelte/elements';
 
-	import type { WithElementRef } from "$lib/utils.js";
+	import type { WithElementRef } from '$lib/utils.js';
 
 	let {
 		children,

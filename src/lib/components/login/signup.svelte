@@ -119,6 +119,9 @@
 							/>
 						{/snippet}
 					</Form.Control>
+					<Form.Description>
+						{m.passwordDescription()}
+					</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
 

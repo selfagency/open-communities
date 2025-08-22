@@ -3,19 +3,17 @@
 // resolved by the alias to this folder and Vite will import the matching file.
 // Provide a default export that behaves like a Svelte component function.
 
-function DummyComponent(props) {
-	// Minimal Svelte component shim: return an object with $$render used by Svelte runtime
-	return {
-		$$render: () => `<!--svg-mock-->`
-	};
-}
+import Empty from './EmptyIcon.svelte';
 
-export default DummyComponent;
+// Export a real Svelte component as the default fallback so imports that
+// don't resolve to a specific mock file still receive a callable Svelte
+// constructor (avoids `X is not a function` at runtime).
+export default Empty && (Empty.default || Empty);
 
-// Also export named components for a few assets used directly in code
+// Re-export named mocks backed by real Svelte stubs
 export { default as asl } from './asl.svg.js';
 export { default as find } from './find.svg.js';
 export { default as inclusive } from './inclusive.svg.js';
 export { default as mask } from './mask.svg.js';
 export { default as rabbis4ceasefire } from './rabbis4ceasefire.svg.js';
-
+export { default as tent } from './tent.svg.js';

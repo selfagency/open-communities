@@ -6,29 +6,25 @@ function MenorahComponent(options) {
 		return new MenorahComponent(options);
 	}
 
-	try {
-		const target = options && options.target;
-		const props = (options && options.props) || {};
-		if (target) {
-			const container = document.createElement('div');
-			container.innerHTML = markup;
-			const node = container.firstElementChild;
-			if (props.class) node.setAttribute('class', String(props.class));
-			if (props.size) {
-				node.setAttribute('width', String(props.size));
-				node.setAttribute('height', String(props.size));
-			}
-			target.appendChild(node);
-			this._node = node;
+	const target = options && options.target;
+	const props = (options && options.props) || {};
+	if (target) {
+		const container = document.createElement('div');
+		container.innerHTML = markup;
+		const node = container.firstElementChild;
+		if (props.class) node.setAttribute('class', String(props.class));
+		if (props.size) {
+			node.setAttribute('width', String(props.size));
+			node.setAttribute('height', String(props.size));
 		}
-	} catch {
-		// defensive
+		target.appendChild(node);
+		this._node = node;
 	}
 }
-MenorahComponent.$$render = function() {
+MenorahComponent.$$render = function () {
 	return markup;
 };
-MenorahComponent.prototype.$destroy = function() {
+MenorahComponent.prototype.$destroy = function () {
 	if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };
 

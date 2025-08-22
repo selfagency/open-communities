@@ -12,12 +12,12 @@ export const FieldErrors = Generic;
 export const ElementField = Generic;
 
 export default {
-  Control,
-  Description,
-  ElementField,
-  Field,
-  FieldErrors,
-  Fieldset,
-  Label,
-  Legend
+	Control,
+	Description,
+	ElementField,
+	Field,
+	FieldErrors,
+	Fieldset,
+	Label,
+	Legend
 };

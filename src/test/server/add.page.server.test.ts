@@ -21,8 +21,8 @@ describe('routes/add +page.server', () => {
 		});
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const res = await mod.load({ fetch: fetch as any, locals }).catch((e) => e);
-	// load should throw (SvelteKit redirect) when no client id
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	await expect(mod.load({ fetch: fetch as any, locals })).rejects.toBeDefined();
+		// load should throw (SvelteKit redirect) when no client id
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await expect(mod.load({ fetch: fetch as any, locals })).rejects.toBeDefined();
 	});
 });

@@ -6,8 +6,8 @@ import type { ObjectSchema } from 'zod';
 import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
 
-import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
 import type { CongregationMetaRecord, TypedPocketBase } from '$lib/pocketbase.d';
+import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
 
 /* endregion imports */
 

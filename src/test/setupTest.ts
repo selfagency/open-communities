@@ -218,6 +218,40 @@ vi.mock('$lib/paraglide/messages', () => {
 // Provide UI component stubs (sheet etc.) used by global components via test API
 vi.mock('$lib/components/ui/sheet', () => testApi.sheet);
 
+// Mock SVG component imports to use our test implementations
+vi.mock('$lib/assets/find.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/find.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/mask.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/mask.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/asl.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/asl.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/tent.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/tent.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/inclusive.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/inclusive.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/rabbis4ceasefire.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/rabbis4ceasefire.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/menorah.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/menorah.svelte');
+	return mod;
+});
+vi.mock('$lib/assets/siddur.svg?component', async () => {
+	const mod = await import('$test/mocks/assets/siddur.svelte');
+	return mod;
+});
+
 // Ensure DOM is cleaned up between tests to avoid queries matching previous
 // renders. This prevents the "Found multiple elements" errors when tests
 // accidentally query the global document.
@@ -225,50 +259,91 @@ afterEach(() => {
 	cleanup();
 });
 
-// ---------------------------------------------------------------------------
-// Map `$lib/assets/*.svg?component` imports to our test mocks.
-//
-// Many components import SVGs with the `?component` query (handled by a
-// Vite plugin in the app). During tests those imports may resolve to raw
-// assets instead of Svelte components which causes runtime errors like
-// "X is not a function". To avoid having to mock every asset by hand,
-// glob-load the prepared JS mocks under `src/test/mocks/assets/*.svg.js`
-// and register them with Vitest so an import like
-// `$lib/assets/find.svg?component` returns the component constructor.
-//
-// This uses Vite's import.meta.glob to eagerly load the mock modules at
-// setup-time and then calls `vi.doMock` for each corresponding
-// `$lib/assets/<name>.svg?component` specifier.
+// Provide minimal `process` for browser runner tests that reference process.env
+if (typeof (globalThis as unknown as { process?: unknown }).process === 'undefined') {
+	// keep it minimal; tests only read `process.env` in a few places
+	(globalThis as unknown as Record<string, unknown>).process = { env: {} };
+}
+
+// Some server code (and tests) reference the Node `global` variable. Create
+// a `global` binding so those references work in the browser runner. We use
+// indirect eval to ensure we assign a top-level global variable instead of
+// merely setting a property on `globalThis` (which doesn't create the
+// `global` identifier in module scope).
 try {
-	// import.meta.glob is available in Vite-run tests; use eager to get modules
-	const modules = import.meta.glob('../test/mocks/assets/*.svg.js', { eager: true });
-
-	for (const p of Object.keys(modules)) {
-		// p looks like '../test/mocks/assets/find.svg.js'
-		const match = p.match(/\.\.\/test\/mocks\/assets\/(.+)\.svg\.js$/);
-		if (!match) continue;
-		const name = match[1];
-
-		// map to the same specifier used in app code
-		const spec = `$lib/assets/${name}.svg?component`;
-
-		// capture the actual module object
-		const mod = modules[p];
-
-		// Ensure we provide an ES module shape: default + named exports.
-		const esm = {
-			default: mod && (mod.default || mod),
-			...(mod && typeof mod === 'object' ? mod : {})
-		};
-
-		// Register the mock eagerly so importing modules receive the mocked
-		// Svelte component constructor as the default export.
-		try {
-			vi.mock(spec, () => esm);
-		} catch {
-			// some runners may disallow mocking here; fail silently
-		}
-	}
+	(0, eval)('global = globalThis');
 } catch {
-	// be defensive in environments where import.meta.glob isn't available
+	// best-effort; some runtimes prevent eval
+}
+
+// Set deterministic viewport/document sizes used by some tests. Tests expect
+// offset/inner sizes (for example, the stores.initState test expects
+// offsetHeight = 800 and offsetWidth = 500), so make those values stable here.
+if (typeof window !== 'undefined') {
+	// Force exact values that tests expect
+	Object.defineProperty(window, 'innerWidth', { configurable: true, value: 500, writable: true });
+	Object.defineProperty(window, 'innerHeight', { configurable: true, value: 800, writable: true });
+
+	// documentElement/client and body/offset used by some layout helpers
+	if (typeof document !== 'undefined' && document.documentElement) {
+		Object.defineProperty(document.documentElement, 'clientWidth', {
+			configurable: true,
+			value: 500,
+			writable: true
+		});
+		Object.defineProperty(document.documentElement, 'clientHeight', {
+			configurable: true,
+			value: 800,
+			writable: true
+		});
+	}
+	if (typeof document !== 'undefined' && document.body) {
+		Object.defineProperty(document.body, 'offsetWidth', {
+			configurable: true,
+			value: 500,
+			writable: true
+		});
+		Object.defineProperty(document.body, 'offsetHeight', {
+			configurable: true,
+			value: 800,
+			writable: true
+		});
+	}
+}
+
+// Optional SVG debug: set environment variable VITEST_SVG_DEBUG=1 to print
+// the resolved module shapes for a couple of assets. This helps diagnose
+// whether `$lib/assets/<name>.svg?component` resolves to a Svelte constructor
+// or an object wrapper.
+const svgDebug = Boolean(
+	(globalThis as unknown as Record<string, unknown>).__VITEST_SVG_DEBUG__ ||
+		((globalThis as unknown as { process?: { env?: Record<string, string> } }).process &&
+			(globalThis as unknown as { process?: { env?: Record<string, string> } }).process!.env &&
+			(globalThis as unknown as { process?: { env?: Record<string, string> } }).process!.env!
+				.VITEST_SVG_DEBUG)
+);
+if (svgDebug) {
+	(async () => {
+		try {
+			// these imports depend on your Vite resolve aliases — if they fail
+			// the catch will print the error for troubleshooting.
+			const findMod = await import('$lib/assets/find.svg?component');
+			const maskMod = await import('$lib/assets/mask.svg?component');
+			console.log(
+				'[svg-debug] find module keys:',
+				Object.keys((findMod || {}) as Record<string, unknown>),
+				'default type:',
+				typeof (findMod as Record<string, unknown>)['default']
+			);
+			console.log(
+				'[svg-debug] mask module keys:',
+				Object.keys((maskMod || {}) as Record<string, unknown>),
+				'default type:',
+				typeof (maskMod as Record<string, unknown>)['default']
+			);
+		} catch (err) {
+			// allow tests to continue even if debug imports fail
+			console.log('[svg-debug] import error', err);
+		}
+	})();
 }

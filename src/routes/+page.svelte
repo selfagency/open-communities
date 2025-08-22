@@ -6,7 +6,6 @@
 	import { m } from '$lib/paraglide/messages';
 	import { state as appState, setState } from '$lib/stores';
 	// import { log } from '$lib/utils';
-
 	/* endregion imports */
 
 	/* region variables */
@@ -15,6 +14,12 @@
 
 	const open = $derived($appState?.showIntro);
 	/* endregion variables */
+
+	$effect(() => {
+		if (data.content) {
+			setState({ loading: false });
+		}
+	});
 </script>
 
 <Dialog.Root {open} onOpenChange={(value) => setState({ showIntro: value })}>

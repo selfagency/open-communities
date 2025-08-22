@@ -1,7 +1,7 @@
 <script lang="ts">
-	import * as FormPrimitive from "formsnap";
+	import * as FormPrimitive from 'formsnap';
 
-	import { cn, type WithoutChild } from "$lib/utils.js";
+	import { cn, type WithoutChild } from '$lib/utils.js';
 
 	let {
 		class: className,
@@ -13,6 +13,6 @@
 <FormPrimitive.Description
 	bind:ref
 	data-slot="form-description"
-	class={cn("text-muted-foreground text-sm", className)}
+	class={cn('text-muted-foreground text-sm', className)}
 	{...restProps}
 />

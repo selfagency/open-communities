@@ -3,9 +3,45 @@ import * as path from 'path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	plugins: [
-		svelte()
-	],
+	// Configure dependency optimization to prevent test instability
+	optimizeDeps: {
+		include: [
+			'@leeoniya/ufuzzy',
+			'@lucide/svelte/icons/x',
+			'@nanostores/persistent',
+			'@sveltejs/kit',
+			'@testing-library/jest-dom/vitest',
+			'@testing-library/svelte',
+			'bits-ui',
+			'cookie',
+			'fast-string-truncated-width',
+			'lucide-svelte/icons/accessibility',
+			'lucide-svelte/icons/captions',
+			'lucide-svelte/icons/circle-alert',
+			'lucide-svelte/icons/flag',
+			'lucide-svelte/icons/flag-off',
+			'lucide-svelte/icons/globe',
+			'lucide-svelte/icons/languages',
+			'lucide-svelte/icons/mail',
+			'lucide-svelte/icons/pencil',
+			'lucide-svelte/icons/share',
+			'lucide-svelte/icons/shield',
+			'lucide-svelte/icons/shield-ban',
+			'lucide-svelte/icons/square-arrow-out-up-right',
+			'mailgun.js',
+			'nanostores',
+			'nodemailer',
+			'pocketbase',
+			'radashi',
+			'svelte-copy',
+			'svelte-sonner',
+			'tailwind-merge',
+			'tailwind-variants',
+			'tslog',
+			'zod'
+		]
+	},
+	plugins: [svelte()],
 	resolve: {
 		alias: {
 			// specific $app aliases must come before the generic '$app' alias
@@ -20,12 +56,10 @@ export default defineConfig({
 			'$app/stores': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
 			'$app/stores.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
 			// eslint-disable-next-line perfectionist/sort-objects
-			'$app': path.resolve(__dirname, 'src/test/mocks/$app'),
+			$app: path.resolve(__dirname, 'src/test/mocks/$app'),
 			'$env/static/private': path.resolve(__dirname, 'src/test/mocks/$env/static/private.js'),
 			'$env/static/public': path.resolve(__dirname, 'src/test/mocks/$env/static/public.js'),
 			$lib: path.resolve(__dirname, 'src/lib'),
-			// map app assets to test mocks so `*.svg?component` imports yield Svelte-friendly mocks
-			'$lib/assets': path.resolve(__dirname, 'src/test/mocks/assets'),
 			// substitute server logger with a lightweight mock during tests
 			'$lib/server/logger': path.resolve(__dirname, 'src/test/mocks/$lib_server_logger.js'),
 			$test: path.resolve(__dirname, 'src/test'),
@@ -52,8 +86,8 @@ export default defineConfig({
 		// explicit include to ensure test files under src/ are collected
 		include: ['src/**/*.test.{ts,tsx,js,jsx}'],
 		outputFile: './test-results/results.json',
-		    reporters: ['json', 'default'],
-    // vitest-browser-svelte must be loaded before the project setup so it
+		reporters: ['json', 'default'],
+		// vitest-browser-svelte must be loaded before the project setup so it
 		// injects the `page.render` and locators for browser-mode tests.
 		setupFiles: ['vitest-browser-svelte', path.resolve(__dirname, 'src/test/setupTest.ts')]
 	}

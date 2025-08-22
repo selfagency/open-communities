@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	import { cn, type WithElementRef } from "$lib/utils.js";
+	import { cn, type WithElementRef } from '$lib/utils.js';
 
 	let {
 		children,
@@ -14,7 +14,7 @@
 <ul
 	bind:this={ref}
 	data-slot="pagination-content"
-	class={cn("flex flex-row items-center gap-1", className)}
+	class={cn('flex flex-row items-center gap-1', className)}
 	{...restProps}
 >
 	{@render children?.()}

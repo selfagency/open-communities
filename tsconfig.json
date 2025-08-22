@@ -1,23 +1,17 @@
 {
-  "extends": "./.svelte-kit/tsconfig.json",
-  "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "inlineSourceMap": true,
-    "strict": true,
-    "moduleResolution": "bundler",
-    "noImplicitAny": false,
-    "lib": [
-      "DOM",
-      "ESNext"
-    ],
-    "types": [
-      "node",
-      "web"
-    ]
-  }
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"inlineSourceMap": true,
+		"strict": true,
+		"moduleResolution": "bundler",
+		"noImplicitAny": false,
+		"lib": ["DOM", "ESNext"],
+		"types": ["node", "web"]
+	}
 }

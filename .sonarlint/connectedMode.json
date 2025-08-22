@@ -1,5 +1,5 @@
 {
-    "sonarCloudOrganization": "selfagency",
-    "projectKey": "selfagency_open-communities",
-    "region": "EU"
+	"sonarCloudOrganization": "selfagency",
+	"projectKey": "selfagency_open-communities",
+	"region": "EU"
 }

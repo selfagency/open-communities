@@ -20,8 +20,12 @@ const userStore = {
 };
 
 const fakeSearchParams = {
-	get() { return null; },
-	has() { return false; }
+	get() {
+		return null;
+	},
+	has() {
+		return false;
+	}
 };
 
 export const page = {

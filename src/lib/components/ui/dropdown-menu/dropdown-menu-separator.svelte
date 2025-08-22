@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+	import { DropdownMenu as DropdownMenuPrimitive } from 'bits-ui';
 
-	import { cn } from "$lib/utils.js";
+	import { cn } from '$lib/utils.js';
 
 	let {
 		class: className,
@@ -13,6 +13,6 @@
 <DropdownMenuPrimitive.Separator
 	bind:ref
 	data-slot="dropdown-menu-separator"
-	class={cn("bg-border -mx-1 my-1 h-px", className)}
+	class={cn('bg-border -mx-1 my-1 h-px', className)}
 	{...restProps}
 />
