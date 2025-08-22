@@ -57,7 +57,7 @@ if (typeof window !== 'undefined') {
 					'blob://test';
 			}
 		}
-	} catch {
+	} catch (e) {
 		// be resilient in very locked-down environments
 	}
 }
@@ -99,7 +99,7 @@ vi.mock('cookie', () => ({
 					return [k.trim(), decodeURIComponent(r.join('='))];
 				})
 			);
-		} catch {
+		} catch (e) {
 			return {};
 		}
 	}
@@ -272,7 +272,7 @@ if (typeof (globalThis as unknown as { process?: unknown }).process === 'undefin
 // `global` identifier in module scope).
 try {
 	(0, eval)('global = globalThis');
-} catch {
+} catch (e) {
 	// best-effort; some runtimes prevent eval
 }
 
@@ -311,39 +311,4 @@ if (typeof window !== 'undefined') {
 	}
 }
 
-// Optional SVG debug: set environment variable VITEST_SVG_DEBUG=1 to print
-// the resolved module shapes for a couple of assets. This helps diagnose
-// whether `$lib/assets/<name>.svg?component` resolves to a Svelte constructor
-// or an object wrapper.
-const svgDebug = Boolean(
-	(globalThis as unknown as Record<string, unknown>).__VITEST_SVG_DEBUG__ ||
-		((globalThis as unknown as { process?: { env?: Record<string, string> } }).process &&
-			(globalThis as unknown as { process?: { env?: Record<string, string> } }).process!.env &&
-			(globalThis as unknown as { process?: { env?: Record<string, string> } }).process!.env!
-				.VITEST_SVG_DEBUG)
-);
-if (svgDebug) {
-	(async () => {
-		try {
-			// these imports depend on your Vite resolve aliases — if they fail
-			// the catch will print the error for troubleshooting.
-			const findMod = await import('$lib/assets/find.svg?component');
-			const maskMod = await import('$lib/assets/mask.svg?component');
-			console.log(
-				'[svg-debug] find module keys:',
-				Object.keys((findMod || {}) as Record<string, unknown>),
-				'default type:',
-				typeof (findMod as Record<string, unknown>)['default']
-			);
-			console.log(
-				'[svg-debug] mask module keys:',
-				Object.keys((maskMod || {}) as Record<string, unknown>),
-				'default type:',
-				typeof (maskMod as Record<string, unknown>)['default']
-			);
-		} catch (err) {
-			// allow tests to continue even if debug imports fail
-			console.log('[svg-debug] import error', err);
-		}
-	})();
-}
+// Optional SVG debug section removed temporarily to debug syntax issues

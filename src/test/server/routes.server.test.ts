@@ -43,8 +43,14 @@ describe('server route modules smoke tests', () => {
 
 	it('logout action clears cookies', async () => {
 		const mod = await import('../../routes/logout/+page.server');
-		const cookies = { set: () => {} };
-		const locals = { api: { authStore: { clear: () => {} } }, cookieOpts: {} };
+		const cookies = {
+			delete: () => {},
+			get: () => '',
+			getAll: () => ({}),
+			serialize: () => ({}),
+			set: () => {}
+		};
+		const locals = { api: { authStore: { clear: () => {} } }, cookieOpts: {} } as App.Locals;
 		const res = await mod.actions.logout({ cookies, locals });
 		expect(res).toEqual({});
 	});

@@ -7,4 +7,4 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 // `import '@testing-library/jest-dom'` and `import matchers from '.../matchers'`
 // work for our setup.
 export default matchers;
-export * from '@testing-library/jest-dom/matchers';
+// export * from '@testing-library/jest-dom/matchers';

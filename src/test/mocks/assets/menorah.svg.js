@@ -12,13 +12,15 @@ function MenorahComponent(options) {
 		const container = document.createElement('div');
 		container.innerHTML = markup;
 		const node = container.firstElementChild;
-		if (props.class) node.setAttribute('class', String(props.class));
-		if (props.size) {
-			node.setAttribute('width', String(props.size));
-			node.setAttribute('height', String(props.size));
+		if (node) {
+			if (props.class) node.setAttribute('class', String(props.class));
+			if (props.size) {
+				node.setAttribute('width', String(props.size));
+				node.setAttribute('height', String(props.size));
+			}
+			target.appendChild(node);
+			this._node = node;
 		}
-		target.appendChild(node);
-		this._node = node;
 	}
 }
 MenorahComponent.$$render = function () {

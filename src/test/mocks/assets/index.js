@@ -8,7 +8,7 @@ import Empty from './EmptyIcon.svelte';
 // Export a real Svelte component as the default fallback so imports that
 // don't resolve to a specific mock file still receive a callable Svelte
 // constructor (avoids `X is not a function` at runtime).
-export default Empty && (Empty.default || Empty);
+export default Empty;
 
 // Re-export named mocks backed by real Svelte stubs
 export { default as asl } from './asl.svg.js';

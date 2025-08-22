@@ -26,7 +26,13 @@ describe('login +page.server', () => {
 
 	it('logout action clears cookies', async () => {
 		const mod = await import('../../../src/routes/login/+page.server');
-		const cookies = { set: () => {} };
+		const cookies = {
+			delete: () => {},
+			get: () => '',
+			getAll: () => ({}),
+			serialize: () => ({}),
+			set: () => {}
+		};
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const locals = { api: { authStore: { clear: () => {} } }, cookieOpts: {} } as any;
 		const res = await mod.actions.logout({ cookies, locals });

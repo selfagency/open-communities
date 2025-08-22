@@ -25,7 +25,7 @@ describe('contact +page.server', () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const locals: any = { api: makeApiStub(), log: { error: vi.fn() }, validate };
 		const form = await locals.validate();
-		const res = await mod.actions.default({ locals, request: {} });
+		const res = await mod.actions.default({ locals, request: {} as Request });
 		// when invalid, action returns a fail which in this stub will resolve; expect an object or failure
 		expect(res).toBeDefined();
 	});

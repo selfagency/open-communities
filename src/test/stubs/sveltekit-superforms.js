@@ -1,10 +1,8 @@
 // Provide setError for tests that import it directly
-export function setError(_field, _message) {}
-
-// no-op in test environment
-export default { superForm };
-
+// increment an observable counter too
+globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
 // Minimal sveltekit-superforms stub for tests
+
 export function superForm(initialData = {}) {
 	// ensure form data has the same defaults the real component expects
 	const defaults = {
@@ -49,17 +47,15 @@ export function superForm(initialData = {}) {
 		setMessage: () => {},
 		submit: (el) => {
 			// If a test installs a spy on globalThis, call it so tests can assert.
-			try {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				if (globalThis.__TEST_SUPERFORM_SUBMIT__) globalThis.__TEST_SUPERFORM_SUBMIT__(el);
-				// increment an observable counter too
-				// @ts-expect-error - test-only global
-				globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ =
-					(globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
-			} catch {
-				// swallow in test stub
-			}
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			if (globalThis.__TEST_SUPERFORM_SUBMIT__) globalThis.__TEST_SUPERFORM_SUBMIT__(el);
+			// increment an observable counter too
+			globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ =
+				(globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
 		}
 	};
 }
+
+// no-op in test environment
+export default { superForm };
