@@ -1,3 +1,61 @@
+/**
+ * Creates a mock RequestEvent for testing SvelteKit server actions
+ */
+export function createMockRequestEvent(overrides: Partial<Record<string, unknown>> = {}) {
+	return {
+		cookies: {
+			delete: () => {},
+			get: () => '',
+			getAll: () => [],
+			serialize: () => '',
+			set: () => {}
+		},
+		fetch,
+		getClientAddress: () => '127.0.0.1',
+		isDataRequest: false,
+		isSubRequest: false,
+		locals: {},
+		params: {},
+		platform: {},
+		request: new Request('http://localhost/'),
+		route: { id: '/' },
+		setHeaders: () => {},
+		url: new URL('http://localhost/'),
+		...overrides
+	};
+}
+
+/**
+ * Creates a mock ServerLoadEvent for testing SvelteKit server load functions
+ */
+export function createMockServerLoadEvent(overrides: Partial<Record<string, unknown>> = {}) {
+	return {
+		cookies: {
+			delete: () => {},
+			get: () => '',
+			getAll: () => [],
+			serialize: () => '',
+			set: () => {}
+		},
+		depends: () => {},
+		fetch,
+		getClientAddress: () => '127.0.0.1',
+		isDataRequest: false,
+		isSubRequest: false,
+		locals: {},
+		params: {},
+		parent: async () => ({}),
+		platform: {},
+		request: new Request('http://localhost/'),
+		route: { id: '/' },
+		setHeaders: () => {},
+		tracing: { span: {} },
+		untrack: (fn: () => unknown) => fn(),
+		url: new URL('http://localhost/'),
+		...overrides
+	};
+}
+
 // Return the test user store created in setupTest.ts at runtime. We use a function
 // so the store lookup happens after Vitest runs the setup file that initializes
 // the global. Importing the store directly at module load time can be too early.
@@ -25,4 +83,68 @@ export function getUserStore() {
 		(globalThis as Record<string, unknown>).__TEST_USER_STORE__ = store;
 	}
 	return (globalThis as Record<string, unknown>).__TEST_USER_STORE__;
+}
+
+/**
+ * Shared mock for sveltekit-superforms - use with vi.mock()
+ */
+import { writable } from 'svelte/store';
+
+export const mockSveltekitSuperforms = {
+	message: () => ({}),
+	setError: () => ({}),
+	superForm: (initialForm = {}) => {
+		// create writable stores for fields commonly used by components
+		const formStore = writable(initialForm);
+		const errorsStore = writable({});
+		const delayed = writable(false);
+		const message = writable(null);
+		const posted = writable(false);
+		const submitting = writable(false);
+		const timeout = writable(null);
+
+		return {
+			allErrors: () => [],
+			capture: () => {},
+			constraints: {},
+			delayed,
+			enhance: () => {},
+			errors: errorsStore,
+			form: formStore,
+			isTainted: () => false,
+			message,
+			posted,
+			reset: () => {},
+			restore: () => {},
+			submit: () => {},
+			submitting,
+			timeout,
+			validate: () => {},
+			validateField: () => {}
+		};
+	},
+	superValidate: () => ({})
+};
+
+/**
+ * Create minimal props for components that expect a SuperForm-like `form`,
+ * a `formData` store and an `errors` store.
+ */
+export function makeMockFormProps(formData = {}, errors = {}) {
+	// create writable stores so UI components that call set/update work
+	const formDataStore = writable(formData);
+	const errorsStore = writable(errors);
+
+	const base = mockSveltekitSuperforms.superForm(formData);
+	// shallow clone and set helpful properties
+	const f = Object.assign({}, base);
+	(f as any).formId = 'test';
+	(f as any).options = {};
+	(f as any).tainted = false;
+	(f as any).validateForm = () => ({ valid: true });
+	// ensure .form and .errors are writable stores
+	f.form = formDataStore;
+	f.errors = errorsStore;
+
+	return { errors: errorsStore, form: f as any, formData: formDataStore };
 }

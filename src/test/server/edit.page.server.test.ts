@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
+import { createMockServerLoadEvent } from '$test/testUtils';
+
 function makeApiStub() {
 	return {
 		authStore: { record: { admin: false, congregation: 'c1', id: 'u1' } },
-		collection: (_: string) => ({
+		collection: () => ({
 			getFirstListItem: async () => ({ id: 'c1', location: {} }),
 			getOne: async () => ({
 				accessibility: { id: 'a1' },
@@ -29,8 +31,13 @@ describe('edit +page.server', () => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const locals = { api: makeApiStub(), validate: async () => ({}) } as any;
 		const url = new URL('http://localhost/?id=c1');
+		const mockEvent = createMockServerLoadEvent({
+			locals,
+			route: { id: '/edit' },
+			url
+		});
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const res = await mod.load({ fetch: fetch as any, locals, url } as any);
+		const res = await mod.load(mockEvent as any);
 		expect(res).toHaveProperty('congregation');
 		expect(res).toHaveProperty('form');
 	});

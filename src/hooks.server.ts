@@ -17,7 +17,10 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* endregion imports */
 /* region init */
 if (!Sentry.isInitialized()) {
-	Sentry.init({ dsn: PUBLIC_SENTRY_DSN, tracesSampleRate: 1.0 });
+	Sentry.init({ dsn: PUBLIC_SENTRY_DSN, enableLogs: true, tracesSampleRate: 1.0 });
+	logger.attachTransport((logObj) => {
+		Sentry.logger[`${logObj.logLevelName}`](logObj);
+	});
 }
 /* endregion init */
 

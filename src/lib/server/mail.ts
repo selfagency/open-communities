@@ -3,6 +3,7 @@ import Mailgun from 'mailgun.js';
 
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 
+import { dev } from '$app/environment';
 import { ADMIN_EMAIL, MAILGUN_API_KEY } from '$env/static/private';
 import emailTemplate from '$lib/assets/emailTemplate.html?raw';
 import { log } from '$lib/server/logger';
@@ -10,7 +11,7 @@ import { log } from '$lib/server/logger';
 
 let mg: null | ReturnType<Mailgun['client']> = null;
 
-if (!MAILGUN_API_KEY || MAILGUN_API_KEY.trim() === '') {
+if (!dev && (!MAILGUN_API_KEY || MAILGUN_API_KEY.trim() === '')) {
 	log.warn('Mailgun API key is not set');
 } else {
 	const mailgun = new Mailgun(FormData);

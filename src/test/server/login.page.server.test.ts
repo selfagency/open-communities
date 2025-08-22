@@ -1,15 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-function makeApiStub() {
-	return {
-		authStore: { exportToCookie: () => 'cookie' },
-		collection: (name: string) => ({
-			authWithPassword: async () => ({ record: { email: 'a@b', id: 'u1' } }),
-			requestVerification: async () => ({})
-		})
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} as any;
-}
+import { createMockRequestEvent, mockSveltekitSuperforms } from '$test/testUtils';
+
+// Mock sveltekit-superforms before any dynamic imports
+vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe('login +page.server', () => {
 	it('load provides forms', async () => {
@@ -29,13 +23,23 @@ describe('login +page.server', () => {
 		const cookies = {
 			delete: () => {},
 			get: () => '',
-			getAll: () => ({}),
-			serialize: () => ({}),
+			getAll: () => [{}] as { name: string; value: string }[],
+			serialize: () => '',
 			set: () => {}
 		};
+
+		const locals = {
+			api: { authStore: { clear: () => {} } },
+			cookieOpts: {}
+		} as App.Locals;
+		const mockActionEvent = createMockRequestEvent({
+			cookies,
+			locals,
+			route: { id: '/login' },
+			url: new URL('http://localhost/login')
+		});
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const locals = { api: { authStore: { clear: () => {} } }, cookieOpts: {} } as any;
-		const res = await mod.actions.logout({ cookies, locals });
+		const res = await mod.actions.logout(mockActionEvent as any);
 		expect(res).toEqual({});
 	});
 });

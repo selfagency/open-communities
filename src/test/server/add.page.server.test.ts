@@ -1,9 +1,14 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+import { createMockServerLoadEvent, mockSveltekitSuperforms } from '$test/testUtils';
+
+// Mock sveltekit-superforms before any dynamic imports
+vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 function makeLocals(overrides = {}) {
 	const api = {
 		authStore: { record: {} },
-		collection: (name: string) => ({ getFirstListItem: async () => ({ id: 'page' }) })
+		collection: () => ({ getFirstListItem: async () => ({ id: 'page' }) })
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} as any;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,10 +24,13 @@ describe('routes/add +page.server', () => {
 				collection: () => ({ getFirstListItem: async () => ({}) })
 			}
 		});
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const res = await mod.load({ fetch: fetch as any, locals }).catch((e) => e);
 		// load should throw (SvelteKit redirect) when no client id
+		const mockEvent = createMockServerLoadEvent({
+			locals,
+			route: { id: '/add' },
+			url: new URL('http://localhost/add')
+		});
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		await expect(mod.load({ fetch: fetch as any, locals })).rejects.toBeDefined();
+		await expect(mod.load(mockEvent as any)).rejects.toBeDefined();
 	});
 });

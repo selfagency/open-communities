@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
+import { createMockRequestEvent } from '$test/testUtils';
+
 function makeApiStub() {
 	return {
 		authStore: { record: {} },
-		collection: (_: string) => ({
+		collection: () => ({
 			getFirstListItem: async () => ({ body: 'x', id: 'p1' }),
 			getFullList: async () => [],
 			getOne: async () => ({ id: 'o1' })
@@ -46,12 +48,19 @@ describe('server route modules smoke tests', () => {
 		const cookies = {
 			delete: () => {},
 			get: () => '',
-			getAll: () => ({}),
-			serialize: () => ({}),
+			getAll: () => [{}] as { name: string; value: string }[],
+			serialize: () => '',
 			set: () => {}
 		};
 		const locals = { api: { authStore: { clear: () => {} } }, cookieOpts: {} } as App.Locals;
-		const res = await mod.actions.logout({ cookies, locals });
+		const mockActionEvent = createMockRequestEvent({
+			cookies,
+			locals,
+			route: { id: '/logout' },
+			url: new URL('http://localhost/logout')
+		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const res = await mod.actions.logout(mockActionEvent as any);
 		expect(res).toEqual({});
 	});
 });

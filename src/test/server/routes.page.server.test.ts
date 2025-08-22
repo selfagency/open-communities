@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { createMockServerLoadEvent } from '$test/testUtils';
+
 function makeApiStub() {
 	return {
 		authStore: { record: {} },
-		collection(name: string) {
+		collection() {
 			return {
 				async getFirstListItem() {
 					return { body: 'x', id: 'p1' };
@@ -32,7 +34,13 @@ describe('routes +page.server quick smoke', () => {
 	it('root load returns congregations and content', async () => {
 		const mod = await import('../../../src/routes/+page.server');
 
-		const res = await mod.load({ fetch, locals });
+		const mockEvent = createMockServerLoadEvent({
+			locals,
+			route: { id: '/' },
+			url: new URL('http://localhost/')
+		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const res = await mod.load(mockEvent as any);
 		expect(res).toHaveProperty('congregations');
 		expect(res).toHaveProperty('content');
 	});

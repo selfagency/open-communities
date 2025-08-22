@@ -41,7 +41,15 @@ export default defineConfig({
 			'zod'
 		]
 	},
-	plugins: [svelte()],
+	// Enable compatibility for Svelte component API v4 when running tests so
+	// older-style instantiation (new Component(...)) works in the test runner.
+	plugins: [
+		svelte({
+			compilerOptions: {
+				compatibility: { componentApi: 4 }
+			}
+		})
+	],
 	resolve: {
 		alias: {
 			// specific $app aliases must come before the generic '$app' alias
