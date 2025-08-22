@@ -1,5 +1,6 @@
 /* region imports */
 import Mailgun from 'mailgun.js';
+import nodemailer from 'nodemailer';
 
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 
@@ -25,7 +26,10 @@ export async function adminMail(
 	{ email, message, name, record, subject }: Record<string, string>,
 	api: TypedPocketBase
 ) {
-	if (mg) {
+	// If Mailgun client is initialized and we're not forcing SMTP, prefer Mailgun.
+	const forceSmtp = Boolean(process.env.FORCE_SMTP || process.env.SKIP_CAPTCHA);
+
+	if (mg && !forceSmtp) {
 		try {
 			let congregation: string | undefined;
 			let congregationUrl: string | undefined;
@@ -53,7 +57,29 @@ export async function adminMail(
 			log.error('Error sending admin email', e);
 		}
 	} else {
-		log.warn('Mailgun client is not initialized');
+		// Fallback: send via SMTP (useful in e2e where Mailpit is available on localhost:1025)
+		try {
+			const transporter = nodemailer.createTransport({
+				auth:
+					process.env.SMTP_USER && process.env.SMTP_PASS
+						? { pass: process.env.SMTP_PASS, user: process.env.SMTP_USER }
+						: undefined,
+				host: process.env.SMTP_HOST ?? '127.0.0.1',
+				port: parseInt(process.env.SMTP_PORT ?? '1025', 10),
+				secure: false,
+				tls: { rejectUnauthorized: false }
+			});
+
+			await transporter.sendMail({
+				from: `${name} via Open Communities <${email}>`,
+				html: emailTemplate.replace('%MESSAGE%', `<p>${message.replace('\n', '<br />')}</p>`),
+				subject,
+				text: message,
+				to: `Admin <${process.env.ADMIN_EMAIL ?? 'admin@example.test'}>`
+			});
+		} catch (e) {
+			log.error('Error sending admin email via SMTP fallback', e);
+		}
 	}
 }
 
@@ -61,7 +87,9 @@ export async function transactionalMail({ email, message, name, subject }: Recor
 	const html = emailTemplate.replace('%MESSAGE%', `<p>${message.replace('\n', '<br />')}</p>`);
 	const text = message;
 
-	if (mg) {
+	const forceSmtp = Boolean(process.env.FORCE_SMTP || process.env.SKIP_CAPTCHA);
+
+	if (mg && !forceSmtp) {
 		try {
 			await mg.messages.create('m.opencommunities.info', {
 				from: 'Open Communities <no-reply@m.opencommunities.info>',
@@ -71,9 +99,31 @@ export async function transactionalMail({ email, message, name, subject }: Recor
 				to: [`${name} <${email}>`]
 			});
 		} catch (e) {
-			log.error('Error sending transactional email', e);
+			log.error('Error sending transactional email via Mailgun', e);
 		}
 	} else {
-		log.warn('Mailgun client is not initialized');
+		// SMTP fallback
+		try {
+			const transporter = nodemailer.createTransport({
+				auth:
+					process.env.SMTP_USER && process.env.SMTP_PASS
+						? { pass: process.env.SMTP_PASS, user: process.env.SMTP_USER }
+						: undefined,
+				host: process.env.SMTP_HOST ?? '127.0.0.1',
+				port: parseInt(process.env.SMTP_PORT ?? '1025', 10),
+				secure: false,
+				tls: { rejectUnauthorized: false }
+			});
+
+			await transporter.sendMail({
+				from: 'Open Communities <no-reply@m.opencommunities.info>',
+				html,
+				subject,
+				text,
+				to: `${name} <${email}>`
+			});
+		} catch (e) {
+			log.error('Error sending transactional email via SMTP fallback', e);
+		}
 	}
 }

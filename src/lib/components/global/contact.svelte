@@ -198,7 +198,7 @@
 					<Form.Control>
 						<div class="my-2 w-full">
 							<cap-widget
-								data-cap-api-endpoint="https://captcha.selfagency.dev/{PUBLIC_CAPTCHA_SITE_KEY}/"
+								data-cap-api-endpoint={`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/`}
 							></cap-widget>
 						</div>
 					</Form.Control>

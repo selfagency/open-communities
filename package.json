@@ -15,6 +15,8 @@
 		"preview": "vite preview",
 		"start": "node build/index.js",
 		"test": "vitest",
+		"e2e": "bash ./e2e/run-e2e.sh",
+		"e2e:headed": "bash ./e2e/run-e2e.sh --headed",
 		"machine-translate": "inlang machine translate --project project.inlang"
 	},
 	"dependencies": {
