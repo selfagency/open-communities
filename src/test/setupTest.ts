@@ -6,7 +6,6 @@
 // Import matchers from the local test mock via a relative path so Vite
 // import-analysis doesn't need to resolve the package subpath.
 
-
 // Use the official vitest integration for jest-dom matchers so they are
 // registered against Vitest's `expect` before tests run.
 import '@testing-library/jest-dom/vitest';
@@ -94,10 +93,12 @@ vi.mock('cookie', () => ({
 	// a simple 'pb_auth=...' string so a minimal parse implementation is fine.
 	parse: (s: string) => {
 		try {
-			return Object.fromEntries(s.split(';').map(p => {
-				const [k, ...r] = p.split('=');
-				return [k.trim(), decodeURIComponent(r.join('='))];
-			}));
+			return Object.fromEntries(
+				s.split(';').map((p) => {
+					const [k, ...r] = p.split('=');
+					return [k.trim(), decodeURIComponent(r.join('='))];
+				})
+			);
 		} catch {
 			return {};
 		}
