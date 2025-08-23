@@ -1,35 +1,16 @@
-version: '3.8'
 services:
-  app:
-    image: opencommunities-app:latest
-    build:
-      context: ..
-      dockerfile: e2e/Dockerfile.app
-    ports:
-      - '3000:3000'
-    environment:
-      - SMTP_HOST=mailpit
-      - SMTP_PORT=1025
-      - MAILPIT_API=http://mailpit:8025/api/v1
-      - PUBLIC_API_ENDPOINT=http://app:3000
-      - NODE_ENV=production
-    depends_on:
-      - pocketbase
-      - mailpit
-      - cap
-
   pocketbase:
     build:
       context: ./pocketbase
       dockerfile: Dockerfile
       args:
-        PB_VERSION: "0.29.2"
-        PB_ARCH: "amd64"
+        PB_VERSION: '0.29.2'
+        PB_ARCH: 'amd64'
     image: opencommunities-pocketbase:local
     ports:
       - '8090:8090'
     volumes:
-      - ./e2e/pb_data:/pb_data
+      - ./pocketbase/pb_data:/pb_data
 
   mailpit:
     image: axllent/mailpit:latest
@@ -40,6 +21,6 @@ services:
   cap:
     image: tiago2/cap:latest
     environment:
-      - ADMIN_KEY=${CAP_ADMIN_KEY:-test_admin_key}
+      - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
     ports:
       - '3001:3000'

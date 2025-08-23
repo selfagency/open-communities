@@ -5,7 +5,7 @@ set -eu
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-BASE_URL="${PB_TEST_BASEURL:-http://localhost:3000}"
+BASE_URL="${PB_TEST_BASEURL:-http://localhost:4173}"
 LOGFILE="/tmp/opencommunities-e2e.log"
 PIDFILE="/tmp/opencommunities-e2e.pid"
 
@@ -162,6 +162,10 @@ echo "[e2e] Starting Node server (node build/index.js)..."
 # want to exercise real captcha flows in e2e runs.
 export SMTP_HOST=${SMTP_HOST:-127.0.0.1}
 export SMTP_PORT=${SMTP_PORT:-1025}
+export MAILPIT_API=${MAILPIT_API:-http://127.0.0.1:8025/api/v1}
+# Force SMTP fallback (avoid Mailgun or other providers) so emails go to local Mailpit
+export FORCE_SMTP=1
+export PORT=${PORT:-4173}
 
 nohup node build/index.js > "$LOGFILE" 2>&1 &
 SERVER_PID=$!

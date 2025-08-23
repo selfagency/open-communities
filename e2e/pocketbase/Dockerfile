@@ -20,4 +20,9 @@ RUN curl -fsSL -o /tmp/pb.zip \
 
 EXPOSE 8090
 
-CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8090"]
+# create a data directory and expose it as a volume so host mounts align
+RUN mkdir -p /pb_data && chmod 755 /pb_data
+VOLUME ["/pb_data"]
+
+# Start PocketBase and store DB files in /pb_data so docker-compose host mount works
+CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb_data"]

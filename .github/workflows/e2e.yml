@@ -3,7 +3,7 @@ name: E2E
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   e2e:
@@ -63,6 +63,12 @@ jobs:
         run: nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
 
       - name: Start Node preview server
+        env:
+          SMTP_HOST: 127.0.0.1
+          SMTP_PORT: 1025
+          MAILPIT_API: http://127.0.0.1:8025/api/v1
+          FORCE_SMTP: '1'
+          PORT: 4173
         run: nohup node build/index.js > .e2e/server.log 2>&1 &
 
       - name: Install Playwright browsers
@@ -73,5 +79,5 @@ jobs:
           SMTP_HOST: 127.0.0.1
           SMTP_PORT: 1025
           MAILPIT_API: http://127.0.0.1:8025/api/v1
-          PB_TEST_BASEURL: http://127.0.0.1:3000
+          PB_TEST_BASEURL: http://127.0.0.1:4173
         run: pnpm exec playwright test --config e2e/playwright.config.mjs

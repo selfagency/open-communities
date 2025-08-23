@@ -12,12 +12,12 @@ Services and default ports
 - PocketBase: <http://127.0.0.1:8090>
 - Mailpit HTTP API: <http://127.0.0.1:8025> (SMTP: 127.0.0.1:1025)
 - Cap standalone API (mapped): <http://127.0.0.1:3001>
-- App frontend (when run locally): <http://localhost:3000>
+- App frontend (when run locally): <http://localhost:4173>
 
 Environment variables (use when you need non-default ports/hosts)
 
 - PB_TEST_API - PocketBase API endpoint (default <http://127.0.0.1:8090>)
-- PB_TEST_BASEURL - app frontend base URL (default <http://localhost:3000>)
+- PB_TEST_BASEURL - app frontend base URL (default <http://localhost:4173>)
 - MAILPIT_API - Mailpit API base (default <http://127.0.0.1:8025/api/v1>)
 
 Local developer flow (automated)

@@ -4,7 +4,7 @@ import { uid } from 'radashi';
 import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
-const base = process.env.PB_TEST_BASEURL ?? 'http://localhost:3000';
+const base = process.env.PB_TEST_BASEURL ?? 'http://localhost:4173';
 
 test.describe('auth flows', () => {
   const emailPrefix = `e2e-${uid(6)}`;
@@ -48,11 +48,18 @@ test.describe('auth flows', () => {
 
     await Promise.all([page.waitForNavigation(), page.click('text=Sign up')]);
 
-    const subjectPart = 'Verify your email';
-    const msg = await findMessageBySubject(subjectPart, 10000);
+  const subjectPart = 'Verify your email';
+    const msg = await findMessageBySubject(subjectPart, 20000);
+    if (!msg) {
+      const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
+      const res = await fetch(`${MAILPIT_API}/messages`);
+      const dump = await (res.ok ? res.json() : res.text());
+      console.error('[e2e-debug] verification email not found — Mailpit messages dump:', JSON.stringify(dump, null, 2));
+    }
     expect(msg).toBeTruthy();
 
-    const rawRes = await fetch(`http://127.0.0.1:8025/api/v1/messages/${msg.id}/raw`);
+    const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
+    const rawRes = await fetch(`${MAILPIT_API}/messages/${msg.id}/raw`);
     const raw = rawRes.ok ? await rawRes.text() : JSON.stringify(msg);
     const tokenMatch = raw.match(/verifyEmail=([A-Za-z0-9-_]+)/) || raw.match(/verifyEmail"\]\s*:\s*"([A-Za-z0-9-_]+)/);
     const token = tokenMatch ? tokenMatch[1] : undefined;
@@ -64,9 +71,14 @@ test.describe('auth flows', () => {
     await page.fill('input[autocomplete="email"]', email);
     await page.click('text=Send reset email');
 
-    const resetMsg = await findMessageBySubject('Reset', 10000);
+    const resetMsg = await findMessageBySubject('Reset', 20000);
+    if (!resetMsg) {
+      const res2 = await fetch(`${MAILPIT_API}/messages`);
+      const dump2 = await (res2.ok ? res2.json() : res2.text());
+      console.error('[e2e-debug] reset email not found — Mailpit messages dump:', JSON.stringify(dump2, null, 2));
+    }
     expect(resetMsg).toBeTruthy();
-    const rawResetRes = await fetch(`http://127.0.0.1:8025/api/v1/messages/${resetMsg.id}/raw`);
+    const rawResetRes = await fetch(`${MAILPIT_API}/messages/${resetMsg.id}/raw`);
     const rawReset = rawResetRes.ok ? await rawResetRes.text() : JSON.stringify(resetMsg);
     const resetMatch = rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) || rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9-_]+)/);
     const resetToken = resetMatch ? resetMatch[1] : undefined;

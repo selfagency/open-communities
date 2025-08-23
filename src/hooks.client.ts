@@ -4,18 +4,13 @@ import * as Sentry from '@sentry/sveltekit';
 
 import { dev } from '$app/environment';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
-import { log, logger } from '$lib/utils';
+import { log } from '$lib/utils';
 /* endregion imports */
 
 if (!Sentry.isInitialized()) {
 	Sentry.init({
 		dsn: PUBLIC_SENTRY_DSN,
-		enableLogs: true,
 		tracesSampleRate: 1.0
-	});
-
-	logger.attachTransport((logObj) => {
-		Sentry.logger[`${logObj.logLevelName}`](logObj);
 	});
 }
 

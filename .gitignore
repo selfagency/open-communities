@@ -4,9 +4,6 @@
 !.vscode/launch.json
 !.vscode/settings.json
 !.vscode/tasks.json
-!pb_data/data.db
-!pb_data/types.d.ts
-!pb_schema.json
 ._*
 .apdisk
 .AppleDB
@@ -121,7 +118,7 @@ old_data/
 out
 package
 package/
-pb_data/*
+e2e/pocketbase/pb_data/auxiliary.db
 pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 src/lib/paraglide
