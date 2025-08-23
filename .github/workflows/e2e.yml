@@ -1,0 +1,77 @@
+name: E2E
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    services:
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+        options: >-
+          --health-cmd='curl -sSf http://localhost:8025/api/v1/messages || exit 1'
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
+      cap:
+        image: tiago2/cap:latest
+        ports:
+          - 3001:3000
+        options: >-
+          --health-cmd='curl -sSf http://localhost:3000/ || exit 1'
+          --health-interval=5s
+          --health-timeout=2s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Download PocketBase binary
+        run: |
+          PB_VERSION=0.29.2
+          mkdir -p .e2e
+          curl -fsSL -o .e2e/pb.zip "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip"
+          unzip -o .e2e/pb.zip -d .e2e
+          chmod +x .e2e/pocketbase
+
+      - name: Start PocketBase
+        run: nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
+
+      - name: Start Node preview server
+        run: nohup node build/index.js > .e2e/server.log 2>&1 &
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run Playwright E2E
+        env:
+          SMTP_HOST: 127.0.0.1
+          SMTP_PORT: 1025
+          MAILPIT_API: http://127.0.0.1:8025/api/v1
+          PB_TEST_BASEURL: http://127.0.0.1:3000
+        run: pnpm exec playwright test --config e2e/playwright.config.mjs
