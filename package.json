@@ -15,6 +15,7 @@
 		"format": "eslint --fix . && prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"preview": "vite preview",
+		"preview:e2e": "export FORCE_SMTP=1 SMTP_HOST=127.0.0.1 SMTP_PORT=1025 MAILPIT_API=http://127.0.0.1:8025/api/v1 && vite preview",
 		"start": "node build/index.js",
 		"test": "vitest",
 		"test:e2e": "playwright test --config e2e/playwright.config.mjs",

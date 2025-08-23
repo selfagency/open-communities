@@ -7,9 +7,14 @@ import { deleteTestUsers } from '../helpers/pb-helper.js';
 const base = process.env.PB_TEST_BASEURL ?? 'http://localhost:4173';
 
 test.describe('auth flows', () => {
+  // run tests in this describe serially so they can share state
+  test.describe.configure({ mode: 'serial' });
+
   const emailPrefix = `e2e-${uid(6)}`;
   const email = `${emailPrefix}@example.test`;
   const password = 'Testpass123!';
+  let verifyToken;
+  let resetToken;
 
   test.beforeAll(async () => {
     await clearMailpit();
@@ -19,12 +24,12 @@ test.describe('auth flows', () => {
     await deleteTestUsers(emailPrefix).catch(() => {});
   });
 
-  test('signup -> verify email -> reset password -> login', async ({ page }) => {
-  await page.goto(`${base}/login?signUp`);
-  // wait for the form to be interactive
-  await page.waitForSelector('form[action*="signup"], input[autocomplete="name"]', { timeout: 10000 });
+  test('signup -> sends verification email and verifies account', async ({ page }) => {
+    await page.goto(`${base}/login?signUp`);
+    // wait for the form to be interactive
+    await page.waitForSelector('form[action*="signup"], input[autocomplete="name"]', { timeout: 10000 });
 
-  await page.fill('input[autocomplete="name"]', 'E2E Tester');
+    await page.fill('input[autocomplete="name"]', 'E2E Tester');
     await page.fill('input[autocomplete="email"]', email);
     // fill password fields (some builds may not set `name` attributes predictably)
     const pwLocators = page.locator('input[type="password"]');
@@ -48,7 +53,7 @@ test.describe('auth flows', () => {
 
     await Promise.all([page.waitForNavigation(), page.click('text=Sign up')]);
 
-  const subjectPart = 'Verify your email';
+    const subjectPart = 'Verify your email';
     const msg = await findMessageBySubject(subjectPart, 20000);
     if (!msg) {
       const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
@@ -62,15 +67,19 @@ test.describe('auth flows', () => {
     const rawRes = await fetch(`${MAILPIT_API}/messages/${msg.id}/raw`);
     const raw = rawRes.ok ? await rawRes.text() : JSON.stringify(msg);
     const tokenMatch = raw.match(/verifyEmail=([A-Za-z0-9-_]+)/) || raw.match(/verifyEmail"\]\s*:\s*"([A-Za-z0-9-_]+)/);
-    const token = tokenMatch ? tokenMatch[1] : undefined;
-    expect(token).toBeTruthy();
+    verifyToken = tokenMatch ? tokenMatch[1] : undefined;
+    expect(verifyToken).toBeTruthy();
 
-    await page.goto(`${base}/login?verifyEmail=${token}`);
+    // perform verification
+    await page.goto(`${base}/login?verifyEmail=${verifyToken}`);
+  });
 
+  test('request reset -> receives reset email and sets new password', async ({ page }) => {
     await page.goto(`${base}/login`);
     await page.fill('input[autocomplete="email"]', email);
     await page.click('text=Send reset email');
 
+    const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
     const resetMsg = await findMessageBySubject('Reset', 20000);
     if (!resetMsg) {
       const res2 = await fetch(`${MAILPIT_API}/messages`);
@@ -81,7 +90,7 @@ test.describe('auth flows', () => {
     const rawResetRes = await fetch(`${MAILPIT_API}/messages/${resetMsg.id}/raw`);
     const rawReset = rawResetRes.ok ? await rawResetRes.text() : JSON.stringify(resetMsg);
     const resetMatch = rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) || rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9-_]+)/);
-    const resetToken = resetMatch ? resetMatch[1] : undefined;
+    resetToken = resetMatch ? resetMatch[1] : undefined;
     expect(resetToken).toBeTruthy();
 
     await page.goto(`${base}/login?resetPassword=${resetToken}`);
@@ -96,7 +105,10 @@ test.describe('auth flows', () => {
       await page.fill('input[name="passwordConfirm"]', newPass).catch(() => {});
     }
     await page.click('text=Reset password');
+  });
 
+  test('login with new password', async ({ page }) => {
+    const newPass = password + '1';
     await page.goto(`${base}/login`);
     await page.waitForSelector('input[autocomplete="email"], input[type="password"]', { timeout: 10000 });
     await page.fill('input[autocomplete="email"]', email);

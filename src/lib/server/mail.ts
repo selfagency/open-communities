@@ -29,6 +29,24 @@ export async function adminMail(
 	// If Mailgun client is initialized and we're not forcing SMTP, prefer Mailgun.
 	const forceSmtp = Boolean(process.env.FORCE_SMTP || process.env.SKIP_CAPTCHA);
 
+	// Debug: log mail delivery settings (avoid printing secrets)
+	try {
+		const smtpHost = process.env.SMTP_HOST ?? '127.0.0.1';
+		const smtpPort = process.env.SMTP_PORT ?? '1025';
+		const smtpUserSet = Boolean(process.env.SMTP_USER);
+		const mailgunKeySet = Boolean(process.env.MAILGUN_API_KEY);
+		log.debug('mail: delivery settings', {
+			forceSmtp,
+			mailgunKeySet,
+			provider: mg && !forceSmtp ? 'mailgun' : 'smtp',
+			smtpHost,
+			smtpPort,
+			smtpUserSet
+		});
+	} catch {
+		// no-op if logging fails
+	}
+
 	if (mg && !forceSmtp) {
 		try {
 			let congregation: string | undefined;
@@ -59,6 +77,10 @@ export async function adminMail(
 	} else {
 		// Fallback: send via SMTP (useful in e2e where Mailpit is available on localhost:1025)
 		try {
+			log.debug('mail: using SMTP fallback', {
+				host: process.env.SMTP_HOST ?? '127.0.0.1',
+				port: process.env.SMTP_PORT ?? '1025'
+			});
 			const transporter = nodemailer.createTransport({
 				auth:
 					process.env.SMTP_USER && process.env.SMTP_PASS
@@ -88,6 +110,20 @@ export async function transactionalMail({ email, message, name, subject }: Recor
 	const text = message;
 
 	const forceSmtp = Boolean(process.env.FORCE_SMTP || process.env.SKIP_CAPTCHA);
+
+	// Debug: log mail delivery settings for transactional mails
+	const smtpHost = process.env.SMTP_HOST ?? '127.0.0.1';
+	const smtpPort = process.env.SMTP_PORT ?? '1025';
+	const smtpUserSet = Boolean(process.env.SMTP_USER);
+	const mailgunKeySet = Boolean(process.env.MAILGUN_API_KEY);
+	log.debug('mail: transactional delivery settings', {
+		forceSmtp,
+		mailgunKeySet,
+		provider: mg && !forceSmtp ? 'mailgun' : 'smtp',
+		smtpHost,
+		smtpPort,
+		smtpUserSet
+	});
 
 	if (mg && !forceSmtp) {
 		try {
