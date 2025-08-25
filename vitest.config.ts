@@ -90,11 +90,6 @@ export default defineConfig({
 		environment: 'happy-dom',
 		// Use Node environment for server tests
 		environmentMatchGlobs: [['src/test/server/**/*.test.{ts,tsx,js,jsx}', 'node']],
-		environmentOptions: {
-			happyDOM: {
-				disableCrossOriginPolicy: true
-			}
-		},
 		// ensure Vitest provides global test APIs (describe/it/beforeEach)
 		globals: true,
 		// explicit include to ensure test files under src/ are collected

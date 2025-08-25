@@ -37,9 +37,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Playwright
+        run: pnpm exec playwright install
+
       - name: Run tests (vitest) with coverage
-        # allow failures so artifacts are still uploaded for reporting
-        run: pnpm test -- --coverage.enabled true || true
+        id: test
+        continue-on-error: true
+        run: pnpm test -- --coverage.enabled true
 
       - name: Collect coverage folder (if present)
         run: |
@@ -62,3 +66,7 @@ jobs:
         with:
           name: test-results
           path: test-results
+
+      - name: Fail workflow if tests failed
+        if: steps.test.outcome == 'failure'
+        run: exit 1
