@@ -12,7 +12,7 @@ export const initForm = (data: Record<string, unknown>) => {
 		id: 'signup',
 		onError({ result }) {
 			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
+			toast.error(m.signUpFailure);
 		},
 		onResult() {
 			setState({ loading: false });
@@ -27,9 +27,9 @@ export const initForm = (data: Record<string, unknown>) => {
 				setState({ form: { hasErrors: false, success: true } });
 			} else {
 				setState({ form: { hasErrors: true, success: false } });
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.errors))
-					log.error('submission error', result.data.form_error);
+				if (!isEmpty(result.data.form.errors)) {
+					log.error('form errors', result.data.form.errors);
+				}
 				toast.error(m.signUpFailure);
 			}
 		}

@@ -23,7 +23,7 @@ vi.mock('radashi', () => ({
 	uid: () => 'staticid'
 }));
 
-vi.mock('$env/static/public', () => ({ PUBLIC_HOSTNAME: 'example.com' }));
+vi.mock('$env/dynamic/public', () => ({ PUBLIC_HOSTNAME: 'http://localhost:4173' }));
 vi.mock('$app/environment', () => ({ dev: false }));
 
 import { logger } from '$lib/utils';

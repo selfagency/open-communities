@@ -21,7 +21,7 @@ vi.mock('pocketbase', () => {
 	};
 });
 
-vi.mock('$env/static/public', () => ({ PUBLIC_API_ENDPOINT: 'http://test.local' }));
+vi.mock('$env/dynamic/public', () => ({ PUBLIC_API_ENDPOINT: 'http://localhost:8090' }));
 
 vi.mock('./logger', () => ({ log: { error: vi.fn() } }));
 

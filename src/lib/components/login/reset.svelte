@@ -84,6 +84,9 @@
 						/>
 					{/snippet}
 				</Form.Control>
+				<Form.Description>
+					{m.passwordRequirements()}
+				</Form.Description>
 				<Form.FieldErrors />
 			</Form.Field>
 

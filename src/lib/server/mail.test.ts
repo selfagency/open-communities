@@ -1,77 +1,40 @@
+// @vitest-environment node
 import { spawn } from 'child_process';
-import nodemailer from 'nodemailer';
-import { uid } from 'radashi';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { sleep, uid } from 'radashi';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { CongregationMetaResponse, TypedPocketBase } from '$lib/pocketbase.d';
+import type {
+	Collections,
+	CongregationMetaResponse,
+	MetaDenominationOptions,
+	TypedPocketBase
+} from '$lib/pocketbase.d';
 
-import { Collections, MetaDenominationOptions } from '$lib/pocketbase.d';
-
-// hoist-safe mock: mailgun.js client.messages.create will use nodemailer to send SMTP to Mailpit
-vi.mock('mailgun.js', () => ({
-	default: function MockMailgun(_formData: unknown) {
-		void _formData;
-		return {
-			client: (_opts: unknown) => ({
-				messages: {
-					create: async (
-						_domain: string,
-						data: {
-							from: string;
-							html?: string;
-							subject: string;
-							text?: string;
-							to: string | string[];
-						}
-					) => {
-						void _opts;
-						// capture last sent mail for tests
-						try {
-							// eslint-disable-next-line @typescript-eslint/no-explicit-any
-							(global as any).__lastMail = {
-								from: data.from,
-								html: data.html,
-								subject: data.subject,
-								text: data.text,
-								to: data.to
-							};
-						} catch {
-							// ignore potential globals write errors in test environment
-						}
-						const transporter = nodemailer.createTransport({
-							host: '127.0.0.1',
-							port: 1025,
-							secure: false,
-							tls: { rejectUnauthorized: false }
-						});
-
-						await transporter.sendMail({
-							from: data.from,
-							html: data.html,
-							subject: data.subject,
-							text: data.text,
-							to: Array.isArray(data.to) ? data.to.join(',') : data.to
-						});
-
-						return { id: 'mock-sent' };
-					}
-				}
-			})
-		};
-	}
+// mock the raw email template asset so mail.ts can call .replace() on it
+vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
+	default: '<!doctype html><html><body>%MESSAGE%</body></html>'
 }));
 
-vi.mock('$env/static/private', () => ({
-	ADMIN_EMAIL: 'admin@example.test',
-	MAILGUN_API_KEY: 'test-key'
+// Ensure env imports resolve even if Vitest/Vite aliasing isn't applied in this run
+vi.mock('$env/dynamic/private', () => ({
+	ADMIN_EMAIL: 'admin@test.local',
+	CAPTCHA_SITE_SECRET: 'test-captcha-secret',
+	SMTP_HOST: '127.0.0.1',
+	SMTP_PASS: 'abc123abc123',
+	SMTP_PORT: '1025',
+	SMTP_USER: 'test@test.com'
 }));
+
+// (use shared mocks in src/test/mocks)
 
 import { adminMail, transactionalMail } from './mail';
 
 async function ensureMailpitRunning() {
 	const check = async () => {
 		try {
-			const res = await fetch('http://localhost:8025/api/v1/messages');
+			// prefer the lightweight /info endpoint to confirm Mailpit readiness
+			const res = await fetch('http://localhost:8025/api/v1/info');
+			console.debug('mailpit running', res.ok);
 			return res.ok;
 		} catch {
 			return false;
@@ -87,27 +50,54 @@ async function ensureMailpitRunning() {
 		const deadline = Date.now() + 10000;
 		while (Date.now() < deadline) {
 			if (await check()) return;
-			await new Promise((r) => setTimeout(r, 250));
+			await sleep(250);
 		}
 		throw new Error('Mailpit not reachable at http://localhost:8025 in CI');
-	}
-
-	// Local developer run: try to spawn a local mailpit binary if available, then poll.
-	try {
-		const child = spawn('mailpit', [], { detached: true, stdio: 'ignore' });
-		child.unref();
-	} catch (e) {
-		// ignore spawn errors for local runs; we'll still poll for a running service
-		void e;
-	}
-
-	const deadline = Date.now() + 10000;
-	while (Date.now() < deadline) {
-		if (await check()) return;
-
-		await new Promise((r) => setTimeout(r, 250));
+	} else {
+		// Local developer run: try to spawn a local mailpit binary if available, then poll.
+		try {
+			const child = spawn('mailpit', [], { detached: true, stdio: 'ignore' });
+			child.unref();
+		} catch (e) {
+			// ignore spawn errors for local runs; we'll still poll for a running service
+			void e;
+			const deadline = Date.now() + 10000;
+			while (Date.now() < deadline) {
+				if (await check()) return;
+				await sleep(250);
+			}
+		}
 	}
 }
+
+beforeEach(async () => {
+	await ensureMailpitRunning();
+});
+
+// cleanup Mailpit between tests to avoid cross-test contamination
+afterEach(async () => {
+	try {
+		// only attempt cleanup if Mailpit is reachable (avoid noisy "Failed to fetch" logs)
+		try {
+			const info = await fetch('http://localhost:8025/api/v1/info');
+			if (!info.ok) {
+				console.debug('Mailpit not reachable for cleanup (non-ok /info)');
+				return;
+			}
+		} catch {
+			console.debug('Mailpit not reachable for cleanup (fetch failed), skipping DELETE');
+			return;
+		}
+
+		// delete all messages
+		await fetch('http://localhost:8025/api/v1/messages', { method: 'DELETE' });
+		// small pause to ensure Mailpit processed deletion
+		await sleep(100);
+	} catch (e) {
+		// ignore cleanup failures in test environment
+		console.debug('Mailpit cleanup error', e);
+	}
+});
 
 async function findMessageBySubject(subject: string) {
 	const deadline = Date.now() + 8000;
@@ -156,7 +146,7 @@ async function findMessageBySubject(subject: string) {
 
 		// wait a bit before retrying
 
-		await new Promise((r) => setTimeout(r, 300));
+		await sleep(300);
 	}
 
 	// final fetch for debug
@@ -173,19 +163,6 @@ async function findMessageBySubject(subject: string) {
 	return undefined;
 }
 
-// cleanup Mailpit between tests to avoid cross-test contamination
-afterEach(async () => {
-	try {
-		// delete all messages
-		await fetch('http://localhost:8025/api/v1/messages', { method: 'DELETE' });
-		// small pause to ensure Mailpit processed deletion
-		await new Promise((r) => setTimeout(r, 100));
-	} catch (e) {
-		// ignore cleanup failures in test environment
-		console.debug('Mailpit cleanup error', e);
-	}
-});
-
 describe('src/lib/server/mail', () => {
 	it('sends transactional email via SMTP (mailpit)', async () => {
 		await ensureMailpitRunning();
@@ -201,16 +178,8 @@ describe('src/lib/server/mail', () => {
 
 		await transactionalMail(payload as unknown as Record<string, string>);
 
-		// prefer checking the captured mail from the SMTP mock if available
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const lastMail = (global as any).__lastMail as undefined | { subject?: string };
-		if (lastMail) {
-			expect(lastMail.subject).toContain(txSubject);
-			return;
-		}
-
-		// allow delivery to Mailpit if SMTP mock not used
-		await new Promise((r) => setTimeout(r, 500));
+		// allow delivery to Mailpit
+		await sleep(500);
 
 		const found = await findMessageBySubject(txSubject);
 		expect(found).toBeTruthy();
@@ -230,12 +199,12 @@ describe('src/lib/server/mail', () => {
 								clergy: '',
 								collectionId: 'cong_meta_col',
 								// use string for collectionName to avoid complex enum typing in test
-								collectionName: Collections.CongregationMeta,
+								collectionName: 'CongregationMeta' as Collections,
 								contactEmail: '',
 								contactName: '',
 								contactUrl: '',
 								created: now,
-								denomination: MetaDenominationOptions.other as MetaDenominationOptions,
+								denomination: 'other' as MetaDenominationOptions,
 								expand: undefined,
 								fit: null,
 								flavor: '',
@@ -272,23 +241,15 @@ describe('src/lib/server/mail', () => {
 
 		await adminMail(payload as unknown as Record<string, string>, fakeApi);
 
-		// allow delivery
-		await new Promise((r) => setTimeout(r, 500));
+		// allow delivery to Mailpit
+		await sleep(500);
 
-		// prefer checking the captured mail from the SMTP mock if available
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const lastMail = (global as any).__lastMail as undefined | { html?: string; text?: string };
-		if (lastMail) {
-			const hay = `${lastMail.html ?? ''} ${lastMail.text ?? ''}`;
-			expect(hay).toContain('Listing: Congregation Name');
-			return;
-		}
-
+		// ensure a message with the expected subject made it to Mailpit
 		const found = await findMessageBySubject(adminSubject);
 		expect(found).toBeTruthy();
 		console.error('Found message from list search:', found);
 
-		// fetch raw source with retries — Mailpit may not have raw persisted instantly
+		// fetch raw source and assert listing presence
 		let raw = '';
 		const rawDeadline = Date.now() + 5000;
 		while (Date.now() < rawDeadline) {
@@ -297,18 +258,30 @@ describe('src/lib/server/mail', () => {
 				raw = await rawRes.text();
 				break;
 			}
-			// backoff a bit
-			await new Promise((r) => setTimeout(r, 250));
+			await sleep(250);
 		}
+
 		// if raw not available, fetch message details and search there
 		if (!raw) {
-			const detailRes = await fetch(`http://localhost:8025/api/v1/messages/${found!.id}`);
+			const detailRes = await fetch(`http://localhost:8025/api/v1/message/${found!.id}`);
 			if (detailRes.ok) {
 				const detail = await detailRes.json();
+				// Check HTML and Text fields directly instead of stringifying the whole object
+				const htmlContent = detail.HTML || '';
+				const textContent = detail.Text || '';
+
+				if (
+					htmlContent.includes('Listing: Congregation Name') ||
+					textContent.includes('Listing: Congregation Name')
+				) {
+					// Test passes
+					return;
+				}
+
+				// Fallback to checking the whole object
 				const haystack = JSON.stringify(detail);
 				expect(haystack).toContain('Listing: Congregation Name');
 			} else {
-				// gather diagnostics: message detail failed, fetch full messages list and print useful info
 				const detailText = await detailRes.text().catch(() => '<no-body>');
 				console.error('Mailpit /messages/{id} non-ok:', {
 					body: detailText,
@@ -319,11 +292,22 @@ describe('src/lib/server/mail', () => {
 					const listRes = await fetch('http://localhost:8025/api/v1/messages');
 					const listBody = await listRes.text();
 					console.error('Mailpit messages list raw:', listBody);
+					// Since we have the message list, let's check if the content is in the snippet
+					const listData = JSON.parse(listBody);
+					const foundMessage = listData.messages?.find(
+						(m: Record<string, unknown>) => m.ID === found!.id
+					);
+					if (foundMessage && foundMessage.Snippet) {
+						expect(foundMessage.Snippet).toContain('Listing: Congregation Name');
+						return; // Test passed, exit early
+					}
 				} catch (e) {
 					console.debug('Failed to fetch Mailpit messages list for diagnostics:', e);
 				}
-				// final assertion will fail and show last failed raw (empty) — keep test informative
-				expect(raw).toContain('Listing: Congregation Name');
+				// If we get here, we couldn't find the content anywhere
+				throw new Error(
+					`Could not verify email content. Raw fetch failed, detail fetch failed, and snippet not found. Detail status: ${detailRes.status}`
+				);
 			}
 		} else {
 			expect(raw).toContain('Listing: Congregation Name');

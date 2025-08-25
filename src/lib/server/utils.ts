@@ -3,8 +3,8 @@ import type { SuperValidated } from 'sveltekit-superforms';
 import { fail } from '@sveltejs/kit';
 import { setError } from 'sveltekit-superforms';
 
-import { CAPTCHA_SITE_SECRET } from '$env/static/private';
-import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
+import { env } from '$env/dynamic/private';
+import { env as pubEnv } from '$env/dynamic/public';
 // SKIP_CAPTCHA is intentionally read from runtime env to avoid requiring
 // a static build-time env export. Use process.env for test-time toggles.
 const SKIP_CAPTCHA = process.env.SKIP_CAPTCHA;
@@ -17,7 +17,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 		return true;
 	}
 
-	if (!PUBLIC_CAPTCHA_SITE_KEY || !CAPTCHA_SITE_SECRET) {
+	if (!pubEnv.PUBLIC_CAPTCHA_SITE_KEY || !env.CAPTCHA_SITE_SECRET) {
 		throw new Error('Captcha validation is not configured');
 	}
 
@@ -27,10 +27,10 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
 	} else {
 		const captchaValid = (
 			await (
-				await fetch(`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
+				await fetch(`${env.PUBLIC_CAPTCHA_ENDPOINT}/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/siteverify`, {
 					body: JSON.stringify({
 						response: form.data.captcha as string,
-						secret: CAPTCHA_SITE_SECRET
+						secret: env.CAPTCHA_SITE_SECRET
 					}),
 					headers: {
 						'Content-Type': 'application/json'

@@ -1,165 +1,103 @@
 /* region imports */
-import Mailgun from 'mailgun.js';
 import nodemailer from 'nodemailer';
 
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 
-import { dev } from '$app/environment';
-import { ADMIN_EMAIL, MAILGUN_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import emailTemplate from '$lib/assets/emailTemplate.html?raw';
 import { log } from '$lib/server/logger';
 /* endregion imports */
 
-let mg: null | ReturnType<Mailgun['client']> = null;
+// transporter will be created per-call in mailTransport so we can conditionally
+// include auth only when credentials are provided (Mailpit often runs without auth)
 
-if (!dev && (!MAILGUN_API_KEY || MAILGUN_API_KEY.trim() === '')) {
-	log.warn('Mailgun API key is not set');
-} else {
-	const mailgun = new Mailgun(FormData);
-	mg = mailgun.client({
-		key: MAILGUN_API_KEY,
-		username: 'api'
-	});
-}
+const { ADMIN_EMAIL, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } = env;
 
 export async function adminMail(
 	{ email, message, name, record, subject }: Record<string, string>,
 	api: TypedPocketBase
 ) {
-	// If Mailgun client is initialized and we're not forcing SMTP, prefer Mailgun.
-	const forceSmtp = Boolean(process.env.FORCE_SMTP || process.env.SKIP_CAPTCHA);
-
-	// Debug: log mail delivery settings (avoid printing secrets)
 	try {
-		const smtpHost = process.env.SMTP_HOST ?? '127.0.0.1';
-		const smtpPort = process.env.SMTP_PORT ?? '1025';
-		const smtpUserSet = Boolean(process.env.SMTP_USER);
-		const mailgunKeySet = Boolean(process.env.MAILGUN_API_KEY);
-		log.debug('mail: delivery settings', {
-			forceSmtp,
-			mailgunKeySet,
-			provider: mg && !forceSmtp ? 'mailgun' : 'smtp',
-			smtpHost,
-			smtpPort,
-			smtpUserSet
-		});
-	} catch {
-		// no-op if logging fails
-	}
+		let congregation: string | undefined;
+		let congregationUrl: string | undefined;
 
-	if (mg && !forceSmtp) {
-		try {
-			let congregation: string | undefined;
-			let congregationUrl: string | undefined;
-
-			if (record && record.trim() !== '') {
-				const congMeta = await api.collection('congregationMeta').getOne(record, { fetch });
-				congregation = congMeta.name;
-				congregationUrl = `https://opencommunities.info/edit?id=${congMeta.id}`;
-				if (congregation) {
-					message += `\n\nListing: ${congregation}\n${congregationUrl}`;
-				}
+		if (record && record.trim() !== '') {
+			const congMeta = await api.collection('congregationMeta').getOne(record, { fetch });
+			congregation = congMeta.name;
+			congregationUrl = `https://opencommunities.info/edit?id=${congMeta.id}`;
+			if (congregation) {
+				message += `\n\nListing: ${congregation}\n${congregationUrl}`;
 			}
-
-			const html = emailTemplate.replace('%MESSAGE%', `<p>${message.replace('\n', '<br />')}</p>`);
-			const text = message;
-
-			await mg.messages.create('m.opencommunities.info', {
-				from: `${name} via Open Communities <${email}>`,
-				html,
-				subject,
-				text,
-				to: [`Admin <${ADMIN_EMAIL}>`]
-			});
-		} catch (e) {
-			log.error('Error sending admin email', e);
 		}
-	} else {
-		// Fallback: send via SMTP (useful in e2e where Mailpit is available on localhost:1025)
-		try {
-			log.debug('mail: using SMTP fallback', {
-				host: process.env.SMTP_HOST ?? '127.0.0.1',
-				port: process.env.SMTP_PORT ?? '1025'
-			});
-			const transporter = nodemailer.createTransport({
-				auth:
-					process.env.SMTP_USER && process.env.SMTP_PASS
-						? { pass: process.env.SMTP_PASS, user: process.env.SMTP_USER }
-						: undefined,
-				host: process.env.SMTP_HOST ?? '127.0.0.1',
-				port: parseInt(process.env.SMTP_PORT ?? '1025', 10),
-				secure: false,
-				tls: { rejectUnauthorized: false }
-			});
 
-			await transporter.sendMail({
-				from: `${name} via Open Communities <${email}>`,
-				html: emailTemplate.replace('%MESSAGE%', `<p>${message.replace('\n', '<br />')}</p>`),
-				subject,
-				text: message,
-				to: `Admin <${process.env.ADMIN_EMAIL ?? 'admin@example.test'}>`
-			});
-		} catch (e) {
-			log.error('Error sending admin email via SMTP fallback', e);
-		}
+		await mailTransport({
+			from: `${name} via Open Communities <${email}>`,
+			message,
+			subject,
+			to: `Open Communities Admin <${ADMIN_EMAIL ?? 'admin@example.test'}>`
+		});
+	} catch (e) {
+		log.error('Error sending admin email', e);
 	}
 }
 
-export async function transactionalMail({ email, message, name, subject }: Record<string, string>) {
-	const html = emailTemplate.replace('%MESSAGE%', `<p>${message.replace('\n', '<br />')}</p>`);
+export async function mailTransport({ from, message, subject, to }: Record<string, string>) {
+	if (!SMTP_USER || !SMTP_PASS || !SMTP_HOST || !SMTP_PORT) {
+		log.warn('SMTP credentials are not set');
+	}
+
+	const html = emailTemplate?.replace('%MESSAGE%', `<p>${message?.replace('\n', '<br />')}</p>`);
 	const text = message;
+	const mail = {
+		from,
+		html,
+		subject,
+		text,
+		to: [to]
+	};
 
-	const forceSmtp = Boolean(process.env.FORCE_SMTP || process.env.SKIP_CAPTCHA);
+	// build transport options and include auth only if provided
+	const transportOpts = {
+		host: SMTP_HOST as string,
+		port: parseInt(SMTP_PORT as string, 10),
+		secure: false,
+		tls: { rejectUnauthorized: false }
+	} as unknown as nodemailer.TransportOptions;
 
-	// Debug: log mail delivery settings for transactional mails
-	const smtpHost = process.env.SMTP_HOST ?? '127.0.0.1';
-	const smtpPort = process.env.SMTP_PORT ?? '1025';
-	const smtpUserSet = Boolean(process.env.SMTP_USER);
-	const mailgunKeySet = Boolean(process.env.MAILGUN_API_KEY);
-	log.debug('mail: transactional delivery settings', {
-		forceSmtp,
-		mailgunKeySet,
-		provider: mg && !forceSmtp ? 'mailgun' : 'smtp',
-		smtpHost,
-		smtpPort,
-		smtpUserSet
-	});
+	if (SMTP_USER && SMTP_PASS) {
+		// include auth only when provided
+		// reorder pass before user to satisfy lint rule
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(transportOpts as any).auth = { pass: SMTP_PASS, user: SMTP_USER };
+	}
 
-	if (mg && !forceSmtp) {
+	const transporter = nodemailer.createTransport(transportOpts);
+
+	log.debug('Verifying SMTP transporter');
+	if (typeof transporter.verify === 'function') {
 		try {
-			await mg.messages.create('m.opencommunities.info', {
-				from: 'Open Communities <no-reply@m.opencommunities.info>',
-				html,
-				subject,
-				text,
-				to: [`${name} <${email}>`]
-			});
-		} catch (e) {
-			log.error('Error sending transactional email via Mailgun', e);
+			await transporter.verify();
+		} catch (err) {
+			log.error('SMTP transporter verification failed', err);
+			throw err;
 		}
 	} else {
-		// SMTP fallback
-		try {
-			const transporter = nodemailer.createTransport({
-				auth:
-					process.env.SMTP_USER && process.env.SMTP_PASS
-						? { pass: process.env.SMTP_PASS, user: process.env.SMTP_USER }
-						: undefined,
-				host: process.env.SMTP_HOST ?? '127.0.0.1',
-				port: parseInt(process.env.SMTP_PORT ?? '1025', 10),
-				secure: false,
-				tls: { rejectUnauthorized: false }
-			});
+		log.debug('transporter.verify is not available in this runtime, skipping verification');
+	}
 
-			await transporter.sendMail({
-				from: 'Open Communities <no-reply@m.opencommunities.info>',
-				html,
-				subject,
-				text,
-				to: `${name} <${email}>`
-			});
-		} catch (e) {
-			log.error('Error sending transactional email via SMTP fallback', e);
-		}
+	log.debug('Sending email', mail);
+	await transporter.sendMail(mail);
+}
+
+export async function transactionalMail({ email, message, name, subject }: Record<string, string>) {
+	try {
+		await mailTransport({
+			from: 'Open Communities <no-reply@m.opencommunities.info>',
+			message,
+			subject,
+			to: `${name} <${email}>`
+		});
+	} catch (e) {
+		log.error('Error sending transactional email', e);
 	}
 }

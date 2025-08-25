@@ -8,7 +8,7 @@
 
 	import { browser, dev } from '$app/environment';
 	import { page } from '$app/state';
-	import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
@@ -120,7 +120,7 @@
 						{/snippet}
 					</Form.Control>
 					<Form.Description>
-						{m.passwordDescription()}
+						{m.passwordRequirements()}
 					</Form.Description>
 					<Form.FieldErrors />
 				</Form.Field>
@@ -145,7 +145,7 @@
 						<div class="my-4 w-full">
 							<cap-widget
 								id="captcha"
-								data-cap-api-endpoint={`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/`}
+								data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
 							></cap-widget>
 						</div>
 					</Form.Control>

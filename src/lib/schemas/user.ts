@@ -1,4 +1,3 @@
-/* region imports */
 import * as z from 'zod';
 
 // import { log } from '$lib/utils';
@@ -9,9 +8,11 @@ import { m } from '$lib/paraglide/messages';
 // constants
 const password = z
 	.string()
-	.min(12)
-	.max(64)
-	.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{12,64}$/);
+	.min(12, { message: m.passwordRequirementsFailed() })
+	.max(64, { message: m.passwordRequirementsFailed() })
+	.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{12,64}$/, {
+		message: m.passwordRequirementsFailed()
+	});
 /* endregion variables */
 
 export const userSchema = z

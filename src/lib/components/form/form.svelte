@@ -10,7 +10,7 @@
 	import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
 
 	import { browser, dev } from '$app/environment';
-	import { PUBLIC_CAPTCHA_SITE_KEY } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import Loading from '$lib/components/global/loading.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
@@ -279,7 +279,7 @@
 											<div class="mt-4 mb-8 w-full">
 												<cap-widget
 													id="captcha"
-													data-cap-api-endpoint={`https://captcha.selfagency.dev/${PUBLIC_CAPTCHA_SITE_KEY}/`}
+													data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
 												></cap-widget>
 											</div>
 										</Form.Control>

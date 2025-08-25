@@ -242,5 +242,6 @@
 	"warning": "Are you sure you want to continue?",
 	"warningNote": "This action cannot be undone.",
 	"website": "Website",
-	"passwordDescription": "Your password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, and one number."
+	"passwordRequirements": "Password must be at least 12 characters long and contain one uppercase letter, one lowercase letter, one number, and one symbol (!@#$%^&*, etc.)",
+	"passwordRequirementsFailed": "Password requirements not met"
 }

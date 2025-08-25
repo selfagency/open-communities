@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { uid } from 'radashi';
+import { sleep, uid } from 'radashi';
 
 import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
-const base = process.env.PB_TEST_BASEURL ?? 'http://localhost:4173';
+const base = 'http://localhost:4173';
 
 test.describe('auth flows', () => {
   // run tests in this describe serially so they can share state
@@ -12,7 +12,7 @@ test.describe('auth flows', () => {
 
   const emailPrefix = `e2e-${uid(6)}`;
   const email = `${emailPrefix}@example.test`;
-  const password = 'Testpass123!';
+  const password = 'TestPass123!';
   let verifyToken;
   let resetToken;
 
@@ -46,14 +46,24 @@ test.describe('auth flows', () => {
       await page.fill('input[name="passwordConfirm"]', password).catch(() => {});
     }
 
-    await page.evaluate(() => {
-      const el = document.querySelector('input[name="captcha"]');
-      if (el) el.value = 'test-token';
-    });
+    // Wait for the captcha widget to load
+    await page.waitForSelector('cap-widget', { timeout: 10000 });
 
-    await Promise.all([page.waitForNavigation(), page.click('text=Sign up')]);
+    // Wait for the captcha clickable area and click it
+    await page.waitForSelector('cap-widget .captcha', { timeout: 10000 });
+    await page.click('cap-widget .captcha');
 
-    const subjectPart = 'Verify your email';
+    // Wait for the captcha to be solved (it should show as "done" state)
+    await page.waitForSelector('cap-widget .captcha[data-state="done"]', { timeout: 10000 });
+
+    // Click the submit button
+    await sleep(1000);
+    await page.click('button[type="submit"]');
+
+    // Wait for form submission
+    await page.waitForTimeout(2000);
+
+    const subjectPart = 'Verify your Open Communities email';
     const msg = await findMessageBySubject(subjectPart, 20000);
     if (!msg) {
       const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
@@ -64,11 +74,85 @@ test.describe('auth flows', () => {
     expect(msg).toBeTruthy();
 
     const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
-    const rawRes = await fetch(`${MAILPIT_API}/messages/${msg.id}/raw`);
-    const raw = rawRes.ok ? await rawRes.text() : JSON.stringify(msg);
-    const tokenMatch = raw.match(/verifyEmail=([A-Za-z0-9-_]+)/) || raw.match(/verifyEmail"\]\s*:\s*"([A-Za-z0-9-_]+)/);
-    verifyToken = tokenMatch ? tokenMatch[1] : undefined;
+    const rawRes = await fetch(`${MAILPIT_API}/message/${msg.id}/raw`);
+    let raw = rawRes.ok ? await rawRes.text() : '';
+
+    // If raw fetch failed, try getting message details
+    if (!raw) {
+      const detailRes = await fetch(`${MAILPIT_API}/message/${msg.id}`);
+      if (detailRes.ok) {
+        const detail = await detailRes.json();
+        raw = detail.HTML || detail.Text || JSON.stringify(detail);
+      }
+    }
+
+    // Add debug logging and improve token extraction
+    console.log('[e2e-debug] Raw email content length:', raw.length);
+    console.log('[e2e-debug] Raw email content preview:', raw.substring(0, 500));
+
+    // More comprehensive token extraction that handles URL encoding and line breaks
+    const tokenMatch = raw.match(/verifyEmail=3D([A-Za-z0-9-_.%=]+)/g) ||
+                       raw.match(/verifyEmail=([A-Za-z0-9-_.%=]+)/g) ||
+                       raw.match(/verifyEmail["\s]*[:=]\s*["']?([A-Za-z0-9-_.%=]+)["']?/g);
+
+    let rawToken = null;
+    if (tokenMatch && tokenMatch.length > 0) {
+      // Extract the token from the first match, handling multiple capture patterns
+      const match = tokenMatch[0];
+      const tokenPart = match.split('=').pop(); // Get everything after the last =
+      rawToken = tokenPart;
+    }
+
+    console.log('[e2e-debug] Extracted raw token:', rawToken);
+
+    // URL decode the token if needed
+    if (rawToken) {
+      verifyToken = decodeURIComponent(rawToken);
+      // Handle the 3D encoding specifically (3D = URL encoded =)
+      if (rawToken.startsWith('3D')) {
+        verifyToken = decodeURIComponent(rawToken.replace(/^3D/, '='));
+      }
+    }
+
+    console.log('[e2e-debug] Final decoded token:', verifyToken);
+
     expect(verifyToken).toBeTruthy();
+
+    // Verify user was created in PocketBase
+    const PB_ADMIN = process.env.PB_TEST_ADMIN;
+    const PB_PASSWORD = process.env.PB_TEST_PASSWORD;
+    const PB_API = process.env.PB_API ?? 'http://127.0.0.1:8090/api';
+
+    if (PB_ADMIN && PB_PASSWORD) {
+      // Login as admin to PocketBase
+      const authRes = await fetch(`${PB_API}/admins/auth-with-password`, {
+        body: JSON.stringify({ identity: PB_ADMIN, password: PB_PASSWORD }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST'
+      });
+
+      if (authRes.ok) {
+        const authData = await authRes.json();
+        const token = authData.token;
+
+        // Query users to find our test user
+        const usersRes = await fetch(`${PB_API}/collections/users/records?filter=(email="${email}")`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          expect(usersData.items).toHaveLength(1);
+          expect(usersData.items[0].email).toBe(email);
+          expect(usersData.items[0].verified).toBe(false); // Should be unverified initially
+          console.log('[e2e] User successfully created in PocketBase:', usersData.items[0].id);
+        } else {
+          console.warn('[e2e] Failed to query PocketBase users:', await usersRes.text());
+        }
+      } else {
+        console.warn('[e2e] Failed to authenticate with PocketBase admin');
+      }
+    }
 
     // perform verification
     await page.goto(`${base}/login?verifyEmail=${verifyToken}`);
@@ -87,8 +171,18 @@ test.describe('auth flows', () => {
       console.error('[e2e-debug] reset email not found — Mailpit messages dump:', JSON.stringify(dump2, null, 2));
     }
     expect(resetMsg).toBeTruthy();
-    const rawResetRes = await fetch(`${MAILPIT_API}/messages/${resetMsg.id}/raw`);
-    const rawReset = rawResetRes.ok ? await rawResetRes.text() : JSON.stringify(resetMsg);
+    const rawResetRes = await fetch(`${MAILPIT_API}/message/${resetMsg.id}/raw`);
+    let rawReset = rawResetRes.ok ? await rawResetRes.text() : '';
+
+    // If raw fetch failed, try getting message details
+    if (!rawReset) {
+      const detailRes = await fetch(`${MAILPIT_API}/message/${resetMsg.id}`);
+      if (detailRes.ok) {
+        const detail = await detailRes.json();
+        rawReset = detail.HTML || detail.Text || JSON.stringify(detail);
+      }
+    }
+
     const resetMatch = rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) || rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9-_]+)/);
     resetToken = resetMatch ? resetMatch[1] : undefined;
     expect(resetToken).toBeTruthy();

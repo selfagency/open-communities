@@ -3,8 +3,8 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 import { shake, uid } from 'radashi';
 
-import { dev } from '$app/environment';
-import { PUBLIC_HOSTNAME } from '$env/static/public';
+// import { dev } from '$app/environment';
+import { env } from '$env/dynamic/public';
 import { logger } from '$lib/utils';
 /* endregion imports */
 
@@ -12,7 +12,7 @@ import { logger } from '$lib/utils';
 // constants
 const log = logger.getSubLogger({
 	name: 'server',
-	type: dev ? 'pretty' : 'json'
+	type: 'pretty'
 });
 /* endregion variables */
 
@@ -28,7 +28,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
 		if (referer) {
 			const refererUrl = new URL(referer);
 			const refererHostname = refererUrl.hostname;
-			if (refererHostname === 'localhost' || refererHostname === PUBLIC_HOSTNAME) {
+			if (refererHostname === 'localhost' || refererHostname === env.PUBLIC_HOSTNAME) {
 				referer = refererUrl.pathname;
 			}
 		} else {

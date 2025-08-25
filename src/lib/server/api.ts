@@ -7,14 +7,14 @@ import PocketBase from 'pocketbase';
 
 import type { TypedPocketBase, UsersRecord } from '$lib/pocketbase.d';
 
-import { PUBLIC_API_ENDPOINT } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import { cleanResponse, expand } from '$lib/api';
 
 import { log } from './logger';
 /* endregion imports */
 
 // instantiate pocketbase api service
-const api = new PocketBase(PUBLIC_API_ENDPOINT) as TypedPocketBase;
+const api = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
 api.autoCancellation(false);
 
 async function authenticate(auth: string) {

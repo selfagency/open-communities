@@ -1,8 +1,14 @@
 export const log = {
+	debug: () => {},
+	error: () => {},
 	getSubLogger: () => ({
+		debug: () => {},
 		error: () => {},
-		info: () => {}
-	})
+		info: () => {},
+		warn: () => {}
+	}),
+	info: () => {},
+	warn: () => {}
 };
 
 export async function logEvent() {

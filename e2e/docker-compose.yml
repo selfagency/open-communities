@@ -7,10 +7,11 @@ services:
         PB_VERSION: '0.29.2'
         PB_ARCH: 'amd64'
     image: opencommunities-pocketbase:local
-    ports:
-      - '8090:8090'
+    network_mode: 'host'
     volumes:
       - ./pocketbase/pb_data:/pb_data
+    depends_on:
+      - mailpit
 
   mailpit:
     image: axllent/mailpit:latest
@@ -24,3 +25,5 @@ services:
       - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
     ports:
       - '3001:3000'
+    volumes:
+      - ./cap/data:/usr/src/app/.data
