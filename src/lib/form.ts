@@ -13,18 +13,18 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
 		dataType: 'json',
 		id: 'addEditCongregation',
 		onError({ result }) {
-			setState({ form: { hasErrors: true, success: false }, loading: false });
+			setState({ form: { hasErrors: true, success: false }, loadingSecondary: false });
 			log.error(result.error.message);
 			toast.error(result.error.message);
 		},
 		onResult() {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		},
 		onSubmit() {
-			setState({ loading: true });
+			setState({ loadingSecondary: true });
 		},
 		async onUpdate({ result }) {
-			setState({ form: { hasErrors: false, success: false }, loading: false });
+			setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
 
 			if (result.type === 'success') {
 				toast.success(mode === 'edit' ? m.editSuccess() : m.addSuccess());

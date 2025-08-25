@@ -31,13 +31,13 @@
 			toast.error(m.verifyFailure);
 		},
 		onResult() {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		},
 		onSubmit() {
-			setState({ loading: true });
+			setState({ loadingSecondary: true });
 		},
 		async onUpdate({ result }) {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 			if (result.type === 'success') {
 				verified = true;
 			} else {

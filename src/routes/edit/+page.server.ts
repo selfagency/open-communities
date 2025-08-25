@@ -108,12 +108,24 @@ export const actions = {
 			if (owner) {
 				batch.collection('users').update(owner, { congregation: '' });
 			}
-			batch.collection('accessibility').delete(accessibility.id);
-			batch.collection('fit').delete(fit.id);
-			batch.collection('registration').delete(registration.id);
-			batch.collection('health').delete(health.id);
-			batch.collection('security').delete(security.id);
-			batch.collection('services').delete(services.id);
+			if (accessibility?.id) {
+				batch.collection('accessibility').delete(accessibility.id);
+			}
+			if (fit?.id) {
+				batch.collection('fit').delete(fit.id);
+			}
+			if (registration?.id) {
+				batch.collection('registration').delete(registration.id);
+			}
+			if (health?.id) {
+				batch.collection('health').delete(health.id);
+			}
+			if (security?.id) {
+				batch.collection('security').delete(security.id);
+			}
+			if (services?.id) {
+				batch.collection('services').delete(services.id);
+			}
 			batch.collection('congregations').delete(data.id);
 			await batch.send({ fetch });
 

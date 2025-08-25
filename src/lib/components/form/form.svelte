@@ -141,7 +141,7 @@
 	/* region lifecycle */
 	onMount(async () => {
 		if (browser) {
-			setState({ form: { hasErrors: false, success: false }, loading: true });
+			setState({ form: { hasErrors: false, success: false }, loadingSecondary: true });
 
 			if (!$formData?.id) {
 				initData();
@@ -153,7 +153,7 @@
 
 			await sleep(500);
 
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		}
 	});
 	/* endregion lifecycle */
@@ -175,7 +175,7 @@
 <section class="m-auto w-full" style="max-width: 480px;">
 	<Card.Root>
 		<div>
-			{#if $appState.loading}
+			{#if $appState.loadingSecondary}
 				<div
 					transition:fade={{ delay: 300, duration: 100 }}
 					class="flex h-full min-h-96 w-full flex-col items-center justify-center"

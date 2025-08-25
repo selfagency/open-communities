@@ -16,13 +16,13 @@ export const initForm = (data: Record<string, unknown>) => {
 			toast.error(m.signUpFailure());
 		},
 		onResult() {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		},
 		onSubmit() {
-			setState({ loading: true });
+			setState({ loadingSecondary: true });
 		},
 		async onUpdate({ result }) {
-			setState({ form: { hasErrors: false, success: false }, loading: false });
+			setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
 
 			if (result.type === 'success') {
 				setState({ form: { hasErrors: false, success: true } });

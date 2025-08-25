@@ -21,7 +21,7 @@
 	setContext('congregation', data.congregation);
 
 	onMount(() => {
-		setState({ form: { hasErrors: false, success: false } });
+		setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
 	});
 	/* endregion lifecycle */
 

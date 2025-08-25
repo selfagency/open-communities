@@ -35,7 +35,7 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		setState({ form: { hasErrors: false, success: false } });
+		setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
 		$formData.emailVisibility = true;
 		$formData.lang = 'en';
 	});

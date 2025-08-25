@@ -30,12 +30,13 @@
 		onError({ result }) {
 			log.error(result.error.message);
 			toast.error(result.error.message);
+			setState({ loadingSecondary: false });
 		},
 		onResult() {
-			setState({ loading: false });
+			setState({ loadingSecondary: false });
 		},
 		onSubmit() {
-			setState({ loading: true });
+			setState({ loadingSecondary: true });
 		},
 		async onUpdate({ result }) {
 			if (result.type === 'success') {
