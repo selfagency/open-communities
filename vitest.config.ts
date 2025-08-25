@@ -87,6 +87,9 @@ export default defineConfig({
 			instances: [{ browser: 'chromium' }],
 			provider: 'playwright'
 		},
+		coverage: {
+			provider: 'istanbul' // or 'v8'
+		},
 		environment: 'happy-dom',
 		// Use Node environment for server tests
 		environmentMatchGlobs: [['src/test/server/**/*.test.{ts,tsx,js,jsx}', 'node']],

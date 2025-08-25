@@ -34,6 +34,30 @@ jobs:
           corepack enable
           corepack prepare pnpm@latest --activate
 
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -49,7 +73,7 @@ jobs:
       - name: Run tests (vitest) with coverage
         id: test
         continue-on-error: true
-        run: pnpm test -- --coverage.enabled true
+        run: pnpm test -- --coverage
         env:
           ADMIN_EMAIL: rabbis4ceasefire@gmail.com
           CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
@@ -75,12 +99,14 @@ jobs:
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
+        if: always() && hashFiles('coverage/**') != ''
         with:
           name: coverage
           path: coverage
 
       - name: Upload test results artifact
         uses: actions/upload-artifact@v4
+        if: always() && hashFiles('test-results/**') != ''
         with:
           name: test-results
           path: test-results
