@@ -2,7 +2,8 @@ name: Deploy
 
 on:
   workflow_run:
-    workflows: ['e2e']
+    # workflows: ['e2e']
+    workflows: ['build']
     types:
       - completed
 
