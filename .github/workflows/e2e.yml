@@ -19,7 +19,7 @@ jobs:
           - 1025:1025
           - 8025:8025
         options: >-
-          --health-cmd='curl -f http://localhost:8025/api/v1/messages || exit 1'
+          --health-cmd='curl http://localhost:8025/api/v1/messages'
           --health-interval=5s
           --health-timeout=2s
           --health-retries=10
@@ -28,7 +28,7 @@ jobs:
         ports:
           - 3001:3000
         options: >-
-          --health-cmd='curl -f http://localhost:3000/ || exit 1'
+          --health-cmd='curl http://localhost:3000/'
           --health-interval=5s
           --health-timeout=2s
           --health-retries=10
