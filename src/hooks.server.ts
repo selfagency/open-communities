@@ -9,7 +9,7 @@ import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
-import { dev } from '$app/environment';
+// import { dev } from '$app/environment';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
@@ -42,8 +42,8 @@ async function customHandler({ event, resolve }) {
 		httpOnly: false,
 		maxAge: 60 * 60 * 24 * 1, // 1 day
 		path: '/',
-		sameSite: 'lax',
-		secure: !dev
+		sameSite: 'lax'
+		// secure: !dev
 	} as SerializeOptions & { path: string };
 
 	// auth
@@ -71,10 +71,19 @@ async function customHandler({ event, resolve }) {
 					event.locals.api.authStore.exportToCookie(),
 					event.locals.cookieOpts
 				);
+				// Maintain session cookie if auth refresh succeeds
+				if (!event.cookies.get('session')) {
+					event.cookies.set('session', uid(32), event.locals.cookieOpts);
+				}
 			}
 		}
-	} catch {
+	} catch (error) {
+		// Only clear auth store if refresh actually failed, not for other errors
+		log.debug('Auth refresh failed:', error);
 		event.locals.api.authStore.clear();
+		// Clear both cookies when auth fails
+		event.cookies.set('auth', '', event.locals.cookieOpts);
+		event.cookies.set('session', '', event.locals.cookieOpts);
 	}
 
 	// response

@@ -10,10 +10,10 @@ import type { UsersRecord } from '$lib/pocketbase.d';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
+import { log } from '$lib/server/logger';
 import { validateCaptcha } from '$lib/server/utils';
 
 import type { PageServerLoad } from './$types';
-// import { log } from '$lib/server/logger';
 /* endregion imports */
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -99,12 +99,24 @@ export const actions = {
 			cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);
 			cookies.set('session', uid(32), cookieOpts);
 
+			// Add debug logging
+			// log.debug('Login successful, cookies set:', {
+			// 	authCookieSet: !!api.authStore.exportToCookie(),
+			// 	cookieOpts
+			// });
+
 			return {
 				form,
 				user
 			};
 		} catch (error) {
 			const err = error as ClientResponseError;
+
+			log.error('Login failed:', {
+				email: form.data.email,
+				error: err.message,
+				status: err.status
+			});
 
 			return fail(err.status, {
 				form: {

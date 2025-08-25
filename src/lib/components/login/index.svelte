@@ -1,6 +1,5 @@
 <script lang="ts">
 	/* region imports */
-	import { isEmpty } from 'radashi';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
@@ -57,10 +56,14 @@
 				toast.success(m.loginSuccess());
 				await goto('/');
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-				if (!isEmpty(result.data.form.errors))
-					log.error('submission error', result.data.form.errors);
-				toast.error(result.data.form.errors);
+				const errorMessage =
+					result.data?.form?.error ||
+					Object.values(result.data?.form?.errors || {})
+						.flat()
+						.join(', ') ||
+					'Login failed';
+				log.error('Login error:', result.data);
+				toast.error(errorMessage);
 			}
 		}
 	});
