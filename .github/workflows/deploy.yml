@@ -3,7 +3,7 @@ name: Deploy
 on:
   workflow_run:
     # workflows: ['e2e']
-    workflows: ['build']
+    workflows: ['Build']
     types:
       - completed
 
