@@ -51,7 +51,7 @@
 	</Card.Header>
 	<Card.Content>
 		{#if verifying && !verified}
-			<Verify data={verify} bind:verified />
+			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{m.verified_extended()}

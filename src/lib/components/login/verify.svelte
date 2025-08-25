@@ -4,11 +4,10 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
-	// removed wait-for-the-element: use native Svelte element binding instead
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
+	import { waitForTheElement } from 'wait-for-the-element';
 
 	import { dev } from '$app/environment';
-	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
 	import { setState } from '$lib/stores';
 	import { log } from '$lib/utils';
@@ -16,11 +15,11 @@
 
 	/* region variables */
 	// props
-	let { data, verified = $bindable(false) }: { data: SuperValidated<any>; verified: boolean } =
-		$props();
-
-	let formEl: HTMLFormElement | null = $state(null);
-	let submitted = $state(false);
+	let {
+		data,
+		token,
+		verified = $bindable(false)
+	}: { data: SuperValidated<any>; token: null | string; verified: boolean } = $props();
 	/* endregion variables */
 
 	/* region form */
@@ -54,16 +53,12 @@
 	/* endregion form */
 
 	/* region lifecycle */
-	onMount(() => {
-		$formData.token = page.url.searchParams.get('verifyEmail');
+	onMount(async () => {
+		$formData.token = token;
 		$formData.type = 'verifyEmail';
-	});
-
-	$effect(() => {
-		if (formEl && !submitted) {
-			form.submit(formEl);
-			submitted = true;
-		}
+		await waitForTheElement('#verify', { timeout: 1000 });
+		const formEl = document.getElementById('verify') as HTMLFormElement;
+		form.submit(formEl);
 	});
 	/* endregion lifecycle */
 </script>

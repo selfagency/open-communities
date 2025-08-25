@@ -64,10 +64,10 @@
 			} else {
 				setState({ form: { hasErrors: true, success: false } });
 				if (!isEmpty(result.data.form.errors)) {
-					log.error('form errors', result.data.form_errors);
+					log.error('form errors', result.data.form.errors);
 				}
 				if (!isEmpty(result.data.form.errors)) {
-					log.error('submission error', result.data.form_error);
+					log.error('submission error', result.data.form.errors);
 				}
 				toast.error(m.transferFailure());
 			}

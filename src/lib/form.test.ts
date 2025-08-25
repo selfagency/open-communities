@@ -134,9 +134,7 @@ describe('initForm', () => {
 
 		const result = {
 			data: {
-				form: { errors: { field: 'invalid' } },
-				form_error: 'submission failed',
-				form_errors: { field: 'invalid' }
+				form: { errors: { field: 'invalid' } }
 			},
 			type: 'error'
 		} as const;
@@ -145,7 +143,7 @@ describe('initForm', () => {
 
 		expect(setState).toHaveBeenCalled();
 		const formReturned = (superFormMock as unknown as SuperFormMockShape).mock.results[0].value;
-		expect(formReturned.errors.set).toHaveBeenCalledWith(result.data.form_errors);
+		expect(formReturned.errors.set).toHaveBeenCalledWith(result.data.form.errors);
 		expect(log.error).toHaveBeenCalled();
 		expect(toast.error).toHaveBeenCalledWith(m.addFailure());
 	});

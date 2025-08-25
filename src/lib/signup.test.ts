@@ -102,9 +102,7 @@ describe('signup initForm', () => {
 
 		const result = {
 			data: {
-				form: { errors: { field: 'invalid' } },
-				form_error: 'submission failed',
-				form_errors: { field: 'invalid' }
+				form: { errors: { field: 'invalid' } }
 			},
 			type: 'error'
 		} as const;
