@@ -95,7 +95,7 @@ export const actions = {
 				).record
 			) as UsersRecord;
 
-			// cookies.set('remember', remember ? (username as string) : '', cookieOpts);
+			// Use the same cookieOpts from locals to ensure consistency
 			cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);
 			cookies.set('session', uid(32), cookieOpts);
 

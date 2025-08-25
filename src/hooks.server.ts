@@ -9,6 +9,7 @@ import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
+import { dev } from '$app/environment';
 import { PUBLIC_SENTRY_DSN } from '$env/static/public';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
@@ -38,10 +39,11 @@ async function customHandler({ event, resolve }) {
 	};
 
 	event.locals.cookieOpts = {
+		httpOnly: false,
 		maxAge: 60 * 60 * 24 * 1, // 1 day
 		path: '/',
-		sameSite: 'strict',
-		secure: true
+		sameSite: 'lax',
+		secure: !dev
 	} as SerializeOptions & { path: string };
 
 	// auth
