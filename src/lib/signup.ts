@@ -11,8 +11,9 @@ export const initForm = (data: Record<string, unknown>) => {
 		dataType: 'json',
 		id: 'signup',
 		onError({ result }) {
+			// This handles actual server errors (500s, exceptions, etc.)
 			log.error('submission error', result.error.message);
-			toast.error(m.signUpFailure);
+			toast.error(m.signUpFailure());
 		},
 		onResult() {
 			setState({ loading: false });
@@ -25,12 +26,36 @@ export const initForm = (data: Record<string, unknown>) => {
 
 			if (result.type === 'success') {
 				setState({ form: { hasErrors: false, success: true } });
-			} else {
+			} else if (result.type === 'failure') {
+				// This handles validation failures (fail(400, { form }))
 				setState({ form: { hasErrors: true, success: false } });
-				if (!isEmpty(result.data.form.errors)) {
-					log.error('form errors', result.data.form.errors);
+
+				// Add detailed error logging
+				log.error('signup form validation failed', {
+					data: result.data,
+					status: result.status,
+					type: result.type
+				});
+
+				if (!isEmpty(result.data?.form?.errors)) {
+					log.error('form field errors', result.data.form.errors);
 				}
-				toast.error(m.signUpFailure);
+
+				// Check if there's a specific error message from the server
+				const serverError = result.data?.form?.error;
+				if (serverError) {
+					log.error('server error message', serverError);
+					toast.error(serverError);
+				} else if (!isEmpty(result.data?.form?.errors)) {
+					// If there are field errors but no general error, show generic message
+					toast.error(m.signUpFailure());
+				} else {
+					// Fallback for unknown validation failure
+					toast.error(m.signUpFailure());
+				}
+			} else {
+				// Handle other result types (like 'redirect')
+				log.error('unexpected result type', result);
 			}
 		}
 	});

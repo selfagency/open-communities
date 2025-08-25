@@ -5,6 +5,7 @@ import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
 const base = 'http://localhost:4173';
+const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
 
 test.describe('auth flows', () => {
   // run tests in this describe serially so they can share state
@@ -53,97 +54,105 @@ test.describe('auth flows', () => {
     await page.waitForSelector('cap-widget .captcha', { timeout: 10000 });
     await page.click('cap-widget .captcha');
 
-    // Wait for the captcha to be solved (it should show as "done" state)
-    await page.waitForSelector('cap-widget .captcha[data-state="done"]', { timeout: 10000 });
-
-    // Debug: Check what captcha token was generated
-    const captchaToken = await page.evaluate(() => {
-      const input = document.querySelector('input[name="captcha"]');
-      return input ? input.value : null;
-    });
-    console.log('[e2e-debug] Captcha token generated:', captchaToken);
-
     // Click the submit button
-    await sleep(1000);
+    await sleep(300);
+
+    // Check if captcha token is set before submitting
+    const captchaCheck = await page.evaluate(() => {
+      const captchaInput = document.querySelector('input[name="captcha"]');
+      return {
+        captchaValue: captchaInput?.value || 'NO VALUE',
+        hasSubmitButton: !!document.querySelector('button[type="submit"]')
+      };
+    });
+    console.log('[e2e-debug] Pre-submit check:', captchaCheck);
+
     await page.click('button[type="submit"]');
 
     // Wait for form submission
-    await page.waitForTimeout(2000);
+    await sleep(200);
 
     // Check if there are any form errors displayed
-    const errorMessages = await page.evaluate(() => {
-      const errors = Array.from(document.querySelectorAll('[data-testid="error"], .error, .field-error, .form-error'));
-      return errors.map(el => el.textContent.trim()).filter(text => text);
-    });
+    // const errorMessages = await page.evaluate(() => {
+    //   const errors = Array.from(document.querySelectorAll('[data-testid="error"], .error, .field-error, .form-error'));
+    //   return errors.map(el => el.textContent.trim()).filter(text => text);
+    // });
 
-    if (errorMessages.length > 0) {
-      console.log('[e2e-debug] Form errors found:', errorMessages);
-    }
+    // if (errorMessages.length > 0) {
+    //   console.log('[e2e-debug] Form errors found:', errorMessages);
+    // }
 
     // Check if we're still on the signup page (which would indicate an error)
-    const currentUrl = page.url();
-    console.log('[e2e-debug] Current URL after form submission:', currentUrl);
+    // const currentUrl = page.url();
+    // console.log('[e2e-debug] Current URL after form submission:', currentUrl);
 
     // Look for success message
-    const successMessage = await page.textContent('.success, [data-testid="success"]').catch(() => null);
+    const successMessage = await page.textContent('*:has-text("Sign up successful")').catch(() => null);
     if (successMessage) {
       console.log('[e2e-debug] Success message:', successMessage);
     }
 
+    // Wait a bit for the email to be sent (without using page context)
+    console.log('[e2e-debug] Waiting for verification email to be sent...');
+    await sleep(1000);
+
     const subjectPart = 'Verify your Open Communities email';
+    // console.log('[e2e-debug] Looking for email with subject containing:', subjectPart);
+
     const msg = await findMessageBySubject(subjectPart, 20000);
-    if (!msg) {
-      const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
-      const res = await fetch(`${MAILPIT_API}/messages`);
-      const dump = await (res.ok ? res.json() : res.text());
-      console.error('[e2e-debug] verification email not found — Mailpit messages dump:', JSON.stringify(dump, null, 2));
-    }
     expect(msg).toBeTruthy();
 
-    const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
-    const rawRes = await fetch(`${MAILPIT_API}/message/${msg.id}/raw`);
-    let raw = rawRes.ok ? await rawRes.text() : '';
+    // console.log('[e2e-debug] Found message:', { id: msg.ID || msg.id, subject: msg.Subject || msg.subject });
 
-    // If raw fetch failed, try getting message details
-    if (!raw) {
-      const detailRes = await fetch(`${MAILPIT_API}/message/${msg.id}`);
-      if (detailRes.ok) {
-        const detail = await detailRes.json();
-        raw = detail.HTML || detail.Text || JSON.stringify(detail);
+    const messageId = msg.ID || msg.id;
+    // console.log('[e2e-debug] Fetching message details for ID:', messageId);
+
+    // Skip raw endpoint and go directly to message details
+    const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`,  {
+      headers: {
+        accept: 'application/json'
       }
+    });
+    console.log('[e2e-debug] Detail response status:', detailRes.status, detailRes.statusText);
+
+    if (!detailRes.ok) {
+      throw new Error(`Failed to fetch message details: ${detailRes.status} ${detailRes.statusText}`);
     }
 
-    // Add debug logging and improve token extraction
-    console.log('[e2e-debug] Raw email content length:', raw.length);
-    console.log('[e2e-debug] Raw email content preview:', raw.substring(0, 500));
+    const detail = await detailRes.json();
+    // console.log('[e2e-debug] Message detail keys:', Object.keys(detail));
+    // console.log('[e2e-debug] Detail HTML length:', detail.HTML?.length || 0);
+    // console.log('[e2e-debug] Detail Text length:', detail.Text?.length || 0);
 
-    // More comprehensive token extraction that handles URL encoding and line breaks
-    const tokenMatch = raw.match(/verifyEmail=3D([A-Za-z0-9-_.%=]+)/g) ||
-                       raw.match(/verifyEmail=([A-Za-z0-9-_.%=]+)/g) ||
-                       raw.match(/verifyEmail["\s]*[:=]\s*["']?([A-Za-z0-9-_.%=]+)["']?/g);
+    // Use HTML content primarily, fall back to Text
+    let raw = detail.HTML || detail.Text || '';
 
-    let rawToken = null;
-    if (tokenMatch && tokenMatch.length > 0) {
-      // Extract the token from the first match, handling multiple capture patterns
-      const match = tokenMatch[0];
-      const tokenPart = match.split('=').pop(); // Get everything after the last =
-      rawToken = tokenPart;
+    // Add debug logging and extract verification link
+    // console.log('[e2e-debug] Final email content length:', raw.length);
+    // console.log('[e2e-debug] Final email content preview:', raw.substring(0, 500));    // Extract verification link instead of just the token
+    const linkMatch = raw.match(/https?:\/\/[^\s"'<>]+verifyEmail[^\s"'<>]*/g) ||
+                      raw.match(/https?:\/\/[^\s"'<>]+\?[^\s"'<>]*verifyEmail[^\s"'<>]*/g);
+
+    let verificationLink = null;
+    if (linkMatch && linkMatch.length > 0) {
+      verificationLink = linkMatch[0];
+      // Clean up any HTML encoding
+      verificationLink = verificationLink.replace(/&amp;/g, '&').replace(/=3D/g, '=');
     }
 
-    console.log('[e2e-debug] Extracted raw token:', rawToken);
+    // console.log('[e2e-debug] Extracted verification link:', verificationLink);
 
-    // URL decode the token if needed
-    if (rawToken) {
-      verifyToken = decodeURIComponent(rawToken);
-      // Handle the 3D encoding specifically (3D = URL encoded =)
-      if (rawToken.startsWith('3D')) {
-        verifyToken = decodeURIComponent(rawToken.replace(/^3D/, '='));
-      }
-    }
+    expect(verificationLink).toBeTruthy();
 
-    console.log('[e2e-debug] Final decoded token:', verifyToken);
+    // Click the verification link
+    await page.goto(verificationLink);
 
-    expect(verifyToken).toBeTruthy();
+    // Wait for verification to complete
+    await page.waitForTimeout(2000);
+
+    // Check if we're on a success page or if there's a success message
+    // const pageContent = await page.textContent('body');
+    // console.log('[e2e-debug] Verification page content:', pageContent.substring(0, 200));
 
     // Verify user was created in PocketBase
     const PB_ADMIN = process.env.PB_TEST_ADMIN;
@@ -154,7 +163,7 @@ test.describe('auth flows', () => {
       // Login as admin to PocketBase
       const authRes = await fetch(`${PB_API}/admins/auth-with-password`, {
         body: JSON.stringify({ identity: PB_ADMIN, password: PB_PASSWORD }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'content-type': 'application/json' },
         method: 'POST'
       });
 
@@ -171,8 +180,8 @@ test.describe('auth flows', () => {
           const usersData = await usersRes.json();
           expect(usersData.items).toHaveLength(1);
           expect(usersData.items[0].email).toBe(email);
-          expect(usersData.items[0].verified).toBe(false); // Should be unverified initially
-          console.log('[e2e] User successfully created in PocketBase:', usersData.items[0].id);
+          expect(usersData.items[0].verified).toBe(true); // Should be verified after clicking the link
+          console.log('[e2e] User successfully verified in PocketBase:', usersData.items[0].id);
         } else {
           console.warn('[e2e] Failed to query PocketBase users:', await usersRes.text());
         }
@@ -190,20 +199,24 @@ test.describe('auth flows', () => {
     await page.fill('input[autocomplete="email"]', email);
     await page.click('text=Send reset email');
 
-    const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
     const resetMsg = await findMessageBySubject('Reset', 20000);
-    if (!resetMsg) {
-      const res2 = await fetch(`${MAILPIT_API}/messages`);
-      const dump2 = await (res2.ok ? res2.json() : res2.text());
-      console.error('[e2e-debug] reset email not found — Mailpit messages dump:', JSON.stringify(dump2, null, 2));
-    }
     expect(resetMsg).toBeTruthy();
-    const rawResetRes = await fetch(`${MAILPIT_API}/message/${resetMsg.id}/raw`);
+
+    const messageId = resetMsg.ID || resetMsg.id;
+    const rawResetRes = await fetch(`${MAILPIT_API}/message/${messageId}/raw`, {
+      headers: {
+        accept: 'application/json'
+      }
+    });
     let rawReset = rawResetRes.ok ? await rawResetRes.text() : '';
 
     // If raw fetch failed, try getting message details
     if (!rawReset) {
-      const detailRes = await fetch(`${MAILPIT_API}/message/${resetMsg.id}`);
+      const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`,  {
+      headers: {
+        accept: 'application/json'
+      }
+    });
       if (detailRes.ok) {
         const detail = await detailRes.json();
         rawReset = detail.HTML || detail.Text || JSON.stringify(detail);

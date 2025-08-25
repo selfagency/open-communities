@@ -1,7 +1,7 @@
 const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
 
 export async function clearMailpit() {
-  const res = await fetch(`${MAILPIT_API}/messages`, { method: 'DELETE' });
+  const res = await fetch(`${MAILPIT_API}/messages`, { accept: 'application/json', method: 'DELETE' });
   if (!res.ok) {
     throw new Error(`Failed to clear Mailpit messages: ${res.status} ${res.statusText}`);
   }
@@ -16,8 +16,14 @@ export async function findMessageBySubject(subject, timeout = 8000, to) {
   let lastPayload = null;
   const needle = (subject || '').toLowerCase();
 
+  console.log(`[mailpit] Searching for subject containing: "${needle}"`);
+
   while (Date.now() < deadline) {
-    const res = await fetch(`${MAILPIT_API}/messages`);
+    const res = await fetch(`${MAILPIT_API}/messages`, {
+      headers: {
+        'accept': 'application/json'
+      }
+    });
     if (!res.ok) throw new Error('Mailpit API not reachable');
     const data = await res.json();
     // support several shapes returned by various mailpit versions
@@ -37,13 +43,16 @@ export async function findMessageBySubject(subject, timeout = 8000, to) {
       return true;
     });
 
-    if (found) return found;
+    if (found) {
+      console.log(`[mailpit] Found matching message with ID: ${found.ID}`);
+      return found;
+    }
     await new Promise((r) => setTimeout(r, 250));
   }
 
   // helpful debug: show subjects of last fetch if nothing found
   try {
-    const subjects = (lastPayload || []).slice(0, 10).map((m) => ({ id: m.id, subject: m.subject || m.Subject }));
+    const subjects = (lastPayload || []).slice(0, 10).map((m) => ({ id: m.ID, subject: m.subject || m.Subject }));
     console.warn(`[mailpit] findMessageBySubject timeout; checked subjects: ${JSON.stringify(subjects)}`);
   } catch {
     // ignore

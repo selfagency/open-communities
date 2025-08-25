@@ -1,14 +1,13 @@
 <script lang="ts">
 	/* region imports */
-	import { sleep } from 'radashi';
 	import { onMount, untrack } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms';
 
-	import { browser, dev } from '$app/environment';
+	import { dev } from '$app/environment';
 	import { page } from '$app/state';
-	import { env } from '$env/dynamic/public';
+	import Captcha from '$lib/components/global/captcha.svelte';
 	import Combobox from '$lib/components/global/combobox.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
@@ -63,14 +62,6 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		if (browser) {
-			await sleep(500);
-			const widget = document.querySelector('cap-widget');
-			widget?.addEventListener('solve', function (e) {
-				$formData.captcha = e.detail.token;
-			});
-		}
-
 		if (!$formData.reason) $formData.reason = 'question';
 		if (!$formData.name) $formData.name = user?.name || '';
 		if (!$formData.email) $formData.email = user?.email || '';
@@ -194,16 +185,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Field {form} name="captcha">
-					<Form.Control>
-						<div class="my-2 w-full">
-							<cap-widget
-								data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
-							></cap-widget>
-						</div>
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
+				<Captcha {form} />
 
 				<Form.Button>{m.contact_send()}</Form.Button>
 			</form>

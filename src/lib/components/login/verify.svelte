@@ -1,13 +1,14 @@
 <script lang="ts">
 	/* region imports */
 	import { isEmpty } from 'radashi';
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	// removed wait-for-the-element: use native Svelte element binding instead
+	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
 	import { dev } from '$app/environment';
+	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
 	import { setState } from '$lib/stores';
 	import { log } from '$lib/utils';
@@ -15,11 +16,11 @@
 
 	/* region variables */
 	// props
-	let {
-		data,
-		token,
-		verified = $bindable(false)
-	}: { data: SuperValidated<any>; token: null | string; verified: boolean } = $props();
+	let { data, verified = $bindable(false) }: { data: SuperValidated<any>; verified: boolean } =
+		$props();
+
+	let formEl: HTMLFormElement | null = $state(null);
+	let submitted = $state(false);
 	/* endregion variables */
 
 	/* region form */
@@ -28,7 +29,7 @@
 		id: 'verify',
 		onError({ result }) {
 			log.error('submission error', result.error.message);
-			toast.error(result.error.message);
+			toast.error(m.verifyFailure);
 		},
 		onResult() {
 			setState({ loading: false });
@@ -41,9 +42,9 @@
 			if (result.type === 'success') {
 				verified = true;
 			} else {
-				if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form_errors);
-				if (!isEmpty(result.data.form.errors))
-					log.error('submission error', result.data.form_error);
+				if (!isEmpty(result.data.form.errors)) {
+					log.error('form errors', result.data.form.errors);
+				}
 				toast.error(m.verifyFailure);
 			}
 		}
@@ -53,20 +54,12 @@
 	/* endregion form */
 
 	/* region lifecycle */
-	let formEl: HTMLFormElement | null = null;
-	let submitted = false;
+	onMount(() => {
+		$formData.token = page.url.searchParams.get('verifyEmail');
+		$formData.type = 'verifyEmail';
+	});
 
-	onMount(async () => {
-		// Use the store API to update form data so test stubs that implement
-		// set/subscribe/update work correctly.
-		formData.update((fd: any) => ({ ...(fd ?? {}), token, type: 'verifyEmail' }));
-
-		// wait a microtask so the conditional form has a chance to render and
-		// bind to `formEl` (Svelte will do this on the next tick). Await twice
-		// to be extra-safe in test environments.
-		await tick();
-		await tick();
-
+	$effect(() => {
 		if (formEl && !submitted) {
 			form.submit(formEl);
 			submitted = true;

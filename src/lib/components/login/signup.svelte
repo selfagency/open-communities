@@ -2,13 +2,12 @@
 	/* region imports */
 	import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
-	import { sleep } from 'radashi';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { browser, dev } from '$app/environment';
+	import { dev } from '$app/environment';
 	import { page } from '$app/state';
-	import { env } from '$env/dynamic/public';
+	import Captcha from '$lib/components/global/captcha.svelte';
 	import Verify from '$lib/components/login/verify.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Form from '$lib/components/ui/form';
@@ -24,7 +23,6 @@
 
 	// locals
 	let verified: boolean = $state(false);
-	let widget: HTMLElement | null = $state(null);
 	// let captchaLoaded: boolean = false;
 
 	// constants
@@ -37,23 +35,9 @@
 
 	/* region lifecycle */
 	onMount(async () => {
-		if (browser) {
-			await sleep(500);
-			widget = document.getElementById('captcha');
-			widget?.addEventListener('solve', function (e) {
-				$formData.captcha = e.detail.token;
-			});
-		}
-
 		setState({ form: { hasErrors: false, success: false } });
 		$formData.emailVisibility = true;
 		$formData.lang = 'en';
-	});
-
-	onDestroy(() => {
-		if (widget) {
-			widget.removeEventListener('solve', () => {});
-		}
 	});
 	/* endregion lifecycle */
 </script>
@@ -67,7 +51,7 @@
 	</Card.Header>
 	<Card.Content>
 		{#if verifying && !verified}
-			<Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
+			<Verify data={verify} bind:verified />
 		{:else if verified}
 			<span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
 				{m.verified_extended()}
@@ -140,17 +124,7 @@
 					<Form.FieldErrors />
 				</Form.Field>
 
-				<Form.Field {form} name="captcha">
-					<Form.Control>
-						<div class="my-4 w-full">
-							<cap-widget
-								id="captcha"
-								data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
-							></cap-widget>
-						</div>
-					</Form.Control>
-					<Form.FieldErrors />
-				</Form.Field>
+				<Captcha {form} />>
 
 				<div class="mt-4"><Form.Button>{m.signUp()}</Form.Button></div>
 			</form>

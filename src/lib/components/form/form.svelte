@@ -4,13 +4,13 @@
 
 	import WarningIcon from 'lucide-svelte/icons/circle-alert';
 	import { sleep } from 'radashi';
-	import { getContext, onDestroy, onMount, untrack } from 'svelte';
+	import { getContext, onMount, untrack } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
 
 	import { browser, dev } from '$app/environment';
-	import { env } from '$env/dynamic/public';
+	import Captcha from '$lib/components/global/captcha.svelte';
 	import Loading from '$lib/components/global/loading.svelte';
 	import * as Accordion from '$lib/components/ui/accordion';
 	import * as Alert from '$lib/components/ui/alert';
@@ -56,7 +56,6 @@
 	const congregation = getContext('congregation') as CongregationMetaRecord;
 
 	// locals
-	let widget: HTMLElement | null = $state(null);
 	let title: string = $state('');
 	let view = $state('congregation') as string;
 	/* endregion variables */
@@ -154,20 +153,7 @@
 
 			await sleep(500);
 
-			if (mode === 'add') {
-				widget = document.getElementById('captcha');
-				widget?.addEventListener('solve', function (e) {
-					$formData.captcha = e.detail.token;
-				});
-			}
-
 			setState({ loading: false });
-		}
-	});
-
-	onDestroy(() => {
-		if (widget) {
-			widget.removeEventListener('solve', () => {});
 		}
 	});
 	/* endregion lifecycle */
@@ -274,17 +260,7 @@
 								</div>
 
 								{#if mode === 'add'}
-									<Form.Field {form} name="captcha">
-										<Form.Control>
-											<div class="mt-4 mb-8 w-full">
-												<cap-widget
-													id="captcha"
-													data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
-												></cap-widget>
-											</div>
-										</Form.Control>
-										<Form.FieldErrors />
-									</Form.Field>
+									<Captcha {form} />
 								{/if}
 							{/if}
 						</Card.Content>
