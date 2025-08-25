@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
     services:
       mailpit:
         image: axllent/mailpit:latest
@@ -26,6 +27,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -64,12 +72,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build project
-        run: pnpm build
-        env:
-          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
       - name: Download PocketBase binary
         run: |
           PB_VERSION=0.29.2
@@ -81,7 +83,7 @@ jobs:
       - name: Start PocketBase
         run: nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
 
-      - name: Start Node preview server
+      - name: Pull and start Docker container
         env:
           ADMIN_EMAIL: rabbis4ceasefire@gmail.com
           CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
@@ -95,10 +97,31 @@ jobs:
           SMTP_HOST: localhost
           SMTP_PORT: 1025
           PORT: 4173
-        run: nohup node build/index.js > .e2e/server.log 2>&1 &
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
+          docker run -d \
+            --name app \
+            --network host \
+            -e ADMIN_EMAIL="$ADMIN_EMAIL" \
+            -e CAP_API_KEY="$CAP_API_KEY" \
+            -e NODE_ENV="$NODE_ENV" \
+            -e PB_TEST_ADMIN="$PB_TEST_ADMIN" \
+            -e PB_TEST_PASSWORD="$PB_TEST_PASSWORD" \
+            -e PUBLIC_API_ENDPOINT="$PUBLIC_API_ENDPOINT" \
+            -e PUBLIC_CAPTCHA_ENDPOINT="$PUBLIC_CAPTCHA_ENDPOINT" \
+            -e PUBLIC_HOSTNAME="$PUBLIC_HOSTNAME" \
+            -e PUBLIC_SENTRY_DSN="$PUBLIC_SENTRY_DSN" \
+            -e SMTP_HOST="$SMTP_HOST" \
+            -e SMTP_PORT="$SMTP_PORT" \
+            -e PORT="$PORT" \
+            ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
+
+      - name: Wait for application to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:4173 >/dev/null 2>&1; do sleep 1; done'
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps --only-shell
 
       - name: Run Playwright E2E
         env:
@@ -107,3 +130,23 @@ jobs:
           MAILPIT_API: http://127.0.0.1:8025/api/v1
           PB_TEST_BASEURL: http://127.0.0.1:4173
         run: pnpm exec playwright test --config e2e/playwright.config.mjs
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v4
+        if: always() && hashFiles('e2e/test-results/**') != ''
+        with:
+          name: e2e-test-results
+          path: e2e/test-results
+
+      - name: Upload E2E Playwright report
+        uses: actions/upload-artifact@v4
+        if: always() && hashFiles('e2e/playwright-report/**') != ''
+        with:
+          name: e2e-playwright-report
+          path: e2e/playwright-report
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop app || true
+          docker rm app || true

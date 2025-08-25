@@ -88,7 +88,9 @@ export default defineConfig({
 			provider: 'playwright'
 		},
 		coverage: {
-			provider: 'istanbul' // or 'v8'
+			provider: 'istanbul', // or 'v8'
+			reporter: ['text', 'json-summary', 'json', 'html'],
+			reportsDirectory: './coverage'
 		},
 		environment: 'happy-dom',
 		// Use Node environment for server tests
@@ -97,8 +99,11 @@ export default defineConfig({
 		globals: true,
 		// explicit include to ensure test files under src/ are collected
 		include: ['src/**/*.test.{ts,tsx,js,jsx}'],
-		outputFile: './test-results/results.json',
-		reporters: ['json', 'default'],
+		outputFile: {
+			json: './test-results/results.json',
+			junit: './test-results/junit.xml'
+		},
+		reporters: ['json', 'default', 'junit'],
 		// vitest-browser-svelte must be loaded before the project setup so it
 		// injects the `page.render` and locators for browser-mode tests.
 		setupFiles: ['vitest-browser-svelte', path.resolve(__dirname, 'src/test/setupTest.ts')]

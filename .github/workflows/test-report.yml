@@ -14,6 +14,7 @@ permissions:
 jobs:
   report:
     runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - name: Checkout repository (default branch context)
@@ -21,18 +22,24 @@ jobs:
 
       - name: Download coverage artifact
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: coverage
           path: coverage
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Download test-results artifact
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           name: test-results
           path: test-results
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Report coverage (step summary + PR comment)
-        if: always()
+        if: hashFiles('coverage/coverage-summary.json') != ''
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           # point to the json summary produced by vitest
@@ -42,12 +49,12 @@ jobs:
           comment-on: pr
 
       - name: Publish test report (create check run)
-        if: always()
+        if: hashFiles('test-results/*.xml') != ''
         uses: dorny/test-reporter@v2
         with:
           artifact: test-results
           path: '*.xml'
-          reporter: jest-unit
+          reporter: java-junit
           name: Vitest Tests
           use-actions-summary: 'true'
           fail-on-empty: 'false'
