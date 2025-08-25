@@ -113,9 +113,9 @@ export const actions = {
 				batch.collection('services').create({ ...services, congregation });
 				await batch.send({ fetch });
 
-				await api.collection('users').update(user, { congregation });
-
 				if (!client?.admin) {
+					await api.collection('users').update(user, { congregation });
+
 					await transactionalMail({
 						email: client.email,
 						message: `${m.transactional_submitted({ locale: client.lang || 'en' })} ${m.transactional_confirmation({ locale: client.lang || 'en' })}`,

@@ -1,4 +1,5 @@
 /* region imports */
+import { marked } from 'marked';
 import nodemailer from 'nodemailer';
 
 import type { TypedPocketBase } from '$lib/pocketbase.d';
@@ -46,7 +47,7 @@ export async function mailTransport({ from, message, subject, to }: Record<strin
 		log.warn('SMTP credentials are not set');
 	}
 
-	const html = emailTemplate?.replace('%MESSAGE%', `<p>${message?.replace('\n', '<br />')}</p>`);
+	const html = emailTemplate?.replace('%MESSAGE%', `${await marked.parseInline(message)}`);
 	const text = message;
 	const mail = {
 		from,
