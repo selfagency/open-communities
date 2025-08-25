@@ -18,7 +18,7 @@ jobs:
           - 1025:1025
           - 8025:8025
         options: >-
-          --health-cmd='curl -sSf http://localhost:8025/api/v1/messages || exit 1'
+          --health-cmd='curl -f http://localhost:8025/api/v1/messages || exit 1'
           --health-interval=5s
           --health-timeout=2s
           --health-retries=10
