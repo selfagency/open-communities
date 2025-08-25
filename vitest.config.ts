@@ -90,7 +90,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'istanbul', // or 'v8'
 			reporter: ['text', 'json-summary', 'json', 'html'],
-			reportsDirectory: './coverage'
+			reportsDirectory: './test-results/coverage'
 		},
 		environment: 'happy-dom',
 		// Use Node environment for server tests

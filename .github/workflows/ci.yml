@@ -105,13 +105,6 @@ jobs:
           find . -maxdepth 2 -name "*test*.xml" -type f -exec cp {} test-results/ \;
           ls -la test-results/ || echo "test-results still empty"
 
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        if: always() && hashFiles('coverage/**') != ''
-        with:
-          name: coverage
-          path: coverage
-
       - name: Upload test results artifact
         uses: actions/upload-artifact@v4
         if: always() && hashFiles('test-results/**') != ''

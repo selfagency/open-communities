@@ -20,15 +20,6 @@ jobs:
       - name: Checkout repository (default branch context)
         uses: actions/checkout@v4
 
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: coverage
-          path: coverage
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-
       - name: Download test-results artifact
         uses: actions/download-artifact@v4
         continue-on-error: true
@@ -38,22 +29,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Debug downloaded artifacts
-        run: |
-          echo "=== Downloaded coverage ==="
-          ls -la coverage/ || echo "No coverage directory"
-          echo "=== Downloaded test-results ==="
-          ls -la test-results/ || echo "No test-results directory"
-          echo "=== All files ==="
-          find . -type f -name "*.xml" -o -name "*.json" | grep -E "(coverage|test)" || echo "No relevant files found"
+      # - name: Debug downloaded artifacts
+      #   run: |
+      #     echo "=== Downloaded coverage ==="
+      #     ls -la coverage/ || echo "No coverage directory"
+      #     echo "=== Downloaded test-results ==="
+      #     ls -la test-results/ || echo "No test-results directory"
+      #     echo "=== All files ==="
+      #     find . -type f -name "*.xml" -o -name "*.json" | grep -E "(coverage|test)" || echo "No relevant files found"
 
       - name: Report coverage (step summary + PR comment)
-        if: hashFiles('coverage/coverage-summary.json') != ''
+        if: hashFiles('/home/runner/work/open-communities/open-communities/test-results/coverage/coverage-summary.json') != ''
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           # point to the json summary produced by vitest
-          json-summary-path: './coverage/coverage-summary.json'
-          json-final-path: './coverage/coverage-final.json'
+          json-summary-path: '/home/runner/work/open-communities/open-communities/test-results/coverage/coverage-summary.json'
+          json-final-path: '/home/runner/work/open-communities/open-communities/test-results/coverage/coverage-final.json'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on: pr
 
@@ -62,7 +53,7 @@ jobs:
         uses: dorny/test-reporter@v2
         with:
           artifact: test-results
-          path: 'test-results/**/*.xml'
+          path: '/home/runner/work/open-communities/open-communities/test-results/**'
           reporter: java-junit
           name: Vitest Tests
           use-actions-summary: 'true'

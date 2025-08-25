@@ -18,7 +18,7 @@
 		"preview": "pnpx dotenv-cli -c dynamic -- vite preview",
 		"preview:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite preview",
 		"start": "node build/index.js",
-		"test": "pnpx dotenv-cli -e .env.test -- vitest",
+		"test": "pnpx dotenv-cli -e .env.test -- vitest --coverage --coverage.enabled=true",
 		"test:setup": "pnpx dotenv-cli -e .env.test -- node e2e/cap/setup-captcha.mjs",
 		"test:e2e": "pnpx dotenv-cli -e .env.test -e .env.e2e -- playwright test --config e2e/playwright.config.mjs",
 		"machine-translate": "inlang machine translate --project project.inlang"
@@ -54,6 +54,7 @@
 		"@types/nodemailer": "^7.0.1",
 		"@types/web": "^0.0.263",
 		"@vitest/browser": "^3.2.4",
+		"@vitest/coverage-istanbul": "3.2.4",
 		"bits-ui": "2.9.4",
 		"clsx": "^2.1.1",
 		"cmdk-sv": "^0.0.19",
