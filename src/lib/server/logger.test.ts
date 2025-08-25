@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Hoist-safe mocks
@@ -38,7 +40,9 @@ vi.mock('radashi', () => ({
 	uid: () => 'staticid'
 }));
 
-vi.mock('$env/dynamic/public', () => ({ PUBLIC_HOSTNAME: 'http://localhost:4173' }));
+vi.mock('$env/dynamic/public', () => ({
+	env: { PUBLIC_HOSTNAME: 'http://localhost:4173' }
+}));
 vi.mock('$app/environment', () => ({ dev: false }));
 
 import { logger } from '$lib/utils';

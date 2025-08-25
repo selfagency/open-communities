@@ -38,7 +38,7 @@ vi.mock('$lib/stores', () => {
 	return { setState };
 });
 
-vi.mock('$lib/paraglide/messages', () => ({ m: { signUpFailure: 'signup-failed' } }));
+vi.mock('$lib/paraglide/messages', () => ({ m: { signUpFailure: () => 'boom' } }));
 
 vi.mock('$lib/utils', () => ({ log: { error: vi.fn() } }));
 
@@ -104,7 +104,7 @@ describe('signup initForm', () => {
 			data: {
 				form: { errors: { field: 'invalid' } }
 			},
-			type: 'error'
+			type: 'failure'
 		} as const;
 
 		await opts.onUpdate?.({ result });
@@ -112,6 +112,6 @@ describe('signup initForm', () => {
 		expect(setState).toHaveBeenCalled();
 		// Ensure logging and toast were triggered for failure
 		expect(log.error).toHaveBeenCalled();
-		expect(toast.error).toHaveBeenCalledWith(m.signUpFailure);
+		expect(toast.error).toHaveBeenCalledWith(m.signUpFailure());
 	});
 });

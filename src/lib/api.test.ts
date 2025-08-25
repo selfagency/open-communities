@@ -30,7 +30,9 @@ vi.mock('pocketbase', () => {
 	};
 });
 
-vi.mock('$env/dynamic/public', () => ({ PUBLIC_API_ENDPOINT: 'https://localhost:8090' }));
+vi.mock('$env/dynamic/public', () => ({ 
+	env: { PUBLIC_API_ENDPOINT: 'https://localhost:8090' }
+}));
 
 // Import after mocks so the module uses the mocks during evaluation
 import { cleanResponse, expand } from './api';

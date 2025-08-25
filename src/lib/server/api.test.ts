@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Hoist-safe mocks before importing the module under test

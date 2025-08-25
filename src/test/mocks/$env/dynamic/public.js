@@ -7,3 +7,6 @@ export const env = {
   PUBLIC_HOSTNAME,
   PUBLIC_SENTRY_DSN
 }
+
+// Provide a default export to avoid ESM named export resolution issues under test bundling
+export default env;

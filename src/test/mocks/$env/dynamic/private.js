@@ -15,3 +15,5 @@ export const env = {
 	SMTP_PORT,
 	SMTP_USER
 }
+
+export default env;
