@@ -23,7 +23,7 @@ import { adminMail, transactionalMail } from '$lib/server/mail';
 /* endregion imports */
 
 /* region types */
-type MetaRecord = {
+type MetaRecord = RecordWithId & {
 	accessibility: AccessibilityRecord & { id: string };
 	fit: FitRecord & { id: string };
 	health: HealthRecord & { id: string };
@@ -32,7 +32,6 @@ type MetaRecord = {
 	security: SecurityRecord & { id: string };
 	services: ServicesRecord & { id: string };
 };
-
 type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
@@ -101,10 +100,14 @@ export const actions = {
 			}
 
 			const record = await api.collection('congregationMeta').getOne(data.id, { fetch });
-			const { accessibility, fit, health, registration, security, services } = record as MetaRecord;
+			const { accessibility, fit, health, owner, registration, security, services } =
+				record as MetaRecord;
 
 			const batch = api.createBatch();
 
+			if (owner) {
+				batch.collection('users').update(owner, { congregation: '' });
+			}
 			batch.collection('accessibility').delete(accessibility.id);
 			batch.collection('fit').delete(fit.id);
 			batch.collection('registration').delete(registration.id);

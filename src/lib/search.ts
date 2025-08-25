@@ -40,11 +40,17 @@ export class Search {
 				const locationIds = this.data
 					.filter((record) => {
 						const { city, country, state: recordState } = record.location as LocationMeta;
-						return (
-							(!filterCity || city?.id === filterCity.id) &&
-							(!filterCountry || country?.id === filterCountry.id) &&
-							(!filterState || recordState?.id === filterState.id)
-						);
+
+						// if (this.debug) {
+						// 	console.log('Filter:', { filterCity, filterCountry, filterState });
+						// 	console.log('Record:', { city, country, state: recordState });
+						// }
+
+						const cityMatch = !filterCity || (city && city.id === filterCity.id);
+						const countryMatch = !filterCountry || (country && country.id === filterCountry.id);
+						const stateMatch = !filterState || (recordState && recordState.id === filterState.id);
+
+						return cityMatch && countryMatch && stateMatch;
 					})
 					.map((i) => i.id);
 				resultIds = resultIds.filter((i) => locationIds.includes(i));
