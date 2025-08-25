@@ -18,20 +18,10 @@ jobs:
         ports:
           - 1025:1025
           - 8025:8025
-        options: >-
-          --health-cmd='curl http://localhost:8025/api/v1/messages'
-          --health-interval=5s
-          --health-timeout=2s
-          --health-retries=10
       cap:
         image: tiago2/cap:latest
         ports:
           - 3001:3000
-        options: >-
-          --health-cmd='curl http://localhost:3000/'
-          --health-interval=5s
-          --health-timeout=2s
-          --health-retries=10
 
     steps:
       - name: Checkout repository
