@@ -40,10 +40,28 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install
 
+      - name: Build application
+        run: pnpm build
+        env:
+          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
       - name: Run tests (vitest) with coverage
         id: test
         continue-on-error: true
         run: pnpm test -- --coverage.enabled true
+        env:
+          ADMIN_EMAIL: rabbis4ceasefire@gmail.com
+          CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
+          NODE_ENV: test
+          PB_TEST_ADMIN: admin@test.com
+          PB_TEST_PASSWORD: i3_NL-dfzzFt5TX
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
+          PUBLIC_HOSTNAME: http://localhost:4173
+          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
+          SMTP_HOST: localhost
+          SMTP_PORT: 1025
 
       - name: Collect coverage folder (if present)
         run: |
