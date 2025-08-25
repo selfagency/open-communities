@@ -38,6 +38,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      - name: Debug downloaded artifacts
+        run: |
+          echo "=== Downloaded coverage ==="
+          ls -la coverage/ || echo "No coverage directory"
+          echo "=== Downloaded test-results ==="
+          ls -la test-results/ || echo "No test-results directory"
+          echo "=== All files ==="
+          find . -type f -name "*.xml" -o -name "*.json" | grep -E "(coverage|test)" || echo "No relevant files found"
+
       - name: Report coverage (step summary + PR comment)
         if: hashFiles('coverage/coverage-summary.json') != ''
         uses: davelosert/vitest-coverage-report-action@v2
@@ -49,11 +58,11 @@ jobs:
           comment-on: pr
 
       - name: Publish test report (create check run)
-        if: hashFiles('test-results/*.xml') != ''
+        if: hashFiles('test-results/**') != ''
         uses: dorny/test-reporter@v2
         with:
           artifact: test-results
-          path: 'test-results/junit.xml'
+          path: 'test-results/**/*.xml'
           reporter: java-junit
           name: Vitest Tests
           use-actions-summary: 'true'

@@ -73,7 +73,8 @@ jobs:
       - name: Run tests (vitest) with coverage
         id: test
         continue-on-error: true
-        run: pnpm test -- --coverage
+        run: |
+          pnpm test -- --coverage --reporter=default --reporter=junit --reporter=json
         env:
           ADMIN_EMAIL: rabbis4ceasefire@gmail.com
           CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
@@ -87,15 +88,22 @@ jobs:
           SMTP_HOST: localhost
           SMTP_PORT: 1025
 
-      - name: Collect coverage folder (if present)
+      - name: Debug coverage and test results
         run: |
-          if [ -d coverage ]; then echo 'coverage found'; else echo 'no coverage dir'; fi
+          echo "=== Coverage directory ==="
+          ls -la coverage/ || echo "No coverage directory"
+          echo "=== Test results directory ==="
+          ls -la test-results/ || echo "No test-results directory"
+          echo "=== All XML files ==="
+          find . -name "*.xml" -type f | head -10
 
-      - name: Collect test result XML files
+      - name: Ensure test results directory exists
         run: |
-          mkdir -p test-results || true
-          # try to find common junit/xml files produced by vitest or reporters and copy them
-          find . -maxdepth 4 -type f \( -iname "*junit*.xml" -o -iname "*test-results*.xml" -o -iname "*vitest*.xml" -o -iname "*.xml" \) -print -exec cp {} test-results/ \; || true
+          mkdir -p test-results
+          # Copy any XML files from root or common locations
+          find . -maxdepth 2 -name "junit*.xml" -type f -exec cp {} test-results/ \;
+          find . -maxdepth 2 -name "*test*.xml" -type f -exec cp {} test-results/ \;
+          ls -la test-results/ || echo "test-results still empty"
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4

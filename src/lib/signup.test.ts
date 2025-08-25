@@ -70,10 +70,10 @@ describe('signup initForm', () => {
 		expect(opts).toBeDefined();
 
 		opts.onSubmit?.();
-		expect(setState).toHaveBeenCalledWith({ loading: true });
+		expect(setState).toHaveBeenCalledWith({ loadingSecondary: true });
 
 		opts.onResult?.();
-		expect(setState).toHaveBeenCalledWith({ loading: false });
+		expect(setState).toHaveBeenCalledWith({ loadingSecondary: false });
 	});
 
 	it('onError logs and toasts error message', () => {

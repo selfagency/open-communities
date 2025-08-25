@@ -89,10 +89,10 @@ describe('initForm', () => {
 		expect(opts).toBeDefined();
 
 		opts.onSubmit?.();
-		expect(setState).toHaveBeenCalledWith({ loading: true });
+		expect(setState).toHaveBeenCalledWith({ loadingSecondary: true });
 
 		opts.onResult?.();
-		expect(setState).toHaveBeenCalledWith({ loading: false });
+		expect(setState).toHaveBeenCalledWith({ loadingSecondary: false });
 	});
 
 	it('onError logs and sets error state and shows toast', () => {
@@ -104,7 +104,7 @@ describe('initForm', () => {
 
 		expect(setState).toHaveBeenCalledWith({
 			form: { hasErrors: true, success: false },
-			loading: false
+			loadingSecondary: false
 		});
 		expect(log.error).toHaveBeenCalledWith(err.error.message);
 		expect(toast.error).toHaveBeenCalledWith(err.error.message);
