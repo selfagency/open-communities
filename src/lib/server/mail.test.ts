@@ -14,17 +14,6 @@ import type {
 vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
 	default: '<!doctype html><html><body>%MESSAGE%</body></html>'
 }));
-
-// Ensure env imports resolve even if Vitest/Vite aliasing isn't applied in this run
-vi.mock('$env/dynamic/private', () => ({
-	ADMIN_EMAIL: 'admin@test.local',
-	CAPTCHA_SITE_SECRET: 'test-captcha-secret',
-	SMTP_HOST: '127.0.0.1',
-	SMTP_PASS: 'abc123abc123',
-	SMTP_PORT: '1025',
-	SMTP_USER: 'test@test.com'
-}));
-
 // (use shared mocks in src/test/mocks)
 
 import { adminMail, transactionalMail } from './mail';

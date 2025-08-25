@@ -2,19 +2,34 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Hoist-safe mocks
 vi.mock('$lib/utils', () => {
-	const rootError = vi.fn();
+	// Create shared spy functions that will be used across all instances
 	const requestInfo = vi.fn();
 	const requestError = vi.fn();
+	const serverError = vi.fn();
+	const serverInfo = vi.fn();
 
+	// The request logger that gets returned by server.getSubLogger()
+	const requestLogger = {
+		error: requestError,
+		info: requestInfo
+	};
+
+	// The server logger that gets returned by root.getSubLogger()
+	const serverLogger = {
+		error: serverError,
+		getSubLogger: () => requestLogger,
+		info: serverInfo
+	};
+
+	// The root logger
 	const rootLogger = {
-		error: rootError,
-		getSubLogger: () => ({ error: requestError, info: requestInfo })
+		error: vi.fn(),
+		getSubLogger: () => serverLogger,
+		info: vi.fn()
 	};
 
 	return {
-		logger: {
-			getSubLogger: () => rootLogger
-		}
+		logger: rootLogger
 	};
 });
 
@@ -44,7 +59,8 @@ describe('server/logger', () => {
 
 		await logEvent(200, event);
 
-		const requestLogger = logger.getSubLogger().getSubLogger();
+		const serverLogger = logger.getSubLogger();
+		const requestLogger = serverLogger.getSubLogger();
 		expect(requestLogger.info).toHaveBeenCalledWith(
 			'request',
 			expect.objectContaining({ referer: '/some/path', status: 200 })
@@ -54,13 +70,14 @@ describe('server/logger', () => {
 	it('uses pathname when referer hostname matches PUBLIC_HOSTNAME', async () => {
 		const event = {
 			locals: { startTimer: Date.now() - 50 },
-			request: { headers: { get: () => 'https://example.com/outer/path' }, method: 'POST' },
-			url: new URL('https://example.com/posted')
+			request: { headers: { get: () => 'http://localhost:4173/outer/path' }, method: 'POST' },
+			url: new URL('http://localhost:4173/posted')
 		} as unknown as Parameters<typeof logEvent>[1];
 
 		await logEvent(201, event);
 
-		const requestLogger = logger.getSubLogger().getSubLogger();
+		const serverLogger = logger.getSubLogger();
+		const requestLogger = serverLogger.getSubLogger();
 		expect(requestLogger.info).toHaveBeenCalledWith(
 			'request',
 			expect.objectContaining({ method: 'POST', referer: '/outer/path', status: 201 })
@@ -76,7 +93,8 @@ describe('server/logger', () => {
 
 		await logEvent(204, event);
 
-		const requestLogger = logger.getSubLogger().getSubLogger();
+		const serverLogger = logger.getSubLogger();
+		const requestLogger = serverLogger.getSubLogger();
 		expect(requestLogger.info).toHaveBeenCalledWith(
 			'request',
 			expect.objectContaining({ referer: null, status: 204 })
@@ -92,7 +110,8 @@ describe('server/logger', () => {
 
 		await logEvent(500, event);
 
-		const requestLogger = logger.getSubLogger().getSubLogger();
+		const serverLogger = logger.getSubLogger();
+		const requestLogger = serverLogger.getSubLogger();
 		expect(requestLogger.error).toHaveBeenCalledWith(
 			'request',
 			expect.objectContaining({ error: expect.any(Error), status: 500 })

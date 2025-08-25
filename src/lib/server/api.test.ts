@@ -21,8 +21,6 @@ vi.mock('pocketbase', () => {
 	};
 });
 
-vi.mock('$env/dynamic/public', () => ({ PUBLIC_API_ENDPOINT: 'http://localhost:8090' }));
-
 vi.mock('./logger', () => ({ log: { error: vi.fn() } }));
 
 // Mock the SvelteKit error helper to return a plain object we can assert on

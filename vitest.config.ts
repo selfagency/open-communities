@@ -2,6 +2,40 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import * as path from 'path';
 import { defineConfig } from 'vitest/config';
 
+const resolve = {
+	alias: {
+		// specific $app aliases must come before the generic '$app' alias
+		'$app/environment': path.resolve(__dirname, 'src/test/mocks/$app/environment.js'),
+		'$app/environment.js': path.resolve(__dirname, 'src/test/mocks/$app/environment.js'),
+		'$app/navigation': path.resolve(__dirname, 'src/test/mocks/$app/navigation.js'),
+		'$app/navigation.js': path.resolve(__dirname, 'src/test/mocks/$app/navigation.js'),
+		'$app/state': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
+		'$app/state.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
+		'$app/state.ts': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
+		'$app/state/index': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
+		'$app/stores': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
+		'$app/stores.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
+		// eslint-disable-next-line perfectionist/sort-objects
+		$app: path.resolve(__dirname, 'src/test/mocks/$app'),
+		'$env/dynamic/private': path.resolve(__dirname, 'src/test/mocks/$env/dynamic/private.js'),
+		'$env/dynamic/public': path.resolve(__dirname, 'src/test/mocks/$env/dynamic/public.js'),
+		'$env/static/private': path.resolve(__dirname, 'src/test/mocks/$env/static/private.js'),
+		'$env/static/public': path.resolve(__dirname, 'src/test/mocks/$env/static/public.js'),
+		$lib: path.resolve(__dirname, 'src/lib'),
+		// substitute server logger with a lightweight mock during tests
+		'$lib/server/logger': path.resolve(__dirname, 'src/test/mocks/$lib_server_logger.js'),
+		$test: path.resolve(__dirname, 'src/test'),
+
+		formsnap: path.resolve(__dirname, 'src/test/stubs/formsnap.js'),
+		// also alias the absolute path used by vite import-analysis to the mock
+		[path.resolve(__dirname, 'src/lib/server/logger.ts')]: path.resolve(
+			__dirname,
+			'src/test/mocks/$lib_server_logger.js'
+		),
+		'sveltekit-superforms': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms.js')
+	}
+};
+
 export default defineConfig({
 	// Configure dependency optimization to prevent test instability
 	optimizeDeps: {
@@ -50,39 +84,7 @@ export default defineConfig({
 			}
 		})
 	],
-	resolve: {
-		alias: {
-			// specific $app aliases must come before the generic '$app' alias
-			'$app/environment': path.resolve(__dirname, 'src/test/mocks/$app/environment.js'),
-			'$app/environment.js': path.resolve(__dirname, 'src/test/mocks/$app/environment.js'),
-			'$app/navigation': path.resolve(__dirname, 'src/test/mocks/$app/navigation.js'),
-			'$app/navigation.js': path.resolve(__dirname, 'src/test/mocks/$app/navigation.js'),
-			'$app/state': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-			'$app/state.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-			'$app/state.ts': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-			'$app/state/index': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-			'$app/stores': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-			'$app/stores.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-			// eslint-disable-next-line perfectionist/sort-objects
-			$app: path.resolve(__dirname, 'src/test/mocks/$app'),
-			'$env/dynamic/private': path.resolve(__dirname, 'src/test/mocks/$env/dynamic/private.js'),
-			'$env/dynamic/public': path.resolve(__dirname, 'src/test/mocks/$env/dynamic/public.js'),
-			'$env/static/private': path.resolve(__dirname, 'src/test/mocks/$env/static/private.js'),
-			'$env/static/public': path.resolve(__dirname, 'src/test/mocks/$env/static/public.js'),
-			$lib: path.resolve(__dirname, 'src/lib'),
-			// substitute server logger with a lightweight mock during tests
-			'$lib/server/logger': path.resolve(__dirname, 'src/test/mocks/$lib_server_logger.js'),
-			$test: path.resolve(__dirname, 'src/test'),
-
-			formsnap: path.resolve(__dirname, 'src/test/stubs/formsnap.js'),
-			// also alias the absolute path used by vite import-analysis to the mock
-			[path.resolve(__dirname, 'src/lib/server/logger.ts')]: path.resolve(
-				__dirname,
-				'src/test/mocks/$lib_server_logger.js'
-			),
-			'sveltekit-superforms': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms.js')
-		}
-	},
+	resolve,
 	test: {
 		// Enable browser runner for client-side Svelte component tests
 		browser: {
@@ -99,42 +101,10 @@ export default defineConfig({
 		// run server-side tests under node to avoid browser runtime/CORS issues
 		projects: [
 			{
-				resolve: {
-					alias: {
-						'$app/environment': path.resolve(__dirname, 'src/test/mocks/$app/environment.js'),
-						'$app/environment.js': path.resolve(__dirname, 'src/test/mocks/$app/environment.js'),
-						'$app/navigation': path.resolve(__dirname, 'src/test/mocks/$app/navigation.js'),
-						'$app/navigation.js': path.resolve(__dirname, 'src/test/mocks/$app/navigation.js'),
-						'$app/state': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-						'$app/state.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-						'$app/state.ts': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-						'$app/state/index': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-						'$app/stores': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-						'$app/stores.js': path.resolve(__dirname, 'src/test/mocks/$app/stores.js'),
-						// eslint-disable-next-line perfectionist/sort-objects
-						$app: path.resolve(__dirname, 'src/test/mocks/$app'),
-						'$env/static/private': path.resolve(__dirname, 'src/test/mocks/$env/static/private.js'),
-						'$env/static/public': path.resolve(__dirname, 'src/test/mocks/$env/static/public.js'),
-						$lib: path.resolve(__dirname, 'src/lib'),
-						// substitute server logger with a lightweight mock during tests
-						'$lib/server/logger': path.resolve(__dirname, 'src/test/mocks/$lib_server_logger.js'),
-						$test: path.resolve(__dirname, 'src/test'),
-
-						formsnap: path.resolve(__dirname, 'src/test/stubs/formsnap.js'),
-						// also alias the absolute path used by vite import-analysis to the mock
-						[path.resolve(__dirname, 'src/lib/server/logger.ts')]: path.resolve(
-							__dirname,
-							'src/test/mocks/$lib_server_logger.js'
-						),
-						'sveltekit-superforms': path.resolve(
-							__dirname,
-							'src/test/mocks/sveltekit-superforms.js'
-						)
-					}
-				},
+				resolve,
 				test: {
 					environment: 'node',
-					include: ['src/lib/server/**']
+					include: ['src/lib/server/**.test.ts']
 				}
 			}
 		],

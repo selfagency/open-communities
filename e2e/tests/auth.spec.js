@@ -56,12 +56,39 @@ test.describe('auth flows', () => {
     // Wait for the captcha to be solved (it should show as "done" state)
     await page.waitForSelector('cap-widget .captcha[data-state="done"]', { timeout: 10000 });
 
+    // Debug: Check what captcha token was generated
+    const captchaToken = await page.evaluate(() => {
+      const input = document.querySelector('input[name="captcha"]');
+      return input ? input.value : null;
+    });
+    console.log('[e2e-debug] Captcha token generated:', captchaToken);
+
     // Click the submit button
     await sleep(1000);
     await page.click('button[type="submit"]');
 
     // Wait for form submission
     await page.waitForTimeout(2000);
+
+    // Check if there are any form errors displayed
+    const errorMessages = await page.evaluate(() => {
+      const errors = Array.from(document.querySelectorAll('[data-testid="error"], .error, .field-error, .form-error'));
+      return errors.map(el => el.textContent.trim()).filter(text => text);
+    });
+
+    if (errorMessages.length > 0) {
+      console.log('[e2e-debug] Form errors found:', errorMessages);
+    }
+
+    // Check if we're still on the signup page (which would indicate an error)
+    const currentUrl = page.url();
+    console.log('[e2e-debug] Current URL after form submission:', currentUrl);
+
+    // Look for success message
+    const successMessage = await page.textContent('.success, [data-testid="success"]').catch(() => null);
+    if (successMessage) {
+      console.log('[e2e-debug] Success message:', successMessage);
+    }
 
     const subjectPart = 'Verify your Open Communities email';
     const msg = await findMessageBySubject(subjectPart, 20000);
