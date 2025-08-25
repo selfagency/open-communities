@@ -47,7 +47,7 @@ jobs:
         with:
           artifact: test-results
           path: '*.xml'
-          reporter: junit
+          reporter: jest-unit
           name: Vitest Tests
           use-actions-summary: 'true'
           fail-on-empty: 'false'

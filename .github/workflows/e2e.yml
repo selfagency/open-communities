@@ -42,6 +42,9 @@ jobs:
 
       - name: Build project
         run: pnpm build
+        env:
+          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Download PocketBase binary
         run: |
@@ -56,15 +59,22 @@ jobs:
 
       - name: Start Node preview server
         env:
-          SMTP_HOST: 127.0.0.1
+          ADMIN_EMAIL: rabbis4ceasefire@gmail.com
+          CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
+          NODE_ENV: test
+          PB_TEST_ADMIN: admin@test.com
+          PB_TEST_PASSWORD: i3_NL-dfzzFt5TX
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
+          PUBLIC_HOSTNAME: http://localhost:4173
+          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
+          SMTP_HOST: localhost
           SMTP_PORT: 1025
-          MAILPIT_API: http://127.0.0.1:8025/api/v1
-          FORCE_SMTP: '1'
           PORT: 4173
         run: nohup node build/index.js > .e2e/server.log 2>&1 &
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Run Playwright E2E
         env:
