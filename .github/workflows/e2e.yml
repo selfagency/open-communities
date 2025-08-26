@@ -111,7 +111,7 @@ jobs:
           echo "Starting Docker container..."
           CONTAINER_ID=$(docker run -d \
             --name app \
-            --network host \
+            -p 4173:4173 \
             -e ADMIN_EMAIL="$ADMIN_EMAIL" \
             -e CAP_API_KEY="$CAP_API_KEY" \
             -e NODE_ENV="$NODE_ENV" \
@@ -148,20 +148,20 @@ jobs:
 
           echo "Container is running successfully"
 
-      - name: Wait for application to be ready
-        run: |
-          echo "Waiting for application to be ready on http://localhost:4173..."
-          timeout 120 bash -c 'while true; do
-            if curl -f http://localhost:4173 >/dev/null 2>&1; then
-              echo "Application is ready!"
-              break
-            else
-              echo "Waiting for app... ($(date))"
-              echo "=== Recent container logs ==="
-              docker logs --tail 5 app 2>/dev/null || true
-              sleep 5
-            fi
-          done'
+      # - name: Wait for application to be ready
+      #   run: |
+      #     echo "Waiting for application to be ready on http://localhost:4173..."
+      #     timeout 120 bash -c 'while true; do
+      #       if curl -f http://localhost:4173 >/dev/null 2>&1; then
+      #         echo "Application is ready!"
+      #         break
+      #       else
+      #         echo "Waiting for app... ($(date))"
+      #         echo "=== Recent container logs ==="
+      #         docker logs --tail 5 app 2>/dev/null || true
+      #         sleep 5
+      #       fi
+      #     done'
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps --only-shell
