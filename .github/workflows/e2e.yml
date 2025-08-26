@@ -81,9 +81,19 @@ jobs:
           chmod +x .e2e/pocketbase
 
       - name: Start PocketBase
-        run: nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
+        run: |
+          nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
+          # Wait for PocketBase to be ready
+          timeout 30 bash -c 'until curl -f http://127.0.0.1:8090/api/health >/dev/null 2>&1; do sleep 1; echo "Waiting for PocketBase..."; done'
+          echo "PocketBase is ready"
 
-      - name: Pull and start Docker container
+      - name: Pull Docker image
+        run: |
+          echo "Pulling Docker image..."
+          docker pull ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
+          echo "Image pulled successfully"
+
+      - name: Start Docker container
         env:
           ADMIN_EMAIL: rabbis4ceasefire@gmail.com
           CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
@@ -98,8 +108,8 @@ jobs:
           SMTP_PORT: 1025
           PORT: 4173
         run: |
-          docker pull ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
-          docker run -d \
+          echo "Starting Docker container..."
+          CONTAINER_ID=$(docker run -d \
             --name app \
             --network host \
             -e ADMIN_EMAIL="$ADMIN_EMAIL" \
@@ -114,11 +124,44 @@ jobs:
             -e SMTP_HOST="$SMTP_HOST" \
             -e SMTP_PORT="$SMTP_PORT" \
             -e PORT="$PORT" \
-            ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
+            ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }})
+
+          echo "Container started with ID: $CONTAINER_ID"
+
+          # Give it a moment to start
+          sleep 5
+
+          # Check container status
+          echo "=== Container status ==="
+          docker ps -a
+
+          echo "=== Initial container logs ==="
+          docker logs app
+
+          # Check if container is still running
+          if ! docker ps --filter "name=app" --filter "status=running" | grep -q app; then
+            echo "ERROR: Container is not running!"
+            echo "=== Full container logs ==="
+            docker logs app
+            exit 1
+          fi
+
+          echo "Container is running successfully"
 
       - name: Wait for application to be ready
         run: |
-          timeout 90 bash -c 'until curl -f http://localhost:4173 >/dev/null 2>&1; do sleep 1; done'
+          echo "Waiting for application to be ready on http://localhost:4173..."
+          timeout 120 bash -c 'while true; do
+            if curl -f http://localhost:4173 >/dev/null 2>&1; then
+              echo "Application is ready!"
+              break
+            else
+              echo "Waiting for app... ($(date))"
+              echo "=== Recent container logs ==="
+              docker logs --tail 5 app 2>/dev/null || true
+              sleep 5
+            fi
+          done'
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps --only-shell
@@ -148,5 +191,9 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          docker stop app || true
-          docker rm app || true
+          echo "=== Final container logs ==="
+          docker logs app 2>/dev/null || true
+          echo "=== PocketBase logs ==="
+          cat .e2e/pb.log 2>/dev/null || true
+          docker stop app 2>/dev/null || true
+          docker rm app 2>/dev/null || true

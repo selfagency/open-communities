@@ -24,6 +24,7 @@ export default {
 		'font-src': [
 			'self',
 			'data:',
+			'fonts.cdnfonts.com',
 			'fonts.gstatic.com',
 			'fonts.googleapis.com',
 			'*.basemaps.cartocdn.com'
@@ -50,8 +51,8 @@ export default {
 			'captcha.selfagency.dev',
 			'cdn.jsdelivr.net'
 		],
-		'style-src': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'fonts.googleapis.com'],
-		'style-src-elem': ['self', 'unsafe-inline', 'fonts.googleapis.com'],
+		'style-src': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
+		'style-src-elem': ['self', 'unsafe-inline', 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
 		'worker-src': ['self', 'blob:']
 	}
 };
