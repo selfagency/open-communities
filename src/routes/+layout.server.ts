@@ -4,7 +4,7 @@ import { cleanResponse, handleError } from '$lib/server/api';
 /* endregion imports */
 
 export async function load({ cookies, fetch, locals }) {
-  const { api } = locals;
+  const { api, captureException } = locals;
   const user = api.authStore.record;
   const lang = cookies.get('lang') || user?.lang || 'en';
 
@@ -19,6 +19,7 @@ export async function load({ cookies, fetch, locals }) {
       user
     };
   } catch (err) {
+    captureException(err, user?.id);
     return handleError(err as Error);
   }
 }

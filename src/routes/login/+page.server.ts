@@ -10,25 +10,26 @@ import type { UsersRecord } from '$lib/pocketbase.d';
 import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
-import { log } from '$lib/server/logger';
+// import { log } from '$lib/server/logger';
 import { validateCaptcha } from '$lib/server/utils';
 
 import type { PageServerLoad } from './$types';
 /* endregion imports */
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, request }) => {
   return {
-    login: await locals.validate(loginSchema),
-    reset: await locals.validate(tokenSchema),
-    signup: await locals.validate(userSchema),
-    verify: await locals.validate(tokenSchema)
+    login: await locals.validate(request, loginSchema),
+    reset: await locals.validate(request, tokenSchema),
+    signup: await locals.validate(request, userSchema),
+    verify: await locals.validate(request, tokenSchema)
   };
 };
 
 export const actions = {
   acct: async (event) => {
-    const { api } = event.locals;
-    const form = await event.locals.validate(tokenSchema, event);
+    const { api, captureException, validate } = event.locals;
+    const client = api.authStore.record;
+    const form = await validate(event.request, tokenSchema);
 
     try {
       if (!form.valid) {
@@ -61,6 +62,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      captureException(error, client?.id);
 
       return fail(err.status ?? 400, {
         form: {
@@ -75,7 +77,8 @@ export const actions = {
   },
   login: async (event) => {
     const { cookies, fetch, locals } = event;
-    const { api, cookieOpts } = locals;
+    const { api, captureException, cookieOpts } = locals;
+    const client = api.authStore.record;
 
     const form = await locals.validate(loginSchema, event);
     let user: UsersRecord;
@@ -111,12 +114,13 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      captureException(error, client?.id);
 
-      log.error('Login failed:', {
-        email: form.data.email,
-        error: err.message,
-        status: err.status
-      });
+      // log.error('Login failed:', {
+      //   email: form.data.email,
+      //   error: err.message,
+      //   status: err.status
+      // });
 
       return fail(err.status, {
         form: {
@@ -138,7 +142,7 @@ export const actions = {
     return {};
   },
   signup: async (event) => {
-    const { api, validate } = event.locals;
+    const { api, captureException, validate } = event.locals;
     const form = await validate(userSchema, event);
     let user: UsersRecord;
 
@@ -171,6 +175,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      captureException(error);
 
       return fail(err.status || 400, {
         form: {

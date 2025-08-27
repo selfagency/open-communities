@@ -3,7 +3,7 @@ import { cleanResponse, handleError } from '$lib/server/api';
 /* endregion imports */
 
 export async function load({ fetch, locals }) {
-  const { api } = locals;
+  const { api, captureException } = locals;
   const client = api.authStore.record;
 
   try {
@@ -17,6 +17,7 @@ export async function load({ fetch, locals }) {
       content: await api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch })
     };
   } catch (err) {
+    captureException(err, client?.id);
     return handleError(err as Error);
   }
 }

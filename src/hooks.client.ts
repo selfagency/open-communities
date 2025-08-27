@@ -1,4 +1,6 @@
 /* region imports */
+import posthog from 'posthog-js';
+
 import { dev } from '$app/environment';
 import { log } from '$lib/utils';
 /* endregion imports */
@@ -8,6 +10,8 @@ export const handleError = ({ error, event, message, status }) => {
     if (dev) {
       log.debug('event', event);
       log.error(error);
+    } else {
+      posthog.captureException(error);
     }
   }
 

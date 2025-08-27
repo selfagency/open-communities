@@ -2,10 +2,12 @@ import { json } from '@sveltejs/kit';
 
 import type { UsersRecord } from '$lib/pocketbase.d';
 
-import { api } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 
 export async function POST({ cookies, locals, request }) {
+  const { api, captureException } = locals;
+  const client = api.authStore.record;
+
   const { lang, user } = await request.json();
 
   let result: null | UsersRecord = null;
@@ -22,6 +24,7 @@ export async function POST({ cookies, locals, request }) {
 
     return json({ result, status: 201 });
   } catch (error) {
+    captureException(error, client?.id);
     log.error('Error updating user:', error);
     return json({ error: 'Failed to update user language' }, { status: 500 });
   }

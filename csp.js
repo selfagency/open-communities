@@ -9,6 +9,7 @@ export default {
       'localhost:3001',
       'api.opencommunities.info',
       '*.pockethost.io',
+      '*.posthog.com',
       'captcha.selfagency.dev',
       'cdn.jsdelivr.net',
       'basemaps.cartocdn.com',
@@ -32,9 +33,10 @@ export default {
       'cdn.jsdelivr.net',
       'basemaps.cartocdn.com',
       '*.basemaps.cartocdn.com',
+      '*.posthog.com',
       'nonce-o247950'
     ],
-    'script-src-elem': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'cdn.jsdelivr.net'],
+    'script-src-elem': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'cdn.jsdelivr.net', '*.posthog.com'],
     'style-src': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
     'style-src-elem': ['self', 'unsafe-inline', 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
     'worker-src': ['self', 'blob:']

@@ -39,7 +39,7 @@ type MetaRecord = {
 /* endregion types */
 
 export const load = async ({ fetch, locals }) => {
-  const { api, validate } = locals;
+  const { api, captureException, validate } = locals;
   const client = api.authStore.record;
 
   try {
@@ -56,6 +56,7 @@ export const load = async ({ fetch, locals }) => {
     if ((error as Error).message === 'Forbidden') {
       redirect(302, '/login?signUp=true');
     } else {
+      captureException(error, client?.id);
       return handleError(error);
     }
   }
@@ -64,10 +65,10 @@ export const load = async ({ fetch, locals }) => {
 export const actions = {
   submit: async (event) => {
     const { fetch, locals } = event;
-    const { api, log, validate } = locals;
+    const { api, captureException, log, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(defaultSchema, event);
+    const form = await validate(event.request, defaultSchema);
     const formData = form.data as CongregationMetaRecord & MetaRecord;
 
     try {
@@ -147,7 +148,9 @@ export const actions = {
         form
       };
     } catch (error) {
+      captureException(error, client?.id);
       log.error('add:submit:error', error);
+
       const err = error as ClientResponseError;
 
       if (err.message === 'Invalid captcha') {

@@ -12,31 +12,42 @@ import { validateCaptcha } from '$lib/server/utils';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 
-export const load = async ({ fetch, locals }) => {
-  const { api, validate } = locals;
+export const load = async ({ fetch, locals, request }) => {
+  const { api, captureException, log, validate } = locals;
+  const client = api.authStore.record;
 
-  const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map((c) => {
-    const location = c.location as LocationMeta;
-    const label = truncateText(
-      `${c.name}${location?.city?.name ? ', ' + location.city.name : ''}${location?.state?.name ? ', ' + location.state.name : ''}${location?.country?.name ? ', ' + location.country.name : ''}`,
-      38
-    );
+  try {
+    const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map((c) => {
+      const location = c.location as LocationMeta;
+      const label = truncateText(
+        `${c.name}${location?.city?.name ? ', ' + location.city.name : ''}${location?.state?.name ? ', ' + location.state.name : ''}${location?.country?.name ? ', ' + location.country.name : ''}`,
+        38
+      );
+      return {
+        id: c.id,
+        label: truncateText(label, 38),
+        value: label
+      };
+    });
+
     return {
-      id: c.id,
-      label: truncateText(label, 38),
-      value: label
+      congregations,
+      form: await validate(request, contactSchema)
     };
-  });
+  } catch (error) {
+    captureException(error, client?.id);
+    log.error('contact:load:error', error);
 
-  return {
-    congregations,
-    form: await validate(contactSchema)
-  };
+    return {
+      form: await validate(request, contactSchema)
+    };
+  }
 };
 
 export const actions = {
   default: async (event) => {
-    const { api, log } = event.locals;
+    const { api, captureException, log } = event.locals;
+    const client = api.authStore.record;
     const form = await event.locals.validate(contactSchema, event);
 
     try {
@@ -64,6 +75,7 @@ export const actions = {
           api
         );
       } catch (error) {
+        captureException(error, client?.id);
         return fail(400, {
           error,
           form
@@ -75,6 +87,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      captureException(error, client?.id);
       log.error('error', err);
 
       return fail(err.status || 400, {

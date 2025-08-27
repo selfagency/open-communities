@@ -1,5 +1,6 @@
 /* region imports */
 import type { SerializeOptions } from 'cookie';
+import type { Posthog } from 'posthog-node';
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
 import type { ObjectSchema } from 'zod';
 
@@ -24,6 +25,7 @@ declare global {
     interface Locals {
       api: TypedPocketBase;
       auth: string;
+      captureException: Posthog.captureException;
       cookieOpts: SerializeOptions & { path: string };
       error?: string;
       errorId?: string;
