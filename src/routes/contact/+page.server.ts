@@ -13,7 +13,7 @@ import { truncateText } from '$lib/utils';
 /* endregion imports */
 
 export const load = async (event) => {
-  const { fetch, locals, request } = event;
+  const { fetch, locals } = event;
   const { api, captureException, log, validate } = locals;
   const client = api.authStore.record;
 
@@ -36,7 +36,7 @@ export const load = async (event) => {
       form: await validate(event, contactSchema)
     };
   } catch (error) {
-    captureException(error, client?.id);
+    await captureException(error, client?.id);
     log.error('contact:load:error', error);
 
     return {
@@ -76,7 +76,7 @@ export const actions = {
           api
         );
       } catch (error) {
-        captureException(error, client?.id);
+        await captureException(error, client?.id);
         return fail(400, {
           error,
           form
@@ -88,7 +88,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
       log.error('error', err);
 
       return fail(err.status || 400, {

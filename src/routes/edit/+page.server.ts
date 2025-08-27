@@ -35,7 +35,7 @@ type MetaRecord = RecordWithId & {
 type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
-export const load = async ({ fetch, locals, request, url }) => {
+export const load = async ({ fetch, locals, url }) => {
   const { api, captureException, validate } = locals;
   const client = api.authStore.record;
 
@@ -74,7 +74,7 @@ export const load = async ({ fetch, locals, request, url }) => {
     if ((error as Error).message === '403') {
       redirect(302, '/login');
     } else {
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
       return handleError(error);
     }
   }
@@ -82,7 +82,7 @@ export const load = async ({ fetch, locals, request, url }) => {
 
 export const actions = {
   delete: async (event) => {
-    const { fetch, locals, request } = event;
+    const { fetch, locals } = event;
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
 
@@ -143,7 +143,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
 
       return fail(err.status ?? 400, {
         form: {
@@ -154,7 +154,7 @@ export const actions = {
     }
   },
   submit: async (event) => {
-    const { fetch, locals, request } = event;
+    const { fetch, locals } = event;
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
 
@@ -236,7 +236,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
 
       return fail(err.status ?? 400, {
         form: {
@@ -247,7 +247,7 @@ export const actions = {
     }
   },
   transfer: async (event) => {
-    const { fetch, locals, request } = event;
+    const { fetch, locals } = event;
     const { api, captureException, log, validate } = locals;
     const client = api.authStore.record;
 
@@ -285,7 +285,7 @@ export const actions = {
       return { form };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
 
       return fail(err.status ?? 400, {
         form: {

@@ -17,7 +17,7 @@ import type { PageServerLoad } from './$types';
 /* endregion imports */
 
 export const load: PageServerLoad = async (event) => {
-  const { locals, request } = event;
+  const { locals } = event;
 
   return {
     login: await locals.validate(event, loginSchema),
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions = {
   acct: async (event) => {
-    const { locals, request } = event;
+    const { locals } = event;
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
     const form = await validate(event, tokenSchema);
@@ -65,7 +65,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
 
       return fail(err.status ?? 400, {
         form: {
@@ -118,7 +118,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
 
       // log.error('Login failed:', {
       //   email: form.data.email,
@@ -146,7 +146,7 @@ export const actions = {
     return {};
   },
   signup: async (event) => {
-    const { locals, request } = event;
+    const { locals } = event;
     const { api, captureException, validate } = locals;
     const form = await validate(event, userSchema);
     let user: UsersRecord;
@@ -180,7 +180,7 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      captureException(error);
+      await captureException(error);
 
       return fail(err.status || 400, {
         form: {

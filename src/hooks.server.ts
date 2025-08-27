@@ -3,11 +3,12 @@ import type { Handle } from '@sveltejs/kit';
 import type { SerializeOptions } from 'cookie';
 
 import { sequence } from '@sveltejs/kit/hooks';
-// import { PostHog } from 'posthog-node';
+import { PostHog } from 'posthog-node';
 import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
+import { PUBLIC_POSTHOG_KEY } from '$env/static/public';
 // import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
@@ -15,10 +16,7 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* endregion imports */
 
 /* region variables */
-// constants;
-// const phClient = new PostHog('phc_qzaqrjtbSUFKRMDZb8TXQosR3MInxaJwJS3yTrZbVfn', {
-//   host: 'https://us.i.posthog.com'
-// });
+// constants
 const log = logger.getSubLogger({ name: 'hooks' });
 
 /* endregion variables */
@@ -28,8 +26,13 @@ async function customHandler({ event, resolve }) {
   // services
   event.locals.api = api;
   event.locals.log = log;
-  // event.locals.captureException = phClient ? phClient.captureException : () => {};
-  event.locals.captureException = (error, user, other) => {};
+  event.locals.captureException = async (error, user, other) => {
+    const phClient = new PostHog(PUBLIC_POSTHOG_KEY, {
+      host: 'https://us.i.posthog.com'
+    });
+    phClient.captureException(error, user, other);
+    await phClient.shutdown();
+  };
 
   event.locals.validate = async (request, schema) => {
     return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
@@ -96,8 +99,7 @@ export const handleError = async ({ error, event, status }) => {
     event.locals.errorId = errorId;
     logEvent(status, event);
 
-    // phClient.captureException(error);
-    // await phClient.shutdown();
+    await event.locals.captureException(error, event.locals.api.authStore.record?.id);
 
     return {
       errorId,

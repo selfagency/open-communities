@@ -24,7 +24,7 @@ export async function POST({ cookies, locals, request }) {
 
     return json({ result, status: 201 });
   } catch (error) {
-    captureException(error, client?.id);
+    await captureException(error, client?.id);
     log.error('Error updating user:', error);
     return json({ error: 'Failed to update user language' }, { status: 500 });
   }

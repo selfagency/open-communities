@@ -17,7 +17,7 @@ export async function load({ fetch, locals }) {
       content: await api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch })
     };
   } catch (err) {
-    captureException(err, client?.id);
+    await captureException(err, client?.id);
     return handleError(err as Error);
   }
 }

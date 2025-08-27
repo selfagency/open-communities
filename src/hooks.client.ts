@@ -1,5 +1,6 @@
 /* region imports */
-// import posthog from 'posthog-js';
+import posthog from 'posthog-js';
+import { isEmpty } from 'radashi';
 
 import { dev } from '$app/environment';
 import { log } from '$lib/utils';
@@ -11,7 +12,9 @@ export const handleError = ({ error, event, message, status }) => {
       log.debug('event', event);
       log.error(error);
     } else {
-      // if (posthog) posthog.captureException(error);
+      if (!isEmpty(posthog)) {
+        posthog.captureException(error);
+      }
     }
   }
 

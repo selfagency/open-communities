@@ -19,7 +19,7 @@ export async function load({ cookies, fetch, locals }) {
       user
     };
   } catch (err) {
-    captureException(err, user?.id);
+    await captureException(err, user?.id);
     return handleError(err as Error);
   }
 }

@@ -39,7 +39,7 @@ type MetaRecord = {
 /* endregion types */
 
 export const load = async (event) => {
-  const { fetch, locals, request } = event;
+  const { fetch, locals } = event;
   const { api, captureException, validate } = locals;
   const client = api.authStore.record;
 
@@ -57,7 +57,7 @@ export const load = async (event) => {
     if ((error as Error).message === 'Forbidden') {
       redirect(302, '/login?signUp=true');
     } else {
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
       return handleError(error);
     }
   }
@@ -65,7 +65,7 @@ export const load = async (event) => {
 
 export const actions = {
   submit: async (event) => {
-    const { fetch, locals, request } = event;
+    const { fetch, locals } = event;
     const { api, captureException, log, validate } = locals;
     const client = api.authStore.record;
 
@@ -149,7 +149,7 @@ export const actions = {
         form
       };
     } catch (error) {
-      captureException(error, client?.id);
+      await captureException(error, client?.id);
       log.error('add:submit:error', error);
 
       const err = error as ClientResponseError;
