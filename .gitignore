@@ -22,7 +22,6 @@
 .env.development.local
 .env.local
 .env.production.local
-.env.sentry-build-plugin
 .env.test.local
 .eslintcache
 .fseventsd
@@ -48,7 +47,6 @@
 .rts2_cache_cjs/
 .rts2_cache_es/
 .rts2_cache_umd/
-.sentryclirc
 .serverless/
 .Spotlight-V100
 .stylelintcache

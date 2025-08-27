@@ -66,9 +66,6 @@ jobs:
 
       - name: Build application
         run: pnpm build
-        env:
-          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Run tests (vitest) with coverage
         id: test
@@ -84,7 +81,6 @@ jobs:
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
           PUBLIC_HOSTNAME: http://localhost:4173
-          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
           SMTP_HOST: localhost
           SMTP_PORT: 1025
 

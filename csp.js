@@ -12,8 +12,7 @@ export default {
       'captcha.selfagency.dev',
       'cdn.jsdelivr.net',
       'basemaps.cartocdn.com',
-      '*.basemaps.cartocdn.com',
-      '*.sentry.io'
+      '*.basemaps.cartocdn.com'
     ],
     'default-src': ['self', 'cdn.jsdelivr.net', 'captcha.selfagency.dev', 'api.opencommunities.info'],
     'font-src': [
@@ -25,21 +24,17 @@ export default {
       '*.basemaps.cartocdn.com'
     ],
     'img-src': ['self', 'data:', 'blob:', '*.basemaps.cartocdn.com'],
-    'report-uri': [
-      'https://o247950.ingest.us.sentry.io/api/4507958645948416/security/?sentry_key=304d7d493ffd890f8928c8fa11a5007e'
-    ],
     'script-src': [
       'self',
       'unsafe-eval',
       'unsafe-inline',
       'captcha.selfagency.dev',
       'cdn.jsdelivr.net',
-      '*.sentry.io',
       'basemaps.cartocdn.com',
       '*.basemaps.cartocdn.com',
       'nonce-o247950'
     ],
-    'script-src-elem': ['self', 'unsafe-inline', '*.sentry.io', 'captcha.selfagency.dev', 'cdn.jsdelivr.net'],
+    'script-src-elem': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'cdn.jsdelivr.net'],
     'style-src': ['self', 'unsafe-inline', 'captcha.selfagency.dev', 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
     'style-src-elem': ['self', 'unsafe-inline', 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
     'worker-src': ['self', 'blob:']

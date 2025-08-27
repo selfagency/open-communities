@@ -1,6 +1,5 @@
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import svg from '@poppanator/sveltekit-svg';
-import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
@@ -19,12 +18,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     ViteMcp(),
-    sentrySvelteKit({
-      sourceMapsUploadOptions: {
-        org: 'selfagency',
-        project: 'open-communities'
-      }
-    }),
     mode === 'test' && inlineSveltePlugin(),
     devtoolsJson(),
     tailwindcss(),

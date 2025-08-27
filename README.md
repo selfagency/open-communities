@@ -17,14 +17,7 @@ pnpm run deps:up
 
 Log into PocketBase, create an admin account, then import `pb_schema.json`. You can also create a user account and grant it 'admin' privileges. Admins can only be enabled through the backend, not through the frontend app. You'll also need to import a dump of the location data, which is a little large to contain in the repo, so be in touch. I may switch to using an external API in the near future. Then log into [Cap](https://github.com/tiagorangel1/cap) and create an admin user, an API key, and new site key.
 
-Setup a [Sentry](https://sentry.io/) project. Then create a `.env` file containing:
-
-```bash
-PUBLIC_SENTRY_DSN=""
-SENTRY_AUTH_TOKEN=""
-```
-
-We also need a `.env.dynamic` file containing:
+Create an `.env.dynamic` file containing:
 
 ```bash
 ADMIN_EMAIL=""

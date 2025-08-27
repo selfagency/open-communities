@@ -45,8 +45,6 @@ jobs:
         with:
           cache: true
           push: true
-          env: |
-            PUBLIC_SENTRY_DSN=${{ vars.PUBLIC_SENTRY_DSN }}, SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}

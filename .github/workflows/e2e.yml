@@ -103,7 +103,6 @@ jobs:
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
           PUBLIC_HOSTNAME: http://localhost:4173
-          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
           SMTP_HOST: localhost
           SMTP_PORT: 1025
           PORT: 4173
@@ -120,7 +119,6 @@ jobs:
             -e PUBLIC_API_ENDPOINT="$PUBLIC_API_ENDPOINT" \
             -e PUBLIC_CAPTCHA_ENDPOINT="$PUBLIC_CAPTCHA_ENDPOINT" \
             -e PUBLIC_HOSTNAME="$PUBLIC_HOSTNAME" \
-            -e PUBLIC_SENTRY_DSN="$PUBLIC_SENTRY_DSN" \
             -e SMTP_HOST="$SMTP_HOST" \
             -e SMTP_PORT="$SMTP_PORT" \
             -e PORT="$PORT" \
