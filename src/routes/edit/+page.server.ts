@@ -86,7 +86,7 @@ export const actions = {
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(request, deleteSchema);
+    const form = await validate(event, deleteSchema);
     const data = form.data as MetaRecord & RecordWithId;
 
     try {
@@ -158,7 +158,7 @@ export const actions = {
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(request, defaultSchema);
+    const form = await validate(event, defaultSchema);
     const data = form.data as MetaRecord & RecordWithId;
 
     try {
@@ -251,7 +251,7 @@ export const actions = {
     const { api, captureException, log, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(request, transferSchema);
+    const form = await validate(event, transferSchema);
     const data = form.data;
 
     try {

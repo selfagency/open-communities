@@ -12,7 +12,8 @@ import { validateCaptcha } from '$lib/server/utils';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 
-export const load = async ({ fetch, locals, request }) => {
+export const load = async (event) => {
+  const { fetch, locals, request } = event;
   const { api, captureException, log, validate } = locals;
   const client = api.authStore.record;
 
@@ -32,14 +33,14 @@ export const load = async ({ fetch, locals, request }) => {
 
     return {
       congregations,
-      form: await validate(request, contactSchema)
+      form: await validate(event, contactSchema)
     };
   } catch (error) {
     captureException(error, client?.id);
     log.error('contact:load:error', error);
 
     return {
-      form: await validate(request, contactSchema)
+      form: await validate(event, contactSchema)
     };
   }
 };

@@ -16,12 +16,14 @@ import { validateCaptcha } from '$lib/server/utils';
 import type { PageServerLoad } from './$types';
 /* endregion imports */
 
-export const load: PageServerLoad = async ({ locals, request }) => {
+export const load: PageServerLoad = async (event) => {
+  const { locals, request } = event;
+
   return {
-    login: await locals.validate(request, loginSchema),
-    reset: await locals.validate(request, tokenSchema),
-    signup: await locals.validate(request, userSchema),
-    verify: await locals.validate(request, tokenSchema)
+    login: await locals.validate(event, loginSchema),
+    reset: await locals.validate(event, tokenSchema),
+    signup: await locals.validate(event, userSchema),
+    verify: await locals.validate(event, tokenSchema)
   };
 };
 
@@ -30,7 +32,7 @@ export const actions = {
     const { locals, request } = event;
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
-    const form = await validate(request, tokenSchema);
+    const form = await validate(event, tokenSchema);
 
     try {
       if (!form.valid) {
@@ -77,15 +79,16 @@ export const actions = {
     }
   },
   login: async (event) => {
-    const { cookies, fetch, locals, request } = event;
-    const { api, captureException, cookieOpts } = locals;
+    const { cookies, fetch, locals } = event;
+    const { api, captureException, cookieOpts, log } = locals;
     const client = api.authStore.record;
 
-    const form = await locals.validate(request, loginSchema);
+    const form = await locals.validate(event, loginSchema);
     let user: UsersRecord;
 
     try {
       if (!form.valid) {
+        log.error('form invalid', form);
         return fail(400, {
           form
         });
@@ -145,7 +148,7 @@ export const actions = {
   signup: async (event) => {
     const { locals, request } = event;
     const { api, captureException, validate } = locals;
-    const form = await validate(request, userSchema);
+    const form = await validate(event, userSchema);
     let user: UsersRecord;
 
     try {

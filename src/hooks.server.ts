@@ -28,7 +28,7 @@ async function customHandler({ event, resolve }) {
   // services
   event.locals.api = api;
   event.locals.log = log;
-  event.locals.captureException = phClient.captureException;
+  event.locals.captureException = phClient ? phClient.captureException : () => {};
 
   event.locals.validate = async (request, schema) => {
     return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));

@@ -11,7 +11,7 @@ export const handleError = ({ error, event, message, status }) => {
       log.debug('event', event);
       log.error(error);
     } else {
-      posthog.captureException(error);
+      if (posthog) posthog.captureException(error);
     }
   }
 
