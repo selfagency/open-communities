@@ -10,7 +10,7 @@
   import FilterIcon from 'lucide-svelte/icons/filter';
   import AdminIcon from 'lucide-svelte/icons/settings';
   import SecurityIcon from 'lucide-svelte/icons/shield';
-  import { isEmpty } from 'radashi';
+  import { assign, isEmpty } from 'radashi';
 
   import { page } from '$app/state';
   import MaskIcon from '$lib/assets/mask.svg?component';
@@ -114,6 +114,20 @@
   const some = (object: Record<string, boolean>) => Object.values(object).some((filter) => filter);
 
   const every = (object: Record<string, boolean>) => Object.values(object).every((filter) => filter);
+
+  const updateFilter = (category: string, option: string, checked: boolean) => {
+    // Create a new filters object to ensure reactivity
+    filters = assign(filters, {
+      [category]: {
+        ...filters[category],
+        [option]: checked
+      }
+    }) as unknown as Record<string, Record<string, boolean>>;
+  };
+
+  const resetFilters = () => {
+    filters = structuredClone(initFilters);
+  };
   /* endregion methods */
 
   /* region reactivity */
@@ -169,7 +183,7 @@
                       id={`${category}_${option}`}
                       class="scale-75"
                       checked={filters[category][option]}
-                      onCheckedChange={(checked) => (filters[category][option] = checked ?? false)} />
+                      onCheckedChange={(checked) => updateFilter(category, option, checked ?? false)} />
                     <Label for={`${category}_${option}`}>
                       <span class="filter-label text-slate-500">
                         {option === 'other' ? m.other() : m[`${category}_${option}`]()}
@@ -182,7 +196,7 @@
           </Collapsible.Root>
         {/if}
       {/each}
-      <Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={() => (filters = initFilters)}>
+      <Button class="filter-heading h-auto p-0 text-slate-500" variant="link" onclick={resetFilters}>
         <span class="filter-icon"><CloseIcon size="16" /></span>
         <span class="filter-label"><span>{m.reset()}</span></span>
       </Button>

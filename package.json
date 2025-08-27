@@ -116,7 +116,11 @@
 			"@tailwindcss/oxide",
 			"esbuild",
 			"sqlite3"
-		]
+		],
+		"overrides": {
+			"devalue": "^5.3.2",
+			"cookie": "^1.0.2"
+		}
 	},
 	"packageManager": "pnpm@10.14.0"
 }
