@@ -8,7 +8,7 @@ import { isEmpty, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
-import { PUBLIC_POSTHOG_KEY } from '$env/static/public';
+import { PUBLIC_POSTHOG_HOST, PUBLIC_POSTHOG_KEY } from '$env/static/public';
 // import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
@@ -18,17 +18,22 @@ import { logEvent, log as logger } from '$lib/server/logger';
 /* region variables */
 // constants
 const log = logger.getSubLogger({ name: 'hooks' });
-
 /* endregion variables */
+
 async function customHandler({ event, resolve }) {
   const startTimer = Date.now();
+
+  const hog = await posthog(event);
+  if (hog) {
+    return hog;
+  }
 
   // services
   event.locals.api = api;
   event.locals.log = log;
   event.locals.captureException = async (error, user, other) => {
     const phClient = new PostHog(PUBLIC_POSTHOG_KEY, {
-      host: 'https://us.i.posthog.com'
+      host: PUBLIC_POSTHOG_HOST
     });
     phClient.captureException(error, user, other);
     await phClient.shutdown();
@@ -88,6 +93,40 @@ async function customHandler({ event, resolve }) {
   event.locals.startTimer = startTimer;
   logEvent(response.status, event);
   return response;
+}
+
+async function posthog(event) {
+  const { pathname } = event.url;
+
+  if (pathname.startsWith('/relay-bVfn')) {
+    // Determine target hostname based on static or dynamic ingestion
+    const hostname = pathname.startsWith('/relay-bVfn/static/')
+      ? 'us-assets.i.posthog.com' // change us to eu for EU Cloud
+      : 'us.i.posthog.com'; // change us to eu for EU Cloud
+
+    // Build external URL
+    const url = new URL(event.request.url);
+    url.protocol = 'https:';
+    url.hostname = hostname;
+    url.port = '443';
+    url.pathname = pathname.replace('/relay-bVfn/', '');
+
+    // Clone and adjust headers
+    const headers = new Headers(event.request.headers);
+    headers.set('Accept-Encoding', '');
+    headers.set('host', hostname);
+
+    // Proxy the request to the external host
+    const response = await fetch(url.toString(), {
+      body: event.request.body,
+      // @ts-expect-error 'duplex' doesn't exist in the type definition
+      duplex: 'half',
+      headers,
+      method: event.request.method
+    });
+
+    return response;
+  }
 }
 
 export const handleError = async ({ error, event, status }) => {
