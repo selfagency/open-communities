@@ -44,16 +44,16 @@ This cheat sheet provides a quick guide to the essential features of Svelte 5, f
 
 ```svelte
 <script>
-	let name = $state('World'); // Reactive state
+  let name = $state('World'); // Reactive state
 </script>
 
 /// file: MyComponent.svelte
 <h1>Hello, {name}!</h1>
 
 <style>
-	h1 {
-		color: blue;
-	} /* Styles scoped to this component */
+  h1 {
+    color: blue;
+  } /* Styles scoped to this component */
 </style>
 ```
 
@@ -66,7 +66,7 @@ Svelte 5 introduces `.svelte.js` (or `.svelte.ts` for TypeScript) files for crea
 export const count = $state(0);
 
 export function increment() {
-	count.set(count + 1);
+  count.set(count + 1);
 }
 ```
 
@@ -85,7 +85,7 @@ The `$state` rune is the primary way to declare reactive variables in Svelte 5. 
 
 ```svelte
 <script>
-	let count = $state(0); // Reactive number
+  let count = $state(0); // Reactive number
 </script>
 
 <button on:click={() => count++}>Clicks: {count}</button>
@@ -110,8 +110,8 @@ The `$derived` rune creates values that are automatically updated whenever their
 
 ```svelte
 <script>
-	let count = $state(10);
-	let doubled = $derived(count * 2); // `doubled` updates when `count` changes
+  let count = $state(10);
+  let doubled = $derived(count * 2); // `doubled` updates when `count` changes
 </script>
 
 <p>{count} doubled is {doubled}</p>
@@ -136,15 +136,15 @@ The `$effect` rune allows you to perform side effects in response to reactive st
 
 ```svelte
 <script>
-	let color = $state('red');
-	let canvas;
+  let color = $state('red');
+  let canvas;
 
-	$effect(() => {
-		// Effect runs when `color` changes
-		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = color;
-		ctx.fillRect(10, 10, 50, 50);
-	});
+  $effect(() => {
+    // Effect runs when `color` changes
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = color;
+    ctx.fillRect(10, 10, 50, 50);
+  });
 </script>
 
 <canvas bind:this={canvas} width="100" height="100"></canvas>
@@ -167,7 +167,7 @@ The `$props` rune is used to access properties passed to a Svelte component from
 
 ```svelte
 <script>
-	let { name = 'Guest' } = $props(); // Destructure and set default
+  let { name = 'Guest' } = $props(); // Destructure and set default
 </script>
 
 /// file: MyComponent.svelte
@@ -192,7 +192,7 @@ The `$bindable` rune is used in child components to create props that can be bou
 
 ```svelte
 <script>
-	let { value = $bindable() } = $props(); // `value` is bindable
+  let { value = $bindable() } = $props(); // `value` is bindable
 </script>
 
 /// file: FancyInput.svelte
@@ -203,8 +203,8 @@ In the parent component:
 
 ```svelte
 <script>
-	import FancyInput from './FancyInput.svelte';
-	let message = $state('Initial message');
+  import FancyInput from './FancyInput.svelte';
+  let message = $state('Initial message');
 </script>
 
 /// file: App.svelte
@@ -224,9 +224,9 @@ The `$inspect` rune is a debugging tool similar to `console.log`, but it automat
 
 ```svelte
 <script>
-	let count = $state(0);
-	let message = $state('Hello');
-	$inspect(count, message); // Logs `count` and `message` whenever they change
+  let count = $state(0);
+  let message = $state('Hello');
+  $inspect(count, message); // Logs `count` and `message` whenever they change
 </script>
 ```
 
@@ -250,9 +250,9 @@ The `$host` rune is specifically for components compiled as custom elements. It 
 <svelte:options customElement="my-stepper" />
 
 <script>
-	function dispatch(type) {
-		$host().dispatchEvent(new CustomEvent(type));
-	}
+  function dispatch(type) {
+    $host().dispatchEvent(new CustomEvent(type));
+  }
 </script>
 
 /// file: Stepper.svelte
@@ -264,15 +264,15 @@ Svelte markup is an extension of HTML, allowing you to embed JavaScript expressi
 
 ```svelte
 <script>
-	let dynamicClass = 'active';
-	let message = $state('Click me');
-	function handleClick() {
-		alert('Clicked!');
-	}
+  let dynamicClass = 'active';
+  let message = $state('Click me');
+  function handleClick() {
+    alert('Clicked!');
+  }
 </script>
 
 <div class={dynamicClass}>
-	<button on:click={handleClick}>{message}</button>
+  <button on:click={handleClick}>{message}</button>
 </div>
 ```
 
@@ -284,13 +284,13 @@ Text expressions are also enclosed in curly braces: `{expression}`. Use `{@html 
 
 ```svelte
 <script>
-	let isLoggedIn = $state(false);
+  let isLoggedIn = $state(false);
 </script>
 
 {#if isLoggedIn}
-	<p>Welcome back!</p>
+  <p>Welcome back!</p>
 {:else}
-	<p>Please log in.</p>
+  <p>Please log in.</p>
 {/if}
 ```
 
@@ -300,13 +300,13 @@ Text expressions are also enclosed in curly braces: `{expression}`. Use `{@html 
 
 ```svelte
 <script>
-	let items = $state(['Apple', 'Banana', 'Cherry']);
+  let items = $state(['Apple', 'Banana', 'Cherry']);
 </script>
 
 <ul>
-	{#each items as item, index (item)}
-		<li key={item}>{index + 1}: {item}</li>
-	{/each}
+  {#each items as item, index (item)}
+    <li key={item}>{index + 1}: {item}</li>
+  {/each}
 </ul>
 ```
 
@@ -318,11 +318,11 @@ Text expressions are also enclosed in curly braces: `{expression}`. Use `{@html 
 
 ```svelte
 <script>
-	let currentView = $state('view1');
+  let currentView = $state('view1');
 </script>
 
 {#key currentView}
-	<svelte:component this={currentViewComponent} />
+  <svelte:component this={currentViewComponent} />
 {/key}
 ```
 
@@ -332,15 +332,15 @@ Text expressions are also enclosed in curly braces: `{expression}`. Use `{@html 
 
 ```svelte
 <script>
-	let promise = fetchData(); // Function returning a Promise
+  let promise = fetchData(); // Function returning a Promise
 </script>
 
 {#await promise}
-	<p>Loading...</p>
+  <p>Loading...</p>
 {:then data}
-	<p>Data: {data}</p>
+  <p>Data: {data}</p>
 {:catch error}
-	<p>Error: {error.message}</p>
+  <p>Error: {error.message}</p>
 {/await}
 ```
 
@@ -363,7 +363,7 @@ You can omit the `:catch` or the initial pending block if not needed.
 </script>
 
 {#each images as image}
-	{@render figure(image)}
+  {@render figure(image)}
 {/each}
 ```
 
@@ -385,7 +385,7 @@ Use optional chaining `{@render snippetName?.()}` for snippets that might be und
 
 ```svelte
 <script>
-	let htmlContent = $state('<b>Bold text</b>');
+  let htmlContent = $state('<b>Bold text</b>');
 </script>
 
 <div>{@html htmlContent}</div>
@@ -397,8 +397,8 @@ Use optional chaining `{@render snippetName?.()}` for snippets that might be und
 
 ```svelte
 {#each items as item}
-	{@const area = item.width * item.height}
-	<p>Area: {area}</p>
+  {@const area = item.width * item.height}
+  <p>Area: {area}</p>
 {/each}
 ```
 
@@ -408,8 +408,8 @@ Use optional chaining `{@render snippetName?.()}` for snippets that might be und
 
 ```svelte
 <script>
-	let name = $state('Alice');
-	let age = $state(30);
+  let name = $state('Alice');
+  let age = $state(30);
 </script>
 
 {@debug name, age}
@@ -423,7 +423,7 @@ The `bind:` directive creates two-way bindings between component state and DOM e
 
 ```svelte
 <script>
-	let inputValue = $state('');
+  let inputValue = $state('');
 </script>
 
 <input bind:value={inputValue} placeholder="Enter text" /><p>You typed: {inputValue}</p>
@@ -437,12 +437,12 @@ The `use:` directive applies actions to DOM elements when they are mounted. Acti
 
 ```svelte
 <script>
-	import { focusTrap } from './actions.js'; // Custom action
+  import { focusTrap } from './actions.js'; // Custom action
 
-	function myAction(node) {
-		console.log('Element mounted');
-		return () => console.log('Element unmounted');
-	}
+  function myAction(node) {
+    console.log('Element mounted');
+    return () => console.log('Element unmounted');
+  }
 </script>
 
 <div use:myAction use:focusTrap>...</div>
@@ -456,14 +456,14 @@ The `transition:` directive applies transitions to elements when they enter or l
 
 ```svelte
 <script>
-	import { fade } from 'svelte/transition';
-	let visible = $state(true);
+  import { fade } from 'svelte/transition';
+  let visible = $state(true);
 </script>
 
 <button on:click={() => (visible = !visible)}>Toggle</button>
 
 {#if visible}
-	<div transition:fade={{ duration: 200 }}>Fades in/out</div>
+  <div transition:fade={{ duration: 200 }}>Fades in/out</div>
 {/if}
 ```
 
@@ -475,7 +475,7 @@ The `in:` and `out:` directives are unidirectional transitions, similar to `tran
 
 ```svelte
 {#if visible}
-	<div in:fly={{ y: 200 }} out:fade>Flies in, fades out</div>
+  <div in:fly={{ y: 200 }} out:fade>Flies in, fades out</div>
 {/if}
 ```
 
@@ -485,7 +485,7 @@ The `animate:` directive is used within keyed `{#each}` blocks to animate elemen
 
 ```svelte
 {#each list as item (item.id)}
-	<li animate:flip>{item.text}</li>
+  <li animate:flip>{item.text}</li>
 {/each}
 ```
 
@@ -497,8 +497,8 @@ The `style:` directive provides a shorthand for setting inline styles on element
 
 ```svelte
 <script>
-	let textColor = $state('red');
-	let fontSize = $state('16px');
+  let textColor = $state('red');
+  let fontSize = $state('16px');
 </script>
 
 <p style:color={textColor} style:font-size={fontSize}>Styled text</p>
@@ -512,7 +512,7 @@ Classes can be set using the `class` attribute or the `class:` directive. The `c
 
 ```svelte
 <script>
-	let isActive = $state(true);
+  let isActive = $state(true);
 </script>
 
 <div class={{ active: isActive, 'text-bold': true }}>Using class object</div>
@@ -525,9 +525,9 @@ Styles defined within a `<style>` block in a `.svelte` component are automatical
 
 ```svelte
 <style>
-	p {
-		color: green;
-	} /* Only applies to <p> elements in this component */
+  p {
+    color: green;
+  } /* Only applies to <p> elements in this component */
 </style>
 ```
 
@@ -537,16 +537,16 @@ To apply styles globally, use the `:global(...)` modifier or the `:global {...}`
 
 ```svelte
 <style>
-	:global(body) {
-		margin: 0;
-	} /* Global body style */
+  :global(body) {
+    margin: 0;
+  } /* Global body style */
 
-	:global {
-		.global-class {
-			/* Global class style */
-			color: blue;
-		}
-	}
+  :global {
+    .global-class {
+      /* Global class style */
+      color: blue;
+    }
+  }
 </style>
 ```
 
@@ -562,12 +562,12 @@ Inside `Slider.svelte`:
 
 ```svelte
 <style>
-	.track {
-		background-color: var(--track-color, #ccc);
-	}
-	.thumb {
-		width: var(--thumb-size, 15px);
-	}
+  .track {
+    background-color: var(--track-color, #ccc);
+  }
+  .thumb {
+    width: var(--thumb-size, 15px);
+  }
 </style>
 ```
 
@@ -577,12 +577,12 @@ While only one top-level `<style>` tag is allowed per component, you can nest `<
 
 ```svelte
 <div>
-	<style>
-		/* Global style - not scoped */
-		div {
-			color: red;
-		}
-	</style>
+  <style>
+    /* Global style - not scoped */
+    div {
+      color: red;
+    }
+  </style>
 </div>
 ```
 
@@ -629,8 +629,8 @@ While only one top-level `<style>` tag is allowed per component, you can nest `<
 
 ```svelte
 <svelte:head>
-	<title>My Svelte App</title>
-	<meta name="description" content="App description" />
+  <title>My Svelte App</title>
+  <meta name="description" content="App description" />
 </svelte:head>
 ```
 
@@ -640,7 +640,7 @@ While only one top-level `<style>` tag is allowed per component, you can nest `<
 
 ```svelte
 <script>
-	let elementTag = $state('article');
+  let elementTag = $state('article');
 </script>
 
 <svelte:element this={elementTag}>Dynamic element content</svelte:element>
@@ -660,12 +660,12 @@ Stores in Svelte are objects that hold reactive values and allow components to s
 
 ```svelte
 <script>
-	import { writable } from 'svelte/store';
-	const count = writable(0);
+  import { writable } from 'svelte/store';
+  const count = writable(0);
 </script>
 
 <p>Count: {$count}</p>
-<button on:click={() => count.update((n) => n + 1)}>Increment</button>
+<button on:click={() => count.update(n => n + 1)}>Increment</button>
 ```
 
 `svelte/store` module provides `writable`, `readable`, `derived`, `readonly`, and `get` store utilities.
@@ -696,14 +696,14 @@ Svelte 5 primarily uses `$effect` for most lifecycle needs. `onMount(callback)` 
 
 ```svelte
 <script>
-	import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
 
-	onMount(() => {
-		console.log('Component mounted');
-	});
-	onDestroy(() => {
-		console.log('Component destroyed');
-	});
+  onMount(() => {
+    console.log('Component mounted');
+  });
+  onDestroy(() => {
+    console.log('Component destroyed');
+  });
 </script>
 ```
 
@@ -726,7 +726,7 @@ Svelte has built-in TypeScript support. Use `<script lang="ts">` to enable TypeS
 
 ```svelte
 <script lang="ts">
-	let name: string = $state<string>('World');
+  let name: string = $state<string>('World');
 </script>
 ```
 

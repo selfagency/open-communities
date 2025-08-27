@@ -15,5 +15,7 @@
 	"sonarlint.connectedMode.project": {
 		"connectionId": "selfagency",
 		"projectKey": "selfagency_open-communities"
-	}
+	},
+	"prettier.configPath": "prettier.config.js",
+	"prettier.printWidth": 80
 }

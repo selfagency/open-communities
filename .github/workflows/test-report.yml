@@ -53,7 +53,7 @@ jobs:
         uses: dorny/test-reporter@v2
         with:
           artifact: test-results
-          path: '/home/runner/work/open-communities/open-communities/test-results/junit.xml'
+          path: '/home/runner/work/open-communities/test-results/junit.xml'
           reporter: java-junit
           name: Vitest Tests
           use-actions-summary: 'true'

@@ -1,8 +1,8 @@
 /* region imports */
-import type { MapStore, ReadableAtom } from 'nanostores';
+import type { DeepMapStore, ReadableAtom } from 'nanostores';
 
 import Fuzzy from '@leeoniya/ufuzzy';
-import { computed, map } from 'nanostores';
+import { computed, deepMap } from 'nanostores';
 import { alphabetical, isEmpty, shake, unique } from 'radashi';
 
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
@@ -12,203 +12,192 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 /* endregion imports */
 
 export class Search {
-	data: SearchData[];
-	debug: boolean;
-	fuzzy: Fuzzy;
-	ids: string[];
-	results: ReadableAtom<CongregationMetaRecord[]>;
-	state: MapStore<SearchState>;
+  data: SearchData[];
+  debug: boolean;
+  fuzzy: Fuzzy;
+  ids: string[];
+  results: ReadableAtom<CongregationMetaRecord[]>;
+  state: DeepMapStore<SearchState>;
 
-	constructor(data = [] as SearchData[], debug = false) {
-		this.data = alphabetical(data, (i) => i.name);
-		this.debug = debug;
+  constructor(data = [] as SearchData[], debug = false) {
+    this.data = alphabetical(data, (i) => i.name);
+    this.debug = debug;
 
-		this.state = map<SearchState>({});
-		this.fuzzy = new Fuzzy();
-		this.ids = this.data.map((i) => i.id);
+    this.state = deepMap<SearchState>({});
+    this.fuzzy = new Fuzzy();
+    this.ids = this.data.map((i) => i.id);
 
-		this.results = computed(this.state, (state) => {
-			let resultIds = [...this.ids];
+    this.results = computed(this.state, (state) => {
+      let resultIds = [...this.ids];
 
-			// Filter by Location
-			if (state.searchLocation && !isEmpty(state.searchLocation)) {
-				const {
-					city: filterCity,
-					country: filterCountry,
-					state: filterState
-				} = state.searchLocation;
-				const locationIds = this.data
-					.filter((record) => {
-						const { city, country, state: recordState } = record.location as LocationMeta;
+      // Filter by Location
+      if (state.searchLocation && !isEmpty(state.searchLocation)) {
+        const { city: filterCity, country: filterCountry, state: filterState } = state.searchLocation;
+        const locationIds = this.data
+          .filter((record) => {
+            const { city, country, state: recordState } = record.location as LocationMeta;
+            const cityMatch = !filterCity || (city && city.id === filterCity.id);
+            const countryMatch = !filterCountry || (country && country.id === filterCountry.id);
+            const stateMatch = !filterState || (recordState && recordState.id === filterState.id);
 
-						// if (this.debug) {
-						// 	console.log('Filter:', { filterCity, filterCountry, filterState });
-						// 	console.log('Record:', { city, country, state: recordState });
-						// }
+            return cityMatch && countryMatch && stateMatch;
+          })
+          .map((i) => i.id);
+        resultIds = resultIds.filter((i) => locationIds.includes(i));
+      }
 
-						const cityMatch = !filterCity || (city && city.id === filterCity.id);
-						const countryMatch = !filterCountry || (country && country.id === filterCountry.id);
-						const stateMatch = !filterState || (recordState && recordState.id === filterState.id);
+      // Filter by Search Text
+      if (state.searchTerms && !isEmpty(state.searchTerms)) {
+        const searchIds =
+          this.fuzzy
+            ?.filter(
+              this.data.map(
+                (i) => `${i.name} ${i.flavor} ${i.id} ${i.location?.city?.name} ${i.location?.state?.name}`
+              ),
+              (state.searchTerms as string)?.toLowerCase()
+            )
+            ?.map((i) => this.data[i].id) || [];
+        resultIds = resultIds.filter((i) => searchIds.includes(i));
+      }
 
-						return cityMatch && countryMatch && stateMatch;
-					})
-					.map((i) => i.id);
-				resultIds = resultIds.filter((i) => locationIds.includes(i));
-			}
+      // Apply All Other Filters
+      resultIds = this.applyAllFilters(state, resultIds);
 
-			// Filter by Search Text
-			if (state.searchTerms && !isEmpty(state.searchTerms)) {
-				const searchIds =
-					this.fuzzy
-						?.filter(
-							this.data.map((i) => `${i.name} ${i.flavor} ${i.id}`),
-							(state.searchTerms as string)?.toLowerCase()
-						)
-						?.map((i) => this.data[i].id) || [];
-				resultIds = resultIds.filter((i) => searchIds.includes(i));
-			}
+      return alphabetical(
+        this.data.filter((record) => unique(resultIds).includes(record.id)),
+        (i) => i.name
+      );
+    });
 
-			// Apply All Other Filters
-			resultIds = this.applyAllFilters(state, resultIds);
+    this.setSearchTerms = this.setSearchTerms.bind(this);
+    this.setSearchLocation = this.setSearchLocation.bind(this);
+    this.setFilters = this.setFilters.bind(this);
+    this.resetSearchTerms = this.resetSearchTerms.bind(this);
+    this.resetFilters = this.resetFilters.bind(this);
+    this.resetLocation = this.resetLocation.bind(this);
+    this.resetAll = this.resetAll.bind(this);
+    this.toggleLocation = this.toggleLocation.bind(this);
+  }
 
-			return alphabetical(
-				this.data.filter((record) => unique(resultIds).includes(record.id)),
-				(i) => i.name
-			);
-		});
+  adminFilter(filters: object, currentIds: string[]) {
+    const activeFilters = shake(filters, (f) => !f);
+    if (isEmpty(activeFilters)) return currentIds;
 
-		this.setSearchTerms = this.setSearchTerms.bind(this);
-		this.setSearchLocation = this.setSearchLocation.bind(this);
-		this.setFilters = this.setFilters.bind(this);
-		this.resetSearchTerms = this.resetSearchTerms.bind(this);
-		this.resetFilters = this.resetFilters.bind(this);
-		this.resetLocation = this.resetLocation.bind(this);
-		this.resetAll = this.resetAll.bind(this);
-		this.toggleLocation = this.toggleLocation.bind(this);
-	}
+    let ids: string[] = [];
 
-	adminFilter(filters: object, currentIds: string[]) {
-		const activeFilters = shake(filters, (f) => !f);
-		if (isEmpty(activeFilters)) return currentIds;
+    if (activeFilters['unapproved']) {
+      ids = this.data.filter((record) => !record.visible).map((i) => i.id);
+    }
 
-		let ids: string[] = [];
+    if (activeFilters['unclaimed']) {
+      const unclaimedIds = this.data.filter((record) => !record.owner).map((i) => i.id);
+      // If 'unapproved' was also checked, find the intersection. Otherwise, just use unclaimed.
+      ids = !isEmpty(ids) ? ids.filter((id) => unclaimedIds.includes(id)) : unclaimedIds;
+    }
 
-		if (activeFilters['unapproved']) {
-			ids = this.data.filter((record) => !record.visible).map((i) => i.id);
-		}
+    return currentIds.filter((i) => ids.includes(i));
+  }
 
-		if (activeFilters['unclaimed']) {
-			const unclaimedIds = this.data.filter((record) => !record.owner).map((i) => i.id);
-			// If 'unapproved' was also checked, find the intersection. Otherwise, just use unclaimed.
-			ids = !isEmpty(ids) ? ids.filter((id) => unclaimedIds.includes(id)) : unclaimedIds;
-		}
+  applyAllFilters(state: SearchState, currentIds: string[]) {
+    const hasFilter = (filters): boolean => {
+      if (!filters || isEmpty(filters)) return false;
+      return Object.values(filters).some((f) => f === true);
+    };
 
-		return currentIds.filter((i) => ids.includes(i));
-	}
+    if (!state.filters || isEmpty(state.filters)) {
+      return currentIds;
+    }
 
-	applyAllFilters(state: SearchState, currentIds: string[]) {
-		const hasFilter = (filters): boolean => {
-			if (!filters || isEmpty(filters)) return false;
-			return !isEmpty(shake(filters, (f) => (typeof f === 'boolean' ? f !== true : isEmpty(f))));
-		};
+    let resultIds = [...currentIds];
+    const { accessibility, admin, denomination, health, registration, security, services } = state.filters;
 
-		if (!state.filters || isEmpty(state.filters)) {
-			return currentIds;
-		}
+    if (hasFilter(services)) {
+      resultIds = this.boolFilter('services', services, resultIds);
+    }
+    if (hasFilter(security)) {
+      resultIds = this.boolFilter('security', security, resultIds);
+    }
+    if (hasFilter(accessibility)) {
+      resultIds = this.boolFilter('accessibility', accessibility, resultIds);
+    }
+    if (hasFilter(denomination)) {
+      resultIds = this.stringFilter('denomination', 'denomination', denomination, resultIds);
+    }
+    if (hasFilter(health)) {
+      resultIds = this.stringFilter('health', 'protocol', health, resultIds);
+    }
+    if (hasFilter(registration)) {
+      resultIds = this.stringFilter('registration', 'registrationType', registration, resultIds);
+    }
+    if (hasFilter(admin)) {
+      resultIds = this.adminFilter(admin, resultIds);
+    }
 
-		let resultIds = [...currentIds];
-		const { accessibility, admin, denomination, health, registration, security, services } =
-			state.filters;
+    return resultIds;
+  }
 
-		if (hasFilter(services)) {
-			resultIds = this.boolFilter('services', services, resultIds);
-		}
-		if (hasFilter(security)) {
-			resultIds = this.boolFilter('security', security, resultIds);
-		}
-		if (hasFilter(accessibility)) {
-			resultIds = this.boolFilter('accessibility', accessibility, resultIds);
-		}
-		if (hasFilter(denomination)) {
-			resultIds = this.stringFilter('denomination', 'denomination', denomination, resultIds);
-		}
-		if (hasFilter(health)) {
-			resultIds = this.stringFilter('health', 'protocol', health, resultIds);
-		}
-		if (hasFilter(registration)) {
-			resultIds = this.stringFilter('registration', 'registrationType', registration, resultIds);
-		}
-		if (hasFilter(admin)) {
-			resultIds = this.adminFilter(admin, resultIds);
-		}
+  boolFilter(filter: string, filters: object, currentIds: string[]) {
+    const activeFilters = shake(filters, (f) => !f);
+    if (isEmpty(activeFilters)) return currentIds;
 
-		return resultIds;
-	}
+    const ids = this.data
+      .filter((record) => {
+        return Object.keys(activeFilters).some((key) => {
+          return record[filter]?.[key];
+        });
+      })
+      .map((i) => i.id);
 
-	boolFilter(filter: string, filters: object, currentIds: string[]) {
-		const activeFilters = shake(filters, (f) => !f);
-		if (isEmpty(activeFilters)) return currentIds;
+    return currentIds.filter((i) => ids.includes(i));
+  }
 
-		const ids = this.data
-			.filter((record) => {
-				return Object.keys(activeFilters).some((key) => {
-					return record[filter]?.[key];
-				});
-			})
-			.map((i) => i.id);
+  resetAll() {
+    this.state.setKey('searchTerms', '');
+    this.state.setKey('searchLocation', {});
+    this.state.setKey('filters', {});
+  }
 
-		return currentIds.filter((i) => ids.includes(i));
-	}
+  resetFilters() {
+    this.state.setKey('filters', {});
+  }
 
-	resetAll() {
-		this.state.setKey('searchTerms', '');
-		this.state.setKey('searchLocation', {});
-		this.state.setKey('filters', {});
-	}
+  resetLocation() {
+    this.state.setKey('searchLocation', {});
+  }
 
-	resetFilters() {
-		this.state.setKey('filters', {});
-	}
+  resetSearchTerms() {
+    this.state.setKey('searchTerms', '');
+  }
 
-	resetLocation() {
-		this.state.setKey('searchLocation', {});
-	}
+  setFilters(filters: SearchState['filters']) {
+    this.state.setKey('filters', filters);
+  }
 
-	resetSearchTerms() {
-		this.state.setKey('searchTerms', '');
-	}
+  setSearchLocation(searchLocation: LocationMeta) {
+    this.state.setKey('searchLocation', searchLocation);
+  }
 
-	setFilters(filters: SearchState['filters']) {
-		this.state.setKey('filters', filters);
-	}
+  setSearchTerms(searchTerms: string) {
+    this.state.setKey('searchTerms', searchTerms);
+  }
 
-	setSearchLocation(searchLocation: LocationMeta) {
-		this.state.setKey('searchLocation', searchLocation);
-	}
+  stringFilter(filter: string, targetKey: string, filters: object, currentIds: string[]) {
+    const activeFilters = shake(filters, (f) => !f);
+    if (isEmpty(activeFilters)) return currentIds;
 
-	setSearchTerms(searchTerms: string) {
-		this.state.setKey('searchTerms', searchTerms);
-	}
+    const ids = this.data
+      .filter((record) => {
+        return Object.keys(activeFilters).some((key) => {
+          return targetKey === 'denomination' ? record[targetKey] === key : record[filter]?.[targetKey] === key;
+        });
+      })
+      .map((i) => i.id);
 
-	stringFilter(filter: string, targetKey: string, filters: object, currentIds: string[]) {
-		const activeFilters = shake(filters, (f) => !f);
-		if (isEmpty(activeFilters)) return currentIds;
+    return currentIds.filter((i) => ids.includes(i));
+  }
 
-		const ids = this.data
-			.filter((record) => {
-				return Object.keys(activeFilters).some((key) => {
-					return targetKey === 'denomination'
-						? record[targetKey] === key
-						: record[filter]?.[targetKey] === key;
-				});
-			})
-			.map((i) => i.id);
-
-		return currentIds.filter((i) => ids.includes(i));
-	}
-
-	toggleLocation() {
-		const state = this.state.get();
-		this.state.setKey('showLocation', !state.showLocation);
-	}
+  toggleLocation() {
+    const state = this.state.get();
+    this.state.setKey('showLocation', !state.showLocation);
+  }
 }

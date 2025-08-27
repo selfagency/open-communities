@@ -1,7 +1,8 @@
 /** @type {import("prettier").Config} */
 
 const config = {
-	arrowParens: 'avoid',
+	arrowParens: 'always',
+	bracketSameLine: true,
 	bracketSpacing: true,
 	overrides: [
 		{
@@ -17,7 +18,7 @@ const config = {
 	semi: true,
 	singleQuote: true,
 	tabWidth: 2,
-	trailingComma: 'es5',
+	trailingComma: 'none',
 	useTabs: false
 };
 

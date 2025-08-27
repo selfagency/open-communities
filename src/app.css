@@ -161,7 +161,7 @@
     @apply flex w-full flex-row items-start justify-start space-x-2;
 
     .filter-label {
-      @apply mt-0.5;
+      @apply -mt-1;
     }
   }
 }
