@@ -12,7 +12,7 @@ export async function generateCaptchaToken(siteKey) {
         data: 'e2e-test'
       }),
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       method: 'POST'
     });
@@ -40,7 +40,7 @@ export async function loadCaptchaConfig() {
     const envContent = await fs.readFile(envFile, 'utf8');
 
     const config = {};
-    envContent.split('\n').forEach(line => {
+    envContent.split('\n').forEach((line) => {
       const [key, value] = line.split('=');
       if (key && value) {
         config[key.trim()] = value.replace(/"/g, '').trim();

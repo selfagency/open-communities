@@ -13,51 +13,51 @@ const api = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
 api.autoCancellation(false);
 
 async function authenticate(auth: string) {
-	try {
-		if (auth) api.authStore.loadFromCookie(auth);
-		if (api.authStore.isValid) {
-			await api.collection('users').authRefresh();
-		}
-	} catch {
-		api.authStore.clear();
-	}
-	return api;
+  try {
+    if (auth) api.authStore.loadFromCookie(auth);
+    if (api.authStore.isValid) {
+      await api.collection('users').authRefresh();
+    }
+  } catch {
+    api.authStore.clear();
+  }
+  return api;
 }
 
 function cleanResponse<T>(response: T, keepDate: boolean = false): T {
-	return convertBooleans(
-		omit(response, [
-			'collectionId' as keyof T,
-			'collectionName' as keyof T,
-			'updated' as keyof T,
-			keepDate ? ('' as keyof T) : ('created' as keyof T)
-		])
-	) as T;
+  return convertBooleans(
+    omit(response, [
+      'collectionId' as keyof T,
+      'collectionName' as keyof T,
+      'updated' as keyof T,
+      keepDate ? ('' as keyof T) : ('created' as keyof T)
+    ])
+  ) as T;
 }
 
 function convertBooleans(obj) {
-	if (isArray(obj)) {
-		return obj.map(convertBooleans);
-	} else if (obj !== null && typeof obj === 'object') {
-		return Object.keys(obj).reduce((acc, key) => {
-			const value = obj[key];
-			if (value === 1) {
-				acc[key] = true;
-			} else if (value === 0) {
-				acc[key] = false;
-			} else {
-				acc[key] = convertBooleans(value);
-			}
-			return acc;
-		}, {});
-	}
-	return obj;
+  if (isArray(obj)) {
+    return obj.map(convertBooleans);
+  } else if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const value = obj[key];
+      if (value === 1) {
+        acc[key] = true;
+      } else if (value === 0) {
+        acc[key] = false;
+      } else {
+        acc[key] = convertBooleans(value);
+      }
+      return acc;
+    }, {});
+  }
+  return obj;
 }
 
 function expand(item) {
-	const newItem = assign(item, { ...item.expand });
-	delete newItem.expand;
-	return newItem;
+  const newItem = assign(item, { ...item.expand });
+  delete newItem.expand;
+  return newItem;
 }
 
 export { api, authenticate, cleanResponse, expand };

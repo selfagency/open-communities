@@ -13,25 +13,25 @@ const Root = DialogPrimitive.Root;
 const Portal = DialogPrimitive.Portal;
 
 export {
-	Close,
-	Content,
-	Description,
-	//
-	Root as Dialog,
-	Close as DialogClose,
-	Content as DialogContent,
-	Description as DialogDescription,
-	Footer as DialogFooter,
-	Header as DialogHeader,
-	Overlay as DialogOverlay,
-	Portal as DialogPortal,
-	Title as DialogTitle,
-	Trigger as DialogTrigger,
-	Footer,
-	Header,
-	Overlay,
-	Portal,
-	Root,
-	Title,
-	Trigger
+  Close,
+  Content,
+  Description,
+  //
+  Root as Dialog,
+  Close as DialogClose,
+  Content as DialogContent,
+  Description as DialogDescription,
+  Footer as DialogFooter,
+  Header as DialogHeader,
+  Overlay as DialogOverlay,
+  Portal as DialogPortal,
+  Title as DialogTitle,
+  Trigger as DialogTrigger,
+  Footer,
+  Header,
+  Overlay,
+  Portal,
+  Root,
+  Title,
+  Trigger
 };

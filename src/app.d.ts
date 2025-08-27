@@ -12,50 +12,48 @@ import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/s
 /* endregion imports */
 
 declare global {
-	namespace App {
-		interface Error {
-			code?: string;
-			errorId?: string;
-			message?: string;
-			stack?: string;
-			status?: number;
-		}
+  namespace App {
+    interface Error {
+      code?: string;
+      errorId?: string;
+      message?: string;
+      stack?: string;
+      status?: number;
+    }
 
-		interface Locals {
-			api: TypedPocketBase;
-			auth: string;
-			cookieOpts: SerializeOptions & { path: string };
-			error?: string;
-			errorId?: string;
-			errorStackTrace?: string;
-			i18n: {
-				locale: string;
-				route: string;
-			};
-			log: Logger<{ main: boolean; sub: boolean }>;
-			message?: unknown;
-			session: string;
-			startTimer?: number;
-			track?: unknown;
-			validate: (
-				request: unknown,
-				schema?: unknown
-			) => Promise<
-				SuperValidated<Infer<ObjectSchema<DefaultSchema | LoginSchema | TokenSchema | UserSchema>>>
-			>;
-		}
+    interface Locals {
+      api: TypedPocketBase;
+      auth: string;
+      cookieOpts: SerializeOptions & { path: string };
+      error?: string;
+      errorId?: string;
+      errorStackTrace?: string;
+      i18n: {
+        locale: string;
+        route: string;
+      };
+      log: Logger<{ main: boolean; sub: boolean }>;
+      message?: unknown;
+      session: string;
+      startTimer?: number;
+      track?: unknown;
+      validate: (
+        request: unknown,
+        schema?: unknown
+      ) => Promise<SuperValidated<Infer<ObjectSchema<DefaultSchema | LoginSchema | TokenSchema | UserSchema>>>>;
+    }
 
-		interface PageData {
-			congregations?: CongregationMetaRecord[];
-			default?: SuperValidated<DefaultSchema>;
-			login?: SuperValidated<LoginSchema>;
-			signup?: SuperValidated<UserSchema>;
-			verify?: SuperValidated<TokenSchema>;
-		}
+    interface PageData {
+      congregations?: CongregationMetaRecord[];
+      default?: SuperValidated<DefaultSchema>;
+      login?: SuperValidated<LoginSchema>;
+      signup?: SuperValidated<UserSchema>;
+      verify?: SuperValidated<TokenSchema>;
+    }
 
-		// interface PageState {}
-		// interface Platform {}
-	}
+    // interface PageState {}
+    // interface Platform {}
+  }
 }
 
 export {};

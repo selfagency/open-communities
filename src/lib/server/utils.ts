@@ -9,44 +9,44 @@ import { m } from '$lib/paraglide/messages';
 import { log } from '$lib/server/logger';
 
 export async function validateCaptcha(form: SuperValidated<Record<string, unknown>>) {
-	if (!pubEnv.PUBLIC_CAPTCHA_SITE_KEY || !env.CAPTCHA_SITE_SECRET) {
-		log.error('[captcha] Captcha validation is not configured');
-		throw new Error('Captcha validation is not configured');
-	}
+  if (!pubEnv.PUBLIC_CAPTCHA_SITE_KEY || !env.CAPTCHA_SITE_SECRET) {
+    log.error('[captcha] Captcha validation is not configured');
+    throw new Error('Captcha validation is not configured');
+  }
 
-	if (!form.data.captcha) {
-		log.error('[captcha] No captcha token provided');
-		setError(form, 'captcha', m.invalidCaptcha());
-		return fail(400, { form });
-	} else {
-		log.debug('[captcha] Validating captcha token:', form.data.captcha);
+  if (!form.data.captcha) {
+    log.error('[captcha] No captcha token provided');
+    setError(form, 'captcha', m.invalidCaptcha());
+    return fail(400, { form });
+  } else {
+    log.debug('[captcha] Validating captcha token:', form.data.captcha);
 
-		const endpoint = `${pubEnv.PUBLIC_CAPTCHA_ENDPOINT}/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/siteverify`;
-		log.debug('[captcha] Validation endpoint:', endpoint);
+    const endpoint = `${pubEnv.PUBLIC_CAPTCHA_ENDPOINT}/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/siteverify`;
+    log.debug('[captcha] Validation endpoint:', endpoint);
 
-		const response = await fetch(endpoint, {
-			body: JSON.stringify({
-				response: form.data.captcha as string,
-				secret: env.CAPTCHA_SITE_SECRET
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			method: 'POST'
-		});
+    const response = await fetch(endpoint, {
+      body: JSON.stringify({
+        response: form.data.captcha as string,
+        secret: env.CAPTCHA_SITE_SECRET
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST'
+    });
 
-		const result = await response.json();
-		log.debug('[captcha] Validation response:', result);
+    const result = await response.json();
+    log.debug('[captcha] Validation response:', result);
 
-		const captchaValid = result?.success;
+    const captchaValid = result?.success;
 
-		if (!captchaValid) {
-			log.error('[captcha] Validation failed:', result);
-			setError(form, 'captcha', m.invalidCaptcha());
-			return fail(400, { form });
-		} else {
-			log.debug('[captcha] Validation successful');
-			return captchaValid;
-		}
-	}
+    if (!captchaValid) {
+      log.error('[captcha] Validation failed:', result);
+      setError(form, 'captcha', m.invalidCaptcha());
+      return fail(400, { form });
+    } else {
+      log.debug('[captcha] Validation successful');
+      return captchaValid;
+    }
+  }
 }

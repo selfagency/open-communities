@@ -1,109 +1,106 @@
 <script lang="ts">
-	/* region imports */
-	import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
+  /* region imports */
+  import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
 
-	import type { LocationMeta } from '$lib/types.d';
+  import type { LocationMeta } from '$lib/types.d';
 
-	import { Button } from '$lib/components/ui/button';
-	import { Location } from '$lib/location';
-	import { Search } from '$lib/search';
-	/* endregion imports */
+  import { Button } from '$lib/components/ui/button';
+  import { Location } from '$lib/location';
+  import { Search } from '$lib/search';
+  /* endregion imports */
 
-	/* region variables */
-	// props
-	let {
-		location,
-		locations = $bindable([] as LocationMeta[]),
-		search
-	}: {
-		location: Location;
-		locations: LocationMeta[];
-		search: Search;
-	} = $props();
+  /* region variables */
+  // props
+  let {
+    location,
+    locations = $bindable([] as LocationMeta[]),
+    search
+  }: {
+    location: Location;
+    locations: LocationMeta[];
+    search: Search;
+  } = $props();
 
-	// constants
-	const { state: searchState } = search;
+  // constants
+  const { state: searchState } = search;
 
-	// locals
-	const center = $derived(() => {
-		const loc = $searchState.searchLocation;
-		if (loc?.country?.id) {
-			return [
-				loc.city?.longitude || loc.state?.longitude || loc.country?.longitude || -90,
-				loc.city?.latitude || loc.state?.latitude || loc.country?.latitude || 10
-			] as LngLatLike;
-		}
-		return [-90, 10] as LngLatLike;
-	});
+  // locals
+  const center = $derived(() => {
+    const loc = $searchState.searchLocation;
+    if (loc?.country?.id) {
+      return [
+        loc.city?.longitude || loc.state?.longitude || loc.country?.longitude || -90,
+        loc.city?.latitude || loc.state?.latitude || loc.country?.latitude || 10
+      ] as LngLatLike;
+    }
+    return [-90, 10] as LngLatLike;
+  });
 
-	const zoom = $derived(() => {
-		const loc = $searchState.searchLocation;
-		if (loc?.country?.id) {
-			if (loc.city?.id) return 10;
-			if (loc.state?.id) return 6;
-			return 3;
-		}
-		return 1;
-	});
-	/* endregion variables */
+  const zoom = $derived(() => {
+    const loc = $searchState.searchLocation;
+    if (loc?.country?.id) {
+      if (loc.city?.id) return 10;
+      if (loc.state?.id) return 6;
+      return 3;
+    }
+    return 1;
+  });
+  /* endregion variables */
 </script>
 
 {#if (globalThis as Record<string, unknown>).__TEST__}
-	<!-- Test-friendly fallback: render buttons for each location so tests can query labels
+  <!-- Test-friendly fallback: render buttons for each location so tests can query labels
 		 without initializing MapLibre / WebGL. -->
-	<div class="h-96">
-		{#each locations as { city, country, state } (city?.id)}
-			<div>
-				<Button
-					variant="ghost"
-					class="h-full min-h-max w-full"
-					onclick={() => {
-						search.state.setKey('showLocation', true);
-						location.load({ city: city?.id, country: country?.id, state: state?.id });
-					}}
-				>
-					<span class="text-xs">
-						{#if city}{city.name},{/if}
-						{#if state}{state.name},{/if}
-						{#if country}{country.name}{/if}
-					</span>
-				</Button>
-			</div>
-		{/each}
-	</div>
+  <div class="h-96">
+    {#each locations as { city, country, state } (city?.id)}
+      <div>
+        <Button
+          variant="ghost"
+          class="h-full min-h-max w-full"
+          onclick={() => {
+            search.state.setKey('showLocation', true);
+            location.load({ city: city?.id, country: country?.id, state: state?.id });
+          }}>
+          <span class="text-xs">
+            {#if city}{city.name},{/if}
+            {#if state}{state.name},{/if}
+            {#if country}{country.name}{/if}
+          </span>
+        </Button>
+      </div>
+    {/each}
+  </div>
 {:else}
-	<MapLibre
-		center={center()}
-		zoom={zoom()}
-		minZoom={1}
-		class="h-96"
-		standardControls
-		style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-		attributionControl={false}
-	>
-		{#each locations as { city, country, latitude, longitude, state } (city?.id)}
-			<DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
-				<Popup offset={[0, -10]}>
-					<Button
-						variant="ghost"
-						class="h-full min-h-max w-full"
-						onclick={() => {
-							search.state.setKey('showLocation', true);
-							location.load({
-								city: city?.id,
-								country: country?.id,
-								state: state?.id
-							});
-						}}
-					>
-						<span class="text-xs">
-							{#if city}{city.name},{/if}
-							{#if state}{state.name},{/if}
-							{#if country}{country.name}{/if}
-						</span>
-					</Button>
-				</Popup>
-			</DefaultMarker>
-		{/each}
-	</MapLibre>
+  <MapLibre
+    center={center()}
+    zoom={zoom()}
+    minZoom={1}
+    class="h-96"
+    standardControls
+    style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+    attributionControl={false}>
+    {#each locations as { city, country, latitude, longitude, state } (city?.id)}
+      <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
+        <Popup offset={[0, -10]}>
+          <Button
+            variant="ghost"
+            class="h-full min-h-max w-full"
+            onclick={() => {
+              search.state.setKey('showLocation', true);
+              location.load({
+                city: city?.id,
+                country: country?.id,
+                state: state?.id
+              });
+            }}>
+            <span class="text-xs">
+              {#if city}{city.name},{/if}
+              {#if state}{state.name},{/if}
+              {#if country}{country.name}{/if}
+            </span>
+          </Button>
+        </Popup>
+      </DefaultMarker>
+    {/each}
+  </MapLibre>
 {/if}

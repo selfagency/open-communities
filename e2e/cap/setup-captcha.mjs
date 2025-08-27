@@ -25,10 +25,10 @@ async function main() {
     const createResponse = await fetch(`${base}/server/keys`, {
       body: JSON.stringify({ name: keyName }),
       headers: {
-        'Authorization': `Bot ${apiKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bot ${apiKey}`,
+        'Content-Type': 'application/json'
       },
-      method: 'POST',
+      method: 'POST'
     });
 
     if (!createResponse.ok) {
@@ -39,7 +39,7 @@ async function main() {
 
     // List keys to find the one we just created
     const listResponse = await fetch(`${base}/server/keys`, {
-      headers: { 'Authorization': `Bot ${apiKey}` },
+      headers: { Authorization: `Bot ${apiKey}` }
     });
 
     if (!listResponse.ok) {
@@ -54,7 +54,7 @@ async function main() {
     // Find our key
     let siteKey = null;
     if (Array.isArray(keys)) {
-      const ourKey = keys.find(k => k.name === keyName);
+      const ourKey = keys.find((k) => k.name === keyName);
       if (ourKey) {
         siteKey = ourKey.siteKey;
       }
@@ -68,8 +68,8 @@ async function main() {
     // Rotate the secret to generate a proper secret key
     console.log('[captcha-setup] rotating secret for siteKey:', siteKey);
     const rotateResponse = await fetch(`${base}/server/keys/${siteKey}/rotate-secret`, {
-      headers: { 'Authorization': `Bot ${apiKey}` },
-      method: 'POST',
+      headers: { Authorization: `Bot ${apiKey}` },
+      method: 'POST'
     });
 
     console.log('[captcha-setup] rotate response status:', rotateResponse.status);
@@ -101,7 +101,7 @@ async function main() {
     if (!secret) {
       console.log('[captcha-setup] fetching key details for secret after rotation:', siteKey);
       const detailResponse = await fetch(`${base}/server/keys/${siteKey}`, {
-        headers: { 'Authorization': `Bot ${apiKey}` },
+        headers: { Authorization: `Bot ${apiKey}` }
       });
 
       if (detailResponse.ok) {
@@ -129,7 +129,6 @@ PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
     console.log(`[captcha-setup] site key: ${siteKey}`);
     console.log(`[captcha-setup] secret: ${secret}`);
     console.log(`[captcha-setup] environment file: ${envFile}`);
-
   } catch (error) {
     console.error('[captcha-setup] error:', error);
     process.exit(10);
@@ -145,7 +144,7 @@ async function waitForCap(url, timeout = 15000) {
     } catch {
       // ignore
     }
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 500));
   }
   return false;
 }

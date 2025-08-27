@@ -10,54 +10,54 @@ import inlineSveltePlugin from 'vite-plugin-svelte-inline-component';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
-	build: {
-		rollupOptions: {
-			output: {
-				manualChunks: { 'svelte-maplibre': ['svelte-maplibre'] }
-			}
-		}
-	},
-	plugins: [
-		ViteMcp(),
-		sentrySvelteKit({
-			sourceMapsUploadOptions: {
-				org: 'selfagency',
-				project: 'open-communities'
-			}
-		}),
-		mode === 'test' && inlineSveltePlugin(),
-		devtoolsJson(),
-		tailwindcss(),
-		sveltekit(),
-		paraglideVitePlugin({
-			outdir: './src/lib/paraglide',
-			project: './project.inlang'
-		}),
-		svg()
-	],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: { 'svelte-maplibre': ['svelte-maplibre'] }
+      }
+    }
+  },
+  plugins: [
+    ViteMcp(),
+    sentrySvelteKit({
+      sourceMapsUploadOptions: {
+        org: 'selfagency',
+        project: 'open-communities'
+      }
+    }),
+    mode === 'test' && inlineSveltePlugin(),
+    devtoolsJson(),
+    tailwindcss(),
+    sveltekit(),
+    paraglideVitePlugin({
+      outdir: './src/lib/paraglide',
+      project: './project.inlang'
+    }),
+    svg()
+  ],
 
-	// Resolve aliases for both dev/build and Vitest.
-	// Ensure $test/* path mapping from tsconfig/svelte.config is also available to Vite/Vitest.
-	resolve: {
-		alias: [
-			{ find: '$test', replacement: path.resolve(__dirname, 'src/test') },
-			{ find: '$test/', replacement: path.resolve(__dirname, 'src/test') + '/' }
-		],
-		...(process.env.VITEST ? { conditions: ['browser'] } : {})
-	},
+  // Resolve aliases for both dev/build and Vitest.
+  // Ensure $test/* path mapping from tsconfig/svelte.config is also available to Vite/Vitest.
+  resolve: {
+    alias: [
+      { find: '$test', replacement: path.resolve(__dirname, 'src/test') },
+      { find: '$test/', replacement: path.resolve(__dirname, 'src/test') + '/' }
+    ],
+    ...(process.env.VITEST ? { conditions: ['browser'] } : {})
+  },
 
-	test: {
-		coverage: {
-			// you can include other reporters, but 'json-summary' is required, json is recommended
-			reporter: ['text', 'json-summary', 'json'],
-			// If you want a coverage reports even if your tests are failing, include the reportOnFailure option
-			reportOnFailure: false
-		},
-		environment: 'jsdom',
-		// enable vitest globals (expect, describe, it) so tests can use them without imports
-		globals: true,
-		reporter: ['junit', 'json', 'verbose'],
-		// run our test setup before tests so we can mock SvelteKit runtime modules
-		setupFiles: ['./src/test/setupTest.ts']
-	}
+  test: {
+    coverage: {
+      // you can include other reporters, but 'json-summary' is required, json is recommended
+      reporter: ['text', 'json-summary', 'json'],
+      // If you want a coverage reports even if your tests are failing, include the reportOnFailure option
+      reportOnFailure: false
+    },
+    environment: 'jsdom',
+    // enable vitest globals (expect, describe, it) so tests can use them without imports
+    globals: true,
+    reporter: ['junit', 'json', 'verbose'],
+    // run our test setup before tests so we can mock SvelteKit runtime modules
+    setupFiles: ['./src/test/setupTest.ts']
+  }
 }));

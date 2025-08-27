@@ -4,36 +4,33 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe('Accessibility segment (behavior)', () => {
-	it('toggles an accessibility checkbox and updates formData', async () => {
-		const { default: Host } = await import('$test/components/AccessibilityHost.svelte');
+  it('toggles an accessibility checkbox and updates formData', async () => {
+    const { default: Host } = await import('$test/components/AccessibilityHost.svelte');
 
-		const props = makeMockFormProps(
-			{ accessibility: { online_asl: false, other: false, otherText: '' } },
-			{}
-		);
-		const target = document.createElement('div');
+    const props = makeMockFormProps({ accessibility: { online_asl: false, other: false, otherText: '' } }, {});
+    const target = document.createElement('div');
 
-		// mount the host which provides Accordion.Root and renders Accessibility
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		new (Host as any)({ props: { props }, target });
+    // mount the host which provides Accordion.Root and renders Accessibility
 
-		// find checkboxes rendered by bits-ui Checkbox (role or input)
-		const checkboxes = target.querySelectorAll('input[type="checkbox"], [role="checkbox"]');
-		expect(checkboxes.length).toBeGreaterThan(0);
+    new (Host as any)({ props: { props }, target });
 
-		const first = checkboxes[0] as HTMLElement;
-		first.click();
+    // find checkboxes rendered by bits-ui Checkbox (role or input)
+    const checkboxes = target.querySelectorAll('input[type="checkbox"], [role="checkbox"]');
+    expect(checkboxes.length).toBeGreaterThan(0);
 
-		await Promise.resolve();
+    const first = checkboxes[0] as HTMLElement;
+    first.click();
 
-		let latest: unknown;
-		const unsub = (
-			props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }
-		).subscribe((v) => (latest = v));
-		unsub();
+    await Promise.resolve();
 
-		// verify the nested accessibility flag changed
-		const acc = (latest as unknown as Record<string, any>).accessibility || {};
-		expect(acc.online_asl).toBe(true);
-	});
+    let latest: unknown;
+    const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
+      (v) => (latest = v)
+    );
+    unsub();
+
+    // verify the nested accessibility flag changed
+    const acc = (latest as unknown as Record<string, any>).accessibility || {};
+    expect(acc.online_asl).toBe(true);
+  });
 });

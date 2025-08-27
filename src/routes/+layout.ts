@@ -6,11 +6,11 @@ import { initState, state } from '$lib/stores';
 /* endregion imports */
 
 export const load = async ({ data }) => {
-	if (browser) {
-		if (isEmpty(state?.get())) {
-			initState();
-		}
-	}
+  if (browser) {
+    if (isEmpty(state?.get())) {
+      initState();
+    }
+  }
 
-	return data;
+  return data;
 };

@@ -37,17 +37,17 @@ export default defineConfig({
       'tailwind-merge',
       'tailwind-variants',
       'tslog',
-      'zod',
-    ],
+      'zod'
+    ]
   },
   // Enable compatibility for Svelte component API v4 when running tests so
   // older-style instantiation (new Component(...)) works in the test runner.
   plugins: [
     svelte({
       compilerOptions: {
-        compatibility: { componentApi: 4 },
-      },
-    }),
+        compatibility: { componentApi: 4 }
+      }
+    })
   ],
   resolve: {
     alias: {
@@ -77,15 +77,15 @@ export default defineConfig({
         __dirname,
         'src/test/mocks/$lib_server_logger.js'
       ),
-      'sveltekit-superforms': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms.js'),
-    },
+      'sveltekit-superforms': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms.js')
+    }
   },
   test: {
     // Enable browser runner for client-side Svelte component tests
     browser: {
       enabled: true,
       instances: [{ browser: 'chromium' }],
-      provider: 'playwright',
+      provider: 'playwright'
     },
     coverage: {
       exclude: [
@@ -105,12 +105,12 @@ export default defineConfig({
         'src/lib/paraglide',
         'src/test?(-*).?(c|m)[jt]s?(x)',
         'src/test?(s)/**',
-        'static',
+        'static'
       ],
       include: ['src'],
       provider: 'istanbul', // or 'v8'
       reporter: ['text', 'json-summary', 'json', 'html'],
-      reportsDirectory: './test-results/coverage',
+      reportsDirectory: './test-results/coverage'
     },
     environment: 'happy-dom',
     // Use Node environment for server tests
@@ -121,11 +121,11 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx,js,jsx}'],
     outputFile: {
       json: './test-results/results.json',
-      junit: './test-results/junit.xml',
+      junit: './test-results/junit.xml'
     },
     reporters: ['json', 'default', 'junit'],
     // vitest-browser-svelte must be loaded before the project setup so it
     // injects the `page.render` and locators for browser-mode tests.
-    setupFiles: ['vitest-browser-svelte', path.resolve(__dirname, 'src/test/setupTest.ts')],
-  },
+    setupFiles: ['vitest-browser-svelte', path.resolve(__dirname, 'src/test/setupTest.ts')]
+  }
 });

@@ -11,17 +11,17 @@ import { page } from '$app/state';
 export type SelectOption = { label: string; value: string };
 
 export type State = {
-	form?: {
-		hasErrors: boolean;
-		success: boolean;
-	};
-	isMobile?: boolean;
-	lang?: string;
-	loading?: boolean;
-	loadingSecondary?: boolean;
-	offsetHeight?: number;
-	offsetWidth?: number;
-	showIntro?: boolean;
+  form?: {
+    hasErrors: boolean;
+    success: boolean;
+  };
+  isMobile?: boolean;
+  lang?: string;
+  loading?: boolean;
+  loadingSecondary?: boolean;
+  offsetHeight?: number;
+  offsetWidth?: number;
+  showIntro?: boolean;
 };
 /* endregion types */
 
@@ -30,8 +30,8 @@ export type State = {
 const { persistentMap } = persistent;
 
 const encoder = {
-	decode: JSON.parse,
-	encode: JSON.stringify
+  decode: JSON.parse,
+  encode: JSON.stringify
 };
 /* endregion variables */
 
@@ -40,23 +40,23 @@ export const state = persistentMap<State>('state_', {} as State, encoder);
 /* endregion state */
 
 export function initState() {
-	setState({
-		form: {
-			hasErrors: false,
-			success: false
-		},
-		isMobile: window.innerWidth < 640,
-		lang: page.data.user?.lang || 'en',
-		loading: false,
-		loadingSecondary: false,
-		offsetHeight: window.innerHeight,
-		offsetWidth: window.innerWidth,
-		showIntro: true
-	});
+  setState({
+    form: {
+      hasErrors: false,
+      success: false
+    },
+    isMobile: window.innerWidth < 640,
+    lang: page.data.user?.lang || 'en',
+    loading: false,
+    loadingSecondary: false,
+    offsetHeight: window.innerHeight,
+    offsetWidth: window.innerWidth,
+    showIntro: true
+  });
 }
 
 /* region methods */
 export function setState(newState: Partial<State>) {
-	state.set(assign(state.get(), newState));
+  state.set(assign(state.get(), newState));
 }
 /* endregion methods */

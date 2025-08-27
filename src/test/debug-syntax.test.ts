@@ -15,15 +15,13 @@ vi.mock('$lib/search', () => ({ Search: FakeSearch }));
 vi.mock('$lib/location', () => ({ Location: class {} }));
 
 describe('Syntax Error Debug', () => {
-	it('should import congregations component without radashi mock', async () => {
-		try {
-			const { default: Congregations } = await import(
-				'../lib/components/search/congregations.svelte'
-			);
-			expect(Congregations).toBeDefined();
-		} catch (error) {
-			console.error('Import error:', error);
-			throw error;
-		}
-	});
+  it('should import congregations component without radashi mock', async () => {
+    try {
+      const { default: Congregations } = await import('../lib/components/search/congregations.svelte');
+      expect(Congregations).toBeDefined();
+    } catch (error) {
+      console.error('Import error:', error);
+      throw error;
+    }
+  });
 });

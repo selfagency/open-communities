@@ -12,34 +12,34 @@ import Congregation from './congregation.svelte';
 
 // use the same shape as pocketbase types (minimal)
 const baseCong = {
-	flavor: 'A friendly place',
-	id: 'abc123',
-	location: { city: { name: 'TestCity' }, country: { name: 'TestCountry' }, state: { name: 'TS' } },
-	name: 'Test Congregation',
-	services: { onlineOnly: false },
-	visibility: true,
-	visible: true
+  flavor: 'A friendly place',
+  id: 'abc123',
+  location: { city: { name: 'TestCity' }, country: { name: 'TestCountry' }, state: { name: 'TS' } },
+  name: 'Test Congregation',
+  services: { onlineOnly: false },
+  visibility: true,
+  visible: true
 };
 
 describe('Congregation component', () => {
-	it('renders title and copy/share triggers copyText and toast', async () => {
-		const user = userEvent.setup();
+  it('renders title and copy/share triggers copyText and toast', async () => {
+    const user = userEvent.setup();
 
-		// render dialog open so Dialog.Content (which contains the share button) is present
-		render(Congregation, { congregation: baseCong, open: true });
+    // render dialog open so Dialog.Content (which contains the share button) is present
+    render(Congregation, { congregation: baseCong, open: true });
 
-		// title exists inside the opened dialog
-		const dialog = screen.getByRole('dialog');
-		expect(within(dialog).getByText('Test Congregation')).toBeInTheDocument();
+    // title exists inside the opened dialog
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByText('Test Congregation')).toBeInTheDocument();
 
-		// find the invisible sr-only label for share and click its parent button
-		const shareLabel = screen.getByText(m.share());
-		const shareButton = shareLabel.closest('button');
-		if (!shareButton) throw new Error('share button not found');
+    // find the invisible sr-only label for share and click its parent button
+    const shareLabel = screen.getByText(m.share());
+    const shareButton = shareLabel.closest('button');
+    if (!shareButton) throw new Error('share button not found');
 
-		await user.click(shareButton);
+    await user.click(shareButton);
 
-		expect(copyText).toHaveBeenCalled();
-		expect(toast.success).toHaveBeenCalled();
-	});
+    expect(copyText).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalled();
+  });
 });

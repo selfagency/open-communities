@@ -1,11 +1,11 @@
 export const actions = {
-	logout: async (event) => {
-		const { cookies, locals } = event;
+  logout: async (event) => {
+    const { cookies, locals } = event;
 
-		cookies.set('auth', '', locals.cookieOpts);
-		cookies.set('session', '', locals.cookieOpts);
-		locals.api.authStore.clear();
+    cookies.set('auth', '', locals.cookieOpts);
+    cookies.set('session', '', locals.cookieOpts);
+    locals.api.authStore.clear();
 
-		return {};
-	}
+    return {};
+  }
 };

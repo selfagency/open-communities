@@ -665,7 +665,7 @@ Stores in Svelte are objects that hold reactive values and allow components to s
 </script>
 
 <p>Count: {$count}</p>
-<button on:click={() => count.update(n => n + 1)}>Increment</button>
+<button on:click={() => count.update((n) => n + 1)}>Increment</button>
 ```
 
 `svelte/store` module provides `writable`, `readable`, `derived`, `readonly`, and `get` store utilities.

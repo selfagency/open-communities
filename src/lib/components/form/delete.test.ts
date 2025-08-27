@@ -6,12 +6,12 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe('Delete form component', () => {
-	it('renders without crashing', async () => {
-		const { default: Component } = await import('./delete.svelte');
-		const props = makeMockFormProps({}, {});
-		const target = document.createElement('div');
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		new (Component as any)({ props, target });
-		expect(target).toBeTruthy();
-	});
+  it('renders without crashing', async () => {
+    const { default: Component } = await import('./delete.svelte');
+    const props = makeMockFormProps({}, {});
+    const target = document.createElement('div');
+
+    new (Component as any)({ props, target });
+    expect(target).toBeTruthy();
+  });
 });

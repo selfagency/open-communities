@@ -1,4 +1,5 @@
-import { vi, describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
 import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
@@ -10,14 +11,14 @@ describe('Security segment (behavior)', () => {
     const props = makeMockFormProps(
       {
         security: {
-          localPolice: false,
-          privateSecurityArmed: false,
-          privateSecurityUnarmed: false,
           clergyArmed: false,
           congregantsArmed: false,
+          localPolice: false,
           noFirearms: false,
           other: false,
-          otherText: ''
+          otherText: '',
+          privateSecurityArmed: false,
+          privateSecurityUnarmed: false
         }
       },
       {}
@@ -25,7 +26,6 @@ describe('Security segment (behavior)', () => {
 
     const target = document.createElement('div');
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     new (Host as unknown as any)({ props: { props }, target });
 
     // wait for Svelte to render
@@ -39,10 +39,12 @@ describe('Security segment (behavior)', () => {
     await Promise.resolve();
 
     let latest: unknown;
-    const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe((v) => (latest = v));
+    const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
+      (v) => (latest = v)
+    );
     unsub();
 
-    const security = ((latest as unknown) as Record<string, unknown>)?.security as Record<string, unknown> | undefined;
+    const security = (latest as unknown as Record<string, unknown>)?.security as Record<string, unknown> | undefined;
     expect(
       Boolean(security?.localPolice) ||
         Boolean(security?.privateSecurityArmed) ||

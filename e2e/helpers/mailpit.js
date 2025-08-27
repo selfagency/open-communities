@@ -21,13 +21,13 @@ export async function findMessageBySubject(subject, timeout = 8000, to) {
   while (Date.now() < deadline) {
     const res = await fetch(`${MAILPIT_API}/messages`, {
       headers: {
-        'accept': 'application/json'
+        accept: 'application/json'
       }
     });
     if (!res.ok) throw new Error('Mailpit API not reachable');
     const data = await res.json();
     // support several shapes returned by various mailpit versions
-    const arr = Array.isArray(data) ? data : data.messages ?? data.items ?? [];
+    const arr = Array.isArray(data) ? data : (data.messages ?? data.items ?? []);
     lastPayload = arr;
 
     const found = arr.find((m) => {

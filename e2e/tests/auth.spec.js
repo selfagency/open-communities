@@ -108,7 +108,7 @@ test.describe('auth flows', () => {
     // console.log('[e2e-debug] Fetching message details for ID:', messageId);
 
     // Skip raw endpoint and go directly to message details
-    const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`,  {
+    const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`, {
       headers: {
         accept: 'application/json'
       }
@@ -130,8 +130,9 @@ test.describe('auth flows', () => {
     // Add debug logging and extract verification link
     // console.log('[e2e-debug] Final email content length:', raw.length);
     // console.log('[e2e-debug] Final email content preview:', raw.substring(0, 500));    // Extract verification link instead of just the token
-    const linkMatch = raw.match(/https?:\/\/[^\s"'<>]+verifyEmail[^\s"'<>]*/g) ||
-                      raw.match(/https?:\/\/[^\s"'<>]+\?[^\s"'<>]*verifyEmail[^\s"'<>]*/g);
+    const linkMatch =
+      raw.match(/https?:\/\/[^\s"'<>]+verifyEmail[^\s"'<>]*/g) ||
+      raw.match(/https?:\/\/[^\s"'<>]+\?[^\s"'<>]*verifyEmail[^\s"'<>]*/g);
 
     let verificationLink = null;
     if (linkMatch && linkMatch.length > 0) {
@@ -173,7 +174,7 @@ test.describe('auth flows', () => {
 
         // Query users to find our test user
         const usersRes = await fetch(`${PB_API}/collections/users/records?filter=(email="${email}")`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` }
         });
 
         if (usersRes.ok) {
@@ -212,18 +213,19 @@ test.describe('auth flows', () => {
 
     // If raw fetch failed, try getting message details
     if (!rawReset) {
-      const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`,  {
-      headers: {
-        accept: 'application/json'
-      }
-    });
+      const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`, {
+        headers: {
+          accept: 'application/json'
+        }
+      });
       if (detailRes.ok) {
         const detail = await detailRes.json();
         rawReset = detail.HTML || detail.Text || JSON.stringify(detail);
       }
     }
 
-    const resetMatch = rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) || rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9-_]+)/);
+    const resetMatch =
+      rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) || rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9-_]+)/);
     resetToken = resetMatch ? resetMatch[1] : undefined;
     expect(resetToken).toBeTruthy();
 

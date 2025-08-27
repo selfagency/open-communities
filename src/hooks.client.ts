@@ -8,23 +8,23 @@ import { log } from '$lib/utils';
 /* endregion imports */
 
 if (!Sentry.isInitialized()) {
-	Sentry.init({
-		dsn: PUBLIC_SENTRY_DSN,
-		tracesSampleRate: 1.0
-	});
+  Sentry.init({
+    dsn: PUBLIC_SENTRY_DSN,
+    tracesSampleRate: 1.0
+  });
 }
 
 export const handleError = handleErrorWithSentry(({ error, event, message, status }) => {
-	if (status !== 404) {
-		if (dev) {
-			log.debug('event', event);
-			log.error(error);
-		}
-	}
+  if (status !== 404) {
+    if (dev) {
+      log.debug('event', event);
+      log.error(error);
+    }
+  }
 
-	return {
-		message,
-		stack: (<Error>error)?.stack,
-		status
-	};
+  return {
+    message,
+    stack: (<Error>error)?.stack,
+    status
+  };
 });

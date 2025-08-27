@@ -6,31 +6,30 @@ import { createMockServerLoadEvent, mockSveltekitSuperforms } from '$test/testUt
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 function makeLocals(overrides = {}) {
-	const api = {
-		authStore: { record: {} },
-		collection: () => ({ getFirstListItem: async () => ({ id: 'page' }) })
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	} as any;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return { api, validate: async () => ({}), ...overrides } as any;
+  const api = {
+    authStore: { record: {} },
+    collection: () => ({ getFirstListItem: async () => ({ id: 'page' }) })
+  } as any;
+
+  return { api, validate: async () => ({}), ...overrides } as any;
 }
 
 describe('routes/add +page.server', () => {
-	it('load redirects to login when no client id', async () => {
-		const mod = await import('../../../src/routes/add/+page.server');
-		const locals = makeLocals({
-			api: {
-				authStore: { record: null },
-				collection: () => ({ getFirstListItem: async () => ({}) })
-			}
-		});
-		// load should throw (SvelteKit redirect) when no client id
-		const mockEvent = createMockServerLoadEvent({
-			locals,
-			route: { id: '/add' },
-			url: new URL('http://localhost/add')
-		});
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		await expect(mod.load(mockEvent as any)).rejects.toBeDefined();
-	});
+  it('load redirects to login when no client id', async () => {
+    const mod = await import('../../../src/routes/add/+page.server');
+    const locals = makeLocals({
+      api: {
+        authStore: { record: null },
+        collection: () => ({ getFirstListItem: async () => ({}) })
+      }
+    });
+    // load should throw (SvelteKit redirect) when no client id
+    const mockEvent = createMockServerLoadEvent({
+      locals,
+      route: { id: '/add' },
+      url: new URL('http://localhost/add')
+    });
+
+    await expect(mod.load(mockEvent as any)).rejects.toBeDefined();
+  });
 });

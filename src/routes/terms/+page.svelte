@@ -1,17 +1,17 @@
 <script lang="ts">
-	/* region imports */
-	import Page from '$lib/components/global/page.svelte';
+  /* region imports */
+  import Page from '$lib/components/global/page.svelte';
 
-	import type { PageProps } from './$types';
-	/* endregion imports */
+  import type { PageProps } from './$types';
+  /* endregion imports */
 
-	/* region variables */
-	// props
-	const { data }: PageProps = $props();
+  /* region variables */
+  // props
+  const { data }: PageProps = $props();
 
-	// locals
-	let content = $derived(data.content);
-	/* endregion variables */
+  // locals
+  let content = $derived(data.content);
+  /* endregion variables */
 </script>
 
 <Page {content} />

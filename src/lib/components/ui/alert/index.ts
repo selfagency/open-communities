@@ -4,11 +4,11 @@ import Root from './alert.svelte';
 export { type AlertVariant, alertVariants } from './alert.svelte';
 
 export {
-	//
-	Root as Alert,
-	Description as AlertDescription,
-	Title as AlertTitle,
-	Description,
-	Root,
-	Title
+  //
+  Root as Alert,
+  Description as AlertDescription,
+  Title as AlertTitle,
+  Description,
+  Root,
+  Title
 };
