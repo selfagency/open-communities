@@ -6,7 +6,7 @@ import { log } from '$lib/server/logger';
 
 export async function POST({ cookies, locals, request }) {
   const { api, captureException } = locals;
-  const client = api.authStore.record;
+  const client = api?.authStore?.record;
 
   const { lang, user } = await request.json();
 

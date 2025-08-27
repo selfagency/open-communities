@@ -4,7 +4,7 @@ import { cleanResponse, handleError } from '$lib/server/api';
 
 export async function load({ fetch, locals }) {
   const { api, captureException } = locals;
-  const client = api.authStore.record;
+  const client = api?.authStore?.record;
 
   try {
     return {

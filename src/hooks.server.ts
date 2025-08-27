@@ -48,7 +48,7 @@ async function customHandler({ event, resolve }) {
   event.locals.api.authStore.loadFromCookie(event.cookies.get('auth') ?? '');
 
   // i18n
-  const lang = event.cookies.get('lang') || event.locals.api.authStore.model?.lang || 'en';
+  const lang = event.cookies.get('lang') || event.locals.api?.authStore?.record?.lang || 'en';
 
   event.locals.i18n = {
     locale: lang,
@@ -62,9 +62,9 @@ async function customHandler({ event, resolve }) {
       event.cookies.set('session', '', event.locals.cookieOpts);
       event.locals.api.authStore.clear();
     } else {
-      if (event.locals.api.authStore.isValid) {
+      if (event.locals.api?.authStore?.isValid) {
         await event.locals.api.collection('users').authRefresh();
-        event.cookies.set('auth', event.locals.api.authStore.exportToCookie(), event.locals.cookieOpts);
+        event.cookies.set('auth', event.locals.api?.authStore?.exportToCookie(), event.locals.cookieOpts);
         // Maintain session cookie if auth refresh succeeds
         if (!event.cookies.get('session')) {
           event.cookies.set('session', uid(32), event.locals.cookieOpts);
@@ -97,7 +97,7 @@ export const handleError = async ({ error, event, status }) => {
     event.locals.errorId = errorId;
     logEvent(status, event);
 
-    await event.locals.captureException(error, event.locals.api.authStore.record?.id);
+    await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
 
     return {
       errorId,

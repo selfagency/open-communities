@@ -41,7 +41,7 @@ type MetaRecord = {
 export const load = async (event) => {
   const { fetch, locals } = event;
   const { api, captureException, validate } = locals;
-  const client = api.authStore.record;
+  const client = api?.authStore?.record;
 
   try {
     if (!client?.id) {
@@ -67,7 +67,7 @@ export const actions = {
   submit: async (event) => {
     const { fetch, locals } = event;
     const { api, captureException, log, validate } = locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
 
     const form = await validate(event, defaultSchema);
     const formData = form.data as CongregationMetaRecord & MetaRecord;

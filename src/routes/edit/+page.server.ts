@@ -37,7 +37,7 @@ type RecordWithId = CongregationMetaRecord & { id: string };
 
 export const load = async ({ fetch, locals, url }) => {
   const { api, captureException, validate } = locals;
-  const client = api.authStore.record;
+  const client = api?.authStore?.record;
 
   try {
     if (client?.id) {
@@ -84,7 +84,7 @@ export const actions = {
   delete: async (event) => {
     const { fetch, locals } = event;
     const { api, captureException, validate } = locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
 
     const form = await validate(event, deleteSchema);
     const data = form.data as MetaRecord & RecordWithId;
@@ -156,7 +156,7 @@ export const actions = {
   submit: async (event) => {
     const { fetch, locals } = event;
     const { api, captureException, validate } = locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
 
     const form = await validate(event, defaultSchema);
     const data = form.data as MetaRecord & RecordWithId;
@@ -249,7 +249,7 @@ export const actions = {
   transfer: async (event) => {
     const { fetch, locals } = event;
     const { api, captureException, log, validate } = locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
 
     const form = await validate(event, transferSchema);
     const data = form.data;

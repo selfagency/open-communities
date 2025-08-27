@@ -31,7 +31,7 @@ export const actions = {
   acct: async (event) => {
     const { locals } = event;
     const { api, captureException, validate } = locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
     const form = await validate(event, tokenSchema);
 
     try {
@@ -81,7 +81,7 @@ export const actions = {
   login: async (event) => {
     const { cookies, fetch, locals } = event;
     const { api, captureException, cookieOpts, log } = locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
 
     const form = await locals.validate(event, loginSchema);
     let user: UsersRecord;

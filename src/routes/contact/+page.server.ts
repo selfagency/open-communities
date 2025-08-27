@@ -15,7 +15,7 @@ import { truncateText } from '$lib/utils';
 export const load = async (event) => {
   const { fetch, locals } = event;
   const { api, captureException, log, validate } = locals;
-  const client = api.authStore.record;
+  const client = api?.authStore?.record;
 
   try {
     const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map((c) => {
@@ -48,7 +48,7 @@ export const load = async (event) => {
 export const actions = {
   default: async (event) => {
     const { api, captureException, log } = event.locals;
-    const client = api.authStore.record;
+    const client = api?.authStore?.record;
     const form = await event.locals.validate(event.request, contactSchema);
 
     try {

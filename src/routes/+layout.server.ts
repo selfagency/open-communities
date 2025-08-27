@@ -5,7 +5,7 @@ import { cleanResponse, handleError } from '$lib/server/api';
 
 export async function load({ cookies, fetch, locals }) {
   const { api, captureException } = locals;
-  const user = api.authStore.record;
+  const user = api?.authStore?.record;
   const lang = cookies.get('lang') || user?.lang || 'en';
 
   const countries = await api.collection('countries').getFullList({
