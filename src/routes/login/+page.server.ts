@@ -27,9 +27,10 @@ export const load: PageServerLoad = async ({ locals, request }) => {
 
 export const actions = {
   acct: async (event) => {
-    const { api, captureException, validate } = event.locals;
+    const { locals, request } = event;
+    const { api, captureException, validate } = locals;
     const client = api.authStore.record;
-    const form = await validate(event.request, tokenSchema);
+    const form = await validate(request, tokenSchema);
 
     try {
       if (!form.valid) {
@@ -76,11 +77,11 @@ export const actions = {
     }
   },
   login: async (event) => {
-    const { cookies, fetch, locals } = event;
+    const { cookies, fetch, locals, request } = event;
     const { api, captureException, cookieOpts } = locals;
     const client = api.authStore.record;
 
-    const form = await locals.validate(loginSchema, event);
+    const form = await locals.validate(request, loginSchema);
     let user: UsersRecord;
 
     try {
@@ -142,8 +143,9 @@ export const actions = {
     return {};
   },
   signup: async (event) => {
-    const { api, captureException, validate } = event.locals;
-    const form = await validate(userSchema, event);
+    const { locals, request } = event;
+    const { api, captureException, validate } = locals;
+    const form = await validate(request, userSchema);
     let user: UsersRecord;
 
     try {

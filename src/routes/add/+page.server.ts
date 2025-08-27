@@ -38,7 +38,7 @@ type MetaRecord = {
 };
 /* endregion types */
 
-export const load = async ({ fetch, locals }) => {
+export const load = async ({ fetch, locals, request }) => {
   const { api, captureException, validate } = locals;
   const client = api.authStore.record;
 
@@ -51,7 +51,7 @@ export const load = async ({ fetch, locals }) => {
       .collection('pages')
       .getFirstListItem(`slug="add-${client?.lang || 'en'}"`, { fetch })) as PagesRecord;
 
-    return { content, form: { default: await validate(defaultSchema) } };
+    return { content, form: { default: await validate(request, defaultSchema) } };
   } catch (error) {
     if ((error as Error).message === 'Forbidden') {
       redirect(302, '/login?signUp=true');
@@ -64,11 +64,11 @@ export const load = async ({ fetch, locals }) => {
 
 export const actions = {
   submit: async (event) => {
-    const { fetch, locals } = event;
+    const { fetch, locals, request } = event;
     const { api, captureException, log, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(event.request, defaultSchema);
+    const form = await validate(request, defaultSchema);
     const formData = form.data as CongregationMetaRecord & MetaRecord;
 
     try {

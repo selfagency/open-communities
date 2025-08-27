@@ -35,7 +35,7 @@ type MetaRecord = RecordWithId & {
 type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
-export const load = async ({ fetch, locals, url }) => {
+export const load = async ({ fetch, locals, request, url }) => {
   const { api, captureException, validate } = locals;
   const client = api.authStore.record;
 
@@ -53,7 +53,6 @@ export const load = async ({ fetch, locals, url }) => {
         congregation,
         form: {
           default: await validate(
-            defaultSchema,
             cleanResponse({
               ...congregation,
               location: {
@@ -61,10 +60,11 @@ export const load = async ({ fetch, locals, url }) => {
                 country: location.country?.id,
                 state: location.state?.id
               }
-            })
+            }),
+            defaultSchema
           ),
-          delete: await validate(deleteSchema, { id }),
-          transfer: await validate(transferSchema, { id })
+          delete: await validate({ id }, deleteSchema),
+          transfer: await validate({ id }, transferSchema)
         }
       };
     } else {
@@ -82,11 +82,11 @@ export const load = async ({ fetch, locals, url }) => {
 
 export const actions = {
   delete: async (event) => {
-    const { fetch, locals } = event;
+    const { fetch, locals, request } = event;
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(event.request, deleteSchema);
+    const form = await validate(request, deleteSchema);
     const data = form.data as MetaRecord & RecordWithId;
 
     try {
@@ -154,11 +154,11 @@ export const actions = {
     }
   },
   submit: async (event) => {
-    const { fetch, locals } = event;
+    const { fetch, locals, request } = event;
     const { api, captureException, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(event.request, defaultSchema);
+    const form = await validate(request, defaultSchema);
     const data = form.data as MetaRecord & RecordWithId;
 
     try {
@@ -247,11 +247,11 @@ export const actions = {
     }
   },
   transfer: async (event) => {
-    const { fetch, locals } = event;
+    const { fetch, locals, request } = event;
     const { api, captureException, log, validate } = locals;
     const client = api.authStore.record;
 
-    const form = await validate(event.request, transferSchema);
+    const form = await validate(request, transferSchema);
     const data = form.data;
 
     try {

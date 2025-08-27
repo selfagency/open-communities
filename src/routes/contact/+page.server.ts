@@ -48,7 +48,7 @@ export const actions = {
   default: async (event) => {
     const { api, captureException, log } = event.locals;
     const client = api.authStore.record;
-    const form = await event.locals.validate(contactSchema, event);
+    const form = await event.locals.validate(event.request, contactSchema);
 
     try {
       if (!form.valid) {
