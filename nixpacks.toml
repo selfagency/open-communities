@@ -1,2 +1,2 @@
 [phases.build]
-cmds = ['pnpm run build', 'pnpx posthog-cli sourcemap inject --directory ./build', 'pnpx posthog-cli sourcemap upload --directory ./build']
+cmds = ['pnpm run build', 'pnpx @posthog/cli sourcemap inject --directory ./build', 'pnpx @posthog/cli sourcemap upload --directory ./build']

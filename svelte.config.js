@@ -14,6 +14,9 @@ const config = {
       $test: path.resolve('./src/test')
     },
     csp,
+    paths: {
+      relative: false
+    },
     serviceWorker: {
       register: false
     }

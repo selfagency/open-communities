@@ -100,12 +100,17 @@ jobs:
           NODE_ENV: test
           PB_TEST_ADMIN: admin@test.com
           PB_TEST_PASSWORD: i3_NL-dfzzFt5TX
+          PORT: 4173
+          POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
+          POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
           PUBLIC_HOSTNAME: http://localhost:4173
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
           SMTP_HOST: localhost
           SMTP_PORT: 1025
-          PORT: 4173
+
         run: |
           echo "Starting Docker container..."
           CONTAINER_ID=$(docker run -d \
