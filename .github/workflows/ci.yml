@@ -88,22 +88,22 @@ jobs:
           SMTP_HOST: localhost
           SMTP_PORT: 1025
 
-      # - name: Debug coverage and test results
-      #   run: |
-      #     echo "=== Coverage directory ==="
-      #     ls -la coverage/ || echo "No coverage directory"
-      #     echo "=== Test results directory ==="
-      #     ls -la test-results/ || echo "No test-results directory"
-      #     echo "=== All XML files ==="
-      #     find . -name "*.xml" -type f | head -10
+      - name: Debug coverage and test results
+        run: |
+          echo "=== Coverage directory ==="
+          ls -la coverage/ || echo "No coverage directory"
+          echo "=== Test results directory ==="
+          ls -la test-results/ || echo "No test-results directory"
+          echo "=== All XML files ==="
+          find . -name "*.xml" -type f | head -10
 
-      # - name: Ensure test results directory exists
-      #   run: |
-      #     mkdir -p test-results
-      #     # Copy any XML files from root or common locations
-      #     find . -maxdepth 2 -name "junit*.xml" -type f -exec cp {} test-results/ \;
-      #     find . -maxdepth 2 -name "*test*.xml" -type f -exec cp {} test-results/ \;
-      #     ls -la test-results/ || echo "test-results still empty"
+      - name: Ensure test results directory exists
+        run: |
+          mkdir -p test-results
+          # Copy any XML files from root or common locations
+          find . -maxdepth 2 -name "junit*.xml" -type f -exec cp {} test-results/ \;
+          find . -maxdepth 2 -name "*test*.xml" -type f -exec cp {} test-results/ \;
+          ls -la test-results/ || echo "test-results still empty"
 
       - name: Upload test results artifact
         uses: actions/upload-artifact@v4
