@@ -3,7 +3,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 import { shake, uid } from 'radashi';
 
-// import { dev } from '$app/environment';
+import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import { logger } from '$lib/utils';
 /* endregion imports */
@@ -23,6 +23,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
     // Skip logging for internal requests
     const pathname = event.url.pathname;
     if (
+      (!dev && event.url.host === 'localhost:3000') ||
       pathname.startsWith('/relay-bVfn') ||
       pathname.startsWith('/_app/') ||
       pathname.includes('__data.json') ||

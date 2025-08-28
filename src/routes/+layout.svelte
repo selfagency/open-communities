@@ -80,10 +80,10 @@
   <title>{m.title()}</title>
 </svelte:head>
 
-<div class="flex h-full min-h-screen flex-col items-center justify-between">
+<div class="flex h-full min-h-screen flex-col items-center justify-between max-w-screen w-full overflow-hidden">
   <Progress />
   <Header />
-  <main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px]">
+  <main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4">
     {@render children()}
   </main>
   <Footer />
