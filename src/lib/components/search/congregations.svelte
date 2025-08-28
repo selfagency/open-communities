@@ -140,7 +140,7 @@
   });
 
   $effect(() => {
-    if (searchTerms) {
+    if (searchTerms || searchTerms.length === 0) {
       untrack(() => {
         search.setSearchTerms(searchTerms);
       });

@@ -23,7 +23,9 @@ export class Search {
     this.data = alphabetical(data, (i) => i.name);
     this.debug = debug;
 
-    this.state = deepMap<SearchState>({});
+    this.state = deepMap<SearchState>({
+      showLocation: true
+    });
     this.fuzzy = new Fuzzy();
     this.ids = this.data.map((i) => i.id);
 
@@ -52,7 +54,8 @@ export class Search {
           this.fuzzy
             ?.filter(
               this.data.map(
-                (i) => `${i.name} ${i.flavor} ${i.id} ${i.location?.city?.name} ${i.location?.state?.name}`
+                (i) =>
+                  `${i.name} ${i.flavor} ${i.id} ${i.location?.city?.name} ${i.location?.state?.name} ${i.location?.country?.name}`
               ),
               (state.searchTerms as string)?.toLowerCase()
             )
