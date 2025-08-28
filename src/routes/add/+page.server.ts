@@ -2,7 +2,7 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { fail, redirect } from '@sveltejs/kit';
-import { omit } from 'radashi';
+import { isFunction, omit } from 'radashi';
 import { setError } from 'sveltekit-superforms';
 
 import type {
@@ -57,7 +57,9 @@ export const load = async (event) => {
     if ((error as Error).message === 'Forbidden') {
       redirect(302, '/login?signUp=true');
     } else {
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
       return handleError(error);
     }
   }
@@ -149,7 +151,9 @@ export const actions = {
         form
       };
     } catch (error) {
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
       log.error('add:submit:error', error);
 
       const err = error as ClientResponseError;

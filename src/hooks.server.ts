@@ -3,7 +3,7 @@ import type { Handle } from '@sveltejs/kit';
 import type { SerializeOptions } from 'cookie';
 
 import { sequence } from '@sveltejs/kit/hooks';
-import { isEmpty, uid } from 'radashi';
+import { isEmpty, isFunction, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
@@ -97,7 +97,9 @@ export const handleError = async ({ error, event, status }) => {
     event.locals.errorId = errorId;
     logEvent(status, event);
 
-    await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
+    if (isFunction(event.locals.captureException)) {
+      await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
+    }
 
     return {
       errorId,

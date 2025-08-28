@@ -2,7 +2,7 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
-import { uid } from 'radashi';
+import { isFunction, uid } from 'radashi';
 
 import type { UsersRecord } from '$lib/pocketbase.d';
 
@@ -65,7 +65,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
 
       return fail(err.status ?? 400, {
         form: {
@@ -118,7 +120,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
 
       // log.error('Login failed:', {
       //   email: form.data.email,
@@ -180,7 +184,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error);
+      if (isFunction(captureException)) {
+        await captureException(error);
+      }
 
       return fail(err.status || 400, {
         form: {

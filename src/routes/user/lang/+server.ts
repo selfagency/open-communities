@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { isFunction } from 'radashi';
 
 import type { UsersRecord } from '$lib/pocketbase.d';
 
@@ -24,7 +25,9 @@ export async function POST({ cookies, locals, request }) {
 
     return json({ result, status: 201 });
   } catch (error) {
-    await captureException(error, client?.id);
+    if (isFunction(captureException)) {
+      await captureException(error, client?.id);
+    }
     log.error('Error updating user:', error);
     return json({ error: 'Failed to update user language' }, { status: 500 });
   }

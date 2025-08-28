@@ -2,7 +2,7 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { fail, redirect } from '@sveltejs/kit';
-import { isEmpty, omit } from 'radashi';
+import { isEmpty, isFunction, omit } from 'radashi';
 
 import type {
   AccessibilityRecord,
@@ -74,7 +74,9 @@ export const load = async ({ fetch, locals, url }) => {
     if ((error as Error).message === '403') {
       redirect(302, '/login');
     } else {
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
       return handleError(error);
     }
   }
@@ -143,7 +145,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
 
       return fail(err.status ?? 400, {
         form: {
@@ -236,7 +240,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
 
       return fail(err.status ?? 400, {
         form: {
@@ -285,7 +291,9 @@ export const actions = {
       return { form };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
 
       return fail(err.status ?? 400, {
         form: {

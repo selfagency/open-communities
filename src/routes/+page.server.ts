@@ -1,4 +1,6 @@
 /* region imports */
+import { isFunction } from 'radashi';
+
 import { cleanResponse, handleError } from '$lib/server/api';
 /* endregion imports */
 
@@ -17,7 +19,9 @@ export async function load({ fetch, locals }) {
       content: await api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch })
     };
   } catch (err) {
-    await captureException(err, client?.id);
+    if (isFunction(captureException)) {
+      await captureException(err, client?.id);
+    }
     return handleError(err as Error);
   }
 }

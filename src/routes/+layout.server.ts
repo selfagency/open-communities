@@ -1,4 +1,6 @@
 /* region imports */
+import { isFunction } from 'radashi';
+
 import { cleanResponse, handleError } from '$lib/server/api';
 // import { log } from '$lib/server/logger';
 /* endregion imports */
@@ -19,7 +21,9 @@ export async function load({ cookies, fetch, locals }) {
       user
     };
   } catch (err) {
-    await captureException(err, user?.id);
+    if (isFunction(captureException)) {
+      await captureException(err, user?.id);
+    }
     return handleError(err as Error);
   }
 }

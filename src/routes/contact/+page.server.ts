@@ -2,6 +2,7 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
+import { isFunction } from 'radashi';
 
 import type { LocationMeta } from '$lib/types.d';
 
@@ -36,7 +37,9 @@ export const load = async (event) => {
       form: await validate(event, contactSchema)
     };
   } catch (error) {
-    await captureException(error, client?.id);
+    if (isFunction(captureException)) {
+      await captureException(error, client?.id);
+    }
     log.error('contact:load:error', error);
 
     return {
@@ -76,7 +79,9 @@ export const actions = {
           api
         );
       } catch (error) {
-        await captureException(error, client?.id);
+        if (isFunction(captureException)) {
+          await captureException(error, client?.id);
+        }
         return fail(400, {
           error,
           form
@@ -88,7 +93,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      await captureException(error, client?.id);
+      if (isFunction(captureException)) {
+        await captureException(error, client?.id);
+      }
       log.error('error', err);
 
       return fail(err.status || 400, {
