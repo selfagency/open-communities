@@ -30,9 +30,13 @@ export const load: PageServerLoad = async (event) => {
 export const actions = {
   acct: async (event) => {
     const { locals } = event;
-    const { api, captureException, validate } = locals;
+    const { api, capture, captureException, validate } = locals;
     const client = api?.authStore?.record;
     const form = await validate(event, tokenSchema);
+
+    if (isFunction(capture)) {
+      await capture(client?.id, form.data.type, form.data);
+    }
 
     try {
       if (!form.valid) {
@@ -151,8 +155,11 @@ export const actions = {
   },
   signup: async (event) => {
     const { locals } = event;
-    const { api, captureException, validate } = locals;
+    const { api, capture, captureException, validate } = locals;
     const form = await validate(event, userSchema);
+
+    await capture(form.data.email, 'signup', form.data);
+
     let user: UsersRecord;
 
     try {

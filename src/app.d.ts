@@ -1,14 +1,15 @@
 /* region imports */
 import type { SerializeOptions } from 'cookie';
-import type { Posthog } from 'posthog-node';
 import type { Infer, SuperValidated } from 'sveltekit-superforms';
 import type { ObjectSchema } from 'zod';
 
-import '@poppanator/sveltekit-svg/dist/svg';
 import { Logger } from 'tslog';
+import '@poppanator/sveltekit-svg/dist/svg';
 
 import type { CongregationMetaRecord, TypedPocketBase } from '$lib/pocketbase.d';
 import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
+
+import { capture, captureException } from '$lib/server/posthog';
 
 /* endregion imports */
 
@@ -25,7 +26,8 @@ declare global {
     interface Locals {
       api: TypedPocketBase;
       auth: string;
-      captureException: Posthog.captureException;
+      capture: returnType<typeof capture>;
+      captureException: returnType<typeof captureException>;
       cookieOpts: SerializeOptions & { path: string };
       error?: string;
       errorId?: string;

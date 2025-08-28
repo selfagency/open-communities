@@ -68,11 +68,15 @@ export const load = async (event) => {
 export const actions = {
   submit: async (event) => {
     const { fetch, locals } = event;
-    const { api, captureException, log, validate } = locals;
+    const { api, capture, captureException, log, validate } = locals;
     const client = api?.authStore?.record;
 
     const form = await validate(event, defaultSchema);
     const formData = form.data as CongregationMetaRecord & MetaRecord;
+
+    if (isFunction(capture)) {
+      await capture(client?.id, 'addCongregation', formData);
+    }
 
     try {
       if (!client?.id) {

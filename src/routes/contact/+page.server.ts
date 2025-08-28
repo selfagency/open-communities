@@ -50,9 +50,13 @@ export const load = async (event) => {
 
 export const actions = {
   default: async (event) => {
-    const { api, captureException, log } = event.locals;
+    const { api, capture, captureException, log } = event.locals;
     const client = api?.authStore?.record;
     const form = await event.locals.validate(event.request, contactSchema);
+
+    if (isFunction(capture)) {
+      await capture(client?.id, 'contactForm', form.data);
+    }
 
     try {
       if (!form.valid) {

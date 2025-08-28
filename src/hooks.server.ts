@@ -1,5 +1,5 @@
 /* region imports */
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { SerializeOptions } from 'cookie';
 
 import { sequence } from '@sveltejs/kit/hooks';
@@ -11,7 +11,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
-import { captureException, posthogRelay } from '$lib/server/posthog';
+import { capture, captureException, posthogRelay } from '$lib/server/posthog';
 /* endregion imports */
 
 /* region variables */
@@ -30,9 +30,10 @@ async function customHandler({ event, resolve }) {
   // services
   event.locals.api = api;
   event.locals.log = log;
+  event.locals.capture = capture;
   event.locals.captureException = captureException;
 
-  event.locals.validate = async (request, schema) => {
+  event.locals.validate = async (request: RequestEvent, schema) => {
     return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
   };
 
