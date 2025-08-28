@@ -9,7 +9,7 @@ import { env } from '$env/dynamic/public';
 
 export async function capture(user: string, event: string) {
   const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
-    host: `${page.url.host}/relay-bVfn`
+    host: `${page.url.origin}/relay-bVfn`
   });
   phClient.capture({ distinctId: user, event });
   await phClient.shutdown();
@@ -17,7 +17,7 @@ export async function capture(user: string, event: string) {
 
 export async function captureException(error: Error, user: string, other: Record<string, number | string>) {
   const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
-    host: `${page.url.host}/relay-bVfn`
+    host: `${page.url.origin}/relay-bVfn`
   });
   phClient.captureException(error, user, other);
   await phClient.shutdown();
