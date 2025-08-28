@@ -188,27 +188,53 @@ export const actions = {
       const { accessibility, fit, health, location, registration, security, services } = data;
       const batch = api.createBatch();
 
-      batch.collection('congregations').update(data.id, {
-        ...omit(data, [
-          'id',
-          'accessibility',
-          'fit',
-          'location',
-          'registration',
-          'owner',
-          'health',
-          'security',
-          'services'
-        ]),
-        visible: client?.admin ? data.visible : false,
-        ...location
-      });
-      batch.collection('accessibility').update(accessibility.id, omit(accessibility, ['id']));
-      batch.collection('fit').update(fit.id, omit(fit, ['id']));
-      batch.collection('registration').update(registration.id, omit(registration, ['id']));
-      batch.collection('health').update(health.id, omit(health, ['id']));
-      batch.collection('security').update(security.id, omit(security, ['id']));
-      batch.collection('services').update(services.id, omit(services, ['id']));
+      if (data.id) {
+        batch.collection('congregations').update(data.id, {
+          ...omit(data, [
+            'id',
+            'accessibility',
+            'fit',
+            'location',
+            'registration',
+            'owner',
+            'health',
+            'security',
+            'services'
+          ]),
+          visible: client?.admin ? data.visible : false,
+          ...location
+        });
+      }
+      if (accessibility.id) {
+        batch.collection('accessibility').update(accessibility.id, omit(accessibility, ['id']));
+      } else {
+        batch.collection('accessibility').create({ ...accessibility, congregation: data.id });
+      }
+      if (fit.id) {
+        batch.collection('fit').update(fit.id, omit(fit, ['id']));
+      } else {
+        batch.collection('fit').create({ ...fit, congregation: data.id });
+      }
+      if (registration.id) {
+        batch.collection('registration').update(registration.id, omit(registration, ['id']));
+      } else {
+        batch.collection('registration').create({ ...registration, congregation: data.id });
+      }
+      if (health.id) {
+        batch.collection('health').update(health.id, omit(health, ['id']));
+      } else {
+        batch.collection('health').create({ ...health, congregation: data.id });
+      }
+      if (security.id) {
+        batch.collection('security').update(security.id, omit(security, ['id']));
+      } else {
+        batch.collection('security').create({ ...security, congregation: data.id });
+      }
+      if (services.id) {
+        batch.collection('services').update(services.id, omit(services, ['id']));
+      } else {
+        batch.collection('services').create({ ...services, congregation: data.id });
+      }
       await batch.send({ fetch });
 
       if (!client?.admin) {
