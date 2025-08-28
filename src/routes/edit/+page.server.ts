@@ -91,8 +91,13 @@ export const actions = {
     const form = await validate(event, deleteSchema);
     const data = form.data as MetaRecord & RecordWithId;
 
-    if (isFunction(capture)) {
-      await capture(client?.id, 'deleteCongregation', form.data);
+    try {
+      if (isFunction(capture)) {
+        await capture(client?.id, 'deleteCongregation');
+      }
+    } catch (captureError) {
+      // Log capture error but don't fail the action
+      console.error('PostHog capture failed:', captureError);
     }
 
     try {
@@ -169,8 +174,13 @@ export const actions = {
     const form = await validate(event, defaultSchema);
     const data = form.data as MetaRecord & RecordWithId;
 
-    if (isFunction(capture)) {
-      await capture(client?.id, 'editCongregation', data);
+    try {
+      if (isFunction(capture)) {
+        await capture(client?.id, 'editCongregation');
+      }
+    } catch (captureError) {
+      // Log capture error but don't fail the action
+      console.error('PostHog capture failed:', captureError);
     }
 
     try {
@@ -294,8 +304,13 @@ export const actions = {
     const form = await validate(event, transferSchema);
     const data = form.data;
 
-    if (isFunction(capture)) {
-      await capture(client?.id, 'transferCongregation', data);
+    try {
+      if (isFunction(capture)) {
+        await capture(client?.id, 'transferCongregation');
+      }
+    } catch (captureError) {
+      // Log capture error but don't fail the action
+      console.error('PostHog capture failed:', captureError);
     }
 
     try {
