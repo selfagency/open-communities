@@ -103,8 +103,11 @@ jobs:
           PORT: 4173
           POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
           POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
-          PUBLIC_API_ENDPOINT: http://localhost:8090
-          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
+          # Container needs to reach services (PocketBase, captcha, mailpit) running on the runner.
+          # Inside a container, "localhost" refers to the container itself, so use host.docker.internal
+          # and add a host mapping when running the container (see --add-host below).
+          PUBLIC_API_ENDPOINT: http://host.docker.internal:8090
+          PUBLIC_CAPTCHA_ENDPOINT: http://host.docker.internal:3001
           PUBLIC_HOSTNAME: http://localhost:4173
           PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
           PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
@@ -114,6 +117,7 @@ jobs:
         run: |
           echo "Starting Docker container..."
           CONTAINER_ID=$(docker run -d \
+            --add-host=host.docker.internal:host-gateway \
             --name app \
             -p 4173:4173 \
             -e ADMIN_EMAIL="$ADMIN_EMAIL" \
@@ -124,7 +128,7 @@ jobs:
             -e PUBLIC_API_ENDPOINT="$PUBLIC_API_ENDPOINT" \
             -e PUBLIC_CAPTCHA_ENDPOINT="$PUBLIC_CAPTCHA_ENDPOINT" \
             -e PUBLIC_HOSTNAME="$PUBLIC_HOSTNAME" \
-            -e SMTP_HOST="$SMTP_HOST" \
+            -e SMTP_HOST="host.docker.internal" \
             -e SMTP_PORT="$SMTP_PORT" \
             -e PORT="$PORT" \
             ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }})
