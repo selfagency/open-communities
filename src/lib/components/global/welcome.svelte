@@ -1,5 +1,6 @@
 <script lang="ts">
   /* region imports */
+  import { goto } from '$app/navigation';
   import Find from '$lib/assets/find.svg?component';
   import Inclusive from '$lib/assets/inclusive.svg?component';
   import { Button } from '$lib/components/ui/button';
@@ -16,5 +17,5 @@
     {m.home_blurb()}
   </h1>
 
-  <Button><a href="/about">Learn more</a></Button>
+  <Button onclick={async () => await goto('/about')}>Learn more</Button>
 </div>

@@ -190,7 +190,11 @@
           <span class="sr-only">{m.search()}</span>
         </Label>
         <span class="w-full">
-          <Input placeholder={m.search()} bind:value={searchTerms} id="search" class="w-full" />
+          <Input
+            placeholder={m.search()}
+            bind:value={searchTerms}
+            id="search"
+            class="w-full placeholder:text-gray-500" />
 
           <span class="absolute top-0 z-10 h-10 w-10 ltr:right-1 rtl:left-1 rtl:mx-1">
             <Button

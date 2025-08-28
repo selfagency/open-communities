@@ -50,11 +50,11 @@
   class="flex h-full min-h-max flex-col justify-between transition-transform hover:scale-105 ltr:text-left rtl:text-right">
   <Card.Header>
     <Card.Title>
-      <h1 class="font-display text-xl leading-6 font-normal tracking-wide">
+      <h1 class="font-display text-xl leading-6 font-normal tracking-wide text-slate-600">
         {congregation.name}
       </h1>
     </Card.Title>
-    <Card.Description>
+    <Card.Description class="text-gray-400 -mt-1">
       {#if services.onlineOnly}
         <span>{m.services_onlineOnly()}</span
         >{#if location.country.name && location.country.name !== 'United States'}<span>, {location.country.name}</span

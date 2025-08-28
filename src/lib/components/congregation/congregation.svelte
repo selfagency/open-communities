@@ -100,18 +100,18 @@
             target="_blank"
             rel="noopener noreferrer"
             class="inline-block max-w-[92%] hyphens-auto">
-            <h1 class="inline-lbock text-2xl leading-7">
+            <h1 class="inline-block text-2xl leading-7 text-slate-600">
               <span>{congregation.name}</span>
               <span><LinkIcon size="14" color="gray" class="inline rtl:mx-1" /></span>
             </h1>
           </a>
         {:else}
-          <h1 class="inline text-2xl leading-6">
+          <h1 class="inline text-2xl leading-6 text-slate-600">
             {congregation.name}
           </h1>
         {/if}
       </Dialog.Title>
-      <Dialog.Description class="flex w-full flex-row items-center justify-between space-x-2">
+      <Dialog.Description class="flex w-full flex-row items-center justify-between space-x-2 text-gray-500 -mt-4">
         <span class="w-2/3">
           {#if city.name || province.name || country.name}
             {#if city.name}<span>{city.name}</span>{#if province.name || country.name},{/if}{/if}
