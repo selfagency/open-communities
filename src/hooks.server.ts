@@ -80,10 +80,12 @@ async function customHandler({ event, resolve }) {
     event.cookies.set('session', '', event.locals.cookieOpts);
   }
 
+  // Store start timer before resolving the response
+  event.locals.startTimer = startTimer;
+
   // response
   const response = await resolve(event);
 
-  event.locals.startTimer = startTimer;
   logEvent(response.status, event);
   return response;
 }
