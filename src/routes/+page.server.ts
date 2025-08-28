@@ -15,8 +15,8 @@ export async function load({ fetch, locals }) {
           fetch,
           filter: client?.admin ? '' : 'visible=1'
         })
-      ).map((c) => cleanResponse(c)),
-      content: await api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch })
+      ).map((c) => cleanResponse(c))
+      // content: await api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch })
     };
   } catch (err) {
     if (isFunction(captureException)) {

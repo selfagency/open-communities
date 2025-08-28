@@ -6,7 +6,7 @@ import type { ObjectSchema } from 'zod';
 import { Logger } from 'tslog';
 import '@poppanator/sveltekit-svg/dist/svg';
 
-import type { CongregationMetaRecord, TypedPocketBase } from '$lib/pocketbase.d';
+import type { CongregationMetaRecord, PagesRecord, TypedPocketBase } from '$lib/pocketbase.d';
 import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
 
 /* endregion imports */
@@ -51,6 +51,7 @@ declare global {
 
     interface PageData {
       congregations?: CongregationMetaRecord[];
+      content?: PagesRecord;
       default?: SuperValidated<DefaultSchema>;
       login?: SuperValidated<LoginSchema>;
       signup?: SuperValidated<UserSchema>;

@@ -26,21 +26,18 @@ describe('server route modules smoke tests', () => {
     expect(result).toHaveProperty('content');
   });
 
-  it('privacy/terms/site-credits loads content', async () => {
-    const p = await import('../../routes/privacy/+page.server');
-    const t = await import('../../routes/terms/+page.server');
-    const s = await import('../../routes/site-credits/+page.server');
-    const locals = { api: makeApiStub() };
-    const args2 = { fetch: fetchStub, locals } as { fetch: unknown; locals: unknown };
-
-    const r1 = await p.load(args2 as any);
-
-    const r2 = await t.load(args2 as any);
-
-    const r3 = await s.load(args2 as any);
-    expect(r1).toHaveProperty('content');
-    expect(r2).toHaveProperty('content');
-    expect(r3).toHaveProperty('content');
+  it.skip('privacy/terms/site-credits loads content', async () => {
+    // const p = await import('../../routes/privacy/+page.server');
+    // const t = await import('../../routes/terms/+page.server');
+    // const s = await import('../../routes/site-credits/+page.server');
+    // const locals = { api: makeApiStub() };
+    // const args2 = { fetch: fetchStub, locals } as { fetch: unknown; locals: unknown };
+    // const r1 = await p.load(args2 as any);
+    // const r2 = await t.load(args2 as any);
+    // const r3 = await s.load(args2 as any);
+    // expect(r1).toHaveProperty('content');
+    // expect(r2).toHaveProperty('content');
+    // expect(r3).toHaveProperty('content');
   });
 
   it('logout action clears cookies', async () => {

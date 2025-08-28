@@ -23,6 +23,9 @@
   <div class="flex w-full flex-row items-center justify-center">
     <span class="flex flex-col items-center justify-center space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
       <span class="flex flex-row items-center justify-center space-x-4">
+        <a class="text-xs text-slate-500 hover:text-slate-500" href="/about">
+          <span>{m.about()}</span>
+        </a>
         <a class="text-xs text-slate-500 hover:text-slate-500" href="/contact">
           <span>{m.contact_contactUs()}</span>
         </a>
