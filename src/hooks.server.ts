@@ -12,6 +12,7 @@ import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 import { capture, captureException, posthogRelay } from '$lib/server/posthog';
+import security from '$lib/server/security';
 /* endregion imports */
 
 /* region variables */
@@ -21,11 +22,6 @@ const log = logger.getSubLogger({ name: 'hooks' });
 
 async function customHandler({ event, resolve }) {
   const startTimer = Date.now();
-
-  const hog = await posthogRelay(event);
-  if (hog) {
-    return hog;
-  }
 
   // services
   event.locals.api = api;
@@ -121,4 +117,4 @@ const handleParaglide: Handle = ({ event, resolve }) =>
     });
   });
 
-export const handle = sequence(handleParaglide, customHandler);
+export const handle = sequence(posthogRelay, security, customHandler, handleParaglide);

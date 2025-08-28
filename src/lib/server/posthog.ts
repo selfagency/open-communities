@@ -22,7 +22,7 @@ export async function captureException(error: Error, user: string, other: Record
   await phClient.shutdown();
 }
 
-export async function posthogRelay(event: RequestEvent) {
+export async function posthogRelay({ event, resolve }: { event: RequestEvent; resolve }) {
   const { pathname } = event.url;
 
   if (pathname.startsWith('/relay-bVfn')) {
@@ -47,5 +47,7 @@ export async function posthogRelay(event: RequestEvent) {
     });
 
     return response;
+  } else {
+    return resolve(event);
   }
 }

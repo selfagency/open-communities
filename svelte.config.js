@@ -2,8 +2,6 @@ import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
-import csp from './csp.js';
-
 const config = {
   kit: {
     adapter: adapter({
@@ -13,7 +11,6 @@ const config = {
     alias: {
       $test: path.resolve('./src/test')
     },
-    csp,
     paths: {
       relative: false
     },
