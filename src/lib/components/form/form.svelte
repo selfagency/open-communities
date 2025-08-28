@@ -237,7 +237,7 @@
                   </Accordion.Root>
 
                   <!-- visibility -->
-                  <div class="mt-8 flex flex-row items-center justify-end">
+                  <div class="my-4 flex flex-row items-start justify-end w-full">
                     {#if user?.admin}
                       <Form.Field {form} name="visible">
                         <Form.Control
