@@ -1,7 +1,7 @@
 /* region imports */
 import type { RequestEvent } from '@sveltejs/kit';
 
-import { shake, uid } from 'radashi';
+import { omit, shake, uid } from 'radashi';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
@@ -60,7 +60,8 @@ async function logEvent(statusCode: number, event: RequestEvent) {
       error: error,
       errorId: errorId,
       errorStackTrace: errorStackTrace,
-      headers: Object.fromEntries(event.request.headers.entries()), // Add all headers for debugging (remove this later)
+      headers: dev ? Object.fromEntries(event.request.headers.entries()) : undefined,
+      ip: event.request.headers.get('x-forwarded-for') || event.request.headers.get('remote-addr'),
       method: event.request.method,
       pathname: event.url.pathname,
       referer: referer,

@@ -16,6 +16,13 @@ export const load = async ({ data }) => {
       capture_pageview: false
     });
 
+    if (data.user) {
+      posthog.identify(data.user.id, {
+        email: data.user.email,
+        name: data.user.name
+      });
+    }
+
     if (isEmpty(state?.get())) {
       initState();
     }
