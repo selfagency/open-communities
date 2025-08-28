@@ -1,7 +1,7 @@
 /* region imports */
 import type { RequestEvent } from '@sveltejs/kit';
 
-import { omit, shake, uid } from 'radashi';
+import { shake, uid } from 'radashi';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';

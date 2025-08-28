@@ -39,12 +39,12 @@ jobs:
       #     find . -type f -name "*.xml" -o -name "*.json" | grep -E "(coverage|test)" || echo "No relevant files found"
 
       - name: Report coverage (step summary + PR comment)
-        if: hashFiles('/home/runner/work/open-communities/open-communities/test-results/coverage/coverage-summary.json') != ''
+        if: hashFiles('./test-results/coverage/coverage-summary.json') != ''
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           # point to the json summary produced by vitest
-          json-summary-path: '/home/runner/work/open-communities/open-communities/test-results/coverage/coverage-summary.json'
-          json-final-path: '/home/runner/work/open-communities/open-communities/test-results/coverage/coverage-final.json'
+          json-summary-path: './test-results/coverage/coverage-summary.json'
+          json-final-path: './test-results/coverage/coverage-final.json'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on: pr
 
@@ -53,7 +53,7 @@ jobs:
         uses: dorny/test-reporter@v2
         with:
           artifact: test-results
-          path: '/home/runner/work/open-communities/test-results/junit.xml'
+          path: './test-results/junit.xml'
           reporter: java-junit
           name: Vitest Tests
           use-actions-summary: 'true'
