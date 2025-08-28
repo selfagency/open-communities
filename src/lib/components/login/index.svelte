@@ -23,7 +23,7 @@
   const { data, reset }: { data: SuperValidated<any>; reset: SuperValidated<any> } = $props();
 
   // locals
-  let resetting: boolean = $state(false);
+  let resetting: boolean = $state(!!page.url.searchParams.get('resetPassword'));
   let resetSuccess: boolean = $state(false);
   let sentSuccess: boolean = $state(false);
   /* endregion variables */
@@ -103,7 +103,7 @@
         <div class="flex flex-col items-center justify-center space-y-4">
           <span>{m.passwordSuccess()}</span>
           <span role="button" tabindex="0" onclick={() => resetter()} onkeypress={() => resetter()}>
-            {m.continueToLogin} →
+            {m.continueToLogin()} →
           </span>
         </div>
       {/if}
