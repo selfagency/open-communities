@@ -35,7 +35,7 @@ export const actions = {
     const form = await validate(event, tokenSchema);
 
     if (isFunction(capture)) {
-      await capture(client?.id, form.data.type, form.data);
+      await capture(client?.id, form.data.type);
     }
 
     try {
@@ -158,7 +158,7 @@ export const actions = {
     const { api, capture, captureException, validate } = locals;
     const form = await validate(event, userSchema);
 
-    await capture(form.data.email, 'signup', form.data);
+    await capture(form.data.email, 'signup');
 
     let user: UsersRecord;
 

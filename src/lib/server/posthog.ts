@@ -3,24 +3,56 @@ import type { RequestEvent } from '@sveltejs/kit';
 
 import { PostHog } from 'posthog-node';
 
+import { browser } from '$app/environment';
 import { page } from '$app/state';
 import { env } from '$env/dynamic/public';
 /* endregion imports */
 
-export async function capture(user: string, event: string) {
-  const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
-    host: `${page.url.origin}/relay-bVfn`
-  });
-  phClient.capture({ distinctId: user, event });
-  await phClient.shutdown();
+export async function capture(user: string, event: string, origin?: string) {
+  try {
+    // Validate PostHog key exists
+    if (!env.PUBLIC_POSTHOG_KEY) {
+      console.warn('PostHog key not configured, skipping capture');
+      return;
+    }
+
+    // Get the origin - use parameter for server-side, page state for client-side
+    const hostOrigin = origin || page.url.origin;
+
+    const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
+      host: `${hostOrigin}/relay-bVfn`
+    });
+    phClient.capture({ distinctId: user, event });
+    await phClient.shutdown();
+  } catch (error) {
+    console.error('PostHog capture failed:', error);
+  }
 }
 
-export async function captureException(error: Error, user: string, other: Record<string, number | string>) {
-  const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
-    host: `${page.url.origin}/relay-bVfn`
-  });
-  phClient.captureException(error, user, other);
-  await phClient.shutdown();
+export async function captureException(
+  error: Error,
+  user: string,
+  origin?: string,
+  other?: Record<string, number | string>
+) {
+  try {
+    // Validate PostHog key exists
+    if (!env.PUBLIC_POSTHOG_KEY) {
+      console.warn('PostHog key not configured, skipping captureException');
+      return;
+    }
+
+    // Get the origin - use parameter for server-side, page state for client-side
+    const hostOrigin = origin || (browser ? page.url.origin : 'http://localhost:5173');
+
+    const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
+      host: `${hostOrigin}/relay-bVfn`
+    });
+    phClient.captureException(error, user, other);
+    await phClient.shutdown();
+  } catch (phError) {
+    console.error('PostHog captureException failed:', phError);
+  }
 }
 
 export async function posthogRelay({ event, resolve }: { event: RequestEvent; resolve }) {

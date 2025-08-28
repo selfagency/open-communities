@@ -55,7 +55,7 @@ export const actions = {
     const form = await event.locals.validate(event.request, contactSchema);
 
     if (isFunction(capture)) {
-      await capture(client?.id, 'contactForm', form.data);
+      await capture(client?.id, 'contactForm');
     }
 
     try {

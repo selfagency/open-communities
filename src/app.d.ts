@@ -9,8 +9,6 @@ import '@poppanator/sveltekit-svg/dist/svg';
 import type { CongregationMetaRecord, TypedPocketBase } from '$lib/pocketbase.d';
 import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
 
-import { capture, captureException } from '$lib/server/posthog';
-
 /* endregion imports */
 
 declare global {
@@ -26,8 +24,12 @@ declare global {
     interface Locals {
       api: TypedPocketBase;
       auth: string;
-      capture: returnType<typeof capture>;
-      captureException: returnType<typeof captureException>;
+      capture: (user: string | undefined, event: string) => Promise<void>;
+      captureException: (
+        error: Error | unknown,
+        user?: string,
+        other?: Record<string, number | string>
+      ) => Promise<void>;
       cookieOpts: SerializeOptions & { path: string };
       error?: string;
       errorId?: string;

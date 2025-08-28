@@ -75,7 +75,7 @@ export const actions = {
     const formData = form.data as CongregationMetaRecord & MetaRecord;
 
     if (isFunction(capture)) {
-      await capture(client?.id, 'addCongregation', formData);
+      await capture(client?.id, 'addCongregation');
     }
 
     try {

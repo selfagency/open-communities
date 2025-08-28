@@ -29,7 +29,9 @@ export default dev
             'fonts.cdnfonts.com',
             'fonts.gstatic.com',
             'fonts.googleapis.com',
-            '*.basemaps.cartocdn.com'
+            '*.basemaps.cartocdn.com',
+            'd1sdjtjk6xzm7.cloudfront.net',
+            'us.posthog.com'
           ],
           'img-src': ["'self'", 'data:', 'blob:', '*.basemaps.cartocdn.com'],
           'script-src': [

@@ -26,8 +26,12 @@ async function customHandler({ event, resolve }) {
   // services
   event.locals.api = api;
   event.locals.log = log;
-  event.locals.capture = capture;
-  event.locals.captureException = captureException;
+
+  // Create origin-aware PostHog functions
+  const origin = event.url.origin;
+  event.locals.capture = (user: string, eventName: string) => capture(user, eventName, origin);
+  event.locals.captureException = (error: Error, user: string, other?: Record<string, number | string>) =>
+    captureException(error, user, origin, other);
 
   event.locals.validate = async (request: RequestEvent, schema) => {
     return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));
