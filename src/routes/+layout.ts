@@ -10,7 +10,7 @@ import { initState, state } from '$lib/stores';
 export const load = async ({ data }) => {
   if (browser) {
     posthog.init(env.PUBLIC_POSTHOG_KEY as string, {
-      api_host: '/relay-bVfn',
+      api_host: `${window.location.origin}/relay-bVfn`,
       capture_exceptions: true,
       capture_pageleave: false,
       capture_pageview: false
