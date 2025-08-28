@@ -149,9 +149,7 @@ export const actions = {
         });
       }
 
-      return {
-        form
-      };
+      redirect(302, '/');
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {

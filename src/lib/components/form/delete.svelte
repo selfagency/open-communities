@@ -32,8 +32,12 @@
       toast.error(result.error.message);
       setState({ loadingSecondary: false });
     },
-    onResult() {
+    onResult({ result }) {
       setState({ loadingSecondary: false });
+      // Handle redirect case
+      if (result.type === 'redirect') {
+        toast.success(m.deleteSuccess());
+      }
     },
     onSubmit() {
       setState({ loadingSecondary: true });
@@ -43,8 +47,8 @@
         toast.success(m.deleteSuccess());
         await goto('/');
       } else {
-        if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-        if (!isEmpty(result.data.form.errors)) toast.error(m.deleteFailure());
+        if (!isEmpty(result.data?.form?.errors)) log.error('form errors', result.data.form.errors);
+        if (!isEmpty(result.data?.form?.errors)) toast.error(m.deleteFailure());
       }
     }
   });
