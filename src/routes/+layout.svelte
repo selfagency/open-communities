@@ -3,11 +3,11 @@
   import '../app.css';
   import type { Snippet } from 'svelte';
 
-  // import posthog from 'posthog-js';
+  import posthog from 'posthog-js';
   import { onMount } from 'svelte';
 
   import { browser } from '$app/environment';
-  import { onNavigate } from '$app/navigation';
+  import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
   import Footer from '$lib/components/global/footer.svelte';
   import Header from '$lib/components/global/header.svelte';
   import Progress from '$lib/components/global/progress.svelte';
@@ -22,10 +22,10 @@
   /* endregion imports */
 
   /* Initialize PostHog pageview and pageleave tracking */
-  // if (browser) {
-  //   beforeNavigate(() => posthog.capture('$pageleave'));
-  //   afterNavigate(() => posthog.capture('$pageview'));
-  // }
+  if (browser) {
+    beforeNavigate(() => posthog.capture('$pageleave'));
+    afterNavigate(() => posthog.capture('$pageview'));
+  }
 
   /* region variables */
   let { children, data }: { children: Snippet; data: LayoutData } = $props();

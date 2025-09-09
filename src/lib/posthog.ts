@@ -3,6 +3,8 @@ import { isEmpty } from 'radashi';
 
 import type { UsersResponse } from '$lib/pocketbase.d';
 
+import { env } from '$env/dynamic/public';
+
 export async function captureException(error, event, message) {
   try {
     if (!isEmpty(posthog) && posthog.__loaded) {
@@ -32,7 +34,7 @@ export async function captureException(error, event, message) {
 
 export async function posthogInit(posthogKey: string, user: UsersResponse) {
   posthog.init(posthogKey, {
-    api_host: `${window.location.origin}/relay-bVfn`,
+    api_host: env.PUBLIC_POSTHOG_HOST,
     capture_exceptions: true,
     capture_pageleave: false,
     capture_pageview: false

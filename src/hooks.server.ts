@@ -11,7 +11,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
-import { capture, captureException, posthogRelay } from '$lib/server/posthog';
+import { capture, captureException } from '$lib/server/posthog';
 import security from '$lib/server/security';
 /* endregion imports */
 
@@ -28,10 +28,9 @@ async function customHandler({ event, resolve }) {
   event.locals.log = log;
 
   // Create origin-aware PostHog functions
-  // const origin = event.url.origin;
-  event.locals.capture = (user: string, eventName: string) => log.info(user, eventName);
+  event.locals.capture = (user: string, eventName: string) => capture(user, eventName);
   event.locals.captureException = (error: Error, user: string, other?: Record<string, number | string>) =>
-    log.error(user, error, other);
+    captureException(error, user, other);
 
   event.locals.validate = async (request: RequestEvent, schema) => {
     return !isEmpty(request) ? superValidate(request, zod4(schema)) : superValidate(zod4(schema));

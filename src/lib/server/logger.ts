@@ -24,7 +24,6 @@ async function logEvent(statusCode: number, event: RequestEvent) {
     const pathname = event.url.pathname;
     if (
       (!dev && event.url.host === 'localhost:3000') ||
-      pathname.startsWith('/relay-bVfn') ||
       pathname.startsWith('/_app/') ||
       pathname.includes('__data.json') ||
       pathname.endsWith('.js') ||
