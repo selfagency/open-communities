@@ -2,7 +2,7 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { fail, redirect } from '@sveltejs/kit';
-import { isFunction, omit } from 'radashi';
+import { isEmpty, isFunction, omit } from 'radashi';
 import { setError } from 'sveltekit-superforms';
 
 import type {
@@ -112,12 +112,12 @@ export const actions = {
 
         const congregation = record.id;
         const batch = api.createBatch();
-        batch.collection('accessibility').create({ ...accessibility, congregation });
-        batch.collection('fit').create({ ...fit, congregation });
-        batch.collection('registration').create({ ...registration, congregation });
-        batch.collection('health').create({ ...health, congregation });
-        batch.collection('security').create({ ...security, congregation });
-        batch.collection('services').create({ ...services, congregation });
+        if (!isEmpty(accessibility)) batch.collection('accessibility').create({ ...accessibility, congregation });
+        if (!isEmpty(fit)) batch.collection('fit').create({ ...fit, congregation });
+        if (!isEmpty(registration)) batch.collection('registration').create({ ...registration, congregation });
+        if (!isEmpty(health)) batch.collection('health').create({ ...health, congregation });
+        if (!isEmpty(security)) batch.collection('security').create({ ...security, congregation });
+        if (!isEmpty(services)) batch.collection('services').create({ ...services, congregation });
         await batch.send({ fetch });
 
         if (!client?.admin) {

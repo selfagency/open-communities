@@ -215,32 +215,32 @@ export const actions = {
       }
       if (accessibility.id) {
         batch.collection('accessibility').update(accessibility.id, omit(accessibility, ['id']));
-      } else {
+      } else if (!isEmpty(accessibility)) {
         batch.collection('accessibility').create({ ...accessibility, congregation: data.id });
       }
       if (fit.id) {
         batch.collection('fit').update(fit.id, omit(fit, ['id']));
-      } else {
+      } else if (!isEmpty(fit)) {
         batch.collection('fit').create({ ...fit, congregation: data.id });
       }
       if (registration.id) {
         batch.collection('registration').update(registration.id, omit(registration, ['id']));
-      } else {
+      } else if (!isEmpty(registration)) {
         batch.collection('registration').create({ ...registration, congregation: data.id });
       }
       if (health.id) {
         batch.collection('health').update(health.id, omit(health, ['id']));
-      } else {
+      } else if (!isEmpty(health)) {
         batch.collection('health').create({ ...health, congregation: data.id });
       }
       if (security.id) {
         batch.collection('security').update(security.id, omit(security, ['id']));
-      } else {
+      } else if (!isEmpty(security)) {
         batch.collection('security').create({ ...security, congregation: data.id });
       }
       if (services.id) {
         batch.collection('services').update(services.id, omit(services, ['id']));
-      } else {
+      } else if (!isEmpty(services)) {
         batch.collection('services').create({ ...services, congregation: data.id });
       }
       await batch.send({ fetch });
