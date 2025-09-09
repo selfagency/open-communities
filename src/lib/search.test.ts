@@ -137,13 +137,13 @@ describe('Search filters', () => {
   it('toggleLocation and resetAll mutate state correctly', () => {
     const s = new Search(data, true);
 
-    // initial showLocation undefined -> toggle -> true
-    s.toggleLocation();
-    expect(s.state.get().showLocation).toBe(true);
-
-    // toggle again -> false
+    // initial showLocation true -> toggle -> false
     s.toggleLocation();
     expect(s.state.get().showLocation).toBe(false);
+
+    // toggle again -> true
+    s.toggleLocation();
+    expect(s.state.get().showLocation).toBe(true);
 
     // set a searchLocation and terms, then resetAll
     const loc: LocationMeta = { city: { id: 'city1' } };

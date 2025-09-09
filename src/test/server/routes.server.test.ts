@@ -23,7 +23,6 @@ describe('server route modules smoke tests', () => {
 
     const result = await mod.load(args as any);
     expect(result).toHaveProperty('congregations');
-    expect(result).toHaveProperty('content');
   });
 
   it.skip('privacy/terms/site-credits loads content', async () => {

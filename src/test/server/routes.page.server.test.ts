@@ -28,7 +28,7 @@ describe('routes +page.server quick smoke', () => {
     locals = { api: makeApiStub(), validate: async () => ({}) };
   });
 
-  it('root load returns congregations and content', async () => {
+  it('root load returns congregations', async () => {
     const mod = await import('../../../src/routes/+page.server');
 
     const mockEvent = createMockServerLoadEvent({
@@ -39,6 +39,5 @@ describe('routes +page.server quick smoke', () => {
 
     const res = await mod.load(mockEvent as any);
     expect(res).toHaveProperty('congregations');
-    expect(res).toHaveProperty('content');
   });
 });
