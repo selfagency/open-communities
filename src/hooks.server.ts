@@ -8,6 +8,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
 // import { dev } from '$app/environment';
+import { env } from '$env/dynamic/public';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { api } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
@@ -82,6 +83,11 @@ async function customHandler({ event, resolve }) {
 
   // Store start timer before resolving the response
   event.locals.startTimer = startTimer;
+
+  event.request.headers.set(
+    'Reporting-Endpoints',
+    `posthog="${env.PUBLIC_POSTHOG_HOST}/report/?token=phc_qzaqrjtbSUFKRMDZb8TXQosR3MInxaJwJS3yTrZbVfn"`
+  );
 
   // response
   const response = await resolve(event);

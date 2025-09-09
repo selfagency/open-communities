@@ -1,6 +1,7 @@
 import helmet from 'sveltekit-helmet';
 
 import { dev } from '$app/environment';
+import { env } from '$env/dynamic/public';
 
 export default dev
   ? ({ event, resolve }) => resolve(event)
@@ -34,6 +35,8 @@ export default dev
             'us.posthog.com'
           ],
           'img-src': ["'self'", 'data:', 'blob:', '*.basemaps.cartocdn.com'],
+          reportTo: ['posthog'],
+          reportUri: [`${env.PUBLIC_POSTHOG_HOST}/report/?token=phc_qzaqrjtbSUFKRMDZb8TXQosR3MInxaJwJS3yTrZbVfn`],
           'script-src': [
             "'self'",
             "'unsafe-eval'",
