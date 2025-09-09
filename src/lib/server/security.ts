@@ -10,58 +10,68 @@ export default dev
         directives: {
           'child-src': ["'self'", 'blob:'],
           'connect-src': [
-            "'self'",
+            '*.basemaps.cartocdn.com',
+            '*.i.posthog.com',
+            '*.opencommunities.info',
+            '*.pockethost.io',
+            '*.selfagency.dev',
+            'basemaps.cartocdn.com',
+            'cdn.jsdelivr.net',
+            'localhost:3001',
+            'localhost:8090',
             'ws:',
             'wss:',
-            'localhost:8090',
-            'localhost:3001',
-            'api.opencommunities.info',
-            '*.pockethost.io',
-            '*.i.posthog.com',
-            'captcha.selfagency.dev',
-            'cdn.jsdelivr.net',
-            'basemaps.cartocdn.com',
-            '*.basemaps.cartocdn.com'
+            "'self'"
           ],
-          'default-src': ["'self'", 'cdn.jsdelivr.net', 'captcha.selfagency.dev', 'api.opencommunities.info'],
+          'default-src': ["'self'", 'cdn.jsdelivr.net', '*.selfagency.dev', '*.opencommunities.info'],
           'font-src': [
-            "'self'",
+            '*.basemaps.cartocdn.com',
+            '*.opencommunities.info',
+            'd1sdjtjk6xzm7.cloudfront.net',
             'data:',
             'fonts.cdnfonts.com',
-            'fonts.gstatic.com',
             'fonts.googleapis.com',
-            '*.basemaps.cartocdn.com',
-            'd1sdjtjk6xzm7.cloudfront.net',
-            'us.posthog.com'
+            'fonts.gstatic.com',
+            'us.posthog.com',
+            "'self'"
           ],
-          'img-src': ["'self'", 'data:', 'blob:', '*.basemaps.cartocdn.com'],
+          'img-src': ["'self'", 'data:', 'blob:', '*.basemaps.cartocdn.com', '*.opencommunities.info'],
           reportTo: ['posthog'],
           reportUri: [`${env.PUBLIC_POSTHOG_HOST}/report/?token=phc_qzaqrjtbSUFKRMDZb8TXQosR3MInxaJwJS3yTrZbVfn`],
           'script-src': [
+            '*.basemaps.cartocdn.com',
+            '*.opencommunities.info',
+            '*.posthog.com',
+            '*.selfagency.dev',
+            'basemaps.cartocdn.com',
+            'cdn.jsdelivr.net',
             "'self'",
             "'unsafe-eval'",
-            "'unsafe-inline'",
-            'captcha.selfagency.dev',
-            'cdn.jsdelivr.net',
-            'basemaps.cartocdn.com',
-            '*.basemaps.cartocdn.com',
-            '*.posthog.com'
+            "'unsafe-inline'"
           ],
           'script-src-elem': [
-            "'self'",
-            "'unsafe-inline'",
-            'captcha.selfagency.dev',
+            '*.opencommunities.info',
+            '*.posthog.com',
+            '*.selfagency.dev',
             'cdn.jsdelivr.net',
-            '*.posthog.com'
+            "'self'",
+            "'unsafe-inline'"
           ],
           'style-src': [
-            "'self'",
-            "'unsafe-inline'",
-            'captcha.selfagency.dev',
+            '*.opencommunities.info',
+            '*.selfagency.dev',
             'fonts.cdnfonts.com',
-            'fonts.googleapis.com'
+            'fonts.googleapis.com',
+            "'self'",
+            "'unsafe-inline'"
           ],
-          'style-src-elem': ["'self'", "'unsafe-inline'", 'fonts.cdnfonts.com', 'fonts.googleapis.com'],
+          'style-src-elem': [
+            '*.opencommunities.info',
+            'fonts.cdnfonts.com',
+            'fonts.googleapis.com',
+            "'self'",
+            "'unsafe-inline'"
+          ],
           'worker-src': ["'self'", 'blob:']
         }
       }
