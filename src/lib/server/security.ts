@@ -37,7 +37,7 @@ export default dev
           ],
           'img-src': ["'self'", 'data:', 'blob:', '*.basemaps.cartocdn.com', '*.opencommunities.info'],
           reportTo: ['posthog'],
-          reportUri: [`${env.PUBLIC_POSTHOG_HOST}/report/?token=phc_qzaqrjtbSUFKRMDZb8TXQosR3MInxaJwJS3yTrZbVfn`],
+          reportUri: [`${env.PUBLIC_POSTHOG_HOST}/report/?token=${env.PUBLIC_POSTHOG_KEY}`],
           'script-src': [
             '*.basemaps.cartocdn.com',
             '*.opencommunities.info',
