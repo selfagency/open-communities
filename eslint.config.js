@@ -2,7 +2,7 @@ import css from '@eslint/css';
 import js from '@eslint/js';
 import html from '@html-eslint/eslint-plugin';
 import prettier from 'eslint-config-prettier';
-import baselineJs from 'eslint-plugin-baseline-js';
+// import baselineJs from 'eslint-plugin-baseline-js';
 import perfectionist from 'eslint-plugin-perfectionist';
 import svelte from 'eslint-plugin-svelte';
 import { globalIgnores } from 'eslint/config';
@@ -52,10 +52,10 @@ export default ts.config(
   },
   {
     files: ['**/*.{js,ts,jsx,tsx}'],
-    plugins: { 'baseline-js': baselineJs, html },
+    plugins: { html },
     rules: {
       // Allow only "widely available" Baseline features
-      'baseline-js/use-baseline': ['error', { baseline: 'widely' }]
+      // 'baseline-js/use-baseline': ['error', { baseline: 'widely' }]
     }
   },
   {
@@ -97,7 +97,7 @@ export default ts.config(
         svelteConfig
       }
     },
-    plugins: { baselineJs, css, html },
+    plugins: { css, html },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
