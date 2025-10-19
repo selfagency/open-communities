@@ -86,7 +86,7 @@ async function customHandler({ event, resolve }) {
 
   event.request.headers.set(
     'Reporting-Endpoints',
-    `posthog="${env.PUBLIC_POSTHOG_HOST}/report/?token=phc_qzaqrjtbSUFKRMDZb8TXQosR3MInxaJwJS3yTrZbVfn"`
+    `posthog="${env.PUBLIC_POSTHOG_HOST}/report/?token=${env.PUBLIC_POSTHOG_TOKEN}"`
   );
 
   // response

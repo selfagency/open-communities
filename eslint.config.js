@@ -1,9 +1,13 @@
+import css from '@eslint/css';
 import js from '@eslint/js';
+import html from '@html-eslint/eslint-plugin';
 import prettier from 'eslint-config-prettier';
+import baselineJs from 'eslint-plugin-baseline-js';
 import perfectionist from 'eslint-plugin-perfectionist';
 import svelte from 'eslint-plugin-svelte';
 import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
+import { tailwind4 } from 'tailwind-csstree';
 import ts from 'typescript-eslint';
 
 import svelteConfig from './svelte.config.js';
@@ -37,6 +41,37 @@ export default ts.config(
   prettier,
   ...svelte.configs.prettier,
   {
+    files: ['**/*.{html}'],
+    language: 'html/html',
+    plugins: {
+      html
+    },
+    rules: {
+      'html/no-duplicate-class': 'error'
+    }
+  },
+  {
+    files: ['**/*.{js,ts,jsx,tsx}'],
+    plugins: { 'baseline-js': baselineJs, html },
+    rules: {
+      // Allow only "widely available" Baseline features
+      'baseline-js/use-baseline': ['error', { baseline: 'widely' }]
+    }
+  },
+  {
+    files: ['**/*.css'],
+    language: 'css/css',
+    languageOptions: {
+      customSyntax: tailwind4
+    },
+    plugins: {
+      css
+    },
+    rules: {
+      'css/no-empty-blocks': 'error'
+    }
+  },
+  {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node }
     },
@@ -62,6 +97,7 @@ export default ts.config(
         svelteConfig
       }
     },
+    plugins: { baselineJs, css, html },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
