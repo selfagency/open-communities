@@ -26,6 +26,12 @@ async function customHandler({ event, resolve }) {
 
   // services
   event.locals.api = api;
+  event.locals.api.beforeSend = function (url, options) {
+    options.headers = Object.assign({}, options.headers, {
+      'X-PocketHost-Client-Ip': event.request?.headers?.get('x-forwarded-for') || ''
+    });
+    return { options, url };
+  };
   event.locals.log = log;
 
   // Create origin-aware PostHog functions
