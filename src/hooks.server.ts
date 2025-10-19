@@ -3,7 +3,7 @@ import type { Handle, RequestEvent } from '@sveltejs/kit';
 import type { SerializeOptions } from 'cookie';
 
 import { sequence } from '@sveltejs/kit/hooks';
-import { isEmpty, isFunction, uid } from 'radashi';
+import { assign, isEmpty, isFunction, uid } from 'radashi';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
@@ -27,9 +27,17 @@ async function customHandler({ event, resolve }) {
   // services
   event.locals.api = api;
   event.locals.api.beforeSend = function (url, options) {
-    options.headers = Object.assign({}, options.headers, {
-      'X-PocketHost-Client-Ip': event.request?.headers?.get('x-forwarded-for') || ''
-    });
+    options.headers = assign(
+      {},
+      {
+        ...options.headers,
+        'X-PocketHost-Client-Ip':
+          event.request?.headers?.get('cf-connecting-ip') ??
+          event.request?.headers?.get('x-forwarded-for') ??
+          event.getClientAddress() ??
+          ''
+      }
+    );
     return { options, url };
   };
   event.locals.log = log;
