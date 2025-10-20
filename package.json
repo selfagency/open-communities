@@ -74,6 +74,7 @@
 		"formsnap": "2.0.1",
 		"globals": "16.4.0",
 		"happy-dom": "^18.0.1",
+		"internal-ip": "^8.0.1",
 		"jsdom": "27.0.1",
 		"lucide-svelte": "^0.546.0",
 		"marked": "^16.4.1",
