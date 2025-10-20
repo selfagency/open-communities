@@ -29,7 +29,7 @@ async function customHandler({ event, resolve }) {
     event.request?.headers?.get('cf-connecting-ip') ??
     event.request?.headers?.get('x-forwarded-for') ??
     event.getClientAddress();
-  if (clientIp === '::1' || clientIp === '127.0.0.1') {
+  if (!clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1') {
     clientIp = (await publicIp()) ?? '';
   }
 
@@ -40,7 +40,7 @@ async function customHandler({ event, resolve }) {
       {},
       {
         ...options.headers,
-        'X-PocketHost-Client-Ip': clientIp || ''
+        'X-PocketHost-Client-Ip': clientIp
       }
     );
     return { options, url };
