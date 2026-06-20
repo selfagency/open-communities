@@ -15,10 +15,11 @@ import type {
 } from '$lib/pocketbase.d';
 import type { LocationMeta, LocationRecord } from '$lib/types.d';
 
-import { cleanResponse } from '$lib/api';
 import { m } from '$lib/paraglide/messages';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
-import { handleError } from '$lib/server/api';
+import { cleanResponse } from '$lib/server/api';
+import { throwAsHttpError } from '$lib/server/api';
+import { log } from '$lib/server/logger';
 import { adminMail, transactionalMail } from '$lib/server/mail';
 /* endregion imports */
 
@@ -44,7 +45,7 @@ export const load = async ({ fetch, locals, url }) => {
       const id = client?.admin ? url.searchParams.get('id') : client.congregation;
 
       const congregation = cleanResponse(
-        await api.collection('congregationMeta').getFirstListItem(`id="${id}"`, { fetch })
+        await api.collection('congregationMeta').getFirstListItem(api.filter('id={:id}', { id }), { fetch })
       ) as RecordWithId;
 
       const location = congregation.location as LocationMeta;
@@ -77,7 +78,7 @@ export const load = async ({ fetch, locals, url }) => {
       if (isFunction(captureException)) {
         await captureException(error, client?.id);
       }
-      return handleError(error);
+      throwAsHttpError(error as { message?: string; status?: number });
     }
   }
 };
@@ -97,7 +98,7 @@ export const actions = {
       }
     } catch (captureError) {
       // Log capture error but don't fail the action
-      console.error('PostHog capture failed:', captureError);
+      log.error('PostHog capture failed:', captureError);
     }
 
     try {
@@ -156,12 +157,7 @@ export const actions = {
         await captureException(error, client?.id);
       }
 
-      return fail(err.status ?? 400, {
-        form: {
-          ...form,
-          error: err.message
-        }
-      });
+      return fail(err.status ?? 400, { form });
     }
   },
   submit: async (event) => {
@@ -170,7 +166,7 @@ export const actions = {
     const client = api?.authStore?.record;
 
     const form = await validate(event, defaultSchema);
-    const data = form.data as MetaRecord & RecordWithId;
+    const data = form.data; // typed as output<typeof defaultSchema> via superforms
 
     try {
       if (isFunction(capture)) {
@@ -178,11 +174,11 @@ export const actions = {
       }
     } catch (captureError) {
       // Log capture error but don't fail the action
-      console.error('PostHog capture failed:', captureError);
+      log.error('PostHog capture failed:', captureError);
     }
 
     try {
-      if (!client?.id) {
+      if (!client?.admin && client?.congregation !== data.id) {
         const error = new Error('Forbidden') as ClientResponseError;
         error.status = 403;
         throw error;
@@ -254,7 +250,7 @@ export const actions = {
 						https://opencommunities.info/edit?id=${data.id}
 					`,
             name: client.name,
-            title: `${data.name} edited`
+            subject: `${data.name} edited`
           },
           api
         );
@@ -271,7 +267,9 @@ export const actions = {
         const owner = await api.collection('users').getOne(data.owner, { fetch });
         await transactionalMail({
           email: owner.email,
-          message: m.transactional_updateApproved({ locale: owner.lang || 'en' }),
+          message: m.transactional_updateApproved({
+            locale: owner.lang || 'en'
+          }),
           name: owner.name,
           subject: m.transactional_subject({ locale: owner.lang || 'en' })
         });
@@ -286,12 +284,7 @@ export const actions = {
         await captureException(error, client?.id);
       }
 
-      return fail(err.status ?? 400, {
-        form: {
-          ...form,
-          error: err.message
-        }
-      });
+      return fail(err.status ?? 400, { form });
     }
   },
   transfer: async (event) => {
@@ -308,7 +301,7 @@ export const actions = {
       }
     } catch (captureError) {
       // Log capture error but don't fail the action
-      console.error('PostHog capture failed:', captureError);
+      log.error('PostHog capture failed:', captureError);
     }
 
     try {
@@ -323,7 +316,9 @@ export const actions = {
         throw error;
       }
 
-      const user = await api.collection('users').getFirstListItem(`email="${data.email}"`, { fetch });
+      const user = await api.collection('users').getFirstListItem(api.filter('email={:email}', { email: data.email }), {
+        fetch
+      });
 
       const batch = api.createBatch();
       if (!isEmpty(data.owner)) {
@@ -346,12 +341,7 @@ export const actions = {
         await captureException(error, client?.id);
       }
 
-      return fail(err.status ?? 400, {
-        form: {
-          ...form,
-          error: err.message
-        }
-      });
+      return fail(err.status ?? 400, { form });
     }
   }
 };

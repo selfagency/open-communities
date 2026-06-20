@@ -1,9 +1,11 @@
+import type { Handle } from '@sveltejs/kit';
+
 import helmet from 'sveltekit-helmet';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 
-export default dev
+const handle: Handle = dev
   ? ({ event, resolve }) => resolve(event)
   : helmet({
       contentSecurityPolicy: {
@@ -46,7 +48,6 @@ export default dev
             'basemaps.cartocdn.com',
             'cdn.jsdelivr.net',
             "'self'",
-            "'unsafe-eval'",
             "'unsafe-inline'"
           ],
           'script-src-elem': [
@@ -76,3 +77,5 @@ export default dev
         }
       }
     });
+
+export default handle;

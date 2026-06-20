@@ -18,9 +18,14 @@ function makeApiStub() {
       })
     }),
     createBatch: () => ({
-      collection: () => ({ create: () => {}, delete: () => {}, update: () => {} }),
+      collection: () => ({
+        create: () => {},
+        delete: () => {},
+        update: () => {}
+      }),
       send: async () => ({})
-    })
+    }),
+    filter: (expr: string) => expr
   } as any;
 }
 

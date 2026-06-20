@@ -7,7 +7,7 @@ export const contactSchema = z.object({
   email: z.email(),
   message: z.string(),
   name: z.string(),
-  reason: z.enum(['question', 'claim', 'delete', 'suggest']),
+  reason: z.enum(['question', 'claim', 'delete', 'suggest', 'transfer']),
   record: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional())
 });
 

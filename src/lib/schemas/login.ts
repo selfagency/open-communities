@@ -2,7 +2,7 @@
 import * as z from 'zod';
 
 import { m } from '$lib/paraglide/messages';
-// import { log } from '$lib/utils';
+
 /* endregion imports */
 
 export const loginSchema = z.object({

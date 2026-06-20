@@ -7,7 +7,8 @@ function makeApiStub() {
     authStore: { record: { id: 'u1', lang: 'en' } },
     collection: () => ({
       getFullList: async () => [{ id: 'c1', name: 'X' }]
-    })
+    }),
+    filter: (expr: string) => expr
   };
 }
 

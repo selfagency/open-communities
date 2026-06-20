@@ -1,0 +1,46 @@
+The `location.test.ts` already has `filter: (expr: string) => expr` on line 9 — the mock fix was applied. The narrative is clear.
+
+**Final assessment:**
+- Compartment 120 (stub additions) and messages 134-153 (test execution, mock bug fix, full verification) form one continuous work arc. Fold 134-153 into 120.
+- Importance: 38 (catching the mock bug during verification was valuable in-the-moment but is already self-corrected in current code state).
+- No events (the mock gap was a routine test-coverage gap, not an external constraint).
+- One fact: `api.filter` was introduced in production code, requiring test stubs to be updated.
+
+```xml
+<output>
+<compartments>
+<compartment start="120" end="153" title="Added filter method to all test API stubs and verified full test pass" episode_type="bug,testing" importance="38">
+<p1>
+Grep'd all server test files under `src/test/server/` for missing `filter` method after the Phase 1 S-5 fix introduced `pb.filter()` usage in production code. Identified 5 files needing the `filter: (expr) => expr` stub: `route-lookup.test.ts` (two locations), `layout.server.test.ts`, `contact.page.server.test.ts`, and `add.page.server.test.ts`. Also confirmed `location.test.ts` already had the stub (`src/lib/location.test.ts:9`).
+
+Ran full vitest suite without coverage. All 68 test files passed, 0 failures. Pre-existing svelte-check errors in Vite config and FakeSearch remain — none introduced by Phase 1.
+
+Phase 1 of CODE_REVIEW.md remediation is fully complete and verified.
+</p1>
+<p2>
+Added `filter: (expr) => expr` to API stubs in 5 test files after Phase 1 S-5 introduced `pb.filter()` in production code. All 68 tests pass. Phase 1 complete.
+</p2>
+<p3>
+Test API stubs updated to include `filter` method after Phase 1 PB filter injection fix; full suite passes.
+</p3>
+<p4/>
+</compartment>
+</compartments>
+<facts>
+<CONSTRAINTS>
+* PocketBase filter strings must use `api.filter(expr, params)` with `{:param}` placeholder syntax — string interpolation is injection-vulnerable.
+</CONSTRAINTS>
+<CONFIG_VALUES>
+* Auth cookie options in `src/hooks.server.ts:70-76`: `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev` (was `httpOnly: false`, `secure` commented out).
+* Auth cookie options in `src/hooks.server.ts:59-65`: `httpOnly: false`, `sameSite: 'lax'`, `secure` commented out.
+* PocketBase singleton: `src/lib/server/api.ts:17` — shared across all requests.
+</CONFIG_VALUES>
+</facts>
+<events>
+</events>
+<meta>
+<messages_processed>134-153</messages_processed>
+<unprocessed_from>154</unprocessed_from>
+</meta>
+</output>
+```

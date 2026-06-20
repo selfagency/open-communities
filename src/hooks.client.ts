@@ -13,7 +13,7 @@ export const handleError = async ({ error, event, message, status }) => {
 
   return {
     message,
-    stack: (<Error>error)?.stack,
+    ...(dev ? { stack: (<Error>error)?.stack } : {}),
     status
   };
 };

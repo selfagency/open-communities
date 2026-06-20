@@ -10,7 +10,6 @@
     "inlineSourceMap": true,
     "strict": true,
     "moduleResolution": "bundler",
-    "noImplicitAny": false,
     "lib": ["DOM", "ESNext"],
     "types": ["node", "nodemailer", "web"]
   }

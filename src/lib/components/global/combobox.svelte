@@ -64,12 +64,11 @@
   /* endregion methods */
 
   /* region lifecycle */
-  onMount(() => {
-    // Delay initialization to prevent reactivity issues during initial render
-    setTimeout(() => {
-      commandsInitialized = true;
-    }, 0);
-  });
+	onMount(() => {
+		tick().then(() => {
+			commandsInitialized = true;
+		});
+	});
   /* endregion lifecycle */
 
   /* region reactivity */

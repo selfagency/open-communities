@@ -1,5 +1,5 @@
 /* region imports */
-import { handleError } from '$lib/server/api';
+import { throwAsHttpError } from '$lib/server/api';
 /* endregion imports */
 
 export async function load({ fetch, locals, params }) {
@@ -7,9 +7,11 @@ export async function load({ fetch, locals, params }) {
 
   try {
     return {
-      content: await api.collection('pages').getFirstListItem(`slug="${params.slug}"`, { fetch })
+      content: await api.collection('pages').getFirstListItem(api.filter('slug={:slug}', { slug: params.slug }), {
+        fetch
+      })
     };
   } catch (err) {
-    return handleError(err as Error);
+    throwAsHttpError(err as Error);
   }
 }

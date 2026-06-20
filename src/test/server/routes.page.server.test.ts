@@ -17,7 +17,8 @@ function makeApiStub() {
           return { id: 'o1' };
         }
       } as any;
-    }
+    },
+    filter: (expr: string) => expr
   } as any;
 }
 

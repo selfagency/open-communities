@@ -1,3 +1,4 @@
+// @ts-nocheck — test infrastructure, intentionally loose typing
 // Provide setError for tests that import it directly
 // increment an observable counter too
 globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;

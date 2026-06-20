@@ -2,15 +2,13 @@
 import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
-import { isFunction, uid } from 'radashi';
+import { isFunction } from 'radashi';
 
 import type { UsersRecord } from '$lib/pocketbase.d';
 
-// import { dev } from '$app/environment';
-import { cleanResponse } from '$lib/api';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
-// import { log } from '$lib/server/logger';
+import { cleanResponse } from '$lib/server/api';
 import { validateCaptcha } from '$lib/server/utils';
 
 import type { PageServerLoad } from './$types';
@@ -48,21 +46,24 @@ export const actions = {
       // let res;
       switch (form.data.type) {
         case 'requestReset':
-          await api.collection('users').requestPasswordReset(form.data.email);
+          await api.collection('users').requestPasswordReset(form.data.email as string);
           break;
         case 'resetPassword':
           await api
             .collection('users')
-            .confirmPasswordReset(form.data.token, form.data.password, form.data.passwordConfirm, {
-              fetch
-            });
+            .confirmPasswordReset(
+              form.data.token as string,
+              form.data.password as string,
+              form.data.passwordConfirm as string,
+              {
+                fetch
+              }
+            );
           break;
         case 'verifyEmail':
-          await api.collection('users').confirmVerification(form.data.token);
+          await api.collection('users').confirmVerification(form.data.token as string);
           break;
       }
-
-      // if (dev) log.debug(`login:${form.data.type}`, res);
 
       return {
         form
@@ -110,13 +111,7 @@ export const actions = {
 
       // Use the same cookieOpts from locals to ensure consistency
       cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);
-      cookies.set('session', uid(32), cookieOpts);
-
-      // Add debug logging
-      // log.debug('Login successful, cookies set:', {
-      // 	authCookieSet: !!api.authStore.exportToCookie(),
-      // 	cookieOpts
-      // });
+      cookies.set('session', crypto.randomUUID(), cookieOpts);
 
       return {
         form,
@@ -128,21 +123,7 @@ export const actions = {
         await captureException(error, client?.id);
       }
 
-      // log.error('Login failed:', {
-      //   email: form.data.email,
-      //   error: err.message,
-      //   status: err.status
-      // });
-
-      return fail(err.status, {
-        form: {
-          ...form,
-          error: err.message,
-          errors: {
-            ...form.errors
-          }
-        }
-      });
+      return fail(err.status ?? 401, { form });
     }
   },
   logout: async (event) => {
@@ -158,8 +139,6 @@ export const actions = {
     const { api, capture, captureException, validate } = locals;
     const form = await validate(event, userSchema);
 
-    await capture(form.data.email, 'signup');
-
     let user: UsersRecord;
 
     try {
@@ -169,7 +148,10 @@ export const actions = {
         });
       }
 
-      await validateCaptcha(form);
+      const captchaValid = await validateCaptcha(form);
+      if (!captchaValid) {
+        return fail(400, { form });
+      }
 
       user = (await api.collection('users').create(
         {
@@ -182,6 +164,11 @@ export const actions = {
         },
         { fetch }
       )) as UsersRecord;
+
+      // S-13: capture after success using user ID, not email as PII distinctId
+      if (isFunction(capture)) {
+        await capture((user as UsersRecord & { id: string }).id, 'signup');
+      }
 
       await api.collection('users').requestVerification(form.data.email as string, { fetch });
 

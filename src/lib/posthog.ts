@@ -5,7 +5,11 @@ import type { UsersResponse } from '$lib/pocketbase.d';
 
 import { env } from '$env/dynamic/public';
 
-export async function captureException(error, event, message) {
+export async function captureException(
+  error: unknown,
+  event?: { url?: { pathname?: string } },
+  message?: string
+): Promise<void> {
   try {
     if (!isEmpty(posthog) && posthog.__loaded) {
       // Convert error to a serializable format for WebKit
@@ -41,9 +45,6 @@ export async function posthogInit(posthogKey: string, user: UsersResponse) {
   });
 
   if (user) {
-    posthog.identify(user.id, {
-      email: user.email,
-      name: user.name
-    });
+    posthog.identify(user.id);
   }
 }

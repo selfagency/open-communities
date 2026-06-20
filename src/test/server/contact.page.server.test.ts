@@ -9,7 +9,8 @@ function makeApiStub() {
   return {
     collection: () => ({
       getFullList: async () => [{ id: 'c1', name: 'Cong' }]
-    })
+    }),
+    filter: (expr: string) => expr
   };
 }
 
@@ -33,7 +34,11 @@ describe('contact +page.server', () => {
     const mod = await import('../../../src/routes/contact/+page.server');
     const validate = async () => ({ data: {}, valid: false });
 
-    const locals: any = { api: makeApiStub(), log: { error: vi.fn() }, validate };
+    const locals: any = {
+      api: makeApiStub(),
+      log: { error: vi.fn() },
+      validate
+    };
     await locals.validate();
     const mockActionEvent = createMockRequestEvent({
       locals,

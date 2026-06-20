@@ -1,7 +1,8 @@
 /* region imports */
+import type { RequestEvent } from '@sveltejs/kit';
 import type { SerializeOptions } from 'cookie';
-import type { Infer, SuperValidated } from 'sveltekit-superforms';
-import type { ObjectSchema } from 'zod';
+import type { SuperValidated } from 'sveltekit-superforms';
+import type { $ZodType, output } from 'zod/v4/core';
 
 import { Logger } from 'tslog';
 import '@poppanator/sveltekit-svg/dist/svg';
@@ -43,10 +44,10 @@ declare global {
       session: string;
       startTimer?: number;
       track?: unknown;
-      validate: (
-        request: unknown,
-        schema?: unknown
-      ) => Promise<SuperValidated<Infer<ObjectSchema<DefaultSchema | LoginSchema | TokenSchema | UserSchema>>>>;
+      validate: <S extends $ZodType<Record<string, unknown>>>(
+        request: Record<string, unknown> | RequestEvent,
+        schema: S
+      ) => Promise<SuperValidated<output<S>>>;
     }
 
     interface PageData {

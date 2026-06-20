@@ -8,7 +8,8 @@ vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 function makeLocals(overrides = {}) {
   const api = {
     authStore: { record: {} },
-    collection: () => ({ getFirstListItem: async () => ({ id: 'page' }) })
+    collection: () => ({ getFirstListItem: async () => ({ id: 'page' }) }),
+    filter: (expr: string) => expr
   } as any;
 
   return { api, validate: async () => ({}), ...overrides } as any;

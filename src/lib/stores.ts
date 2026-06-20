@@ -4,7 +4,6 @@ import { assign } from 'radashi';
 
 import { page } from '$app/state';
 
-// import { log } from '$lib/utils';
 /* endregion imports */
 
 /* region types  */

@@ -13,13 +13,35 @@ import { validateCaptcha } from '$lib/server/utils';
 import { truncateText } from '$lib/utils';
 /* endregion imports */
 
+// Short TTL cache for congregation data
+const congregationCache = new Map<string, { data: unknown[]; timestamp: number }>();
+const CONGREGATION_CACHE_TTL_MS = 30_000; // 30 seconds
+
+async function getCachedCongregations<T>(
+  api: {
+    collection: (name: string) => {
+      getFullList: (opts?: object) => Promise<T[]>;
+    };
+  },
+  opts: object
+): Promise<T[]> {
+  const cacheKey = JSON.stringify(opts);
+  const cached = congregationCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CONGREGATION_CACHE_TTL_MS) {
+    return cached.data as T[];
+  }
+  const data = await api.collection('congregationMeta').getFullList(opts);
+  congregationCache.set(cacheKey, { data, timestamp: Date.now() });
+  return data;
+}
+
 export const load = async (event) => {
   const { fetch, locals } = event;
   const { api, captureException, log, validate } = locals;
   const client = api?.authStore?.record;
 
   try {
-    const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map((c) => {
+    const congregations = (await getCachedCongregations(api, { fetch })).map((c) => {
       const location = c.location as LocationMeta;
       const label = truncateText(
         `${c.name}${location?.city?.name ? ', ' + location.city.name : ''}${location?.state?.name ? ', ' + location.state.name : ''}${location?.country?.name ? ', ' + location.country.name : ''}`,
@@ -52,7 +74,7 @@ export const actions = {
   default: async (event) => {
     const { api, capture, captureException, log } = event.locals;
     const client = api?.authStore?.record;
-    const form = await event.locals.validate(event.request, contactSchema);
+    const form = await event.locals.validate(event, contactSchema);
 
     if (isFunction(capture)) {
       await capture(client?.id, 'contactForm');
@@ -65,7 +87,10 @@ export const actions = {
         });
       }
 
-      await validateCaptcha(form);
+      const captchaValid = await validateCaptcha(form);
+      if (!captchaValid) {
+        return fail(400, { form });
+      }
 
       try {
         await adminMail(
@@ -78,7 +103,8 @@ export const actions = {
 
 						https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
 						`,
-            name: form.data.name
+            name: form.data.name,
+            subject: `Contact form: ${form.data.reason}`
           },
           api
         );

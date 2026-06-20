@@ -1,41 +1,65 @@
 /* region imports */
 import { PostHog } from 'posthog-node';
 
+import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
+import { log } from '$lib/server/logger';
 /* endregion imports */
 
-export async function capture(user: string, event: string) {
-  try {
-    // Validate PostHog key exists
-    if (!env.PUBLIC_POSTHOG_KEY) {
-      console.warn('PostHog key not configured, skipping capture');
-      return;
-    }
+// Singleton PostHog client — created once, reused across all captures
+let _phClient: null | PostHog = null;
 
-    const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
-      host: env.PUBLIC_POSTHOG_HOST
-    });
-    phClient.capture({ distinctId: user, event });
-    await phClient.shutdown();
+function getPhClient(): null | PostHog {
+  if (!env.PUBLIC_POSTHOG_KEY) return null;
+  if (_phClient) return _phClient;
+  _phClient = new PostHog(env.PUBLIC_POSTHOG_KEY, {
+    host: env.PUBLIC_POSTHOG_HOST
+  });
+  return _phClient;
+}
+
+// Graceful shutdown on process exit
+process.once('beforeExit', () => {
+  closePhClient();
+});
+
+export async function capture(user: string | undefined, event: string) {
+  const phClient = getPhClient();
+  if (!phClient) return;
+
+  try {
+    phClient.capture({ distinctId: user ?? 'anonymous', event });
+    if (dev) {
+      await phClient.shutdown();
+      _phClient = null;
+    } else {
+      await phClient.flush();
+    }
   } catch (error) {
-    console.error('PostHog capture failed:', error);
+    log.error('PostHog capture failed:', error);
   }
 }
 
-export async function captureException(error: Error, user: string, other?: Record<string, number | string>) {
-  try {
-    // Validate PostHog key exists
-    if (!env.PUBLIC_POSTHOG_KEY) {
-      console.warn('PostHog key not configured, skipping captureException');
-      return;
-    }
+export async function captureException(error: Error, user?: string, other?: Record<string, number | string>) {
+  const phClient = getPhClient();
+  if (!phClient) return;
 
-    const phClient = new PostHog(env.PUBLIC_POSTHOG_KEY as string, {
-      host: env.PUBLIC_POSTHOG_HOST
-    });
-    phClient.captureException(error, user, other);
-    await phClient.shutdown();
+  try {
+    phClient.captureException(error, user ?? 'anonymous', other);
+    if (dev) {
+      await phClient.shutdown();
+      _phClient = null;
+    } else {
+      await phClient.flush();
+    }
   } catch (phError) {
-    console.error('PostHog captureException failed:', phError);
+    log.error('PostHog captureException failed:', phError);
+  }
+}
+
+export function closePhClient() {
+  if (_phClient) {
+    _phClient.shutdown();
+    _phClient = null;
   }
 }

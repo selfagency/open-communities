@@ -20,7 +20,8 @@ vi.mock('$lib/api', () => {
           }
           return Promise.resolve([]);
         }
-      })
+      }),
+      filter: (expr: string) => expr
     }
   };
 });
@@ -29,7 +30,13 @@ vi.mock('$lib/utils', () => ({ log: { error: vi.fn() } }));
 
 import { Location } from './location';
 
-const country = { code: 'CO', id: 'c1', latitude: 1, longitude: 2, name: 'CountryOne' };
+const country = {
+  code: 'CO',
+  id: 'c1',
+  latitude: 1,
+  longitude: 2,
+  name: 'CountryOne'
+};
 const _state: Partial<StatesResponse> = {};
 _state.id = 's1';
 _state.code = 'S1';

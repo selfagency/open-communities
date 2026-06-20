@@ -2,6 +2,7 @@
   /* region imports */
   import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
+  import DOMPurify from 'isomorphic-dompurify';
   import WarningIcon from 'lucide-svelte/icons/circle-alert';
   import { sleep } from 'radashi';
   import { getContext, onMount, untrack } from 'svelte';
@@ -18,6 +19,7 @@
   import * as Card from '$lib/components/ui/card';
   import * as Form from '$lib/components/ui/form';
   import { Switch } from '$lib/components/ui/switch';
+  import { createInitForm } from '$lib/forms/defaults';
   import { m } from '$lib/paraglide/messages';
   import { state as appState, setState } from '$lib/stores';
   // import { log } from '$lib/utils';
@@ -55,73 +57,7 @@
   // constants
   const congregation = getContext('congregation') as CongregationMetaRecord;
 
-  const initForm = {
-    accessibility: {
-      inPerson_adaAll: false,
-      inPerson_adaSome: false,
-      inPerson_asl: false,
-      inPerson_eva: false,
-      online_asl: false,
-      online_automatedCaptions: false,
-      online_liveCaptions: false,
-      other: false,
-      otherText: ''
-    },
-    captcha: '',
-    clergy: '',
-    contactEmail: '',
-    contactName: '',
-    contactUrl: '',
-    denomination: '',
-    fit: {
-      clergyMember: false,
-      flag: '',
-      multipleClergyMembers: false,
-      other: false,
-      otherText: '',
-      publicStatement: false
-    },
-    flavor: '',
-    health: {
-      otherText: '',
-      protocol: ''
-    },
-    location: {
-      city: '',
-      country: '',
-      latitude: 0,
-      longitude: 0,
-      state: ''
-    },
-    name: '',
-    notes: '',
-    owner: user?.admin ? '' : user?.id,
-    registration: {
-      email: '',
-      otherText: '',
-      registrationType: '',
-      url: ''
-    },
-    security: {
-      clergyArmed: false,
-      congregantsArmed: false,
-      localPolice: false,
-      noFirearms: false,
-      other: false,
-      otherText: '',
-      privateSecurityArmed: false,
-      privateSecurityUnarmed: false
-    },
-    services: {
-      hybrid: false,
-      inPerson: false,
-      offsite: false,
-      onlineOnly: false,
-      other: false,
-      otherText: ''
-    },
-    visible: false
-  };
+  const initForm = createInitForm(user);
 
   // locals
   let title: string = $state('');
@@ -194,8 +130,8 @@
             </Card.Header>
             <Card.Content>
               <div class="flex flex-col items-center justify-start">
-                {#if mode === 'add' && content && !$appState.form?.success}
-                  <div class="prose w-full">{@html content.content}</div>
+                {#if mode === 'add' && content?.content && !$appState.form?.success}
+                  <div class="prose w-full">{@html DOMPurify.sanitize(content.content)}</div>
                 {/if}
 
                 {#if mode === 'edit' && !user?.admin}

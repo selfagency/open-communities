@@ -8,7 +8,6 @@ import { alphabetical, isEmpty, shake, unique } from 'radashi';
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
-// import { log } from '$lib/utils';
 /* endregion imports */
 
 export class Search {
@@ -19,6 +18,12 @@ export class Search {
   results: ReadableAtom<CongregationMetaRecord[]>;
   state: DeepMapStore<SearchState>;
 
+  // Pre-built indexes for fast filtering
+  /** Map<filterKey, Map<valueKey, Set<rowIndex>>> */
+  private boolIndex = new Map<string, Map<string, Set<number>>>();
+  /** Map<filterKey, Map<targetKey, Map<value, Set<number>>>> */
+  private stringIndex = new Map<string, Map<string, Map<string, Set<number>>>>();
+
   constructor(data = [] as SearchData[], debug = false) {
     this.data = alphabetical(data, (i) => i.name);
     this.debug = debug;
@@ -28,6 +33,8 @@ export class Search {
     });
     this.fuzzy = new Fuzzy();
     this.ids = this.data.map((i) => i.id);
+
+    this._buildIndexes();
 
     this.results = computed(this.state, (state) => {
       let resultIds = [...this.ids];
@@ -102,7 +109,7 @@ export class Search {
   }
 
   applyAllFilters(state: SearchState, currentIds: string[]) {
-    const hasFilter = (filters): boolean => {
+    const hasFilter = (filters: Record<string, boolean>): boolean => {
       if (!filters || isEmpty(filters)) return false;
       return Object.values(filters).some((f) => f === true);
     };
@@ -143,15 +150,21 @@ export class Search {
     const activeFilters = shake(filters, (f) => !f);
     if (isEmpty(activeFilters)) return currentIds;
 
-    const ids = this.data
-      .filter((record) => {
-        return Object.keys(activeFilters).some((key) => {
-          return record[filter]?.[key];
-        });
-      })
-      .map((i) => i.id);
+    const keyMap = this.boolIndex.get(filter);
+    if (!keyMap) return currentIds;
 
-    return currentIds.filter((i) => ids.includes(i));
+    const matchedIdx = new Set<number>();
+    for (const key of Object.keys(activeFilters)) {
+      const idxSet = keyMap.get(key);
+      if (idxSet) {
+        for (const idx of idxSet) matchedIdx.add(idx);
+      }
+    }
+
+    return currentIds.filter((id) => {
+      const idx = this.ids.indexOf(id);
+      return idx >= 0 && matchedIdx.has(idx);
+    });
   }
 
   resetAll() {
@@ -188,19 +201,102 @@ export class Search {
     const activeFilters = shake(filters, (f) => !f);
     if (isEmpty(activeFilters)) return currentIds;
 
-    const ids = this.data
-      .filter((record) => {
-        return Object.keys(activeFilters).some((key) => {
-          return targetKey === 'denomination' ? record[targetKey] === key : record[filter]?.[targetKey] === key;
-        });
-      })
-      .map((i) => i.id);
+    const map = this.stringIndex.get(filter);
+    if (!map) return currentIds;
 
-    return currentIds.filter((i) => ids.includes(i));
+    const valMap = map.get(targetKey);
+    if (!valMap) return currentIds;
+
+    const matchedIdx = new Set<number>();
+    for (const key of Object.keys(activeFilters)) {
+      const idxSet = valMap.get(key);
+      if (idxSet) {
+        for (const idx of idxSet) matchedIdx.add(idx);
+      }
+    }
+
+    return currentIds.filter((id) => {
+      const idx = this.ids.indexOf(id);
+      return idx >= 0 && matchedIdx.has(idx);
+    });
   }
 
   toggleLocation() {
     const state = this.state.get();
     this.state.setKey('showLocation', !state.showLocation);
+  }
+
+  /** Build lookup indexes so boolFilter/stringFilter don't scan all records. */
+  private _buildIndexes(): void {
+    this.data.forEach((record, idx) => {
+      // Bool filters: services, security, accessibility
+      for (const key of ['services', 'security', 'accessibility'] as const) {
+        const sub = record[key];
+        if (sub) {
+          for (const subKey of Object.keys(sub)) {
+            if (sub[subKey]) {
+              let keyMap = this.boolIndex.get(key);
+              if (!keyMap) {
+                keyMap = new Map();
+                this.boolIndex.set(key, keyMap);
+              }
+              let set = keyMap.get(subKey);
+              if (!set) {
+                set = new Set();
+                keyMap.set(subKey, set);
+              }
+              set.add(idx);
+            }
+          }
+        }
+      }
+
+      // String filters: denomination, health.protocol, registration.registrationType
+      const denom = record.denomination;
+      if (denom) {
+        let map = this.stringIndex.get('denomination');
+        if (!map) {
+          map = new Map();
+          this.stringIndex.set('denomination', map);
+        }
+        let valMap = map.get('denomination');
+        if (!valMap) {
+          valMap = new Map();
+          map.set('denomination', valMap);
+        }
+        let set = valMap.get(denom);
+        if (!set) {
+          set = new Set();
+          valMap.set(denom, set);
+        }
+        set.add(idx);
+      }
+
+      for (const filter of ['health', 'registration'] as const) {
+        const sub = record[filter];
+        if (sub) {
+          const targetKey = filter === 'health' ? 'protocol' : 'registrationType';
+          const val = sub[targetKey as keyof typeof sub];
+          if (val && typeof val === 'string') {
+            let map = this.stringIndex.get(filter);
+            if (!map) {
+              map = new Map();
+              this.stringIndex.set(filter, map);
+            }
+            let valMap = map.get(targetKey);
+            if (!valMap) {
+              valMap = new Map();
+              map.set(targetKey, valMap);
+            }
+            let set = valMap.get(val);
+            if (!set) {
+              set = new Set();
+              valMap.set(val, set);
+            }
+            set.add(idx);
+          }
+        }
+      }
+    });
   }
 }

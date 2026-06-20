@@ -1,3 +1,4 @@
+// @ts-nocheck — test infrastructure, intentionally loose typing
 // Minimal page store used by components in tests. Mirrors the in-test
 // page store created in `src/test/setupTest.ts` so imports from
 // `$app/state` resolve during Vite transform.
