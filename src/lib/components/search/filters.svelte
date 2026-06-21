@@ -22,7 +22,8 @@
   import { Label } from '$lib/components/ui/label';
   import * as Popover from '$lib/components/ui/popover';
   import { m } from '$lib/paraglide/messages';
-  import { Search } from '$lib/search';
+  import type { Search } from '$lib/search';
+
   // import { log } from '$lib/utils';
   /* endregion imports */
 

@@ -6,6 +6,7 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
+
   /* endregion imports */
 
   /* region variables */

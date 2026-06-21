@@ -5,6 +5,7 @@
   // import { log } from '$lib/utils';
 
   import type { PageProps } from './$types';
+
   /* endregion imports */
 
   /* region variables */

@@ -3,16 +3,15 @@
   import LocaleIcon from 'lucide-svelte/icons/languages';
   import { onMount, tick } from 'svelte';
   import { toast } from 'svelte-sonner';
-
-  import type { UsersLangOptions } from '$lib/pocketbase.d';
-
   import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state';
   import { Badge } from '$lib/components/ui/badge';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
   import { m } from '$lib/paraglide/messages';
   import { setLocale } from '$lib/paraglide/runtime';
+  import type { UsersLangOptions } from '$lib/pocketbase.d';
   import { log } from '$lib/utils';
+
   /*  endregion imports */
 
   /* region variables */

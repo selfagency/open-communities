@@ -5,6 +5,7 @@
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { initState } from '$lib/stores';
+
   /* endregion imports */
 
   /* region lifecycle */

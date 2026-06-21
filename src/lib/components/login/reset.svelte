@@ -2,9 +2,9 @@
   import { isEmpty } from 'radashi';
   /* region imports */
   import { onMount } from 'svelte';
-  import { toast } from 'svelte-sonner';
   import { fade } from 'svelte/transition';
-  import { superForm, type SuperValidated } from 'sveltekit-superforms';
+  import { toast } from 'svelte-sonner';
+  import { type SuperValidated, superForm } from 'sveltekit-superforms';
   import { waitForTheElement } from 'wait-for-the-element';
 
   import { dev } from '$app/environment';
@@ -12,6 +12,7 @@
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
   import { log } from '$lib/utils';
+
   /* endregion imports */
 
   /* region variables */

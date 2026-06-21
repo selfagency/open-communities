@@ -2,11 +2,10 @@
   /* region imports */
   import Flag from 'lucide-svelte/icons/flag';
   import FlagOff from 'lucide-svelte/icons/flag-off';
-
-  import type { FitRecord } from '$lib/pocketbase.d';
-
   import * as Tooltip from '$lib/components/ui/tooltip';
   import { m } from '$lib/paraglide/messages';
+  import type { FitRecord } from '$lib/pocketbase.d';
+
   /* endregion imports */
 
   /* region variables */

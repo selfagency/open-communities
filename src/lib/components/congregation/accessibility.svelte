@@ -4,12 +4,11 @@
   import CcIcon from 'lucide-svelte/icons/captions';
   import WarningIcon from 'lucide-svelte/icons/circle-alert';
   import EvaIcon from 'lucide-svelte/icons/languages';
-
-  import type { AccessibilityRecord } from '$lib/pocketbase.d';
-
   import AslIcon from '$lib/assets/asl.svg?component';
   import * as Tooltip from '$lib/components/ui/tooltip';
   import { m } from '$lib/paraglide/messages';
+  import type { AccessibilityRecord } from '$lib/pocketbase.d';
+
   /* endregion imports */
 
   /* region variables */

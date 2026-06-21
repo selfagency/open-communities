@@ -21,10 +21,10 @@
 </script>
 
 <script lang="ts">
-  import type { Snippet } from 'svelte';
 
   import XIcon from '@lucide/svelte/icons/x';
   import { Dialog as SheetPrimitive } from 'bits-ui';
+  import type { Snippet } from 'svelte';
 
   import { cn, type WithoutChildrenOrChild } from '$lib/utils.js';
 

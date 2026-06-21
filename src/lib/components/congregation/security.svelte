@@ -2,11 +2,10 @@
   /* region imports */
   import SecurityIcon from 'lucide-svelte/icons/shield';
   import UnarmedIcon from 'lucide-svelte/icons/shield-ban';
-
-  import type { SecurityRecord } from '$lib/pocketbase.d';
-
   import * as Tooltip from '$lib/components/ui/tooltip';
   import { m } from '$lib/paraglide/messages';
+  import type { SecurityRecord } from '$lib/pocketbase.d';
+
   /* endregion imports */
 
   /* region variables */

@@ -1,14 +1,15 @@
 <script lang="ts">
-  /* region imports */
-  import type { SuperForm } from 'sveltekit-superforms';
 
   import { sleep } from 'radashi';
   import { onDestroy, onMount } from 'svelte';
+  /* region imports */
+  import type { SuperForm } from 'sveltekit-superforms';
 
   import { browser } from '$app/environment';
   import { env } from '$env/dynamic/public';
   import * as Form from '$lib/components/ui/form';
   import { log } from '$lib/utils';
+
   // import { log } from '$lib/utils';
   /* endregion imports */
 
@@ -31,7 +32,7 @@
       widget = document.getElementById('captcha');
       if (widget) {
         log.debug('[captcha] Widget found, adding event listener');
-        widget.addEventListener('solve', function (e: Event) {
+        widget.addEventListener('solve', (e: Event) => {
           const ce = e as CustomEvent;
           log.debug('[captcha] Solve event fired:', ce.detail);
           $formData.captcha = ce.detail.token;

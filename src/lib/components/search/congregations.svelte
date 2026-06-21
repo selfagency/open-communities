@@ -1,18 +1,14 @@
 <script lang="ts">
-  /* region imports */
-  import type { DeepMapStore, ReadableAtom } from 'nanostores';
 
   import WarningIcon from 'lucide-svelte/icons/circle-alert';
   import ClearIcon from 'lucide-svelte/icons/circle-x';
   import LocationIcon from 'lucide-svelte/icons/globe';
   import SearchIcon from 'lucide-svelte/icons/search';
+  /* region imports */
+  import type { DeepMapStore, ReadableAtom } from 'nanostores';
   import { alphabetical, isEmpty, sleep, unique } from 'radashi';
   import { onMount, tick, untrack } from 'svelte';
   import { fade } from 'svelte/transition';
-
-  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-  import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
-
   import { dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
@@ -23,12 +19,14 @@
   import * as Pagination from '$lib/components/ui/pagination';
   import { Location as LocationService } from '$lib/location';
   import { m } from '$lib/paraglide/messages';
+  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
   import { Search } from '$lib/search';
-  import { state as appState } from '$lib/stores';
+  import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
   import Filters from './filters.svelte';
   import Location from './location.svelte';
   import Map from './map.svelte';
+
   /* endregion imports */
 
   /* region types */
@@ -172,12 +170,13 @@
     }
   });
   /* endregion reactivity */
+  const skeletons = [1, 2, 3];
 </script>
 
 <section class="w-full space-y-4">
   {#if loading}
     <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
-      {#each [1, 2, 3]}
+      {#each skeletons as s}
         <div class="col-span-1">
           <div class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-white p-4">
             <div class="space-y-2">

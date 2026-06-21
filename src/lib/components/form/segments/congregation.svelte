@@ -2,10 +2,6 @@
   /* region imports */
   import { isEmpty } from 'radashi';
   import { getContext, onMount, untrack } from 'svelte';
-
-  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-  import type { LocationMeta, LocationRecord } from '$lib/types.d';
-
   import { page } from '$app/state';
   import Combobox from '$lib/components/global/combobox.svelte';
   import * as Accordion from '$lib/components/ui/accordion';
@@ -16,9 +12,12 @@
   import { Textarea } from '$lib/components/ui/textarea';
   import { Location } from '$lib/location';
   import { m } from '$lib/paraglide/messages';
+  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
+  import type { LocationMeta, LocationRecord } from '$lib/types.d';
   import { log } from '$lib/utils';
 
   import Required from '../required.svelte';
+
   /* endregion imports */
 
   /* region variables */

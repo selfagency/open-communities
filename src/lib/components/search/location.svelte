@@ -6,9 +6,10 @@
 
   import Combobox from '$lib/components/global/combobox.svelte';
   import { Button } from '$lib/components/ui/button';
-  import { Location } from '$lib/location';
+  import type { Location } from '$lib/location';
   import { m } from '$lib/paraglide/messages';
-  import { Search } from '$lib/search';
+  import type { Search } from '$lib/search';
+
   /* endregion imports */
 
   /* region variables */

@@ -4,9 +4,9 @@
 
   import * as Sheet from '$lib/components/ui/sheet';
   import { m } from '$lib/paraglide/messages';
-  import { state as appState } from '$lib/stores';
 
   import Menu from './menu.svelte';
+
   /*  endregion imports */
 
   /* region variables */

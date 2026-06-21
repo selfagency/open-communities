@@ -1,9 +1,9 @@
 <script lang="ts">
   /* region imports */
   import '../app.css';
-  import type { Snippet } from 'svelte';
 
   import posthog from 'posthog-js';
+  import type { Snippet } from 'svelte';
   import { onMount } from 'svelte';
 
   import { browser } from '$app/environment';
@@ -19,6 +19,7 @@
 
   // import { log } from '$lib/utils';
   import '../app.css';
+
   /* endregion imports */
 
   /* Initialize PostHog pageview and pageleave tracking */

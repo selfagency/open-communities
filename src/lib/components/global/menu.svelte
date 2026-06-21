@@ -7,9 +7,9 @@
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
   import { m } from '$lib/paraglide/messages';
-  import { state as appState } from '$lib/stores';
 
   import Locale from './locale.svelte';
+
   /*  endregion imports */
 
   /* region variables */

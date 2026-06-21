@@ -1,15 +1,14 @@
 <script lang="ts">
   /* region imports */
   import { onMount, setContext } from 'svelte';
-
-  import type { UsersRecord } from '$lib/pocketbase.d';
-
   import EditForm from '$lib/components/form/form.svelte';
   import { initForm } from '$lib/form';
   import { m } from '$lib/paraglide/messages';
+  import type { UsersRecord } from '$lib/pocketbase.d';
   import { setState } from '$lib/stores';
 
   import type { PageProps } from './$types';
+
   /* endregion imports */
 
   /* region variables */
@@ -25,7 +24,7 @@
   });
   /* endregion lifecycle */
 
-  const form = initForm(data.form!.default, 'edit', data.user?.admin);
+  const form = initForm(data.form?.default, 'edit', data.user?.admin);
 
   export const snapshot = { capture: form.capture, restore: form.restore };
 </script>

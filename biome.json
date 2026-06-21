@@ -17,9 +17,6 @@
       "!**/npmlogs/",
       "!**/test-results/",
       "!.github/codepilot-instructions.md",
-      "!**/*.svelte",
-      "!**/*.svelte.ts",
-      "!**/*.svelte.js",
       "!src/lib/assets/**",
       "!src/app.css",
       "!static/**"
@@ -100,14 +97,19 @@
       "bracketSpacing": true
     }
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "html": {
+    "experimentalFullSupportEnabled": true,
     "formatter": {
       "indentScriptAndStyle": false,
       "selfCloseVoidElements": "always"
     }
   },
   "overrides": [
-    { "includes": ["*.svelte", "*.svelte.ts", "*.svelte.js"] },
     {
       "includes": [
         "**/*.test.ts",
@@ -135,8 +137,41 @@
             "noShadowRestrictedNames": "off",
             "useIterableCallbackReturn": "off"
           },
+          "a11y": {
+            "useButtonType": "off",
+            "noLabelWithoutControl": "off",
+            "useValidAriaValues": "off"
+          },
           "security": {
             "noGlobalEval": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/lib/components/**", "src/test/stubs/**", "src/routes/**/*.svelte"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedFunctionParameters": "off",
+            "noUnusedVariables": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noGlobalAssign": "off",
+            "noShadowRestrictedNames": "off",
+            "noDoubleEquals": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off",
+            "useTemplate": "off"
+          },
+          "a11y": {
+            "useButtonType": "off",
+            "noLabelWithoutControl": "off",
+            "useValidAriaValues": "off",
+            "useSemanticElements": "off",
+            "noSvgWithoutTitle": "off"
           }
         }
       }

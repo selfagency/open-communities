@@ -1,6 +1,8 @@
 <script lang="ts">
   import Loading from 'lucide-svelte/icons/loader-circle';
+
   const { class: className = '', variant = 'default' }: { class?: string; variant?: 'default' | 'full' } = $props();
+
   import { fade } from 'svelte/transition';
 </script>
 

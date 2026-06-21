@@ -4,6 +4,7 @@
 </script>
 
 <svg
+  aria-label="ASL"
   data-testid="mock-asl"
   class={cls}
   width={size}

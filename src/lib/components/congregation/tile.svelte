@@ -1,7 +1,12 @@
 <script lang="ts">
   /* region imports */
   import EditIcon from 'lucide-svelte/icons/pencil';
-
+  import { goto, resolve } from '$app/navigation';
+  import { page } from '$app/state';
+  import { Badge } from '$lib/components/ui/badge';
+  import * as Card from '$lib/components/ui/card';
+  import * as Tooltip from '$lib/components/ui/tooltip';
+  import { m } from '$lib/paraglide/messages';
   import type {
     AccessibilityRecord,
     CitiesRecord as City,
@@ -14,17 +19,11 @@
     StatesRecord as State
   } from '$lib/pocketbase.d';
 
-  import { goto, resolve } from '$app/navigation';
-  import { page } from '$app/state';
-  import { Badge } from '$lib/components/ui/badge';
-  import * as Card from '$lib/components/ui/card';
-  import * as Tooltip from '$lib/components/ui/tooltip';
-  import { m } from '$lib/paraglide/messages';
-
   import Accessibility from './accessibility.svelte';
   import Flag from './flag.svelte';
   import Health from './health.svelte';
   import Security from './security.svelte';
+
   /* endregion imports */
 
   /* region variables */

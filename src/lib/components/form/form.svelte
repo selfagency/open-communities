@@ -1,15 +1,12 @@
 <script lang="ts">
-  /* region imports */
-  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
   import DOMPurify from 'isomorphic-dompurify';
   import WarningIcon from 'lucide-svelte/icons/circle-alert';
   import { sleep } from 'radashi';
   import { getContext, onMount, untrack } from 'svelte';
   import { fade } from 'svelte/transition';
-
-  import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
-
+  /* region imports */
+  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
   import { browser, dev } from '$app/environment';
   import Captcha from '$lib/components/global/captcha.svelte';
   import Loading from '$lib/components/global/loading.svelte';
@@ -21,6 +18,7 @@
   import { Switch } from '$lib/components/ui/switch';
   import { createInitForm } from '$lib/forms/defaults';
   import { m } from '$lib/paraglide/messages';
+  import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
   import { state as appState, setState } from '$lib/stores';
   // import { log } from '$lib/utils';
 
@@ -34,6 +32,7 @@
   import Security from './segments/security.svelte';
   import Services from './segments/services.svelte';
   import Transfer from './transfer.svelte';
+
   /* endregion imports */
 
   /* region variables */

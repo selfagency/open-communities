@@ -3,6 +3,7 @@
   import EmailIcon from 'lucide-svelte/icons/mail';
 
   import { m } from '$lib/paraglide/messages';
+
   /* endregion imports */
 
   /* region variables */

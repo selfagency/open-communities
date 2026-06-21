@@ -4,6 +4,7 @@
   import { m } from '$lib/paraglide/messages';
 
   import type { PageProps, Snapshot } from './$types';
+
   /* endregion imports */
 
   /* region variables */

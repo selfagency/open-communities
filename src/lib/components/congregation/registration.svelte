@@ -2,11 +2,10 @@
   /* region imports */
   import WebIcon from 'lucide-svelte/icons/globe';
   import EmailIcon from 'lucide-svelte/icons/mail';
-
-  import type { RegistrationRecord } from '$lib/pocketbase.d';
-
   import { Button } from '$lib/components/ui/button';
   import { m } from '$lib/paraglide/messages';
+  import type { RegistrationRecord } from '$lib/pocketbase.d';
+
   /* endregion imports */
 
   /* region variables */

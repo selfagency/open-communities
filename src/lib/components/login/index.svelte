@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition';
   /* region imports */
   import { toast } from 'svelte-sonner';
-  import { fade } from 'svelte/transition';
-  import { superForm, type SuperValidated } from 'sveltekit-superforms';
+  import { type SuperValidated, superForm } from 'sveltekit-superforms';
 
   import { dev } from '$app/environment';
   import { goto } from '$app/navigation';
@@ -14,8 +14,9 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
-  import { state as appState, setState } from '$lib/stores';
+  import { setState } from '$lib/stores';
   import { log } from '$lib/utils';
+
   /* endregion imports */
 
   /* region variables */

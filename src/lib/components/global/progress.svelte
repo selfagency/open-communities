@@ -5,6 +5,7 @@
 
   import { Progress } from '$lib/components/ui/progress';
   import { state as appState } from '$lib/stores';
+
   /* endregion imports */
 
   /* region variables */

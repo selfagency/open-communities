@@ -1,9 +1,9 @@
 <script lang="ts">
-  /* region imports */
-  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+  /* region imports */
+  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
   import { dev } from '$app/environment';
   import { page } from '$app/state';
@@ -13,7 +13,8 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
-  import { state as appState, setState } from '$lib/stores';
+  import { setState } from '$lib/stores';
+
   // import { log } from '$lib/utils';
   /* endregion imports */
 

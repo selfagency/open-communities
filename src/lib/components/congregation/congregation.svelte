@@ -4,10 +4,17 @@
   import ShareIcon from 'lucide-svelte/icons/share';
   import LinkIcon from 'lucide-svelte/icons/square-arrow-out-up-right';
   import { isEmpty, omit } from 'radashi';
+  import { fade } from 'svelte/transition';
   import { copyText } from 'svelte-copy';
   import { toast } from 'svelte-sonner';
-  import { fade } from 'svelte/transition';
-
+  import { goto, resolve } from '$app/navigation';
+  import { page } from '$app/state';
+  import { Badge } from '$lib/components/ui/badge';
+  import * as Dialog from '$lib/components/ui/dialog';
+  import { Separator } from '$lib/components/ui/separator';
+  import * as Tabs from '$lib/components/ui/tabs';
+  import * as Tooltip from '$lib/components/ui/tooltip';
+  import { m } from '$lib/paraglide/messages';
   import type {
     AccessibilityRecord,
     CitiesRecord as City,
@@ -21,15 +28,6 @@
     StatesRecord as State
   } from '$lib/pocketbase.d';
 
-  import { goto, resolve } from '$app/navigation';
-  import { page } from '$app/state';
-  import { Badge } from '$lib/components/ui/badge';
-  import * as Dialog from '$lib/components/ui/dialog';
-  import { Separator } from '$lib/components/ui/separator';
-  import * as Tabs from '$lib/components/ui/tabs';
-  import * as Tooltip from '$lib/components/ui/tooltip';
-  import { m } from '$lib/paraglide/messages';
-
   import Accessibility from './accessibility.svelte';
   import Contact from './contact.svelte';
   import Fit from './fit.svelte';
@@ -39,6 +37,7 @@
   import Security from './security.svelte';
   import Services from './services.svelte';
   import Tile from './tile.svelte';
+
   /* endregion imports */
 
   /* region variables */

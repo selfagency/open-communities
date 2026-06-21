@@ -1,12 +1,11 @@
 <script lang="ts">
   /* region imports */
   import WarningIcon from 'lucide-svelte/icons/circle-alert';
-
-  import type { HealthRecord } from '$lib/pocketbase.d';
-
   import MaskIcon from '$lib/assets/mask.svg?component';
   import * as Tooltip from '$lib/components/ui/tooltip';
   import { m } from '$lib/paraglide/messages';
+  import type { HealthRecord } from '$lib/pocketbase.d';
+
   /* endregion imports */
 
   /* region variables */

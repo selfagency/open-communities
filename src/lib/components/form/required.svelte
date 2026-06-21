@@ -2,6 +2,7 @@
   /* region imports */
   import { Badge } from '$lib/components/ui/badge';
   import { m } from '$lib/paraglide/messages';
+
   /* endregion imports */
 
   /* region variables */

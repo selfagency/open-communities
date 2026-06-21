@@ -9,6 +9,7 @@
 
   import * as Command from '../ui/command/index.js';
   import * as Popover from '../ui/popover/index.js';
+
   /*  endregion imports */
 
   /* region variables */
