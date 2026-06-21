@@ -45,7 +45,7 @@
     state: searchState
   }: { results: ReadableAtom<CongregationMetaRecord[]>; state: DeepMapStore<SearchState> } = search;
   const location = new LocationService({ countries: page.data.countries, search: search });
-  const open = {};
+  const open: Record<string, boolean> = {};
 
   // locals
   let loading = $state(true);
@@ -244,7 +244,7 @@
       <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3" class:blurred={isPaging}>
         {#each pages[currentPage - 1] as congregation (congregation.id + '-' + currentPage)}
           <div class="col-span-1">
-            <CongregationCard {congregation} open={open[congregation.id]} />
+            <CongregationCard {congregation} open={open[congregation.id] ?? false} />
           </div>
         {/each}
       </div>

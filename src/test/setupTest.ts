@@ -149,7 +149,7 @@ vi.mock("$app/state", () => {
 	};
 
 	// expose for tests to import and mutate
-	globalThis.__TEST_USER_STORE__ = userStore;
+	(globalThis as any).__TEST_USER_STORE__ = userStore;
 
 	// minimal searchParams-like object used by components (page.url.searchParams.has/get)
 	const fakeSearchParams = {

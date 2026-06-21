@@ -50,8 +50,8 @@ describe("server route modules smoke tests", () => {
 			locals: { api },
 		} as unknown as Parameters<typeof mod.load>[0];
 
-		const result = await mod.load(args);
-		expect(result).toHaveProperty("congregations");
+		const result = (await mod.load(args))!;
+		expect(result!).toHaveProperty("congregations");
 		expect(result.congregations).toHaveLength(congregationMetaViews.length);
 	});
 

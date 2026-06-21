@@ -94,7 +94,7 @@ export const actions = {
 						"health",
 						"security",
 						"services",
-						"user",
+						"user" as any,
 					]),
 					...location,
 					visible: client?.admin ? formData.visible : false,

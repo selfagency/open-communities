@@ -14,10 +14,10 @@
 </script>
 
 <svelte:head>
-  <title>{data.content.title} &middot; {m.title()}</title>
+  <title>{data.content?.title ?? ''} &middot; {m.title()}</title>
 </svelte:head>
 
-{#if data.content.id}
+{#if data.content}
   {#key data.content.id}
     <section class="max-w-3xl mx-auto">
       <Card.Root>

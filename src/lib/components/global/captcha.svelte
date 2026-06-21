@@ -31,9 +31,10 @@
       widget = document.getElementById('captcha');
       if (widget) {
         log.debug('[captcha] Widget found, adding event listener');
-        widget.addEventListener('solve', function (e) {
-          log.debug('[captcha] Solve event fired:', e.detail);
-          $formData.captcha = e.detail.token;
+        widget.addEventListener('solve', function (e: Event) {
+          const ce = e as CustomEvent;
+          log.debug('[captcha] Solve event fired:', ce.detail);
+          $formData.captcha = ce.detail.token;
           log.debug('[captcha] Token set to:', $formData.captcha);
         });
       } else {

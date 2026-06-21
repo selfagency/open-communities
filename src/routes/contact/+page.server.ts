@@ -1,139 +1,146 @@
 /* region imports */
-import type { ClientResponseError } from 'pocketbase';
+import type { ClientResponseError } from "pocketbase";
 
-import { fail } from '@sveltejs/kit';
-import { isFunction } from 'radashi';
+import { fail } from "@sveltejs/kit";
+import { isFunction } from "radashi";
 
-import type { LocationMeta } from '$lib/types.d';
+import type { LocationMeta } from "$lib/types.d";
+import type { CongregationMetaRecord } from "$lib/pocketbase.d";
 
-import { m } from '$lib/paraglide/messages';
-import { contactSchema } from '$lib/schemas/contact';
-import { adminMail } from '$lib/server/mail';
-import { validateCaptcha } from '$lib/server/utils';
-import { truncateText } from '$lib/utils';
+import { m } from "$lib/paraglide/messages";
+import { contactSchema } from "$lib/schemas/contact";
+import { adminMail } from "$lib/server/mail";
+import { validateCaptcha } from "$lib/server/utils";
+import { truncateText } from "$lib/utils";
 /* endregion imports */
 
 // Short TTL cache for congregation data
-const congregationCache = new Map<string, { data: unknown[]; timestamp: number }>();
+const congregationCache = new Map<
+	string,
+	{ data: unknown[]; timestamp: number }
+>();
 const CONGREGATION_CACHE_TTL_MS = 30_000; // 30 seconds
 
 async function getCachedCongregations<T>(
-  api: {
-    collection: (name: string) => {
-      getFullList: (opts?: object) => Promise<T[]>;
-    };
-  },
-  opts: object
+	api: {
+		collection: (name: string) => {
+			getFullList: (opts?: object) => Promise<T[]>;
+		};
+	},
+	opts: object,
 ): Promise<T[]> {
-  const cacheKey = JSON.stringify(opts);
-  const cached = congregationCache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < CONGREGATION_CACHE_TTL_MS) {
-    return cached.data as T[];
-  }
-  const data = await api.collection('congregationMeta').getFullList(opts);
-  congregationCache.set(cacheKey, { data, timestamp: Date.now() });
-  return data;
+	const cacheKey = JSON.stringify(opts);
+	const cached = congregationCache.get(cacheKey);
+	if (cached && Date.now() - cached.timestamp < CONGREGATION_CACHE_TTL_MS) {
+		return cached.data as T[];
+	}
+	const data = await api.collection("congregationMeta").getFullList(opts);
+	congregationCache.set(cacheKey, { data, timestamp: Date.now() });
+	return data;
 }
 
 export const load = async (event) => {
-  const { fetch, locals } = event;
-  const { api, captureException, log, validate } = locals;
-  const client = api?.authStore?.record;
+	const { fetch, locals } = event;
+	const { api, captureException, log, validate } = locals;
+	const client = api?.authStore?.record;
 
-  try {
-    const congregations = (await getCachedCongregations(api, { fetch })).map((c) => {
-      const location = c.location as LocationMeta;
-      const label = truncateText(
-        `${c.name}${location?.city?.name ? ', ' + location.city.name : ''}${location?.state?.name ? ', ' + location.state.name : ''}${location?.country?.name ? ', ' + location.country.name : ''}`,
-        38
-      );
-      return {
-        id: c.id,
-        label: truncateText(label, 38),
-        value: label
-      };
-    });
+	try {
+		const congregations = (await getCachedCongregations(api, { fetch })).map(
+			(c) => {
+				const rec = c as CongregationMetaRecord & { id: string };
+				const location = rec.location as LocationMeta;
+				const label = truncateText(
+					`${rec.name}${location?.city?.name ? ", " + location.city.name : ""}${location?.state?.name ? ", " + location.state.name : ""}${location?.country?.name ? ", " + location.country.name : ""}`,
+					38,
+				);
+				return {
+					id: rec.id,
+					label: truncateText(label, 38),
+					value: label,
+				};
+			},
+		);
 
-    return {
-      congregations,
-      form: await validate(event, contactSchema)
-    };
-  } catch (error) {
-    if (isFunction(captureException)) {
-      await captureException(error, client?.id);
-    }
-    log.error('contact:load:error', error);
+		return {
+			congregations,
+			form: await validate(event, contactSchema),
+		};
+	} catch (error) {
+		if (isFunction(captureException)) {
+			await captureException(error, client?.id);
+		}
+		log.error("contact:load:error", error);
 
-    return {
-      form: await validate(event, contactSchema)
-    };
-  }
+		return {
+			form: await validate(event, contactSchema),
+		};
+	}
 };
 
 export const actions = {
-  default: async (event) => {
-    const { api, capture, captureException, log } = event.locals;
-    const client = api?.authStore?.record;
-    const form = await event.locals.validate(event, contactSchema);
+	default: async (event) => {
+		const { api, capture, captureException, log } = event.locals;
+		const client = api?.authStore?.record;
+		const form = await event.locals.validate(event, contactSchema);
 
-    if (isFunction(capture)) {
-      await capture(client?.id, 'contactForm');
-    }
+		if (isFunction(capture)) {
+			await capture(client?.id, "contactForm");
+		}
 
-    try {
-      if (!form.valid) {
-        return fail(400, {
-          form
-        });
-      }
+		try {
+			if (!form.valid) {
+				return fail(400, {
+					form,
+				});
+			}
 
-      const captchaValid = await validateCaptcha(form);
-      if (!captchaValid) {
-        return fail(400, { form });
-      }
+			const captchaValid = await validateCaptcha(form);
+			if (!captchaValid) {
+				return fail(400, { form });
+			}
 
-      try {
-        await adminMail(
-          {
-            email: form.data.email,
-            message: `
+			try {
+				await adminMail(
+					{
+						email: form.data.email,
+						message: `
 						${m[`contactOptions_${form.data.reason}`]()}
 
 						${form.data.message}
 
-						https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
+						https://opencommunities.info/edit?id=${form.data.record}${["claim", "transfer"].includes(form.data.reason) ? `&transfer=${form.data.email}` : ""}
 						`,
-            name: form.data.name,
-            subject: `Contact form: ${form.data.reason}`
-          },
-          api
-        );
-      } catch (error) {
-        if (isFunction(captureException)) {
-          await captureException(error, client?.id);
-        }
-        return fail(400, {
-          error,
-          form
-        });
-      }
+						name: form.data.name,
+						subject: `Contact form: ${form.data.reason}`,
+					},
+					api,
+				);
+			} catch (error) {
+				if (isFunction(captureException)) {
+					await captureException(error, client?.id);
+				}
+				return fail(400, {
+					error,
+					form,
+				});
+			}
 
-      return {
-        form
-      };
-    } catch (error) {
-      const err = error as ClientResponseError;
-      if (isFunction(captureException)) {
-        await captureException(error, client?.id);
-      }
-      log.error('error', err);
+			return {
+				form,
+			};
+		} catch (error) {
+			const err = error as ClientResponseError;
+			if (isFunction(captureException)) {
+				await captureException(error, client?.id);
+			}
+			log.error("error", err);
 
-      return fail(err.status || 400, {
-        form: {
-          ...form,
-          error: err.message
-        }
-      });
-    }
-  }
+			return fail(err.status || 400, {
+				form: {
+					...form,
+					error: err.message,
+				},
+			});
+		}
+	},
 };

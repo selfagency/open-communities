@@ -38,8 +38,8 @@ describe("+layout.server load", () => {
 			url: new URL("http://localhost/"),
 		});
 
-		const res = await mod.load(mockEvent as any);
-		expect(res).toHaveProperty("countries");
+		const res = (await mod.load(mockEvent as any))!;
+		expect(res!).toHaveProperty("countries");
 		expect(res).toHaveProperty("lang");
 		expect(res).toHaveProperty("user");
 		expect(res.lang).toBe("en");

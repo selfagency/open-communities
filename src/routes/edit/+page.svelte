@@ -25,7 +25,7 @@
   });
   /* endregion lifecycle */
 
-  const form = initForm(data.form.default, 'edit', data.user?.admin);
+  const form = initForm(data.form!.default, 'edit', data.user?.admin);
 
   export const snapshot = { capture: form.capture, restore: form.restore };
 </script>
@@ -37,6 +37,6 @@
 <EditForm
   {form}
   mode="edit"
-  deletion={data.form.delete}
-  transfer={data.form.transfer}
+  deletion={data.form!.delete}
+  transfer={data.form!.transfer}
   user={data.user as UsersRecord & { id: string }} />

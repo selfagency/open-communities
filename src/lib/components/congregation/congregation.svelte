@@ -75,7 +75,7 @@
   /* endregion variables */
 
   /* region methods */
-  const allFalse = (obj) => Object.values(omit(obj, ['id', 'otherText'])).every((v) => !v);
+  const allFalse = (obj: Record<string, unknown>) => Object.values(omit(obj, ['id', 'otherText'])).every((v) => !v);
   /* endregion methods */
 
   /* region reactivity */
@@ -186,7 +186,7 @@
                   <h2 class="label">{m.denomination_affiliation()}</h2>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
-                  {m[`denomination_${congregation.denomination}`]()}
+                  {(m as Record<string, (args?: unknown) => string>)[`denomination_${congregation.denomination}`]()}
                 </div>
               {/if}
 

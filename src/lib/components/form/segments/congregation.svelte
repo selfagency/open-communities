@@ -242,7 +242,7 @@
             <Select.Trigger id="denomination" class="w-full" {...props}>
               {#if $formData?.denomination}
                 {@const denom = `denomination_${$formData?.denomination}`}
-                {m[denom]()}
+                {(m as Record<string, (args?: unknown) => string>)[denom]()}
               {:else}
                 {m.selectThing({ thing: m.denomination().toLowerCase() })}
               {/if}

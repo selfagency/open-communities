@@ -155,17 +155,17 @@
               <div class="filter-heading">
                 <span class="filter-icon">
                   {#if category === 'denomination' || category === 'health' || category === 'services'}
-                    {@const Icon = icons[category]}
+                    {@const Icon = (icons as unknown as Record<string, typeof AccessibilityIcon>)[category]}
                     <span class="h-4 w-5 fill-slate-500">
                       <Icon />
                     </span>
                   {:else}
-                    {@const Icon = icons[category]}
+                    {@const Icon = (icons as unknown as Record<string, typeof AccessibilityIcon>)[category]}
                     <Icon size="17" />
                   {/if}
                 </span>
                 <span class="filter-label">
-                  <span>{m[category]()}</span>
+                  <span>{(m as Record<string, (args?: unknown) => string>)[category]()}</span>
                 </span>
                 <span class="filter-status">
                   <StatusIcon class="h-4 w-4" />
@@ -186,7 +186,7 @@
                       onCheckedChange={(checked) => updateFilter(category, option, checked ?? false)} />
                     <Label for={`${category}_${option}`}>
                       <span class="filter-label text-slate-500">
-                        {option === 'other' ? m.other() : m[`${category}_${option}`]()}
+                        {option === 'other' ? m.other() : (m as Record<string, (args?: unknown) => string>)[`${category}_${option}`]()}
                       </span>
                     </Label>
                   </span>

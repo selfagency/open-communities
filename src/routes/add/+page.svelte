@@ -16,7 +16,7 @@
   // props
   const { data }: PageProps = $props();
 
-  const form = initForm(data.form.default, 'add', data.user?.admin);
+  const form = initForm(data.form!.default, 'add', data.user?.admin);
 
   export const snapshot = { capture: form.capture, restore: form.restore };
   /*endregion variables */

@@ -48,7 +48,7 @@
     });
   }
 
-  function handleCommandValueChange(newValue) {
+  function handleCommandValueChange(newValue: string) {
     commandValue = newValue;
   }
 
