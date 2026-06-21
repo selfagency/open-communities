@@ -104,33 +104,33 @@ async function seedData(token) {
   const other = await create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, lang: 'en', emailVisibility: true });
 
   // Congregation 1: visible, owned by regular user, full featured
-  await create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true });
-  await create('fit', { youngFamilies: true, youngAdults: true, seniors: true, singles: true, interfaith: true, lgbtq: true, beginners: true, families: true });
-  await create('health', { requiresVax: true, hasAirPurification: true });
-  await create('registration', { maxCapacity: 500 });
-  await create('security', { securityPresent: true, secureEntry: true, cctv: true, guards: true, emergencyPlan: true });
-  await create('services', { fridayNight: true, saturdayMorning: true, holiday: true, hybrid: true, online: true, timeFridayNight: '18:30', timeSaturdayMorning: '09:30' });
-  await create('congregations', { name: 'Shalom Congregation', clergy: 'rabbi', denomination: 'reform', flavor: 'egalitarian', notes: 'A welcoming Reform community', contactName: 'Rabbi Cohen', contactEmail: 'info@shalom.org', contactUrl: 'https://shalom.org', country: us.id, state: ny.id, city: nyc.id, visible: true, owner: regular.id });
+  const cong1 = await create('congregations', { name: 'Shalom Congregation', clergy: 'rabbi', denomination: 'reform', flavor: 'egalitarian', notes: 'A welcoming Reform community', contactName: 'Rabbi Cohen', contactEmail: 'info@shalom.org', contactUrl: 'https://shalom.org', country: us.id, state: ny.id, city: nyc.id, visible: true, owner: regular.id });
+  await create('accessibility', { congregation: cong1.id, online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true });
+  await create('fit', { congregation: cong1.id, youngFamilies: true, youngAdults: true, seniors: true, singles: true, interfaith: true, lgbtq: true, beginners: true, families: true });
+  await create('health', { congregation: cong1.id, requiresVax: true, hasAirPurification: true });
+  await create('registration', { congregation: cong1.id, maxCapacity: 500 });
+  await create('security', { congregation: cong1.id, securityPresent: true, secureEntry: true, cctv: true, guards: true, emergencyPlan: true });
+  await create('services', { congregation: cong1.id, fridayNight: true, saturdayMorning: true, holiday: true, hybrid: true, online: true, timeFridayNight: '18:30', timeSaturdayMorning: '09:30' });
 
   // Congregation 2: hidden
-  await create('services', { fridayNight: true, holiday: true });
-  await create('congregations', { name: 'Private Minyan', clergy: 'lay-led', denomination: 'conservative', flavor: 'traditional', contactName: 'Private Member', contactEmail: 'private@example.test', country: us.id, state: ny.id, city: bkn.id, visible: false, owner: regular.id });
+  const cong2 = await create('congregations', { name: 'Private Minyan', clergy: 'lay-led', denomination: 'conservative', flavor: 'traditional', contactName: 'Private Member', contactEmail: 'private@example.test', country: us.id, state: ny.id, city: bkn.id, visible: false, owner: regular.id });
+  await create('services', { congregation: cong2.id, fridayNight: true, holiday: true });
 
   // Congregation 3: owned by other user
-  await create('services', { saturdayMorning: true, holiday: true });
-  await create('congregations', { name: 'Other Community', clergy: 'rabbi', denomination: 'orthodox', flavor: 'modern', contactName: 'Other Rabbi', contactEmail: 'other@example.test', country: us.id, state: ca.id, city: la.id, visible: true, owner: other.id });
+  const cong3 = await create('congregations', { name: 'Other Community', clergy: 'rabbi', denomination: 'orthodox', flavor: 'modern', contactName: 'Other Rabbi', contactEmail: 'other@example.test', country: us.id, state: ca.id, city: la.id, visible: true, owner: other.id });
+  await create('services', { congregation: cong3.id, saturdayMorning: true, holiday: true });
 
   // Congregation 4: online-only
-  await create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true });
-  await create('fit', { interfaith: true, lgbtq: true });
-  await create('registration', { requiresRegistration: true });
-  await create('services', { fridayNight: true, hybrid: true, online: true, timeFridayNight: '19:00' });
-  await create('congregations', { name: 'Online Gathering', clergy: '', denomination: 'reconstructionist', flavor: 'online', notes: 'Zoom-based community', contactName: 'Online Group', contactEmail: 'online@example.test', contactUrl: 'https://online.example.test', country: us.id, state: ca.id, city: la.id, visible: true, owner: regular.id });
+  const cong4 = await create('congregations', { name: 'Online Gathering', clergy: '', denomination: 'reconstructionist', flavor: 'online', notes: 'Zoom-based community', contactName: 'Online Group', contactEmail: 'online@example.test', contactUrl: 'https://online.example.test', country: us.id, state: ca.id, city: la.id, visible: true, owner: regular.id });
+  await create('accessibility', { congregation: cong4.id, online_liveCaptions: true, online_automatedCaptions: true });
+  await create('fit', { congregation: cong4.id, interfaith: true, lgbtq: true });
+  await create('registration', { congregation: cong4.id, requiresRegistration: true });
+  await create('services', { congregation: cong4.id, fridayNight: true, hybrid: true, online: true, timeFridayNight: '19:00' });
 
   // Pages
-  await create('pages', { title: 'About', slug: 'about', content: '# About\n\nDirectory of Jewish congregations.', published: true });
-  await create('pages', { title: 'Privacy', slug: 'privacy', content: '# Privacy Policy\n\nYour privacy matters.', published: true });
-  await create('pages', { title: 'FAQ', slug: 'faq', content: '# FAQ\n\nClick "Add Congregation".', published: true });
+  await create('pages', { title: 'About', slug: 'about', lang: 'en', content: '# About\n\nDirectory of Jewish congregations.', published: true });
+  await create('pages', { title: 'Privacy', slug: 'privacy', lang: 'en', content: '# Privacy Policy\n\nYour privacy matters.', published: true });
+  await create('pages', { title: 'FAQ', slug: 'frequently-asked-questions', lang: 'en', content: '# FAQ\n\nClick "Add Congregation".', published: true });
 }
 
 function createAdmin() {
