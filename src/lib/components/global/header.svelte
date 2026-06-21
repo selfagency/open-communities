@@ -10,6 +10,7 @@
 <nav
   class="fixed top-0 left-0 z-40 flex h-18 w-screen min-w-max flex-row items-center justify-between space-x-2 bg-white p-4 shadow">
   <div>
+    <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
     <a href="/" class="flex flex-row items-center justify-start space-x-2">
       <span>
         <Tent class="w-12 fill-slate-800 sm:w-16" />

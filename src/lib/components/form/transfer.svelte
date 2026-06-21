@@ -151,6 +151,7 @@
               onclick={async (event) => {
                 event.preventDefault();
                 open = false;
+                // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve called above
                 await goto(`${page.url.pathname}?id=${id}`);
               }}>{m.cancel()}</AlertDialog.Cancel>
             <AlertDialog.Action

@@ -103,6 +103,7 @@
                   e.stopPropagation();
                   const url = `/edit?id=${congregation.id}`;
                   await resolve(url);
+                  // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve called above
                   await goto(url);
                 }}>
                 <EditIcon size="16" class="text-slate-700" />

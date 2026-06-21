@@ -14,6 +14,7 @@ test.describe('auth flows', () => {
   const emailPrefix = `e2e-${uid(6)}`;
   const email = `${emailPrefix}@example.test`;
   const password = 'TestPass123!';
+  // eslint-disable-next-line no-unassigned-vars -- set from email later
   let verifyToken;
   let resetToken;
 

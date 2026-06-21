@@ -18,6 +18,7 @@
   let {
     data,
     token,
+    // eslint-disable-next-line no-useless-assignment -- value overwritten before read
     verified = $bindable(false)
   }: { data: SuperValidated<any>; token: null | string; verified: boolean } = $props();
   /* endregion variables */

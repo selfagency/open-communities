@@ -31,6 +31,7 @@
       variant={mode === 'mini' ? 'link' : 'default'}
       onclick={async () => {
         dispatch('close');
+        // eslint-disable-next-line svelte/no-navigation-without-resolve
         await goto(`/edit?id=${user?.congregation}`);
       }}>
       {mode === 'full' && $appState.isMobile ? m.edit() : m.editCongregation()}
@@ -40,6 +41,7 @@
       variant={mode === 'mini' ? 'link' : 'default'}
       onclick={async () => {
         dispatch('close');
+        // eslint-disable-next-line svelte/no-navigation-without-resolve
         await goto('/add');
       }}>
       {mode === 'full' && $appState.isMobile ? m.add() : m.addCongregation()}
@@ -51,6 +53,7 @@
       variant={mode === 'mini' ? 'link' : 'outline'}
       onclick={async () => {
         dispatch('close');
+        // eslint-disable-next-line svelte/no-navigation-without-resolve
         await goto('/logout');
       }}>
       {m.logout()}
@@ -60,6 +63,7 @@
       variant={mode === 'mini' ? 'link' : 'outline'}
       onclick={async () => {
         dispatch('close');
+        // eslint-disable-next-line svelte/no-navigation-without-resolve
         await goto('/login');
       }}>
       {m.login()}

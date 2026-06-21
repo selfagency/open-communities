@@ -95,6 +95,7 @@
     <Dialog.Header class="w-full rtl:text-right">
       <Dialog.Title>
         {#if congregation.contactUrl}
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external link -->
           <a
             href={congregation.contactUrl}
             target="_blank"
@@ -124,6 +125,7 @@
         </span>
 
         <div class="flex w-1/3 flex-row items-center justify-end space-x-1">
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- internal link -->
           {#if isEmpty(congregation.owner) && !user?.admin}
             <a href={`/contact?claim=${congregation.id}`}>
               <Badge variant="outline" class="font-normal text-nowrap text-slate-500 hover:bg-slate-100"
@@ -138,6 +140,7 @@
                   onclick={async () => {
                     const url = `/edit?id=${congregation.id}`;
                     await resolve(url);
+                    // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve called above
                     await goto(url);
                   }}>
                   <EditIcon size="16" class="text-slate-500 rtl:mx-1" />

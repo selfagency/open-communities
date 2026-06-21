@@ -20,6 +20,7 @@
 
   /* region variables */
   // props
+  // eslint-disable-next-line no-useless-assignment -- value overwritten before read
   let { congregations, data, snapshot = $bindable() }: { congregations: any; data: any; snapshot: any } = $props();
 
   // derived
@@ -53,6 +54,7 @@
   });
 
   const { capture, enhance, form: formData, restore } = form;
+  // eslint-disable-next-line no-useless-assignment -- value overwritten before read
   snapshot = { capture, restore };
   /* endregion form */
 

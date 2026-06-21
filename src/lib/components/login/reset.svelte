@@ -18,7 +18,9 @@
   // props
   let {
     data,
+    // eslint-disable-next-line no-useless-assignment -- value overwritten before read
     reset = $bindable(false),
+    // eslint-disable-next-line no-useless-assignment -- value overwritten before read
     sent = $bindable(false),
     token
   }: {

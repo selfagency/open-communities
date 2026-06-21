@@ -13,6 +13,7 @@
 
   /* region variables */
   // props
+  // eslint-disable-next-line no-useless-assignment -- value overwritten before read
   let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
 
   // constants
