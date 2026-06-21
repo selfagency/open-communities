@@ -41,7 +41,7 @@ describe('Signup component', () => {
       },
       formId: 'stub',
       id: 'stub',
-      isTainted: (value: unknown) => false,
+      isTainted: (_value: unknown) => false,
       lastSubmit: null,
       lastValid: null,
       message: '',

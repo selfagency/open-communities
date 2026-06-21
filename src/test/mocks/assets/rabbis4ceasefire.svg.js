@@ -7,8 +7,8 @@ function RabbisComponent(options) {
     return new RabbisComponent(options);
   }
 
-  const target = options && options.target;
-  const props = (options && options.props) || {};
+  const target = options?.target;
+  const props = options?.props || {};
   if (target) {
     const container = document.createElement('div');
     container.innerHTML = markup;
@@ -26,7 +26,7 @@ function RabbisComponent(options) {
 }
 RabbisComponent.$$render = () => markup;
 RabbisComponent.prototype.$destroy = function () {
-  if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
+  if (this._node?.parentNode) this._node.parentNode.removeChild(this._node);
 };
 
 export default RabbisComponent;

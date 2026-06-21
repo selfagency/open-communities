@@ -240,6 +240,7 @@ export const actions = {
       await batch.send({ fetch });
 
       if (!client?.admin) {
+        // biome-ignore lint/style/noNonNullAssertion: guarded by if (!client?.admin) above
         const c = client!;
         await adminMail(
           {
@@ -256,7 +257,7 @@ export const actions = {
 
         await transactionalMail({
           email: c.email,
-          message: `${m.transactional_updated({ locale: c.lang || 'en' })} ${m['transactional_confirmation']({
+          message: `${m.transactional_updated({ locale: c.lang || 'en' })} ${m.transactional_confirmation({
             locale: c.lang || 'en'
           })}`,
           name: c.name,

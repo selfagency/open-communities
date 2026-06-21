@@ -13,8 +13,8 @@
     "deps:up": "docker-compose -f e2e/docker-compose.yml up -d --build",
     "deps:down": "docker-compose -f e2e/docker-compose.yml down",
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
-    "format": "biome check --write . && prettier --write --plugin prettier-plugin-svelte 'src/**/*.svelte' 'src/**/*.svelte.ts'",
-    "lint": "biome ci . && prettier --check --plugin prettier-plugin-svelte 'src/**/*.svelte' 'src/**/*.svelte.ts' && eslint 'src/**/*.svelte' 'src/**/*.svelte.ts' 'src/**/*.svelte.js'",
+    "format": "biome check --write . && prettier --write --plugin prettier-plugin-svelte 'src/**/*.svelte' 'src/**/*.html'",
+    "lint": "biome check . && prettier --check --plugin prettier-plugin-svelte 'src/**/*.svelte' 'src/**/*.html' && eslint 'src/**/*.svelte'",
     "preview": "pnpx dotenv-cli -c dynamic -- vite preview",
     "preview:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite preview",
     "start": "node build/index.js",
@@ -33,11 +33,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
-    "@eslint/compat": "^2.1.0",
-    "@eslint/css": "^1.3.0",
-    "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^10.0.1",
-    "@html-eslint/eslint-plugin": "^0.62.0",
     "@html-eslint/parser": "^0.62.0",
     "@inlang/cli": "^3.1.14",
     "@inlang/paraglide-js": "2.4.0",
@@ -70,14 +65,11 @@
     "concurrently": "^10.0.3",
     "cookie": "1.1.1",
     "eslint": "^10.5.0",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-html": "^8.1.4",
-    "eslint-plugin-perfectionist": "^5.9.1",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "3.19.0",
     "fast-string-truncated-width": "3.0.3",
     "form-data": "^4.0.6",
     "formsnap": "2.0.1",
-    "globals": "17.6.0",
     "happy-dom": "^20.10.6",
     "jsdom": "29.1.1",
     "lucide-svelte": "^1.0.1",
@@ -89,7 +81,6 @@
     "pocketbase": "^0.27.0",
     "prettier": "^3.8.4",
     "prettier-plugin-svelte": "^4.1.1",
-    "prettier-plugin-tailwindcss": "^0.8.0",
     "public-ip": "^8.0.0",
     "radashi": "12.9.1",
     "sqlite3": "^6.0.1",
@@ -100,7 +91,6 @@
     "svelte-sonner": "1.1.1",
     "sveltekit-helmet": "^2.1.0",
     "sveltekit-superforms": "^2.30.1",
-    "tailwind-csstree": "^0.3.3",
     "tailwind-merge": "3.6.0",
     "tailwind-variants": "3.2.2",
     "tailwindcss": "^4.3.1",
@@ -125,12 +115,7 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@tailwindcss/oxide",
-      "core-js",
-      "esbuild",
-      "sqlite3"
-    ]
+    "onlyBuiltDependencies": ["@tailwindcss/oxide", "core-js", "esbuild", "sqlite3"]
   },
   "packageManager": "pnpm@10.18.3"
 }

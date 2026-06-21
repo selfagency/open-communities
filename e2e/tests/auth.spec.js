@@ -231,7 +231,7 @@ test.describe('auth flows', () => {
     expect(resetToken).toBeTruthy();
 
     await page.goto(`${base}/login?resetPassword=${resetToken}`);
-    const newPass = password + '1';
+    const newPass = `${password}1`;
     await page.waitForSelector('input[type="password"]', { timeout: 10000 });
     const resetPwLocators = page.locator('input[type="password"]');
     const resetPwCount = await resetPwLocators.count();
@@ -245,7 +245,7 @@ test.describe('auth flows', () => {
   });
 
   test('login with new password', async ({ page }) => {
-    const newPass = password + '1';
+    const newPass = `${password}1`;
     await page.goto(`${base}/login`);
     await page.waitForSelector('input[autocomplete="email"], input[type="password"]', { timeout: 10000 });
     await page.fill('input[autocomplete="email"]', email);

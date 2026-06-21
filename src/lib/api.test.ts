@@ -102,6 +102,7 @@ describe('src/lib/api', () => {
       name: 'root'
     } as const;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const expanded = expand(item) as any;
 
     expect(expanded).toHaveProperty('owner');

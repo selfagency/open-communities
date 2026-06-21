@@ -19,7 +19,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
     return false;
   }
 
-  log.debug('[captcha] Validating captcha token:', (form.data.captcha as string)?.slice(0, 4) + '...');
+  log.debug('[captcha] Validating captcha token:', `${(form.data.captcha as string)?.slice(0, 4)}...`);
 
   const endpoint = `${pubEnv.PUBLIC_CAPTCHA_ENDPOINT}/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/siteverify`;
   log.debug('[captcha] Validation endpoint:', endpoint);

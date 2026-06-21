@@ -14218,7 +14218,7 @@ namespace apis {
      */
     duration: number;
   }
-  type iterator<T> = {};
+  type iterator<_T> = {};
   interface limitedReader extends _spXrWSL {}
   interface limitedReader {
     read(b: Array<number> | string): number;
@@ -17248,7 +17248,7 @@ namespace types {
   /**
    * JSONMap defines a map that is safe for json and db read/write.
    */
-  interface JSONMap<T> extends _TygojaDict {}
+  interface JSONMap<_T> extends _TygojaDict {}
   /**
    * JSONRaw defines a json value type that is safe for db read/write.
    */
@@ -18331,27 +18331,27 @@ namespace store {
   /**
    * Store defines a concurrent safe in memory key-value data store.
    */
-  type Store<K, T> = {};
-  interface Store<K, T> {
+  type Store<_K, _T> = {};
+  interface Store<_K, _T> {
     /**
      * Reset clears the store and replaces the store data with a
      * shallow copy of the provided newData.
      */
     reset(newData: _TygojaDict): void;
   }
-  interface Store<K, T> {
+  interface Store<_K, _T> {
     /**
      * Length returns the current number of elements in the store.
      */
     length(): number;
   }
-  interface Store<K, T> {
+  interface Store<_K, _T> {
     /**
      * RemoveAll removes all the existing store entries.
      */
     removeAll(): void;
   }
-  interface Store<K, T> {
+  interface Store<K, _T> {
     /**
      * Remove removes a single entry from the store.
      *
@@ -18359,7 +18359,7 @@ namespace store {
      */
     remove(key: K): void;
   }
-  interface Store<K, T> {
+  interface Store<K, _T> {
     /**
      * Has checks if element with the specified key exist or not.
      */
@@ -18379,13 +18379,13 @@ namespace store {
      */
     getOk(key: K): [T, boolean];
   }
-  interface Store<K, T> {
+  interface Store<_K, _T> {
     /**
      * GetAll returns a shallow copy of the current store data.
      */
     getAll(): _TygojaDict;
   }
-  interface Store<K, T> {
+  interface Store<_K, T> {
     /**
      * Values returns a slice with all of the current store values.
      */
@@ -18433,7 +18433,7 @@ namespace store {
      */
     setIfLessThanLimit(key: K, value: T, maxAllowedElements: number): boolean;
   }
-  interface Store<K, T> {
+  interface Store<_K, _T> {
     /**
      * UnmarshalJSON implements [json.Unmarshaler] and imports the
      * provided JSON data into the store.
@@ -18442,7 +18442,7 @@ namespace store {
      */
     unmarshalJSON(data: Array<number> | string): void;
   }
-  interface Store<K, T> {
+  interface Store<_K, _T> {
     /**
      * MarshalJSON implements [json.Marshaler] and export the current
      * store data into valid JSON.
@@ -18905,7 +18905,7 @@ namespace hook {
    * 	h.Trigger(&CustomEvent{ SomeField: 123 })
    * ```
    */
-  type Hook<T> = {};
+  type Hook<_T> = {};
   interface TaggedHook<T> extends _sbtKKCI<T> {}
 }
 

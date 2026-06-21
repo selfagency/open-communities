@@ -1,8 +1,8 @@
+import path from 'node:path';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import svg from '@poppanator/sveltekit-svg';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'path';
 import biomePlugin from 'vite-plugin-biome';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { ViteMcp } from 'vite-plugin-mcp';
@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => ({
       { find: '$test', replacement: path.resolve(__dirname, 'src/test') },
       {
         find: '$test/',
-        replacement: path.resolve(__dirname, 'src/test') + '/'
+        replacement: `${path.resolve(__dirname, 'src/test')}/`
       }
     ],
     ...(process.env.VITEST ? { conditions: ['browser'] } : {})

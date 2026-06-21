@@ -55,7 +55,7 @@ if (typeof window !== 'undefined') {
         (URLCtor as unknown as { createObjectURL: () => string }).createObjectURL = () => 'blob://test';
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // be resilient in very locked-down environments
   }
 }
@@ -97,7 +97,7 @@ vi.mock('cookie', () => ({
           return [k.trim(), decodeURIComponent(r.join('='))];
         })
       );
-    } catch (e) {
+    } catch (_e) {
       return {};
     }
   }
@@ -273,7 +273,7 @@ if (typeof (globalThis as unknown as { process?: unknown }).process === 'undefin
 // `global` identifier in module scope).
 try {
   (0, eval)('global = globalThis');
-} catch (e) {
+} catch (_e) {
   // best-effort; some runtimes prevent eval
 }
 

@@ -45,7 +45,7 @@ export const load = async (event) => {
       const rec = c as CongregationMetaRecord & { id: string };
       const location = rec.location as LocationMeta;
       const label = truncateText(
-        `${rec.name}${location?.city?.name ? ', ' + location.city.name : ''}${location?.state?.name ? ', ' + location.state.name : ''}${location?.country?.name ? ', ' + location.country.name : ''}`,
+        `${rec.name}${location?.city?.name ? `, ${location.city.name}` : ''}${location?.state?.name ? `, ${location.state.name}` : ''}${location?.country?.name ? `, ${location.country.name}` : ''}`,
         38
       );
       return {

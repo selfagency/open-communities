@@ -327,7 +327,7 @@ h5 {
 }
 
 cap-widget {
-  width: 100% !important;
+  width: 100%;
 }
 
 /* Print stylesheet: hide chrome/navigation, show content */
@@ -337,7 +337,7 @@ cap-widget {
   .maplibregl-ctrl-top-right,
   .maplibregl-ctrl-bottom-right,
   .maplibregl-ctrl-group {
-    display: none !important;
+    display: none;
   }
 
   body {
@@ -347,14 +347,14 @@ cap-widget {
   }
 
   main {
-    margin-top: 0 !important;
-    max-width: 100% !important;
+    margin-top: 0;
+    max-width: 100%;
   }
 
   .button,
   button,
   [role="button"] {
-    display: none !important;
+    display: none;
   }
 
   a {
@@ -363,11 +363,11 @@ cap-widget {
 
   .dialog-content,
   div[role="dialog"] {
-    position: static !important;
-    max-width: 100% !important;
-    box-shadow: none !important;
-    border: none !important;
-    overflow: visible !important;
+    position: static;
+    max-width: 100%;
+    box-shadow: none;
+    border: none;
+    overflow: visible;
   }
 
   .grid {
@@ -376,7 +376,7 @@ cap-widget {
 
   img,
   svg {
-    max-width: 100% !important;
+    max-width: 100%;
     page-break-inside: avoid;
   }
 

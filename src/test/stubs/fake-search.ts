@@ -131,11 +131,5 @@ export class FakeSearch {
   toggleLocation = toggleLocationSpy;
   updateFilters = vi.fn();
   visible = true;
-  /** Pre-built indexes for fast filtering (must be private to match Search type) */
-  private boolIndex: Map<string, Map<string, Set<number>>> = new Map();
-  private stringIndex: Map<string, Map<string, Map<string, Set<number>>>> = new Map();
   adminFilter = () => [] as string[];
-  private _buildIndexes(): void {
-    // stub — no-op in tests
-  }
 }

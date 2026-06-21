@@ -145,7 +145,7 @@ function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo>
   };
 
   if (SMTP_USER && SMTP_PASS) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: nodemailer transport auth typing
     (transportOpts as any).auth = { pass: SMTP_PASS, user: SMTP_USER };
   }
 

@@ -1,6 +1,6 @@
 // @vitest-environment node
 
-import { spawn } from 'child_process';
+import { spawn } from 'node:child_process';
 import { sleep, uid } from 'radashi';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -257,7 +257,7 @@ describe.skipIf(!process.env.MAILPIT_API)('src/lib/server/mail', () => {
     let raw = '';
     const rawDeadline = Date.now() + 5000;
     while (Date.now() < rawDeadline) {
-      const rawRes = await fetch(`http://localhost:8025/api/v1/messages/${found!.id}/raw`, {
+      const rawRes = await fetch(`http://localhost:8025/api/v1/messages/${found?.id}/raw`, {
         headers: {
           accept: 'application/json'
         }
@@ -271,7 +271,7 @@ describe.skipIf(!process.env.MAILPIT_API)('src/lib/server/mail', () => {
 
     // if raw not available, fetch message details and search there
     if (!raw) {
-      const detailRes = await fetch(`http://localhost:8025/api/v1/message/${found!.id}`, {
+      const detailRes = await fetch(`http://localhost:8025/api/v1/message/${found?.id}`, {
         headers: {
           accept: 'application/json'
         }
@@ -294,7 +294,7 @@ describe.skipIf(!process.env.MAILPIT_API)('src/lib/server/mail', () => {
         const detailText = await detailRes.text().catch(() => '<no-body>');
         console.error('Mailpit /messages/{id} non-ok:', {
           body: detailText,
-          id: found!.id,
+          id: found?.id,
           status: detailRes.status
         });
         try {
@@ -307,8 +307,8 @@ describe.skipIf(!process.env.MAILPIT_API)('src/lib/server/mail', () => {
           console.error('Mailpit messages list raw:', listBody);
           // Since we have the message list, let's check if the content is in the snippet
           const listData = JSON.parse(listBody);
-          const foundMessage = listData.messages?.find((m: Record<string, unknown>) => m.ID === found!.id);
-          if (foundMessage && foundMessage.Snippet) {
+          const foundMessage = listData.messages?.find((m: Record<string, unknown>) => m.ID === found?.id);
+          if (foundMessage?.Snippet) {
             expect(foundMessage.Snippet).toContain('Listing: Congregation Name');
             return; // Test passed, exit early
           }

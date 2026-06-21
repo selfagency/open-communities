@@ -70,7 +70,7 @@ export const userHandlers = [
       created: new Date().toISOString(),
       email: body.email as string,
       emailVisibility: false,
-      id: 'user_new_' + Math.random().toString(36).slice(2, 10),
+      id: `user_new_${Math.random().toString(36).slice(2, 10)}`,
       lang: 'en',
       name: (body.name as string) ?? '',
       token: 'mock_new_user_token',

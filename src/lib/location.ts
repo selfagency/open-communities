@@ -96,7 +96,7 @@ export class Location {
     let states: State[] = [];
     try {
       states = await api?.collection('states')?.getFullList({
-        filter: api!.filter('country={:country}', { country: country?.id })
+        filter: api?.filter('country={:country}', { country: country?.id })
       });
 
       if (states)
@@ -142,7 +142,7 @@ export class Location {
 
     try {
       cities = await api?.collection('cities')?.getFullList({
-        filter: api!.filter('state={:state}', { state: state?.id })
+        filter: api?.filter('state={:state}', { state: state?.id })
       });
 
       if (cities)

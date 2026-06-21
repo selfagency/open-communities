@@ -1,6 +1,6 @@
+import * as path from 'node:path';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { playwright } from '@vitest/browser-playwright';
-import * as path from 'path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({

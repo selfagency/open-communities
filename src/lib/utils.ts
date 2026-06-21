@@ -10,9 +10,9 @@ import { dev } from '$app/environment';
 
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: null | U };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: conditional type utility
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: conditional type utility
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T;
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 
@@ -59,7 +59,7 @@ export const flyAndScale = (
   const styleToString = (style: Record<string, number | string | undefined>): string => {
     return Object.keys(style).reduce((str, key) => {
       if (style[key] === undefined) return str;
-      return str + `${key}:${style[key]};`;
+      return `${str}${key}:${style[key]};`;
     }, '');
   };
 

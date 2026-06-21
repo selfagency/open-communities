@@ -12,7 +12,7 @@ const config = {
       }
     }
   ],
-  plugins: ['prettier-plugin-tailwindcss', 'prettier-plugin-svelte'],
+  plugins: ['prettier-plugin-svelte'],
   printWidth: 120,
   proseWrap: 'preserve',
   semi: true,

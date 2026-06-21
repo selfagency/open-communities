@@ -1,6 +1,6 @@
+import path from 'node:path';
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import path from 'path';
 
 const config = {
   kit: {

@@ -18,7 +18,7 @@ vi.mock('pocketbase', () => {
       };
       // collection returns an object with authRefresh spy
       // @ts-expect-error collection mock
-      this.collection = vi.fn((name: string) => ({ authRefresh: vi.fn() }));
+      this.collection = vi.fn((_name: string) => ({ authRefresh: vi.fn() }));
     }
   };
 });

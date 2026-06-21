@@ -10,10 +10,19 @@
       "!**/yarn.lock",
       "!**/pb_data/",
       "!**/pb_migrations/",
+      "!e2e",
+      "!**/build/",
+      "!**/.svelte-kit/",
+      "!**/node_modules/",
+      "!**/npmlogs/",
+      "!**/test-results/",
       "!.github/codepilot-instructions.md",
       "!**/*.svelte",
       "!**/*.svelte.ts",
-      "!**/*.svelte.js"
+      "!**/*.svelte.js",
+      "!src/lib/assets/**",
+      "!src/app.css",
+      "!static/**"
     ]
   },
   "formatter": {
@@ -34,7 +43,47 @@
     "rules": {
       "preset": "recommended",
       "correctness": {
-        "noUnusedImports": "warn"
+        "noUnusedImports": "error",
+        "noUnknownProperty": "warn"
+      },
+      "style": {
+        "noParameterAssign": "error",
+        "useConst": "error",
+        "useExponentiationOperator": "error",
+        "useLiteralEnumMembers": "error",
+        "noNonNullAssertion": "warn"
+      },
+      "complexity": {
+        "noForEach": "warn",
+        "noBannedTypes": "error",
+        "noEmptyTypeParameters": "warn",
+        "noStaticOnlyClass": "warn",
+        "noThisInStatic": "error",
+        "noUselessEmptyExport": "warn",
+        "noUselessLoneBlockStatements": "warn",
+        "useDateNow": "warn",
+        "useFlatMap": "warn"
+      },
+      "suspicious": {
+        "noApproximativeNumericConstant": "warn",
+        "noAsyncPromiseExecutor": "error",
+        "noCatchAssign": "error",
+        "noClassAssign": "error",
+        "noCommentText": "error",
+        "noCompareNegZero": "error",
+        "noDebugger": "warn",
+        "noDuplicateSelectorsKeyframeBlock": "warn",
+        "noEvolvingTypes": "off",
+        "noFallthroughSwitchClause": "error",
+        "noFunctionAssign": "error",
+        "noImportAssign": "error",
+        "noShadowRestrictedNames": "warn",
+        "noUnsafeDeclarationMerging": "warn",
+        "useBiomeIgnoreFolder": "off",
+        "useIterableCallbackReturn": "warn"
+      },
+      "security": {
+        "noGlobalEval": "warn"
       }
     }
   },
@@ -57,7 +106,42 @@
       "selfCloseVoidElements": "always"
     }
   },
-  "overrides": [{ "includes": ["*.svelte"] }],
+  "overrides": [
+    { "includes": ["*.svelte", "*.svelte.ts", "*.svelte.js"] },
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.js",
+        "**/*.spec.ts",
+        "**/*.spec.js",
+        "**/test/**",
+        "**/mocks/**",
+        "**/stubs/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "complexity": {
+            "noForEach": "off",
+            "noCommaOperator": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noShadowRestrictedNames": "off",
+            "useIterableCallbackReturn": "off"
+          },
+          "security": {
+            "noGlobalEval": "off"
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": { "source": { "organizeImports": "on" } }

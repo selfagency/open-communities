@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const port = process.env.CAP_STANDALONE_PORT ?? '3001';
 const apiKey = process.env.CAP_API_KEY;

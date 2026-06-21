@@ -95,11 +95,11 @@ export class Search {
 
     let ids: string[] = [];
 
-    if (activeFilters['unapproved']) {
+    if (activeFilters.unapproved) {
       ids = this.data.filter((record) => !record.visible).map((i) => i.id);
     }
 
-    if (activeFilters['unclaimed']) {
+    if (activeFilters.unclaimed) {
       const unclaimedIds = this.data.filter((record) => !record.owner).map((i) => i.id);
       // If 'unapproved' was also checked, find the intersection. Otherwise, just use unclaimed.
       ids = !isEmpty(ids) ? ids.filter((id) => unclaimedIds.includes(id)) : unclaimedIds;
