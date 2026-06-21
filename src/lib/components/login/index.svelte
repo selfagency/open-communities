@@ -38,6 +38,8 @@
   /* endregion methods */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: forms are initialized once from server data (not reactive to prop changes)
   const form = superForm(data, {
     dataType: 'json',
     id: 'login',

@@ -34,6 +34,8 @@
   /* endregion variables */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const { enhance, form: formData } = form;
   /* endregion form */
 

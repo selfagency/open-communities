@@ -71,6 +71,8 @@
   /* endregion methods */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const { enhance, errors, form: formData } = form as SuperForm<any, any>;
   /* endregion form */
 

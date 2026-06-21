@@ -17,6 +17,8 @@
   /* endregion variables */
 
   /* region lifecycle */
+  // svelte-ignore state_referenced_locally
+  // Intentional: congregation data is fetched once per load (not reactive to prop changes)
   setContext('congregation', data.congregation);
 
   onMount(() => {
@@ -24,6 +26,9 @@
   });
   /* endregion lifecycle */
 
+  /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: forms are initialized once from server data (not reactive to prop changes)
   const form = initForm(data.form?.default as unknown as Record<string, unknown>, 'edit', data.user?.admin);
 
   export const snapshot = { capture: form.capture, restore: form.restore };

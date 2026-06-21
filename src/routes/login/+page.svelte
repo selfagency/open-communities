@@ -36,6 +36,8 @@
   /* endregion lifecycle */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: forms are initialized once from server data (not reactive to prop changes)
   const form = initForm(data.signup);
   export const snapshot = { capture: form.capture, restore: form.restore };
   /*endregion form */

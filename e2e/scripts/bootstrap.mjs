@@ -4,304 +4,156 @@
  * PocketBase bootstrap & seed script for E2E/testing environment.
  *
  * Usage:
- *   pnpm deps:up        # Start containers
- *   pnpm deps:bootstrap # Run this script
+ *   pnpm deps:up
+ *   pnpm deps:bootstrap
  *
- * Uses the PB installation token (from the startup URL) to authenticate
- * as superuser for schema import and data seeding.
+ * Uses PB's installation token from startup URL for superuser API access.
+ * Imports schema from pb_schema.json, seeds test data, creates admin.
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { existsSync, readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
+import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-/* ------------------------------------------------------------------ */
-/*  Config                                                             */
-/* ------------------------------------------------------------------ */
-
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '../..');
-
-const PB_URL = process.env.PUBLIC_API_ENDPOINT || 'http://localhost:8090';
+const PB = process.env.PUBLIC_API_ENDPOINT || 'http://localhost:8090';
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
 const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX';
-const SCHEMA_PATH = resolve(ROOT, 'pb_schema.json');
 const CONTAINER = 'e2e-pocketbase-1';
+const SCHEMA_PATH = resolve(ROOT, 'pb_schema.json');
 
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
+/* ── Helpers ── */
 
-async function pbFetch(path, options = {}) {
-  const url = `${PB_URL}/api${path}`;
-  const res = await fetch(url, {
-    headers: { 'content-type': 'application/json', ...options.headers },
-    ...options,
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    if (res.status >= 400) {
-      console.warn(`  ⚠ PB ${options.method || 'GET'} ${path}: ${res.status} — ${text.slice(0, 150)}`);
-    }
-    return null;
-  }
-  return res.json();
+async function api(method, path, body, token) {
+  const opts = { method, headers: { 'content-type': 'application/json' } };
+  if (token) opts.headers['authorization'] = `Bearer ${token}`;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${PB}/api${path}`, opts);
+  const text = await res.text();
+  if (!res.ok) throw new Error(`${method} ${path}: ${res.status} — ${text.slice(0, 100)}`);
+  return text ? JSON.parse(text) : null;
 }
 
-function containerCmd(cmd) {
-  return execSync(`docker exec ${CONTAINER} ${cmd}`, { encoding: 'utf8', timeout: 30000 }).trim();
-}
-
-/* ------------------------------------------------------------------ */
-/*  1. Wait for PocketBase                                             */
-/* ------------------------------------------------------------------ */
+/* ── Steps ── */
 
 async function waitForPB() {
-  console.log('⏳ Waiting for PocketBase...');
+  process.stdout.write('⏳ Waiting for PocketBase...');
   for (let i = 0; i < 60; i++) {
-    try {
-      const res = await fetch(`${PB_URL}/api/health`);
-      if (res.ok) {
-        console.log('  ✅ PocketBase is healthy');
-        return;
-      }
-    } catch {}
+    try { if ((await fetch(`${PB}/api/health`)).ok) { console.log(' ✅'); return; } } catch {}
     await sleep(2000);
   }
-  throw new Error('PocketBase did not become healthy within 120s');
+  throw new Error('PB did not become healthy within 120s');
 }
 
-/* ------------------------------------------------------------------ */
-/*  2. Extract installation token from PB startup logs                 */
-/* ------------------------------------------------------------------ */
-
-function getInstallToken() {
-  const logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8' });
-  const match = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
-  if (!match) throw new Error('Could not find installation token in PB logs');
-  return match[1];
+function getToken() {
+  const logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
+  const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
+  if (!m) throw new Error('No installation token found — start PB fresh');
+  console.log('  🔑 Installation token acquired');
+  return m[1];
 }
-
-/* ------------------------------------------------------------------ */
-/*  3. Import collections from schema                                  */
-/* ------------------------------------------------------------------ */
 
 async function importSchema(token) {
-  console.log('📦 Importing collections...');
-  if (!existsSync(SCHEMA_PATH)) {
-    console.log('  ⚠ Schema file not found at', SCHEMA_PATH);
-    return;
-  }
+  console.log('📦 Importing schema...');
   const schema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf-8'));
 
-  // Import via PUT /api/collections/import
-  const result = await pbFetch('/collections/import', {
+  const res = await fetch(`${PB}/api/collections/import`, {
     method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
     body: JSON.stringify({ collections: schema, deleteMissing: false }),
   });
-
-  if (result !== null) {
-    console.log('  ✅ Collections imported');
-  } else {
-    // Fallback: create collections one by one
-    console.log('  Trying individual collection creation...');
-    for (const col of schema) {
-      if (col.system) continue; // skip system collections
-      const r = await pbFetch('/collections', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify(col),
-      });
-      if (r) console.log(`    ✅ ${col.name}`);
-    }
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Schema import failed: ${res.status} — ${text.slice(0, 200)}`);
   }
+  console.log('  ✅ Collections imported');
 }
-
-/* ------------------------------------------------------------------ */
-/*  4. Seed test data via REST API (with install token)                */
-/* ------------------------------------------------------------------ */
 
 async function seedData(token) {
   console.log('🌱 Seeding data...');
 
-  function api(path, options = {}) {
-    return pbFetch(path, {
-      ...options,
-      headers: { Authorization: `Bearer ${token}`, ...options.headers },
-    });
+  const existing = await api('GET', `/collections/users/records?filter=${encodeURIComponent('email="regular@example.test"')}`, null, token);
+  if (existing?.items?.length > 0) {
+    console.log('  ⏭  Already seeded');
+    return;
   }
 
-  // Check if already seeded
-  try {
-    const existing = await api('/collections/users/records?filter=email%3D%22regular%40example.test%22');
-    if (existing?.items?.length > 0) {
-      console.log('  ⏭  Data already seeded, skipping');
-      return;
-    }
-  } catch {}
-
-  // ── Countries ──
-  const us = await api('/collections/countries/records', {
-    method: 'POST',
-    body: JSON.stringify({ name: 'United States', code: 'US', flag: '🇺🇸', longitude: -98.5795, latitude: 39.8283 }),
-  });
-  if (!us) { console.log('  ❌ Failed to create country'); return; }
-  console.log('  ✅ Country');
-
-  // ── States ──
-  const states = {};
-  for (const s of [
-    { name: 'New York', code: 'NY' },
-    { name: 'California', code: 'CA' },
-  ]) {
-    states[s.code] = await api('/collections/states/records', {
-      method: 'POST',
-      body: JSON.stringify({ ...s, country: us.id, longitude: 0, latitude: 0 }),
-    });
-  }
-  console.log('  ✅ States');
-
-  // ── Cities ──
-  const cities = {};
-  for (const c of [
-    { key: 'NYC', name: 'New York City', state: 'NY' },
-    { key: 'BKN', name: 'Brooklyn', state: 'NY' },
-    { key: 'LA', name: 'Los Angeles', state: 'CA' },
-    { key: 'SF', name: 'San Francisco', state: 'CA' },
-  ]) {
-    cities[c.key] = await api('/collections/cities/records', {
-      method: 'POST',
-      body: JSON.stringify({ name: c.name, state: states[c.state]?.id, country: us.id, longitude: 0, latitude: 0 }),
-    });
-  }
-  console.log('  ✅ Cities');
-
-  // ── Users ──
-  const users = {};
-  for (const u of [
-    { key: 'regular', email: 'regular@example.test', name: 'Regular User' },
-    { key: 'other', email: 'other@example.test', name: 'Other User' },
-  ]) {
-    users[u.key] = await api('/collections/users/records', {
-      method: 'POST',
-      body: JSON.stringify({ ...u, password: 'TestPass123!', passwordConfirm: 'TestPass123!', verified: true, admin: false, lang: 'en', emailVisibility: true }),
-    });
-  }
-  console.log('  ✅ Users');
-
-  // ── Child table helpers ──
-  async function createChild(table, data) {
-    return api(`/collections/${table}/records`, { method: 'POST', body: JSON.stringify(data) });
+  async function create(col, data) {
+    const r = await api('POST', `/collections/${col}/records`, data, token);
+    console.log(`    ✅ ${col}: ${r?.id?.slice(0, 8)}...`);
+    return r;
   }
 
-  // ── Congregations ──
-  const defs = [{
-    name: 'Shalom Congregation', owner: 'regular', city: 'NYC',
-    children: {
-      accessibility: { online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true },
-      fit: { youngFamilies: true, youngAdults: true, seniors: true, singles: true, interfaith: true, lgbtq: true, beginners: true, families: true },
-      health: { requiresVax: true, hasAirPurification: true },
-      registration: { maxCapacity: 500 },
-      security: { securityPresent: true, secureEntry: true, cctv: true, guards: true, emergencyPlan: true },
-      services: { fridayNight: true, saturdayMorning: true, holiday: true, hybrid: true, online: true, timeFridayNight: '18:30', timeSaturdayMorning: '09:30' },
-    },
-  }, {
-    name: 'Private Minyan', owner: 'regular', city: 'BKN', visible: false,
-    children: { services: { fridayNight: true, holiday: true } },
-  }, {
-    name: 'Other Community', owner: 'other', city: 'LA',
-    children: { services: { saturdayMorning: true, holiday: true } },
-  }, {
-    name: 'Online Gathering', owner: 'regular', city: 'SF',
-    children: {
-      accessibility: { online_liveCaptions: true, online_automatedCaptions: true },
-      fit: { interfaith: true, lgbtq: true },
-      registration: { requiresRegistration: true },
-      services: { fridayNight: true, hybrid: true, online: true, timeFridayNight: '19:00' },
-    },
-  }];
+  // Countries
+  const us = await create('countries', { name: 'United States', code: 'US', flag: '🇺🇸', longitude: -98.5795, latitude: 39.8283 });
 
-  for (const d of defs) {
-    const city = cities[d.city];
-    if (!city) continue;
+  // States
+  const ny = await create('states', { name: 'New York', code: 'NY', country: us.id, longitude: -74.006, latitude: 40.7128 });
+  const ca = await create('states', { name: 'California', code: 'CA', country: us.id, longitude: -119.6816, latitude: 36.1162 });
 
-    for (const [table, data] of Object.entries(d.children)) {
-      if (Object.keys(data).length) await createChild(table, data);
-    }
+  // Cities
+  const nyc = await create('cities', { name: 'New York City', state: ny.id, country: us.id, longitude: -74.006, latitude: 40.7128 });
+  const bkn = await create('cities', { name: 'Brooklyn', state: ny.id, country: us.id, longitude: -73.9442, latitude: 40.6782 });
+  const la  = await create('cities', { name: 'Los Angeles', state: ca.id, country: us.id, longitude: -118.2437, latitude: 34.0522 });
 
-    await api('/collections/congregations/records', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: d.name, denomination: 'reform', visible: d.visible !== false,
-        country: us.id, state: city.state, city: city.id,
-        owner: users[d.owner]?.id,
-      }),
-    });
-  }
-  console.log('  ✅ Congregations');
+  // Users (password will be hashed by PB automatically)
+  const regular = await create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, lang: 'en', emailVisibility: true });
+  const other = await create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, lang: 'en', emailVisibility: true });
 
-  // ── Pages ──
-  for (const p of [
-    { title: 'About', slug: 'about', content: '# About\nDirectory.', published: true },
-    { title: 'Privacy', slug: 'privacy', content: '# Privacy\nYour privacy matters.', published: true },
-    { title: 'FAQ', slug: 'faq', content: '# FAQ\n## How do I add?\n\nClick the button.', published: true },
-  ]) {
-    await api('/collections/pages/records', { method: 'POST', body: JSON.stringify(p) });
-  }
-  console.log('  ✅ Pages');
+  // Congregation 1: visible, owned by regular user, full featured
+  await create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true });
+  await create('fit', { youngFamilies: true, youngAdults: true, seniors: true, singles: true, interfaith: true, lgbtq: true, beginners: true, families: true });
+  await create('health', { requiresVax: true, hasAirPurification: true });
+  await create('registration', { maxCapacity: 500 });
+  await create('security', { securityPresent: true, secureEntry: true, cctv: true, guards: true, emergencyPlan: true });
+  await create('services', { fridayNight: true, saturdayMorning: true, holiday: true, hybrid: true, online: true, timeFridayNight: '18:30', timeSaturdayMorning: '09:30' });
+  await create('congregations', { name: 'Shalom Congregation', clergy: 'rabbi', denomination: 'reform', flavor: 'egalitarian', notes: 'A welcoming Reform community', contactName: 'Rabbi Cohen', contactEmail: 'info@shalom.org', contactUrl: 'https://shalom.org', country: us.id, state: ny.id, city: nyc.id, visible: true, owner: regular.id });
 
-  console.log('  ✅ Seed complete');
+  // Congregation 2: hidden
+  await create('services', { fridayNight: true, holiday: true });
+  await create('congregations', { name: 'Private Minyan', clergy: 'lay-led', denomination: 'conservative', flavor: 'traditional', contactName: 'Private Member', contactEmail: 'private@example.test', country: us.id, state: ny.id, city: bkn.id, visible: false, owner: regular.id });
+
+  // Congregation 3: owned by other user
+  await create('services', { saturdayMorning: true, holiday: true });
+  await create('congregations', { name: 'Other Community', clergy: 'rabbi', denomination: 'orthodox', flavor: 'modern', contactName: 'Other Rabbi', contactEmail: 'other@example.test', country: us.id, state: ca.id, city: la.id, visible: true, owner: other.id });
+
+  // Congregation 4: online-only
+  await create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true });
+  await create('fit', { interfaith: true, lgbtq: true });
+  await create('registration', { requiresRegistration: true });
+  await create('services', { fridayNight: true, hybrid: true, online: true, timeFridayNight: '19:00' });
+  await create('congregations', { name: 'Online Gathering', clergy: '', denomination: 'reconstructionist', flavor: 'online', notes: 'Zoom-based community', contactName: 'Online Group', contactEmail: 'online@example.test', contactUrl: 'https://online.example.test', country: us.id, state: ca.id, city: la.id, visible: true, owner: regular.id });
+
+  // Pages
+  await create('pages', { title: 'About', slug: 'about', content: '# About\n\nDirectory of Jewish congregations.', published: true });
+  await create('pages', { title: 'Privacy', slug: 'privacy', content: '# Privacy Policy\n\nYour privacy matters.', published: true });
+  await create('pages', { title: 'FAQ', slug: 'faq', content: '# FAQ\n\nClick "Add Congregation".', published: true });
 }
-
-/* ------------------------------------------------------------------ */
-/*  5. Create superuser via CLI (for admin panel access)               */
-/* ------------------------------------------------------------------ */
 
 function createAdmin() {
   console.log('👤 Creating superuser...');
-  try {
-    const result = containerCmd(`/pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`);
-    if (result.includes('Successfully')) {
-      console.log('  ✅ Superuser created');
-    }
-  } catch (err) {
-    console.error('  ❌ Failed:', err.message);
-  }
+  execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
+  console.log('  ✅ Superuser created');
 }
 
-/* ------------------------------------------------------------------ */
-/*  Main                                                               */
-/* ------------------------------------------------------------------ */
-
 async function main() {
-  console.log('═══════════════════════════════════════');
-  console.log('  PocketBase Bootstrap Script');
-  console.log('═══════════════════════════════════════\n');
-
+  console.log('═══════════════════════════════════════\n  PocketBase Bootstrap\n═══════════════════════════════════════\n');
   const start = Date.now();
-
   try {
     await waitForPB();
-
-    const token = getInstallToken();
-    console.log('  🔑 Installation token acquired');
-
+    const token = getToken();
     await importSchema(token);
     await seedData(token);
     createAdmin();
-
-    const elapsed = ((Date.now() - start) / 1000).toFixed(1);
-    console.log(`\n✅ Bootstrap complete in ${elapsed}s`);
-    console.log(`   Admin panel: ${PB_URL}/_/`);
-    console.log(`   Email:        ${ADMIN_EMAIL}`);
-    console.log(`   Password:     ${ADMIN_PASSWORD}`);
-  } catch (err) {
-    console.error('\n❌ Bootstrap failed:', err.message);
+    console.log(`\n✅ Done in ${((Date.now()-start)/1000).toFixed(1)}s`);
+    console.log(`   Panel: ${PB}/_/`);
+    console.log(`   Auth:  ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+  } catch (e) {
+    console.error('\n❌', e.message);
     process.exit(1);
   }
 }
-
 main();
