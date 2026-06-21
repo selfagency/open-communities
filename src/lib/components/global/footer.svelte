@@ -23,32 +23,26 @@
   <div class="flex w-full flex-row items-center justify-center">
     <span class="flex flex-col items-center justify-center space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
       <span class="flex flex-row items-center justify-center space-x-4">
-        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a class="text-xs text-slate-500 hover:text-slate-500" href="/about">
           <span>{m.about()}</span>
         </a>
-        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a class="text-xs text-slate-500 hover:text-slate-500" href="/contact">
           <span>{m.contact_contactUs()}</span>
         </a>
-        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a class="text-xs text-slate-500 hover:text-slate-500" href="/privacy">
           <span>{m.privacyPolicy()}</span>
         </a>
-        <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
         <a class="text-xs text-slate-500 hover:text-slate-500" href="/terms">
           <span>{m.termsOfService()}</span>
         </a>
       </span>
       <a class="text-xs text-slate-500 hover:text-slate-500" href="https://self.agency" target="_blank">
         <span>
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -- paraglide intentionally returns HTML -->
           {@html m.home_credit({
             thing: 'The Self Agency, LLC'
           })}
         </span>
       </a>
-      <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
       <a class="text-xs text-slate-500 hover:text-slate-500" href="/site-credits">
         <span>
           {m.siteCredits()}

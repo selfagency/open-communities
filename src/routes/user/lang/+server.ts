@@ -28,7 +28,6 @@ export async function POST({ cookies, locals, request }) {
     return json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  // eslint-disable-next-line no-useless-assignment -- default for error path
   let result: null | UsersRecord = null;
 
   try {

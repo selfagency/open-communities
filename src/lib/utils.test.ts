@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 // Provide a minimal getComputedStyle for non-DOM test envs
 if (typeof globalThis.getComputedStyle === 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   globalThis.getComputedStyle = () => ({ transform: 'none' });
 }

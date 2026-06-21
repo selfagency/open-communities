@@ -76,7 +76,6 @@
       noFirearms: false,
       privateSecurityArmed: false,
       privateSecurityUnarmed: false,
-      // eslint-disable-next-line perfectionist/sort-objects
       other: false
     },
     services: {

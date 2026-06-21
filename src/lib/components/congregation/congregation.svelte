@@ -95,7 +95,7 @@
     <Dialog.Header class="w-full rtl:text-right">
       <Dialog.Title>
         {#if congregation.contactUrl}
-          <!-- eslint-disable svelte/no-navigation-without-resolve -- external link, opens in new tab -->
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external link -->
           <a
             href={congregation.contactUrl}
             target="_blank"
@@ -126,7 +126,6 @@
         </span>
 
         <div class="flex w-1/3 flex-row items-center justify-end space-x-1">
-          <!-- eslint-disable svelte/no-navigation-without-resolve -- internal link, resolve called by page-level handler -->
           {#if isEmpty(congregation.owner) && !user?.admin}
             <a href={`/contact?claim=${congregation.id}`}>
               <Badge variant="outline" class="font-normal text-nowrap text-slate-500 hover:bg-slate-100"
@@ -142,7 +141,6 @@
                   onclick={async () => {
                     const url = `/edit?id=${congregation.id}`;
                     await resolve(url);
-                    // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve called above
                     await goto(url);
                   }}>
                   <EditIcon size="16" class="text-slate-500 rtl:mx-1" />
@@ -184,7 +182,6 @@
         {#if tab === 'about'}
           <div transition:fade>
             {#if congregation.flavor}
-              <!-- eslint-disable-next-line svelte/no-at-html-tags -- DOMPurify-sanitized -->
               <p class="mb-6 text-sm">{@html congregation.flavor}</p>
             {/if}
 
@@ -268,7 +265,6 @@
                   <h2 class="label">{m.notes()}</h2>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
-                  <!-- eslint-disable-next-line svelte/no-at-html-tags -- DOMPurify-sanitized -->
                   <p>{@html notes}</p>
                 </div>
               {/if}

@@ -54,7 +54,6 @@
       setState({ loadingSecondary: false });
       if (result.type === 'success') {
         toast.success(m.loginSuccess());
-        // eslint-disable-next-line svelte/no-navigation-without-resolve
         await goto('/');
       } else {
         const errorMessage =

@@ -92,7 +92,6 @@ export class Location {
     const country = this.countries?.find((c) => c?.id === input) as Country;
     const api = this.api as TypedPocketBase;
 
-    // eslint-disable-next-line no-useless-assignment -- default for error path
     let states: State[] = [];
     try {
       states = await api?.collection('states')?.getFullList({
@@ -137,7 +136,6 @@ export class Location {
     const state = objState.localities?.states?.find((s) => s?.id === input) as State;
     const api = this.api as TypedPocketBase;
 
-    // eslint-disable-next-line no-useless-assignment -- default for error path
     let cities: City[] = [];
 
     try {

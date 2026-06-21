@@ -131,7 +131,6 @@
             <Card.Content>
               <div class="flex flex-col items-center justify-start">
                 {#if mode === 'add' && content?.content && !$appState.form?.success}
-                  <!-- eslint-disable-next-line svelte/no-at-html-tags -- DOMPurify-sanitized -->
                   <div class="prose w-full">{@html DOMPurify.sanitize(content.content)}</div>
                 {/if}
 

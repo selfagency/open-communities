@@ -177,7 +177,6 @@
 <section class="w-full space-y-4">
   {#if loading}
     <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
-      <!-- eslint-disable-next-line svelte/require-each-key, @typescript-eslint/no-unused-vars -- static skeleton -->
       {#each [1, 2, 3]}
         <div class="col-span-1">
           <div class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-white p-4">

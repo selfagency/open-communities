@@ -17,6 +17,5 @@
     {m.home_blurb()}
   </h1>
 
-  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
   <Button onclick={async () => await goto('/about')}>Learn more</Button>
 </div>

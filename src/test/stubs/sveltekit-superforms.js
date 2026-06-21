@@ -48,7 +48,6 @@ export function superForm(initialData = {}) {
     setMessage: () => {},
     submit: (el) => {
       // If a test installs a spy on globalThis, call it so tests can assert.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       if (globalThis.__TEST_SUPERFORM_SUBMIT__) globalThis.__TEST_SUPERFORM_SUBMIT__(el);
       // increment an observable counter too

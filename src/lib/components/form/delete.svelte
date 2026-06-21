@@ -46,7 +46,6 @@
       if (result.type === 'success') {
         toast.success(m.deleteSuccess());
         await resolve('/');
-        // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve called above
         await goto('/');
       } else {
         if (!isEmpty(result.data?.form?.errors)) log.error('form errors', result.data.form.errors);

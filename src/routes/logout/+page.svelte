@@ -12,7 +12,6 @@
     if (browser) {
       initState();
       await fetch('?/logout', { body: new FormData(), method: 'POST' });
-      // eslint-disable-next-line svelte/no-navigation-without-resolve
       await goto('/');
       window.location.reload();
     }

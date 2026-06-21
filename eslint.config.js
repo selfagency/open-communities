@@ -45,7 +45,10 @@ export default ts.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       // DOMPurify-sanitized {@html} is safe
-      'svelte/no-at-html-tags': 'off'
+      'svelte/no-at-html-tags': 'off',
+      // resolve() called before goto() in event handlers, but static analysis
+      // can't trace variable-based URLs through Svelte inline expressions
+      'svelte/no-navigation-without-resolve': 'off'
     }
   },
   ...svelte.configs.recommended.map((cfg) => ({
