@@ -2,6 +2,7 @@
 import { isFunction } from 'radashi';
 
 import { cleanResponse, throwAsHttpError } from '$lib/server/api';
+
 /* endregion imports */
 
 // Module-level TTL cache for data that rarely changes

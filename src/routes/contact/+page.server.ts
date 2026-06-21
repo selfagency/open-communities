@@ -1,17 +1,16 @@
 /* region imports */
-import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
-
-import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-import type { LocationMeta } from '$lib/types.d';
-
 import { m } from '$lib/paraglide/messages';
+import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import { contactSchema } from '$lib/schemas/contact';
 import { adminMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
+import type { LocationMeta } from '$lib/types.d';
 import { truncateText } from '$lib/utils';
+
 /* endregion imports */
 
 // Short TTL cache for congregation data

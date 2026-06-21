@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { HttpResponse, http } from 'msw';
 
 import { allCities, countries, findCitiesByState, findStatesByCountry, states } from '../../data/locations';
 

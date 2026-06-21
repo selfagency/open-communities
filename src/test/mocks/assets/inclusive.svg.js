@@ -24,9 +24,7 @@ function InclusiveComponent(options) {
     }
   }
 }
-InclusiveComponent.$$render = function () {
-  return markup;
-};
+InclusiveComponent.$$render = () => markup;
 InclusiveComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

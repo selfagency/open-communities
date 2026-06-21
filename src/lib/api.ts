@@ -1,10 +1,9 @@
 /* region imports */
 import PocketBase from 'pocketbase';
 import { isArray, omit } from 'radashi';
-
+import { env } from '$env/dynamic/public';
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 
-import { env } from '$env/dynamic/public';
 /* endregion imports */
 
 // instantiate pocketbase api service

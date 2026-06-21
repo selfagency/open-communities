@@ -24,9 +24,7 @@ function FindComponent(options) {
     }
   }
 }
-FindComponent.$$render = function () {
-  return markup;
-};
+FindComponent.$$render = () => markup;
 FindComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

@@ -1,13 +1,11 @@
 /* region imports */
-import type { ClientResponseError } from 'pocketbase';
 
 import { fail, redirect } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import { isEmpty, isFunction, omit } from 'radashi';
 import { setError } from 'sveltekit-superforms';
-
-import type { CongregationsResponse, PagesRecord } from '$lib/pocketbase.d';
-
 import { m } from '$lib/paraglide/messages';
+import type { CongregationsResponse, PagesRecord } from '$lib/pocketbase.d';
 import { defaultSchema } from '$lib/schemas/record';
 import { throwAsHttpError } from '$lib/server/api';
 import { adminMail, transactionalMail } from '$lib/server/mail';

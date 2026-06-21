@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
+
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe('Registration segment (behavior)', () => {

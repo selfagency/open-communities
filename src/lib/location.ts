@@ -7,9 +7,8 @@ import { api } from '$lib/api';
 import { log } from '$lib/utils';
 
 import type { TypedPocketBase } from './pocketbase.d';
+import type { Search } from './search';
 import type { City, Country, LocationRecord, LocationState, State } from './types.d';
-
-import { Search } from './search';
 /* endregion imports */
 
 export class Location {

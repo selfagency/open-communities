@@ -1,10 +1,8 @@
 /// <reference types="vitest" />
 
 import { render, screen } from '@testing-library/svelte';
-
-import type { RegistrationRecord } from '$lib/pocketbase.d';
-
 import { m } from '$lib/paraglide/messages';
+import type { RegistrationRecord } from '$lib/pocketbase.d';
 import '@testing-library/jest-dom/vitest';
 
 import Registration from './registration.svelte';

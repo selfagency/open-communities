@@ -1,8 +1,6 @@
 import { render } from '@testing-library/svelte';
-
-import type { Search } from '$lib/search';
-
 import { m } from '$lib/paraglide/messages';
+import type { Search } from '$lib/search';
 import { FakeSearch, setFiltersSpy } from '$test/stubs/fake-search';
 
 import Filters from './filters.svelte';

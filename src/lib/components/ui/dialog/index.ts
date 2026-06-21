@@ -14,24 +14,24 @@ const Portal = DialogPrimitive.Portal;
 
 export {
   Close,
-  Content,
-  Description,
-  //
-  Root as Dialog,
   Close as DialogClose,
+  Content,
   Content as DialogContent,
+  Description,
   Description as DialogDescription,
   Footer as DialogFooter,
-  Header as DialogHeader,
-  Overlay as DialogOverlay,
-  Portal as DialogPortal,
-  Title as DialogTitle,
-  Trigger as DialogTrigger,
   Footer,
+  Header as DialogHeader,
   Header,
+  Overlay as DialogOverlay,
   Overlay,
+  Portal as DialogPortal,
   Portal,
+  //
+  Root as Dialog,
   Root,
+  Title as DialogTitle,
   Title,
+  Trigger as DialogTrigger,
   Trigger
 };

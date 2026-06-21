@@ -9,14 +9,14 @@ const Portal = TooltipPrimitive.Portal;
 
 export {
   Content,
+  Content as TooltipContent,
   Portal,
+  Portal as TooltipPortal,
   Provider,
+  Provider as TooltipProvider,
   Root,
   //
   Root as Tooltip,
-  Content as TooltipContent,
-  Portal as TooltipPortal,
-  Provider as TooltipProvider,
   Trigger as TooltipTrigger,
   Trigger
 };

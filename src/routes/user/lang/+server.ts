@@ -1,9 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
-
-import type { UsersRecord } from '$lib/pocketbase.d';
-
 import { env } from '$env/dynamic/public';
+import type { UsersRecord } from '$lib/pocketbase.d';
 import { log } from '$lib/server/logger';
 
 export async function POST({ cookies, locals, request }) {

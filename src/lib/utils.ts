@@ -1,9 +1,8 @@
-import type { TransitionConfig } from 'svelte/transition';
-
 import { type ClassValue, clsx } from 'clsx';
 import fstw from 'fast-string-truncated-width';
 import { isEmpty, shake } from 'radashi';
 import { cubicOut } from 'svelte/easing';
+import type { TransitionConfig } from 'svelte/transition';
 import { twMerge } from 'tailwind-merge';
 import { Logger } from 'tslog';
 

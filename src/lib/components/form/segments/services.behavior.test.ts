@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 // use native DOM events to avoid import issues in the test environment
 
 import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
+
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe('Services segment (behavior)', () => {

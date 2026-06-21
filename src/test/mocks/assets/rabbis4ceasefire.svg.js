@@ -24,9 +24,7 @@ function RabbisComponent(options) {
     }
   }
 }
-RabbisComponent.$$render = function () {
-  return markup;
-};
+RabbisComponent.$$render = () => markup;
 RabbisComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

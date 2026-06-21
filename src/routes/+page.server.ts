@@ -2,6 +2,7 @@
 import { isFunction } from 'radashi';
 
 import { cleanResponse, throwAsHttpError } from '$lib/server/api';
+
 /* endregion imports */
 
 // Short TTL cache for congregation data — changes more frequently than countries

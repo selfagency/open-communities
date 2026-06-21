@@ -24,9 +24,7 @@ function MenorahComponent(options) {
     }
   }
 }
-MenorahComponent.$$render = function () {
-  return markup;
-};
+MenorahComponent.$$render = () => markup;
 MenorahComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

@@ -20,14 +20,12 @@ const { prototype } = Element;
 
 if (typeof window !== 'undefined' && !prototype.animate) {
   // @ts-expect-error i don't have the types to handle this
-  prototype.animate = function () {
-    return {
-      cancel: () => {},
-      finished: Promise.resolve(),
-      pause: () => {},
-      play: () => {}
-    };
-  };
+  prototype.animate = () => ({
+    cancel: () => {},
+    finished: Promise.resolve(),
+    pause: () => {},
+    play: () => {}
+  });
 }
 
 // Polyfill URL.createObjectURL which some libs (maplibre-gl) use to create

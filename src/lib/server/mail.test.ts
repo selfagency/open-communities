@@ -15,6 +15,7 @@ import type {
 vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
   default: '<!doctype html><html><body>%MESSAGE%</body></html>'
 }));
+
 // (use shared mocks in src/test/mocks)
 
 import { adminMail, transactionalMail } from './mail';

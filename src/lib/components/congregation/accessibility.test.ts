@@ -2,9 +2,8 @@
 import { render, screen, within } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import type { AccessibilityRecord } from '$lib/pocketbase.d';
-
 import { m } from '$lib/paraglide/messages';
+import type { AccessibilityRecord } from '$lib/pocketbase.d';
 
 import Accessibility from './accessibility.svelte';
 

@@ -1,16 +1,14 @@
-import type SMTPTransport from 'nodemailer/lib/smtp-transport';
-
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
 import nodemailer from 'nodemailer';
-
-import type { TypedPocketBase } from '$lib/pocketbase.d';
-
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 /* region imports */
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import emailTemplate from '$lib/assets/emailTemplate.html?raw';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 import { log } from '$lib/server/logger';
+
 /* endregion imports */
 
 const { ADMIN_EMAIL, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } = env;

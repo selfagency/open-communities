@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
-import { FitFlagOptions } from '$lib/pocketbase.d';
+import type { FitFlagOptions } from '$lib/pocketbase.d';
 
 import FlagComp from './flag.svelte';
 

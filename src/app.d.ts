@@ -2,9 +2,8 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import type { SerializeOptions } from 'cookie';
 import type { SuperValidated } from 'sveltekit-superforms';
-import type { $ZodType, output } from 'zod/v4/core';
-
 import { Logger } from 'tslog';
+import type { $ZodType, output } from 'zod/v4/core';
 import '@poppanator/sveltekit-svg/dist/svg';
 
 import type { CongregationMetaRecord, PagesRecord, TypedPocketBase } from '$lib/pocketbase.d';
@@ -63,5 +62,3 @@ declare global {
     // interface Platform {}
   }
 }
-
-export {};

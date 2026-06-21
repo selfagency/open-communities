@@ -4,6 +4,7 @@ import { PostHog } from 'posthog-node';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import { log } from '$lib/server/logger';
+
 /* endregion imports */
 
 // Singleton PostHog client — created once, reused across all captures

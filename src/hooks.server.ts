@@ -1,15 +1,13 @@
 /* region imports */
 import type { Handle, RequestEvent } from '@sveltejs/kit';
-import type { SerializeOptions } from 'cookie';
-import type { SuperValidated } from 'sveltekit-superforms';
-import type { $ZodType } from 'zod/v4/core';
-import type { output } from 'zod/v4/core';
-
 import { sequence } from '@sveltejs/kit/hooks';
+import type { SerializeOptions } from 'cookie';
 import { publicIp } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
+import type { SuperValidated } from 'sveltekit-superforms';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import type { $ZodType, output } from 'zod/v4/core';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
@@ -19,6 +17,7 @@ import { logEvent, log as logger } from '$lib/server/logger';
 import { closeTransporter } from '$lib/server/mail';
 import { capture, captureException, closePhClient } from '$lib/server/posthog';
 import security from '$lib/server/security';
+
 /* endregion imports */
 
 /* region variables */
@@ -47,7 +46,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   // Per-request PocketBase instance — avoids race conditions on beforeSend
   // and authStore that would occur with a shared singleton (see P-11).
   const requestApi = createApi();
-  requestApi.beforeSend = function (url, options) {
+  requestApi.beforeSend = (url, options) => {
     const ipHeader = clientIp
       ? {
           'X-PocketHost-Client-Ip': clientIp

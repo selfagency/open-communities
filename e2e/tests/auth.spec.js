@@ -126,7 +126,7 @@ test.describe('auth flows', () => {
     // console.log('[e2e-debug] Detail Text length:', detail.Text?.length || 0);
 
     // Use HTML content primarily, fall back to Text
-    let raw = detail.HTML || detail.Text || '';
+    const raw = detail.HTML || detail.Text || '';
 
     // Add debug logging and extract verification link
     // console.log('[e2e-debug] Final email content length:', raw.length);

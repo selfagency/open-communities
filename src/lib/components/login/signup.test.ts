@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import type { SuperFormStub } from '$test/global.d';
-
 import { m } from '$lib/paraglide/messages';
 import { state } from '$lib/stores';
+import type { SuperFormStub } from '$test/global.d';
 
 import Signup from './signup.svelte';
 

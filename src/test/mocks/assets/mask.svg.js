@@ -24,9 +24,7 @@ function MaskComponent(options) {
     }
   }
 }
-MaskComponent.$$render = function () {
-  return markup;
-};
+MaskComponent.$$render = () => markup;
 MaskComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

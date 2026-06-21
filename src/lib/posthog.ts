@@ -1,9 +1,7 @@
 import posthog from 'posthog-js';
 import { isEmpty } from 'radashi';
-
-import type { UsersResponse } from '$lib/pocketbase.d';
-
 import { env } from '$env/dynamic/public';
+import type { UsersResponse } from '$lib/pocketbase.d';
 
 export async function captureException(
   error: unknown,

@@ -24,9 +24,7 @@ function SiddurComponent(options) {
     }
   }
 }
-SiddurComponent.$$render = function () {
-  return markup;
-};
+SiddurComponent.$$render = () => markup;
 SiddurComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

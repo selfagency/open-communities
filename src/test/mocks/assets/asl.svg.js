@@ -27,9 +27,7 @@ function AslComponent(options) {
     }
   }
 }
-AslComponent.$$render = function () {
-  return markup;
-};
+AslComponent.$$render = () => markup;
 AslComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

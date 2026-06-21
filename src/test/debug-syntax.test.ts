@@ -1,6 +1,5 @@
 // Minimal test to isolate the "Unexpected token 'try'" error
-import { describe, expect, it } from 'vitest';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { FakeSearch } from '$test/stubs/fake-search';
 

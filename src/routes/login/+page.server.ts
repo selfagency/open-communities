@@ -1,7 +1,7 @@
 /* region imports */
-import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
 
 import type { UsersRecord } from '$lib/pocketbase.d';

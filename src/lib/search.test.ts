@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-
-import type { LocationMeta, SearchData, SearchState } from './types.d';
-
 import { Search } from './search';
+import type { LocationMeta, SearchData, SearchState } from './types.d';
 
 // Helper to build minimal SearchData records; extras may include runtime-only keys
 function makeRec(id: string, name: string, extras: Record<string, unknown> = {}) {

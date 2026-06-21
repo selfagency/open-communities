@@ -14,24 +14,24 @@ const Portal = SheetPrimitive.Portal;
 
 export {
   Close,
+  Close as SheetClose,
   Content,
+  Content as SheetContent,
   Description,
+  Description as SheetDescription,
   Footer,
+  Footer as SheetFooter,
   Header,
+  Header as SheetHeader,
   Overlay,
+  Overlay as SheetOverlay,
   Portal,
+  Portal as SheetPortal,
   Root,
   //
   Root as Sheet,
-  Close as SheetClose,
-  Content as SheetContent,
-  Description as SheetDescription,
-  Footer as SheetFooter,
-  Header as SheetHeader,
-  Overlay as SheetOverlay,
-  Portal as SheetPortal,
   Title as SheetTitle,
-  Trigger as SheetTrigger,
   Title,
+  Trigger as SheetTrigger,
   Trigger
 };

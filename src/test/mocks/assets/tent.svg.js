@@ -24,9 +24,7 @@ function TentComponent(options) {
     }
   }
 }
-TentComponent.$$render = function () {
-  return markup;
-};
+TentComponent.$$render = () => markup;
 TentComponent.prototype.$destroy = function () {
   if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
 };

@@ -22,66 +22,66 @@ export enum Collections {
 }
 
 export enum DenominationOptions {
-  'conservative' = 'conservative',
-  'humanist' = 'humanist',
-  'multiDenominational' = 'multiDenominational',
-  'orthodox' = 'orthodox',
-  'other' = 'other',
-  'postDenominational' = 'postDenominational',
-  'reconstructionist' = 'reconstructionist',
-  'reform' = 'reform',
-  'renewal' = 'renewal',
-  'unaffiliated' = 'unaffiliated'
+  conservative = 'conservative',
+  humanist = 'humanist',
+  multiDenominational = 'multiDenominational',
+  orthodox = 'orthodox',
+  other = 'other',
+  postDenominational = 'postDenominational',
+  reconstructionist = 'reconstructionist',
+  reform = 'reform',
+  renewal = 'renewal',
+  unaffiliated = 'unaffiliated'
 }
 
 export enum FitFlagOptions {
-  'no' = 'no',
-  'yes' = 'yes',
-  'yesBima' = 'yesBima'
+  no = 'no',
+  yes = 'yes',
+  yesBima = 'yesBima'
 }
 export enum HealthProtocolOptions {
-  'maskingRecommended' = 'maskingRecommended',
-  'maskingRequired' = 'maskingRequired',
-  'noGuidelines' = 'noGuidelines',
-  'other' = 'other'
+  maskingRecommended = 'maskingRecommended',
+  maskingRequired = 'maskingRequired',
+  noGuidelines = 'noGuidelines',
+  other = 'other'
 }
 
 export enum MetaDenominationOptions {
-  'conservative' = 'conservative',
-  'humanist' = 'humanist',
-  'multiDenominational' = 'multiDenominational',
-  'orthodox' = 'orthodox',
-  'other' = 'other',
-  'postDenominational' = 'postDenominational',
-  'reconstructionist' = 'reconstructionist',
-  'reform' = 'reform',
-  'renewal' = 'renewal',
-  'unaffiliated' = 'unaffiliated'
+  conservative = 'conservative',
+  humanist = 'humanist',
+  multiDenominational = 'multiDenominational',
+  orthodox = 'orthodox',
+  other = 'other',
+  postDenominational = 'postDenominational',
+  reconstructionist = 'reconstructionist',
+  reform = 'reform',
+  renewal = 'renewal',
+  unaffiliated = 'unaffiliated'
 }
 
 export enum PagesLangOptions {
-  'de' = 'de',
-  'en' = 'en',
-  'es' = 'es',
-  'fr' = 'fr',
-  'he' = 'he'
+  de = 'de',
+  en = 'en',
+  es = 'es',
+  fr = 'fr',
+  he = 'he'
 }
 
 // Record types for each collection
 
 export enum RegistrationRegistrationTypeOptions {
-  'fixedPrice' = 'fixedPrice',
-  'free' = 'free',
-  'other' = 'other',
-  'slidingScale' = 'slidingScale',
-  'suggestedDonation' = 'suggestedDonation'
+  fixedPrice = 'fixedPrice',
+  free = 'free',
+  other = 'other',
+  slidingScale = 'slidingScale',
+  suggestedDonation = 'suggestedDonation'
 }
 
 export enum UsersLangOptions {
-  'en' = 'en',
-  'es' = 'es',
-  'fr' = 'fr',
-  'he' = 'he'
+  en = 'en',
+  es = 'es',
+  fr = 'fr',
+  he = 'he'
 }
 
 export type AccessibilityRecord = {

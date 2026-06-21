@@ -6,6 +6,7 @@ import { shake } from 'radashi';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import { logger } from '$lib/utils';
+
 /* endregion imports */
 
 /* region variables */

@@ -5,11 +5,9 @@ import { error } from '@sveltejs/kit';
 import cookie from 'cookie';
 import PocketBase from 'pocketbase';
 import { isArray, omit } from 'radashi';
-
-import type { TypedPocketBase, UsersRecord } from '$lib/pocketbase.d';
-
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
+import type { TypedPocketBase, UsersRecord } from '$lib/pocketbase.d';
 
 import { log } from './logger';
 /* endregion imports */
@@ -126,5 +124,6 @@ function throwAsHttpError(err: unknown): { message: string; status: number } {
 }
 
 export { api, authenticate, cleanResponse, expand, handleError, loadUser, throwAsHttpError };
+
 /** @deprecated Renamed to throwAsHttpError for clarity. */
 const handleError = throwAsHttpError;

@@ -15,7 +15,7 @@ export async function search(query, options) {
 }
 
 function parseOptions(opt) {
-  let options = [];
+  const options = [];
   if (opt.languages) {
     options.push(`accept-language=${opt.languages.join(',')}`);
   }

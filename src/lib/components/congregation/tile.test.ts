@@ -3,9 +3,8 @@
 import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import type { CongregationMetaRecord } from '$lib/pocketbase';
-
 import { m } from '$lib/paraglide/messages';
+import type { CongregationMetaRecord } from '$lib/pocketbase';
 
 import Tile from './tile.svelte';
 

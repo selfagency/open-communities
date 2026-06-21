@@ -1,11 +1,11 @@
 import css from '@eslint/css';
 import js from '@eslint/js';
 import html from '@html-eslint/eslint-plugin';
+import { globalIgnores } from 'eslint/config';
 import prettier from 'eslint-config-prettier';
 // import baselineJs from 'eslint-plugin-baseline-js';
 import perfectionist from 'eslint-plugin-perfectionist';
 import svelte from 'eslint-plugin-svelte';
-import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import { tailwind4 } from 'tailwind-csstree';
 import ts from 'typescript-eslint';

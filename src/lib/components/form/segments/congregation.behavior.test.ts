@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest';
-import { describe, expect, it } from 'vitest';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
+
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe('Congregation segment (behavior)', () => {

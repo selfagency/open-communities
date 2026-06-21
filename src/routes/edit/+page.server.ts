@@ -1,9 +1,9 @@
 /* region imports */
-import type { ClientResponseError } from 'pocketbase';
 
 import { fail, redirect } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import { isEmpty, isFunction, omit } from 'radashi';
-
+import { m } from '$lib/paraglide/messages';
 import type {
   AccessibilityRecord,
   CongregationMetaRecord,
@@ -13,14 +13,12 @@ import type {
   SecurityRecord,
   ServicesRecord
 } from '$lib/pocketbase.d';
-import type { LocationMeta, LocationRecord } from '$lib/types.d';
-
-import { m } from '$lib/paraglide/messages';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
-import { cleanResponse } from '$lib/server/api';
-import { throwAsHttpError } from '$lib/server/api';
+import { cleanResponse, throwAsHttpError } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import { adminMail, transactionalMail } from '$lib/server/mail';
+import type { LocationMeta, LocationRecord } from '$lib/types.d';
+
 /* endregion imports */
 
 /* region types */

@@ -3,6 +3,7 @@ import svg from '@poppanator/sveltekit-svg';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
+import biomePlugin from 'vite-plugin-biome';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { ViteMcp } from 'vite-plugin-mcp';
 import inlineSveltePlugin from 'vite-plugin-svelte-inline-component';
@@ -21,6 +22,11 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     ViteMcp(),
     mode === 'test' && inlineSveltePlugin(),
+    biomePlugin({
+      mode: 'lint',
+      files: 'src',
+      failOnError: false
+    }),
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),

@@ -1,7 +1,7 @@
 /* region imports */
-import type { DeepMapStore, ReadableAtom } from 'nanostores';
 
 import Fuzzy from '@leeoniya/ufuzzy';
+import type { DeepMapStore, ReadableAtom } from 'nanostores';
 import { computed, deepMap } from 'nanostores';
 import { alphabetical, isEmpty, shake, unique } from 'radashi';
 
