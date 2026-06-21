@@ -134,7 +134,7 @@
     @apply font-display pointer-events-none text-slate-600;
   }
   label {
-    @apply leading-6 !important;
+    @apply !leading-6;
   }
 }
 
@@ -175,18 +175,18 @@ h2,
 h3,
 h4,
 h5 {
-  @apply font-display font-normal !important;
+  @apply font-display !font-normal;
 }
 
 #captcha {
   @apply font-sans text-sm text-slate-600;
 
   > div > div {
-    @apply max-w-full !important;
+    @apply !max-w-full;
   }
 
   [data-cy="button-human"] {
-    @apply max-w-full !important;
+    @apply !max-w-full;
   }
 
   input {

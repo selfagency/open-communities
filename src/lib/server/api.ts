@@ -85,6 +85,46 @@ function isPbError(err: unknown): err is { message: string; status: number } {
   );
 }
 
+/* region retry */
+// HTTP status codes that indicate a transient connection issue — safe to retry
+const RETRYABLE_STATUSES = new Set([0, 429, 502, 503, 504, 520, 524]);
+
+const RETRY_DEFAULTS = {
+  maxRetries: 3,
+  baseDelayMs: 1000,
+  maxDelayMs: 8000
+};
+
+/**
+ * Wrap a PocketBase API call with exponential backoff retry for transient
+ * connection-level errors (cold start timeout, rate limiting, CF errors).
+ * Returns the result of `fn` on success, or throws after exhausting retries.
+ */
+async function withRetry<T>(fn: () => Promise<T>, options?: Partial<typeof RETRY_DEFAULTS>): Promise<T> {
+  const config = { ...RETRY_DEFAULTS, ...options };
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (attempt < config.maxRetries && isRetryable(err)) {
+        const delay = Math.min(config.baseDelayMs * 2 ** attempt + Math.random() * 1000, config.maxDelayMs);
+        log.warn(`PB retry ${attempt + 1}/${config.maxRetries} after ${Math.round(delay)}ms`, err);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
+  }
+
+  throw lastError;
+}
+
+function isRetryable(err: unknown): boolean {
+  return isPbError(err) && RETRYABLE_STATUSES.has(err.status);
+}
+/* endregion retry */
+
 function loadUser(cookies: Cookies): null | (UsersRecord & { email: string; id: string }) {
   const auth = cookies.get('auth');
   if (!auth) return null;
@@ -123,7 +163,7 @@ function throwAsHttpError(err: unknown): { message: string; status: number } {
   return error(status, clientMessage);
 }
 
-export { api, authenticate, cleanResponse, expand, handleError, loadUser, throwAsHttpError };
+export { api, authenticate, cleanResponse, expand, handleError, loadUser, throwAsHttpError, withRetry };
 
 /** @deprecated Renamed to throwAsHttpError for clarity. */
 const handleError = throwAsHttpError;

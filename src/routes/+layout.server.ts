@@ -1,7 +1,8 @@
 /* region imports */
 import { isFunction } from 'radashi';
 
-import { cleanResponse, throwAsHttpError } from '$lib/server/api';
+import { cleanResponse, withRetry } from '$lib/server/api';
+import { log } from '$lib/server/logger';
 
 /* endregion imports */
 
@@ -15,7 +16,7 @@ export async function load({ cookies, fetch, locals }) {
   const lang = cookies.get('lang') || user?.lang || 'en';
 
   try {
-    const countries = await getCachedFullList(api, 'countries', { fetch });
+    const countries = await withRetry(() => getCachedFullList(api, 'countries', { fetch }));
 
     return {
       countries: countries.map((c) => cleanResponse(c as Record<string, unknown>)),
@@ -26,7 +27,14 @@ export async function load({ cookies, fetch, locals }) {
     if (isFunction(captureException)) {
       await captureException(err, user?.id);
     }
-    throwAsHttpError(err as Error);
+    // Graceful degradation: if PB is down after retries, return fallback data
+    // so the app shell renders instead of a 500 error page.
+    log.warn('PocketBase unavailable, returning fallback layout data', err);
+    return {
+      countries: [],
+      lang,
+      user: null
+    };
   }
 }
 

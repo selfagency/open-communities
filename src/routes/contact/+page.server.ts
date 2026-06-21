@@ -6,6 +6,7 @@ import { isFunction } from 'radashi';
 import { m } from '$lib/paraglide/messages';
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import { contactSchema } from '$lib/schemas/contact';
+import { withRetry } from '$lib/server/api';
 import { adminMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 import type { LocationMeta } from '$lib/types.d';
@@ -41,7 +42,7 @@ export const load = async (event) => {
   const client = api?.authStore?.record;
 
   try {
-    const congregations = (await getCachedCongregations(api, { fetch })).map((c) => {
+    const congregations = (await withRetry(() => getCachedCongregations(api, { fetch }))).map((c) => {
       const rec = c as CongregationMetaRecord & { id: string };
       const location = rec.location as LocationMeta;
       const label = truncateText(
