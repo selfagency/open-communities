@@ -56,7 +56,7 @@
 </script>
 
 {#if href}
-  <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- base component, caller resolves -->
+  <!-- eslint-disable svelte/no-navigation-without-resolve -- base component, caller resolves -->
   <a
     bind:this={ref}
     data-slot="button"
@@ -68,6 +68,7 @@
     {...restProps}>
     {@render children?.()}
   </a>
+  <!-- eslint-enable svelte/no-navigation-without-resolve -->
 {:else}
   <button
     bind:this={ref}

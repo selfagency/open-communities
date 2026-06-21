@@ -203,7 +203,13 @@ h5 {
 }
 
 .button {
-  @apply focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 has-[>svg]:px-3 aria-disabled:pointer-events-none aria-disabled:opacity-50;
+  @apply focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50;
+}
+
+/* has-[>svg] padding — kept separate from @apply because tailwind4 CSS parser can't handle nested brackets in @apply */
+.button:has(> svg) {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 /* [&_svg] rules kept separate from @apply — tailwind4 CSS parser can't handle nested selectors after @apply */
@@ -242,11 +248,21 @@ h5 {
 }
 
 .button.lg {
-  @apply h-10 rounded-md px-6 has-[>svg]:px-4;
+  @apply h-10 rounded-md px-6;
+}
+
+.button.lg:has(> svg) {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .button.sm {
-  @apply h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5;
+  @apply h-8 gap-1.5 rounded-md px-3;
+}
+
+.button.sm:has(> svg) {
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
 }
 
 cap-widget {

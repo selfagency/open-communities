@@ -37,6 +37,7 @@ export const initForm = (formData: Record<string, unknown>, mode: string, isAdmi
         if (isAdmin) {
           const url = '/';
           await resolve(url);
+          // eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve called above
           await goto(url, { invalidateAll: true });
         } else {
           setState({ form: { hasErrors: false, success: true } });
