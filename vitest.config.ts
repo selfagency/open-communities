@@ -118,12 +118,8 @@ export default defineConfig({
 		},
 	},
 	test: {
-		// Enable browser runner for client-side Svelte component tests
-		browser: {
-			enabled: true,
-			instances: [{ browser: "chromium" }],
-			provider: playwright(),
-		},
+		// Root-level: coverage, reporters, and output are shared across projects.
+		// Test-specific config (environment, browser, setup) lives in each project below.
 		coverage: {
 			exclude: [
 				".svelte-kit",
@@ -145,29 +141,46 @@ export default defineConfig({
 				"static",
 			],
 			include: ["src"],
-			provider: "istanbul", // or 'v8'
+			provider: "istanbul",
 			reporter: ["text", "json-summary", "json", "html"],
 			reportsDirectory: "./test-results/coverage",
 		},
-		environment: "happy-dom",
-		// Use Node environment for server tests
-		environmentMatchGlobs: [
-			["src/test/server/**/*.test.{ts,tsx,js,jsx}", "node"],
-		],
-		// ensure Vitest provides global test APIs (describe/it/beforeEach)
 		globals: true,
-		// explicit include to ensure test files under src/ are collected
-		include: ["src/**/*.test.{ts,tsx,js,jsx}"],
 		outputFile: {
 			json: "./test-results/results.json",
 			junit: "./test-results/junit.xml",
 		},
 		reporters: ["json", "default", "junit"],
-		// vitest-browser-svelte must be loaded before the project setup so it
-		// injects the `page.render` and locators for browser-mode tests.
-		setupFiles: [
-			"vitest-browser-svelte",
-			path.resolve(__dirname, "src/test/setupTest.ts"),
+		projects: [
+			{
+				// Inherit plugins, resolve aliases, optimizeDeps from root config
+				extends: true,
+				test: {
+					name: "browser",
+					browser: {
+						enabled: true,
+						headless: true,
+						instances: [{ browser: "chromium" }],
+						provider: playwright(),
+					},
+					environment: "happy-dom",
+					include: ["src/**/*.test.{ts,tsx,js,jsx}"],
+					exclude: ["src/test/server/**"],
+					setupFiles: [
+						"vitest-browser-svelte",
+						path.resolve(__dirname, "src/test/setupTest.ts"),
+					],
+				},
+			},
+			{
+				extends: true,
+				test: {
+					name: "server",
+					environment: "node",
+					include: ["src/test/server/**/*.test.{ts,tsx,js,jsx}"],
+					setupFiles: [path.resolve(__dirname, "src/test/setupServer.ts")],
+				},
+			},
 		],
 	},
 });

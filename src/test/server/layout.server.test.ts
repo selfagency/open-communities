@@ -1,34 +1,47 @@
-import { describe, expect, it } from 'vitest';
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 
-import { createMockServerLoadEvent } from '$test/testUtils';
+import { createMockServerLoadEvent } from "$test/testUtils";
 
-function makeApiStub() {
-  return {
-    authStore: { record: { id: 'u1', lang: 'en' } },
-    collection: () => ({
-      getFullList: async () => [{ id: 'c1', name: 'X' }]
-    }),
-    filter: (expr: string) => expr
-  };
-}
+import { countries } from "../../mocks/data/locations";
 
-const cookies = { get: () => 'en' };
+const PB = "http://*:8090";
 
-describe('+layout.server load', () => {
-  it('returns countries, lang and user', async () => {
-    const mod = await import('../../routes/+layout.server');
-    const locals = { api: makeApiStub() } as unknown;
-    const mockEvent = createMockServerLoadEvent({
-      cookies,
-      locals,
-      route: { id: '/' },
-      url: new URL('http://localhost/')
-    });
+const server = setupServer(
+	http.get(`${PB}/api/collections/countries/records`, () =>
+		HttpResponse.json({
+			items: countries,
+			page: 1,
+			perPage: 50,
+			totalItems: countries.length,
+			totalPages: 1,
+		}),
+	),
+);
 
-    const res = await mod.load(mockEvent as any);
-    expect(res).toHaveProperty('countries');
-    expect(res).toHaveProperty('lang');
-    expect(res).toHaveProperty('user');
-    expect(res.lang).toBe('en');
-  });
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe("+layout.server load", () => {
+	it("returns countries, lang and user", async () => {
+		const mod = await import("../../routes/+layout.server");
+		const { createApi } = await import("../../lib/server/api");
+		const api = createApi();
+
+		const locals = { api, captureException: () => {} };
+		const mockEvent = createMockServerLoadEvent({
+			cookies: { get: () => "en" },
+			locals,
+			route: { id: "/" },
+			url: new URL("http://localhost/"),
+		});
+
+		const res = await mod.load(mockEvent as any);
+		expect(res).toHaveProperty("countries");
+		expect(res).toHaveProperty("lang");
+		expect(res).toHaveProperty("user");
+		expect(res.lang).toBe("en");
+	});
 });

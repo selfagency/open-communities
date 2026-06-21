@@ -19,6 +19,8 @@
     "preview:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite preview",
     "start": "node build/index.js",
     "test:unit": "pnpx dotenv-cli -e .env.test -- vitest --coverage --coverage.enabled=true",
+    "test:server": "pnpx dotenv-cli -e .env.test -- vitest run --project server",
+    "test:browser": "pnpx dotenv-cli -e .env.test -- vitest run --project browser",
     "test:setup": "pnpx dotenv-cli -e .env.test -- node e2e/cap/setup-captcha.mjs",
     "test:e2e": "pnpx dotenv-cli -e .env.test -e .env.e2e -- playwright test --config e2e/playwright.config.mjs",
     "machine-translate": "inlang machine translate --project project.inlang"
@@ -80,6 +82,7 @@
     "lucide-svelte": "^1.0.1",
     "marked": "^18.0.5",
     "mode-watcher": "1.1.0",
+    "msw": "^2.14.6",
     "nanostores": "1.3.0",
     "nodemailer": "^9.0.1",
     "pocketbase": "^0.27.0",

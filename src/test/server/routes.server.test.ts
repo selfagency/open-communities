@@ -1,46 +1,58 @@
-import { describe, expect, it } from "vitest";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { createMockRequestEvent } from "$test/testUtils";
 
-function makeApiStub() {
-	return {
-		authStore: { record: {} },
-		collection: () => ({
-			getFirstListItem: async () => ({ body: "x", id: "p1" }),
-			getFullList: async () => [],
-			getOne: async () => ({ id: "o1" }),
-		}),
-		filter: (expr: string) => expr,
-	};
-}
+import { congregationMetaViews } from "../../mocks/data/congregations";
+import { countries } from "../../mocks/data/locations";
 
-const fetchStub = async () => ({ json: async () => ({}), ok: true });
+// Use wildcard host:port to match PocketBase regardless of localhost/127.0.0.1 resolution
+const PB = "http://*:8090";
+
+const server = setupServer(
+	// GET congregationMeta/records — for the home page congregation list
+	http.get(`${PB}/api/collections/congregationMeta/records`, () =>
+		HttpResponse.json({
+			items: congregationMetaViews,
+			page: 1,
+			perPage: 50,
+			totalItems: congregationMetaViews.length,
+			totalPages: 1,
+		}),
+	),
+	// GET countries/records — for the layout data
+	http.get(`${PB}/api/collections/countries/records`, () =>
+		HttpResponse.json({
+			items: countries,
+			page: 1,
+			perPage: 50,
+			totalItems: countries.length,
+			totalPages: 1,
+		}),
+	),
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe("server route modules smoke tests", () => {
 	it("root load returns expected keys", async () => {
 		const mod = await import("../../routes/+page.server");
-		const locals = { api: makeApiStub() };
-		const args = { fetch: fetchStub, locals } as {
-			fetch: unknown;
-			locals: unknown;
-		};
 
-		const result = await mod.load(args as any);
+		// Use a real PocketBase client — it makes HTTP requests that MSW intercepts
+		const { createApi } = await import("../../lib/server/api");
+		const api = createApi();
+
+		const args = {
+			fetch: globalThis.fetch.bind(globalThis),
+			locals: { api },
+		} as unknown as Parameters<typeof mod.load>[0];
+
+		const result = await mod.load(args);
 		expect(result).toHaveProperty("congregations");
-	});
-
-	it.skip("privacy/terms/site-credits loads content", async () => {
-		// const p = await import('../../routes/privacy/+page.server');
-		// const t = await import('../../routes/terms/+page.server');
-		// const s = await import('../../routes/site-credits/+page.server');
-		// const locals = { api: makeApiStub() };
-		// const args2 = { fetch: fetchStub, locals } as { fetch: unknown; locals: unknown };
-		// const r1 = await p.load(args2 as any);
-		// const r2 = await t.load(args2 as any);
-		// const r3 = await s.load(args2 as any);
-		// expect(r1).toHaveProperty('content');
-		// expect(r2).toHaveProperty('content');
-		// expect(r3).toHaveProperty('content');
+		expect(result.congregations).toHaveLength(congregationMetaViews.length);
 	});
 
 	it("logout action clears cookies", async () => {

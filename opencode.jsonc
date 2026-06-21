@@ -1,0 +1,9 @@
+{
+    "mcp": {
+        "posthog": {
+            "type": "remote",
+            "enabled": true,
+            "url": "https://mcp.posthog.com/mcp"
+        }
+    }
+}
