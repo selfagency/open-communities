@@ -38,6 +38,7 @@
       </span>
       <a class="text-xs text-slate-500 hover:text-slate-500" href="https://self.agency" target="_blank">
         <span>
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -- paraglide intentionally returns HTML -->
           {@html m.home_credit({
             thing: 'The Self Agency, LLC'
           })}

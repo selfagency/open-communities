@@ -24,6 +24,7 @@
         <Card.Header><h1 class="text-3xl">{data.content.title}</h1></Card.Header>
         <Card.Content>
           <div class="prose max-w-none">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitized by route load -->
             {@html data.content.content}
           </div>
         </Card.Content>
