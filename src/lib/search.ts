@@ -75,6 +75,10 @@ export class Search {
   private boolIndex = new Map<string, Map<string, Set<number>>>();
   /** Map<filterKey, Map<targetKey, Map<value, Set<number>>>> */
   private stringIndex = new Map<string, Map<string, Map<string, Set<number>>>>();
+  /** O(1) id → array index lookup — avoids indexOf in filter hot paths */
+  private idxById = new Map<string, number>();
+  /** Pre-built fuzzy search strings — built once, reused on every search */
+  private searchStrings: string[] = [];
 
   constructor(data = [] as SearchData[], debug = false) {
     this.data = alphabetical(data, (i) => i.name);
@@ -85,6 +89,17 @@ export class Search {
     });
     this.fuzzy = new Fuzzy();
     this.ids = this.data.map((i) => i.id);
+
+    // Build id→index map for O(1) lookups in filter methods
+    this.data.forEach((record, idx) => {
+      this.idxById.set(record.id, idx);
+    });
+
+    // Pre-build fuzzy search corpus once — data is immutable after construction
+    this.searchStrings = this.data.map(
+      (i) =>
+        `${i.name} ${i.flavor} ${i.id} ${i.location?.city?.name} ${i.location?.state?.name} ${i.location?.country?.name}`
+    );
 
     this._buildIndexes();
 
@@ -107,17 +122,11 @@ export class Search {
         resultIds = resultIds.filter((i) => locationIds.includes(i));
       }
 
-      // Filter by Search Text
+      // Filter by Search Text — uses pre-built corpus, no per-call allocation
       if (state.searchTerms && !isEmpty(state.searchTerms)) {
         const searchIds =
           this.fuzzy
-            ?.filter(
-              this.data.map(
-                (i) =>
-                  `${i.name} ${i.flavor} ${i.id} ${i.location?.city?.name} ${i.location?.state?.name} ${i.location?.country?.name}`
-              ),
-              (state.searchTerms as string)?.toLowerCase()
-            )
+            ?.filter(this.searchStrings, (state.searchTerms as string)?.toLowerCase())
             ?.map((i) => this.data[i].id) || [];
         resultIds = resultIds.filter((i) => searchIds.includes(i));
       }
@@ -213,7 +222,7 @@ export class Search {
     }
 
     return currentIds.filter((id) => {
-      const idx = this.ids.indexOf(id);
+      const idx = this.idxById.get(id) ?? -1;
       return idx >= 0 && matchedIdx.has(idx);
     });
   }
@@ -267,7 +276,7 @@ export class Search {
     }
 
     return currentIds.filter((id) => {
-      const idx = this.ids.indexOf(id);
+      const idx = this.idxById.get(id) ?? -1;
       return idx >= 0 && matchedIdx.has(idx);
     });
   }

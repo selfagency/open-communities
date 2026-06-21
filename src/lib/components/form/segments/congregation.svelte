@@ -63,22 +63,22 @@
   let city: string = $state('');
 
   // methods
-  async function handleCountryChange(e: CustomEvent) {
-    country = e.detail.value;
-    await setCountry(e.detail.value);
+  async function handleCountryChange(newValue: string) {
+    country = newValue;
+    await setCountry(newValue);
     province = '';
     city = '';
   }
 
-  async function handleStateChange(e: CustomEvent) {
-    province = e.detail.value;
-    await setState(e.detail.value);
+  async function handleStateChange(newValue: string) {
+    province = newValue;
+    await setState(newValue);
     city = '';
   }
 
-  function handleCityChange(e: CustomEvent) {
-    city = e.detail.value;
-    setCity(e.detail.value);
+  function handleCityChange(newValue: string) {
+    city = newValue;
+    setCity(newValue);
   }
 
   // lifecycle
@@ -162,7 +162,7 @@
               placeholder={m.selectThing({
                 thing: m.location_country().toLowerCase()
               })}
-              on:change={handleCountryChange} />
+              onChange={handleCountryChange} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -180,7 +180,7 @@
                 thing: m.location_state().toLowerCase()
               })}
               disabled={!country || !$location.options.stateOptions}
-              on:change={handleStateChange} />
+              onChange={handleStateChange} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -198,7 +198,7 @@
                 thing: m.location_city().toLowerCase()
               })}
               disabled={!province || !$location.options.cityOptions}
-              on:change={handleCityChange} />
+              onChange={handleCityChange} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />

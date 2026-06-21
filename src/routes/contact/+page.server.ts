@@ -7,34 +7,13 @@ import { m } from '$lib/paraglide/messages';
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import { contactSchema } from '$lib/schemas/contact';
 import { withRetry } from '$lib/server/api';
+import { getCachedCongregations } from '$lib/server/cache';
 import { adminMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 import type { LocationMeta } from '$lib/types.d';
 import { truncateText } from '$lib/utils';
 
 /* endregion imports */
-
-// Short TTL cache for congregation data
-const congregationCache = new Map<string, { data: unknown[]; timestamp: number }>();
-const CONGREGATION_CACHE_TTL_MS = 30_000; // 30 seconds
-
-async function getCachedCongregations<T>(
-  api: {
-    collection: (name: string) => {
-      getFullList: (opts?: object) => Promise<T[]>;
-    };
-  },
-  opts: object
-): Promise<T[]> {
-  const cacheKey = JSON.stringify(opts);
-  const cached = congregationCache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < CONGREGATION_CACHE_TTL_MS) {
-    return cached.data as T[];
-  }
-  const data = await api.collection('congregationMeta').getFullList(opts);
-  congregationCache.set(cacheKey, { data, timestamp: Date.now() });
-  return data;
-}
 
 export const load = async (event) => {
   const { fetch, locals } = event;
@@ -99,12 +78,12 @@ export const actions = {
           {
             email: form.data.email,
             message: `
-						${m[`contactOptions_${form.data.reason}`]()}
+					${m[`contactOptions_${form.data.reason}`]()}
 
-						${form.data.message}
+					${form.data.message}
 
-						https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
-						`,
+					https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
+					`,
             name: form.data.name,
             subject: `Contact form: ${form.data.reason}`
           },

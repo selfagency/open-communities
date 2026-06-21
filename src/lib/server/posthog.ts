@@ -1,7 +1,6 @@
 /* region imports */
 import { PostHog } from 'posthog-node';
 
-import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import { log } from '$lib/server/logger';
 
@@ -30,12 +29,7 @@ export async function capture(user: string | undefined, event: string) {
 
   try {
     phClient.capture({ distinctId: user ?? 'anonymous', event });
-    if (dev) {
-      await phClient.shutdown();
-      _phClient = null;
-    } else {
-      await phClient.flush();
-    }
+    await phClient.flush();
   } catch (error) {
     log.error('PostHog capture failed:', error);
   }
@@ -47,12 +41,7 @@ export async function captureException(error: Error, user?: string, other?: Reco
 
   try {
     phClient.captureException(error, user ?? 'anonymous', other);
-    if (dev) {
-      await phClient.shutdown();
-      _phClient = null;
-    } else {
-      await phClient.flush();
-    }
+    await phClient.flush();
   } catch (phError) {
     log.error('PostHog captureException failed:', phError);
   }

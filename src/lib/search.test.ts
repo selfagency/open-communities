@@ -1,158 +1,332 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+// @vitest-environment node
+
+import { describe, expect, it } from 'vitest';
+
 import { Search } from './search';
-import type { LocationMeta, SearchData, SearchState } from './types.d';
+import type { SearchData } from './types.d';
 
-// Helper to build minimal SearchData records; extras may include runtime-only keys
-function makeRec(id: string, name: string, extras: Record<string, unknown> = {}) {
-  // Property order follows `SearchData` declaration: flavor?, id, location?, name, owner?, visible
-  const base = {
+/* region fixtures */
+function makeRecord(overrides: Partial<SearchData> & { id: string; name: string }): SearchData {
+  return {
+    accessibility: {},
+    denomination: undefined,
     flavor: '',
-    id,
-    location: (extras.location as LocationMeta | undefined) ?? undefined,
-    name,
-    owner: (extras.owner as string | undefined) ?? undefined,
-    visible: (extras.visible as boolean) ?? true,
-    // include any runtime-only fields after the core keys
-    ...extras
-  } as Record<string, unknown> & SearchData;
-
-  return base;
+    health: undefined,
+    location: {},
+    owner: undefined,
+    registration: undefined,
+    security: {},
+    services: {},
+    visible: true,
+    ...overrides
+  };
 }
 
-let data: SearchData[];
+const RECORDS: SearchData[] = [
+  makeRecord({
+    accessibility: { inPerson_adaAll: true },
+    denomination: 'reform',
+    flavor: 'egalitarian',
+    health: { protocol: 'maskingRequired' },
+    id: 'a1',
+    location: {
+      city: { id: 'city-nyc', name: 'New York City' } as never,
+      country: { id: 'country-us', name: 'United States' } as never,
+      state: { id: 'state-ny', name: 'New York' } as never
+    },
+    name: 'Alpha Synagogue',
+    owner: 'user-1',
+    registration: { registrationType: 'free' },
+    services: { inPerson: true }
+  }),
+  makeRecord({
+    denomination: 'conservative',
+    flavor: 'traditional',
+    health: { protocol: 'noGuidelines' },
+    id: 'b2',
+    location: {
+      country: { id: 'country-us', name: 'United States' } as never,
+      state: { id: 'state-ca', name: 'California' } as never
+    },
+    name: 'Beta Congregation',
+    registration: { registrationType: 'slidingScale' },
+    security: { noFirearms: true },
+    services: { onlineOnly: true }
+  }),
+  makeRecord({
+    denomination: 'reform',
+    flavor: 'progressive',
+    id: 'c3',
+    location: {
+      city: { id: 'city-chi', name: 'Chicago' } as never,
+      country: { id: 'country-us', name: 'United States' } as never,
+      state: { id: 'state-il', name: 'Illinois' } as never
+    },
+    name: 'Gamma Kehillah',
+    owner: undefined,
+    visible: false
+  }),
+  makeRecord({
+    id: 'd4',
+    location: { country: { id: 'country-ca', name: 'Canada' } as never },
+    name: 'Delta Minyan',
+    visible: true
+  })
+];
+/* endregion fixtures */
 
-beforeEach(() => {
-  data = [
-    makeRec('a', 'Alpha', {
-      accessibility: { inPerson_adaAll: true },
-      denomination: 'reform',
-      health: { protocol: 'maskingRecommended' },
-      location: {
-        city: { id: 'city1' },
-        country: { id: 'ct1' },
-        state: { id: 's1' }
-      } as LocationMeta,
-      owner: 'owner1',
-      registration: { registrationType: 'free' },
-      security: { noFirearms: true },
-      services: { inPerson: true }
-    }),
-    makeRec('b', 'Beta', {
-      denomination: 'orthodox',
-      location: {
-        city: { id: 'city2' },
-        country: { id: 'ct1' },
-        state: { id: 's2' }
-      } as LocationMeta,
-      services: { onlineOnly: true },
-      visible: false
-    }),
-    makeRec('c', 'Chi', {
-      denomination: 'reform',
-      location: {
-        city: { id: 'city1' },
-        country: { id: 'ct2' },
-        state: { id: 's1' }
-      } as LocationMeta,
-      services: { inPerson: true, onlineOnly: false },
-      visible: false
-    })
-  ];
-});
+describe('Search', () => {
+  describe('constructor', () => {
+    it('sorts data alphabetically by name', () => {
+      const s = new Search(RECORDS);
+      const names = s.data.map((r) => r.name);
+      expect(names).toEqual([...names].sort());
+    });
 
-describe('Search filters', () => {
-  it('adminFilter filters unapproved and unclaimed correctly', () => {
-    const s = new Search(data, true);
-    const allIds = data.map((d) => d.id);
-
-    // unapproved -> visible === false (b and c)
-    const adminUnapproved: Record<string, boolean> = { unapproved: true };
-    const unapproved = s.adminFilter(adminUnapproved, allIds);
-    expect(unapproved.sort()).toEqual(['b', 'c']);
-
-    // unclaimed -> owner falsy (b and c)
-    const adminUnclaimed: Record<string, boolean> = { unclaimed: true };
-    const unclaimed = s.adminFilter(adminUnclaimed, allIds);
-    expect(unclaimed.sort()).toEqual(['b', 'c']);
-
-    // both -> intersection -> b and c (both unapproved and unclaimed)
-    const adminBoth: Record<string, boolean> = { unapproved: true, unclaimed: true };
-    const both = s.adminFilter(adminBoth, allIds);
-    expect(both.sort()).toEqual(['b', 'c']);
-  });
-
-  it('boolFilter filters by nested boolean properties (services/security/accessibility)', () => {
-    const s = new Search(data, true);
-    const allIds = data.map((d) => d.id);
-
-    // services.inPerson -> records a and c
-    const servicesFilter: Record<string, boolean> = { inPerson: true };
-    const inPerson = s.boolFilter('services', servicesFilter, allIds);
-    expect(inPerson.sort()).toEqual(['a', 'c']);
-
-    // security.noFirearms -> record a only
-    const securityFilter: Record<string, boolean> = { noFirearms: true };
-    const sec = s.boolFilter('security', securityFilter, allIds);
-    expect(sec).toEqual(['a']);
-
-    // accessibility.inPerson_adaAll -> a only
-    const accessibilityFilter: Record<string, boolean> = { inPerson_adaAll: true };
-    const acc = s.boolFilter('accessibility', accessibilityFilter, allIds);
-    expect(acc).toEqual(['a']);
-  });
-
-  it('stringFilter filters denomination and other string-targeted keys', () => {
-    const s = new Search(data, true);
-    const allIds = data.map((d) => d.id);
-
-    // denomination: 'reform' -> a and c
-    const denomFilter: Record<string, boolean> = { reform: true };
-    const denom = s.stringFilter('denomination', 'denomination', denomFilter, allIds);
-    expect(denom.sort()).toEqual(['a', 'c']);
-
-    // registration.registrationType -> only 'a' has registration.free
-    const regFilter: Record<string, boolean> = { free: true };
-    const reg = s.stringFilter('registration', 'registrationType', regFilter, allIds);
-    expect(reg).toEqual(['a']);
-  });
-
-  it('applyAllFilters composes filters and returns matching ids', () => {
-    const s = new Search(data, true);
-    const allIds = data.map((d) => d.id);
-
-    const state: SearchState = {
-      filters: {
-        admin: { unapproved: true },
-        services: { inPerson: true }
+    it('builds idxById map with correct length', () => {
+      const s = new Search(RECORDS);
+      // Access private via cast for testing
+      const idx = (s as never as { idxById: Map<string, number> }).idxById;
+      expect(idx.size).toBe(RECORDS.length);
+      for (const r of RECORDS) {
+        expect(idx.has(r.id)).toBe(true);
       }
-    };
+    });
 
-    // services inPerson -> a and c, admin unapproved -> b and c => intersection -> c
-    const out = s.applyAllFilters(state, allIds);
-    expect(out).toEqual(['c']);
+    it('pre-builds searchStrings with same length as data', () => {
+      const s = new Search(RECORDS);
+      const ss = (s as never as { searchStrings: string[] }).searchStrings;
+      expect(ss).toHaveLength(RECORDS.length);
+    });
+
+    it('initializes with all records in results', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      })();
+      expect(results).toHaveLength(RECORDS.length);
+    });
   });
 
-  it('toggleLocation and resetAll mutate state correctly', () => {
-    const s = new Search(data, true);
+  describe('setSearchTerms / resetSearchTerms', () => {
+    it('filters results by name text', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchTerms('alpha');
+      expect(results.map((r) => r.id)).toContain('a1');
+      expect(results.map((r) => r.id)).not.toContain('b2');
+      unsub();
+    });
 
-    // initial showLocation true -> toggle -> false
-    s.toggleLocation();
-    expect(s.state.get().showLocation).toBe(false);
+    it('returns all results when searchTerms reset to empty', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchTerms('alpha');
+      s.resetSearchTerms();
+      expect(results).toHaveLength(RECORDS.length);
+      unsub();
+    });
+  });
 
-    // toggle again -> true
-    s.toggleLocation();
-    expect(s.state.get().showLocation).toBe(true);
+  describe('setSearchLocation / resetLocation', () => {
+    it('filters by country', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchLocation({ country: { id: 'country-ca', name: 'Canada' } } as never);
+      expect(results.map((r) => r.id)).toEqual(['d4']);
+      unsub();
+    });
 
-    // set a searchLocation and terms, then resetAll
-    const loc: LocationMeta = { city: { id: 'city1' } };
-    s.setSearchLocation(loc);
-    s.setSearchTerms('alpha');
-    const setFiltersVal: SearchState['filters'] = { services: { inPerson: true } };
-    s.setFilters(setFiltersVal);
+    it('filters by state within country', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchLocation({
+        country: { id: 'country-us', name: 'United States' },
+        state: { id: 'state-ny', name: 'New York' }
+      } as never);
+      expect(results.map((r) => r.id)).toEqual(['a1']);
+      unsub();
+    });
 
-    s.resetAll();
-    expect(s.state.get().searchTerms).toBe('');
-    expect(s.state.get().searchLocation).toEqual({});
-    expect(s.state.get().filters).toEqual({});
+    it('returns all results after resetLocation', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchLocation({ country: { id: 'country-ca', name: 'Canada' } } as never);
+      s.resetLocation();
+      expect(results).toHaveLength(RECORDS.length);
+      unsub();
+    });
+  });
+
+  describe('boolFilter — services', () => {
+    it('returns only records with inPerson=true when filter active', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ services: { inPerson: true } });
+      expect(results.map((r) => r.id)).toEqual(['a1']);
+      unsub();
+    });
+
+    it('returns only records with onlineOnly=true when filter active', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ services: { onlineOnly: true } });
+      expect(results.map((r) => r.id)).toEqual(['b2']);
+      unsub();
+    });
+  });
+
+  describe('boolFilter — accessibility', () => {
+    it('returns only ADA-accessible records', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ accessibility: { inPerson_adaAll: true } });
+      expect(results.map((r) => r.id)).toEqual(['a1']);
+      unsub();
+    });
+  });
+
+  describe('stringFilter — denomination', () => {
+    it('returns only reform congregations', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ denomination: { reform: true } });
+      const ids = results.map((r) => r.id);
+      expect(ids).toContain('a1');
+      expect(ids).toContain('c3');
+      expect(ids).not.toContain('b2');
+      unsub();
+    });
+
+    it('returns only conservative congregations', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ denomination: { conservative: true } });
+      expect(results.map((r) => r.id)).toEqual(['b2']);
+      unsub();
+    });
+  });
+
+  describe('stringFilter — health protocol', () => {
+    it('returns masking-required records', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ health: { maskingRequired: true } });
+      expect(results.map((r) => r.id)).toEqual(['a1']);
+      unsub();
+    });
+  });
+
+  describe('stringFilter — registration type', () => {
+    it('returns free-registration records', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ registration: { free: true } });
+      expect(results.map((r) => r.id)).toEqual(['a1']);
+      unsub();
+    });
+  });
+
+  describe('adminFilter', () => {
+    it('returns unapproved (visible=false) records', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ admin: { unapproved: true } });
+      expect(results.map((r) => r.id)).toEqual(['c3']);
+      unsub();
+    });
+
+    it('returns unclaimed (no owner) records', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setFilters({ admin: { unclaimed: true } });
+      const ids = results.map((r) => r.id);
+      expect(ids).toContain('c3');
+      expect(ids).toContain('d4');
+      expect(ids).not.toContain('a1');
+      unsub();
+    });
+  });
+
+  describe('combined filters', () => {
+    it('combines text search and denomination filter', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchTerms('gamma');
+      s.setFilters({ denomination: { reform: true } });
+      expect(results.map((r) => r.id)).toEqual(['c3']);
+      unsub();
+    });
+  });
+
+  describe('resetAll', () => {
+    it('clears all active filters and search terms', () => {
+      const s = new Search(RECORDS);
+      let results: SearchData[] = [];
+      const unsub = s.results.subscribe((r) => {
+        results = r as unknown as SearchData[];
+      });
+      s.setSearchTerms('alpha');
+      s.setFilters({ denomination: { reform: true } });
+      s.resetAll();
+      expect(results).toHaveLength(RECORDS.length);
+      unsub();
+    });
+  });
+
+  describe('idxById O(1) lookup integrity', () => {
+    it('every id maps to the correct index in this.data', () => {
+      const s = new Search(RECORDS);
+      const idx = (s as never as { idxById: Map<string, number> }).idxById;
+      for (const [id, i] of idx) {
+        expect(s.data[i].id).toBe(id);
+      }
+    });
   });
 });

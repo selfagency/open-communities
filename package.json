@@ -11,7 +11,10 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "deps:up": "docker-compose -f e2e/docker-compose.yml up -d --build",
+    "deps:bootstrap": "node e2e/scripts/bootstrap.mjs",
     "deps:down": "docker-compose -f e2e/docker-compose.yml down",
+    "deps:reset": "docker-compose -f e2e/docker-compose.yml down -v && docker-compose -f e2e/docker-compose.yml up -d --build && sleep 5 && node e2e/scripts/bootstrap.mjs",
+    "deps:setup": "node e2e/scripts/bootstrap.mjs",
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
     "format": "biome check --write .",
     "lint": "biome check .",
@@ -34,6 +37,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
+    "@faker-js/faker": "^10.5.0",
     "@html-eslint/parser": "^0.62.0",
     "@inlang/cli": "^3.1.14",
     "@inlang/paraglide-js": "2.4.0",

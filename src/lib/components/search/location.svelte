@@ -26,20 +26,17 @@
   let city = $state(untrack(() => $locationState.record.city?.id ?? ''));
 
   /* region methods */
-  function handleCountryChange(event: CustomEvent) {
-    const selectedId = event.detail.value;
+  function handleCountryChange(selectedId: string) {
     country = selectedId;
     setCountry(selectedId);
   }
 
-  function handleStateChange(event: CustomEvent) {
-    const selectedId = event.detail.value;
+  function handleStateChange(selectedId: string) {
     province = selectedId;
     setState(selectedId);
   }
 
-  function handleCityChange(event: CustomEvent) {
-    const selectedId = event.detail.value;
+  function handleCityChange(selectedId: string) {
     city = selectedId;
     setCity(selectedId);
   }
@@ -74,7 +71,7 @@
         <Combobox
           items={$locationState.options.countryOptions}
           value={country}
-          on:change={handleCountryChange}
+          onChange={handleCountryChange}
           placeholder={m.selectThing({ thing: m.location_country().toLowerCase() })}
           disabled={!$locationState.options?.countryOptions?.length} />
       </span>
@@ -83,7 +80,7 @@
         <Combobox
           items={$locationState.options.stateOptions}
           value={province}
-          on:change={handleStateChange}
+          onChange={handleStateChange}
           placeholder={m.selectThing({ thing: m.location_state().toLowerCase() })}
           disabled={!country || !$locationState.options?.stateOptions?.length} />
       </span>
@@ -92,7 +89,7 @@
         <Combobox
           items={$locationState.options.cityOptions}
           value={city}
-          on:change={handleCityChange}
+          onChange={handleCityChange}
           placeholder={m.selectThing({ thing: m.location_city().toLowerCase() })}
           disabled={!province || !$locationState.options?.cityOptions?.length} />
       </span>

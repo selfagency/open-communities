@@ -153,9 +153,8 @@
                     thing: m.congregation().toLowerCase()
                   })}
                   disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
-                  on:change={(e) => {
-                    // log.debug(e.detail);
-                    $formData.record = e.detail.value;
+                  onChange={(id) => {
+                    $formData.record = id;
                   }} />
               {/snippet}
             </Form.Control>

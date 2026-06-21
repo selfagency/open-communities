@@ -89,10 +89,11 @@ function isPbError(err: unknown): err is { message: string; status: number } {
 // HTTP status codes that indicate a transient connection issue — safe to retry
 const RETRYABLE_STATUSES = new Set([0, 429, 502, 503, 504, 520, 524]);
 
+// ~30s total window: 2+4+8+16 + jitter ≈ 32-38s — enough for a remote PB cold start
 const RETRY_DEFAULTS = {
-  maxRetries: 3,
-  baseDelayMs: 1000,
-  maxDelayMs: 8000
+  maxRetries: 4,
+  baseDelayMs: 2000,
+  maxDelayMs: 16000
 };
 
 /**
@@ -108,12 +109,15 @@ async function withRetry<T>(fn: () => Promise<T>, options?: Partial<typeof RETRY
     try {
       return await fn();
     } catch (err) {
-      lastError = err;
-      if (attempt < config.maxRetries && isRetryable(err)) {
-        const delay = Math.min(config.baseDelayMs * 2 ** attempt + Math.random() * 1000, config.maxDelayMs);
-        log.warn(`PB retry ${attempt + 1}/${config.maxRetries} after ${Math.round(delay)}ms`, err);
-        await new Promise((r) => setTimeout(r, delay));
+      // Throw immediately on non-retryable errors (e.g., 404, 403)
+      if (!isRetryable(err)) throw err;
+      if (attempt >= config.maxRetries) {
+        lastError = err;
+        break;
       }
+      const delay = Math.min(config.baseDelayMs * 2 ** attempt + Math.random() * 1000, config.maxDelayMs);
+      log.warn(`PB retry ${attempt + 1}/${config.maxRetries} after ${Math.round(delay)}ms`, err);
+      await new Promise((r) => setTimeout(r, delay));
     }
   }
 

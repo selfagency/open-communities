@@ -3,7 +3,7 @@
   import CheckIcon from '@lucide/svelte/icons/check';
   import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
   import { useId } from 'bits-ui';
-  import { createEventDispatcher, onMount, tick, untrack } from 'svelte';
+  import { onMount, tick } from 'svelte';
 
   import { cn } from '$lib/utils.js';
 
@@ -18,25 +18,30 @@
     disabled,
     id,
     items,
+    onChange,
     placeholder,
     value = $bindable('')
   }: {
     disabled?: boolean;
     id?: string;
     items: { id: string; label: string; value: string }[];
+    onChange?: (value: string) => void;
     placeholder?: string;
     value?: string;
   } = $props();
 
   // constants
-  const dispatch = createEventDispatcher();
   const commandGroupId = useId();
 
   // local variables
   let open = $state(false);
   let triggerRef = $state<HTMLButtonElement>(null!);
-  let currentItems = $state(items || []);
-  let selectedValueLabel = $state(placeholder || '');
+  // $derived so the list and label stay in sync when the parent updates the prop
+  let currentItems = $derived(items || []);
+  let selectedValueLabel = $derived.by(() => {
+    const selected = currentItems.find((item) => item.id === value);
+    return selected?.label ?? placeholder ?? '';
+  });
   let commandsInitialized = $state(false);
   let commandValue = $state('');
   /* endregion variables */
@@ -54,14 +59,10 @@
   }
 
   function handleSelect(itemId: string) {
-    dispatch('change', { value: itemId });
+    onChange?.(itemId);
     closeAndFocusTrigger();
   }
 
-  function updateSelectedValue() {
-    const selected = items?.find((item) => item.id === value);
-    selectedValueLabel = selected?.label ?? placeholder ?? '';
-  }
   /* endregion methods */
 
   /* region lifecycle */
@@ -71,18 +72,6 @@
     });
   });
   /* endregion lifecycle */
-
-  /* region reactivity */
-  $effect(() => {
-    // Update the items list when items prop changes
-    if (items) {
-      untrack(() => {
-        currentItems = [...items];
-        updateSelectedValue();
-      });
-    }
-  });
-  /* endregion reactivity */
 </script>
 
 <div class="w-full" class:pointer-events-none={disabled} class:opacity-50={disabled}>

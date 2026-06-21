@@ -81,7 +81,7 @@ export class Location {
       await this.setCountry(record.country);
 
       if (record.state) {
-        await this.setState(record.state, true);
+        await this.setState(record.state, /* preserveCity */ true);
 
         if (record.city) {
           this.setCity(record.city as string);
@@ -162,7 +162,7 @@ export class Location {
     }
   }
 
-  async setState(input: string, loadFn?: boolean) {
+  async setState(input: string, preserveCity?: boolean) {
     const objState = this.state.get();
     const state = objState.localities?.states?.find((s) => s?.id === input) as State;
     const api = this.api as TypedPocketBase;
@@ -194,7 +194,7 @@ export class Location {
             }))
           },
           record: {
-            city: loadFn ? objState.record.city : undefined,
+            city: preserveCity ? objState.record.city : undefined,
             country: objState.record.country as Country,
             latitude: state?.latitude,
             longitude: state?.longitude,

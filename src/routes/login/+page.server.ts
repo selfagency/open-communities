@@ -27,7 +27,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions = {
   acct: async (event) => {
-    const { locals } = event;
+    const { fetch, locals } = event;
     const { api, capture, captureException, validate } = locals;
     const client = api?.authStore?.record;
     const form = await validate(event, tokenSchema);
@@ -43,10 +43,9 @@ export const actions = {
         });
       }
 
-      // let res;
       switch (form.data.type) {
         case 'requestReset':
-          await api.collection('users').requestPasswordReset(form.data.email as string);
+          await api.collection('users').requestPasswordReset(form.data.email as string, { fetch });
           break;
         case 'resetPassword':
           await api
@@ -55,13 +54,11 @@ export const actions = {
               form.data.token as string,
               form.data.password as string,
               form.data.passwordConfirm as string,
-              {
-                fetch
-              }
+              { fetch }
             );
           break;
         case 'verifyEmail':
-          await api.collection('users').confirmVerification(form.data.token as string);
+          await api.collection('users').confirmVerification(form.data.token as string, { fetch });
           break;
       }
 

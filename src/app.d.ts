@@ -23,7 +23,6 @@ declare global {
 
     interface Locals {
       api: TypedPocketBase;
-      auth: string;
       capture: (user: string | undefined, event: string) => Promise<void>;
       captureException: (
         error: Error | unknown,
@@ -40,7 +39,6 @@ declare global {
       };
       log: Logger<{ main: boolean; sub: boolean }>;
       message?: unknown;
-      session: string;
       startTimer?: number;
       track?: unknown;
       validate: <S extends $ZodType<Record<string, unknown>>>(
@@ -54,7 +52,9 @@ declare global {
       content?: PagesRecord;
       default?: SuperValidated<DefaultSchema>;
       login?: SuperValidated<LoginSchema>;
+      offline?: boolean;
       signup?: SuperValidated<UserSchema>;
+      user?: Record<string, unknown> | null;
       verify?: SuperValidated<TokenSchema>;
     }
 

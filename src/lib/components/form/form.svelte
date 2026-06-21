@@ -20,7 +20,6 @@
   import { m } from '$lib/paraglide/messages';
   import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
   import { state as appState, setState } from '$lib/stores';
-  // import { log } from '$lib/utils';
 
   import Delete from './delete.svelte';
   import Accessibility from './segments/accessibility.svelte';

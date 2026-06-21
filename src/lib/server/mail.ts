@@ -89,7 +89,7 @@ export async function mailTransport({
   }
 
   // S-9: sanitize HTML output to prevent email injection
-  const messageHtml = marked.parseInline(message) as string;
+  const messageHtml = await marked.parseInline(message);
   const sanitized = DOMPurify.sanitize(messageHtml, {
     ALLOWED_ATTR: ['href'],
     ALLOWED_TAGS: ['a', 'b', 'i', 'em', 'strong', 'br', 'p']

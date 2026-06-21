@@ -7,7 +7,9 @@ import { setError } from 'sveltekit-superforms';
 import { m } from '$lib/paraglide/messages';
 import type { CongregationsResponse, PagesRecord } from '$lib/pocketbase.d';
 import { defaultSchema } from '$lib/schemas/record';
-import { throwAsHttpError } from '$lib/server/api';
+import { withRetry } from '$lib/server/api';
+import { clearCongregationCache } from '$lib/server/cache';
+import { log } from '$lib/server/logger';
 import { adminMail, transactionalMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
 /* endregion imports */
@@ -17,27 +19,26 @@ export const load = async (event) => {
   const { api, captureException, validate } = locals;
   const client = api?.authStore?.record;
 
-  try {
-    if (!client?.id) {
-      throw new Error('Forbidden');
-    }
+  // Must be outside try-catch so redirect()'s throw propagates
+  if (!client?.id) {
+    redirect(302, '/login?signUp=true');
+  }
 
-    const content = (await api
-      .collection('pages')
-      .getFirstListItem(api.filter('slug={:slug}', { slug: `add-${client?.lang || 'en'}` }), {
+  try {
+    const content = (await withRetry(() =>
+      api.collection('pages').getFirstListItem(api.filter('slug={:slug}', { slug: `add-${client?.lang || 'en'}` }), {
         fetch
-      })) as PagesRecord;
+      })
+    )) as PagesRecord;
 
     return { content, form: { default: await validate(event, defaultSchema) } };
   } catch (error) {
-    if ((error as Error).message === 'Forbidden') {
-      redirect(302, '/login?signUp=true');
-    } else {
-      if (isFunction(captureException)) {
-        await captureException(error, client?.id);
-      }
-      throwAsHttpError(error as { message?: string; status?: number });
+    if (isFunction(captureException)) {
+      await captureException(error, client?.id);
     }
+    // Graceful degradation: if PB is down after retries, show form without content
+    log.warn('PocketBase unavailable for add page', error);
+    return { content: undefined, form: { default: await validate(event, defaultSchema) } };
   }
 };
 
@@ -108,14 +109,16 @@ export const actions = {
         {
           email: client.email,
           message: `
-						A new congregation, ${record.name}, has been submitted and requires approval:\n
-						https://opencommunities.info/edit?id=${record.id}
-					`,
+\t\t\t\t\t\tA new congregation, ${record.name}, has been submitted and requires approval:\\n
+\t\t\t\t\t\thttps://opencommunities.info/edit?id=${record.id}
+\t\t\t\t\t`,
           name: client.name as string,
           subject: `New congregation submitted`
         },
         api
       );
+
+      clearCongregationCache();
 
       return {
         form

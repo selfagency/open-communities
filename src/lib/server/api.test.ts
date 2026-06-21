@@ -39,7 +39,7 @@ vi.mock('@sveltejs/kit', () => ({
 
 import type { Cookies } from '@sveltejs/kit';
 
-import { api, authenticate, cleanResponse, expand, loadUser, throwAsHttpError } from './api';
+import { api, authenticate, cleanResponse, expand, loadUser, throwAsHttpError, withRetry } from './api';
 import { log } from './logger';
 
 describe('src/lib/server/api', () => {
@@ -209,6 +209,79 @@ describe('src/lib/server/api', () => {
       } as unknown as Cookies;
       const u = loadUser(cookies);
       expect(u).toEqual(model);
+    });
+  });
+
+  describe('withRetry', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('returns the result on success without retrying', async () => {
+      const fn = vi.fn().mockResolvedValue('ok');
+      const result = await withRetry(fn);
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on retryable status (429) and succeeds', async () => {
+      const fn = vi.fn().mockRejectedValueOnce({ message: 'rate limit', status: 429 }).mockResolvedValue('ok');
+      const promise = withRetry(fn);
+      // advance past the entire retry window
+      await vi.runAllTimersAsync();
+      const result = await promise;
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('retries on retryable status (0) and succeeds on last attempt', async () => {
+      const fn = vi
+        .fn()
+        .mockRejectedValueOnce({ message: 'net err', status: 0 })
+        .mockRejectedValueOnce({ message: 'net err', status: 0 })
+        .mockRejectedValueOnce({ message: 'net err', status: 0 })
+        .mockResolvedValue('ok');
+      const promise = withRetry(fn);
+      await vi.runAllTimersAsync();
+      const result = await promise;
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(4);
+    });
+
+    it('does NOT retry on non-retryable status (404)', async () => {
+      const fn = vi.fn().mockRejectedValue({ message: 'not found', status: 404 });
+      await expect(withRetry(fn)).rejects.toThrow();
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does NOT retry on non-retryable status (403)', async () => {
+      const fn = vi.fn().mockRejectedValue({ message: 'forbidden', status: 403 });
+      await expect(withRetry(fn)).rejects.toThrow();
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('throws after exhausting all retries', async () => {
+      const err = { message: 'timeout', status: 524 };
+      const fn = vi.fn().mockRejectedValue(err);
+      const promise = withRetry(fn);
+      await vi.runAllTimersAsync();
+      await expect(promise).rejects.toBe(err);
+      // initial call + 4 retries
+      expect(fn).toHaveBeenCalledTimes(5);
+    });
+
+    it('logs a warning on each retry attempt', async () => {
+      const fn = vi.fn().mockRejectedValueOnce({ message: 'busy', status: 429 }).mockResolvedValue('ok');
+      const promise = withRetry(fn);
+      await vi.runAllTimersAsync();
+      await promise;
+      expect(log.warn).toHaveBeenCalledWith(
+        expect.stringContaining('PB retry 1/4'),
+        expect.objectContaining({ message: 'busy', status: 429 })
+      );
     });
   });
 

@@ -15,6 +15,7 @@ import type {
 } from '$lib/pocketbase.d';
 import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
 import { cleanResponse, throwAsHttpError } from '$lib/server/api';
+import { clearCongregationCache } from '$lib/server/cache';
 import { log } from '$lib/server/logger';
 import { adminMail, transactionalMail } from '$lib/server/mail';
 import type { LocationMeta, LocationRecord } from '$lib/types.d';
@@ -139,6 +140,8 @@ export const actions = {
       batch.collection('congregations').delete(data.id);
       await batch.send({ fetch });
 
+      clearCongregationCache();
+
       if (!client?.admin) {
         await transactionalMail({
           email: client.email,
@@ -238,6 +241,8 @@ export const actions = {
         batch.collection('services').create({ ...services, congregation: data.id });
       }
       await batch.send({ fetch });
+
+      clearCongregationCache();
 
       if (!client?.admin) {
         // biome-ignore lint/style/noNonNullAssertion: guarded by if (!client?.admin) above

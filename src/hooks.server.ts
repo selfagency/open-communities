@@ -10,7 +10,6 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import type { $ZodType, output } from 'zod/v4/core';
 
 import { dev } from '$app/environment';
-import { env } from '$env/dynamic/public';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createApi } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
@@ -25,12 +24,21 @@ import security from '$lib/server/security';
 const log = logger.getSubLogger({ name: 'hooks' });
 /* endregion variables */
 
-/* Module-level auth-refresh cooldown to avoid calling authRefresh() on every
- * authenticated request (see P-10 in CODE_REVIEW.md). PocketBase auth tokens
- * are JWT-like with a configurable TTL; refreshing once every 5 minutes is
- * plenty to keep the session alive without hammering the server. */
-let lastAuthRefresh = 0;
+/* Per-session auth-refresh cooldown map.
+ * Keyed by the first 32 chars of the auth cookie (stable within a session,
+ * non-sensitive prefix) so each user's token is refreshed independently.
+ * PocketBase auth tokens are JWT-like with a configurable TTL; refreshing once
+ * every 5 minutes per session is plenty without hammering the server.
+ * Stale entries are pruned on every request to prevent unbounded growth. */
+const authRefreshTimestamps = new Map<string, number>();
 const AUTH_REFRESH_COOLDOWN_MS = 300_000; // 5 minutes
+
+function pruneAuthRefreshTimestamps() {
+  const cutoff = Date.now() - AUTH_REFRESH_COOLDOWN_MS * 2;
+  for (const [key, ts] of authRefreshTimestamps) {
+    if (ts < cutoff) authRefreshTimestamps.delete(key);
+  }
+}
 
 async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const startTimer = Date.now();
@@ -102,10 +110,13 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       requestApi.authStore.clear();
     } else {
       if (requestApi?.authStore?.isValid) {
+        pruneAuthRefreshTimestamps();
         const now = Date.now();
-        if (now - lastAuthRefresh > AUTH_REFRESH_COOLDOWN_MS) {
+        const sessionKey = (event.cookies.get('auth') ?? '').slice(0, 32);
+        const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
+        if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
           await requestApi.collection('users').authRefresh();
-          lastAuthRefresh = now;
+          authRefreshTimestamps.set(sessionKey, now);
         }
         // Re-set the auth cookie on every request to extend its TTL
         event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
@@ -127,10 +138,9 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   // Store start timer before resolving the response
   event.locals.startTimer = startTimer;
 
-  event.request.headers.set(
-    'Reporting-Endpoints',
-    `posthog="${env.PUBLIC_POSTHOG_HOST}/report/?token=${env.PUBLIC_POSTHOG_TOKEN}"`
-  );
+  // NOTE: Reporting-Endpoints is a response header; it is applied via the
+  // Helmet CSP config in security.ts (reportUri / reportTo). Setting it here
+  // on event.request has no effect and is removed to avoid confusion.
 
   // response
   const response = await resolve(event);

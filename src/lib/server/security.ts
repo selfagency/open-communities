@@ -40,6 +40,7 @@ const handle: Handle = dev
           'img-src': ["'self'", 'data:', 'blob:', '*.basemaps.cartocdn.com', '*.opencommunities.info'],
           reportTo: ['posthog'],
           reportUri: [`${env.PUBLIC_POSTHOG_HOST}/report/?token=${env.PUBLIC_POSTHOG_KEY}`],
+          // reportTo and reportUri both use PUBLIC_POSTHOG_KEY — not PUBLIC_POSTHOG_TOKEN
           'script-src': [
             '*.basemaps.cartocdn.com',
             '*.opencommunities.info',

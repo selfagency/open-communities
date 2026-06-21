@@ -8,7 +8,8 @@ export const contactSchema = z.object({
   message: z.string(),
   name: z.string(),
   reason: z.enum(['question', 'claim', 'delete', 'suggest', 'transfer']),
-  record: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional())
+  // Validate as UUID to prevent arbitrary URL injection in admin email links
+  record: z.preprocess((val) => (val === '' ? undefined : val), z.string().uuid().optional())
 });
 
 export type ContactSchema = z.infer<typeof contactSchema>;

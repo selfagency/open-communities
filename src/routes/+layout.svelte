@@ -17,9 +17,6 @@
 
   import type { LayoutData } from './$types';
 
-  // import { log } from '$lib/utils';
-  import '../app.css';
-
   /* endregion imports */
 
   /* Initialize PostHog pageview and pageleave tracking */
@@ -82,9 +79,20 @@
 </svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between max-w-screen w-full overflow-hidden">
+  {#if data.offline}
+    <div
+      role="alert"
+      class="fixed top-0 z-50 flex w-full items-center justify-center bg-amber-500/90 px-4 py-2 text-sm font-medium text-amber-950 backdrop-blur-sm"
+    >
+      Reconnecting to database…
+    </div>
+  {/if}
   <Progress />
   <Header />
-  <main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4">
+  <main
+    class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4"
+    class:mt-28={data.offline}
+  >
     {@render children()}
   </main>
   <Footer />

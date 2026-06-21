@@ -2,13 +2,10 @@
 import { isFunction } from 'radashi';
 
 import { cleanResponse, withRetry } from '$lib/server/api';
+import { getCachedCountries } from '$lib/server/cache';
 import { log } from '$lib/server/logger';
 
 /* endregion imports */
-
-// Module-level TTL cache for data that rarely changes
-const cache = new Map<string, { data: unknown[]; timestamp: number }>();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function load({ cookies, fetch, locals }) {
   const { api, captureException } = locals;
@@ -16,11 +13,12 @@ export async function load({ cookies, fetch, locals }) {
   const lang = cookies.get('lang') || user?.lang || 'en';
 
   try {
-    const countries = await withRetry(() => getCachedFullList(api, 'countries', { fetch }));
+    const countries = await withRetry(() => getCachedCountries(api, { fetch }));
 
     return {
       countries: countries.map((c) => cleanResponse(c as Record<string, unknown>)),
       lang,
+      offline: false,
       user
     };
   } catch (err) {
@@ -28,31 +26,14 @@ export async function load({ cookies, fetch, locals }) {
       await captureException(err, user?.id);
     }
     // Graceful degradation: if PB is down after retries, return fallback data
-    // so the app shell renders instead of a 500 error page.
+    // so the app shell renders instead of a 500 error page. The offline flag
+    // lets the client show a reconnecting banner.
     log.warn('PocketBase unavailable, returning fallback layout data', err);
     return {
       countries: [],
       lang,
+      offline: true,
       user: null
     };
   }
-}
-
-async function getCachedFullList<T>(
-  api: {
-    collection: (name: string) => {
-      getFullList: (opts?: object) => Promise<T[]>;
-    };
-  },
-  collectionName: string,
-  opts?: object
-): Promise<T[]> {
-  const cacheKey = `${collectionName}:${JSON.stringify(opts ?? {})}`;
-  const cached = cache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-    return cached.data as T[];
-  }
-  const data = await api.collection(collectionName).getFullList(opts);
-  cache.set(cacheKey, { data, timestamp: Date.now() });
-  return data;
 }
