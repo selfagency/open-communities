@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { AlertDialog as AlertDialogPrimitive } from 'bits-ui';
+	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
 
-  type $$Props = AlertDialogPrimitive.PortalProps;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars — used for Svelte prop type inference
+	type $$Props = AlertDialogPrimitive.PortalProps;
 </script>
 
 <AlertDialogPrimitive.Portal {...$$restProps}>

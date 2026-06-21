@@ -175,18 +175,18 @@ h2,
 h3,
 h4,
 h5 {
-  @apply font-display !font-normal;
+	@apply font-display font-normal !important;
 }
 
 #captcha {
   @apply font-sans text-sm text-slate-600;
 
   > div > div {
-    @apply !max-w-full;
+	@apply max-w-full !important;
   }
 
   [data-cy='button-human'] {
-    @apply !max-w-full;
+    @apply max-w-full !important;
   }
 
   input {
@@ -239,7 +239,7 @@ h5 {
 }
 
 cap-widget {
-  @apply !w-full;
+	@apply w-full !important;
 }
 
 /* Print stylesheet: hide chrome/navigation, show content */
