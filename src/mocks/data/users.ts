@@ -1,6 +1,6 @@
-import type { UsersRecord } from "$lib/pocketbase.d";
+import { UsersLangOptions } from "$lib/pocketbase.d";
 
-export interface UserFixture extends UsersRecord {
+export interface UserFixture {
 	id: string;
 	collectionId: string;
 	collectionName: string;
@@ -10,7 +10,7 @@ export interface UserFixture extends UsersRecord {
 	avatar: string;
 	email: string;
 	emailVisibility: boolean;
-	lang: string;
+	lang: UsersLangOptions;
 	name: string;
 	verified: boolean;
 	congregation?: string;
@@ -24,7 +24,7 @@ export const adminUser: UserFixture = {
 	email: "admin@example.test",
 	emailVisibility: false,
 	id: "user_admin_001",
-	lang: "en",
+	lang: UsersLangOptions["en"],
 	name: "Admin User",
 	token: "mock_admin_token",
 	updated: "2025-01-01T00:00:00Z",
@@ -40,7 +40,7 @@ export const regularUser: UserFixture = {
 	email: "user@example.test",
 	emailVisibility: true,
 	id: "user_regular_001",
-	lang: "en",
+	lang: UsersLangOptions["en"],
 	name: "Regular User",
 	token: "mock_user_token",
 	updated: "2025-01-02T00:00:00Z",
@@ -55,7 +55,7 @@ export const unverifiedUser: UserFixture = {
 	email: "unverified@example.test",
 	emailVisibility: false,
 	id: "user_unverified_001",
-	lang: "en",
+	lang: UsersLangOptions["en"],
 	name: "Unverified User",
 	token: "mock_unverified_token",
 	updated: "2025-01-03T00:00:00Z",

@@ -194,7 +194,7 @@ describe.skipIf(!process.env.MAILPIT_API)("src/lib/server/mail", () => {
 			subject: txSubject,
 		};
 
-		await transactionalMail(payload as unknown as Record<string, string>);
+		await transactionalMail(payload);
 
 		// allow delivery to Mailpit
 		await sleep(500);
@@ -257,7 +257,7 @@ describe.skipIf(!process.env.MAILPIT_API)("src/lib/server/mail", () => {
 			subject: adminSubject,
 		};
 
-		await adminMail(payload as unknown as Record<string, string>, fakeApi);
+		await adminMail(payload, fakeApi);
 
 		// allow delivery to Mailpit
 		await sleep(500);
