@@ -8,7 +8,7 @@
   import { superForm, type SuperValidated } from 'sveltekit-superforms';
 
   import { dev } from '$app/environment';
-  import { goto } from '$app/navigation';
+  import { goto, resolve } from '$app/navigation';
   import Loading from '$lib/components/global/loading.svelte';
   import * as Alert from '$lib/components/ui/alert';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
@@ -45,6 +45,7 @@
     async onUpdate({ result }) {
       if (result.type === 'success') {
         toast.success(m.deleteSuccess());
+        await resolve('/');
         await goto('/');
       } else {
         if (!isEmpty(result.data?.form?.errors)) log.error('form errors', result.data.form.errors);

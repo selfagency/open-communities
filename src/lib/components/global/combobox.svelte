@@ -64,11 +64,11 @@
   /* endregion methods */
 
   /* region lifecycle */
-	onMount(() => {
-		tick().then(() => {
-			commandsInitialized = true;
-		});
-	});
+  onMount(() => {
+    tick().then(() => {
+      commandsInitialized = true;
+    });
+  });
   /* endregion lifecycle */
 
   /* region reactivity */

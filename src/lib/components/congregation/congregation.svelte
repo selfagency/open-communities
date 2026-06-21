@@ -21,7 +21,7 @@
     StatesRecord as State
   } from '$lib/pocketbase.d';
 
-  import { goto } from '$app/navigation';
+  import { goto, resolve } from '$app/navigation';
   import { page } from '$app/state';
   import { Badge } from '$lib/components/ui/badge';
   import * as Dialog from '$lib/components/ui/dialog';
@@ -136,7 +136,9 @@
                 <Tooltip.Trigger
                   class="button ghost h-8 px-2 py-0"
                   onclick={async () => {
-                    await goto(`/edit?id=${congregation.id}`);
+                    const url = `/edit?id=${congregation.id}`;
+                    await resolve(url);
+                    await goto(url);
                   }}>
                   <EditIcon size="16" class="text-slate-500 rtl:mx-1" />
                   <span class="sr-only">{m.edit()}</span>

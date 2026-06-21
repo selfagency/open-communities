@@ -34,6 +34,7 @@ This plan adds [Mock Service Worker (MSW) v2](https://mswjs.io/docs) as the unif
 - The same handler definitions can be reused across Vitest unit tests, Vitest browser-mode tests, Storybook (if added later), and local development.
 
 **Architecture:**
+
 - **`src/mocks/handlers/`** — declarative handler files grouped by domain (PocketBase collections, captcha, PostHog, mailpit, etc.). One source of truth for all mocked network behavior.
 - **`src/mocks/node.ts`** — `setupServer(...handlers)` for Vitest Node-environment tests (server-route tests, lib tests).
 - **`src/mocks/browser.ts`** — `setupWorker(...handlers)` for Vitest browser-mode tests and dev-mode mocking (optional).
@@ -54,45 +55,45 @@ A complete inventory of mocking in the current codebase:
 
 #### Global mocks (in `src/test/setupTest.ts`)
 
-| Mock | Lines | What it replaces | Why | Problem |
-|---|---|---|---|---|
-| `Element.animate` polyfill | 19–31 | Web Animations API in jsdom | jsdom doesn't implement `animate()` | Fine — keep, but irrelevant to MSW |
-| `URL.createObjectURL` polyfill | 37–61 | Blob URL creation in jsdom | jsdom lacks `createObjectURL` | Fine — keep |
-| `document`/`body` mock | 67–77 | DOM for non-jsdom envs | Defensive fallback | Fine — keep |
-| `vi.mock('$app/navigation')` | 80–86 | `goto`, `invalidate`, `invalidateAll`, `afterNavigate`, `beforeNavigate` | SvelteKit runtime not available in Vitest | **Remove with MSW + `@sveltejs/kit/vitest` plugin** |
-| `vi.mock('cookie')` | 89–104 | `cookie.parse` | Server modules import `cookie` package | **Keep** — `cookie` is a real package, not HTTP. Could be replaced by MSW intercepting the cookie parsing, but that's overkill. |
-| `vi.mock('nodemailer')` | 109–113 | `createTransport`, `sendMail` | nodemailer pulls in Node streams, doesn't work in jsdom | **Replace with MSW** — mock the SMTP at the network level, OR keep the module mock (nodemailer doesn't speak HTTP). See §3.5. |
-| `vi.mock('$app/environment')` | 116–119 | `browser`, `dev` | SvelteKit runtime | **Remove with `@sveltejs/kit/vitest` plugin** |
-| `vi.mock('$app/state')` | 124–171 | `page` store | SvelteKit runtime | **Remove with `@sveltejs/kit/vitest` plugin** |
-| `vi.mock('svelte-copy')` | 174–176 | `copyText` | Browser-only API | Keep (not HTTP) |
-| `vi.mock('svelte-sonner')` | 178–183 | `toast` | Browser-side effects | Keep (not HTTP) |
-| `vi.mock('$lib/paraglide/messages')` | 203–214 | `m` translation function | Generated module not available before build | Keep (not HTTP) |
-| `vi.mock('$lib/components/ui/sheet')` | 217 | UI component stubs | Complex bits-ui components hard to render in jsdom | Keep (not HTTP) |
-| `vi.mock('$lib/assets/*.svg?component')` | 220–251 | SVG imports | Vite asset imports not resolved in Vitest | Keep (not HTTP) |
+| Mock                                     | Lines   | What it replaces                                                         | Why                                                     | Problem                                                                                                                         |
+| ---------------------------------------- | ------- | ------------------------------------------------------------------------ | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `Element.animate` polyfill               | 19–31   | Web Animations API in jsdom                                              | jsdom doesn't implement `animate()`                     | Fine — keep, but irrelevant to MSW                                                                                              |
+| `URL.createObjectURL` polyfill           | 37–61   | Blob URL creation in jsdom                                               | jsdom lacks `createObjectURL`                           | Fine — keep                                                                                                                     |
+| `document`/`body` mock                   | 67–77   | DOM for non-jsdom envs                                                   | Defensive fallback                                      | Fine — keep                                                                                                                     |
+| `vi.mock('$app/navigation')`             | 80–86   | `goto`, `invalidate`, `invalidateAll`, `afterNavigate`, `beforeNavigate` | SvelteKit runtime not available in Vitest               | **Remove with MSW + `@sveltejs/kit/vitest` plugin**                                                                             |
+| `vi.mock('cookie')`                      | 89–104  | `cookie.parse`                                                           | Server modules import `cookie` package                  | **Keep** — `cookie` is a real package, not HTTP. Could be replaced by MSW intercepting the cookie parsing, but that's overkill. |
+| `vi.mock('nodemailer')`                  | 109–113 | `createTransport`, `sendMail`                                            | nodemailer pulls in Node streams, doesn't work in jsdom | **Replace with MSW** — mock the SMTP at the network level, OR keep the module mock (nodemailer doesn't speak HTTP). See §3.5.   |
+| `vi.mock('$app/environment')`            | 116–119 | `browser`, `dev`                                                         | SvelteKit runtime                                       | **Remove with `@sveltejs/kit/vitest` plugin**                                                                                   |
+| `vi.mock('$app/state')`                  | 124–171 | `page` store                                                             | SvelteKit runtime                                       | **Remove with `@sveltejs/kit/vitest` plugin**                                                                                   |
+| `vi.mock('svelte-copy')`                 | 174–176 | `copyText`                                                               | Browser-only API                                        | Keep (not HTTP)                                                                                                                 |
+| `vi.mock('svelte-sonner')`               | 178–183 | `toast`                                                                  | Browser-side effects                                    | Keep (not HTTP)                                                                                                                 |
+| `vi.mock('$lib/paraglide/messages')`     | 203–214 | `m` translation function                                                 | Generated module not available before build             | Keep (not HTTP)                                                                                                                 |
+| `vi.mock('$lib/components/ui/sheet')`    | 217     | UI component stubs                                                       | Complex bits-ui components hard to render in jsdom      | Keep (not HTTP)                                                                                                                 |
+| `vi.mock('$lib/assets/*.svg?component')` | 220–251 | SVG imports                                                              | Vite asset imports not resolved in Vitest               | Keep (not HTTP)                                                                                                                 |
 
 #### Per-test-file mocks
 
-| File | Mock | Target | Problem |
-|---|---|---|---|
-| `src/lib/api.test.ts:5-24` | `vi.mock('pocketbase')` | The entire PocketBase SDK | Replaces PB with a hand-built class that has `authStore`, `collection()`. Each test then pokes the mock to return specific values. **Doesn't exercise real PB filter syntax, real auth refresh, real batch.** |
-| `src/lib/api.test.ts:33` | `vi.mock('$env/dynamic/public')` | Env vars | Fine — env isn't HTTP. But could be replaced with `process.env` setup. |
-| `src/lib/server/api.test.ts` | `vi.mock('pocketbase')`, `vi.mock('./logger')`, `vi.mock('@sveltejs/kit')` | PB, logger, `error()` | Same PB-mock problem. Mocking `@sveltejs/kit`'s `error()` to return a plain object bypasses the real throw semantics. |
-| `src/lib/server/mail.test.ts:15` | `vi.mock('$lib/assets/emailTemplate.html?raw')` | Email template asset | Fine — asset import. |
-| `src/lib/stores.test.ts:4,20,28` | `vi.mock('@nanostores/persistent')`, `vi.mock('radashi')`, `vi.mock('$app/state')` | Persistent store, radashi, SvelteKit | Mix of legitimate and over-mocked. `$app/state` should use the real SvelteKit Vitest plugin. |
-| `src/lib/signup.test.ts:17,28,33,40,45,51` | Mocks `sveltekit-superforms`, `svelte-sonner`, `$lib/paraglide/messages`, `$lib/stores`, `$lib/utils`, `radashi` | Six modules | The `sveltekit-superforms` mock is the most damaging — it replaces `superValidate` with a no-op, so the signup-form validation pipeline is never tested. |
-| `src/lib/components/login/verify.test.ts:5` | `vi.mock('wait-for-the-element')` | Polling utility | Fine — not HTTP. |
-| `src/lib/components/search/congregations.test.ts:9,46,49` | `vi.mock('radashi')`, `vi.mock('$lib/search')`, `vi.mock('$lib/location')` | Search and Location classes | Mocking the classes under test defeats the purpose. |
-| `src/lib/components/search/map.test.ts:5` | `vi.mock('svelte-maplibre')` | MapLibre components | WebGL not available in jsdom. Keep — but consider Vitest browser mode. |
-| `src/test/server/*.test.ts` (6 files) | `vi.mock('sveltekit-superforms')` | `superValidate`, `setError` | **Most damaging pattern.** Every server-route test mocks `sveltekit-superforms`, so the real validation pipeline — where the captcha-bypass bug lives — is never tested. |
+| File                                                      | Mock                                                                                                             | Target                               | Problem                                                                                                                                                                                                       |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/api.test.ts:5-24`                                | `vi.mock('pocketbase')`                                                                                          | The entire PocketBase SDK            | Replaces PB with a hand-built class that has `authStore`, `collection()`. Each test then pokes the mock to return specific values. **Doesn't exercise real PB filter syntax, real auth refresh, real batch.** |
+| `src/lib/api.test.ts:33`                                  | `vi.mock('$env/dynamic/public')`                                                                                 | Env vars                             | Fine — env isn't HTTP. But could be replaced with `process.env` setup.                                                                                                                                        |
+| `src/lib/server/api.test.ts`                              | `vi.mock('pocketbase')`, `vi.mock('./logger')`, `vi.mock('@sveltejs/kit')`                                       | PB, logger, `error()`                | Same PB-mock problem. Mocking `@sveltejs/kit`'s `error()` to return a plain object bypasses the real throw semantics.                                                                                         |
+| `src/lib/server/mail.test.ts:15`                          | `vi.mock('$lib/assets/emailTemplate.html?raw')`                                                                  | Email template asset                 | Fine — asset import.                                                                                                                                                                                          |
+| `src/lib/stores.test.ts:4,20,28`                          | `vi.mock('@nanostores/persistent')`, `vi.mock('radashi')`, `vi.mock('$app/state')`                               | Persistent store, radashi, SvelteKit | Mix of legitimate and over-mocked. `$app/state` should use the real SvelteKit Vitest plugin.                                                                                                                  |
+| `src/lib/signup.test.ts:17,28,33,40,45,51`                | Mocks `sveltekit-superforms`, `svelte-sonner`, `$lib/paraglide/messages`, `$lib/stores`, `$lib/utils`, `radashi` | Six modules                          | The `sveltekit-superforms` mock is the most damaging — it replaces `superValidate` with a no-op, so the signup-form validation pipeline is never tested.                                                      |
+| `src/lib/components/login/verify.test.ts:5`               | `vi.mock('wait-for-the-element')`                                                                                | Polling utility                      | Fine — not HTTP.                                                                                                                                                                                              |
+| `src/lib/components/search/congregations.test.ts:9,46,49` | `vi.mock('radashi')`, `vi.mock('$lib/search')`, `vi.mock('$lib/location')`                                       | Search and Location classes          | Mocking the classes under test defeats the purpose.                                                                                                                                                           |
+| `src/lib/components/search/map.test.ts:5`                 | `vi.mock('svelte-maplibre')`                                                                                     | MapLibre components                  | WebGL not available in jsdom. Keep — but consider Vitest browser mode.                                                                                                                                        |
+| `src/test/server/*.test.ts` (6 files)                     | `vi.mock('sveltekit-superforms')`                                                                                | `superValidate`, `setError`          | **Most damaging pattern.** Every server-route test mocks `sveltekit-superforms`, so the real validation pipeline — where the captcha-bypass bug lives — is never tested.                                      |
 
 #### Stubs and helpers
 
-| File | Purpose |
-|---|---|
-| `src/test/testUtils.ts` | `createMockRequestEvent`, `createMockServerLoadEvent`, `mockSveltekitSuperforms`, `makeMockFormProps`. These hand-build SvelteKit `RequestEvent` objects and `superForm` returns. |
-| `src/test/stubs/` | `body-scroll-lock.svelte.js`, `fake-search.ts`, `fake-location.ts`, `formsnap.js`, `sveltekit-superforms.js`, `bits-ui.js`, `primitives/*.svelte`, `components/ui/*.svelte` — full stub implementations of UI libraries. |
-| `src/test/mocks/` | `$env/dynamic/{private,public}.js`, `$env/static/{private,public}.js`, `$app/{navigation,environment,index,stores}.js`, `$lib_server_logger.js`, `sveltekit-superforms.js`, `assets/*` — module-level mocks for SvelteKit runtime and assets. |
-| `src/test/components/*.svelte` | Host components for testing segments (e.g., `CongregationHost.svelte` wraps the congregation segment with test-controlled props). |
+| File                           | Purpose                                                                                                                                                                                                                                       |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/test/testUtils.ts`        | `createMockRequestEvent`, `createMockServerLoadEvent`, `mockSveltekitSuperforms`, `makeMockFormProps`. These hand-build SvelteKit `RequestEvent` objects and `superForm` returns.                                                             |
+| `src/test/stubs/`              | `body-scroll-lock.svelte.js`, `fake-search.ts`, `fake-location.ts`, `formsnap.js`, `sveltekit-superforms.js`, `bits-ui.js`, `primitives/*.svelte`, `components/ui/*.svelte` — full stub implementations of UI libraries.                      |
+| `src/test/mocks/`              | `$env/dynamic/{private,public}.js`, `$env/static/{private,public}.js`, `$app/{navigation,environment,index,stores}.js`, `$lib_server_logger.js`, `sveltekit-superforms.js`, `assets/*` — module-level mocks for SvelteKit runtime and assets. |
+| `src/test/components/*.svelte` | Host components for testing segments (e.g., `CongregationHost.svelte` wraps the congregation segment with test-controlled props).                                                                                                             |
 
 ### 1.2 What MSW Replaces vs. Keeps
 
@@ -121,30 +122,30 @@ To mock PocketBase with MSW, we need to know the exact HTTP surface the PocketBa
 
 **Endpoints used by this codebase (verified by grepping `api.collection(...)` calls):**
 
-| Method & Path | SDK Method | Used In | Purpose |
-|---|---|---|---|
-| `GET /api/collections/{collection}/records?filter=...&expand=...` | `getFullList`, `getList` | `+layout.server.ts` (countries), `+page.server.ts` (congregations), `contact/+page.server.ts` (congregations), `location.ts` (states, cities) | List records |
-| `GET /api/collections/{collection}/records/{id}` | `getOne` | `edit/+page.server.ts` (congregation), `mail.ts` (congregationMeta for email body) | Single record |
-| `GET /api/collections/{collection}/records?filter=...` (first page, 1 item) | `getFirstListItem` | `+page.server.ts` (pages by slug), `edit/+page.server.ts` (congregation by id), `login/+page.server.ts` (user by email) | Single record by filter |
-| `POST /api/collections/{collection}/records` | `create` | `add/+page.server.ts` (congregation + children), `login/+page.server.ts` (signup) | Create record |
-| `PATCH /api/collections/{collection}/records/{id}` | `update` | `edit/+page.server.ts` (congregation + children), `login/+page.server.ts` (profile), `user/lang/+server.ts` | Update record |
-| `DELETE /api/collections/{collection}/records/{id}` | `delete` | `edit/+page.server.ts` (delete action, children) | Delete record |
-| `POST /api/collections/users/auth-with-password` | `authWithPassword` | `login/+page.server.ts` | Login |
-| `POST /api/collections/users/auth-refresh` | `authRefresh` | `hooks.server.ts` (every authenticated request!), `api.ts` (authenticate) | Refresh auth token |
-| `POST /api/collections/users/request-password-reset` | `requestPasswordReset` | `login/+page.server.ts` | Request reset |
-| `POST /api/collections/users/confirm-password-reset` | `confirmPasswordReset` | `login/+page.server.ts` | Confirm reset |
-| `POST /api/collections/users/request-verification` | `requestVerification` | `login/+page.server.ts` | Request email verification |
-| `POST /api/collections/users/confirm-verification` | `confirmVerification` | `login/+page.server.ts` | Confirm email |
-| `POST /api/batch` | `createBatch().send()` | `add/+page.server.ts`, `edit/+page.server.ts` | Batch operations |
+| Method & Path                                                               | SDK Method               | Used In                                                                                                                                       | Purpose                    |
+| --------------------------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `GET /api/collections/{collection}/records?filter=...&expand=...`           | `getFullList`, `getList` | `+layout.server.ts` (countries), `+page.server.ts` (congregations), `contact/+page.server.ts` (congregations), `location.ts` (states, cities) | List records               |
+| `GET /api/collections/{collection}/records/{id}`                            | `getOne`                 | `edit/+page.server.ts` (congregation), `mail.ts` (congregationMeta for email body)                                                            | Single record              |
+| `GET /api/collections/{collection}/records?filter=...` (first page, 1 item) | `getFirstListItem`       | `+page.server.ts` (pages by slug), `edit/+page.server.ts` (congregation by id), `login/+page.server.ts` (user by email)                       | Single record by filter    |
+| `POST /api/collections/{collection}/records`                                | `create`                 | `add/+page.server.ts` (congregation + children), `login/+page.server.ts` (signup)                                                             | Create record              |
+| `PATCH /api/collections/{collection}/records/{id}`                          | `update`                 | `edit/+page.server.ts` (congregation + children), `login/+page.server.ts` (profile), `user/lang/+server.ts`                                   | Update record              |
+| `DELETE /api/collections/{collection}/records/{id}`                         | `delete`                 | `edit/+page.server.ts` (delete action, children)                                                                                              | Delete record              |
+| `POST /api/collections/users/auth-with-password`                            | `authWithPassword`       | `login/+page.server.ts`                                                                                                                       | Login                      |
+| `POST /api/collections/users/auth-refresh`                                  | `authRefresh`            | `hooks.server.ts` (every authenticated request!), `api.ts` (authenticate)                                                                     | Refresh auth token         |
+| `POST /api/collections/users/request-password-reset`                        | `requestPasswordReset`   | `login/+page.server.ts`                                                                                                                       | Request reset              |
+| `POST /api/collections/users/confirm-password-reset`                        | `confirmPasswordReset`   | `login/+page.server.ts`                                                                                                                       | Confirm reset              |
+| `POST /api/collections/users/request-verification`                          | `requestVerification`    | `login/+page.server.ts`                                                                                                                       | Request email verification |
+| `POST /api/collections/users/confirm-verification`                          | `confirmVerification`    | `login/+page.server.ts`                                                                                                                       | Confirm email              |
+| `POST /api/batch`                                                           | `createBatch().send()`   | `add/+page.server.ts`, `edit/+page.server.ts`                                                                                                 | Batch operations           |
 
 **Other HTTP surfaces to mock:**
 
-| Service | Endpoint | Used In |
-|---|---|---|
-| Cap (captcha) | `POST {PUBLIC_CAPTCHA_ENDPOINT}/{siteKey}/siteverify` | `src/lib/server/utils.ts:27` |
-| PostHog | `POST {PUBLIC_POSTHOG_HOST}/capture/` (and `/decide/`, `/e/`) | `src/lib/server/posthog.ts`, `src/lib/posthog.ts` |
-| public-ip | `GET https://discovery.googleapis.com/v1/apis/...` (DNS-over-HTTPS via OpenDNS/Google) | `src/hooks.server.ts:33` |
-| Mailpit (test-only) | `GET/DELETE http://localhost:8025/api/v1/messages` | `src/lib/server/mail.test.ts` (currently `describe.skip`) |
+| Service             | Endpoint                                                                               | Used In                                                   |
+| ------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Cap (captcha)       | `POST {PUBLIC_CAPTCHA_ENDPOINT}/{siteKey}/siteverify`                                  | `src/lib/server/utils.ts:27`                              |
+| PostHog             | `POST {PUBLIC_POSTHOG_HOST}/capture/` (and `/decide/`, `/e/`)                          | `src/lib/server/posthog.ts`, `src/lib/posthog.ts`         |
+| public-ip           | `GET https://discovery.googleapis.com/v1/apis/...` (DNS-over-HTTPS via OpenDNS/Google) | `src/hooks.server.ts:33`                                  |
+| Mailpit (test-only) | `GET/DELETE http://localhost:8025/api/v1/messages`                                     | `src/lib/server/mail.test.ts` (currently `describe.skip`) |
 
 ---
 
@@ -231,17 +232,14 @@ export const congregationHandlers = [
   http.get(`${PB_BASE}/api/collections/congregationMeta/records/:id`, ({ params }) => {
     const cong = congregations.find((c) => c.id === params.id);
     if (!cong) {
-      return HttpResponse.json(
-        { code: 404, message: "The resource wasn't found.", data: {} },
-        { status: 404 }
-      );
+      return HttpResponse.json({ code: 404, message: "The resource wasn't found.", data: {} }, { status: 404 });
     }
     return HttpResponse.json(cong);
   }),
 
   // POST /api/collections/congregations/records — create
   http.post(`${PB_BASE}/api/collections/congregations/records`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as Record<string, unknown>;
     const newCong = {
       id: 'rec_' + Math.random().toString(36).slice(2, 17),
       created: new Date().toISOString(),
@@ -258,12 +256,9 @@ export const congregationHandlers = [
   http.patch(`${PB_BASE}/api/collections/congregations/records/:id`, async ({ params, request }) => {
     const idx = congregations.findIndex((c) => c.id === params.id);
     if (idx === -1) {
-      return HttpResponse.json(
-        { code: 404, message: "The resource wasn't found.", data: {} },
-        { status: 404 }
-      );
+      return HttpResponse.json({ code: 404, message: "The resource wasn't found.", data: {} }, { status: 404 });
     }
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as Record<string, unknown>;
     congregations[idx] = { ...congregations[idx], ...body, updated: new Date().toISOString() };
     return HttpResponse.json(congregations[idx]);
   }),
@@ -272,10 +267,7 @@ export const congregationHandlers = [
   http.delete(`${PB_BASE}/api/collections/congregations/records/:id`, ({ params }) => {
     const idx = congregations.findIndex((c) => c.id === params.id);
     if (idx === -1) {
-      return HttpResponse.json(
-        { code: 404, message: "The resource wasn't found.", data: {} },
-        { status: 404 }
-      );
+      return HttpResponse.json({ code: 404, message: "The resource wasn't found.", data: {} }, { status: 404 });
     }
     congregations.splice(idx, 1);
     return HttpResponse.json({ acknowledge: true });
@@ -346,13 +338,15 @@ import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { server } from '../mocks/node';
 
 // Start MSW server before all tests
-beforeAll(() => server.listen({
-  onUnhandledRequest: (req) => {
-    // In tests, unhandled requests are errors — forces every test to mock what it uses
-    console.error('Unhandled request:', req.method, req.url);
-    throw new Error(`Unhandled request: ${req.method} ${req.url}`);
-  }
-}));
+beforeAll(() =>
+  server.listen({
+    onUnhandledRequest: (req) => {
+      // In tests, unhandled requests are errors — forces every test to mock what it uses
+      console.error('Unhandled request:', req.method, req.url);
+      throw new Error(`Unhandled request: ${req.method} ${req.url}`);
+    }
+  })
+);
 
 // Reset handlers after each test for isolation
 afterEach(() => {
@@ -400,11 +394,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [
-    sveltekit(),  // This now includes the Vitest plugin in SvelteKit 2.5+
+    sveltekit() // This now includes the Vitest plugin in SvelteKit 2.5+
     // ...
   ],
   test: {
-    setupFiles: ['./src/test/setupTest.ts'],
+    setupFiles: ['./src/test/setupTest.ts']
     // ...
   }
 });
@@ -419,6 +413,7 @@ This removes ~80 lines of hand-rolled mocks from `setupTest.ts` and ensures the 
 ### 3.1 Why MSW v2 (not v1)
 
 MSW v2 is the current major version (released 2023). v1 is in maintenance. Per the [MSW migration guide](https://mswjs.io/docs/migrations/1.x-to-2.x), v2 has:
+
 - Standard `Request`/`Response` objects (no more custom `req`/`res` shapes).
 - Better TypeScript support.
 - Cleaner handler API (`http.get(url, resolver)` instead of `rest.get(url, resolver)`).
@@ -441,17 +436,20 @@ For dev mode (`worker.start()`), use `'warn'` instead — developers don't want 
 The current approach mocks the PocketBase SDK at the module level (`vi.mock('pocketbase')`). MSW mocks at the HTTP level — the real PocketBase SDK runs, makes real HTTP calls, and MSW intercepts them.
 
 **Advantages of HTTP-level mocking:**
+
 - Real PB SDK behavior is exercised: filter string parsing, auth refresh, batch operations, error handling, expand syntax.
 - The filter-injection bug (S-5 from code review) becomes visible — a test that submits a malformed filter can assert the response.
 - Tests don't need to be updated when PB SDK internals change (e.g., if PB changes how it paginates, the mock handler changes, not every test).
 
 **Disadvantages:**
+
 - The handler files must replicate the PB API surface accurately. If PB returns a field the handler doesn't, the test breaks. Mitigation: generate handler stubs from the PB schema (Phase 4).
 - Slightly more setup than a module mock. Worth it for the fidelity.
 
 ### 3.4 Why Handler Files Grouped by Collection
 
 Per MSW best practices, handlers should be grouped by domain, not by HTTP method or by test file. Grouping by PB collection means:
+
 - Adding a new collection (e.g., `osm_places` from the OSM migration) = adding one new handler file.
 - A bug in one collection's mock doesn't affect others.
 - Handlers are reusable across test files — the `congregations` handler is used by every test that touches congregations.
@@ -461,15 +459,18 @@ Per MSW best practices, handlers should be grouped by domain, not by HTTP method
 Nodemailer speaks SMTP, not HTTP. MSW can't intercept SMTP. Three options:
 
 **Option A: Keep the `vi.mock('nodemailer')` module mock.**
+
 - Pros: Simple, already works.
 - Cons: Doesn't test the real `createTransport`/`sendMail` pipeline. The `transporter.verify()` call in `mail.ts` is mocked away.
 
 **Option B: Use Nodemailer's built-in stub transport.**
+
 - `nodemailer.createTransport({ streamTransport: true, jsonTransport: true })` — captures emails in memory without sending.
 - Pros: Tests the real `createTransport`/`sendMail` API. Emails are inspectable.
 - Cons: Requires injection — the production code creates the transport with hardcoded options, so tests can't swap it without refactoring `mail.ts` to accept a transport.
 
 **Option C: Run a real Mailpit instance in CI (already done in e2e).**
+
 - Pros: Truest end-to-end.
 - Cons: Requires Docker in CI for unit tests. Currently `mail.test.ts` is `describe.skip`'d for this reason.
 
@@ -514,7 +515,7 @@ const CAPTCHA_ENDPOINT = 'http://localhost:3001';
 
 export const captchaHandlers = [
   http.post(`${CAPTCHA_ENDPOINT}/:siteKey/siteverify`, async ({ request }) => {
-    const body = await request.json() as { response: string; secret: string };
+    const body = (await request.json()) as { response: string; secret: string };
     // Default: success. Tests can override with server.use() to return failure.
     return HttpResponse.json({
       success: true,
@@ -543,7 +544,7 @@ export const posthogHandlers = [
   // Decide endpoint (feature flags)
   http.post(`${POSTHOG_HOST}/decide/`, () => HttpResponse.json({ config: {}, featureFlags: {} })),
   // Batch endpoint (browser SDK)
-  http.post(`${POSTHOG_HOST}/e/`, () => HttpResponse.json({ status: 1 })),
+  http.post(`${POSTHOG_HOST}/e/`, () => HttpResponse.json({ status: 1 }))
 ];
 ```
 
@@ -563,6 +564,7 @@ if (dev && browser && url.searchParams.has('mock')) {
 ```
 
 This lets developers:
+
 - Test the UI without spinning up PocketBase.
 - Reproduce bug reports by sharing mock data files.
 - Demo the app without backend dependencies.
@@ -582,56 +584,66 @@ Each phase is a separately reviewable PR. Each phase leaves the test suite in a 
 #### Tasks
 
 0.1 **Install MSW:**
-   ```bash
-   pnpm add -D msw
-   ```
+
+```bash
+pnpm add -D msw
+```
 
 0.2 **Generate the browser worker script:**
-   ```bash
-   pnpm exec msw init static/ --save
-   ```
-   This creates `static/mockServiceWorker.js`, which SvelteKit serves as a static asset. Add it to `.gitignore`? No — it should be committed (it's a generated file that doesn't change often).
+
+```bash
+pnpm exec msw init static/ --save
+```
+
+This creates `static/mockServiceWorker.js`, which SvelteKit serves as a static asset. Add it to `.gitignore`? No — it should be committed (it's a generated file that doesn't change often).
 
 0.3 **Create the directory structure** per §2.1.
 
 0.4 **Write `src/mocks/handlers/index.ts`** as an empty array (no handlers yet):
-   ```typescript
-   export const handlers: never[] = [];
-   ```
+
+```typescript
+export const handlers: never[] = [];
+```
 
 0.5 **Write `src/mocks/node.ts`:**
-   ```typescript
-   import { setupServer } from 'msw/node';
-   import { handlers } from './handlers';
-   export const server = setupServer(...handlers);
-   ```
+
+```typescript
+import { setupServer } from 'msw/node';
+import { handlers } from './handlers';
+export const server = setupServer(...handlers);
+```
 
 0.6 **Write `src/mocks/browser.ts`:**
-   ```typescript
-   import { setupWorker } from 'msw/browser';
-   import { handlers } from './handlers';
-   export const worker = setupWorker(...handlers);
-   ```
+
+```typescript
+import { setupWorker } from 'msw/browser';
+import { handlers } from './handlers';
+export const worker = setupWorker(...handlers);
+```
 
 0.7 **Update `src/test/setupTest.ts`** to start/stop the MSW server:
-   ```typescript
-   import { server } from '../mocks/node';
-   
-   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));  // 'bypass' for now — existing vi.mocks handle everything
-   afterEach(() => server.resetHandlers());
-   afterAll(() => server.close());
-   ```
-   Note: `onUnhandledRequest: 'bypass'` for Phase 0 — existing `vi.mock`s prevent real HTTP calls, so MSW seeing zero requests is expected. Phase 1+ will tighten this.
+
+```typescript
+import { server } from '../mocks/node';
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' })); // 'bypass' for now — existing vi.mocks handle everything
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+```
+
+Note: `onUnhandledRequest: 'bypass'` for Phase 0 — existing `vi.mock`s prevent real HTTP calls, so MSW seeing zero requests is expected. Phase 1+ will tighten this.
 
 0.8 **Verify the test suite still runs** (or fails the same way it did before, due to the `@testing-library/svelte` issue — MSW shouldn't make it worse).
 
 #### Deliverables
+
 - MSW installed.
 - Directory structure in place.
 - Empty handler index.
 - Server wired into setup with `bypass` mode.
 
 #### Rollback
+
 `pnpm remove msw`. Delete `src/mocks/`. Revert `setupTest.ts`.
 
 ---
@@ -643,65 +655,74 @@ Each phase is a separately reviewable PR. Each phase leaves the test suite in a 
 #### Tasks
 
 1.1 **Write fixture data** in `src/mocks/data/`:
-   - `users.ts`: 3 user fixtures (admin, regular user, unverified).
-   - `congregations.ts`: 5 congregation fixtures (visible, hidden, owned by user A, owned by user B, online-only).
-   - `pages.ts`: 2 page fixtures (home-en, add-en).
-   - `locations.ts`: 3 countries, 5 states, 10 cities (small subset for testing).
 
-1.2 **Write `src/mocks/handlers/pocketbase/users.ts`** — handlers for:
-   - `POST /api/collections/users/auth-with-password` — returns a token + user record (or 401).
-   - `POST /api/collections/users/auth-refresh` — returns a new token.
-   - `POST /api/collections/users/request-password-reset` — returns 200.
-   - `POST /api/collections/users/confirm-password-reset` — returns 200 (or 400 on bad token).
-   - `POST /api/collections/users/request-verification` — returns 200.
-   - `POST /api/collections/users/confirm-verification` — returns 200 (or 400).
-   - `POST /api/collections/users/records` — create user (signup).
-   - `PATCH /api/collections/users/records/:id` — update user (e.g., lang).
-   - `GET /api/collections/users/records?filter=...` — list users (for transfer action).
+- `users.ts`: 3 user fixtures (admin, regular user, unverified).
+- `congregations.ts`: 5 congregation fixtures (visible, hidden, owned by user A, owned by user B, online-only).
+- `pages.ts`: 2 page fixtures (home-en, add-en).
+- `locations.ts`: 3 countries, 5 states, 10 cities (small subset for testing).
 
-1.3 **Write `src/mocks/handlers/pocketbase/congregations.ts`** — handlers for:
-   - `GET /api/collections/congregationMeta/records` — list (with filter support).
-   - `GET /api/collections/congregationMeta/records/:id` — single.
-   - `POST /api/collections/congregations/records` — create.
-   - `PATCH /api/collections/congregations/records/:id` — update.
-   - `DELETE /api/collections/congregations/records/:id` — delete.
+  1.2 **Write `src/mocks/handlers/pocketbase/users.ts`** — handlers for:
 
-1.4 **Write `src/mocks/handlers/pocketbase/pages.ts`** — handlers for `GET /api/collections/pages/records?filter=slug=...`.
+- `POST /api/collections/users/auth-with-password` — returns a token + user record (or 401).
+- `POST /api/collections/users/auth-refresh` — returns a new token.
+- `POST /api/collections/users/request-password-reset` — returns 200.
+- `POST /api/collections/users/confirm-password-reset` — returns 200 (or 400 on bad token).
+- `POST /api/collections/users/request-verification` — returns 200.
+- `POST /api/collections/users/confirm-verification` — returns 200 (or 400).
+- `POST /api/collections/users/records` — create user (signup).
+- `PATCH /api/collections/users/records/:id` — update user (e.g., lang).
+- `GET /api/collections/users/records?filter=...` — list users (for transfer action).
 
-1.5 **Write `src/mocks/handlers/pocketbase/locations.ts`** — handlers for countries/states/cities list endpoints.
+  1.3 **Write `src/mocks/handlers/pocketbase/congregations.ts`** — handlers for:
 
-1.6 **Write `src/mocks/handlers/pocketbase/batch.ts`** — handler for `POST /api/batch`. This is critical: the batch endpoint receives an array of sub-requests, executes them in order, and returns an array of responses. The handler must parse the batch body, route each sub-request to the appropriate handler, and aggregate responses. See [PocketBase batch docs](https://pocketbase.io/docs/api-records#batch-create-update-upsert-delete).
+- `GET /api/collections/congregationMeta/records` — list (with filter support).
+- `GET /api/collections/congregationMeta/records/:id` — single.
+- `POST /api/collections/congregations/records` — create.
+- `PATCH /api/collections/congregations/records/:id` — update.
+- `DELETE /api/collections/congregations/records/:id` — delete.
 
-1.7 **Tighten `onUnhandledRequest`** to `'warn'` in setup. Existing `vi.mock`s still handle non-PB modules.
+  1.4 **Write `src/mocks/handlers/pocketbase/pages.ts`** — handlers for `GET /api/collections/pages/records?filter=slug=...`.
 
-1.8 **Migrate `src/test/server/routes.server.test.ts`** as the first test file:
-   - Remove `makeApiStub()`.
-   - Remove `vi.mock('sveltekit-superforms')` for the parts that touch PB (keep for form validation if needed in Phase 2).
-   - The test's `load` call now hits the real `api.collection('congregationMeta').getFullList()`, which MSW intercepts.
-   - Assert the returned congregations match the fixtures.
+  1.5 **Write `src/mocks/handlers/pocketbase/locations.ts`** — handlers for countries/states/cities list endpoints.
 
-1.9 **Migrate the rest of `src/test/server/*.test.ts`** one by one:
-   - `add.page.server.test.ts` — submit action now creates a real PB record via MSW.
-   - `edit.page.server.test.ts` — load + submit + delete + transfer all via MSW.
-   - `login.page.server.test.ts` — auth flows via MSW.
-   - `contact.page.server.test.ts` — congregation list via MSW.
-   - `layout.server.test.ts` — countries via MSW.
-   - `routes.page.server.test.ts` — pages via MSW.
+  1.6 **Write `src/mocks/handlers/pocketbase/batch.ts`** — handler for `POST /api/batch`. This is critical: the batch endpoint receives an array of sub-requests, executes them in order, and returns an array of responses. The handler must parse the batch body, route each sub-request to the appropriate handler, and aggregate responses. See [PocketBase batch docs](https://pocketbase.io/docs/api-records#batch-create-update-upsert-delete).
 
-1.10 **Migrate `src/lib/api.test.ts` and `src/lib/server/api.test.ts`:**
-   - Remove `vi.mock('pocketbase')`.
-   - The `authenticate`, `handleError`, `loadUser`, `cleanResponse`, `expand` functions now run against MSW-intercepted HTTP.
+  1.7 **Tighten `onUnhandledRequest`** to `'warn'` in setup. Existing `vi.mock`s still handle non-PB modules.
+
+  1.8 **Migrate `src/test/server/routes.server.test.ts`** as the first test file:
+
+- Remove `makeApiStub()`.
+- Remove `vi.mock('sveltekit-superforms')` for the parts that touch PB (keep for form validation if needed in Phase 2).
+- The test's `load` call now hits the real `api.collection('congregationMeta').getFullList()`, which MSW intercepts.
+- Assert the returned congregations match the fixtures.
+
+  1.9 **Migrate the rest of `src/test/server/*.test.ts`** one by one:
+
+- `add.page.server.test.ts` — submit action now creates a real PB record via MSW.
+- `edit.page.server.test.ts` — load + submit + delete + transfer all via MSW.
+- `login.page.server.test.ts` — auth flows via MSW.
+- `contact.page.server.test.ts` — congregation list via MSW.
+- `layout.server.test.ts` — countries via MSW.
+- `routes.page.server.test.ts` — pages via MSW.
+
+  1.10 **Migrate `src/lib/api.test.ts` and `src/lib/server/api.test.ts`:**
+
+- Remove `vi.mock('pocketbase')`.
+- The `authenticate`, `handleError`, `loadUser`, `cleanResponse`, `expand` functions now run against MSW-intercepted HTTP.
 
 #### Deliverables
+
 - PB auth + congregations + pages + locations + batch handlers in place.
 - All 8 server-route test files migrated to MSW.
 - `vi.mock('pocketbase')` removed from the codebase.
 - `makeApiStub()` removed from `testUtils.ts`.
 
 #### Rollback
+
 Revert to `vi.mock('pocketbase')`. The MSW handlers can stay (they're inert if no test uses them).
 
 #### Risk
+
 The batch handler is the most complex piece. PocketBase's batch endpoint has specific request/response shapes. If the handler gets it wrong, every add/edit/delete test breaks. Mitigation: start with a minimal batch handler that supports only the operations used in tests (create, update, delete on the 6 child tables + congregations). Extend as needed.
 
 ---
@@ -719,47 +740,47 @@ The batch handler is the most complex piece. PocketBase's batch endpoint has spe
 2.3 **Write `src/mocks/handlers/public-ip.ts`** per §3.6.
 
 2.4 **Write a test for the captcha-bypass bug (S-1):**
-   ```typescript
-   // src/lib/server/utils.test.ts (NEW)
-   import { describe, it, expect } from 'vitest';
-   import { server } from '../../mocks/node';
-   import { http, HttpResponse } from 'msw';
-   import { validateCaptcha } from './utils';
 
-   describe('validateCaptcha', () => {
-     it('returns true when captcha service says success', async () => {
-       const form = { data: { captcha: 'valid-token' } } as any;
-       const result = await validateCaptcha(form);
-       expect(result).toBe(true);
-     });
+```typescript
+// src/lib/server/utils.test.ts (NEW)
+import { describe, it, expect } from 'vitest';
+import { server } from '../../mocks/node';
+import { http, HttpResponse } from 'msw';
+import { validateCaptcha } from './utils';
 
-     it('returns false when captcha service says failure', async () => {
-       server.use(
-         http.post('http://localhost:3001/:key/siteverify', () =>
-           HttpResponse.json({ success: false })
-         )
-       );
-       const form = { data: { captcha: 'invalid-token' } } as any;
-       const result = await validateCaptcha(form);
-       expect(result).toBe(false);
-     });
+describe('validateCaptcha', () => {
+  it('returns true when captcha service says success', async () => {
+    const form = { data: { captcha: 'valid-token' } } as any;
+    const result = await validateCaptcha(form);
+    expect(result).toBe(true);
+  });
 
-     it('throws when captcha is not configured', async () => {
-       // Override env to empty
-       // ...
-     });
-   });
-   ```
-   This test would have caught S-1 before it shipped.
+  it('returns false when captcha service says failure', async () => {
+    server.use(http.post('http://localhost:3001/:key/siteverify', () => HttpResponse.json({ success: false })));
+    const form = { data: { captcha: 'invalid-token' } } as any;
+    const result = await validateCaptcha(form);
+    expect(result).toBe(false);
+  });
+
+  it('throws when captcha is not configured', async () => {
+    // Override env to empty
+    // ...
+  });
+});
+```
+
+This test would have caught S-1 before it shipped.
 
 2.5 **Tighten `onUnhandledRequest`** to `'error'`. Now every HTTP call must have a handler. Fix any remaining unhandled requests (likely a few PostHog or captcha calls in tests that don't explicitly mock them).
 
 #### Deliverables
+
 - Captcha, PostHog, public-ip handlers.
 - `validateCaptcha` test that would have caught S-1.
 - `onUnhandledRequest: 'error'` enforced.
 
 #### Rollback
+
 Revert to `'warn'`. Keep the handlers (inert if not used).
 
 ---
@@ -775,25 +796,29 @@ Revert to `'warn'`. Keep the handlers (inert if not used).
 3.2 **Update `vite.config.ts`** to use the SvelteKit Vitest plugin (already imported as `sveltekit()` — verify it's enabled for tests).
 
 3.3 **Remove from `setupTest.ts`:**
-   - `vi.mock('$app/navigation')` (lines 80–86)
-   - `vi.mock('$app/environment')` (lines 116–119)
-   - `vi.mock('$app/state')` (lines 124–171)
 
-3.4 **Remove from `src/test/mocks/$app/`** — the entire directory is no longer needed.
+- `vi.mock('$app/navigation')` (lines 80–86)
+- `vi.mock('$app/environment')` (lines 116–119)
+- `vi.mock('$app/state')` (lines 124–171)
 
-3.5 **Run tests, fix failures.** The real SvelteKit runtime behaves slightly differently from the mocks (e.g., `page` store updates are async, `goto` returns a Promise that resolves after navigation). Tests that depended on the mocks' synchronous behavior will need `await tick()` or `await waitFor()`.
+  3.4 **Remove from `src/test/mocks/$app/`** — the entire directory is no longer needed.
 
-3.6 **Update `src/test/testUtils.ts`** — `createMockRequestEvent` and `createMockServerLoadEvent` may still be needed (they construct the event object passed to load/actions), but they should use the real SvelteKit types where possible.
+  3.5 **Run tests, fix failures.** The real SvelteKit runtime behaves slightly differently from the mocks (e.g., `page` store updates are async, `goto` returns a Promise that resolves after navigation). Tests that depended on the mocks' synchronous behavior will need `await tick()` or `await waitFor()`.
+
+  3.6 **Update `src/test/testUtils.ts`** — `createMockRequestEvent` and `createMockServerLoadEvent` may still be needed (they construct the event object passed to load/actions), but they should use the real SvelteKit types where possible.
 
 #### Deliverables
+
 - 3 `vi.mock` calls removed.
 - `src/test/mocks/$app/` directory deleted.
 - Real SvelteKit runtime in tests.
 
 #### Rollback
+
 Re-add the mocks. The SvelteKit plugin can coexist with them (the mocks take precedence).
 
 #### Risk
+
 Tests that depended on the mocks' specific behavior (e.g., the `$app/state` mock's synchronous store updates) may break. Mitigation: run the full suite, fix failures one by one. Most fixes are adding `await tick()` or `await waitFor()`.
 
 ---
@@ -806,41 +831,45 @@ Tests that depended on the mocks' specific behavior (e.g., the `$app/state` mock
 
 4.1 **Audit each component test file** to identify which mocks are HTTP-related (replace with MSW) vs. UI-related (keep).
 
-   | Test file | HTTP-related mocks (→ MSW) | UI mocks (keep) |
-   |---|---|---|
-   | `congregations.test.ts` | `$lib/search` (calls PB), `$lib/location` (calls PB) | `radashi` (partial) |
-   | `map.test.ts` | `svelte-maplibre` (WebGL) | keep |
-   | `location.test.ts` | `$lib/location` | — |
-   | `filters.test.ts` | `$lib/search` | — |
-   | `tile.test.ts` | — | paraglide messages |
-   | `congregation.test.ts` | — | paraglide messages |
-   | `form/*.test.ts` | `sveltekit-superforms` | paraglide, svelte-sonner |
-   | `form/segments/*.test.ts` | `sveltekit-superforms` | paraglide |
-   | `login/*.test.ts` | `sveltekit-superforms` | paraglide, svelte-sonner |
-   | `global/*.test.ts` | `sveltekit-superforms` (contact form) | paraglide, svelte-sonner, svelte-copy |
+| Test file                 | HTTP-related mocks (→ MSW)                           | UI mocks (keep)                       |
+| ------------------------- | ---------------------------------------------------- | ------------------------------------- |
+| `congregations.test.ts`   | `$lib/search` (calls PB), `$lib/location` (calls PB) | `radashi` (partial)                   |
+| `map.test.ts`             | `svelte-maplibre` (WebGL)                            | keep                                  |
+| `location.test.ts`        | `$lib/location`                                      | —                                     |
+| `filters.test.ts`         | `$lib/search`                                        | —                                     |
+| `tile.test.ts`            | —                                                    | paraglide messages                    |
+| `congregation.test.ts`    | —                                                    | paraglide messages                    |
+| `form/*.test.ts`          | `sveltekit-superforms`                               | paraglide, svelte-sonner              |
+| `form/segments/*.test.ts` | `sveltekit-superforms`                               | paraglide                             |
+| `login/*.test.ts`         | `sveltekit-superforms`                               | paraglide, svelte-sonner              |
+| `global/*.test.ts`        | `sveltekit-superforms` (contact form)                | paraglide, svelte-sonner, svelte-copy |
 
 4.2 **For tests that mock `$lib/search` or `$lib/location`:** these classes make PB calls internally. Two options:
-   - **Option A (preferred):** Remove the class mock, let the real class run, MSW intercepts its PB calls. The test provides fixture data via MSW handlers.
-   - **Option B:** Keep the class mock if the test is specifically testing the component's UI, not the class's data flow. Use the existing `FakeSearch` stub.
-   
-   Recommendation: Option A for integration-style component tests, Option B for pure-UI tests.
+
+- **Option A (preferred):** Remove the class mock, let the real class run, MSW intercepts its PB calls. The test provides fixture data via MSW handlers.
+- **Option B:** Keep the class mock if the test is specifically testing the component's UI, not the class's data flow. Use the existing `FakeSearch` stub.
+
+Recommendation: Option A for integration-style component tests, Option B for pure-UI tests.
 
 4.3 **For tests that mock `sveltekit-superforms`:** the `superForm` and `superValidate` functions don't make HTTP calls directly — they process form data. The HTTP call happens when the form is submitted (the SvelteKit action is invoked). For component tests that just render a form and assert UI, the mock is fine. For tests that submit the form and assert the response, MSW should intercept the action's HTTP call (which is the form POST to the SvelteKit server, not directly to PB).
-   
-   SvelteKit form actions are invoked via `POST /?/actionName` (the form's `action` attribute). MSW can intercept these, but it's cleaner to let SvelteKit's `enhance` handle the submission and mock the underlying PB calls.
-   
-   Recommendation: Keep `sveltekit-superforms` mock for pure-UI component tests. For integration tests, use the real `superForm` and let MSW intercept PB calls.
+
+SvelteKit form actions are invoked via `POST /?/actionName` (the form's `action` attribute). MSW can intercept these, but it's cleaner to let SvelteKit's `enhance` handle the submission and mock the underlying PB calls.
+
+Recommendation: Keep `sveltekit-superforms` mock for pure-UI component tests. For integration tests, use the real `superForm` and let MSW intercept PB calls.
 
 4.4 **Migrate component tests one by one**, starting with the simplest (e.g., `tile.test.ts`) and working up to the complex (`congregations.test.ts`).
 
 #### Deliverables
+
 - Component tests use MSW for HTTP, real SvelteKit runtime for navigation/state.
 - Pure-UI mocks (paraglide, svelte-sonner) retained.
 
 #### Rollback
+
 Revert individual test files. MSW handlers stay.
 
 #### Risk
+
 Component tests are the most fragile (jsdom + Svelte 5 + bits-ui). The `@testing-library/svelte` incompatibility (T-1 from code review) may block this phase. Mitigation: fix the `@testing-library/svelte` version first (upgrade to a Svelte 5.41-compatible version), then do this phase.
 
 ---
@@ -852,25 +881,28 @@ Component tests are the most fragile (jsdom + Svelte 5 + bits-ui). The `@testing
 #### Tasks
 
 5.1 **Update `src/routes/+layout.ts`** (or `src/hooks.client.ts`):
-   ```typescript
-   import { dev } from '$app/environment';
-   import { browser } from '$app/environment';
-   
-   if (dev && browser && new URLSearchParams(location.search).has('mock')) {
-     const { worker } = await import('$lib/mocks/browser');
-     await worker.start({ onUnhandledRequest: 'bypass' });
-   }
-   ```
+
+```typescript
+import { dev } from '$app/environment';
+import { browser } from '$app/environment';
+
+if (dev && browser && new URLSearchParams(location.search).has('mock')) {
+  const { worker } = await import('$lib/mocks/browser');
+  await worker.start({ onUnhandledRequest: 'bypass' });
+}
+```
 
 5.2 **Document in README:** "Add `?mock` to the URL to run the app with mocked data. Useful for testing UI changes without a backend."
 
 5.3 **Add a dev-only toggle in the UI** (a small "Mock mode" indicator in the corner).
 
 #### Deliverables
+
 - Dev-mode mocking works via `?mock` query param.
 - README updated.
 
 #### Rollback
+
 Remove the `?mock` block from `+layout.ts`. The worker file can stay in `static/`.
 
 ---
@@ -882,26 +914,30 @@ Remove the `?mock` block from `+layout.ts`. The worker file can stay in `static/
 #### Tasks
 
 6.1 **Write a code generator** (`scripts/generate-msw-handlers.ts`) that:
-   - Reads `pb_schema.json`.
-   - For each collection, generates a handler file with the 5 CRUD endpoints.
-   - Uses the schema's field definitions to generate TypeScript types for the fixture data.
-   - Generates a default fixture (1 record per collection) as a starting point.
 
-6.2 **Wire into `package.json`:**
-   ```json
-   "scripts": {
-     "generate:mocks": "tsx scripts/generate-msw-handlers.ts"
-   }
-   ```
+- Reads `pb_schema.json`.
+- For each collection, generates a handler file with the 5 CRUD endpoints.
+- Uses the schema's field definitions to generate TypeScript types for the fixture data.
+- Generates a default fixture (1 record per collection) as a starting point.
+
+  6.2 **Wire into `package.json`:**
+
+```json
+"scripts": {
+  "generate:mocks": "tsx scripts/generate-msw-handlers.ts"
+}
+```
 
 6.3 **Run after schema changes** (e.g., after the institution expansion plan's Phase 1).
 
 #### Deliverables
+
 - Generator script.
 - `pnpm generate:mocks` command.
 - Generated handler stubs (which developers then customize with fixture data).
 
 #### Rollback
+
 Delete the generated files. Hand-written handlers from earlier phases are unaffected.
 
 ---
@@ -913,6 +949,7 @@ How do we know the MSW migration is correct? The mocks must faithfully represent
 ### 5.1 Contract Tests Against Real PocketBase
 
 In CI, run a separate job that:
+
 1. Spins up a real PocketBase (the e2e workflow already does this).
 2. For each MSW handler, makes the same request to the real PB and to the MSW mock.
 3. Asserts the response shapes match (fields present, types correct).
@@ -935,56 +972,63 @@ With `onUnhandledRequest: 'error'`, any new HTTP call without a handler fails th
 
 ## 6. Risk Register
 
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| MSW handlers drift from real PB API | Medium | Medium (tests pass but don't reflect reality) | Contract tests in CI (§5.1). Regenerate handlers after PB upgrades. |
-| Batch handler is too complex to mock correctly | Medium | High (add/edit/delete tests fail) | Start minimal (only the operations used in tests). Extend incrementally. |
-| `onUnhandledRequest: 'error'` reveals hidden HTTP calls | High | Low (fix each one) | Expected and desirable. Each unhandled request is a test gap. |
-| Component tests still broken due to `@testing-library/svelte` issue | High | Medium (Phase 4 blocked) | Fix `@testing-library/svelte` version first (code review T-1). |
-| MSW worker doesn't load in dev mode (CSP, path issues) | Low | Low (dev-only feature) | Test in dev. Add CSP exception for `mockServiceWorker.js` if needed. |
-| Test suite slower due to HTTP interception overhead | Low | Low | MSW is fast. If measurable, use `onUnhandledRequest: 'bypass'` for tests that don't need MSW. |
-| Developers forget to update handlers when adding new endpoints | Medium | Medium (new endpoint untested) | CI job that checks for unhandled requests in the test suite. |
-| SvelteKit Vitest plugin incompatible with existing config | Low | Medium (Phase 3 blocked) | Test on a branch first. Keep the old mocks as fallback. |
+| Risk                                                                | Likelihood | Impact                                        | Mitigation                                                                                    |
+| ------------------------------------------------------------------- | ---------- | --------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| MSW handlers drift from real PB API                                 | Medium     | Medium (tests pass but don't reflect reality) | Contract tests in CI (§5.1). Regenerate handlers after PB upgrades.                           |
+| Batch handler is too complex to mock correctly                      | Medium     | High (add/edit/delete tests fail)             | Start minimal (only the operations used in tests). Extend incrementally.                      |
+| `onUnhandledRequest: 'error'` reveals hidden HTTP calls             | High       | Low (fix each one)                            | Expected and desirable. Each unhandled request is a test gap.                                 |
+| Component tests still broken due to `@testing-library/svelte` issue | High       | Medium (Phase 4 blocked)                      | Fix `@testing-library/svelte` version first (code review T-1).                                |
+| MSW worker doesn't load in dev mode (CSP, path issues)              | Low        | Low (dev-only feature)                        | Test in dev. Add CSP exception for `mockServiceWorker.js` if needed.                          |
+| Test suite slower due to HTTP interception overhead                 | Low        | Low                                           | MSW is fast. If measurable, use `onUnhandledRequest: 'bypass'` for tests that don't need MSW. |
+| Developers forget to update handlers when adding new endpoints      | Medium     | Medium (new endpoint untested)                | CI job that checks for unhandled requests in the test suite.                                  |
+| SvelteKit Vitest plugin incompatible with existing config           | Low        | Medium (Phase 3 blocked)                      | Test on a branch first. Keep the old mocks as fallback.                                       |
 
 ---
 
 ## 7. Rollback Strategy
 
 ### Phase 0 rollback
+
 `pnpm remove msw`. Delete `src/mocks/`. Revert `setupTest.ts`.
 
 ### Phase 1 rollback
+
 Re-add `vi.mock('pocketbase')` to the migrated test files. Keep the MSW handlers (inert if unused).
 
 ### Phase 2 rollback
+
 Revert `onUnhandledRequest` to `'bypass'`. Keep the captcha/PostHog/public-ip handlers (inert).
 
 ### Phase 3 rollback
+
 Re-add the `$app/*` mocks. The SvelteKit plugin can coexist.
 
 ### Phase 4 rollback
+
 Revert individual test files. MSW handlers stay.
 
 ### Phase 5 rollback
+
 Remove the `?mock` block. Worker file stays.
 
 ### Phase 6 rollback
+
 Delete generated files. Hand-written handlers unaffected.
 
 ---
 
 ## 8. Timeline
 
-| Phase | Duration | Dependency | Can parallelize? |
-|---|---|---|---|
-| Phase 0: Install + infrastructure | 1 day | None | — |
-| Phase 1: PB auth + congregations | 2–3 days | Phase 0 | — |
-| Phase 2: Captcha + PostHog + public-ip | 1–2 days | Phase 1 | Yes (with Phase 3) |
-| Phase 3: Remove SvelteKit runtime mocks | 1–2 days | Phase 0 | Yes (with Phase 2) |
-| Phase 4: Migrate component tests | 2–3 days | Phases 1, 2, 3 + `@testing-library/svelte` fix | — |
-| Phase 5: Dev-mode browser worker | 1 day | Phase 1 | Yes (anytime after Phase 1) |
-| Phase 6: Generate handlers from schema | 1 day | Phase 1 | Yes (anytime after Phase 1) |
-| **Total (Phases 0–4)** | **7–11 days** | | |
+| Phase                                   | Duration      | Dependency                                     | Can parallelize?            |
+| --------------------------------------- | ------------- | ---------------------------------------------- | --------------------------- |
+| Phase 0: Install + infrastructure       | 1 day         | None                                           | —                           |
+| Phase 1: PB auth + congregations        | 2–3 days      | Phase 0                                        | —                           |
+| Phase 2: Captcha + PostHog + public-ip  | 1–2 days      | Phase 1                                        | Yes (with Phase 3)          |
+| Phase 3: Remove SvelteKit runtime mocks | 1–2 days      | Phase 0                                        | Yes (with Phase 2)          |
+| Phase 4: Migrate component tests        | 2–3 days      | Phases 1, 2, 3 + `@testing-library/svelte` fix | —                           |
+| Phase 5: Dev-mode browser worker        | 1 day         | Phase 1                                        | Yes (anytime after Phase 1) |
+| Phase 6: Generate handlers from schema  | 1 day         | Phase 1                                        | Yes (anytime after Phase 1) |
+| **Total (Phases 0–4)**                  | **7–11 days** |                                                |                             |
 
 With one engineer: ~2 weeks. The minimum viable improvement (Phases 0–2) is ~1 week and immediately makes server-route tests exercise real code paths.
 
@@ -1006,16 +1050,13 @@ const PB = 'http://localhost:8090';
 export const userHandlers = [
   // Login
   http.post(`${PB}/api/collections/users/auth-with-password`, async ({ request }) => {
-    const body = await request.json() as { identity: string; password: string };
+    const body = (await request.json()) as { identity: string; password: string };
     const user = findUserByEmail(body.identity);
-    
+
     if (!user || user.password !== body.password) {
-      return HttpResponse.json(
-        { code: 401, message: 'Failed to authenticate.', data: {} },
-        { status: 401 }
-      );
+      return HttpResponse.json({ code: 401, message: 'Failed to authenticate.', data: {} }, { status: 401 });
     }
-    
+
     return HttpResponse.json({
       token: 'mock-jwt-' + user.id,
       record: { ...user, password: undefined }
@@ -1033,13 +1074,13 @@ export const userHandlers = [
     }
     return HttpResponse.json({
       token: 'mock-jwt-refreshed',
-      record: users[0]  // simplified
+      record: users[0] // simplified
     });
   }),
 
   // Signup
   http.post(`${PB}/api/collections/users/records`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as Record<string, unknown>;
     const newUser = {
       id: 'user_' + Math.random().toString(36).slice(2, 17),
       email: body.email,
@@ -1059,12 +1100,9 @@ export const userHandlers = [
 
   // Confirm password reset
   http.post(`${PB}/api/collections/users/confirm-password-reset`, async ({ request }) => {
-    const body = await request.json() as { token: string; password: string };
+    const body = (await request.json()) as { token: string; password: string };
     if (!body.token || body.token === 'invalid') {
-      return HttpResponse.json(
-        { code: 400, message: 'Invalid or expired token.', data: {} },
-        { status: 400 }
-      );
+      return HttpResponse.json({ code: 400, message: 'Invalid or expired token.', data: {} }, { status: 400 });
     }
     return HttpResponse.json({ acknowledge: true });
   }),
@@ -1076,23 +1114,20 @@ export const userHandlers = [
 
   // Confirm verification
   http.post(`${PB}/api/collections/users/confirm-verification`, async ({ request }) => {
-    const body = await request.json() as { token: string };
+    const body = (await request.json()) as { token: string };
     if (!body.token || body.token === 'invalid') {
-      return HttpResponse.json(
-        { code: 400, message: 'Invalid or expired token.', data: {} },
-        { status: 400 }
-      );
+      return HttpResponse.json({ code: 400, message: 'Invalid or expired token.', data: {} }, { status: 400 });
     }
     return HttpResponse.json({ acknowledge: true });
   }),
 
   // Update user (e.g., lang change)
   http.patch(`${PB}/api/collections/users/records/:id`, async ({ params, request }) => {
-    const idx = users.findIndex(u => u.id === params.id);
+    const idx = users.findIndex((u) => u.id === params.id);
     if (idx === -1) {
-      return HttpResponse.json({ code: 404, message: "Not found.", data: {} }, { status: 404 });
+      return HttpResponse.json({ code: 404, message: 'Not found.', data: {} }, { status: 404 });
     }
-    const body = await request.json() as Record<string, unknown>;
+    const body = (await request.json()) as Record<string, unknown>;
     users[idx] = { ...users[idx], ...body, updated: new Date().toISOString() };
     return HttpResponse.json({ ...users[idx], password: undefined });
   }),
@@ -1106,13 +1141,19 @@ export const userHandlers = [
     if (match) {
       const user = findUserByEmail(match[1]);
       return HttpResponse.json({
-        page: 1, perPage: 1, totalItems: user ? 1 : 0, totalPages: 1,
+        page: 1,
+        perPage: 1,
+        totalItems: user ? 1 : 0,
+        totalPages: 1,
         items: user ? [{ ...user, password: undefined }] : []
       });
     }
     return HttpResponse.json({
-      page: 1, perPage: 50, totalItems: users.length, totalPages: 1,
-      items: users.map(u => ({ ...u, password: undefined }))
+      page: 1,
+      perPage: 50,
+      totalItems: users.length,
+      totalPages: 1,
+      items: users.map((u) => ({ ...u, password: undefined }))
     });
   })
 ];
@@ -1128,13 +1169,13 @@ const PB = 'http://localhost:8090';
 
 export const batchHandlers = [
   http.post(`${PB}/api/batch`, async ({ request }) => {
-    const body = await request.json() as {
+    const body = (await request.json()) as {
       requests: Array<{
         method: string;
         url: string;
         body?: unknown;
         headers?: Record<string, string>;
-      }>
+      }>;
     };
 
     const results = [];
@@ -1169,10 +1210,7 @@ import { http, HttpResponse } from 'msw';
 it('handles PB outage during congregation load', async () => {
   server.use(
     http.get('http://localhost:8090/api/collections/congregationMeta/records', () =>
-      HttpResponse.json(
-        { code: 503, message: 'Service unavailable.', data: {} },
-        { status: 503 }
-      )
+      HttpResponse.json({ code: 503, message: 'Service unavailable.', data: {} }, { status: 503 })
     )
   );
 
@@ -1225,11 +1263,13 @@ For each test file migrated to MSW, verify:
 **Before starting, fix the `@testing-library/svelte` incompatibility** (code review T-1). This is a prerequisite for Phase 4 but not for Phases 0–3. The server-route tests (Phases 1–2) can proceed immediately and deliver the highest value (the captcha-bypass regression test).
 
 **Concurrent with this migration, address the relevant code-review findings:**
+
 - S-1 (captcha bypass): Phase 2.4 writes the regression test.
 - S-5 (filter injection): MSW handlers parse filter strings, making this testable.
 - T-1 (test suite doesn't run): Phase 3 removes the broken `$app/*` mocks, which may resolve some of the test-loading failures.
 
 **Sequence recommendation:**
+
 1. Fix `@testing-library/svelte` version (1 day) — unblocks all testing.
 2. MSW Phase 0 (1 day).
 3. MSW Phase 1 (2–3 days) — highest value, makes server tests real.
@@ -1242,4 +1282,4 @@ Total: ~2 weeks. The result is a test suite that exercises real code paths, catc
 
 ---
 
-*End of MSW mocking plan.*
+_End of MSW mocking plan._

@@ -4,8 +4,8 @@
 
 ## Quick Routes
 
-| File | Description | Priority |
-|------|-------------|----------|
+| File                  | Description                                            | Priority |
+| --------------------- | ------------------------------------------------------ | -------- |
 | `technical-domain.md` | Tech stack, code patterns, naming, standards, security | critical |
 
 ## Deep Dives

@@ -21,22 +21,22 @@ server.listen({
 
 ## Predefined Strategies
 
-| Strategy | Description |
-|----------|-------------|
+| Strategy           | Description                                                           |
+| ------------------ | --------------------------------------------------------------------- |
 | `'warn'` (default) | Print a warning, then perform the request as-is (network passthrough) |
-| `'error'` | Print an error and halt request execution |
-| `'bypass'` | Silently pass through — no output, request proceeds to network |
+| `'error'`          | Print an error and halt request execution                             |
+| `'bypass'`         | Silently pass through — no output, request proceeds to network        |
 
 ```ts
 server.listen({
-  onUnhandledRequest: 'error', // Fail fast on unhandled requests
-})
+  onUnhandledRequest: 'error' // Fail fast on unhandled requests
+});
 ```
 
 ```ts
 server.listen({
-  onUnhandledRequest: 'bypass', // Quiet mode — ignore unhandled requests
-})
+  onUnhandledRequest: 'bypass' // Quiet mode — ignore unhandled requests
+});
 ```
 
 ## Custom Callback Strategy
@@ -46,9 +46,9 @@ Receive each unhandled request and decide what to do:
 ```ts
 server.listen({
   onUnhandledRequest(request) {
-    console.log('Unhandled %s %s', request.method, request.url)
-  },
-})
+    console.log('Unhandled %s %s', request.method, request.url);
+  }
+});
 ```
 
 ### Using `print` helpers
@@ -58,20 +58,20 @@ The second argument provides `print.warning()` and `print.error()` to reuse the 
 ```ts
 server.listen({
   onUnhandledRequest(request, print) {
-    const url = new URL(request.url)
+    const url = new URL(request.url);
 
     // Ignore static asset requests
     if (url.pathname.startsWith('/assets/')) {
-      return // ← return without calling print → silent bypass
+      return; // ← return without calling print → silent bypass
     }
 
     // Only warn for relevant API paths
     if (url.pathname.startsWith('/api')) {
-      print.warning()
+      print.warning();
     }
     // else: other paths silently bypass
-  },
-})
+  }
+});
 ```
 
 ### Filtering by path
@@ -79,16 +79,16 @@ server.listen({
 ```ts
 server.listen({
   onUnhandledRequest(request, print) {
-    const url = new URL(request.url)
-    const pathname = url.pathname
+    const url = new URL(request.url);
+    const pathname = url.pathname;
 
     // Warn for API paths
     if (pathname.startsWith('/api')) {
-      print.warning() // or print.error()
+      print.warning(); // or print.error()
     }
     // Other paths: silently bypass (return without calling print)
-  },
-})
+  }
+});
 ```
 
 ## Recommended Patterns
@@ -97,8 +97,8 @@ server.listen({
 
 ```ts
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'error' })
-})
+  server.listen({ onUnhandledRequest: 'error' });
+});
 ```
 
 This forces you to add a handler for every request your code makes during tests — no silent pass-throughs.
@@ -108,13 +108,13 @@ This forces you to add a handler for every request your code makes during tests 
 ```ts
 server.listen({
   onUnhandledRequest(request, print) {
-    const url = new URL(request.url)
+    const url = new URL(request.url);
     // Only warn about our own API calls, not third-party
     if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
-      print.warning()
+      print.warning();
     }
-  },
-})
+  }
+});
 ```
 
 ### In production (rare) — use `'bypass'`
@@ -124,14 +124,14 @@ server.listen({
 > By default, MSW ignores common static asset requests so they won't be considered unhandled. If you provide a custom callback to `onUnhandledRequest`, **you opt out of that behavior**. You can re-enable it by calling `isCommonAssetRequest()` manually.
 
 ```ts
-import { isCommonAssetRequest } from 'msw'
+import { isCommonAssetRequest } from 'msw';
 
 server.listen({
   onUnhandledRequest(request, print) {
-    if (isCommonAssetRequest(request)) return // ignore assets
-    print.warning()
-  },
-})
+    if (isCommonAssetRequest(request)) return; // ignore assets
+    print.warning();
+  }
+});
 ```
 
 ## SvelteKit / Vite HMR Considerations
@@ -141,12 +141,12 @@ In SvelteKit projects, Vite's HMR and dev server make frequent internal requests
 ```ts
 server.listen({
   onUnhandledRequest(request, print) {
-    const url = new URL(request.url)
+    const url = new URL(request.url);
     // Ignore Vite HMR and internal requests
     if (url.pathname.startsWith('/@vite/') || url.pathname.startsWith('/node_modules/')) {
-      return
+      return;
     }
-    print.warning()
-  },
-})
+    print.warning();
+  }
+});
 ```

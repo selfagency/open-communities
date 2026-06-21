@@ -17,7 +17,6 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import CongregationCard from '$lib/components/congregation/congregation.svelte';
-  import Loading from '$lib/components/global/loading.svelte';
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
@@ -177,8 +176,26 @@
 
 <section class="w-full space-y-4">
   {#if loading}
-    <div class="flex w-full items-center justify-center">
-      <Loading variant="full" />
+    <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+      {#each [1, 2, 3] as _}
+        <div class="col-span-1">
+          <div class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-white p-4">
+            <div class="space-y-2">
+              <div class="h-5 w-3/4 rounded bg-slate-200"></div>
+              <div class="h-3 w-1/2 rounded bg-slate-200"></div>
+            </div>
+            <div class="mt-4 space-y-2">
+              <div class="h-3 w-full rounded bg-slate-100"></div>
+              <div class="h-3 w-5/6 rounded bg-slate-100"></div>
+            </div>
+            <div class="mt-4 flex flex-row space-x-1">
+              <div class="h-6 w-6 rounded-full bg-slate-200"></div>
+              <div class="h-6 w-6 rounded-full bg-slate-200"></div>
+              <div class="h-6 w-6 rounded-full bg-slate-200"></div>
+            </div>
+          </div>
+        </div>
+      {/each}
     </div>
   {:else}
     <div
@@ -199,7 +216,7 @@
           <span class="absolute top-0 z-10 h-10 w-10 ltr:right-1 rtl:left-1 rtl:mx-1">
             <Button
               variant="link"
-              class="text-slate-400 hover:text-slate-500"
+              class="text-slate-500 hover:text-slate-600"
               onclick={() => {
                 searchTerms = '';
                 search.setSearchTerms(searchTerms);
@@ -241,7 +258,7 @@
         <span>{m.nothingFound()}</span>
       </div>
     {:else if pages?.length > 0}
-      <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-3" class:blurred={isPaging}>
+      <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" class:blurred={isPaging}>
         {#each pages[currentPage - 1] as congregation (congregation.id + '-' + currentPage)}
           <div class="col-span-1">
             <CongregationCard {congregation} open={open[congregation.id] ?? false} />

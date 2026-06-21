@@ -14,7 +14,7 @@
     StatesRecord as State
   } from '$lib/pocketbase.d';
 
-  import { goto } from '$app/navigation';
+  import { goto, resolve } from '$app/navigation';
   import { page } from '$app/state';
   import { Badge } from '$lib/components/ui/badge';
   import * as Card from '$lib/components/ui/card';
@@ -54,7 +54,7 @@
         {congregation.name}
       </h1>
     </Card.Title>
-    <Card.Description class="text-gray-400 -mt-1">
+    <Card.Description class="text-slate-500 -mt-1">
       {#if services.onlineOnly}
         <span>{m.services_onlineOnly()}</span
         >{#if location.country.name && location.country.name !== 'United States'}<span>, {location.country.name}</span
@@ -101,7 +101,9 @@
                 onclick={async (e: Event) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  await goto(`/edit?id=${congregation.id}`);
+                  const url = `/edit?id=${congregation.id}`;
+                  await resolve(url);
+                  await goto(url);
                 }}>
                 <EditIcon size="16" class="text-slate-700" />
                 <span class="sr-only">{m.edit()}</span>

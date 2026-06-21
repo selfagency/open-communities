@@ -5,6 +5,7 @@
 **Open Communities** — a SvelteKit 5 directory app for finding Jewish congregations welcoming of Jews opposed to Israel's war in Gaza. Users search a map-based directory, submit congregations, and contact admins. Backed by PocketBase (self-hosted), with i18n (EN/ES/FR/HE), captcha, email notifications, and PostHog analytics.
 
 **Key technologies:**
+
 - SvelteKit 5 (adapter-node, standalone mode) + Svelte 5 runes
 - PocketBase 0.29.x (typed via `pocketbase-typegen`)
 - Tailwind CSS v4 (CSS-first, `@import "tailwindcss"`)
@@ -93,6 +94,7 @@ pnpm preview
 - **`.env.e2e`** — E2E overrides (loaded alongside `.env.test` for E2E)
 
 Required variables in all env files:
+
 ```
 ADMIN_EMAIL=""
 CAP_API_KEY=""              # Cap captcha API key
@@ -162,6 +164,7 @@ pnpm vitest
 ```
 
 **Test architecture:**
+
 - Test files live alongside source: `src/**/*.test.ts`
 - Server tests in `src/test/server/` use `node` environment
 - Component tests use `happy-dom` + Vitest browser mode (Playwright chromium)
@@ -215,6 +218,7 @@ The CI runs in sequence: **Build** → **CI** (unit tests) → **E2E** → **Dep
 ### ESLint
 
 Config: `eslint.config.js` (flat config). Key rules:
+
 - `perfectionist/sort-imports` (warn) — imports sorted with `$` prefix as internal pattern
 - `@typescript-eslint/no-unused-vars` (warn)
 - `svelte/no-at-html-tags` (off for Svelte files — but prefer sanitized rendering)
@@ -226,6 +230,7 @@ Run: `pnpm lint` (Prettier check + ESLint) or `pnpm format` (auto-fix both).
 ### Prettier
 
 Config: `prettier.config.js`. Key settings:
+
 - Single quotes, semicolons, trailing commas: none
 - Print width: 120, tab width: 2
 - Plugins: `prettier-plugin-tailwindcss`, `prettier-plugin-svelte`
@@ -263,6 +268,7 @@ pnpm build:types
 **Build output:** `build/` directory (adapter-node standalone mode).
 
 **Docker:** Built via Nixpacks (see `nixpacks.toml`). After build, PostHog sourcemap injection runs:
+
 ```toml
 [phases.build]
 aptPkgs = ["wget"]
@@ -313,14 +319,14 @@ cmds = [
 
 ### Common Issues
 
-| Symptom | Likely Cause | Fix |
-|---------|-------------|-----|
-| `paraglide` import errors in `pnpm check` | Messages not generated | Run `pnpm build` first |
-| Tests fail with `The $ name is reserved` | `@testing-library/svelte` / Svelte 5 incompatibility | Known issue; CI uses `continue-on-error` |
-| ESLint fails on CSS files | `@eslint/css` plugin incompatibility | Known issue; lint `src/` only with `pnpm exec eslint "src/**/*.{ts,js,svelte}"` |
-| Prettier fails on `messages/en.json` | Sorted JSON keys | `pnpm format` fixes this |
-| PocketBase connection refused | Docker not running | `pnpm deps:up` |
-| Auth refresh fails on every request | Known performance issue | `authRefresh()` called on every authenticated request |
+| Symptom                                   | Likely Cause                                         | Fix                                                                             |
+| ----------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `paraglide` import errors in `pnpm check` | Messages not generated                               | Run `pnpm build` first                                                          |
+| Tests fail with `The $ name is reserved`  | `@testing-library/svelte` / Svelte 5 incompatibility | Known issue; CI uses `continue-on-error`                                        |
+| ESLint fails on CSS files                 | `@eslint/css` plugin incompatibility                 | Known issue; lint `src/` only with `pnpm exec eslint "src/**/*.{ts,js,svelte}"` |
+| Prettier fails on `messages/en.json`      | Sorted JSON keys                                     | `pnpm format` fixes this                                                        |
+| PocketBase connection refused             | Docker not running                                   | `pnpm deps:up`                                                                  |
+| Auth refresh fails on every request       | Known performance issue                              | `authRefresh()` called on every authenticated request                           |
 
 ### Logging
 
@@ -330,89 +336,89 @@ cmds = [
 
 ### Key Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `svelte` | ^5.56.3 | UI framework |
-| `@sveltejs/kit` | ^2.66.0 | SvelteKit |
-| `@sveltejs/adapter-node` | ^5.5.4 | Node deployment |
-| `pocketbase` | ^0.27.0 | PocketBase JS SDK |
-| `tailwindcss` | ^4.3.1 | CSS framework |
-| `bits-ui` | ^2.18.1 | UI primitives |
-| `sveltekit-superforms` | ^2.30.1 | Form handling |
-| `zod` | ^4.4.3 | Schema validation |
-| `vitest` | ^4.1.9 | Test runner |
-| `@playwright/test` | ^1.61.0 | E2E testing |
-| `nanostores` | ^1.3.0 | State management |
-| `svelte-maplibre` | ^1.3.0 | MapLibre integration |
-| `tslog` | ^4.10.2 | Structured logging |
-| `radashi` | ^12.9.1 | Utility library |
-| `posthog-js` / `posthog-node` | latest | Analytics |
-| `@inlang/paraglide-js` | ^2.20.0 | i18n |
-| `sveltekit-helmet` | ^2.1.0 | Security headers |
-| `cookie` | ^1.1.1 | Cookie parsing |
-| `marked` | ^18.0.5 | Markdown rendering |
-| `nodemailer` | ^9.0.1 | Email transport |
-| `cmdk-sv` | ^0.0.19 | Command menu |
-| `mode-watcher` | ^1.1.0 | Dark mode |
-| `svelte-sonner` | ^1.1.1 | Toast notifications |
-| `svelte-copy` | ^2.0.0 | Clipboard |
-| `@internationalized/date` | ^3.12.2 | Date handling |
-| `tailwind-variants` | ^3.2.2 | Component variants |
-| `tailwind-merge` | ^3.6.0 | Class merging |
-| `clsx` | ^2.1.1 | Class utilities |
-| `lucide-svelte` | ^1.0.1 | Icons |
-| `public-ip` | ^8.0.0 | Public IP detection |
-| `fast-string-truncated-width` | ^3.0.3 | String truncation |
-| `@leeoniya/ufuzzy` | ^1.0.19 | Fuzzy search |
-| `formsnap` | ^2.0.1 | Form label/error binding |
-| `concurrently` | ^10.0.3 | Parallel command execution |
-| `sqlite3` | ^6.0.1 | SQLite (PocketBase dependency) |
-| `form-data` | ^4.0.6 | Form data handling |
-| `wait-for-the-element` | ^4.0.2 | DOM element waiting |
-| `@poppanator/sveltekit-svg` | ^7.0.0 | SVG imports |
-| `vite-plugin-mcp` | ^0.3.2 | MCP protocol for Vite |
-| `vite-plugin-devtools-json` | ^1.0.0 | DevTools JSON plugin |
-| `vite-plugin-svelte-inline-component` | ^0.0.8 | Inline Svelte components |
-| `vite-tsconfig-paths` | ^6.1.1 | TS path resolution |
-| `tailwind-csstree` | ^0.3.3 | Tailwind CSS tree |
-| `tw-animate-css` | ^1.4.0 | Tailwind animations |
-| `tailwindcss-animate` | ^1.0.7 | Animation utilities |
-| `@tailwindcss/forms` | ^0.5.11 | Form reset |
-| `@tailwindcss/typography` | ^0.5.20 | Prose styling |
-| `@tailwindcss/vite` | ^4.3.1 | Tailwind Vite plugin |
-| `@testing-library/svelte` | ^5.3.1 | Component testing |
-| `@testing-library/jest-dom` | ^6.9.1 | DOM matchers |
-| `@testing-library/user-event` | ^14.6.1 | User event simulation |
-| `happy-dom` | ^20.10.6 | DOM environment (tests) |
-| `jsdom` | ^29.1.1 | DOM environment (CI tests) |
-| `@vitest/browser` | ^4.1.9 | Browser mode |
-| `@vitest/coverage-istanbul` | ^4.1.9 | Coverage |
-| `vitest-browser-svelte` | ^2.1.1 | Svelte browser testing |
-| `typescript` | ^6.0.3 | TypeScript compiler |
-| `typescript-eslint` | ^8.61.1 | TS ESLint integration |
-| `eslint` | ^10.5.0 | Linter |
-| `eslint-plugin-svelte` | ^3.19.0 | Svelte lint rules |
-| `eslint-plugin-perfectionist` | ^5.9.1 | Import sorting |
-| `eslint-config-prettier` | ^10.1.8 | Prettier compat |
-| `eslint-plugin-html` | ^8.1.4 | HTML linting |
-| `@eslint/css` | ^1.3.0 | CSS linting |
-| `@html-eslint/eslint-plugin` | ^0.62.0 | HTML lint plugin |
-| `prettier` | ^3.8.4 | Formatter |
-| `prettier-plugin-svelte` | ^4.1.1 | Svelte formatting |
-| `prettier-plugin-tailwindcss` | ^0.8.0 | Tailwind class sorting |
-| `svelte-check` | ^4.6.0 | Svelte type checking |
-| `@inlang/cli` | ^3.1.14 | i18n CLI |
-| `@types/node` | ^26.0.0 | Node types |
-| `@types/nodemailer` | ^8.0.1 | Nodemailer types |
-| `@types/web` | ^0.0.350 | Web API types |
-| `@types/eslint` | ^9.6.1 | ESLint types |
-| `@types/jest` | ^30.0.0 | Jest types (for compat) |
-| `globals` | ^17.6.0 | Global type definitions |
-| `tslib` | ^2.8.1 | TS runtime helpers |
-| `@eslint/compat` | ^2.1.0 | ESLint compat |
-| `@eslint/eslintrc` | ^3.3.5 | ESLint config |
-| `@eslint/js` | ^10.0.1 | ESLint JS rules |
-| `@sveltejs/vite-plugin-svelte` | ^7.1.2 | Svelte Vite plugin |
+| Package                               | Version  | Purpose                        |
+| ------------------------------------- | -------- | ------------------------------ |
+| `svelte`                              | ^5.56.3  | UI framework                   |
+| `@sveltejs/kit`                       | ^2.66.0  | SvelteKit                      |
+| `@sveltejs/adapter-node`              | ^5.5.4   | Node deployment                |
+| `pocketbase`                          | ^0.27.0  | PocketBase JS SDK              |
+| `tailwindcss`                         | ^4.3.1   | CSS framework                  |
+| `bits-ui`                             | ^2.18.1  | UI primitives                  |
+| `sveltekit-superforms`                | ^2.30.1  | Form handling                  |
+| `zod`                                 | ^4.4.3   | Schema validation              |
+| `vitest`                              | ^4.1.9   | Test runner                    |
+| `@playwright/test`                    | ^1.61.0  | E2E testing                    |
+| `nanostores`                          | ^1.3.0   | State management               |
+| `svelte-maplibre`                     | ^1.3.0   | MapLibre integration           |
+| `tslog`                               | ^4.10.2  | Structured logging             |
+| `radashi`                             | ^12.9.1  | Utility library                |
+| `posthog-js` / `posthog-node`         | latest   | Analytics                      |
+| `@inlang/paraglide-js`                | ^2.20.0  | i18n                           |
+| `sveltekit-helmet`                    | ^2.1.0   | Security headers               |
+| `cookie`                              | ^1.1.1   | Cookie parsing                 |
+| `marked`                              | ^18.0.5  | Markdown rendering             |
+| `nodemailer`                          | ^9.0.1   | Email transport                |
+| `cmdk-sv`                             | ^0.0.19  | Command menu                   |
+| `mode-watcher`                        | ^1.1.0   | Dark mode                      |
+| `svelte-sonner`                       | ^1.1.1   | Toast notifications            |
+| `svelte-copy`                         | ^2.0.0   | Clipboard                      |
+| `@internationalized/date`             | ^3.12.2  | Date handling                  |
+| `tailwind-variants`                   | ^3.2.2   | Component variants             |
+| `tailwind-merge`                      | ^3.6.0   | Class merging                  |
+| `clsx`                                | ^2.1.1   | Class utilities                |
+| `lucide-svelte`                       | ^1.0.1   | Icons                          |
+| `public-ip`                           | ^8.0.0   | Public IP detection            |
+| `fast-string-truncated-width`         | ^3.0.3   | String truncation              |
+| `@leeoniya/ufuzzy`                    | ^1.0.19  | Fuzzy search                   |
+| `formsnap`                            | ^2.0.1   | Form label/error binding       |
+| `concurrently`                        | ^10.0.3  | Parallel command execution     |
+| `sqlite3`                             | ^6.0.1   | SQLite (PocketBase dependency) |
+| `form-data`                           | ^4.0.6   | Form data handling             |
+| `wait-for-the-element`                | ^4.0.2   | DOM element waiting            |
+| `@poppanator/sveltekit-svg`           | ^7.0.0   | SVG imports                    |
+| `vite-plugin-mcp`                     | ^0.3.2   | MCP protocol for Vite          |
+| `vite-plugin-devtools-json`           | ^1.0.0   | DevTools JSON plugin           |
+| `vite-plugin-svelte-inline-component` | ^0.0.8   | Inline Svelte components       |
+| `vite-tsconfig-paths`                 | ^6.1.1   | TS path resolution             |
+| `tailwind-csstree`                    | ^0.3.3   | Tailwind CSS tree              |
+| `tw-animate-css`                      | ^1.4.0   | Tailwind animations            |
+| `tailwindcss-animate`                 | ^1.0.7   | Animation utilities            |
+| `@tailwindcss/forms`                  | ^0.5.11  | Form reset                     |
+| `@tailwindcss/typography`             | ^0.5.20  | Prose styling                  |
+| `@tailwindcss/vite`                   | ^4.3.1   | Tailwind Vite plugin           |
+| `@testing-library/svelte`             | ^5.3.1   | Component testing              |
+| `@testing-library/jest-dom`           | ^6.9.1   | DOM matchers                   |
+| `@testing-library/user-event`         | ^14.6.1  | User event simulation          |
+| `happy-dom`                           | ^20.10.6 | DOM environment (tests)        |
+| `jsdom`                               | ^29.1.1  | DOM environment (CI tests)     |
+| `@vitest/browser`                     | ^4.1.9   | Browser mode                   |
+| `@vitest/coverage-istanbul`           | ^4.1.9   | Coverage                       |
+| `vitest-browser-svelte`               | ^2.1.1   | Svelte browser testing         |
+| `typescript`                          | ^6.0.3   | TypeScript compiler            |
+| `typescript-eslint`                   | ^8.61.1  | TS ESLint integration          |
+| `eslint`                              | ^10.5.0  | Linter                         |
+| `eslint-plugin-svelte`                | ^3.19.0  | Svelte lint rules              |
+| `eslint-plugin-perfectionist`         | ^5.9.1   | Import sorting                 |
+| `eslint-config-prettier`              | ^10.1.8  | Prettier compat                |
+| `eslint-plugin-html`                  | ^8.1.4   | HTML linting                   |
+| `@eslint/css`                         | ^1.3.0   | CSS linting                    |
+| `@html-eslint/eslint-plugin`          | ^0.62.0  | HTML lint plugin               |
+| `prettier`                            | ^3.8.4   | Formatter                      |
+| `prettier-plugin-svelte`              | ^4.1.1   | Svelte formatting              |
+| `prettier-plugin-tailwindcss`         | ^0.8.0   | Tailwind class sorting         |
+| `svelte-check`                        | ^4.6.0   | Svelte type checking           |
+| `@inlang/cli`                         | ^3.1.14  | i18n CLI                       |
+| `@types/node`                         | ^26.0.0  | Node types                     |
+| `@types/nodemailer`                   | ^8.0.1   | Nodemailer types               |
+| `@types/web`                          | ^0.0.350 | Web API types                  |
+| `@types/eslint`                       | ^9.6.1   | ESLint types                   |
+| `@types/jest`                         | ^30.0.0  | Jest types (for compat)        |
+| `globals`                             | ^17.6.0  | Global type definitions        |
+| `tslib`                               | ^2.8.1   | TS runtime helpers             |
+| `@eslint/compat`                      | ^2.1.0   | ESLint compat                  |
+| `@eslint/eslintrc`                    | ^3.3.5   | ESLint config                  |
+| `@eslint/js`                          | ^10.0.1  | ESLint JS rules                |
+| `@sveltejs/vite-plugin-svelte`        | ^7.1.2   | Svelte Vite plugin             |
 
 ## Additional Notes
 

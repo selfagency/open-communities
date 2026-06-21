@@ -3,7 +3,6 @@
   import LocaleIcon from 'lucide-svelte/icons/languages';
   import { onMount, tick } from 'svelte';
   import { toast } from 'svelte-sonner';
-  import { fade } from 'svelte/transition';
 
   import type { UsersLangOptions } from '$lib/pocketbase.d';
 
@@ -34,7 +33,6 @@
   ];
 
   // locals
-  let hovering = $state(false);
   let lang = $state('en' as UsersLangOptions);
 
   const serverLang = $derived(page.data.lang);
@@ -70,17 +68,10 @@
 
 <DropdownMenu.Root>
   <DropdownMenu.Trigger
-    class="button {mode === 'mini' ? 'link' : 'ghost'} flex flex-row items-center justify-start space-x-1"
-    onmouseenter={() => (hovering = true)}
-    onmouseleave={() => (hovering = false)}>
+    class="button {mode === 'mini' ? 'link' : 'ghost'} flex flex-row items-center justify-start space-x-1">
     {@const locale = locales.find((f) => f.value === lang)?.label}
-    {#if mode === 'mini'}
-      <LocaleIcon class="h-4 w-4 text-slate-500" />
-      <span>{locale}</span>
-    {:else}
-      <LocaleIcon class="h-4 w-4 text-slate-500" />
-      {#if hovering}<span transition:fade>{locale}</span>{/if}
-    {/if}
+    <LocaleIcon class="h-4 w-4 text-slate-500" />
+    <span>{locale}</span>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>

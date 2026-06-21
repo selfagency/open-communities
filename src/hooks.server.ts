@@ -1,29 +1,29 @@
 /* region imports */
-import type { Handle, RequestEvent } from "@sveltejs/kit";
-import type { SerializeOptions } from "cookie";
-import type { SuperValidated } from "sveltekit-superforms";
-import type { $ZodType } from "zod/v4/core";
-import type { output } from "zod/v4/core";
+import type { Handle, RequestEvent } from '@sveltejs/kit';
+import type { SerializeOptions } from 'cookie';
+import type { SuperValidated } from 'sveltekit-superforms';
+import type { $ZodType } from 'zod/v4/core';
+import type { output } from 'zod/v4/core';
 
-import { sequence } from "@sveltejs/kit/hooks";
-import { publicIp } from "public-ip";
-import { assign, isEmpty, isFunction } from "radashi";
-import { superValidate } from "sveltekit-superforms";
-import { zod4 } from "sveltekit-superforms/adapters";
+import { sequence } from '@sveltejs/kit/hooks';
+import { publicIp } from 'public-ip';
+import { assign, isEmpty, isFunction } from 'radashi';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 
-import { dev } from "$app/environment";
-import { env } from "$env/dynamic/public";
-import { paraglideMiddleware } from "$lib/paraglide/server";
-import { createApi } from "$lib/server/api";
-import { logEvent, log as logger } from "$lib/server/logger";
-import { closeTransporter } from "$lib/server/mail";
-import { capture, captureException, closePhClient } from "$lib/server/posthog";
-import security from "$lib/server/security";
+import { dev } from '$app/environment';
+import { env } from '$env/dynamic/public';
+import { paraglideMiddleware } from '$lib/paraglide/server';
+import { createApi } from '$lib/server/api';
+import { logEvent, log as logger } from '$lib/server/logger';
+import { closeTransporter } from '$lib/server/mail';
+import { capture, captureException, closePhClient } from '$lib/server/posthog';
+import security from '$lib/server/security';
 /* endregion imports */
 
 /* region variables */
 // constants
-const log = logger.getSubLogger({ name: "hooks" });
+const log = logger.getSubLogger({ name: 'hooks' });
 /* endregion variables */
 
 /* Module-level auth-refresh cooldown to avoid calling authRefresh() on every
@@ -34,181 +34,149 @@ let lastAuthRefresh = 0;
 const AUTH_REFRESH_COOLDOWN_MS = 300_000; // 5 minutes
 
 async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
-	const startTimer = Date.now();
+  const startTimer = Date.now();
 
-	let clientIp =
-		event.request?.headers?.get("cf-connecting-ip") ??
-		event.request?.headers?.get("x-forwarded-for") ??
-		event.getClientAddress();
-	if (
-		!clientIp ||
-		clientIp === "" ||
-		clientIp === "::1" ||
-		clientIp === "127.0.0.1"
-	) {
-		clientIp = (await publicIp()) ?? "";
-	}
+  let clientIp =
+    event.request?.headers?.get('cf-connecting-ip') ??
+    event.request?.headers?.get('x-forwarded-for') ??
+    event.getClientAddress();
+  if (!clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1') {
+    clientIp = (await publicIp()) ?? '';
+  }
 
-	// Per-request PocketBase instance — avoids race conditions on beforeSend
-	// and authStore that would occur with a shared singleton (see P-11).
-	const requestApi = createApi();
-	requestApi.beforeSend = function (url, options) {
-		const ipHeader = clientIp
-			? {
-					"X-PocketHost-Client-Ip": clientIp,
-				}
-			: {};
-		options.headers = assign(
-			{},
-			{ ...options.headers, ...(ipHeader as Record<string, string>) },
-		);
-		return { options, url };
-	};
-	event.locals.api = requestApi;
-	event.locals.log = log;
+  // Per-request PocketBase instance — avoids race conditions on beforeSend
+  // and authStore that would occur with a shared singleton (see P-11).
+  const requestApi = createApi();
+  requestApi.beforeSend = function (url, options) {
+    const ipHeader = clientIp
+      ? {
+          'X-PocketHost-Client-Ip': clientIp
+        }
+      : {};
+    options.headers = assign({}, { ...options.headers, ...(ipHeader as Record<string, string>) });
+    return { options, url };
+  };
+  event.locals.api = requestApi;
+  event.locals.log = log;
 
-	// Create origin-aware PostHog functions
-	event.locals.capture = (user: string | undefined, eventName: string) =>
-		user ? capture(user, eventName) : Promise.resolve();
-	event.locals.captureException = (
-		error: unknown,
-		user?: string,
-		other?: Record<string, number | string>,
-	) => captureException(error as Error, user ?? "", other);
+  // Create origin-aware PostHog functions
+  event.locals.capture = (user: string | undefined, eventName: string) =>
+    user ? capture(user, eventName) : Promise.resolve();
+  event.locals.captureException = (error: unknown, user?: string, other?: Record<string, number | string>) =>
+    captureException(error as Error, user ?? '', other);
 
-	event.locals.validate = (async <S extends $ZodType<Record<string, unknown>>>(
-		request: Record<string, unknown> | RequestEvent,
-		schema: S,
-	): Promise<SuperValidated<output<S>>> => {
-		const adapter = zod4(schema);
-		if (isEmpty(request)) {
-			return (await superValidate(adapter)) as unknown as SuperValidated<
-				output<S>
-			>;
-		}
-		return (await superValidate(
-			request as unknown as RequestEvent,
-			adapter,
-		)) as unknown as SuperValidated<output<S>>;
-	}) as App.Locals["validate"];
+  event.locals.validate = (async <S extends $ZodType<Record<string, unknown>>>(
+    request: Record<string, unknown> | RequestEvent,
+    schema: S
+  ): Promise<SuperValidated<output<S>>> => {
+    const adapter = zod4(schema);
+    if (isEmpty(request)) {
+      return (await superValidate(adapter)) as unknown as SuperValidated<output<S>>;
+    }
+    return (await superValidate(request as unknown as RequestEvent, adapter)) as unknown as SuperValidated<output<S>>;
+  }) as App.Locals['validate'];
 
-	event.locals.cookieOpts = {
-		httpOnly: true,
-		maxAge: 60 * 60 * 24 * 1, // 1 day
-		path: "/",
-		sameSite: "strict",
-		secure: !dev,
-	} as SerializeOptions & { path: string };
+  event.locals.cookieOpts = {
+    httpOnly: true,
+    maxAge: 60 * 60 * 24 * 1, // 1 day
+    path: '/',
+    sameSite: 'strict',
+    secure: !dev
+  } as SerializeOptions & { path: string };
 
-	// auth — load cookie into the per-request instance
-	requestApi.authStore.loadFromCookie(event.cookies.get("auth") ?? "");
+  // auth — load cookie into the per-request instance
+  requestApi.authStore.loadFromCookie(event.cookies.get('auth') ?? '');
 
-	// i18n
-	const lang =
-		event.cookies.get("lang") || requestApi?.authStore?.record?.lang || "en";
+  // i18n
+  const lang = event.cookies.get('lang') || requestApi?.authStore?.record?.lang || 'en';
 
-	event.locals.i18n = {
-		locale: lang,
-		route: `${event.url.pathname}${event.url.search}`,
-	};
+  event.locals.i18n = {
+    locale: lang,
+    route: `${event.url.pathname}${event.url.search}`
+  };
 
-	// auth
-	try {
-		if (event.url.pathname === "/logout") {
-			event.cookies.set("auth", "", event.locals.cookieOpts);
-			event.cookies.set("session", "", event.locals.cookieOpts);
-			requestApi.authStore.clear();
-		} else {
-			if (requestApi?.authStore?.isValid) {
-				const now = Date.now();
-				if (now - lastAuthRefresh > AUTH_REFRESH_COOLDOWN_MS) {
-					await requestApi.collection("users").authRefresh();
-					lastAuthRefresh = now;
-				}
-				// Re-set the auth cookie on every request to extend its TTL
-				event.cookies.set(
-					"auth",
-					requestApi.authStore.exportToCookie(),
-					event.locals.cookieOpts,
-				);
-				// Maintain session cookie if auth refresh succeeds
-				if (!event.cookies.get("session")) {
-					event.cookies.set(
-						"session",
-						crypto.randomUUID(),
-						event.locals.cookieOpts,
-					);
-				}
-			}
-		}
-	} catch (error) {
-		// Only clear auth store if refresh actually failed, not for other errors
-		log.debug("Auth refresh failed:", error);
-		requestApi.authStore.clear();
-		// Clear both cookies when auth fails
-		event.cookies.set("auth", "", event.locals.cookieOpts);
-		event.cookies.set("session", "", event.locals.cookieOpts);
-	}
+  // auth
+  try {
+    if (event.url.pathname === '/logout') {
+      event.cookies.set('auth', '', event.locals.cookieOpts);
+      event.cookies.set('session', '', event.locals.cookieOpts);
+      requestApi.authStore.clear();
+    } else {
+      if (requestApi?.authStore?.isValid) {
+        const now = Date.now();
+        if (now - lastAuthRefresh > AUTH_REFRESH_COOLDOWN_MS) {
+          await requestApi.collection('users').authRefresh();
+          lastAuthRefresh = now;
+        }
+        // Re-set the auth cookie on every request to extend its TTL
+        event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
+        // Maintain session cookie if auth refresh succeeds
+        if (!event.cookies.get('session')) {
+          event.cookies.set('session', crypto.randomUUID(), event.locals.cookieOpts);
+        }
+      }
+    }
+  } catch (error) {
+    // Only clear auth store if refresh actually failed, not for other errors
+    log.debug('Auth refresh failed:', error);
+    requestApi.authStore.clear();
+    // Clear both cookies when auth fails
+    event.cookies.set('auth', '', event.locals.cookieOpts);
+    event.cookies.set('session', '', event.locals.cookieOpts);
+  }
 
-	// Store start timer before resolving the response
-	event.locals.startTimer = startTimer;
+  // Store start timer before resolving the response
+  event.locals.startTimer = startTimer;
 
-	event.request.headers.set(
-		"Reporting-Endpoints",
-		`posthog="${env.PUBLIC_POSTHOG_HOST}/report/?token=${env.PUBLIC_POSTHOG_TOKEN}"`,
-	);
+  event.request.headers.set(
+    'Reporting-Endpoints',
+    `posthog="${env.PUBLIC_POSTHOG_HOST}/report/?token=${env.PUBLIC_POSTHOG_TOKEN}"`
+  );
 
-	// response
-	const response = await resolve(event);
+  // response
+  const response = await resolve(event);
 
-	logEvent(response.status, event);
-	return response;
+  logEvent(response.status, event);
+  return response;
 }
 
 export const handleError = async ({ error, event, status }) => {
-	if (status !== 404) {
-		const errorId = crypto.randomUUID();
+  if (status !== 404) {
+    const errorId = crypto.randomUUID();
 
-		event.locals.error = error?.toString() || undefined;
-		event.locals.errorStackTrace = (error as Error)?.stack || undefined;
-		event.locals.errorId = errorId;
-		logEvent(status, event);
+    event.locals.error = error?.toString() || undefined;
+    event.locals.errorStackTrace = (error as Error)?.stack || undefined;
+    event.locals.errorId = errorId;
+    logEvent(status, event);
 
-		if (isFunction(event.locals.captureException)) {
-			await event.locals.captureException(
-				error,
-				event.locals.api?.authStore?.record?.id,
-			);
-		}
+    if (isFunction(event.locals.captureException)) {
+      await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
+    }
 
-		return {
-			errorId,
-			message: dev
-				? (error as Error)?.message || "An error occurred"
-				: "An error occurred",
-		};
-	}
+    return {
+      errorId,
+      message: dev ? (error as Error)?.message || 'An error occurred' : 'An error occurred'
+    };
+  }
 };
 
 const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ locale, request }) => {
-		event.request = request;
+  paraglideMiddleware(event.request, ({ locale, request }) => {
+    event.request = request;
 
-		return resolve(event, {
-			transformPageChunk: ({ html }) =>
-				html
-					.replace("%paraglide.lang%", locale)
-					.replace("%paraglide.dir%", locale === "he" ? "rtl" : "ltr"),
-		});
-	});
+    return resolve(event, {
+      transformPageChunk: ({ html }) =>
+        html.replace('%paraglide.lang%', locale).replace('%paraglide.dir%', locale === 'he' ? 'rtl' : 'ltr')
+    });
+  });
 
 export const handle = sequence(security, customHandler, handleParaglide);
 
 /* region graceful shutdown */
 // B-6: Clean up resources on process termination
-process.on("SIGTERM", () => {
-	log.info("SIGTERM received, shutting down gracefully");
-	closeTransporter();
-	closePhClient();
+process.on('SIGTERM', () => {
+  log.info('SIGTERM received, shutting down gracefully');
+  closeTransporter();
+  closePhClient();
 });
 /* endregion graceful shutdown */

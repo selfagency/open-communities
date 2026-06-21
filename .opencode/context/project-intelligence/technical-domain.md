@@ -8,22 +8,22 @@
 
 ## Primary Stack
 
-| Layer | Technology | Version | Rationale |
-|-------|-----------|---------|-----------|
-| Framework | SvelteKit 5 (adapter-node) | ^2.66 | SSR, standalone mode |
-| Language | TypeScript | ^6.0 | strict: true (note: noImplicitAny: false) |
-| Database | PocketBase (self-hosted) | ^0.27 | typed via pocketbase-typegen |
-| Styling | Tailwind CSS v4 + tailwind-variants | ^4.3 | CSS-first, @import "tailwindcss" |
-| Validation | Zod 4 + sveltekit-superforms | ^4.4 / ^2.30 | sveltekit-superforms/adapters/zod4 |
-| UI Library | shadcn-svelte + bits-ui | ^2.18 | Form, Button, Dialog, Card, etc. |
-| i18n | Paraglide/Inlang | ^2.20 | messages/ dir, m.key() usage |
-| Analytics | PostHog (client + server) | ^1.39 / ^5.38 | capture, captureException |
-| Map | MapLibre GL JS via svelte-maplibre | ^1.3 | Interactive map |
-| Client State | nanostores | ^1.3 | Persistent + derived stores |
-| Testing | Vitest + browser mode | ^4.1 | happy-dom + Playwright browser |
-| E2E | Playwright | ^1.61 | Chromium headless |
-| Logging | tslog | ^4.10 | Structured JSON logger |
-| Utilities | Radashi | ^12.9 | omit, isEmpty, isFunction, uid, etc. |
+| Layer        | Technology                          | Version       | Rationale                                 |
+| ------------ | ----------------------------------- | ------------- | ----------------------------------------- |
+| Framework    | SvelteKit 5 (adapter-node)          | ^2.66         | SSR, standalone mode                      |
+| Language     | TypeScript                          | ^6.0          | strict: true (note: noImplicitAny: false) |
+| Database     | PocketBase (self-hosted)            | ^0.27         | typed via pocketbase-typegen              |
+| Styling      | Tailwind CSS v4 + tailwind-variants | ^4.3          | CSS-first, @import "tailwindcss"          |
+| Validation   | Zod 4 + sveltekit-superforms        | ^4.4 / ^2.30  | sveltekit-superforms/adapters/zod4        |
+| UI Library   | shadcn-svelte + bits-ui             | ^2.18         | Form, Button, Dialog, Card, etc.          |
+| i18n         | Paraglide/Inlang                    | ^2.20         | messages/ dir, m.key() usage              |
+| Analytics    | PostHog (client + server)           | ^1.39 / ^5.38 | capture, captureException                 |
+| Map          | MapLibre GL JS via svelte-maplibre  | ^1.3          | Interactive map                           |
+| Client State | nanostores                          | ^1.3          | Persistent + derived stores               |
+| Testing      | Vitest + browser mode               | ^4.1          | happy-dom + Playwright browser            |
+| E2E          | Playwright                          | ^1.61         | Chromium headless                         |
+| Logging      | tslog                               | ^4.10         | Structured JSON logger                    |
+| Utilities    | Radashi                             | ^12.9         | omit, isEmpty, isFunction, uid, etc.      |
 
 ## Code Patterns
 
@@ -60,7 +60,10 @@ export const actions = {
     const form = await validate(event, mySchema);
     if (!form.valid) return fail(400, { form });
     const captchaValid = await validateCaptcha(form);
-    if (!captchaValid) { setError(form, 'captcha', m.invalidCaptcha()); return fail(400, { form }); }
+    if (!captchaValid) {
+      setError(form, 'captcha', m.invalidCaptcha());
+      return fail(400, { form });
+    }
     try {
       await api.collection('collectionName').create(form.data, { fetch });
       return { form };
@@ -105,7 +108,10 @@ export const actions = {
   import { browser } from '$app/environment';
   import posthog from 'posthog-js';
 
-  if (browser) { beforeNavigate(() => posthog.capture('$pageleave')); afterNavigate(() => posthog.capture('$pageview')); }
+  if (browser) {
+    beforeNavigate(() => posthog.capture('$pageleave'));
+    afterNavigate(() => posthog.capture('$pageview'));
+  }
   let { children, data }: { children: Snippet; data: LayoutData } = $props();
 </script>
 
@@ -127,18 +133,18 @@ export const actions = {
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Files | kebab-case | `+page.server.ts`, `user-profile.ts` |
-| SvelteKit routes | `+page.svelte`, `+page.server.ts`, `+layout.svelte`, `+server.ts` | `routes/add/` |
-| Components | PascalCase | `UserCard`, `CongregationTile` |
-| Functions | camelCase | `getUserProfile`, `validateCaptcha` |
-| Variables | camelCase | `clientId`, `formData` |
-| Types/Interfaces | PascalCase | `CongregationMetaRecord`, `LoginSchema` |
-| Constants (env) | UPPER_SNAKE_CASE | `PUBLIC_API_ENDPOINT`, `ADMIN_EMAIL` |
-| PocketBase collections | snake_case | `congregation_meta`, `users` |
-| PocketBase fields | camelCase / snake_case | `contactEmail`, `ada_access` |
-| Directories (domains) | kebab-case | `congregation/`, `form/`, `login/` |
+| Type                   | Convention                                                        | Example                                 |
+| ---------------------- | ----------------------------------------------------------------- | --------------------------------------- |
+| Files                  | kebab-case                                                        | `+page.server.ts`, `user-profile.ts`    |
+| SvelteKit routes       | `+page.svelte`, `+page.server.ts`, `+layout.svelte`, `+server.ts` | `routes/add/`                           |
+| Components             | PascalCase                                                        | `UserCard`, `CongregationTile`          |
+| Functions              | camelCase                                                         | `getUserProfile`, `validateCaptcha`     |
+| Variables              | camelCase                                                         | `clientId`, `formData`                  |
+| Types/Interfaces       | PascalCase                                                        | `CongregationMetaRecord`, `LoginSchema` |
+| Constants (env)        | UPPER_SNAKE_CASE                                                  | `PUBLIC_API_ENDPOINT`, `ADMIN_EMAIL`    |
+| PocketBase collections | snake_case                                                        | `congregation_meta`, `users`            |
+| PocketBase fields      | camelCase / snake_case                                            | `contactEmail`, `ada_access`            |
+| Directories (domains)  | kebab-case                                                        | `congregation/`, `form/`, `login/`      |
 
 ## Code Standards
 
@@ -171,19 +177,19 @@ export const actions = {
 
 ## 📂 Codebase References
 
-| File | Role |
-|------|------|
-| `src/routes/add/+page.server.ts` | API endpoint pattern (load + actions + validation) |
+| File                                  | Role                                                |
+| ------------------------------------- | --------------------------------------------------- |
+| `src/routes/add/+page.server.ts`      | API endpoint pattern (load + actions + validation)  |
 | `src/lib/components/form/form.svelte` | Component pattern (props + context + shadcn fields) |
-| `src/routes/+layout.svelte` | App layout (runes + PostHog + i18n) |
-| `src/hooks.server.ts` | Server hooks (PocketBase init, PostHog, i18n) |
-| `src/lib/server/api.ts` | PocketBase singleton + error handler |
-| `src/lib/schemas/record.ts` | Zod schema composition |
-| `src/app.css` | Tailwind v4 entry + CSS custom properties |
-| `src/lib/stores.ts` | nanostores pattern |
-| `eslint.config.js` | Linting (perfectionist, TypeScript-ESLint) |
-| `tsconfig.json` | TypeScript strict config |
-| `vitest.config.ts` | Test configuration |
+| `src/routes/+layout.svelte`           | App layout (runes + PostHog + i18n)                 |
+| `src/hooks.server.ts`                 | Server hooks (PocketBase init, PostHog, i18n)       |
+| `src/lib/server/api.ts`               | PocketBase singleton + error handler                |
+| `src/lib/schemas/record.ts`           | Zod schema composition                              |
+| `src/app.css`                         | Tailwind v4 entry + CSS custom properties           |
+| `src/lib/stores.ts`                   | nanostores pattern                                  |
+| `eslint.config.js`                    | Linting (perfectionist, TypeScript-ESLint)          |
+| `tsconfig.json`                       | TypeScript strict config                            |
+| `vitest.config.ts`                    | Test configuration                                  |
 
 ## Related Files
 

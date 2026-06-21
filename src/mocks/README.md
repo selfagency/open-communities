@@ -33,11 +33,7 @@ import { server } from '$lib/mocks/node';
 import { http, HttpResponse } from 'msw';
 
 it('handles captcha failure', async () => {
-  server.use(
-    http.post('http://localhost:3001/:key/siteverify', () =>
-      HttpResponse.json({ success: false })
-    )
-  );
+  server.use(http.post('http://localhost:3001/:key/siteverify', () => HttpResponse.json({ success: false })));
   // Test code that calls validateCaptcha...
 });
 ```

@@ -12,7 +12,7 @@ official_docs: https://mswjs.io/docs/api/setup-server/use
 ## Call Signature
 
 ```ts
-server.use(http.get('/resource', resolver), http.post('/resource', resolver))
+server.use(http.get('/resource', resolver), http.post('/resource', resolver));
 ```
 
 ## How It Works
@@ -24,45 +24,45 @@ server.use(http.get('/resource', resolver), http.post('/resource', resolver))
 ```ts
 const server = setupServer(
   http.get('/api/user', () => {
-    return HttpResponse.json({ name: 'John Maverick' })
-  }),
-)
+    return HttpResponse.json({ name: 'John Maverick' });
+  })
+);
 
 // In a test override:
 server.use(
   http.get('/api/user', () => {
-    return HttpResponse.json({ name: 'Overridden' })
-  }),
-)
+    return HttpResponse.json({ name: 'Overridden' });
+  })
+);
 // → GET /api/user now returns { name: 'Overridden' }
 ```
 
 ## Per-Test Pattern
 
 ```ts
-import { http, HttpResponse } from 'msw'
-import { server } from '../mocks/node'
+import { http, HttpResponse } from 'msw';
+import { server } from '../mocks/node';
 
 afterEach(() => {
-  server.resetHandlers() // ← crucial: removes runtime handlers
-})
+  server.resetHandlers(); // ← crucial: removes runtime handlers
+});
 
 // Happy path — uses initial handlers from handlers.ts
 it('displays the user info', async () => {
-  render(UserComponent)
-  expect(await screen.findByText('John Maverick')).toBeVisible()
-})
+  render(UserComponent);
+  expect(await screen.findByText('John Maverick')).toBeVisible();
+});
 
 // Error scenario — overrides per-test
 it('handles errors when fetching the user', () => {
   server.use(
     http.get('/api/user', () => {
-      return new HttpResponse(null, { status: 500 })
-    }),
-  )
-  render(UserComponent)
-  expect(screen.getByRole('alert')).toHaveText('Error!')
-})
+      return new HttpResponse(null, { status: 500 });
+    })
+  );
+  render(UserComponent);
+  expect(screen.getByRole('alert')).toHaveText('Error!');
+});
 ```
 
 ## `server.resetHandlers()`
@@ -72,8 +72,8 @@ it('handles errors when fetching the user', () => {
 Removes all runtime handlers added via `server.use()`, leaving only the initial handlers passed to `setupServer()`.
 
 ```ts
-server.use(http.post('/api/user', resolver))
-server.resetHandlers()
+server.use(http.post('/api/user', resolver));
+server.resetHandlers();
 // → POST /api/user handler removed; only initial handlers remain
 ```
 
@@ -82,9 +82,7 @@ server.resetHandlers()
 Replaces **all** handlers (both initial and runtime) with the given list.
 
 ```ts
-server.resetHandlers(
-  http.patch('/api/book/:bookId', resolver),
-)
+server.resetHandlers(http.patch('/api/book/:bookId', resolver));
 // → Both runtime and initial handlers removed;
 //   only PATCH /api/book/:bookId remains
 ```
@@ -107,9 +105,9 @@ Returns the current list of handlers — useful for debugging.
 ```ts
 // Pseudocode of resolution logic:
 for (const handler of handlers) {
-  result = await handler.run({ request, requestId })
+  result = await handler.run({ request, requestId });
   if (result?.response) {
-    break // first match wins
+    break; // first match wins
   }
 }
 ```
@@ -118,12 +116,12 @@ for (const handler of handlers) {
 
 ```ts
 // vitest.setup.ts
-import { beforeAll, afterAll, afterEach } from 'vitest'
-import { server } from './src/mocks/node'
+import { beforeAll, afterAll, afterEach } from 'vitest';
+import { server } from './src/mocks/node';
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }))
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 ```
 
 The `afterEach` reset is **critical** — without it, runtime overrides from one test bleed into subsequent tests causing flaky failures.
@@ -133,22 +131,22 @@ The `afterEach` reset is **critical** — without it, runtime overrides from one
 Scopes interception to a specific route handler within Express:
 
 ```ts
-import express from 'express'
-import { http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
+import express from 'express';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 
-const app = express()
-const server = setupServer()
+const app = express();
+const server = setupServer();
 
 app.get(
   '/checkout/session',
   server.boundary((req, res) => {
     server.use(
       http.get('https://api.stripe.com/v1/checkout/sessions/:id', ({ params }) => {
-        return HttpResponse.json({ id: params.id, mode: 'payment', status: 'open' })
-      }),
-    )
-    handleSession(req, res)
-  }),
-)
+        return HttpResponse.json({ id: params.id, mode: 'payment', status: 'open' });
+      })
+    );
+    handleSession(req, res);
+  })
+);
 ```

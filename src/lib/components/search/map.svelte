@@ -77,8 +77,7 @@
     minZoom={1}
     class="h-96"
     standardControls
-    style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-    attributionControl={false}>
+    style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json">
     {#each locations as { city, country, latitude, longitude, state } (city?.id)}
       <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
         <Popup offset={[0, -10]}>

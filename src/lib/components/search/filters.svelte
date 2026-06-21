@@ -186,7 +186,9 @@
                       onCheckedChange={(checked) => updateFilter(category, option, checked ?? false)} />
                     <Label for={`${category}_${option}`}>
                       <span class="filter-label text-slate-500">
-                        {option === 'other' ? m.other() : (m as Record<string, (args?: unknown) => string>)[`${category}_${option}`]()}
+                        {option === 'other'
+                          ? m.other()
+                          : (m as Record<string, (args?: unknown) => string>)[`${category}_${option}`]()}
                       </span>
                     </Label>
                   </span>

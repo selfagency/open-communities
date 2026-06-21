@@ -10,36 +10,36 @@
  * Those are handled by setupTest.ts in the "browser" project.
  */
 
-import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
-import { server } from "../mocks/node";
+import { server } from '../mocks/node';
 
 // ── MSW server ──────────────────────────────────────────────────────────
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 // ── Module mocks (non-HTTP) ────────────────────────────────────────────
 
 // Nodemailer is Node-only; provide a minimal mock for server modules
-vi.mock("nodemailer", () => ({
-	createTransport: () => ({
-		sendMail: async () => ({ messageId: "mock" }),
-	}),
+vi.mock('nodemailer', () => ({
+  createTransport: () => ({
+    sendMail: async () => ({ messageId: 'mock' })
+  })
 }));
 
 // Paraglide messages aren't available before build; return key names.
-vi.mock("$lib/paraglide/messages", () => {
-	const m = new Proxy(
-		{},
-		{
-			get: (_target: unknown, prop: unknown) => {
-				const key = String(prop);
-				return () => key;
-			},
-		},
-	);
-	return { m };
+vi.mock('$lib/paraglide/messages', () => {
+  const m = new Proxy(
+    {},
+    {
+      get: (_target: unknown, prop: unknown) => {
+        const key = String(prop);
+        return () => key;
+      }
+    }
+  );
+  return { m };
 });
 
 // Mark as test environment
