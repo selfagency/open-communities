@@ -5,7 +5,6 @@
   import LocationIcon from 'lucide-svelte/icons/globe';
   import SearchIcon from 'lucide-svelte/icons/search';
   /* region imports */
-  import type { DeepMapStore, ReadableAtom } from 'nanostores';
   import { alphabetical, isEmpty, sleep, unique } from 'radashi';
   import { onMount, tick, untrack } from 'svelte';
   import { fade } from 'svelte/transition';
@@ -21,6 +20,7 @@
   import { m } from '$lib/paraglide/messages';
   import type { CongregationMetaRecord } from '$lib/pocketbase.d';
   import { Search } from '$lib/search';
+  import { state as appState } from '$lib/stores';
   import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
   import Filters from './filters.svelte';
@@ -37,10 +37,7 @@
   // constants
   const id = $derived(page.url.searchParams.get('id'));
   const search = new Search(page.data.congregations as SearchData[], dev);
-  const {
-    results,
-    state: searchState
-  }: { results: ReadableAtom<CongregationMetaRecord[]>; state: DeepMapStore<SearchState> } = search;
+  const { results, state: searchState } = search;
   const location = new LocationService({ countries: page.data.countries, search: search });
   const open: Record<string, boolean> = {};
 
@@ -171,6 +168,7 @@
   });
   /* endregion reactivity */
   const skeletons = [1, 2, 3];
+  let isMobile = $derived(appState.isMobile);
 </script>
 
 <section class="w-full space-y-4">
@@ -267,7 +265,7 @@
     {/if}
 
     <div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
-      <Pagination.Root count={$results?.length || 0} {perPage} {onPageChange} siblingCount={$appState.isMobile ? 0 : 1}>
+      <Pagination.Root count={$results?.length || 0} {perPage} {onPageChange} siblingCount={isMobile ? 0 : 1}>
         {#snippet children({ currentPage, pages })}
           <Pagination.Content>
             <Pagination.Item>

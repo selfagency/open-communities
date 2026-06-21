@@ -1,5 +1,6 @@
 import { HttpResponse, http } from 'msw';
 
+import type { CongregationFixture } from '../../data/congregations';
 import { allCongregations, congregationMetaViews, findCongregationById } from '../../data/congregations';
 
 const PB = 'http://*:8090';

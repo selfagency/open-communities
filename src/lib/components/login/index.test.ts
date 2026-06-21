@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
-import { state } from '$lib/stores';
+import { setState } from '$lib/stores';
 
 import Index from './index.svelte';
 
@@ -37,7 +37,7 @@ describe('Login index component', () => {
 
   it('shows loading when loadingSecondary is true', async () => {
     // set loading secondary to true
-    state.set({ loadingSecondary: true });
+    setState({ loadingSecondary: true });
     const valid: SuperStub = { data: {}, errors: {}, id: 'test', posted: false, valid: true };
     render(Index, { data: valid, reset: valid });
 
@@ -46,6 +46,6 @@ describe('Login index component', () => {
     expect(spinner).not.toBeNull();
 
     // reset state back
-    state.set({ loadingSecondary: false });
+    setState({ loadingSecondary: false });
   });
 });

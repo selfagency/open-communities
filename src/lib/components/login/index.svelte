@@ -14,7 +14,7 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
-  import { setState } from '$lib/stores';
+  import { state as appState, setState } from '$lib/stores';
   import { log } from '$lib/utils';
 
   /* endregion imports */
@@ -71,6 +71,9 @@
 
   const { enhance, form: formData } = form;
   /* endregion form */
+
+  let loading = $derived(appState.loading);
+  let loadingSecondary = $derived(appState.loadingSecondary);
 </script>
 
 <Card.Root>
@@ -81,7 +84,7 @@
     <!-- <Card.Description></Card.Description> -->
   </Card.Header>
   <Card.Content>
-    {#if $appState.loading || $appState.loadingSecondary}
+    {#if loading || loadingSecondary}
       <div
         transition:fade={{ delay: 300, duration: 100 }}
         class="flex h-full min-h-96 w-full flex-col items-center justify-center">

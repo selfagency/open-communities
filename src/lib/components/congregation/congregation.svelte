@@ -7,7 +7,7 @@
   import { fade } from 'svelte/transition';
   import { copyText } from 'svelte-copy';
   import { toast } from 'svelte-sonner';
-  import { goto, resolve } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Badge } from '$lib/components/ui/badge';
   import * as Dialog from '$lib/components/ui/dialog';
@@ -94,7 +94,7 @@
     <Dialog.Header class="w-full rtl:text-right">
       <Dialog.Title>
         {#if congregation.contactUrl}
-          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external link -->
+          <!-- external link -->
           <a
             href={congregation.contactUrl}
             target="_blank"
@@ -139,7 +139,6 @@
                   class="button ghost h-8 px-2 py-0"
                   onclick={async () => {
                     const url = `/edit?id=${congregation.id}`;
-                    await resolve(url);
                     await goto(url);
                   }}>
                   <EditIcon size="16" class="text-slate-500 rtl:mx-1" />

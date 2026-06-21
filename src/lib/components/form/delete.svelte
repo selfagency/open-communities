@@ -8,13 +8,13 @@
   import { type SuperValidated, superForm } from 'sveltekit-superforms';
 
   import { dev } from '$app/environment';
-  import { goto, resolve } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import Loading from '$lib/components/global/loading.svelte';
   import * as Alert from '$lib/components/ui/alert';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import * as Form from '$lib/components/ui/form';
   import { m } from '$lib/paraglide/messages';
-  import { setState } from '$lib/stores';
+  import { state as appState, setState } from '$lib/stores';
   import { log } from '$lib/utils';
 
   /* endregion imports */
@@ -46,7 +46,6 @@
     async onUpdate({ result }) {
       if (result.type === 'success') {
         toast.success(m.deleteSuccess());
-        await resolve('/');
         await goto('/');
       } else {
         if (!isEmpty(result.data?.form?.errors)) log.error('form errors', result.data.form.errors);
@@ -57,6 +56,8 @@
 
   const { enhance, form: formData } = form;
   /* endregion form */
+
+  let loadingSecondary = $derived(appState.loadingSecondary);
 
   /* region lifecycle */
   onMount(() => {
@@ -71,7 +72,7 @@
     {m.delete()}
   </AlertDialog.Trigger>
   <AlertDialog.Content>
-    {#if $appState.loadingSecondary}
+    {#if loadingSecondary}
       <div
         transition:fade={{ delay: 300, duration: 100 }}
         class="flex h-full min-h-96 w-full flex-col items-center justify-center">

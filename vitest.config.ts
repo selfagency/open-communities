@@ -9,7 +9,6 @@ export default defineConfig({
     include: [
       '@leeoniya/ufuzzy',
       '@lucide/svelte/icons/x',
-      '@nanostores/persistent',
       '@sveltejs/kit',
       '@testing-library/jest-dom/vitest',
       '@testing-library/svelte',
@@ -29,7 +28,6 @@ export default defineConfig({
       'lucide-svelte/icons/shield',
       'lucide-svelte/icons/shield-ban',
       'lucide-svelte/icons/square-arrow-out-up-right',
-      'nanostores',
       'nodemailer',
       'pocketbase',
       'radashi',

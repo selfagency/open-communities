@@ -16,7 +16,7 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
-  import { setState } from '$lib/stores';
+  import { state as appState, setState } from '$lib/stores';
   import { log } from '$lib/utils';
 
   /* endregion imports */
@@ -78,6 +78,8 @@
   const { enhance, form: formData } = form;
   /* endregion form */
 
+  let loadingSecondary = $derived(appState.loadingSecondary);
+
   /* region lifecycle */
   onMount(() => {
     formData.set({
@@ -104,7 +106,7 @@
       {m.transfer()}
     </AlertDialog.Trigger>
     <AlertDialog.Content>
-      {#if $appState.loadingSecondary}
+      {#if loadingSecondary}
         <div
           transition:fade={{ delay: 300, duration: 100 }}
           class="flex h-full min-h-96 w-full flex-col items-center justify-center">

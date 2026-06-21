@@ -58,14 +58,14 @@
 
   /* region reactivity */
   $effect(() => {
-    if ($appState.loading && !isProgressActive) {
+    if (appState.loading && !isProgressActive) {
       isProgressActive = true;
       startProgress();
     }
   });
 
   $effect(() => {
-    if (!$appState.loading && isProgressActive) {
+    if (!appState.loading && isProgressActive) {
       finishProgress();
     }
   });

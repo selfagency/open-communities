@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
-import { state } from '$lib/stores';
+import { setState } from '$lib/stores';
 import type { SuperFormStub } from '$test/global.d';
 
 import Signup from './signup.svelte';
@@ -88,7 +88,7 @@ describe('Signup component', () => {
   });
 
   it('shows success message when state.form.success is true', () => {
-    state.set({ form: { hasErrors: false, success: true } });
+    setState({ form: { hasErrors: false, success: true } });
     const form = makeForm();
     const verify: SuperValidatedStub = {
       data: {},
@@ -102,6 +102,6 @@ describe('Signup component', () => {
     expect(screen.getByText(new RegExp(m.signUpSuccess(), 'i'))).toBeInTheDocument();
 
     // reset
-    state.set({ form: { hasErrors: false, success: false } });
+    setState({ form: { hasErrors: false, success: false } });
   });
 });

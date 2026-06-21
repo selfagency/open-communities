@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
   import EditIcon from 'lucide-svelte/icons/pencil';
-  import { goto, resolve } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Badge } from '$lib/components/ui/badge';
   import * as Card from '$lib/components/ui/card';
@@ -101,7 +101,6 @@
                   e.preventDefault();
                   e.stopPropagation();
                   const url = `/edit?id=${congregation.id}`;
-                  await resolve(url);
                   await goto(url);
                 }}>
                 <EditIcon size="16" class="text-slate-700" />

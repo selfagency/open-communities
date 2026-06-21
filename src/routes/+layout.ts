@@ -1,19 +1,16 @@
 /* region imports */
-import { isEmpty } from 'radashi';
 import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import type { UsersResponse } from '$lib/pocketbase.d';
 import { posthogInit } from '$lib/posthog';
-import { initState, state } from '$lib/stores';
+import { initState } from '$lib/stores';
 /* endregion imports */
 
 export const load = async ({ data }) => {
   if (browser) {
     posthogInit(env.PUBLIC_POSTHOG_KEY as string, data.user as UsersResponse);
 
-    if (isEmpty(state?.get())) {
-      initState();
-    }
+    initState(data.user?.lang);
   }
 
   return data;

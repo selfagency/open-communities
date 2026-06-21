@@ -1,12 +1,12 @@
 <script lang="ts">
   /* region imports */
   import { createEventDispatcher } from 'svelte';
-
   import { dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
   import { m } from '$lib/paraglide/messages';
+  import { state as appState } from '$lib/stores';
 
   import Locale from './locale.svelte';
 
@@ -19,6 +19,7 @@
   // constants
   const dispatch = createEventDispatcher();
   const user = $derived(page.data.user);
+  let isMobile = $derived(appState.isMobile);
   /* endregion variables */
 </script>
 
@@ -33,7 +34,7 @@
         dispatch('close');
         await goto(`/edit?id=${user?.congregation}`);
       }}>
-      {mode === 'full' && $appState.isMobile ? m.edit() : m.editCongregation()}
+      {mode === 'full' && isMobile ? m.edit() : m.editCongregation()}
     </Button>
   {:else}
     <Button
@@ -42,7 +43,7 @@
         dispatch('close');
         await goto('/add');
       }}>
-      {mode === 'full' && $appState.isMobile ? m.add() : m.addCongregation()}
+      {mode === 'full' && isMobile ? m.add() : m.addCongregation()}
     </Button>
   {/if}
 
@@ -63,7 +64,7 @@
         await goto('/login');
       }}>
       {m.login()}
-      {mode === 'full' && $appState.isMobile ? '' : `/ ${m.signUp()}`}
+      {mode === 'full' && isMobile ? '' : `/ ${m.signUp()}`}
     </Button>
   {/if}
 

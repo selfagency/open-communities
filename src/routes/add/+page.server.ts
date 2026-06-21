@@ -72,16 +72,7 @@ export const actions = {
 
       const record = (await api.collection('congregations').create(
         {
-          ...omit(formData, [
-            'accessibility',
-            'fit',
-            'location',
-            'registration',
-            'health',
-            'security',
-            'services',
-            'user' as const
-          ]),
+          ...omit(formData, ['accessibility', 'fit', 'health', 'location', 'registration', 'security', 'services']),
           ...location,
           visible: client?.admin ? formData.visible : false
         },

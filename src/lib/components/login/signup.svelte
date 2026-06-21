@@ -13,7 +13,7 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
-  import { setState } from '$lib/stores';
+  import { state as appState, setState } from '$lib/stores';
 
   // import { log } from '$lib/utils';
   /* endregion imports */
@@ -28,6 +28,9 @@
 
   // constants
   const verifying = $derived(page.url.searchParams.has('verifyEmail'));
+
+  // Svelte 5: derive store values in script to avoid $ prefix in template
+  let formSuccess = $derived(appState.form?.success);
   /* endregion variables */
 
   /* region form */
@@ -57,7 +60,7 @@
       <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
         {m.verified_extended()}
       </span>
-    {:else if $appState.form?.success}
+    {:else if formSuccess}
       <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
         {m.signUpSuccess()}
       </span>

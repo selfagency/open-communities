@@ -1,8 +1,6 @@
 /* region imports */
 
 import Fuzzy from '@leeoniya/ufuzzy';
-import type { DeepMapStore, ReadableAtom } from 'nanostores';
-import { computed, deepMap } from 'nanostores';
 import { alphabetical, isEmpty, shake, unique } from 'radashi';
 
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
@@ -10,13 +8,67 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 /* endregion imports */
 
+/* ------------------------------------------------------------------ */
+/*  Minimal Svelte store helpers — replaces nanostores deepMap/computed */
+/* ------------------------------------------------------------------ */
+
+type Subscriber<T> = (v: T) => void;
+type Unsubscriber = () => void;
+type Readable<T> = { subscribe: (run: Subscriber<T>) => Unsubscriber };
+
+function writableDeep<T extends Record<string, unknown>>(
+  initial: T
+): Readable<T> & { get(): T; setKey<K extends keyof T>(k: K, v: T[K]): void } {
+  let value = { ...initial };
+  const subs = new Set<Subscriber<T>>();
+  function notify() {
+    for (const fn of subs) fn(value);
+  }
+  return {
+    subscribe(run: Subscriber<T>) {
+      run(value);
+      subs.add(run);
+      return () => subs.delete(run);
+    },
+    get() {
+      return value;
+    },
+    setKey<K extends keyof T>(k: K, v: T[K]) {
+      value = { ...value, [k]: v };
+      notify();
+    }
+  };
+}
+
+function derived<T, D>(source: Readable<T>, fn: (v: T) => D): Readable<D> {
+  let current: D = undefined as unknown as D;
+  const subs = new Set<Subscriber<D>>();
+
+  source.subscribe((v) => {
+    current = fn(v);
+    for (const fn of subs) fn(current);
+  });
+
+  return {
+    subscribe(run: Subscriber<D>) {
+      if (current !== undefined) run(current);
+      subs.add(run);
+      return () => subs.delete(run);
+    }
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Search engine                                                      */
+/* ------------------------------------------------------------------ */
+
 export class Search {
   data: SearchData[];
   debug: boolean;
   fuzzy: Fuzzy;
   ids: string[];
-  results: ReadableAtom<CongregationMetaRecord[]>;
-  state: DeepMapStore<SearchState>;
+  results: Readable<CongregationMetaRecord[]>;
+  state: ReturnType<typeof writableDeep<SearchState>>;
 
   // Pre-built indexes for fast filtering
   /** Map<filterKey, Map<valueKey, Set<rowIndex>>> */
@@ -28,7 +80,7 @@ export class Search {
     this.data = alphabetical(data, (i) => i.name);
     this.debug = debug;
 
-    this.state = deepMap<SearchState>({
+    this.state = writableDeep<SearchState>({
       showLocation: true
     });
     this.fuzzy = new Fuzzy();
@@ -36,7 +88,7 @@ export class Search {
 
     this._buildIndexes();
 
-    this.results = computed(this.state, (state) => {
+    this.results = derived(this.state, (state) => {
       let resultIds = [...this.ids];
 
       // Filter by Location
@@ -101,7 +153,6 @@ export class Search {
 
     if (activeFilters.unclaimed) {
       const unclaimedIds = this.data.filter((record) => !record.owner).map((i) => i.id);
-      // If 'unapproved' was also checked, find the intersection. Otherwise, just use unclaimed.
       ids = !isEmpty(ids) ? ids.filter((id) => unclaimedIds.includes(id)) : unclaimedIds;
     }
 

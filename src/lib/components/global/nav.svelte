@@ -4,6 +4,7 @@
 
   import * as Sheet from '$lib/components/ui/sheet';
   import { m } from '$lib/paraglide/messages';
+  import { state as appState } from '$lib/stores';
 
   import Menu from './menu.svelte';
 
@@ -12,9 +13,11 @@
   /* region variables */
   let open = $state(false);
   /* endregion variables */
+
+  let offsetWidth = $derived(appState.offsetWidth);
 </script>
 
-{#if $appState.offsetWidth && $appState.offsetWidth < 420}
+{#if offsetWidth && offsetWidth < 420}
   <Sheet.Root bind:open>
     <Sheet.Trigger>
       <MenuIcon class="mt-2 h-6 w-6" />

@@ -24,7 +24,7 @@
   });
   /* endregion lifecycle */
 
-  const form = initForm(data.form?.default, 'edit', data.user?.admin);
+  const form = initForm(data.form?.default as unknown as Record<string, unknown>, 'edit', data.user?.admin);
 
   export const snapshot = { capture: form.capture, restore: form.restore };
 </script>

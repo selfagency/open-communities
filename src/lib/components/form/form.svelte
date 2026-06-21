@@ -47,7 +47,7 @@
   }: {
     content?: PagesRecord;
     deletion?: SuperValidated<any>;
-    form: SuperForm<Record<string, unknown>, any>;
+    form: SuperForm<any, any>;
     mode: 'add' | 'edit';
     transfer?: SuperValidated<any>;
     user: UsersRecord & { id: string };
@@ -72,7 +72,7 @@
   /* endregion methods */
 
   /* region form */
-  const { enhance, errors, form: formData } = form as SuperForm<Record<string, unknown>, any>;
+  const { enhance, errors, form: formData } = form as SuperForm<any, any>;
   /* endregion form */
 
   /* region lifecycle */
@@ -97,7 +97,7 @@
 
   /* region reactivity */
   $effect(() => {
-    if ($appState.form?.success) {
+    if (appState.form?.success) {
       title = m.success({
         thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission().toLowerCase()
       });
@@ -106,12 +106,16 @@
     }
   });
   /* endregion reactivity */
+
+  let loadingSecondary = $derived(appState.loadingSecondary);
+  let formSuccess = $derived(appState.form?.success);
+  let formHasErrors = $derived(appState.form?.hasErrors);
 </script>
 
 <section class="m-auto w-full" style="max-width: 480px;">
   <Card.Root>
     <div>
-      {#if $appState.loadingSecondary}
+      {#if loadingSecondary}
         <div
           transition:fade={{ delay: 300, duration: 100 }}
           class="flex h-full min-h-96 w-full flex-col items-center justify-center">
@@ -129,7 +133,7 @@
             </Card.Header>
             <Card.Content>
               <div class="flex flex-col items-center justify-start">
-                {#if mode === 'add' && content?.content && !$appState.form?.success}
+                {#if mode === 'add' && content?.content && !formSuccess}
                   <div class="prose w-full">{@html DOMPurify.sanitize(content.content)}</div>
                 {/if}
 
@@ -142,16 +146,16 @@
                   </Alert.Root>
                 {/if}
 
-                {#if mode === 'add' && $appState.form?.success}
+                {#if mode === 'add' && formSuccess}
                   <p>{m.addSuccessNotice()}</p>
                 {/if}
 
-                {#if mode === 'edit' && $appState.form?.success}
+                {#if mode === 'edit' && formSuccess}
                   <p>{m.editSuccessNotice()}</p>
                 {/if}
 
-                {#if !$appState.form?.success}
-                  {#if $appState.form?.hasErrors}
+                {#if !formSuccess}
+                  {#if formHasErrors}
                     <span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
                       <Alert.Root variant="destructive" class="my-4 bg-red-50">
                         <WarningIcon size="18" />
@@ -202,7 +206,7 @@
 
           <!-- actions -->
           <Card.Footer class="flex flex-col items-center justify-start space-y-4">
-            {#if !$appState.form?.success}
+            {#if !formSuccess}
               <div class="flex w-full flex-row items-center justify-between space-x-2">
                 {#if mode === 'edit'}
                   <div class="flex flex-row items-center justify-start space-x-2">

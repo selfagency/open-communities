@@ -19,13 +19,12 @@ import { vi } from 'vitest';
 const { prototype } = Element;
 
 if (typeof window !== 'undefined' && !prototype.animate) {
-  // @ts-expect-error i don't have the types to handle this
-  prototype.animate = () => ({
+  prototype.animate = (() => ({
     cancel: () => {},
     finished: Promise.resolve(),
-    pause: () => {},
-    play: () => {}
-  });
+    play: () => {},
+    pause: () => {}
+  })) as unknown as typeof prototype.animate;
 }
 
 // Polyfill URL.createObjectURL which some libs (maplibre-gl) use to create

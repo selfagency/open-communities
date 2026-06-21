@@ -1,22 +1,53 @@
 /* region imports */
-import type { MapStore } from 'nanostores';
-
-import { map } from 'nanostores';
-
 import { api } from '$lib/api';
 import { log } from '$lib/utils';
 
 import type { TypedPocketBase } from './pocketbase.d';
 import type { Search } from './search';
 import type { City, Country, LocationRecord, LocationState, State } from './types.d';
+
 /* endregion imports */
+
+/**
+ * Minimal writable store that satisfies the Svelte store contract.
+ * Replaces nanostores `map()` for per-instance Location state.
+ */
+type StoreReader<T> = { subscribe: (run: (v: T) => void) => () => void };
+type LocationStore = StoreReader<LocationState> & {
+  get(): LocationState;
+  set(v: LocationState): void;
+};
+
+function writable<T>(initial: T): {
+  subscribe: (run: (v: T) => void) => () => void;
+  get: () => T;
+  set: (v: T) => void;
+} {
+  let value = initial;
+  const subs = new Set<(v: T) => void>();
+
+  return {
+    subscribe(run: (v: T) => void) {
+      run(value);
+      subs.add(run);
+      return () => subs.delete(run);
+    },
+    get() {
+      return value;
+    },
+    set(v: T) {
+      value = v;
+      for (const fn of subs) fn(value);
+    }
+  };
+}
 
 export class Location {
   api?: TypedPocketBase;
   countries: Country[];
   default: LocationState;
   search?: Search;
-  state: MapStore<LocationState>;
+  state: LocationStore;
 
   constructor({ countries, search }: { countries: Country[]; search?: Search }) {
     if (search) this.search = search;
@@ -36,7 +67,7 @@ export class Location {
       },
       record: {}
     } as LocationState;
-    this.state = map<LocationState>(this.default);
+    this.state = writable<LocationState>(this.default);
 
     this.setCountry = this.setCountry.bind(this);
     this.setState = this.setState.bind(this);

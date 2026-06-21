@@ -14,7 +14,7 @@
   // props
   const { data } = $props();
 
-  // const open = $derived($appState?.showIntro);
+  // const open = $derived(appState?.showIntro);
   /* endregion variables */
 
   $effect(() => {
