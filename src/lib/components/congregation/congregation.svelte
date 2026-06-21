@@ -179,6 +179,7 @@
         {#if tab === 'about'}
           <div transition:fade>
             {#if congregation.flavor}
+              <!-- eslint-disable-next-line svelte/no-at-html-tags -- DOMPurify-sanitized -->
               <p class="mb-6 text-sm">{@html congregation.flavor}</p>
             {/if}
 
@@ -262,6 +263,7 @@
                   <h2 class="label">{m.notes()}</h2>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
+                  <!-- eslint-disable-next-line svelte/no-at-html-tags -- DOMPurify-sanitized -->
                   <p>{@html notes}</p>
                 </div>
               {/if}
