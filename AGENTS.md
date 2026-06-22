@@ -105,17 +105,29 @@ PB_TEST_PASSWORD="i3_NL-dfzzFt5TX"
 PUBLIC_API_ENDPOINT="http://localhost:8090"
 PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
 PUBLIC_HOSTNAME="http://localhost:5173"  # 4173 for preview
+PUBLIC_POSTHOG_HOST="http://localhost:3001"
+PUBLIC_POSTHOG_KEY="phc_dummy"          # set real key for analytics
 SMTP_HOST="localhost"
 SMTP_PORT="1025"
 ```
 
-### PocketBase Setup
+### PocketBase Setup (E2E)
 
-1. Start `pnpm deps:up` (runs PocketBase on port 8090)
-2. Open `http://localhost:8090/_/` and create an admin account
-3. Import `pb_schema.json` via PocketBase admin UI → Settings → Import Collection
-4. Create a user account and grant it admin privileges (backend only)
-5. Import location data dump (contact maintainer for the file)
+The bootstrap script handles all PB setup automatically:
+
+```bash
+pnpm deps:up           # Start Docker containers (PB + Mailpit + Cap)
+pnpm deps:bootstrap    # Create superuser, import schema, seed data
+pnpm deps:reset        # Full wipe: down -v → up → bootstrap
+```
+
+The bootstrap script (e2e/scripts/bootstrap.mjs):
+- Extracts PB's installation token from startup logs
+- Imports all collections from `pb_schema.json` via `PUT /api/collections/import`
+- Seeds locations (countries/states/cities), test users, congregations (with child records), and static pages
+- Creates the superuser via `docker exec` for admin panel access
+
+For manual admin panel access: `http://localhost:8090/_/` with credentials from `.env.test` (`PB_TEST_ADMIN` / `PB_TEST_PASSWORD`).
 
 ### Cap Captcha Setup
 
@@ -136,7 +148,7 @@ pnpm deps:down
 # Type-check (generates paraglide messages first)
 pnpm check
 
-# Lint (Prettier check + ESLint)
+# Lint (Biome check)
 pnpm lint
 
 # Auto-format
@@ -215,25 +227,16 @@ The CI runs in sequence: **Build** → **CI** (unit tests) → **E2E** → **Dep
 - Use `const` over `let`; prefer `async`/`await` over raw promises
 - Svelte 5 runes: `$state`, `$derived`, `$effect`, `$props`, `$bindable`
 
-### ESLint
+### Biome (Linting + Formatting)
 
-Config: `eslint.config.js` (flat config). Key rules:
+Config: `biome.json` (Biome v2.5). Key rules:
 
-- `perfectionist/sort-imports` (warn) — imports sorted with `$` prefix as internal pattern
-- `@typescript-eslint/no-unused-vars` (warn)
-- `svelte/no-at-html-tags` (off for Svelte files — but prefer sanitized rendering)
-- `@typescript-eslint/no-explicit-any` (off for Svelte and test files — but avoid `any` in new code)
-- `no-undef` (off globally — TypeScript catches these)
+- `recommended` preset base
+- `correctness.noUnusedImports` (error)
+- Imports sorted automatically via `assist.actions.source.organizeImports`
+- Svelte files supported natively via `html.experimentalFullSupportEnabled`
 
-Run: `pnpm lint` (Prettier check + ESLint) or `pnpm format` (auto-fix both).
-
-### Prettier
-
-Config: `prettier.config.js`. Key settings:
-
-- Single quotes, semicolons, trailing commas: none
-- Print width: 120, tab width: 2
-- Plugins: `prettier-plugin-tailwindcss`, `prettier-plugin-svelte`
+Run: `pnpm lint` (Biome check) or `pnpm format` (Biome check --write).
 
 ### File Organization
 
@@ -295,7 +298,11 @@ cmds = [
 
 ## Security Considerations
 
-- **CSP** configured via `sveltekit-helmet` in `src/lib/server/security.ts` — currently allows `'unsafe-eval'` and `'unsafe-inline'` (known issue)
+- **CSP** configured via `sveltekit-helmet` in `src/lib/server/security.ts` — staged rollout (report-only in dev, enforced in production)
+- **Auth cookies** are `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev`
+- **SMTP** uses `rejectUnauthorized: true` with proper Port 465/587 negotiation
+- **Captcha validation** — `validateCaptcha()` returns a boolean; always check `if (!captchaValid) return fail(400, { form })`
+- **IDOR** — always verify `client.congregation === data.id` for non-admin mutations
 - **Auth cookies** are `httpOnly: false` and `secure` is commented out (known issue)
 - **SMTP** has `rejectUnauthorized: false` (known issue — needed for local Mailpit)
 - **PocketBase filter injection** — use `pb.filter(expr, params)` instead of string interpolation for all queries
@@ -427,13 +434,7 @@ cmds = [
 - **Editor:** `.editorconfig` enforces spaces, LF, UTF-8
 - **SonarLint:** `.sonarlint/` config present for IDE integration
 - **Known issues** (from `CODE_REVIEW.md`):
-  - Captcha validation returns truthy `fail()` object — always check `if (!captchaValid) return fail(...)`
-  - IDOR in `/edit` submit action — non-admin can edit any congregation
-  - IDOR in `/user/lang` — any user can change any other user's language
-  - PocketBase filter injection in multiple `getFirstListItem` calls — use `pb.filter()`
-  - Auth cookies not `httpOnly` or `secure`
-  - CSP allows `'unsafe-eval'` and `'unsafe-inline'`
-  - SMTP `rejectUnauthorized: false`
-  - Hardcoded secrets in CI workflow files
-  - `noImplicitAny: false` in tsconfig
   - `@testing-library/svelte` / Svelte 5 incompatibility blocks some tests
+  - CSP allows `'unsafe-inline'` on style-src (required for Tailwind v4 runtime style injection)
+  - `noImplicitAny: false` in tsconfig has been removed — strict mode is now fully enabled
+  - Playwright 1.61 has a `Fatal Error: exe.match is not a function` on Node.js 22/pnpm — E2E tests may need `npx playwright install chromium`
