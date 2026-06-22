@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => ({
     ],
     ...(process.env.VITEST ? { conditions: ['browser'] } : {})
   },
-  sourceMap: 'inline',
+  sourceMap: process.env.VITEST ? 'inline' : true,
   test: {
     coverage: {
       // you can include other reporters, but 'json-summary' is required, json is recommended
