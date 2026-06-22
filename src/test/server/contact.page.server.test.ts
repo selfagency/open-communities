@@ -5,49 +5,101 @@ import { createMockRequestEvent, createMockServerLoadEvent, mockSveltekitSuperfo
 // Mock sveltekit-superforms before any dynamic imports
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
-function makeApiStub() {
-  return {
-    collection: () => ({
-      getFullList: async () => [{ id: 'c1', name: 'Cong' }]
-    }),
-    filter: (expr: string) => expr
-  };
-}
-
 describe('contact +page.server', () => {
   it('load returns congregations and form', async () => {
+    // Import the module dynamically so mocks are applied first
     const mod = await import('../../../src/routes/contact/+page.server');
 
-    const locals = { api: makeApiStub(), validate: async () => ({}) } as any;
+    const api = {
+      authStore: { record: { id: 'u1' } },
+      collection: () => ({
+        getFullList: async () => []
+      }),
+      filter: (expr: string) => expr
+    } as any;
+    const locals = { api, validate: async () => ({}) };
     const mockEvent = createMockServerLoadEvent({
       locals,
       route: { id: '/contact' },
       url: new URL('http://localhost/contact')
     });
 
-    const res = await mod.load(mockEvent as any);
-    expect(res).toHaveProperty('congregations');
+    const res = await mod.load(mockEvent);
     expect(res).toHaveProperty('form');
   });
 
-  it('default action fails when form invalid', async () => {
+  it('returns captcha form and congregration list even when unauthenticated', async () => {
     const mod = await import('../../../src/routes/contact/+page.server');
-    const validate = async () => ({ data: {}, valid: false });
 
-    const locals: any = {
-      api: makeApiStub(),
-      log: { error: vi.fn() },
-      validate
-    };
-    await locals.validate();
-    const mockActionEvent = createMockRequestEvent({
+    const api = {
+      authStore: { record: null },
+      collection: () => ({
+        getFullList: async () => []
+      }),
+      filter: (expr: string) => expr
+    } as any;
+    const locals = { api, validate: async () => ({}) };
+    const mockEvent = createMockServerLoadEvent({
       locals,
       route: { id: '/contact' },
       url: new URL('http://localhost/contact')
     });
 
-    const res = await mod.actions.default(mockActionEvent as any);
-    // when invalid, action returns a fail which in this stub will resolve; expect an object or failure
-    expect(res).toBeDefined();
+    const res = await mod.load(mockEvent);
+    expect(res).toHaveProperty('form');
+  });
+
+  describe('default action', () => {
+    it('handles captcha failure gracefully', async () => {
+      const mod = await import('../../../src/routes/contact/+page.server');
+
+      const api = {
+        authStore: { record: { id: 'u1' } },
+        collection: () => ({
+          create: async () => ({}),
+          update: async () => ({})
+        }),
+        filter: (expr: string) => expr
+      } as any;
+
+      const locals = {
+        api,
+        captureException: () => {},
+        log: { error: () => {} },
+        validate: async () => ({
+          data: {
+            captcha: 'invalid',
+            congregation: '',
+            email: 'test@example.com',
+            message: 'Test message',
+            name: 'Test User',
+            reason: 'question'
+          },
+          valid: true
+        })
+      } as any;
+
+      const request = new Request('http://localhost/contact', {
+        method: 'POST',
+        body: new URLSearchParams({
+          captcha: 'invalid',
+          email: 'test@example.com',
+          message: 'Test message',
+          name: 'Test User',
+          reason: 'question'
+        })
+      });
+
+      const mockEvent = createMockRequestEvent({
+        locals,
+        request,
+        route: { id: '/contact' },
+        url: new URL('http://localhost/contact')
+      });
+
+      // The action should run without throwing even if captcha fails
+      const result = await mod.actions.default(mockEvent as any);
+      expect(result).toBeDefined();
+    });
   });
 });

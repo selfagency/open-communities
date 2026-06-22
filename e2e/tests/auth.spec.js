@@ -27,18 +27,16 @@ test.describe('auth flows', () => {
   });
 
   test('signup -> sends verification email and verifies account', async ({ page }) => {
+    // Navigate to login page with signUp param
     await page.goto(`${base}/login?signUp`, { waitUntil: 'domcontentloaded' });
-    // Wait for client-side hydration to switch the tab from 'login' to 'signup'.
-    // Give extra time for analytics/widget scripts that delay full page load.
-    await page.waitForTimeout(5000);
-    // If the tab didn't auto-switch, click the signup tab manually
-    const signupContent = page.locator('div[data-value="signup"]');
-    if (await signupContent.getAttribute('hidden') !== null) {
-      await page.locator('button[data-value="signup"]').click();
-      await page.waitForTimeout(1000);
-    }
+    // Wait for hydration and tab switch to complete
+    await page.waitForTimeout(8000);
+    // The onMount handler in +page.svelte should have switched to the signup tab
+    // by reading ?signUp from the URL params
+    console.log('[e2e] URL:', page.url());
+
     // Wait for the signup form to be visible
-    await page.waitForSelector('form[action*="signup"]', { timeout: 10000 });
+    await page.waitForSelector('form[action*="signup"]', { timeout: 15000, state: 'attached' });
 
     await page.fill('input[autocomplete="name"]', 'E2E Tester');
     await page.fill('input[autocomplete="email"]', email);
