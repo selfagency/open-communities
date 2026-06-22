@@ -109,12 +109,14 @@
   // (the 3-step country→state→city cascade during loadLocation).
   $effect(() => {
     const rec = $location?.record;
-    if (rec && rec.city?.id && rec.country?.id) {
+    const cityId = rec?.city?.id;
+    const countryId = rec?.country?.id;
+    if (cityId && countryId) {
       untrack(() => {
         $formData.location = {
-          city: rec.city.id,
-          country: rec.country.id,
-          state: rec.state?.id
+          city: cityId,
+          country: countryId,
+          state: rec?.state?.id
         };
       });
     }

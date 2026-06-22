@@ -48,3 +48,5 @@ if (phKey) {
   (globalThis as Record<string, unknown>).__OTEL_LOGGER__ = otelLogger;
   (globalThis as Record<string, unknown>).__OTEL_SDK__ = sdk;
 }
+
+export {};

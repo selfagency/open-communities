@@ -31,7 +31,18 @@ export const pageAdd: PageFixture = {
   updated: '2025-01-01T00:00:00Z'
 };
 
-export const allPages: PageFixture[] = [pageHome, pageAdd];
+export const pageAbout: PageFixture = {
+  body: '# About\n\nAbout page content.',
+  collectionId: 'pbc_pages',
+  collectionName: 'pages',
+  created: '2025-01-01T00:00:00Z',
+  id: 'page_about_001',
+  slug: 'about',
+  title: 'About',
+  updated: '2025-01-01T00:00:00Z'
+};
+
+export const allPages: PageFixture[] = [pageHome, pageAdd, pageAbout];
 
 export function findPageBySlug(slug: string): PageFixture | undefined {
   return allPages.find((p) => p.slug === slug);
