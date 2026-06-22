@@ -3,6 +3,7 @@ import { browser } from '$app/environment';
 import type { UsersResponse } from '$lib/pocketbase.d';
 import { initPosthog } from '$lib/posthog';
 import { initState, setState } from '$lib/stores';
+
 /* endregion imports */
 
 let _initialized = false;

@@ -3,6 +3,7 @@
   import Welcome from '$lib/components/global/welcome.svelte';
   import Congregations from '$lib/components/search/congregations.svelte';
   import { setState } from '$lib/stores';
+
   /* endregion imports */
 
   /* region variables */

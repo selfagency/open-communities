@@ -10,6 +10,7 @@
   import { m } from '$lib/paraglide/messages';
   import type { Search } from '$lib/search';
   import type { LocationMeta } from '$lib/types.d';
+
   /* endregion imports */
 
   /* region variables */

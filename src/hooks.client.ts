@@ -1,6 +1,6 @@
-import { dev } from '$app/environment';
 /* region imports */
 import posthog from 'posthog-js';
+import { dev } from '$app/environment';
 import { log } from '$lib/utils';
 /* endregion imports */
 

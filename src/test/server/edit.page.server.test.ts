@@ -4,7 +4,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { createMockServerLoadEvent } from '$test/testUtils';
 
-import { congregationVisible, congregationHidden, congregationOtherOwner } from '../../mocks/data/congregations';
+import { congregationHidden, congregationOtherOwner, congregationVisible } from '../../mocks/data/congregations';
 
 const PB = 'http://*:8090';
 

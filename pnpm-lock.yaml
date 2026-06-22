@@ -29,6 +29,9 @@ importers:
       posthog-node:
         specifier: ^5.38.2
         version: 5.38.2(rxjs@7.8.2)
+      svelte-reactive-preprocessor:
+        specifier: ^0.8.3
+        version: 0.8.3
       topojson-client:
         specifier: ^3.1.0
         version: 3.1.0
@@ -2193,6 +2196,10 @@ packages:
     resolution: {integrity: sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==}
     engines: {node: '>=8'}
 
+  escape-string-regexp@4.0.0:
+    resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
+    engines: {node: '>=10'}
+
   esm-env@1.2.2:
     resolution: {integrity: sha512-Epxrv+Nr/CaL4ZcFGPJIYLWFom+YeV1DqMLHJoEd9SYRxNbaFruBwfEX/kkHUJf55j2+TUbmDcmuilbP1TmXHA==}
 
@@ -2601,6 +2608,9 @@ packages:
   json-stringify-pretty-compact@4.0.0:
     resolution: {integrity: sha512-3CNZ2DnrpByG9Nqj6Xo8vqbjT4F6N+tb4Gb28ESAZjYZ5yqvmc56J+/kuIwkaAMOyblTQhUW7PxMkUb8Q36N3Q==}
 
+  json-stringify-safe@5.0.1:
+    resolution: {integrity: sha512-ZClg6AaYvamvYEE82d3Iyd3vSSIjQ+odgjaTzRuO3s7toCdFKczob2i0zCh7JE8kWn17yvAWhUVxvqGwUalsRA==}
+
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
@@ -2692,6 +2702,9 @@ packages:
   lightningcss@1.32.0:
     resolution: {integrity: sha512-NXYBzinNrblfraPGyrbPoD19C1h9lfI/1mzgWYvXUTe414Gz/X1FD2XBZSZM7rRTrMA8JL3OtAaGifrIKhQ5yQ==}
     engines: {node: '>= 12.0.0'}
+
+  linenumber@1.0.1:
+    resolution: {integrity: sha512-g7x+bxzGaJ7yUk1chFXmY4NT1oIiSQREUs33M29cjDPFUP1W/dlM3YGD1cR7qeSehp5TEpxAFP0L+Rpk3nUKzw==}
 
   locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -2942,6 +2955,9 @@ packages:
   pbf@5.1.0:
     resolution: {integrity: sha512-Wv0yo0+uZepnoNEKsquhar1F18LogB8oeEikIhUXG16udbiXG7JecHGySwoo6kuMgjmbQYzdrTZlO+/K9t8eZg==}
     hasBin: true
+
+  periscopic@2.0.3:
+    resolution: {integrity: sha512-FuCZe61mWxQOJAQFEfmt9FjzebRlcpFz8sFPbyaCKtdusPkMEbA9ey0eARnRav5zAhmXznhaQkKGFAPn7X9NUw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -3357,6 +3373,9 @@ packages:
         optional: true
       topojson-client:
         optional: true
+
+  svelte-reactive-preprocessor@0.8.3:
+    resolution: {integrity: sha512-OZRorkMbIdrHfnvAYrY7brEUW6QOesh0TiIvQy2RQHly2hrvwhZbrH8Ec9KnAVcx9cCYVox26GqsHcLtVkud3g==}
 
   svelte-sonner@1.1.1:
     resolution: {integrity: sha512-5cd3p7wa4cq0NsqslMwdlPb7x1JglEZ/GKrLePWNr5bCxR1nagAVrY01FRFrXfUGs41miLt3C327+8XJo5BzZw==}
@@ -5871,6 +5890,8 @@ snapshots:
 
   escape-string-regexp@2.0.0: {}
 
+  escape-string-regexp@4.0.0: {}
+
   esm-env@1.2.2: {}
 
   esprima@4.0.1: {}
@@ -6302,6 +6323,8 @@ snapshots:
 
   json-stringify-pretty-compact@4.0.0: {}
 
+  json-stringify-safe@5.0.1: {}
+
   json5@2.2.3: {}
 
   just-compare@2.3.0: {}
@@ -6363,6 +6386,8 @@ snapshots:
       lightningcss-linux-x64-musl: 1.32.0
       lightningcss-win32-arm64-msvc: 1.32.0
       lightningcss-win32-x64-msvc: 1.32.0
+
+  linenumber@1.0.1: {}
 
   locate-character@3.0.0: {}
 
@@ -6588,6 +6613,11 @@ snapshots:
   pbf@5.1.0:
     dependencies:
       resolve-protobuf-schema: 2.1.0
+
+  periscopic@2.0.3:
+    dependencies:
+      estree-walker: 2.0.2
+      is-reference: 1.2.1
 
   picocolors@1.1.1: {}
 
@@ -7084,6 +7114,14 @@ snapshots:
       '@deck.gl/core': 9.3.4
       '@deck.gl/mapbox': 9.3.4(@deck.gl/core@9.3.4)(@luma.gl/core@9.3.5)(@math.gl/web-mercator@4.1.0)
       topojson-client: 3.1.0
+
+  svelte-reactive-preprocessor@0.8.3:
+    dependencies:
+      acorn: 8.17.0
+      escape-string-regexp: 4.0.0
+      json-stringify-safe: 5.0.1
+      linenumber: 1.0.1
+      periscopic: 2.0.3
 
   svelte-sonner@1.1.1(svelte@5.56.3(@typescript-eslint/types@8.61.1)):
     dependencies:

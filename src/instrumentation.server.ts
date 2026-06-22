@@ -8,23 +8,24 @@
  * - OTLP log exporter sending to PostHog's logs ingestion endpoint
  * - Resource attributes for service identification
  *
- * The PostHog project token is read from PUBLIC_POSTHOG_KEY (same as event capture).
- * The OTLP endpoint defaults to PostHog US cloud; override via PUBLIC_POSTHOG_HOST
- * for EU cloud (https://eu.i.posthog.com) or self-hosted instances.
+ * Uses dynamic import() for OpenTelemetry packages so they're only loaded
+ * when PUBLIC_POSTHOG_KEY is configured. In dev without a key, none of the
+ * large OTel dependencies are loaded, avoiding Vite serving overhead.
  */
 
-import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
-import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
-import { logs } from '@opentelemetry/api-logs';
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { resourceFromAttributes } from '@opentelemetry/resources';
-
-// Using dynamic env read — at instrumentation time the module-level
-// $env/dynamic/public may not be available, so we read from process.env.
 const phKey = process.env.PUBLIC_POSTHOG_KEY;
 const phHost = process.env.PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
 
 if (phKey) {
+  const [{ BatchLogRecordProcessor }, { OTLPLogExporter }, { logs }, { NodeSDK }, { resourceFromAttributes }] =
+    await Promise.all([
+      import('@opentelemetry/sdk-logs'),
+      import('@opentelemetry/exporter-logs-otlp-http'),
+      import('@opentelemetry/api-logs'),
+      import('@opentelemetry/sdk-node'),
+      import('@opentelemetry/resources')
+    ]);
+
   const sdk = new NodeSDK({
     resource: resourceFromAttributes({
       'service.name': 'open-communities',
@@ -42,11 +43,8 @@ if (phKey) {
 
   sdk.start();
 
-  // Expose the OpenTelemetry logger for use in $lib/server/logger.ts
   const otelLogger = logs.getLogger('open-communities');
 
-  // Attach to global so the server logger can emit OTel records without
-  // importing instrumentation modules at runtime.
   (globalThis as Record<string, unknown>).__OTEL_LOGGER__ = otelLogger;
   (globalThis as Record<string, unknown>).__OTEL_SDK__ = sdk;
 }

@@ -1,8 +1,7 @@
 /* region imports */
 import type { RequestEvent } from '@sveltejs/kit';
-import type { ILogObjMeta } from 'tslog';
-
 import { shake } from 'radashi';
+import type { ILogObjMeta } from 'tslog';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';

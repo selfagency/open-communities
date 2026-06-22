@@ -1,0 +1,159 @@
+Now I have a complete picture of all the changes. Let me write the historian output.
+
+```xml
+<output>
+<compartments>
+
+<compartment start="2563" end="2744" title="Debugged E2E auth tests and Playwright hydration issues" episode_type="infra,bug" importance="35">
+<p1>
+The signup E2E test was timing out because the signup form wasn't switching tabs correctly — the agent had to add `waitUntil: 'domcontentloaded'` as a fallback and a click-based tab switch when the tab didn't auto-switch. Investigated page rendering by checking the built server output, manifest entries, JS chunk serving, and response headers.
+
+Discovered that `svelte-maplibre` has transitive peer dependencies on `@deck.gl/mapbox` and `topojson-client` that weren't installed — these were blocking client hydration and causing the page to fail to render. Installed them and rebuilt.
+
+Also found that PostHog was failing in the E2E environment because `PUBLIC_POSTHOG_KEY` and `PUBLIC_POSTHOG_HOST` were missing from `.env.test` and `.env.e2e`. Added dummy values and guarded `posthogInit` with an env check in `+layout.ts`.
+
+The E2E run revealed that Playwright 1.61 has a pre-existing binary incompatibility with Node.js 22/pnpm (`Fatal Error: exe.match is not a function` from chromium.launch). The bootstrap script (`e2e/scripts/bootstrap.mjs`) works correctly, the page renders, and hydration blockers are fixed — but the test framework itself can't launch a browser. Committed through `a85d5d6`.
+</p1>
+<p2>
+E2E debugging: signup form wait strategy fixed, `svelte-maplibre` peer deps installed (deck.gl, topojson-client), PostHog guarded with dummy env vars in test/e2e envs. Playwright 1.61 + Node.js 22 binary incompatibility is pre-existing and blocks browser launch — not caused by our changes.
+</p2>
+<p3>
+E2E auth test fixes applied; hydration peer deps installed; PostHog env vars added. Playwright binary issue is pre-existing environment incompatibility.
+</p3>
+<p4>deck.gl; topojson-client; svelte-maplibre peer deps; PostHog dummy env; exe.match not a function; a85d5d6</p4>
+</compartment>
+
+<compartment start="2745" end="2885" title="Exhaustive code review vs main + 8-phase remediation" episode_type="security,refactor,infra,docs" importance="88">
+<p1>
+User triggered an exhaustive code review by pasting the full Code Review Skill and asking to compare `fix/code-review-remediation` against `main`. The agent ran all automated checks and produced a detailed remediation plan covering 14 security findings, 11 programmatic correctness findings, API conformity, best practices, and test gaps.
+
+**Automated check results at review start:** `pnpm check` 0 errors (4 pre-existing warnings), `pnpm lint` 0 errors, `pnpm build:test` passes, 68 unit tests passing. E2E blocked by Playwright binary issue.
+
+**Two MEDIUM items addressed immediately** (5d59251):
+1. `createApi` export — confirmed not dead code; used by `hooks.server.ts` + 4 test files, correctly exported.
+2. Bootstrap token verification — `e2e/scripts/bootstrap.mjs` now calls `GET /api/collections?perPage=1` after extracting the installation token to verify it before using it.
+
+**Phase 1 — Coverage and MSW:** `vitest.config.ts` updated: `coverage.include` narrowed to `['src/**/*.{ts,svelte}']`, `src/app.html` added to excludes (was crashing on HTML parsing), global thresholds set (50/40/45/50). New MSW handlers created for captcha (`src/mocks/handlers/captcha.ts`) and PostHog (`src/mocks/handlers/posthog.ts`). Coverage no longer crashes.
+
+**Phase 2 — Helmet security layer:** All response security headers consolidated into a single `helmet()` Handle in `src/lib/server/security.ts`. CSP staged: report-only in dev, enforced in production. Full policy includes CSP, HSTS, referrer-policy, frameguard, noSniff, etc. Removed all duplicated header logic from `hooks.server.ts`. `'unsafe-eval'` fully removed. Inline style allowance only for Tailwind runtime injection (`'unsafe-inline'` on style-src required for Tailwind v4). CSP allowed origins audited: PostHog, PocketBase, MapLibre basemaps, Google Fonts, Cap widget CDN.
+
+**Phase 3 — Security correctness fixes:** `/user/lang` endpoint now uses Zod schema validation (`z.object({ lang: z.enum(VALID_LANGS), user: z.string().optional() })`), CSRF origin check, and admin/self authz. `locale.svelte` now checks `res.ok` from the fetch and only calls `setLocale({ reload: true })` when locale actually changed. `mail.ts` refactored into `headerFrom`/`headerTo`/`bodyText`/`bodyHtml` — mutation stopped after header construction. `posthog.ts` `captureException` accepts `unknown` safely. `publicIp()` timeout fixed (see critical hotfix compartment).
+
+**Phase 8 — AGENTS.md docs update:** Replaced stale ESLint/Prettier references with Biome reality. Removed resolved known issues (noImplicitAny removal, ESLint crashes, CSP unsafe-eval, auth cookie httpOnly, SMTP rejectUnauthorized, hardcoded secrets). Documented `pnpm deps:bootstrap`, `pnpm deps:reset`, `deps:up`, `deps:down` workflow. Added security posture summary post-helmet/CSP consolidation. Documented `sveltekit-helmet` as the single header layer and CSP rollout strategy.
+
+All automated gates green: `pnpm check` 0 errors, `pnpm lint` 0 errors, 68 tests passed. Committed `ae500ae`.
+</p1>
+<p2>
+Exhaustive code review vs `main` produced detailed remediation plan. Two MEDIUM items fixed in `5d59251`. 8-phase remediation completed through `ae500ae`: coverage config narrowed + excludes fixed (Phase 1), helmet consolidated all security headers with staged CSP (Phase 2), `/user/lang` Zod validation + CSRF + authz, `locale.svelte` `res.ok` check, `mail.ts` split (Phase 3), AGENTS.md updated with Biome reality and security posture (Phase 8). Phases 4-7 deferred (route test coverage, form types, E2E blocked by Playwright binary, coverage gates set at repo level). All checks green.
+</p2>
+<p3>
+Code review against `main` → 8-phase remediation. Helmet consolidated all security headers. CSP staged (report-only in dev). `/user/lang` secured with Zod + CSRF + authz. Coverage config fixed. AGENTS.md updated. Phases 4-7 deferred; Playwright E2E blocked by pre-existing binary issue.
+</p3>
+<p4>ae500ae; helmet; CSP report-only dev; Zod lang schema; 5d59251; coverage.includes src/**/*.ts,svelte</p4>
+</compartment>
+
+<compartment start="2778" end="2816" title="Fixed publicIp() request-blocking hang — critical hotfix" episode_type="bug" importance="92">
+<p1>
+U: there is an infinite loop somewhere preventing the site from loading
+
+Root cause identified in `src/hooks.server.ts` `getClientAddress()`: `publicIp()` makes DNS queries (30s timeout) and HTTPS requests (no timeout) to external services. In dev, `getClientAddress()` returns `::1`/`127.0.0.1`, so the condition on line 50 always triggered the `publicIp()` fallback — blocking every single request until external timeouts expired.
+
+Fix: `publicIp()` now only called in production (`!dev`). In dev, loopback is assumed. Added `Promise.race` with a 500ms timeout. On timeout, `clientIp` falls through to `''` and the request proceeds. The client IP is only used for PB logging headers — safe to skip when unavailable.
+
+Also fixed the auth refresh cooldown key — changed from first 32 chars of auth cookie (which changes after each refresh, bypassing cooldown) to the stable `session` cookie, which persists across refreshes. Committed `8434487`.
+</p1>
+<p2>
+`publicIp()` blocked every dev request until external timeouts expired. Fixed with `!dev` guard + 500ms Promise.race timeout; falls back to `''`. Auth refresh cooldown key changed from auth cookie prefix to stable `session` cookie to prevent refresh on every request.
+</p2>
+<p3>
+Critical hotfix: `publicIp()` removed from dev hot path (was hanging all requests). Auth refresh cooldown uses stable session cookie.
+</p3>
+<p4>publicIp timeout; 500ms Promise.race; session cookie cooldown; 8434487</p4>
+</compartment>
+
+<compartment start="2886" end="2907" title="Fixed 8 reactive loop and infinite-loop issues across Svelte components" episode_type="bug,refactor" importance="65">
+<p1>
+User listed 8 specific reactive issues causing potential infinite loops. All were addressed:
+
+**CRITICAL — `congregations.svelte` $effect goto loop (lines 130-158):** The $effect that did `goto()` + `searchTerms = id` / `searchTerms = ''` dance was completely replaced. The new effect simply syncs `searchTerms` to the search store without any navigation. The `?id=` handling was moved out of the reactive effect entirely — the effect now only propagates search terms, not navigation.
+
+**HIGH — `location.svelte` search/location feedback loop (lines 54-72):** `search.setSearchLocation(loc)` was moved OUT of the reactive effect. The effect is now read-only — it only reads `$locationState.record` and syncs to local `country`/`province`/`city` vars. `setSearchLocation` is now called explicitly from `handleCountryChange`, `handleStateChange`, `handleCityChange`, and `reset` handlers. Comment added: "Does NOT call search.setSearchLocation to avoid a circular update loop."
+
+**HIGH — `form.svelte` onMount mutation (lines 80-95):** Removed the `$formData.visible = false` mutation from onMount. The comment now explicitly states: "Do NOT mutate $formData here — it can trigger reactive loops in superforms." Server-side `edit/+page.server.ts` enforces visibility permission instead.
+
+**MEDIUM — `progress.svelte` interval leak (lines 45-58):** `startProgress()` now clears any existing interval before creating a new one: `if (progressInterval) clearInterval(progressInterval)`. Two opposing $effects retained but are now safe against double-start.
+
+**MEDIUM — `locale.svelte` reload loop (lines 41-44, 47-70):** `updateLang()` now checks `if (lang === currentLocale) return;` before calling `setLocale({ reload: true })`. Also checks `res.ok` before proceeding — on error, reverts `lang = serverLang`.
+
+**MEDIUM — `hooks.server.ts` auth refresh cookie loop (lines 117-135):** Changed cooldown key from first 32 chars of auth cookie (which changes on refresh, bypassing cooldown) to the stable `session` cookie. Auth cookie is now only re-set when it actually changed, not on every request.
+
+**LOW — `congregations.svelte` no-op pagination effect (lines 160-172):** The effect that built a new object and discarded it was removed entirely.
+
+**LOW — `reset.svelte` / `verify.svelte` auto-submit double-fire:** Added `submitted` flag (`let submitted = $state(false)`) guarded at the top of onMount. If already submitted, returns early.
+</p1>
+<p2>
+All 8 reactive loop issues fixed. `congregations.svelte` $effect no longer calls `goto()`; location effect is read-only; `form.svelte` onMount doesn't mutate `$formData`; `progress.svelte` clears intervals before reuse; `locale.svelte` guards reload with lang comparison; auth refresh uses stable session cookie as cooldown key; no-op pagination effect removed; reset/verify auto-submit guarded with `submitted` flag.
+</p2>
+<p3>
+8 reactive loop issues resolved across Svelte components: goto removed from $effect, location store write moved out of effect, form mutation removed, progress interval cleared before reuse, locale reload guarded, auth cooldown key stabilized, pagination effect deleted, auto-submit guarded.
+</p3>
+<p4>congregations goto removal; location setSearchLocation moved; form $formData mutation removed; progress interval clear; locale reload guard; session cookie cooldown; pagination effect removed; submitted guard</p4>
+</compartment>
+
+</compartments>
+
+<facts>
+<ARCHITECTURE>
+* sveltekit-helmet is the single Handle for all response security headers; hooks.server.ts composes via `sequence(security, customHandler, handleParaglide)` and does NOT re-implement security headers.
+* CSP is staged: report-only in dev/non-prod, enforced in production — allows tightening inline allowances without breaking live features.
+</ARCHITECTURE>
+<CONFIG_VALUES>
+* publicIp() is called only in production (`!dev`). Dev loopback is assumed and publicIp() is skipped to avoid 500ms+ penalty on every request.
+* publicIp() timeout: 500ms via Promise.race; falls back to `''` on timeout — safe for PB logging header use.
+* Auth refresh cooldown key: stable `session` cookie (not auth cookie prefix, which changes after each refresh and would bypass the cooldown).
+* locale.svelte updateLang guards reload: `if (lang === currentLocale) return;` + `if (!res.ok) return;`
+* reset/verify auto-submit guarded: `if (submitted) return; submitted = true;` in onMount.
+* progress.svelte startProgress clears existing interval before creating new one: `if (progressInterval) clearInterval(progressInterval);`
+* form.svelte onMount does NOT mutate $formData — visibility enforced server-side in edit/+page.server.ts.
+* vitest.config.ts coverage.include: `['src/**/*.{ts,svelte}']`; excludes: src/app.html, src/lib/paraglide/**, src/lib/components/ui/**, src/test/**, static/**
+</CONFIG_VALUES>
+</facts>
+
+<events>
+<trajectory_correction at_compartment="3">
+  <summary>Removed publicIp() from dev hot path entirely — was blocking all requests.</summary>
+  <before_strategy>Call publicIp() as fallback whenever getClientAddress() returned a value, including in dev on every localhost request.</before_strategy>
+  <correction_source>user</correction_source>
+  <correction_signal>U: there is an infinite loop somewhere preventing the site from loading</correction_signal>
+  <after_strategy>publicIp() only called in production; dev assumes loopback and skips it. 500ms timeout added; falls back to empty string.</after_strategy>
+  <evidence>publicIp() has no timeout by default; DNS query alone could take 30s. In dev, getClientAddress() always returns ::1/127.0.0.1, triggering the fallback on every single request.</evidence>
+</trajectory_correction>
+<trajectory_correction at_compartment="4">
+  <summary>Moved goto() and searchTerms mutation out of congregations.svelte $effect.</summary>
+  <before_strategy>$effect(() => { goto(page.url.pathname, { replaceState: false }).then(() => { searchTerms = id; open[id] = true; searchTerms = ''; }); })</before_strategy>
+  <correction_source>user</correction_source>
+  <correction_signal>Do not goto inside an effect. Move the ?id=... handling to +page.svelte or a +page.ts load function.</correction_signal>
+  <after_strategy>$effect only syncs searchTerms to the search store; navigation side effects removed entirely from reactive context.</after_strategy>
+  <evidence>The original effect caused SvelteKit to re-run the effect after goto changed the URL, compounding with searchTerms mutations to create a potential loop.</evidence>
+</trajectory_correction>
+<trajectory_correction at_compartment="4">
+  <summary>Shifted from client-side $formData mutation to server-side visibility enforcement in form.svelte.</summary>
+  <before_strategy>onMount: if (!user?.admin) $formData.visible = false;</before_strategy>
+  <correction_source>user</correction_source>
+  <correction_signal>Do not mutate $formData inside onMount for permissions; set the visible default in the server load or in the schema default instead.</correction_signal>
+  <after_strategy>Comment added: visibility enforced server-side in edit/+page.server.ts. onMount no longer mutates $formData.</after_strategy>
+  <evidence>$formData.visible = false inside onMount could trigger reactive loops in superforms; removed entirely.</evidence>
+</trajectory_correction>
+</events>
+
+<user_observations>
+* User triggers exhaustive structured review by pasting skill documents; expects the review to be comprehensive and followed by phased remediation.
+* User prioritizes critical correctness issues (hangs, loops) immediately over ongoing feature work.
+</user_observations>
+
+<meta>
+<messages_processed>2563-2907</messages_processed>
+<unprocessed_from>2908</unprocessed_from>
+</meta>
+</output>
+```
