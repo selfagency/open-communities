@@ -34,15 +34,19 @@ export async function captureException(
   }
 }
 
-export async function posthogInit(posthogKey: string, user: UsersResponse) {
-  posthog.init(posthogKey, {
-    api_host: env.PUBLIC_POSTHOG_HOST,
-    capture_exceptions: true,
-    capture_pageleave: false,
-    capture_pageview: false
-  });
+export function posthogInit(posthogKey: string, user: UsersResponse) {
+  try {
+    posthog.init(posthogKey, {
+      api_host: env.PUBLIC_POSTHOG_HOST,
+      capture_exceptions: true,
+      capture_pageleave: false,
+      capture_pageview: false
+    });
 
-  if (user) {
-    posthog.identify(user.id);
+    if (user) {
+      posthog.identify(user.id);
+    }
+  } catch (e) {
+    console.error('PostHog init failed (non-blocking):', e);
   }
 }

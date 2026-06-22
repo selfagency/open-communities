@@ -8,7 +8,10 @@ import { initState } from '$lib/stores';
 
 export const load = async ({ data }) => {
   if (browser && env.PUBLIC_POSTHOG_KEY) {
-    posthogInit(env.PUBLIC_POSTHOG_KEY, data.user as UsersResponse);
+    // Defer PostHog init to avoid blocking page load with analytics network requests
+    setTimeout(() => {
+      posthogInit(env.PUBLIC_POSTHOG_KEY, data.user as UsersResponse);
+    }, 0);
 
     initState(data.user?.lang);
   }
