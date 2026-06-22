@@ -27,9 +27,18 @@ test.describe('auth flows', () => {
   });
 
   test('signup -> sends verification email and verifies account', async ({ page }) => {
-    await page.goto(`${base}/login?signUp`);
-    // wait for the form to be interactive
-    await page.waitForSelector('form[action*="signup"], input[autocomplete="name"]', { timeout: 10000 });
+    await page.goto(`${base}/login?signUp`, { waitUntil: 'domcontentloaded' });
+    // Wait for client-side hydration to switch the tab from 'login' to 'signup'.
+    // Give extra time for analytics/widget scripts that delay full page load.
+    await page.waitForTimeout(5000);
+    // If the tab didn't auto-switch, click the signup tab manually
+    const signupContent = page.locator('div[data-value="signup"]');
+    if (await signupContent.getAttribute('hidden') !== null) {
+      await page.locator('button[data-value="signup"]').click();
+      await page.waitForTimeout(1000);
+    }
+    // Wait for the signup form to be visible
+    await page.waitForSelector('form[action*="signup"]', { timeout: 10000 });
 
     await page.fill('input[autocomplete="name"]', 'E2E Tester');
     await page.fill('input[autocomplete="email"]', email);

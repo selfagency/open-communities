@@ -7,8 +7,8 @@ import { initState } from '$lib/stores';
 /* endregion imports */
 
 export const load = async ({ data }) => {
-  if (browser) {
-    posthogInit(env.PUBLIC_POSTHOG_KEY as string, data.user as UsersResponse);
+  if (browser && env.PUBLIC_POSTHOG_KEY) {
+    posthogInit(env.PUBLIC_POSTHOG_KEY, data.user as UsersResponse);
 
     initState(data.user?.lang);
   }

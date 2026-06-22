@@ -14,7 +14,6 @@
     "deps:bootstrap": "node e2e/scripts/bootstrap.mjs",
     "deps:down": "docker-compose -f e2e/docker-compose.yml down",
     "deps:reset": "docker-compose -f e2e/docker-compose.yml down -v && docker-compose -f e2e/docker-compose.yml up -d --build && sleep 5 && node e2e/scripts/bootstrap.mjs",
-    "deps:setup": "node e2e/scripts/bootstrap.mjs",
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
     "format": "biome check --write .",
     "lint": "biome check .",
@@ -29,11 +28,14 @@
     "machine-translate": "inlang machine translate --project project.inlang"
   },
   "dependencies": {
+    "@deck.gl/core": "^9.3.4",
+    "@deck.gl/mapbox": "^9.3.4",
     "@inlang/paraglide-js": "^2.20.0",
     "@selfagency/stately": "^0.1.4",
     "isomorphic-dompurify": "^3.18.0",
     "posthog-js": "^1.391.2",
-    "posthog-node": "^5.38.2"
+    "posthog-node": "^5.38.2",
+    "topojson-client": "^3.1.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
@@ -112,7 +114,12 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@tailwindcss/oxide", "core-js", "esbuild", "sqlite3"]
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "core-js",
+      "esbuild",
+      "sqlite3"
+    ]
   },
   "packageManager": "pnpm@10.18.3"
 }
