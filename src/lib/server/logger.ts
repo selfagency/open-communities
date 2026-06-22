@@ -1,5 +1,6 @@
 /* region imports */
 import type { RequestEvent } from '@sveltejs/kit';
+import type { ILogObjMeta } from 'tslog';
 
 import { shake } from 'radashi';
 
@@ -10,10 +11,42 @@ import { logger } from '$lib/utils';
 /* endregion imports */
 
 /* region variables */
-// constants
+// OpenTelemetry log bridge — emits log records via the OTel logger
+// configured in src/instrumentation.server.ts, if available.
+function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
+  const otelLogger: undefined | { emit: (record: unknown) => void } = (globalThis as Record<string, unknown>)
+    .__OTEL_LOGGER__ as undefined | { emit: (record: unknown) => void };
+  if (!otelLogger) return;
+
+  try {
+    const severityMap: Record<string, string> = {
+      silly: 'trace',
+      trace: 'trace',
+      debug: 'debug',
+      info: 'info',
+      warn: 'warn',
+      error: 'error',
+      fatal: 'fatal'
+    };
+    otelLogger.emit({
+      severityText: severityMap[logObject._meta?.logLevelId as unknown as string] || 'info',
+      body: typeof logObject === 'object' ? shake(logObject as Record<string, unknown>) : logObject,
+      attributes: {
+        'service.name': 'open-communities',
+        'service.version': '1.0.0',
+        'logger.name': logObject._meta?.name?.[0] || 'server'
+      }
+    });
+  } catch {
+    // OTel bridge failure is non-critical; don't let it crash logging
+  }
+}
+
+// tslog logger with OTel bridge attached
 const log = logger.getSubLogger({
   name: 'server',
-  type: 'pretty'
+  type: 'pretty',
+  attachedTransports: [otelTransport]
 });
 /* endregion variables */
 

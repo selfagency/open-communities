@@ -11,6 +11,11 @@ const config = {
     alias: {
       $test: path.resolve('./src/test')
     },
+    experimental: {
+      instrumentation: {
+        server: true
+      }
+    },
     paths: {
       relative: false
     },
