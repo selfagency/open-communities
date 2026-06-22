@@ -104,14 +104,17 @@
   });
 
   // reactivity
+  // Synchronize location state to the superform. Only writes when the location
+  // record has a fully-resolved set of IDs to avoid intermediate partial writes
+  // (the 3-step country→state→city cascade during loadLocation).
   $effect(() => {
-    if ($location?.record || congregation?.location) {
+    const rec = $location?.record;
+    if (rec && rec.city?.id && rec.country?.id) {
       untrack(() => {
-        let loc = ($location.record || congregation.location) as LocationMeta;
         $formData.location = {
-          city: loc.city?.id,
-          country: loc.country?.id,
-          state: loc.state?.id
+          city: rec.city.id,
+          country: rec.country.id,
+          state: rec.state?.id
         };
       });
     }
