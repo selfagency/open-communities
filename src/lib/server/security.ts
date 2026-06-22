@@ -26,6 +26,7 @@ const CSP_DIRECTIVES = {
     '*.opencommunities.info',
     '*.pockethost.io',
     '*.selfagency.dev',
+    '*.posthog.com',
     'basemaps.cartocdn.com',
     'cdn.jsdelivr.net',
     'localhost:3001',

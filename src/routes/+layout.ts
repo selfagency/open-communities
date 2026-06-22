@@ -10,10 +10,10 @@ let _initialized = false;
 
 export const load = async ({ data }) => {
   if (browser) {
-    if (env.PUBLIC_POSTHOG_KEY) {
-      setTimeout(() => {
-        posthogInit(env.PUBLIC_POSTHOG_KEY, data.user as UsersResponse);
-      }, 0);
+    // Init PostHog synchronously on first boot so it's ready before
+    // afterNavigate fires for the initial pageview capture.
+    if (env.PUBLIC_POSTHOG_KEY && !_initialized) {
+      posthogInit(env.PUBLIC_POSTHOG_KEY, data.user as UsersResponse);
     }
 
     if (!_initialized) {

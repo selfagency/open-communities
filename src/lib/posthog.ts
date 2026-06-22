@@ -36,6 +36,7 @@ export async function captureException(
 
 export function posthogInit(posthogKey: string, user: UsersResponse) {
   try {
+    console.log('[PostHog] Initializing with key:', posthogKey.slice(0, 8) + '...', 'host:', env.PUBLIC_POSTHOG_HOST);
     posthog.init(posthogKey, {
       api_host: env.PUBLIC_POSTHOG_HOST,
       capture_exceptions: true,
@@ -45,8 +46,9 @@ export function posthogInit(posthogKey: string, user: UsersResponse) {
 
     if (user) {
       posthog.identify(user.id);
+      console.log('[PostHog] Identified user:', user.id.slice(0, 8) + '...');
     }
   } catch (e) {
-    console.error('PostHog init failed (non-blocking):', e);
+    console.error('[PostHog] Init failed (non-blocking):', e);
   }
 }
