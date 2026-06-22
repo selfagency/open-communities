@@ -35,7 +35,7 @@ vi.mock('$env/dynamic/public', () => ({
 }));
 
 // Import after mocks so the module uses the mocks during evaluation
-import { authenticate, cleanResponse, expand } from './api';
+import { cleanResponse, expand } from './api';
 
 describe('src/lib/api', () => {
   // Note: `api` instance construction is exercised by module load; we avoid asserting
