@@ -1,8 +1,15 @@
 import { json } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
-import { env } from '$env/dynamic/public';
+import { z } from 'zod/v4';
 import type { UsersRecord } from '$lib/pocketbase.d';
 import { log } from '$lib/server/logger';
+
+const VALID_LANGS = ['en', 'es', 'fr', 'he'] as const;
+
+const langSchema = z.object({
+  lang: z.enum(VALID_LANGS),
+  user: z.string().optional()
+});
 
 export async function POST({ cookies, locals, request }) {
   const { api, captureException } = locals;
@@ -14,18 +21,30 @@ export async function POST({ cookies, locals, request }) {
     return json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { lang, user } = await request.json();
-
-  if (!['en', 'es', 'fr', 'he'].includes(lang)) {
-    return json({ error: 'Invalid language' }, { status: 400 });
+  // Parse and validate the request body
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const targetUser = user ?? client?.id;
+  const parsed = langSchema.safeParse(body);
+  if (!parsed.success) {
+    return json({ error: 'Invalid request body: lang must be one of en, es, fr, he' }, { status: 400 });
+  }
+
+  const { lang, user: targetUserId } = parsed.data;
+  const isAdmin = client?.admin === true;
+
+  // Authorization: self-update for normal users, cross-user only for admins
+  if (targetUserId && targetUserId !== client?.id && !isAdmin) {
+    return json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const targetUser = targetUserId ?? client?.id;
   if (!targetUser) {
     return json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (user && user !== client?.id) {
-    return json({ error: 'Forbidden' }, { status: 403 });
   }
 
   let result: null | UsersRecord = null;

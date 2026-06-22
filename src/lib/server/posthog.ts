@@ -35,12 +35,12 @@ export async function capture(user: string | undefined, event: string) {
   }
 }
 
-export async function captureException(error: Error, user?: string, other?: Record<string, number | string>) {
+export async function captureException(error: unknown, user?: string, other?: Record<string, number | string>) {
   const phClient = getPhClient();
   if (!phClient) return;
 
   try {
-    phClient.captureException(error, user ?? 'anonymous', other);
+    phClient.captureException(error instanceof Error ? error : new Error(String(error)), user ?? 'anonymous', other);
     await phClient.flush();
   } catch (phError) {
     log.error('PostHog captureException failed:', phError);

@@ -81,7 +81,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   event.locals.capture = (user: string | undefined, eventName: string) =>
     user ? capture(user, eventName) : Promise.resolve();
   event.locals.captureException = (error: unknown, user?: string, other?: Record<string, number | string>) =>
-    captureException(error as Error, user ?? '', other);
+    captureException(error, user ?? '', other);
 
   event.locals.validate = (async <S extends $ZodType<Record<string, unknown>>>(
     request: Record<string, unknown> | RequestEvent,

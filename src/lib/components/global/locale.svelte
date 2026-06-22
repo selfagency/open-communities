@@ -46,7 +46,7 @@
   /* region methods */
   async function updateLang() {
     try {
-      await fetch('/user/lang', {
+      const res = await fetch('/user/lang', {
         body: JSON.stringify({ lang, user: page.data.user?.id }),
         headers: {
           'Content-Type': 'application/json'
@@ -54,11 +54,21 @@
         method: 'POST'
       });
 
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+        toast.error(err.error || 'Failed to update language');
+        // Revert lang to server value on failure
+        lang = serverLang;
+        return;
+      }
+
       invalidateAll();
       setLocale(lang, { reload: true });
       toast.success(m.languageChanged());
     } catch (error) {
       log.error('failed to update user language', error);
+      toast.error('Network error updating language');
+      lang = serverLang;
     }
   }
 

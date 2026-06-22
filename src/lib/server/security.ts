@@ -3,7 +3,6 @@ import type { Handle } from '@sveltejs/kit';
 import helmet from 'sveltekit-helmet';
 
 import { dev } from '$app/environment';
-import { env } from '$env/dynamic/public';
 
 /**
  * Shared CSP directives used in both report-only and enforce modes.
