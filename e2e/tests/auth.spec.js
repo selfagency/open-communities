@@ -27,10 +27,10 @@ test.describe('auth flows', () => {
   test('signup -> sends verification email and verifies account', async ({ page }) => {
     await page.goto(`${base}/login?signUp`, { waitUntil: 'commit', timeout: 15000 });
 
-    // Form is SSR-rendered but hidden by bits-ui tabs. Use $eval to bypass visibility.
+    // Form is SSR-rendered but hidden by bits-ui tabs. Use $eval for all interactions.
     await page.waitForSelector('form[action*="signup"]', { timeout: 15000, state: 'attached' });
 
-    // Set form fields via $eval (hidden inputs not interactable via page.fill)
+    // Set form fields via $eval (hidden inputs not reachable via page.fill)
     await page.$eval('input[autocomplete="name"]', (el, v) => { (el).value = v; }, 'E2E Tester');
     await page.$eval('input[autocomplete="email"]', (el, v) => { (el).value = v; }, email);
     await page.$eval('input[type="password"]', (el, v) => { (el).value = v; }, password);
@@ -41,19 +41,21 @@ test.describe('auth flows', () => {
       }
     });
 
-    // Bypass captcha: widget is SSR-hidden, dispatch synthetic event via $eval
+    // Dispatch captcha solved event with correct event name ('solve' not 'captcha')
     await page.$eval('cap-widget', (el) => {
-      el.dispatchEvent(new CustomEvent('captcha', { detail: { token: 'e2e-token' } }));
+      el.dispatchEvent(new CustomEvent('solve', { detail: { token: 'e2e-token' } }));
     });
-    await sleep(500);
-    // Submit via evaluate (re-queries DOM fresh)
-    await page.evaluate(() => document.querySelector('button[type="submit"]')?.click());
-    await sleep(500);
+    await sleep(300);
+
+    // Submit via form.requestSubmit — triggers superforms enhance
+    await page.$eval('form[action*="signup"]', (form) => {
+      (form).requestSubmit();
+    });
+    await sleep(800);
+
     const successMessage = await page.textContent('*:has-text("Sign up successful")').catch(() => null);
     if (successMessage) console.log('[e2e] Success:', successMessage);
 
-    // Wait for verification email
-    console.log('[e2e] Waiting for verification email...');
     await sleep(1000);
     const subjectPart = 'Verify your Open Communities email';
     const msg = await findMessageBySubject(subjectPart, 20000);
@@ -78,7 +80,6 @@ test.describe('auth flows', () => {
     await page.goto(verificationLink);
     await page.waitForTimeout(2000);
 
-    // Verify user in PB
     const PB_ADMIN = process.env.PB_TEST_ADMIN;
     const PB_PASSWORD = process.env.PB_TEST_PASSWORD;
     const PB_API = process.env.PB_API ?? 'http://127.0.0.1:8090/api';

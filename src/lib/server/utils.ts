@@ -32,7 +32,8 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
     headers: {
       'Content-Type': 'application/json'
     },
-    method: 'POST'
+    method: 'POST',
+    signal: AbortSignal.timeout(5000)
   });
 
   const result = await response.json();

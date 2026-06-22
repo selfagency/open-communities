@@ -44,9 +44,14 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const startTimer = Date.now();
 
   let clientIp =
-    event.request?.headers?.get('cf-connecting-ip') ??
-    event.request?.headers?.get('x-forwarded-for') ??
-    event.getClientAddress();
+    event.request?.headers?.get('cf-connecting-ip') ?? event.request?.headers?.get('x-forwarded-for') ?? '';
+  if (!clientIp) {
+    try {
+      clientIp = event.getClientAddress();
+    } catch {
+      // getClientAddress can throw in dev when no proxy headers are set
+    }
+  }
   if (!clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1') {
     try {
       clientIp = await Promise.race([
