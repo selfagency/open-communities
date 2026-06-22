@@ -28,7 +28,7 @@ describe('login +page.server — load', () => {
       url: new URL('http://localhost/login')
     });
 
-    const res = await mod.load(mockEvent);
+    const res = await mod.load(mockEvent as any);
     expect(res).toHaveProperty('login');
     expect(res).toHaveProperty('signup');
   });

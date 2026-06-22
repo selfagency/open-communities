@@ -55,7 +55,8 @@
   // constants
   const congregation = getContext('congregation') as CongregationMetaRecord;
 
-  const initForm = createInitForm(user);
+                          // svelte-ignore state_referenced_locally -- user prop is stable after mount
+                          const initForm = createInitForm(user);
 
   // locals
   let title: string = $state('');

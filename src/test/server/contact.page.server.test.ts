@@ -24,7 +24,7 @@ describe('contact +page.server', () => {
       url: new URL('http://localhost/contact')
     });
 
-    const res = await mod.load(mockEvent);
+    const res = await mod.load(mockEvent as any);
     expect(res).toHaveProperty('form');
   });
 
@@ -45,7 +45,7 @@ describe('contact +page.server', () => {
       url: new URL('http://localhost/contact')
     });
 
-    const res = await mod.load(mockEvent);
+    const res = await mod.load(mockEvent as any);
     expect(res).toHaveProperty('form');
   });
 

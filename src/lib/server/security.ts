@@ -115,14 +115,7 @@ const handle: Handle = helmet({
   },
   ieNoOpen: true,
   noSniff: true,
-  originAgentCluster: true,
-  permissionsPolicyDirectives: {
-    camera: ['()'],
-    'display-capture': ['()'],
-    geolocation: ['()'],
-    microphone: ['()']
-  },
-  referrerPolicy: 'strict-origin-when-cross-origin',
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   xssFilter: true
 });
 
