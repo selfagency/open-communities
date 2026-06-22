@@ -10,7 +10,8 @@
   import FilterIcon from 'lucide-svelte/icons/filter';
   import AdminIcon from 'lucide-svelte/icons/settings';
   import SecurityIcon from 'lucide-svelte/icons/shield';
-  import { assign, isEmpty } from 'radashi';
+  import { isEmpty } from 'radashi';
+  import { untrack } from 'svelte';
 
   import { page } from '$app/state';
   import MaskIcon from '$lib/assets/mask.svg?component';
@@ -117,12 +118,13 @@
 
   const updateFilter = (category: string, option: string, checked: boolean) => {
     // Create a new filters object to ensure reactivity
-    filters = assign(filters, {
+    filters = {
+      ...filters,
       [category]: {
         ...filters[category],
         [option]: checked
       }
-    }) as unknown as Record<string, Record<string, boolean>>;
+    } as Record<string, Record<string, boolean>>;
   };
 
   const resetFilters = () => {
@@ -133,8 +135,9 @@
   /* region reactivity */
   $effect(() => {
     // Update search filters whenever the filters object changes
-    // log.info('filter change', filters);
-    search.setFilters(filters);
+    // untrack prevents the search instance from becoming a reactive dependency
+    const currentFilters = filters;
+    untrack(() => search.setFilters(currentFilters));
   });
   /* endregion reactivity */
 </script>

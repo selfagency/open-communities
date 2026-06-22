@@ -1,7 +1,7 @@
 /* region imports */
 
 import Fuzzy from '@leeoniya/ufuzzy';
-import { alphabetical, isEmpty, shake, unique } from 'radashi';
+import { alphabetical, isEmpty, isEqual, shake, unique } from 'radashi';
 
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
@@ -34,6 +34,7 @@ function writableDeep<T extends Record<string, unknown>>(
       return value;
     },
     setKey<K extends keyof T>(k: K, v: T[K]) {
+      if (value[k] === v) return; // skip notification on no-op
       value = { ...value, [k]: v };
       notify();
     }
@@ -45,8 +46,15 @@ function derived<T, D>(source: Readable<T>, fn: (v: T) => D): Readable<D> {
   const subs = new Set<Subscriber<D>>();
 
   source.subscribe((v) => {
-    current = fn(v);
-    for (const fn of subs) fn(current);
+    const next = fn(v);
+    // Skip notification when the value hasn't changed (deep equality).
+    // The fn creates a new array on every call — without deep comparison,
+    // every source change would cascade to all subscribers even if the
+    // computed result is semantically identical.
+    if (!isEqual(next, current)) {
+      current = next;
+      for (const fn of subs) fn(current);
+    }
   });
 
   return {

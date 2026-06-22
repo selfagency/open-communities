@@ -69,7 +69,11 @@ export const useAppStore = defineStore('app', {
      * Mirrors the legacy `setState` API during migration.
      */
     setState(partial: Partial<AppState>) {
-      Object.assign(this, partial);
+      for (const [key, value] of Object.entries(partial)) {
+        if (this[key as keyof AppState] !== value) {
+          (this as Record<string, unknown>)[key] = value;
+        }
+      }
     }
   }
 });

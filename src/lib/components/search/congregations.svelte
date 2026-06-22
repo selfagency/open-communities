@@ -94,7 +94,7 @@
     const items = $results as Congregation[];
     if (items.length > 0) {
       for (let i = 0; i < items.length; i += perPage) {
-        result.push(alphabetical(items, (i) => i.name as string).slice(i, i + perPage));
+        result.push(items.slice(i, i + perPage));
       }
     }
     return result;
