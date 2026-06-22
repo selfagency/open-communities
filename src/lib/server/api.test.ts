@@ -258,20 +258,17 @@ describe('src/lib/server/api', () => {
     it('throws after exhausting all retries', async () => {
       const err = { message: 'timeout', status: 524 };
       const fn = vi.fn().mockRejectedValue(err);
-      // Use advanceTimersByTimeAsync instead of runAllTimersAsync to avoid
-      // runaway microtask/macrotask chains that leave unhandled rejections.
+      vi.useFakeTimers();
       const promise = withRetry(fn);
       await vi.advanceTimersByTimeAsync(60_000);
       await expect(promise).rejects.toBe(err);
-      // initial call + 4 retries
       expect(fn).toHaveBeenCalledTimes(5);
+      vi.useRealTimers();
     });
 
     it('logs a warning on each retry attempt', async () => {
       const fn = vi.fn().mockRejectedValueOnce({ message: 'busy', status: 429 }).mockResolvedValue('ok');
-      const promise = withRetry(fn);
-      await vi.runAllTimersAsync();
-      await promise;
+      await expect(withRetry(fn)).resolves.toBe('ok');
       expect(log.warn).toHaveBeenCalledWith(
         expect.stringContaining('PB retry 1/4'),
         expect.objectContaining({ message: 'busy', status: 429 })
