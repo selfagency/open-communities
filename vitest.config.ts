@@ -37,8 +37,7 @@ export default defineConfig({
       'tailwind-variants',
       'tslog',
       'zod'
-    ],
-    reporters: ['json', 'default', 'junit']
+    ]
   },
   // Enable compatibility for Svelte component API v4 when running tests so
   // older-style instantiation (new Component(...)) works in the test runner.
@@ -97,16 +96,24 @@ export default defineConfig({
         'e2e/**',
         'messages',
         'project.inlang',
+        'src/app.html',
         'src/lib/components/ui',
         'src/lib/paraglide',
         'src/test?(-*).?(c|m)[jt]s?(x)',
         'src/test?(s)/**',
         'static'
       ],
-      include: ['src'],
+      include: ['src/**/*.{ts,svelte}'],
       provider: 'istanbul',
       reporter: ['text', 'json-summary', 'json', 'html'],
-      reportsDirectory: './test-results/coverage'
+      reportsDirectory: './test-results/coverage',
+      thresholds: {
+        statements: 50,
+        branches: 40,
+        functions: 45,
+        lines: 50,
+        perFile: false
+      }
     },
     globals: true,
     outputFile: {
