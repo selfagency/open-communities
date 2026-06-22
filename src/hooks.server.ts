@@ -56,7 +56,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
     try {
       clientIp = await Promise.race([
         publicIp(),
-        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 3000))
+        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 500))
       ]);
     } catch {
       // publicIp can hang for 30s+ when network is unavailable (DNS timeouts,

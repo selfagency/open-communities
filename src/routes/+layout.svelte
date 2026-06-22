@@ -43,7 +43,12 @@
   onNavigate((navigation) => {
     if (browser) {
       setState({ loading: true });
-      if (!document.startViewTransition) return;
+
+      if (!document.startViewTransition) {
+        // No view transitions: set loading=false when navigation completes
+        navigation.complete.then(() => setState({ loading: false }));
+        return;
+      }
 
       return new Promise((resolve) => {
         document.startViewTransition(async () => {
