@@ -19,7 +19,9 @@
   const { data }: PageProps = $props();
 
   // locals
-  let tab: 'login' | 'signup' = $state('login');
+  let tab: 'login' | 'signup' = $state(
+    page.url.searchParams.has('signUp') || page.url.searchParams.has('verifyEmail') ? 'signup' : 'login'
+  );
   /* endregion variables */
 
   /* region lifecycle */
@@ -60,7 +62,7 @@
         {/if}
       </Tabs.Content>
       <Tabs.Content value="signup">
-        {#if tab === 'signup' && data.signup && data.verify}
+        {#if data.signup && data.verify}
           <SignUp {form} verify={data.verify} />
         {/if}
       </Tabs.Content>
