@@ -2,30 +2,49 @@ import { describe, expect, it } from 'vitest';
 
 import { userSchema } from '../../lib/schemas/user';
 
-describe('userSchema', () => {
-  const validUser = {
-    lang: 'en',
-    name: 'Test User',
-    name_public: true
-  };
+const validPw = 'Abcd1234!xyz';
 
-  it('accepts valid user settings', () => {
-    const result = userSchema.safeParse(validUser);
+describe('userSchema', () => {
+  it('accepts valid user with lang and email', () => {
+    const result = userSchema.safeParse({
+      email: 'test@example.com',
+      name: 'Test User',
+      password: validPw,
+      passwordConfirm: validPw,
+      lang: 'en'
+    });
     expect(result.success).toBe(true);
   });
 
   it('accepts Hebrew language', () => {
-    const result = userSchema.safeParse({ ...validUser, lang: 'he' });
+    const result = userSchema.safeParse({
+      email: 'test@example.com',
+      name: 'Test User',
+      password: validPw,
+      passwordConfirm: validPw,
+      lang: 'he'
+    });
     expect(result.success).toBe(true);
   });
 
   it('rejects invalid language', () => {
-    const result = userSchema.safeParse({ ...validUser, lang: 'invalid' });
+    const result = userSchema.safeParse({
+      email: 'test@example.com',
+      name: 'Test User',
+      password: validPw,
+      passwordConfirm: validPw,
+      lang: 'invalid'
+    });
     expect(result.success).toBe(false);
   });
 
-  it('accepts optional fields', () => {
-    const result = userSchema.safeParse({ lang: 'en', name: 'Test' });
-    expect(result.success).toBe(true);
+  it('rejects mismatched passwords', () => {
+    const result = userSchema.safeParse({
+      email: 'test@example.com',
+      name: 'Test User',
+      password: validPw,
+      passwordConfirm: 'differentPw1!'
+    });
+    expect(result.success).toBe(false);
   });
 });

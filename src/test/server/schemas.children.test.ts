@@ -1,28 +1,36 @@
 import { describe, expect, it } from 'vitest';
 
-import { childrenSchema } from '../../lib/schemas/children';
+import { accessibilitySchema, registrationSchema } from '../../lib/schemas/children';
 
-describe('childrenSchema', () => {
+describe('accessibilitySchema', () => {
   const validData = {
-    accessibility: 'wheelchair',
-    email: 'test@example.com',
-    name: 'Test Child',
-    phone: '+1234567890',
-    services: 'childcare'
+    inPerson_adaAll: false,
+    inPerson_adaSome: false,
+    inPerson_asl: false,
+    inPerson_eva: false,
+    online_asl: false,
+    online_automatedCaptions: false,
+    online_liveCaptions: false,
+    other: false
   };
 
   it('accepts valid data', () => {
-    const result = childrenSchema.safeParse(validData);
+    const result = accessibilitySchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
-  it('rejects missing name', () => {
-    const result = childrenSchema.safeParse({ ...validData, name: undefined });
+  it('rejects missing required boolean', () => {
+    const result = accessibilitySchema.safeParse({ ...validData, inPerson_adaAll: undefined });
     expect(result.success).toBe(false);
   });
+});
 
-  it('rejects invalid email', () => {
-    const result = childrenSchema.safeParse({ ...validData, email: 'not-an-email' });
+describe('registrationSchema', () => {
+  it('rejects invalid url', () => {
+    const result = registrationSchema.safeParse({
+      registrationType: 'free',
+      url: 'not-a-url'
+    });
     expect(result.success).toBe(false);
   });
 });

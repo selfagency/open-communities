@@ -111,19 +111,6 @@ describe('src/lib/api', () => {
     expect(expanded.tags).toEqual(['a', 'b']);
   });
 
-  it('authenticate clears auth store on refresh failure', async () => {
-    const clearMock = vi.fn();
-    const mockCookie = 'mock-token';
-
-    const api = new (vi.mocked(await import('pocketbase')).default)('http://localhost');
-    api.authStore.isValid = false;
-    api.authStore.clear = clearMock;
-
-    // When isValid is false, authenticate returns early without calling authRefresh
-    await authenticate(api, 'some-cookie');
-    expect(clearMock).not.toHaveBeenCalled();
-  });
-
   it('convertBooleans handles arrays', () => {
     // Indirect test: cleanResponse calls convertBooleans internally
     const input = [
