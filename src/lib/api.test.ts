@@ -115,26 +115,22 @@ describe('src/lib/api', () => {
     const clearMock = vi.fn();
     const mockCookie = 'mock-token';
 
-    // Not mocking pocketbase's authRefresh here — the mock will resolve
-    // successfully. Instead test that when isValid=false, no refresh is attempted.
-    const { authenticate: auth } = await import('./api');
     const api = new (vi.mocked(await import('pocketbase')).default)('http://localhost');
     api.authStore.isValid = false;
     api.authStore.clear = clearMock;
 
     // When isValid is false, authenticate returns early without calling authRefresh
-    await auth(api, 'some-cookie');
+    await authenticate(api, 'some-cookie');
     expect(clearMock).not.toHaveBeenCalled();
   });
 
   it('convertBooleans handles arrays', () => {
-    const { cleanResponse: clean } = await import('./api');
     // Indirect test: cleanResponse calls convertBooleans internally
     const input = [
       { a: 1, collectionId: 'x' },
       { a: 0, collectionId: 'y' }
     ] as unknown as Record<string, unknown>;
-    const out = clean(input);
+    const out = cleanResponse(input as any);
     // Boolean conversion should apply to array elements
     expect(out).toBeDefined();
   });
