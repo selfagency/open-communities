@@ -56,6 +56,23 @@ function getToken() {
   return m[1];
 }
 
+// Verify the token actually works before using it for schema import/seeding.
+// Tokens from stale PB logs (e.g. after container restart) may be invalid.
+async function verifyToken(token) {
+  try {
+    const res = await fetch(`${PB}/api/collections?perPage=1`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error(`Token rejected: ${res.status}`);
+    const data = await res.json();
+    if (!data?.items) throw new Error('Unexpected response shape');
+    console.log('  🔑 Token verified');
+    return true;
+  } catch (err) {
+    throw new Error(`Installation token is invalid: ${err.message}`);
+  }
+}
+
 async function importSchema(token) {
   console.log('📦 Importing schema...');
   const schema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf-8'));
@@ -145,6 +162,7 @@ async function main() {
   try {
     await waitForPB();
     const token = getToken();
+    await verifyToken(token);
     await importSchema(token);
     await seedData(token);
     createAdmin();
