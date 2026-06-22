@@ -87,4 +87,57 @@ describe('user/lang +server', () => {
     expect(res.status).toBe(200);
     expect(updateMock).toHaveBeenCalledWith('u1', { lang: 'es' });
   });
+
+  it('returns 401 when client is not authenticated', async () => {
+    const mod = await import('../../routes/user/lang/+server');
+    const api = {
+      authStore: { record: null },
+      collection: () => ({ update: async () => ({}) })
+    } as any;
+
+    const request = new Request('http://localhost/user/lang', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ lang: 'en' })
+    });
+
+    const mockEvent = createMockRequestEvent({
+      locals: { api, captureException: () => {} },
+      request,
+      route: { id: '/user/lang' },
+      url: new URL('http://localhost/user/lang')
+    });
+
+    const res = await mod.POST(mockEvent as any);
+    expect(res.status).toBe(401);
+  });
+
+  it('returns 500 when PB update fails', async () => {
+    const mod = await import('../../routes/user/lang/+server');
+    const api = {
+      authStore: { record: { id: 'u1' } },
+      collection: () => ({
+        update: async () => {
+          throw new Error('PB error');
+        }
+      })
+    } as any;
+
+    const request = new Request('http://localhost/user/lang', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ lang: 'en' })
+    });
+
+    const mockEvent = createMockRequestEvent({
+      cookies: { get: () => '', set: () => {}, serialize: () => '' },
+      locals: { api, captureException: vi.fn(), cookieOpts: {} },
+      request,
+      route: { id: '/user/lang' },
+      url: new URL('http://localhost/user/lang')
+    });
+
+    const res = await mod.POST(mockEvent as any);
+    expect(res.status).toBe(500);
+  });
 });
