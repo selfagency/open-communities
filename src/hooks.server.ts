@@ -123,7 +123,12 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       if (requestApi?.authStore?.isValid) {
         pruneAuthRefreshTimestamps();
         const now = Date.now();
-        const sessionKey = (event.cookies.get('auth') ?? '').slice(0, 32);
+        // Use the stable session cookie as the cooldown key (not auth cookie, which changes on refresh)
+        let sessionKey = event.cookies.get('session');
+        if (!sessionKey) {
+          sessionKey = crypto.randomUUID();
+          event.cookies.set('session', sessionKey, event.locals.cookieOpts);
+        }
         const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
         if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
           await requestApi.collection('users').authRefresh();
@@ -131,10 +136,6 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
         }
         // Re-set the auth cookie on every request to extend its TTL
         event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
-        // Maintain session cookie if auth refresh succeeds
-        if (!event.cookies.get('session')) {
-          event.cookies.set('session', crypto.randomUUID(), event.locals.cookieOpts);
-        }
       }
     }
   } catch (error) {

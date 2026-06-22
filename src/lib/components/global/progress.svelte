@@ -30,12 +30,16 @@
 
       if (progress >= 99 && progressInterval) {
         clearInterval(progressInterval);
+        progressInterval = null;
       }
     }, 100);
   };
 
   const finishProgress = () => {
-    if (progressInterval) clearInterval(progressInterval);
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
     progress = 99.9;
     setTimeout(() => {
       progress = 100;

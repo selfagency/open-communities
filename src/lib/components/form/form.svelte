@@ -83,11 +83,9 @@
 
       if (!$formData?.id) {
         initData();
-      } else {
-        if (!user?.admin) {
-          $formData.visible = false;
-        }
       }
+      // Note: visible permission is enforced server-side in edit/+page.server.ts.
+      // Do NOT mutate $formData here — it can trigger reactive loops in superforms.
 
       await sleep(500);
 

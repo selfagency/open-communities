@@ -56,7 +56,10 @@
   /* endregion form */
 
   /* region lifecycle */
+  let submitted = $state(false);
   onMount(async () => {
+    if (submitted) return;
+    submitted = true;
     $formData.token = token;
     $formData.type = 'verifyEmail';
     await waitForTheElement('#verify', { timeout: 1000 });

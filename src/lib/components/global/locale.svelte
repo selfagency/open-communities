@@ -46,6 +46,10 @@
   /* region methods */
   async function updateLang() {
     try {
+      // Only reload if the locale actually changed — prevents reload loop
+      const currentLocale = page.data.lang || 'en';
+      if (lang === currentLocale) return;
+
       const res = await fetch('/user/lang', {
         body: JSON.stringify({ lang, user: page.data.user?.id }),
         headers: {

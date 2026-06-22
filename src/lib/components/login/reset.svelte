@@ -58,7 +58,10 @@
   /* endregion form */
 
   /* region lifecycle */
+  let submitted = $state(false);
   onMount(async () => {
+    if (submitted) return;
+    submitted = true;
     $formData.token = token ? token : 'invalid';
     $formData.type = token ? 'resetPassword' : 'requestReset';
     await waitForTheElement('#reset', { timeout: 1000 });

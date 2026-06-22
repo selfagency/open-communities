@@ -35,7 +35,7 @@
 
   /* region variables */
   // constants
-  const id = $derived(page.url.searchParams.get('id'));
+  // id is handled via +page.svelte load → resolved before this component mounts
   const search = new Search(page.data.congregations as SearchData[], dev);
   const { results, state: searchState } = search;
   const location = new LocationService({ countries: page.data.countries, search: search });
@@ -108,6 +108,17 @@
 
   onMount(async () => {
     await tick();
+    // Handle ?id= query param — open the congregation card directly
+    const id = page.url.searchParams.get('id');
+    if (id) {
+      searchTerms = id;
+      open[id] = true;
+      // Clean up the URL without navigating
+      const url = new URL(page.url);
+      url.searchParams.delete('id');
+      goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true });
+    }
+
     // If results are already present (tests often stub them synchronously),
     // skip the artificial sleep so the UI becomes interactive immediately.
     if (Array.isArray($results)) {
@@ -137,32 +148,6 @@
     if (searchTerms || searchTerms.length === 0) {
       untrack(() => {
         search.setSearchTerms(searchTerms);
-      });
-    }
-  });
-
-  $effect(() => {
-    if (id) {
-      untrack(() => {
-        goto(page.url.pathname, { replaceState: false }).then(() => {
-          searchTerms = id;
-          open[id] = true;
-          searchTerms = '';
-        });
-      });
-    }
-  });
-
-  $effect(() => {
-    if (currentPage) {
-      untrack(() => {
-        pages[currentPage]?.reduce(
-          (acc, congregation) => {
-            acc[congregation.id] = false;
-            return acc;
-          },
-          {} as Record<string, boolean>
-        );
       });
     }
   });

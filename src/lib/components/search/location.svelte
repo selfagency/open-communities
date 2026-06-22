@@ -29,25 +29,35 @@
   function handleCountryChange(selectedId: string) {
     country = selectedId;
     setCountry(selectedId);
+    // Sync to search store after location updates
+    search.setSearchLocation($locationState.record);
   }
 
   function handleStateChange(selectedId: string) {
     province = selectedId;
     setState(selectedId);
+    search.setSearchLocation($locationState.record);
   }
 
   function handleCityChange(selectedId: string) {
     city = selectedId;
     setCity(selectedId);
+    search.setSearchLocation($locationState.record);
+  }
+
+  function handleReset() {
+    reset();
+    search.setSearchLocation(null);
   }
   /* endregion methods */
 
   /* region reactivity */
+  // Sync local state from the store — this effect is READ-ONLY.
+  // It must NOT call search.setSearchLocation() because that would create
+  // a circular update loop (search store → location state → this effect → search store).
   $effect(() => {
     const loc = $locationState.record;
-    search.setSearchLocation(loc);
 
-    // Sync local state from the store only if it differs
     untrack(() => {
       if (country !== (loc.country?.id ?? '')) {
         country = loc.country?.id ?? '';
@@ -99,9 +109,7 @@
       <Button
         variant="link"
         class="h-auto"
-        onclick={() => {
-          reset();
-        }}>
+        onclick={handleReset}>
         <span class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700">
           <ResetIcon size="16" class="rtl:mx-1" />
           <span>{m.reset()}</span>
