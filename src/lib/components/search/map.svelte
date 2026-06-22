@@ -24,7 +24,7 @@
   const { state: searchState } = search;
 
   // locals
-  const center = $derived(() => {
+  const center = $derived.by(() => {
     const loc = $searchState.searchLocation;
     if (loc?.country?.id) {
       return [
@@ -35,7 +35,7 @@
     return [-90, 10] as LngLatLike;
   });
 
-  const zoom = $derived(() => {
+  const zoom = $derived.by(() => {
     const loc = $searchState.searchLocation;
     if (loc?.country?.id) {
       if (loc.city?.id) return 10;
@@ -71,8 +71,8 @@
   </div>
 {:else}
   <MapLibre
-    center={center()}
-    zoom={zoom()}
+    center={center}
+    zoom={zoom}
     minZoom={1}
     class="h-96"
     standardControls

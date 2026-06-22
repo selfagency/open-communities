@@ -87,7 +87,10 @@ function isPbError(err: unknown): err is { message: string; status: number } {
 
 /* region retry */
 // HTTP status codes that indicate a transient connection issue — safe to retry
-const RETRYABLE_STATUSES = new Set([0, 429, 502, 503, 504, 520, 524]);
+// Status 0 (connection refused / network error) is excluded: if PocketBase is
+// unreachable, retrying 4 times causes 30+ seconds of blocking SSR. The
+// layout/page load functions already have graceful fallbacks for this case.
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504, 520, 524]);
 
 // ~30s total window: 2+4+8+16 + jitter ≈ 32-38s — enough for a remote PB cold start
 const RETRY_DEFAULTS = {

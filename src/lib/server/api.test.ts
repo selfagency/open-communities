@@ -237,18 +237,10 @@ describe('src/lib/server/api', () => {
       expect(fn).toHaveBeenCalledTimes(2);
     });
 
-    it('retries on retryable status (0) and succeeds on last attempt', async () => {
-      const fn = vi
-        .fn()
-        .mockRejectedValueOnce({ message: 'net err', status: 0 })
-        .mockRejectedValueOnce({ message: 'net err', status: 0 })
-        .mockRejectedValueOnce({ message: 'net err', status: 0 })
-        .mockResolvedValue('ok');
-      const promise = withRetry(fn);
-      await vi.runAllTimersAsync();
-      const result = await promise;
-      expect(result).toBe('ok');
-      expect(fn).toHaveBeenCalledTimes(4);
+    it('does NOT retry on connection refused (status 0)', async () => {
+      const fn = vi.fn().mockRejectedValue({ message: 'connection refused', status: 0 });
+      await expect(withRetry(fn)).rejects.toThrow();
+      expect(fn).toHaveBeenCalledTimes(1);
     });
 
     it('does NOT retry on non-retryable status (404)', async () => {

@@ -51,16 +51,17 @@ export const useAppStore = defineStore('app', {
         version: 1
       },
   actions: {
-    /** Initialize from window dimensions and user preferences. Call once on mount. */
+    /** Initialize from window dimensions and user preferences. Call ONCE on first browser boot. */
     init(userLang?: string) {
       this.form = { hasErrors: false, success: false };
       this.isMobile = window.innerWidth < 640;
-      this.lang = userLang || 'en';
+      this.lang = userLang || this.lang || 'en'; // preserve persisted lang if no override
       this.loading = false;
       this.loadingSecondary = false;
       this.offsetHeight = window.innerHeight;
       this.offsetWidth = window.innerWidth;
-      this.showIntro = true;
+      // Do NOT reset showIntro — it is persisted to localStorage and should
+      // only be set false by the user dismissing the intro dialog, never reverted.
     },
 
     /**

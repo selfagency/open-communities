@@ -9,65 +9,53 @@
   import type { Location } from '$lib/location';
   import { m } from '$lib/paraglide/messages';
   import type { Search } from '$lib/search';
-
+  import type { LocationMeta } from '$lib/types.d';
   /* endregion imports */
 
   /* region variables */
-  // props
   const { location, search }: { location: Location; search: Search } = $props();
-
-  // constants
   const { reset, setCity, setCountry, setState, state: locationState } = location;
 
-  // locals
-  // Initialize state from the store without creating a subscription.
   let country = $state(untrack(() => $locationState.record.country?.id ?? ''));
   let province = $state(untrack(() => $locationState.record.state?.id ?? ''));
   let city = $state(untrack(() => $locationState.record.city?.id ?? ''));
+  /* endregion variables */
 
   /* region methods */
-  function handleCountryChange(selectedId: string) {
+  async function handleCountryChange(selectedId: string) {
     country = selectedId;
-    setCountry(selectedId);
-    // Sync to search store after location updates
-    search.setSearchLocation($locationState.record);
+    await setCountry(selectedId);
+    search.setSearchLocation($locationState.record as LocationMeta);
   }
 
-  function handleStateChange(selectedId: string) {
+  async function handleStateChange(selectedId: string) {
     province = selectedId;
-    setState(selectedId);
-    search.setSearchLocation($locationState.record);
+    await setState(selectedId);
+    search.setSearchLocation($locationState.record as LocationMeta);
   }
 
   function handleCityChange(selectedId: string) {
     city = selectedId;
     setCity(selectedId);
-    search.setSearchLocation($locationState.record);
+    search.setSearchLocation($locationState.record as LocationMeta);
   }
 
   function handleReset() {
     reset();
-    search.setSearchLocation(null);
+    search.resetLocation();
   }
   /* endregion methods */
 
   /* region reactivity */
-  // Sync local state from the store — this effect is READ-ONLY.
-  // It must NOT call search.setSearchLocation() because that would create
-  // a circular update loop (search store → location state → this effect → search store).
+  // Sync local state from the store — READ-ONLY. Does NOT call search.setSearchLocation
+  // to avoid a circular update loop (search store -> locationState -> effect -> search store).
   $effect(() => {
     const loc = $locationState.record;
 
     untrack(() => {
-      if (country !== (loc.country?.id ?? '')) {
-        country = loc.country?.id ?? '';
-      }
-      if (province !== (loc.state?.id ?? '')) {
-        province = loc.state?.id ?? '';
-      }
-      if (city !== (loc.city?.id ?? '')) {
-        city = loc.city?.id ?? '';
-      }
+      if (country !== (loc.country?.id ?? '')) country = loc.country?.id ?? '';
+      if (province !== (loc.state?.id ?? '')) province = loc.state?.id ?? '';
+      if (city !== (loc.city?.id ?? '')) city = loc.city?.id ?? '';
     });
   });
   /* endregion reactivity */
@@ -92,7 +80,7 @@
           value={province}
           onChange={handleStateChange}
           placeholder={m.selectThing({ thing: m.location_state().toLowerCase() })}
-          disabled={!country || !$locationState.options?.stateOptions?.length} />
+          disabled={!$locationState.options?.stateOptions?.length} />
       </span>
 
       <span class="w-full sm:w-1/3">
@@ -101,15 +89,12 @@
           value={city}
           onChange={handleCityChange}
           placeholder={m.selectThing({ thing: m.location_city().toLowerCase() })}
-          disabled={!province || !$locationState.options?.cityOptions?.length} />
+          disabled={!$locationState.options?.cityOptions?.length} />
       </span>
     </div>
 
-    <span>
-      <Button
-        variant="link"
-        class="h-auto"
-        onclick={handleReset}>
+    <span class="flex w-full flex-row items-center justify-center sm:w-auto">
+      <Button variant="link" class="h-auto" onclick={handleReset}>
         <span class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700">
           <ResetIcon size="16" class="rtl:mx-1" />
           <span>{m.reset()}</span>

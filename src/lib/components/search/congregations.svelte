@@ -43,12 +43,6 @@
 
   // locals
   let loading = $state(true);
-
-  // In tests, allow skipping the artificial loading state so UI becomes
-  // interactive immediately.
-  if ((globalThis as Record<string, unknown>).__TEST__) {
-    loading = false;
-  }
   let searchTerms = $state('');
   let currentPage = $state(1);
   let perPage = $state(9);
@@ -118,21 +112,7 @@
       url.searchParams.delete('id');
       goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true });
     }
-
-    // If results are already present (tests often stub them synchronously),
-    // skip the artificial sleep so the UI becomes interactive immediately.
-    if (Array.isArray($results)) {
-      loading = false;
-      return;
-    }
-
-    // In test runs, avoid the artificial sleep to keep tests fast and
-    // deterministic.
-    if ((globalThis as Record<string, unknown>).__TEST__) {
-      loading = false;
-      return;
-    }
-    await sleep(400);
+    await sleep(200); // brief delay so the fade-in transition renders
     loading = false;
   });
 
@@ -145,11 +125,8 @@
   });
 
   $effect(() => {
-    if (searchTerms || searchTerms.length === 0) {
-      untrack(() => {
-        search.setSearchTerms(searchTerms);
-      });
-    }
+    const terms = searchTerms;
+    untrack(() => search.setSearchTerms(terms));
   });
   /* endregion reactivity */
   const skeletons = [1, 2, 3];

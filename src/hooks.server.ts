@@ -52,17 +52,17 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       // getClientAddress can throw in dev when no proxy headers are set
     }
   }
-  if (!clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1') {
+  // Only attempt public IP resolution in production where the client is not
+  // loopback. In dev, 127.0.0.1/::1 is always the result of getClientAddress(),
+  // and publicIp() incurs a 500ms timeout penalty on every request.
+  const isLoopback = !clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1';
+  if (isLoopback && !dev) {
     try {
       clientIp = await Promise.race([
         publicIp(),
         new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 500))
       ]);
     } catch {
-      // publicIp can hang for 30s+ when network is unavailable (DNS timeouts,
-      // unreachable HTTPS endpoints). In dev/localhost, this blocks every
-      // request. The client IP is only used for PB logging headers — safe to
-      // skip when it can't be determined quickly.
       clientIp = '';
     }
   }
