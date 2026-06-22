@@ -92,11 +92,13 @@ function isPbError(err: unknown): err is { message: string; status: number } {
 // layout/page load functions already have graceful fallbacks for this case.
 const RETRYABLE_STATUSES = new Set([429, 502, 503, 504, 520, 524]);
 
-// ~30s total window: 2+4+8+16 + jitter ≈ 32-38s — enough for a remote PB cold start
+// ~3s total window: 500+1000+2000 + jitter ≈ 4-5s — enough for a local PB restart
+// without blocking SSR for 30+ seconds. Load functions already have graceful
+// fallbacks (return empty arrays) when PB is unreachable.
 const RETRY_DEFAULTS = {
-  maxRetries: 4,
-  baseDelayMs: 2000,
-  maxDelayMs: 16000
+  maxRetries: 2,
+  baseDelayMs: 500,
+  maxDelayMs: 4000
 };
 
 /**

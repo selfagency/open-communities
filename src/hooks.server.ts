@@ -136,7 +136,11 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
         }
         const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
         if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
-          await requestApi.collection('users').authRefresh();
+          // Hard timeout on auth refresh to avoid blocking SSR on PB latency
+          await Promise.race([
+            requestApi.collection('users').authRefresh(),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
+          ]);
           authRefreshTimestamps.set(sessionKey, now);
         }
         // Re-set the auth cookie on every request to extend its TTL

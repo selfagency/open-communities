@@ -262,7 +262,7 @@ describe('src/lib/server/api', () => {
       const promise = withRetry(fn);
       await vi.advanceTimersByTimeAsync(60_000);
       await expect(promise).rejects.toBe(err);
-      expect(fn).toHaveBeenCalledTimes(5);
+      expect(fn).toHaveBeenCalledTimes(3); // initial + 2 retries (maxRetries was reduced to 2)
       vi.useRealTimers();
     });
 
@@ -270,7 +270,7 @@ describe('src/lib/server/api', () => {
       const fn = vi.fn().mockRejectedValueOnce({ message: 'busy', status: 429 }).mockResolvedValue('ok');
       await expect(withRetry(fn)).resolves.toBe('ok');
       expect(log.warn).toHaveBeenCalledWith(
-        expect.stringContaining('PB retry 1/4'),
+        expect.stringContaining('PB retry 1/2'),
         expect.objectContaining({ message: 'busy', status: 429 })
       );
     });
