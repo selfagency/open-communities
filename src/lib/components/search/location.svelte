@@ -14,6 +14,7 @@
 
   /* region variables */
   const { location, search }: { location: Location; search: Search } = $props();
+  // svelte-ignore state_referenced_locally
   const { reset, setCity, setCountry, setState, state: locationState } = location;
 
   let country = $state(untrack(() => $locationState.record.country?.id ?? ''));

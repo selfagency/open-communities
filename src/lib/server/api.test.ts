@@ -258,8 +258,10 @@ describe('src/lib/server/api', () => {
     it('throws after exhausting all retries', async () => {
       const err = { message: 'timeout', status: 524 };
       const fn = vi.fn().mockRejectedValue(err);
+      // Use advanceTimersByTimeAsync instead of runAllTimersAsync to avoid
+      // runaway microtask/macrotask chains that leave unhandled rejections.
       const promise = withRetry(fn);
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(60_000);
       await expect(promise).rejects.toBe(err);
       // initial call + 4 retries
       expect(fn).toHaveBeenCalledTimes(5);

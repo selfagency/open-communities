@@ -12,6 +12,7 @@
   // Using $effect with a change-detection guard prevents misfiring on mount
   // (data.congregations is always truthy — even [] — so the raw condition is
   // vacuously true and would cancel any in-progress progress bar).
+  // svelte-ignore state_referenced_locally
   let _prevCongregations = data.congregations;
   $effect(() => {
     if (data.congregations !== _prevCongregations) {

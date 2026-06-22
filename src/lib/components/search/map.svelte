@@ -21,6 +21,7 @@
   } = $props();
 
   // constants
+  // svelte-ignore state_referenced_locally
   const { state: searchState } = search;
 
   // locals
