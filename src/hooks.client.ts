@@ -1,6 +1,6 @@
 import { dev } from '$app/environment';
 /* region imports */
-import { captureException } from '$lib/posthog';
+import posthog from 'posthog-js';
 import { log } from '$lib/utils';
 /* endregion imports */
 
@@ -8,7 +8,8 @@ export const handleError = async ({ error, event, message, status }) => {
   if (status !== 404) {
     if (dev) log.debug('event', event);
     log.error(error);
-    await captureException(error, event, message);
+    // Use posthog-js's native captureException per official PostHog Svelte docs
+    posthog.captureException(error);
   }
 
   return {

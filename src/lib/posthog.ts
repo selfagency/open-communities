@@ -1,7 +1,38 @@
 import posthog from 'posthog-js';
 import { isEmpty } from 'radashi';
+
+import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import type { UsersResponse } from '$lib/pocketbase.d';
+
+/**
+ * Initialize PostHog analytics. Safe to call multiple times — `posthog.init()`
+ * is idempotent. Call once on first boot from the root layout load function.
+ *
+ * Uses the reverse proxy at PUBLIC_POSTHOG_HOST (shomer.opencommunities.info)
+ * as api_host, with ui_host pointing to the same instance so toolbar features
+ * work correctly.
+ */
+export function initPosthog(user?: UsersResponse) {
+  if (!browser || !env.PUBLIC_POSTHOG_KEY) return;
+
+  try {
+    posthog.init(env.PUBLIC_POSTHOG_KEY, {
+      api_host: env.PUBLIC_POSTHOG_HOST,
+      ui_host: env.PUBLIC_POSTHOG_HOST,
+      capture_exceptions: true,
+      capture_pageleave: false,
+      capture_pageview: false,
+      persistence: 'localStorage'
+    });
+
+    if (user) {
+      posthog.identify(user.id);
+    }
+  } catch (e) {
+    console.error('[PostHog] Init failed (non-blocking):', e);
+  }
+}
 
 export async function captureException(
   error: unknown,
@@ -10,7 +41,6 @@ export async function captureException(
 ): Promise<void> {
   try {
     if (!isEmpty(posthog) && posthog.__loaded) {
-      // Convert error to a serializable format for WebKit
       const err = error as Error;
       const errorData = {
         message: err?.message || message || 'Unknown error',
@@ -29,26 +59,6 @@ export async function captureException(
       });
     }
   } catch (captureError) {
-    // Fallback if PostHog capture fails
-    console.error('Failed to capture exception in PostHog:', captureError);
-  }
-}
-
-export function posthogInit(posthogKey: string, user: UsersResponse) {
-  try {
-    console.log('[PostHog] Initializing with key:', posthogKey.slice(0, 8) + '...', 'host:', env.PUBLIC_POSTHOG_HOST);
-    posthog.init(posthogKey, {
-      api_host: env.PUBLIC_POSTHOG_HOST,
-      capture_exceptions: true,
-      capture_pageleave: false,
-      capture_pageview: false
-    });
-
-    if (user) {
-      posthog.identify(user.id);
-      console.log('[PostHog] Identified user:', user.id.slice(0, 8) + '...');
-    }
-  } catch (e) {
-    console.error('[PostHog] Init failed (non-blocking):', e);
+    console.error('[PostHog] captureException failed:', captureError);
   }
 }
