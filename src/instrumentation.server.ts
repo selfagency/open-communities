@@ -17,7 +17,6 @@ import { BatchLogRecordProcessor } from '@opentelemetry/sdk-logs';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
 import { logs } from '@opentelemetry/api-logs';
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import type { Resource } from '@opentelemetry/resources';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 
 // Using dynamic env read — at instrumentation time the module-level
