@@ -48,7 +48,18 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
     event.request?.headers?.get('x-forwarded-for') ??
     event.getClientAddress();
   if (!clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1') {
-    clientIp = (await publicIp()) ?? '';
+    try {
+      clientIp = await Promise.race([
+        publicIp(),
+        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 3000))
+      ]);
+    } catch {
+      // publicIp can hang for 30s+ when network is unavailable (DNS timeouts,
+      // unreachable HTTPS endpoints). In dev/localhost, this blocks every
+      // request. The client IP is only used for PB logging headers — safe to
+      // skip when it can't be determined quickly.
+      clientIp = '';
+    }
   }
 
   // Per-request PocketBase instance — avoids race conditions on beforeSend
