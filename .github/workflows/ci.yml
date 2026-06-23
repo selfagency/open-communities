@@ -80,8 +80,6 @@ jobs:
           NODE_ENV: test
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-          POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
-          POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
           PUBLIC_HOSTNAME: http://localhost:4173
