@@ -41,10 +41,16 @@ export async function captureException(error: unknown, user?: string, other?: Re
 
   try {
     let fallbackMessage: string;
-    try {
-      fallbackMessage = typeof error === 'string' ? error : JSON.stringify(error);
-    } catch {
-      fallbackMessage = String(error);
+    if (typeof error === 'string') {
+      fallbackMessage = error;
+    } else if (error instanceof Error) {
+      fallbackMessage = error.message;
+    } else {
+      try {
+        fallbackMessage = JSON.stringify(error, Object.keys(error as object));
+      } catch {
+        fallbackMessage = `[${typeof error}] ${Object.prototype.toString.call(error)}`;
+      }
     }
     const errMsg = error instanceof Error ? error : new Error(fallbackMessage);
     phClient.captureException(errMsg, user ?? 'anonymous', other);

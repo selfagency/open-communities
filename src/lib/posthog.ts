@@ -60,7 +60,17 @@ export function captureException(
 ): void {
   if (!browser || !_initialized) return;
   try {
-    const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : JSON.stringify(error));
+    let message: string;
+    if (typeof error === 'string') {
+      message = error;
+    } else {
+      try {
+        message = JSON.stringify(error);
+      } catch {
+        message = String(error);
+      }
+    }
+    const err = error instanceof Error ? error : new Error(message);
     const props: Properties = {
       ...(event?.url?.pathname ? { $exception_url: event.url.pathname } : {}),
       ...additionalProperties
