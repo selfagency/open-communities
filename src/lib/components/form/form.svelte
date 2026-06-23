@@ -41,10 +41,10 @@
   // props
   let {
     content,
-    deletion,
+    deletion = undefined,
     form,
     mode = $bindable("add"),
-    transfer,
+    transfer = undefined,
     user,
   }: {
     content?: PagesRecord;
@@ -52,7 +52,7 @@
     form: SuperForm<any, any>;
     mode: "add" | "edit";
     transfer?: SuperValidated<any>;
-    user: UsersRecord & { id: string };
+    user: (UsersRecord & { id: string }) | undefined;
   } = $props();
 
   // constants
@@ -252,11 +252,11 @@
                     class="flex flex-row items-center justify-start space-x-2"
                   >
                     <Delete
-                      data={deletion}
+                      data={deletion!}
                       id={$formData?.id ?? ""}
                     />
                     <Transfer
-                      data={transfer}
+                      data={transfer!}
                       id={$formData?.id ?? ""}
                       owner={congregation.owner}
                     />

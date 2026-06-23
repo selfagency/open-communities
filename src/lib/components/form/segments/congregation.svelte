@@ -11,7 +11,8 @@
   import * as Select from '$lib/components/ui/select';
   import { Textarea } from '$lib/components/ui/textarea';
   import { Location } from '$lib/location';
-  import { m } from '$lib/paraglide/messages';
+  import { m as mBase } from '$lib/paraglide/messages';
+  const m = mBase as Record<string, (...args: unknown[]) => string>;
   import type { CongregationMetaRecord } from '$lib/pocketbase.d';
   import type { LocationMeta, LocationRecord } from '$lib/types.d';
   import { log } from '$lib/utils';
@@ -23,7 +24,7 @@
   /* region variables */
   // props
   let { errors, form, formData, view = $bindable() }: {
-    errors?: Record<string, string | string[] | undefined>;
+    errors?: any;
     form: any;
     formData: any;
     view?: string;

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
-import posthog from '@posthog/rollup-plugin';
 import svg from '@poppanator/sveltekit-svg';
+import posthog from '@posthog/rollup-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import biomePlugin from 'vite-plugin-biome';
@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => ({
       process.env.POSTHOG_CLI_API_KEY &&
       posthog({
         personalApiKey: process.env.POSTHOG_CLI_API_KEY,
-        projectId: Number(process.env.POSTHOG_CLI_PROJECT_ID),
+        projectId: process.env.POSTHOG_CLI_PROJECT_ID,
         host: process.env.POSTHOG_CLI_HOST,
         sourcemaps: {
           enabled: true,
@@ -55,7 +55,7 @@ export default defineConfig(({ mode }) => ({
           deleteAfterUpload: true
         }
       })
-  ],
+  ].filter((x): x is Exclude<typeof x, false | '' | undefined> => !!x),
 
   // Resolve aliases for both dev/build and Vitest.
   // Ensure $test/* path mapping from tsconfig/svelte.config is also available to Vite/Vitest.

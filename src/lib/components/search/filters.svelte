@@ -22,7 +22,8 @@
   import * as Collapsible from "$lib/components/ui/collapsible";
   import { Label } from "$lib/components/ui/label";
   import * as Popover from "$lib/components/ui/popover";
-  import { m } from "$lib/paraglide/messages";
+  import { m as mBase } from "$lib/paraglide/messages";
+  const m = mBase as Record<string, (...args: unknown[]) => string>;
   import type { Search } from "$lib/search";
 
   // import { log } from '$lib/utils';
@@ -89,7 +90,7 @@
     },
   };
 
-  const icons: Record<string, typeof AccessibilityIcon> = {
+  const icons: Record<string, any> = {
     accessibility: AccessibilityIcon,
     admin: AdminIcon,
     circle: CircleIcon,

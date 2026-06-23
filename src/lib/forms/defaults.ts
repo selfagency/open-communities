@@ -1,7 +1,7 @@
 import type { UsersRecord } from '$lib/pocketbase.d';
 
 /** Default form values for the add/edit congregation form. */
-export function createInitForm(user: UsersRecord & { id: string }) {
+export function createInitForm(user: (UsersRecord & { id: string }) | undefined) {
   return {
     accessibility: {
       inPerson_adaAll: false,
