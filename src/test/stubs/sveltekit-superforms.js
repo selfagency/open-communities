@@ -1,3 +1,4 @@
+// @ts-expect-error — test infrastructure, intentionally loose typing
 // Provide setError for tests that import it directly
 // increment an observable counter too
 globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
@@ -18,15 +19,18 @@ export function superForm(initialData = {}) {
   const subscribers = new Set();
 
   const store = {
+    /** @param {any} next */
     set(next) {
       value = next;
       for (const s of subscribers) s(value);
     },
+    /** @param {(v: any) => void} fn */
     subscribe(fn) {
       subscribers.add(fn);
       fn(value);
       return () => subscribers.delete(fn);
     },
+    /** @param {(v: any) => any} updater */
     update(updater) {
       value = updater(value);
       for (const s of subscribers) s(value);
@@ -45,10 +49,10 @@ export function superForm(initialData = {}) {
     setConstraints: () => {},
     setErrors: () => {},
     setMessage: () => {},
+    /** @param {any} el */
     submit: (el) => {
       // If a test installs a spy on globalThis, call it so tests can assert.
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error
       if (globalThis.__TEST_SUPERFORM_SUBMIT__) globalThis.__TEST_SUPERFORM_SUBMIT__(el);
       // increment an observable counter too
       globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;

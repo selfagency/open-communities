@@ -18,12 +18,19 @@ vi.mock('pocketbase', () => {
       };
       // collection returns an object with authRefresh spy
       // @ts-expect-error collection mock
-      this.collection = vi.fn((name: string) => ({ authRefresh: vi.fn() }));
+      this.collection = vi.fn((_name: string) => ({ authRefresh: vi.fn() }));
     }
   };
 });
 
-vi.mock('./logger', () => ({ log: { error: vi.fn() } }));
+vi.mock('./logger', () => ({ log: { error: vi.fn(), warn: vi.fn() } }));
+
+// Mock dev=true so throwAsHttpError doesn't hide the error message in tests
+vi.mock('$app/environment', () => ({
+  browser: false,
+  dev: true,
+  prerendering: false
+}));
 
 // Mock the SvelteKit error helper to return a plain object we can assert on
 vi.mock('@sveltejs/kit', () => ({
@@ -32,7 +39,7 @@ vi.mock('@sveltejs/kit', () => ({
 
 import type { Cookies } from '@sveltejs/kit';
 
-import { api, authenticate, cleanResponse, expand, handleError, loadUser } from './api';
+import { api, authenticate, cleanResponse, expand, loadUser, throwAsHttpError, withRetry } from './api';
 import { log } from './logger';
 
 describe('src/lib/server/api', () => {
@@ -47,9 +54,11 @@ describe('src/lib/server/api', () => {
       (api.authStore as unknown as { isValid: boolean }).isValid = true;
       const authRefreshSpy = vi.fn(() => Promise.resolve());
       // replace collection to return our spy
-      (api as unknown as { collection: (s: string) => { authRefresh: () => Promise<unknown> } }).collection = vi.fn(
-        () => ({ authRefresh: authRefreshSpy })
-      );
+      (
+        api as unknown as {
+          collection: (s: string) => { authRefresh: () => Promise<unknown> };
+        }
+      ).collection = vi.fn(() => ({ authRefresh: authRefreshSpy }));
 
       // act
       const returned = await authenticate('the-cookie');
@@ -64,9 +73,11 @@ describe('src/lib/server/api', () => {
     it('clears authStore when refresh throws', async () => {
       (api.authStore as unknown as { isValid: boolean }).isValid = true;
       const authRefreshSpy = vi.fn(() => Promise.reject(new Error('boom')));
-      (api as unknown as { collection: (s: string) => { authRefresh: () => Promise<unknown> } }).collection = vi.fn(
-        () => ({ authRefresh: authRefreshSpy })
-      );
+      (
+        api as unknown as {
+          collection: (s: string) => { authRefresh: () => Promise<unknown> };
+        }
+      ).collection = vi.fn(() => ({ authRefresh: authRefreshSpy }));
 
       const returned = await authenticate('x');
 
@@ -81,9 +92,13 @@ describe('src/lib/server/api', () => {
       (api.authStore as unknown as { isValid: boolean }).isValid = false;
       // reset spies
       api.authStore.loadFromCookie = vi.fn();
-      (api as unknown as { collection: (s: string) => { authRefresh: () => Promise<unknown> } }).collection = vi.fn(
-        () => ({ authRefresh: vi.fn(() => Promise.resolve()) })
-      );
+      (
+        api as unknown as {
+          collection: (s: string) => { authRefresh: () => Promise<unknown> };
+        }
+      ).collection = vi.fn(() => ({
+        authRefresh: vi.fn(() => Promise.resolve())
+      }));
 
       const returned = await authenticate('');
 
@@ -93,43 +108,47 @@ describe('src/lib/server/api', () => {
     });
   });
 
-  describe('handleError', () => {
+  describe('throwAsHttpError', () => {
     it('rethrows when status is 303', () => {
-      const err = { message: 'redirect', status: 303 } as unknown as {
-        message: string;
-        status: number;
-      };
+      const err = { message: 'redirect', status: 303 };
       try {
-        // function is expected to throw the passed object
-        handleError(err);
+        throwAsHttpError(err);
         throw new Error('did-not-throw');
       } catch (e) {
         expect(e).toBe(err);
       }
     });
 
-    const cases = [
-      ['bad request', 400],
-      ['unauthorized', 401],
-      ['forbidden', 403],
-      ["wasn't found", 404],
-      ['unexpected', 500],
-      ['unavailable', 503]
-    ] as const;
+    it('uses err.status and err.message when both are present', () => {
+      const err = { message: 'Forbidden', status: 403 };
+      const out = throwAsHttpError(err);
+      expect(out).toEqual({ message: 'Forbidden', status: 403 });
+      expect(log.error).toHaveBeenCalledWith('load', err);
+    });
 
-    cases.forEach(([msg, expected]) => {
-      it(`maps message containing "${msg}" to status ${expected}`, () => {
-        const err = { message: `This is ${msg}` } as unknown as { message: string };
-        const out = handleError(err);
-        expect(out).toEqual({ message: `This is ${msg}`, status: expected });
-        // logger.error should have been called with 'load' and the original error
-        expect(log.error).toHaveBeenCalledWith('load', err);
+    it('returns 500 for errors without a status property', () => {
+      const err = { message: 'something went wrong' };
+      const out = throwAsHttpError(err);
+      expect(out).toEqual({
+        message: 'An unexpected error occurred.',
+        status: 500
       });
+      expect(log.error).toHaveBeenCalledWith('load', err);
+    });
+
+    it('falls back to default message when error has no message', () => {
+      const err = { status: 500 };
+      const out = throwAsHttpError(err);
+      expect(out).toEqual({
+        message: 'An unexpected error occurred.',
+        status: 500
+      });
+      expect(log.error).toHaveBeenCalledWith('load', err);
     });
   });
 
   describe('loadUser', () => {
-    it('returns empty object when cookie missing', () => {
+    it('returns null when cookie missing', () => {
       const cookies = {
         delete: () => undefined,
         get: () => undefined,
@@ -138,10 +157,10 @@ describe('src/lib/server/api', () => {
         set: () => undefined
       } as unknown as Cookies;
       const u = loadUser(cookies);
-      expect(u).toEqual({});
+      expect(u).toBeNull();
     });
 
-    it('returns empty object when pb_auth missing', () => {
+    it('returns null when pb_auth missing', () => {
       const cookies = {
         delete: () => undefined,
         get: () => 'foo=bar',
@@ -150,7 +169,32 @@ describe('src/lib/server/api', () => {
         set: () => undefined
       } as unknown as Cookies;
       const u = loadUser(cookies);
-      expect(u).toEqual({});
+      expect(u).toBeNull();
+    });
+
+    it('returns null on malformed JSON', () => {
+      const cookies = {
+        delete: () => undefined,
+        get: () => 'pb_auth=not-json',
+        getAll: () => [],
+        serialize: () => '',
+        set: () => undefined
+      } as unknown as Cookies;
+      const u = loadUser(cookies);
+      expect(u).toBeNull();
+    });
+
+    it('returns null when model lacks required fields', () => {
+      const pb = JSON.stringify({ model: { foo: 'bar' } });
+      const cookies = {
+        delete: () => undefined,
+        get: () => `pb_auth=${pb}`,
+        getAll: () => [],
+        serialize: () => '',
+        set: () => undefined
+      } as unknown as Cookies;
+      const u = loadUser(cookies);
+      expect(u).toBeNull();
     });
 
     it('parses pb_auth and returns the model', () => {
@@ -165,6 +209,70 @@ describe('src/lib/server/api', () => {
       } as unknown as Cookies;
       const u = loadUser(cookies);
       expect(u).toEqual(model);
+    });
+  });
+
+  describe('withRetry', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('returns the result on success without retrying', async () => {
+      const fn = vi.fn().mockResolvedValue('ok');
+      const result = await withRetry(fn);
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on retryable status (429) and succeeds', async () => {
+      const fn = vi.fn().mockRejectedValueOnce({ message: 'rate limit', status: 429 }).mockResolvedValue('ok');
+      const promise = withRetry(fn);
+      // advance past the entire retry window
+      await vi.runAllTimersAsync();
+      const result = await promise;
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('does NOT retry on connection refused (status 0)', async () => {
+      const fn = vi.fn().mockRejectedValue({ message: 'connection refused', status: 0 });
+      await expect(withRetry(fn)).rejects.toThrow();
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does NOT retry on non-retryable status (404)', async () => {
+      const fn = vi.fn().mockRejectedValue({ message: 'not found', status: 404 });
+      await expect(withRetry(fn)).rejects.toThrow();
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does NOT retry on non-retryable status (403)', async () => {
+      const fn = vi.fn().mockRejectedValue({ message: 'forbidden', status: 403 });
+      await expect(withRetry(fn)).rejects.toThrow();
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('throws after exhausting all retries', async () => {
+      const err = { message: 'timeout', status: 524 };
+      const fn = vi.fn().mockRejectedValue(err);
+      vi.useFakeTimers();
+      const promise = withRetry(fn);
+      await vi.advanceTimersByTimeAsync(60_000);
+      await expect(promise).rejects.toBe(err);
+      expect(fn).toHaveBeenCalledTimes(3); // initial + 2 retries (maxRetries was reduced to 2)
+      vi.useRealTimers();
+    });
+
+    it('logs a warning on each retry attempt', async () => {
+      const fn = vi.fn().mockRejectedValueOnce({ message: 'busy', status: 429 }).mockResolvedValue('ok');
+      await expect(withRetry(fn)).resolves.toBe('ok');
+      expect(log.warn).toHaveBeenCalledWith(
+        expect.stringContaining('PB retry 1/2'),
+        expect.objectContaining({ message: 'busy', status: 429 })
+      );
     });
   });
 

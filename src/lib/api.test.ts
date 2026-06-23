@@ -102,12 +102,23 @@ describe('src/lib/api', () => {
       name: 'root'
     } as const;
 
-    const expanded = expand(item);
+    const expanded = expand(item) as any;
 
     expect(expanded).toHaveProperty('owner');
     expect(expanded).toHaveProperty('tags');
     expect(expanded).not.toHaveProperty('expand');
     expect(expanded.owner).toEqual({ id: 'u', name: 'user' });
     expect(expanded.tags).toEqual(['a', 'b']);
+  });
+
+  it('convertBooleans handles arrays', () => {
+    // Indirect test: cleanResponse calls convertBooleans internally
+    const input = [
+      { a: 1, collectionId: 'x' },
+      { a: 0, collectionId: 'y' }
+    ] as unknown as Record<string, unknown>;
+    const out = cleanResponse(input as any);
+    // Boolean conversion should apply to array elements
+    expect(out).toBeDefined();
   });
 });

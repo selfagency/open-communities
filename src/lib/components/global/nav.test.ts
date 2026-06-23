@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import { state } from '$lib/stores';
+import { setState } from '$lib/stores';
 
 // Tests for responsive Nav wrapper that chooses Sheet (mobile) or Menu (desktop)
 
 describe('Nav component', () => {
   it('renders Sheet trigger when offsetWidth < 420 (mobile)', async () => {
     // set the shared state store to a mobile width before rendering
-    state.set({ isMobile: true, offsetWidth: 360 });
+    setState({ isMobile: true, offsetWidth: 360 });
     const { default: Nav } = await import('./nav.svelte');
     render(Nav);
 
@@ -18,7 +18,7 @@ describe('Nav component', () => {
   });
 
   it('renders Menu (desktop) when offsetWidth >= 420', async () => {
-    state.set({ isMobile: false, offsetWidth: 1024 });
+    setState({ isMobile: false, offsetWidth: 1024 });
     const { default: Nav } = await import('./nav.svelte');
     render(Nav);
 

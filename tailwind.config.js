@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import typography from '@tailwindcss/typography';
-import animate from 'tailwindcss-animate';
 import { fontFamily } from 'tailwindcss/defaultTheme';
+import animate from 'tailwindcss-animate';
 
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],

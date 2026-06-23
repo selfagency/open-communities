@@ -1,62 +1,54 @@
-/* region imports */
-import * as persistent from '@nanostores/persistent';
-import { assign } from 'radashi';
+import { createPersistencePlugin, createStateManager } from '@selfagency/stately';
 
-import { page } from '$app/state';
+import { browser } from '$app/environment';
 
-// import { log } from '$lib/utils';
-/* endregion imports */
+import type { AppState, AppStore } from '$lib/stately/app';
+import { useAppStore } from '$lib/stately/app';
 
-/* region types  */
-export type SelectOption = { label: string; value: string };
+export type { AppState as State, AppStore };
 
-export type State = {
-  form?: {
-    hasErrors: boolean;
-    success: boolean;
-  };
-  isMobile?: boolean;
-  lang?: string;
-  loading?: boolean;
-  loadingSecondary?: boolean;
-  offsetHeight?: number;
-  offsetWidth?: number;
-  showIntro?: boolean;
-};
-/* endregion types */
+/* ------------------------------------------------------------------ */
+/*  Manager singleton                                                  */
+/* ------------------------------------------------------------------ */
 
-/* region variables */
-// constants
-const { persistentMap } = persistent;
+const _manager = createStateManager().use(createPersistencePlugin());
 
-const encoder = {
-  decode: JSON.parse,
-  encode: JSON.stringify
-};
-/* endregion variables */
-
-/* region state */
-export const state = persistentMap<State>('state_', {} as State, encoder);
-/* endregion state */
-
-export function initState() {
-  setState({
-    form: {
-      hasErrors: false,
-      success: false
-    },
-    isMobile: window.innerWidth < 640,
-    lang: page.data.user?.lang || 'en',
-    loading: false,
-    loadingSecondary: false,
-    offsetHeight: window.innerHeight,
-    offsetWidth: window.innerWidth,
-    showIntro: true
-  });
+function _getStore(): AppStore {
+  return useAppStore(_manager);
 }
 
-/* region methods */
-export function setState(newState: Partial<State>) {
-  state.set(assign(state.get(), newState));
+const _defaultState: AppState = {
+  form: { hasErrors: false, success: false },
+  isMobile: false,
+  lang: 'en',
+  loading: false,
+  loadingSecondary: false,
+  offsetHeight: 0,
+  offsetWidth: 0,
+  showIntro: true
+};
+
+/**
+ * App store instance — module-level singleton.
+ *
+ * During SSR, the store still initializes with default values and
+ * a memory-backed persistence adapter (configured in the store definition),
+ * so Svelte's `$store` auto-subscription returns valid defaults immediately.
+ */
+export const state: AppStore = _getStore();
+
+/* ------------------------------------------------------------------ */
+/*  Public helpers                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Initialize from window dimensions and user preferences. Noop when server. */
+export function initState(userLang?: string) {
+  if (browser) {
+    _getStore().init(userLang);
+  }
 }
-/* endregion methods */
+
+/** Apply a partial state update. */
+export function setState(partial: Partial<AppState>) {
+  _getStore().setState(partial);
+}

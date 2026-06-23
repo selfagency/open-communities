@@ -17,30 +17,37 @@ pnpm run deps:up
 
 Log into PocketBase, create an admin account, then import `pb_schema.json`. You can also create a user account and grant it 'admin' privileges. Admins can only be enabled through the backend, not through the frontend app. You'll also need to import a dump of the location data, which is a little large to contain in the repo, so be in touch. I may switch to using an external API in the near future. Then log into [Cap](https://github.com/tiagorangel1/cap) and create an admin user, an API key, and new site key.
 
-Create an `.env.dynamic` file containing:
+Create an `.env.dynamic` file (see `.env.example` for all available variables):
 
 ```bash
-ADMIN_EMAIL=""
+ADMIN_EMAIL="admin@example.test"
+CAP_API_KEY=""
 CAPTCHA_SITE_SECRET=""
 NODE_ENV="development"
 PUBLIC_API_ENDPOINT="http://localhost:8090"
 PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
+PUBLIC_CAPTCHA_SITE_KEY=""
 PUBLIC_HOSTNAME="http://localhost:5173"
+PUBLIC_POSTHOG_KEY=""
+PUBLIC_POSTHOG_HOST=""
 SMTP_HOST="localhost"
 SMTP_PORT="1025"
 ```
 
-And finally an `.env.test` file containing those same variables, but for testing.
+And finally an `.env.test` file (overrides `.env.dynamic` values for testing):
 
 ```bash
-ADMIN_EMAIL=""
+ADMIN_EMAIL="admin@test.com"
 CAP_API_KEY=""
 NODE_ENV="test"
 PB_TEST_ADMIN="admin@test.com"
 PB_TEST_PASSWORD="i3_NL-dfzzFt5TX"
 PUBLIC_API_ENDPOINT="http://localhost:8090"
 PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
+PUBLIC_CAPTCHA_SITE_KEY=""
 PUBLIC_HOSTNAME="http://localhost:4173"
+PUBLIC_POSTHOG_KEY=""
+PUBLIC_POSTHOG_HOST=""
 SMTP_HOST="localhost"
 SMTP_PORT="1025"
 ```
@@ -56,7 +63,7 @@ pnpm run deps:down
 
 ## Production
 
-This project is intended to be deployed to Vercel with an existent PocketBase backend. Just link the repo from your own GitHub or GitLab to your Vercel project and it will deploy automatically with each push to the `main` branch.
+Deploy with [Coolify](https://coolify.io/) or any Docker host supporting [Nixpacks](https://nixpacks.com/). CI builds a Docker image and pushes to GHCR automatically. Point your Coolify project to the GitHub repo and set the environment variables from `.env.example`.
 
 ## Credits
 
@@ -64,13 +71,13 @@ Made with:
 
 - [Sveltekit](https://kit.svelte.dev/)
 - [Tailwind CSS](https://tailwindcss.com)
-- [nanostores](https://github.com/nanostores/nanostores)
-- [shadcdn-svelte](https://www.shadcn-svelte.com) and [Bits UI](https://bits-ui.com)
+- [Stately](https://github.com/selfagency/stately)
+- [shadcn-svelte](https://shadcn-svelte.com) and [Bits UI](https://bits-ui.com)
 - [svelte-maplibre](https://github.com/dimfeld/svelte-maplibre) and [MapLibre](https://github.com/maplibre/maplibre-gl-js)
 - [Superforms](https://superforms.rocks/) and [Formsnap](https://formsnap.dev/)
 - [Radashi](https://radashi.js.org/)
 
-Fonts provided by [The Braille Institute](https://www.brailleinstitute.org/freefont/) and [Prioritype Co.](https://www.behance.net/gallery/119990601/Magilio-A-Chic-Serif-Fonts)
+Fonts provided by [Nathatype](https://nathatype.com/) and [Mozilla](https://github.com/mozilla/mozilla-text-type).
 
 Icons by [Lucide](https://lucide.dev/) and [The Noun Project](https://thenounproject.com/) (Ferifrey, Agarunov Oktay-Abraham, filosovis, and Arthur Shlain)
 

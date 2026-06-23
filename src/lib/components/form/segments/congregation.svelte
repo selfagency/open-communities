@@ -2,10 +2,6 @@
   /* region imports */
   import { isEmpty } from 'radashi';
   import { getContext, onMount, untrack } from 'svelte';
-
-  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-  import type { LocationMeta, LocationRecord } from '$lib/types.d';
-
   import { page } from '$app/state';
   import Combobox from '$lib/components/global/combobox.svelte';
   import * as Accordion from '$lib/components/ui/accordion';
@@ -15,15 +11,26 @@
   import * as Select from '$lib/components/ui/select';
   import { Textarea } from '$lib/components/ui/textarea';
   import { Location } from '$lib/location';
-  import { m } from '$lib/paraglide/messages';
+  import { m as mBase } from '$lib/paraglide/messages';
+
+  const m = mBase as Record<string, (...args: unknown[]) => string>;
+
+  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
+  import type { LocationMeta, LocationRecord } from '$lib/types.d';
   import { log } from '$lib/utils';
 
   import Required from '../required.svelte';
+
   /* endregion imports */
 
   /* region variables */
   // props
-  let { errors, form, formData, view = $bindable() } = $props();
+  let { errors, form, formData, view = $bindable() }: {
+    errors?: any;
+    form: any;
+    formData: any;
+    view?: string;
+  } = $props();
 
   // contstants
   const {
@@ -64,22 +71,22 @@
   let city: string = $state('');
 
   // methods
-  async function handleCountryChange(e: CustomEvent) {
-    country = e.detail.value;
-    await setCountry(e.detail.value);
+  async function handleCountryChange(newValue: string) {
+    country = newValue;
+    await setCountry(newValue);
     province = '';
     city = '';
   }
 
-  async function handleStateChange(e: CustomEvent) {
-    province = e.detail.value;
-    await setState(e.detail.value);
+  async function handleStateChange(newValue: string) {
+    province = newValue;
+    await setState(newValue);
     city = '';
   }
 
-  function handleCityChange(e: CustomEvent) {
-    city = e.detail.value;
-    setCity(e.detail.value);
+  function handleCityChange(newValue: string) {
+    city = newValue;
+    setCity(newValue);
   }
 
   // lifecycle
@@ -105,14 +112,19 @@
   });
 
   // reactivity
+  // Synchronize location state to the superform. Only writes when the location
+  // record has a fully-resolved set of IDs to avoid intermediate partial writes
+  // (the 3-step country→state→city cascade during loadLocation).
   $effect(() => {
-    if ($location?.record || congregation?.location) {
+    const rec = $location?.record;
+    const cityId = rec?.city?.id;
+    const countryId = rec?.country?.id;
+    if (cityId && countryId) {
       untrack(() => {
-        let loc = ($location.record || congregation.location) as LocationMeta;
         $formData.location = {
-          city: loc.city?.id,
-          country: loc.country?.id,
-          state: loc.state?.id
+          city: cityId,
+          country: countryId,
+          state: rec?.state?.id
         };
       });
     }
@@ -124,7 +136,7 @@
     <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
       <span>{m.congregation()}</span>
       {#if isEmpty($formData?.name) || isEmpty($formData?.clergy) || isEmpty($formData?.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
-        <span class="text-red-500">*</span>
+        <span class="text-destructive">*</span>
       {/if}
     </div>
   </Accordion.Trigger>
@@ -163,7 +175,7 @@
               placeholder={m.selectThing({
                 thing: m.location_country().toLowerCase()
               })}
-              on:change={handleCountryChange} />
+              onChange={handleCountryChange} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -181,7 +193,7 @@
                 thing: m.location_state().toLowerCase()
               })}
               disabled={!country || !$location.options.stateOptions}
-              on:change={handleStateChange} />
+              onChange={handleStateChange} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -199,7 +211,7 @@
                 thing: m.location_city().toLowerCase()
               })}
               disabled={!province || !$location.options.cityOptions}
-              on:change={handleCityChange} />
+              onChange={handleCityChange} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -210,7 +222,7 @@
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="contactUrl"><span>{m.website()}</span></Form.Label>
-          <div class="text-xs text-slate-500">{m.http()}</div>
+          <div class="text-xs text-muted-foreground">{m.http()}</div>
           <Input
             id="contactUrl"
             {...props}

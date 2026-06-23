@@ -14,3 +14,7 @@ export async function invalidate() {
 export function invalidateAll() {
   return;
 }
+
+export async function resolve() {
+  return;
+}

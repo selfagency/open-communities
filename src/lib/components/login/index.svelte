@@ -1,10 +1,11 @@
 <script lang="ts">
+  import posthog from 'posthog-js';
+  import { fade } from 'svelte/transition';
   /* region imports */
   import { toast } from 'svelte-sonner';
-  import { fade } from 'svelte/transition';
-  import { superForm, type SuperValidated } from 'sveltekit-superforms';
+  import { type SuperValidated, superForm } from 'sveltekit-superforms';
 
-  import { dev } from '$app/environment';
+  import { browser, dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Loading from '$lib/components/global/loading.svelte';
@@ -16,6 +17,7 @@
   import { m } from '$lib/paraglide/messages';
   import { state as appState, setState } from '$lib/stores';
   import { log } from '$lib/utils';
+
   /* endregion imports */
 
   /* region variables */
@@ -37,6 +39,8 @@
   /* endregion methods */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: forms are initialized once from server data (not reactive to prop changes)
   const form = superForm(data, {
     dataType: 'json',
     id: 'login',
@@ -53,6 +57,9 @@
     async onUpdate({ result }) {
       setState({ loadingSecondary: false });
       if (result.type === 'success') {
+        if (browser && result.data?.user?.id) {
+          posthog.identify(result.data.user.id);
+        }
         toast.success(m.loginSuccess());
         await goto('/');
       } else {
@@ -70,6 +77,9 @@
 
   const { enhance, form: formData } = form;
   /* endregion form */
+
+  let loading = $derived(appState.loading);
+  let loadingSecondary = $derived(appState.loadingSecondary);
 </script>
 
 <Card.Root>
@@ -80,7 +90,7 @@
     <!-- <Card.Description></Card.Description> -->
   </Card.Header>
   <Card.Content>
-    {#if $appState.loading || $appState.loadingSecondary}
+    {#if loading || loadingSecondary}
       <div
         transition:fade={{ delay: 300, duration: 100 }}
         class="flex h-full min-h-96 w-full flex-col items-center justify-center">
@@ -102,9 +112,9 @@
       {#if resetSuccess}
         <div class="flex flex-col items-center justify-center space-y-4">
           <span>{m.passwordSuccess()}</span>
-          <span role="button" tabindex="0" onclick={() => resetter()} onkeypress={() => resetter()}>
+          <button type="button" onclick={() => resetter()}>
             {m.continueToLogin()} →
-          </span>
+          </button>
         </div>
       {/if}
     {:else}

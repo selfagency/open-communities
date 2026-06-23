@@ -1,9 +1,8 @@
-import type { TransitionConfig } from 'svelte/transition';
-
 import { type ClassValue, clsx } from 'clsx';
 import fstw from 'fast-string-truncated-width';
 import { isEmpty, shake } from 'radashi';
 import { cubicOut } from 'svelte/easing';
+import type { TransitionConfig } from 'svelte/transition';
 import { twMerge } from 'tailwind-merge';
 import { Logger } from 'tslog';
 
@@ -11,9 +10,9 @@ import { dev } from '$app/environment';
 
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: null | U };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: conditional type utility
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: conditional type utility
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T;
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 
@@ -34,7 +33,7 @@ export function truncateText(text: unknown, limit: number = 32, ellipses: boolea
   if (!text || typeof text !== 'string') {
     return '';
   } else {
-    const opts = { ellipsis: '…', limit };
+    const opts = { ellipsis: '...', limit };
     const sliced = fstw(text, opts);
     return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
   }
@@ -60,7 +59,7 @@ export const flyAndScale = (
   const styleToString = (style: Record<string, number | string | undefined>): string => {
     return Object.keys(style).reduce((str, key) => {
       if (style[key] === undefined) return str;
-      return str + `${key}:${style[key]};`;
+      return `${str}${key}:${style[key]};`;
     }, '');
   };
 

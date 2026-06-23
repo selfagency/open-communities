@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "skills-store": {
+      "source": "posthog/skills",
+      "sourceType": "github",
+      "skillPath": "skills/omnibus/skills-store/SKILL.md",
+      "computedHash": "658cbaa95468c7331cd5ed7760cd53e0f66a5877d2477202adb68165fad7fcce"
+    }
+  }
+}

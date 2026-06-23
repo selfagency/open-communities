@@ -4,6 +4,6 @@
   // $$restProps is available so attributes passed to the component will be forwarded
 </script>
 
-<svelte:element this={'div'} {...$$restProps}>
+<svelte:element this={"div"} {...$$restProps}>
   <slot />
 </svelte:element>

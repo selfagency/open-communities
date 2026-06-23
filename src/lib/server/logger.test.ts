@@ -4,30 +4,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Hoist-safe mocks
 vi.mock('$lib/utils', () => {
-  // Create shared spy functions that will be used across all instances
-  const requestInfo = vi.fn();
-  const requestError = vi.fn();
-  const serverError = vi.fn();
-  const serverInfo = vi.fn();
+  const rootInfo = vi.fn();
+  const rootError = vi.fn();
 
-  // The request logger that gets returned by server.getSubLogger()
-  const requestLogger = {
-    error: requestError,
-    info: requestInfo
-  };
-
-  // The server logger that gets returned by root.getSubLogger()
-  const serverLogger = {
-    error: serverError,
-    getSubLogger: () => requestLogger,
-    info: serverInfo
-  };
-
-  // The root logger
   const rootLogger = {
-    error: vi.fn(),
-    getSubLogger: () => serverLogger,
-    info: vi.fn()
+    error: rootError,
+    getSubLogger: () => rootLogger,
+    info: rootInfo
   };
 
   return {
@@ -63,9 +46,7 @@ describe('server/logger', () => {
 
     await logEvent(200, event);
 
-    const serverLogger = logger.getSubLogger();
-    const requestLogger = serverLogger.getSubLogger();
-    expect(requestLogger.info).toHaveBeenCalledWith(
+    expect(logger.info).toHaveBeenCalledWith(
       'request',
       expect.objectContaining({ referer: '/some/path', status: 200 })
     );
@@ -80,9 +61,7 @@ describe('server/logger', () => {
 
     await logEvent(201, event);
 
-    const serverLogger = logger.getSubLogger();
-    const requestLogger = serverLogger.getSubLogger();
-    expect(requestLogger.info).toHaveBeenCalledWith(
+    expect(logger.info).toHaveBeenCalledWith(
       'request',
       expect.objectContaining({ method: 'POST', referer: '/outer/path', status: 201 })
     );
@@ -97,9 +76,7 @@ describe('server/logger', () => {
 
     await logEvent(204, event);
 
-    const serverLogger = logger.getSubLogger();
-    const requestLogger = serverLogger.getSubLogger();
-    expect(requestLogger.info).toHaveBeenCalledWith('request', expect.objectContaining({ referer: null, status: 204 }));
+    expect(logger.info).toHaveBeenCalledWith('request', expect.objectContaining({ referer: null, status: 204 }));
   });
 
   it('calls error when locals.error exists', async () => {
@@ -111,9 +88,7 @@ describe('server/logger', () => {
 
     await logEvent(500, event);
 
-    const serverLogger = logger.getSubLogger();
-    const requestLogger = serverLogger.getSubLogger();
-    expect(requestLogger.error).toHaveBeenCalledWith(
+    expect(logger.error).toHaveBeenCalledWith(
       'request',
       expect.objectContaining({ error: expect.any(Error), status: 500 })
     );

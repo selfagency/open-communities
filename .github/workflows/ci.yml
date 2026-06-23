@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  pull_request:
+    branches: ['main']
   workflow_run:
     workflows: ['Build']
     types:
@@ -9,7 +11,7 @@ on:
 jobs:
   test:
     name: Run tests and upload artifacts
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'pull_request' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     services:
       mailpit:
@@ -27,7 +29,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
 
       - name: Enable pnpm (via Corepack)
         run: |
@@ -73,13 +75,11 @@ jobs:
         run: |
           pnpm test -- --coverage --reporter=default --reporter=junit --reporter=json
         env:
-          ADMIN_EMAIL: rabbis4ceasefire@gmail.com
-          CAP_API_KEY: 3f1ef7a88db70e5d478eadcec833d554_WRdePoOCMkcIQUiU0qjvc5q0CF8vZMA6WxpW47BYUA
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
           NODE_ENV: test
-          PB_TEST_ADMIN: admin@test.com
-          PB_TEST_PASSWORD: i3_NL-dfzzFt5TX
-          POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
-          POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
           PUBLIC_HOSTNAME: http://localhost:4173

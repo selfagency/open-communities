@@ -1,29 +1,57 @@
 import { json } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
-
-import type { UsersRecord } from '$lib/pocketbase.d';
-
+import { z } from 'zod/v4';
+import { env } from '$env/dynamic/public';
 import { log } from '$lib/server/logger';
+
+const VALID_LANGS = ['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk'] as const;
+
+const langSchema = z.object({
+  lang: z.enum(VALID_LANGS),
+  user: z.string().optional()
+});
 
 export async function POST({ cookies, locals, request }) {
   const { api, captureException } = locals;
   const client = api?.authStore?.record;
 
-  const { lang, user } = await request.json();
+  // CSRF protection: reject requests with no or mismatched origin
+  const origin = request.headers.get('origin');
+  if (!origin || origin !== env.PUBLIC_HOSTNAME) {
+    return json({ error: 'Forbidden' }, { status: 403 });
+  }
 
-  let result: null | UsersRecord = null;
+  // Parse and validate the request body
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
+
+  const parsed = langSchema.safeParse(body);
+  if (!parsed.success) {
+    return json({ error: `Invalid language. Must be one of: ${VALID_LANGS.join(', ')}` }, { status: 400 });
+  }
+
+  const { lang, user: targetUserId } = parsed.data;
+  const isAdmin = client?.admin === true;
+
+  // Authorization: self-update for normal users, cross-user only for admins
+  if (targetUserId && targetUserId !== client?.id && !isAdmin) {
+    return json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  const targetUser = targetUserId ?? client?.id;
 
   try {
     cookies.set('lang', lang, locals.cookieOpts);
 
-    if (user) {
-      // api.authStore.loadFromCookie(cookies.get('auth') as string);
-      result = await api.collection('users').update(user, {
-        lang
-      });
+    if (targetUser) {
+      await api.collection('users').update(targetUser, { lang });
     }
 
-    return json({ result, status: 201 });
+    return json({ success: true }, { status: 200 });
   } catch (error) {
     if (isFunction(captureException)) {
       await captureException(error, client?.id);

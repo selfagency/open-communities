@@ -1,13 +1,14 @@
 const markup = `<svg data-testid="mock-find" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="none"/></svg>`;
 
+/** @param {any} options */
 function FindComponent(options) {
   // Handle both `new FindComponent()` and `FindComponent()` calls
   if (!(this instanceof FindComponent)) {
     return new FindComponent(options);
   }
 
-  const target = options && options.target;
-  const props = (options && options.props) || {};
+  const target = options?.target;
+  const props = options?.props || {};
   if (target) {
     const container = document.createElement('div');
     container.innerHTML = markup;
@@ -23,11 +24,9 @@ function FindComponent(options) {
     }
   }
 }
-FindComponent.$$render = function () {
-  return markup;
-};
+FindComponent.$$render = () => markup;
 FindComponent.prototype.$destroy = function () {
-  if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default FindComponent;

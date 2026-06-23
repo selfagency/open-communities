@@ -4,6 +4,7 @@
   import { m } from '$lib/paraglide/messages';
 
   import type { PageProps, Snapshot } from './$types';
+
   /* endregion imports */
 
   /* region variables */
@@ -25,5 +26,6 @@
 </svelte:head>
 
 <section class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
+  <h1 class="font-display mb-8 text-2xl text-secondary-foreground">{m.contact_contactUs()}</h1>
   <Contact data={data.form} congregations={data.congregations} bind:snapshot={snapshotData} />
 </section>

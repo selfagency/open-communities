@@ -33,8 +33,8 @@ export async function generateCaptchaToken(siteKey) {
 // Load the captcha configuration from the generated env file
 export async function loadCaptchaConfig() {
   try {
-    const fs = await import('fs/promises');
-    const path = await import('path');
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
 
     const envFile = path.join(process.cwd(), '.env.e2e');
     const envContent = await fs.readFile(envFile, 'utf8');

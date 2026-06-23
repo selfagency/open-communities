@@ -12,11 +12,11 @@ vi.mock('wait-for-the-element', () => ({
 const submitSpy = vi.fn();
 beforeEach(() => {
   // install global hook
-  globalThis.__TEST_SUPERFORM_SUBMIT__ = submitSpy;
+  (globalThis as any).__TEST_SUPERFORM_SUBMIT__ = submitSpy;
 });
 afterEach(() => {
   // clean up global
-  delete globalThis.__TEST_SUPERFORM_SUBMIT__;
+  delete (globalThis as any).__TEST_SUPERFORM_SUBMIT__;
   submitSpy.mockClear();
 });
 
@@ -36,15 +36,31 @@ describe('login/verify', () => {
   });
 
   it('shows verifying message', () => {
-    const superData = { data: {}, errors: {}, id: 'verify', posted: false, valid: true };
+    const superData = {
+      data: {},
+      errors: {},
+      id: 'verify',
+      posted: false,
+      valid: true
+    };
     render(Verify, { data: superData, token: null, verified: false });
     expect(screen.getByText('verifying')).toBeInTheDocument();
   });
 
   it('renders hidden token form and calls submit when token provided', async () => {
     const token = 'abc123';
-    const superData = { data: {}, errors: {}, id: 'verify', posted: false, valid: true };
-    const { container } = render(Verify, { data: superData, token, verified: false });
+    const superData = {
+      data: {},
+      errors: {},
+      id: 'verify',
+      posted: false,
+      valid: true
+    };
+    const { container } = render(Verify, {
+      data: superData,
+      token,
+      verified: false
+    });
 
     // the hidden form should be present
     const form = container.querySelector('form#verify');

@@ -19,15 +19,12 @@ import { vi } from 'vitest';
 const { prototype } = Element;
 
 if (typeof window !== 'undefined' && !prototype.animate) {
-  // @ts-expect-error i don't have the types to handle this
-  prototype.animate = function () {
-    return {
-      cancel: () => {},
-      finished: Promise.resolve(),
-      pause: () => {},
-      play: () => {}
-    };
-  };
+  prototype.animate = (() => ({
+    cancel: () => {},
+    finished: Promise.resolve(),
+    play: () => {},
+    pause: () => {}
+  })) as unknown as typeof prototype.animate;
 }
 
 // Polyfill URL.createObjectURL which some libs (maplibre-gl) use to create
@@ -40,7 +37,9 @@ if (typeof window !== 'undefined') {
 
     // If URL is a constructor, add createObjectURL if missing.
     if (typeof win.URL === 'function') {
-      const URLCtor = win.URL as unknown as { createObjectURL?: (b?: unknown) => string };
+      const URLCtor = win.URL as unknown as {
+        createObjectURL?: (b?: unknown) => string;
+      };
       if (typeof URLCtor.createObjectURL !== 'function') {
         // assign a minimal function without referencing unknown args
         (URLCtor as unknown as { createObjectURL: () => string }).createObjectURL = () => 'blob://test';
@@ -55,7 +54,7 @@ if (typeof window !== 'undefined') {
         (URLCtor as unknown as { createObjectURL: () => string }).createObjectURL = () => 'blob://test';
       }
     }
-  } catch (e) {
+  } catch {
     // be resilient in very locked-down environments
   }
 }
@@ -97,7 +96,7 @@ vi.mock('cookie', () => ({
           return [k.trim(), decodeURIComponent(r.join('='))];
         })
       );
-    } catch (e) {
+    } catch {
       return {};
     }
   }
@@ -143,7 +142,7 @@ vi.mock('$app/state', () => {
   };
 
   // expose for tests to import and mutate
-  globalThis.__TEST_USER_STORE__ = userStore;
+  (globalThis as any).__TEST_USER_STORE__ = userStore;
 
   // minimal searchParams-like object used by components (page.url.searchParams.has/get)
   const fakeSearchParams = {
@@ -160,7 +159,10 @@ vi.mock('$app/state', () => {
     data: { user: userStore },
     // page store subscribe
     subscribe: (fn: (v: unknown) => void) => {
-      fn({ data: { user: userStore }, url: { searchParams: fakeSearchParams } });
+      fn({
+        data: { user: userStore },
+        url: { searchParams: fakeSearchParams }
+      });
       return () => {};
     },
     // provide a minimal url with searchParams used in components
@@ -205,7 +207,7 @@ vi.mock('$lib/paraglide/messages', () => {
     {},
     {
       get: (_target: unknown, prop: unknown) => {
-        const key = String(prop);
+        const key = typeof prop === 'string' ? prop : String(prop); // NOSONAR — i18n mock, prop is always a string key
         return () => key;
       }
     }
@@ -270,17 +272,25 @@ if (typeof (globalThis as unknown as { process?: unknown }).process === 'undefin
 // `global` identifier in module scope).
 try {
   (0, eval)('global = globalThis');
-} catch (e) {
+} catch {
   // best-effort; some runtimes prevent eval
 }
 
 // Set deterministic viewport/document sizes used by some tests. Tests expect
 // offset/inner sizes (for example, the stores.initState test expects
 // offsetHeight = 800 and offsetWidth = 500), so make those values stable here.
-if (typeof window !== 'undefined') {
+if (typeof globalThis !== 'undefined') {
   // Force exact values that tests expect
-  Object.defineProperty(window, 'innerWidth', { configurable: true, value: 500, writable: true });
-  Object.defineProperty(window, 'innerHeight', { configurable: true, value: 800, writable: true });
+  Object.defineProperty(globalThis, 'innerWidth', {
+    configurable: true,
+    value: 500,
+    writable: true
+  });
+  Object.defineProperty(globalThis, 'innerHeight', {
+    configurable: true,
+    value: 800,
+    writable: true
+  });
 
   // documentElement/client and body/offset used by some layout helpers
   if (typeof document !== 'undefined' && document.documentElement) {

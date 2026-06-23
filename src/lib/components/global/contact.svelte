@@ -1,8 +1,8 @@
 <script lang="ts">
   /* region imports */
   import { onMount, untrack } from 'svelte';
-  import { toast } from 'svelte-sonner';
   import { fade } from 'svelte/transition';
+  import { toast } from 'svelte-sonner';
   import { superForm } from 'sveltekit-superforms';
 
   import { dev } from '$app/environment';
@@ -14,8 +14,12 @@
   import { Input } from '$lib/components/ui/input';
   import * as Select from '$lib/components/ui/select';
   import { Textarea } from '$lib/components/ui/textarea';
-  import { m } from '$lib/paraglide/messages';
+  import { m as mBase } from '$lib/paraglide/messages';
+
+  const m = mBase as Record<string, (...args: unknown[]) => string>;
+
   import { log } from '$lib/utils';
+
   /* endregion imports */
 
   /* region variables */
@@ -31,6 +35,8 @@
   /* endregion variables */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const form = superForm(data, {
     dataType: 'json',
     id: 'signup',
@@ -125,7 +131,8 @@
               <Form.Label>{m.contact_reason()}</Form.Label>
               <Select.Root type="single" bind:value={$formData.reason}>
                 <Select.Trigger class="w-full">
-                  {m[`contactOptions_${$formData.reason}`]()}
+                  {@const reasonKey = `contactOptions_${$formData.reason}`}
+                  {m[reasonKey]()}
                 </Select.Trigger>
                 <Select.Content {...props}>
                   <Select.Item value="question">{m.contactOptions_question()}</Select.Item>
@@ -152,9 +159,8 @@
                     thing: m.congregation().toLowerCase()
                   })}
                   disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
-                  on:change={(e) => {
-                    // log.debug(e.detail);
-                    $formData.record = e.detail.value;
+                  onChange={(id) => {
+                    $formData.record = id;
                   }} />
               {/snippet}
             </Form.Control>
@@ -166,7 +172,7 @@
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.contact_message()}</Form.Label>
-              <Form.Description class="text-red-500">
+              <Form.Description class="text-destructive">
                 {#if $formData.reason === 'delete'}
                   {m.contact_account()}
                 {:else if $formData.reason === 'claim'}

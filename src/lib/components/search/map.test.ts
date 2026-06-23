@@ -3,10 +3,12 @@ import { vi } from 'vitest';
 
 // stub svelte-maplibre primitives used in the component
 vi.mock('svelte-maplibre', () => ({
-  DefaultMarker: (props) => ({ $$slot_def: props?.$$slots }),
-  MapLibre: (props) => ({ $$slot_def: props?.$$slots }),
-  Popup: (props) => ({ $$slot_def: props?.$$slots })
+  DefaultMarker: (props: any) => ({ $$slot_def: props?.$$slots }),
+  MapLibre: (props: any) => ({ $$slot_def: props?.$$slots }),
+  Popup: (props: any) => ({ $$slot_def: props?.$$slots })
 }));
+
+import type { Search } from '$lib/search';
 
 import { createFakeLocation } from '$test/stubs/fake-location';
 import { FakeSearch } from '$test/stubs/fake-search';
@@ -22,7 +24,7 @@ it('renders markers and clicking opens location', async () => {
     }
   ];
 
-  const search = new FakeSearch();
+  const search = new FakeSearch() as unknown as Search;
   const loadSpy = vi.fn();
   const fakeLocation = createFakeLocation(
     { city: undefined, country: { id: 'co1' }, state: undefined },
@@ -33,16 +35,24 @@ it('renders markers and clicking opens location', async () => {
 
   (fakeLocation as any).load = loadSpy;
 
-  const { container } = render(Map, { location: fakeLocation as any, locations, search });
+  const { container } = render(Map, {
+    location: fakeLocation as any,
+    locations,
+    search
+  });
 
   await waitFor(() => {
     const text = (container.textContent || '').replace(/\s+/g, ' ');
-    expect(text.includes('City1')).toBe(true);
+    expect(text).toContain('City1');
   });
 
   // click the first button in the rendered container
   const firstButton = container.querySelector('button');
   if (firstButton) await fireEvent.click(firstButton);
   // location.load should have been called with the location keys
-  expect(loadSpy).toHaveBeenCalledWith({ city: 'c1', country: 'co1', state: undefined });
+  expect(loadSpy).toHaveBeenCalledWith({
+    city: 'c1',
+    country: 'co1',
+    state: undefined
+  });
 });

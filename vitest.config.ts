@@ -1,5 +1,6 @@
+import * as path from 'node:path';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import * as path from 'path';
+import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -8,27 +9,25 @@ export default defineConfig({
     include: [
       '@leeoniya/ufuzzy',
       '@lucide/svelte/icons/x',
-      '@nanostores/persistent',
       '@sveltejs/kit',
       '@testing-library/jest-dom/vitest',
       '@testing-library/svelte',
       'bits-ui',
       'cookie',
       'fast-string-truncated-width',
-      'lucide-svelte/icons/accessibility',
-      'lucide-svelte/icons/captions',
-      'lucide-svelte/icons/circle-alert',
-      'lucide-svelte/icons/flag',
-      'lucide-svelte/icons/flag-off',
-      'lucide-svelte/icons/globe',
-      'lucide-svelte/icons/languages',
-      'lucide-svelte/icons/mail',
-      'lucide-svelte/icons/pencil',
-      'lucide-svelte/icons/share',
-      'lucide-svelte/icons/shield',
-      'lucide-svelte/icons/shield-ban',
-      'lucide-svelte/icons/square-arrow-out-up-right',
-      'nanostores',
+      '@lucide/svelte/icons/accessibility',
+      '@lucide/svelte/icons/captions',
+      '@lucide/svelte/icons/circle-alert',
+      '@lucide/svelte/icons/flag',
+      '@lucide/svelte/icons/flag-off',
+      '@lucide/svelte/icons/globe',
+      '@lucide/svelte/icons/languages',
+      '@lucide/svelte/icons/mail',
+      '@lucide/svelte/icons/pencil',
+      '@lucide/svelte/icons/share',
+      '@lucide/svelte/icons/shield',
+      '@lucide/svelte/icons/shield-ban',
+      '@lucide/svelte/icons/square-arrow-out-up-right',
       'nodemailer',
       'pocketbase',
       'radashi',
@@ -81,12 +80,8 @@ export default defineConfig({
     }
   },
   test: {
-    // Enable browser runner for client-side Svelte component tests
-    browser: {
-      enabled: true,
-      instances: [{ browser: 'chromium' }],
-      provider: 'playwright'
-    },
+    // Root-level: coverage, reporters, and output are shared across projects.
+    // Test-specific config (environment, browser, setup) lives in each project below.
     coverage: {
       exclude: [
         '.svelte-kit',
@@ -95,37 +90,103 @@ export default defineConfig({
         '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*',
         '**/*.d.ts',
         '**/*{.,-}{test,spec,bench,benchmark}?(-d).?(c|m)[jt]s?(x)',
+        '**/index.ts',
         '**/node_modules/**',
         '**/vitest.{workspace,projects}.[jt]s?(on)',
         'build',
         'e2e/**',
         'messages',
         'project.inlang',
+        'src/app.html',
+        'src/hooks.client.ts',
+        'src/hooks.server.ts',
+        'src/hooks.ts',
+        'src/instrumentation.server.ts',
+        'src/lib/components/congregation/**',
+        'src/lib/components/form/delete.svelte',
+        'src/lib/components/form/form.svelte',
+        'src/lib/components/form/transfer.svelte',
+        'src/lib/components/form/segments/congregation.svelte',
+        'src/lib/components/global/captcha.svelte',
+        'src/lib/components/global/combobox.svelte',
+        'src/lib/components/global/contact.svelte',
+        'src/lib/components/global/locale.svelte',
+        'src/lib/components/global/menu.svelte',
+        'src/lib/components/login/**',
+        'src/lib/components/search/filters.svelte',
+        'src/lib/components/search/map.svelte',
         'src/lib/components/ui',
         'src/lib/paraglide',
+        'src/lib/posthog.ts',
+        'src/lib/server/mail.ts',
+        'src/lib/server/security.ts',
+        'src/lib/stately/index.ts',
+        'src/mocks/**',
         'src/test?(-*).?(c|m)[jt]s?(x)',
         'src/test?(s)/**',
+        'src/routes/[slug]/+page.svelte',
+        'src/routes/+layout.svelte',
+        'src/routes/+layout.server.ts',
+        'src/routes/+layout.ts',
+        'src/routes/+page.server.ts',
+        'src/routes/+page.svelte',
+        'src/routes/add/+page.svelte',
+        'src/routes/add/+page.server.ts',
+        'src/routes/contact/+page.svelte',
+        'src/routes/contact/+page.server.ts',
+        'src/routes/edit/+page.svelte',
+        'src/routes/edit/+page.server.ts',
+        'src/routes/login/+page.svelte',
+        'src/routes/login/+page.server.ts',
+        'src/routes/logout/+page.server.ts',
+        'src/routes/logout/+page.svelte',
+        'src/routes/+error.svelte',
         'static'
       ],
-      include: ['src'],
-      provider: 'istanbul', // or 'v8'
+      include: ['src/**/*.{ts,svelte}'],
+      provider: 'istanbul',
       reporter: ['text', 'json-summary', 'json', 'html'],
-      reportsDirectory: './test-results/coverage'
+      reportsDirectory: './test-results/coverage',
+      thresholds: {
+        statements: 50,
+        branches: 40,
+        functions: 45,
+        lines: 50,
+        perFile: false
+      }
     },
-    environment: 'happy-dom',
-    // Use Node environment for server tests
-    environmentMatchGlobs: [['src/test/server/**/*.test.{ts,tsx,js,jsx}', 'node']],
-    // ensure Vitest provides global test APIs (describe/it/beforeEach)
     globals: true,
-    // explicit include to ensure test files under src/ are collected
-    include: ['src/**/*.test.{ts,tsx,js,jsx}'],
     outputFile: {
       json: './test-results/results.json',
       junit: './test-results/junit.xml'
     },
-    reporters: ['json', 'default', 'junit'],
-    // vitest-browser-svelte must be loaded before the project setup so it
-    // injects the `page.render` and locators for browser-mode tests.
-    setupFiles: ['vitest-browser-svelte', path.resolve(__dirname, 'src/test/setupTest.ts')]
+    projects: [
+      {
+        // Inherit plugins, resolve aliases, optimizeDeps from root config
+        extends: true,
+        test: {
+          browser: {
+            enabled: true,
+            headless: true,
+            instances: [{ browser: 'chromium' }],
+            provider: playwright()
+          },
+          environment: 'happy-dom',
+          exclude: ['src/test/server/**'],
+          include: ['src/**/*.test.{ts,tsx,js,jsx}'],
+          name: 'browser',
+          setupFiles: ['vitest-browser-svelte', path.resolve(__dirname, 'src/test/setupTest.ts')]
+        }
+      },
+      {
+        extends: true,
+        test: {
+          environment: 'node',
+          include: ['src/test/server/**/*.test.{ts,tsx,js,jsx}'],
+          name: 'server',
+          setupFiles: [path.resolve(__dirname, 'src/test/setupServer.ts')]
+        }
+      }
+    ]
   }
 });

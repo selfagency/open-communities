@@ -1,24 +1,28 @@
 <script lang="ts">
   /* region imports */
-  import SecurityIcon from 'lucide-svelte/icons/shield';
-  import UnarmedIcon from 'lucide-svelte/icons/shield-ban';
+  import SecurityIcon from "@lucide/svelte/icons/shield";
+  import UnarmedIcon from "@lucide/svelte/icons/shield-ban";
+  import * as Tooltip from "$lib/components/ui/tooltip";
+  import { m } from "$lib/paraglide/messages";
+  import type { SecurityRecord } from "$lib/pocketbase.d";
 
-  import type { SecurityRecord } from '$lib/pocketbase.d';
-
-  import * as Tooltip from '$lib/components/ui/tooltip';
-  import { m } from '$lib/paraglide/messages';
   /* endregion imports */
 
   /* region variables */
   // props
-  const { mode = $bindable('mini'), security }: { mode?: 'full' | 'mini'; security: SecurityRecord } = $props();
+  const {
+    mode = $bindable("mini"),
+    security,
+  }: { mode?: "full" | "mini"; security: SecurityRecord } = $props();
 
   // constants
   /* endregion variables */
 </script>
 
-{#if mode === 'mini'}
-  <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
+{#if mode === "mini"}
+  <div
+    class="flex w-full flex-row items-center justify-end space-x-1 antialiased"
+  >
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}
       <Tooltip.Provider>
         <Tooltip.Root>
@@ -47,7 +51,7 @@
   </div>
 {/if}
 
-{#if mode === 'full'}
+{#if mode === "full"}
   <div class="col-span-3">
     <h2 class="label">{m.security()}</h2>
   </div>

@@ -38,7 +38,6 @@ export class FakeSearch {
   results = (() => {
     // If tests placed a static RESULTS_STORE on the class, use it so all
     // instances share the same store and tests can manipulate it easily.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((FakeSearch as any).RESULTS_STORE) return (FakeSearch as any).RESULTS_STORE;
 
     let value: CongregationMetaRecord[] = [];

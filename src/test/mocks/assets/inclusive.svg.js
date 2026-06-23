@@ -1,13 +1,14 @@
 const markup = `<svg data-testid="mock-inclusive" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="none"/></svg>`;
 
+/** @param {any} options */
 function InclusiveComponent(options) {
   // Handle both `new InclusiveComponent()` and `InclusiveComponent()` calls
   if (!(this instanceof InclusiveComponent)) {
     return new InclusiveComponent(options);
   }
 
-  const target = options && options.target;
-  const props = (options && options.props) || {};
+  const target = options?.target;
+  const props = options?.props || {};
   if (target) {
     const container = document.createElement('div');
     container.innerHTML = markup;
@@ -23,11 +24,9 @@ function InclusiveComponent(options) {
     }
   }
 }
-InclusiveComponent.$$render = function () {
-  return markup;
-};
+InclusiveComponent.$$render = () => markup;
 InclusiveComponent.prototype.$destroy = function () {
-  if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default InclusiveComponent;

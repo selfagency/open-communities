@@ -1,6 +1,6 @@
+import path from 'node:path';
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import path from 'path';
 
 const config = {
   kit: {
@@ -10,6 +10,11 @@ const config = {
     // Use kit.alias with a proper path so SvelteKit and Vite can resolve $test imports.
     alias: {
       $test: path.resolve('./src/test')
+    },
+    experimental: {
+      instrumentation: {
+        server: true
+      }
     },
     paths: {
       relative: false

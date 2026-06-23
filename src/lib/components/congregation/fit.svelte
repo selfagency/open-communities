@@ -1,8 +1,9 @@
 <script lang="ts">
+
+  import { m } from '$lib/paraglide/messages';
   /* region imports */
   import type { FitRecord } from '$lib/pocketbase.d';
 
-  import { m } from '$lib/paraglide/messages';
   /* endregion imports */
 
   /* region variables */

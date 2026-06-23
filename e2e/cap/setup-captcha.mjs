@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 const port = process.env.CAP_STANDALONE_PORT ?? '3001';
 const apiKey = process.env.CAP_API_KEY;
@@ -32,8 +32,7 @@ async function main() {
     });
 
     if (!createResponse.ok) {
-      const text = await createResponse.text();
-      console.error('[captcha-setup] failed to create key:', createResponse.status, text);
+      console.error('[captcha-setup] failed to create key:', createResponse.status);
       process.exit(3);
     }
 
@@ -43,13 +42,12 @@ async function main() {
     });
 
     if (!listResponse.ok) {
-      const text = await listResponse.text();
-      console.error('[captcha-setup] failed to list keys:', listResponse.status, text);
+      console.error('[captcha-setup] failed to list keys:', listResponse.status);
       process.exit(4);
     }
 
     const keys = await listResponse.json();
-    console.log('[captcha-setup] keys response:', JSON.stringify(keys, null, 2));
+    console.log('[captcha-setup] keys:', keys.length, 'keys found'); // NOSONAR — only logging count, not the key data
 
     // Find our key
     let siteKey = null;
@@ -78,23 +76,17 @@ async function main() {
     if (rotateResponse.ok) {
       // Try to get the secret from the rotate response
       const rotateText = await rotateResponse.text();
-      console.log('[captcha-setup] rotate response body:', rotateText);
-
-      // Try to parse as JSON if there's content
       if (rotateText.trim()) {
         try {
           const rotateData = JSON.parse(rotateText);
-          console.log('[captcha-setup] rotate response JSON:', JSON.stringify(rotateData, null, 2));
           secret = rotateData.secretKey || rotateData.secret || rotateData.siteSecret || rotateData.key?.secret;
         } catch {
-          console.log('[captcha-setup] rotate response is not JSON, treating as plain text');
           // Maybe the secret is returned as plain text
           secret = rotateText.trim();
         }
       }
     } else {
-      const errorText = await rotateResponse.text();
-      console.error('[captcha-setup] failed to rotate secret:', rotateResponse.status, errorText);
+      console.error('[captcha-setup] failed to rotate secret:', rotateResponse.status);
     }
 
     // If we didn't get the secret from rotate response, fetch key details
@@ -106,7 +98,6 @@ async function main() {
 
       if (detailResponse.ok) {
         const detail = await detailResponse.json();
-        console.log('[captcha-setup] key details after rotation:', JSON.stringify(detail, null, 2));
         secret = detail.secret || detail.siteSecret || detail.key?.secret;
       }
     }
@@ -127,7 +118,7 @@ PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
 
     console.log('[captcha-setup] captcha configured successfully');
     console.log(`[captcha-setup] site key: ${siteKey}`);
-    console.log(`[captcha-setup] secret: ${secret}`);
+    console.log('[captcha-setup] secret written to', envFile);
     console.log(`[captcha-setup] environment file: ${envFile}`);
   } catch (error) {
     console.error('[captcha-setup] error:', error);

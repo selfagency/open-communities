@@ -1,17 +1,18 @@
 <script lang="ts">
+  import type { Booleanish } from 'svelte/elements';
   // simple button wrapper used for Sheet.Trigger in tests
-  export let type: string = 'button';
-  export let ariaExpanded: boolean | string | undefined;
-  export let ariaHaspopup: boolean | string | undefined;
+  export let type: 'submit' | 'button' | 'reset' | null | undefined = 'button';
+  export let ariaExpanded: Booleanish | null | undefined;
+  export let ariaHaspopup: Booleanish | null | undefined;
   export let id: string | undefined;
   export let className: string | undefined;
 </script>
 
 <button
-  type={type as 'button'}
+  type={type}
   {id}
-  aria-expanded={ariaExpanded as boolean}
-  aria-haspopup={ariaHaspopup as boolean}
+  aria-expanded={ariaExpanded}
+  aria-haspopup={ariaHaspopup}
   class={className}
   {...$$restProps}>
   <slot />

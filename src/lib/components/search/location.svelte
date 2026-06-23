@@ -1,65 +1,69 @@
 <script lang="ts">
   /* region imports */
-  import ResetIcon from 'lucide-svelte/icons/circle-x';
-  import { isEmpty } from 'radashi';
-  import { untrack } from 'svelte';
+  import ResetIcon from "@lucide/svelte/icons/circle-x";
+  import { isEmpty } from "radashi";
+  import { untrack } from "svelte";
 
-  import Combobox from '$lib/components/global/combobox.svelte';
-  import { Button } from '$lib/components/ui/button';
-  import { Location } from '$lib/location';
-  import { m } from '$lib/paraglide/messages';
-  import { Search } from '$lib/search';
+  import Combobox from "$lib/components/global/combobox.svelte";
+  import { Button } from "$lib/components/ui/button";
+  import type { Location } from "$lib/location";
+  import { m } from "$lib/paraglide/messages";
+  import type { Search } from "$lib/search";
+  import type { LocationMeta } from "$lib/types.d";
+
   /* endregion imports */
 
   /* region variables */
-  // props
   const { location, search }: { location: Location; search: Search } = $props();
+  // svelte-ignore state_referenced_locally
+  const {
+    reset,
+    setCity,
+    setCountry,
+    setState,
+    state: locationState,
+  } = location;
 
-  // constants
-  const { reset, setCity, setCountry, setState, state: locationState } = location;
-
-  // locals
-  // Initialize state from the store without creating a subscription.
-  let country = $state(untrack(() => $locationState.record.country?.id ?? ''));
-  let province = $state(untrack(() => $locationState.record.state?.id ?? ''));
-  let city = $state(untrack(() => $locationState.record.city?.id ?? ''));
+  let country = $state(untrack(() => $locationState.record.country?.id ?? ""));
+  let province = $state(untrack(() => $locationState.record.state?.id ?? ""));
+  let city = $state(untrack(() => $locationState.record.city?.id ?? ""));
+  /* endregion variables */
 
   /* region methods */
-  function handleCountryChange(event: CustomEvent) {
-    const selectedId = event.detail.value;
+  async function handleCountryChange(selectedId: string) {
     country = selectedId;
-    setCountry(selectedId);
+    await setCountry(selectedId);
+    search.setSearchLocation($locationState.record as LocationMeta);
   }
 
-  function handleStateChange(event: CustomEvent) {
-    const selectedId = event.detail.value;
+  async function handleStateChange(selectedId: string) {
     province = selectedId;
-    setState(selectedId);
+    await setState(selectedId);
+    search.setSearchLocation($locationState.record as LocationMeta);
   }
 
-  function handleCityChange(event: CustomEvent) {
-    const selectedId = event.detail.value;
+  function handleCityChange(selectedId: string) {
     city = selectedId;
     setCity(selectedId);
+    search.setSearchLocation($locationState.record as LocationMeta);
+  }
+
+  function handleReset() {
+    reset();
+    search.resetLocation();
   }
   /* endregion methods */
 
   /* region reactivity */
+  // Sync local state from the store — READ-ONLY. Does NOT call search.setSearchLocation
+  // to avoid a circular update loop (search store -> locationState -> effect -> search store).
   $effect(() => {
     const loc = $locationState.record;
-    search.setSearchLocation(loc);
 
-    // Sync local state from the store only if it differs
     untrack(() => {
-      if (country !== (loc.country?.id ?? '')) {
-        country = loc.country?.id ?? '';
-      }
-      if (province !== (loc.state?.id ?? '')) {
-        province = loc.state?.id ?? '';
-      }
-      if (city !== (loc.city?.id ?? '')) {
-        city = loc.city?.id ?? '';
-      }
+      if (country !== (loc.country?.id ?? "")) country = loc.country?.id ?? "";
+      if (province !== (loc.state?.id ?? "")) province = loc.state?.id ?? "";
+      if (city !== (loc.city?.id ?? "")) city = loc.city?.id ?? "";
     });
   });
   /* endregion reactivity */
@@ -67,44 +71,53 @@
 
 {#if !isEmpty($locationState.options)}
   <div
-    class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-    <div class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-2">
+    class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-muted p-2 sm:flex-row sm:space-y-0 sm:space-x-2"
+  >
+    <div
+      class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-2"
+    >
       <span class="w-full sm:w-1/3">
         <Combobox
           items={$locationState.options.countryOptions}
           value={country}
-          on:change={handleCountryChange}
-          placeholder={m.selectThing({ thing: m.location_country().toLowerCase() })}
-          disabled={!$locationState.options?.countryOptions?.length} />
+          onChange={handleCountryChange}
+          placeholder={m.selectThing({
+            thing: m.location_country().toLowerCase(),
+          })}
+          disabled={!$locationState.options?.countryOptions?.length}
+        />
       </span>
 
       <span class="w-full sm:w-1/3">
         <Combobox
           items={$locationState.options.stateOptions}
           value={province}
-          on:change={handleStateChange}
-          placeholder={m.selectThing({ thing: m.location_state().toLowerCase() })}
-          disabled={!country || !$locationState.options?.stateOptions?.length} />
+          onChange={handleStateChange}
+          placeholder={m.selectThing({
+            thing: m.location_state().toLowerCase(),
+          })}
+          disabled={!$locationState.options?.stateOptions?.length}
+        />
       </span>
 
       <span class="w-full sm:w-1/3">
         <Combobox
           items={$locationState.options.cityOptions}
           value={city}
-          on:change={handleCityChange}
-          placeholder={m.selectThing({ thing: m.location_city().toLowerCase() })}
-          disabled={!province || !$locationState.options?.cityOptions?.length} />
+          onChange={handleCityChange}
+          placeholder={m.selectThing({
+            thing: m.location_city().toLowerCase(),
+          })}
+          disabled={!$locationState.options?.cityOptions?.length}
+        />
       </span>
     </div>
 
-    <span>
-      <Button
-        variant="link"
-        class="h-auto"
-        onclick={() => {
-          reset();
-        }}>
-        <span class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700">
+    <span class="flex w-full flex-row items-center justify-center sm:w-auto">
+      <Button variant="link" class="h-auto" onclick={handleReset}>
+        <span
+          class="flex flex-row items-center justify-start space-x-1 text-muted-foreground hover:text-secondary-foreground"
+        >
           <ResetIcon size="16" class="rtl:mx-1" />
           <span>{m.reset()}</span>
         </span>

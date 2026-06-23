@@ -3,9 +3,8 @@
 import { render, screen, within } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import type { FitRecord } from '$lib/pocketbase.d';
-
 import { m } from '$lib/paraglide/messages';
+import type { FitRecord } from '$lib/pocketbase.d';
 
 import Fit from './fit.svelte';
 

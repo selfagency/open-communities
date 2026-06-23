@@ -1,9 +1,9 @@
 <script lang="ts">
-  /* region imports */
-  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+  /* region imports */
+  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
   import { dev } from '$app/environment';
   import { page } from '$app/state';
@@ -14,6 +14,7 @@
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
   import { state as appState, setState } from '$lib/stores';
+
   // import { log } from '$lib/utils';
   /* endregion imports */
 
@@ -27,9 +28,14 @@
 
   // constants
   const verifying = $derived(page.url.searchParams.has('verifyEmail'));
+
+  // Svelte 5: derive store values in script to avoid $ prefix in template
+  let formSuccess = $derived(appState.form?.success);
   /* endregion variables */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const { enhance, form: formData } = form;
   /* endregion form */
 
@@ -56,7 +62,7 @@
       <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
         {m.verified_extended()}
       </span>
-    {:else if $appState.form?.success}
+    {:else if formSuccess}
       <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
         {m.signUpSuccess()}
       </span>

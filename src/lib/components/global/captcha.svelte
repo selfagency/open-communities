@@ -1,14 +1,15 @@
 <script lang="ts">
-  /* region imports */
-  import type { SuperForm } from 'sveltekit-superforms';
 
   import { sleep } from 'radashi';
   import { onDestroy, onMount } from 'svelte';
+  /* region imports */
+  import type { SuperForm } from 'sveltekit-superforms';
 
   import { browser } from '$app/environment';
   import { env } from '$env/dynamic/public';
   import * as Form from '$lib/components/ui/form';
   import { log } from '$lib/utils';
+
   // import { log } from '$lib/utils';
   /* endregion imports */
 
@@ -18,9 +19,12 @@
 
   // locals
   let widget: HTMLElement | null = $state(null);
+  let solveHandler: ((e: Event) => void) | null = null;
   /* endregion variables */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const { form: formData } = form;
   /* endregion form */
 
@@ -31,11 +35,13 @@
       widget = document.getElementById('captcha');
       if (widget) {
         log.debug('[captcha] Widget found, adding event listener');
-        widget.addEventListener('solve', function (e) {
-          log.debug('[captcha] Solve event fired:', e.detail);
-          $formData.captcha = e.detail.token;
+        solveHandler = (e: Event) => {
+          const ce = e as CustomEvent;
+          log.debug('[captcha] Solve event fired:', ce.detail);
+          $formData.captcha = ce.detail.token;
           log.debug('[captcha] Token set to:', $formData.captcha);
-        });
+        };
+        widget.addEventListener('solve', solveHandler);
       } else {
         log.error('[captcha] Widget not found!');
       }
@@ -43,8 +49,9 @@
   });
 
   onDestroy(() => {
-    if (widget) {
-      widget.removeEventListener('solve', () => {});
+    if (widget && solveHandler) {
+      widget.removeEventListener('solve', solveHandler);
+      solveHandler = null;
     }
   });
   /* endregion lifecycle */

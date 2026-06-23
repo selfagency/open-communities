@@ -10,16 +10,21 @@ export function createMockRequestEvent(overrides: Partial<Record<string, unknown
       serialize: () => '',
       set: () => {}
     },
+    depends: () => {},
     fetch,
     getClientAddress: () => '127.0.0.1',
     isDataRequest: false,
+    isRemoteRequest: false,
     isSubRequest: false,
     locals: {},
     params: {},
+    parent: async () => ({ countries: [], lang: 'en', offline: false, user: null }),
     platform: {},
     request: new Request('http://localhost/'),
     route: { id: '/' },
     setHeaders: () => {},
+    tracing: { enabled: false, root: {} as any, current: {} as any },
+    untrack: <T>(fn: () => T) => fn(),
     url: new URL('http://localhost/'),
     ...overrides
   };
@@ -29,31 +34,8 @@ export function createMockRequestEvent(overrides: Partial<Record<string, unknown
  * Creates a mock ServerLoadEvent for testing SvelteKit server load functions
  */
 export function createMockServerLoadEvent(overrides: Partial<Record<string, unknown>> = {}) {
-  return {
-    cookies: {
-      delete: () => {},
-      get: () => '',
-      getAll: () => [],
-      serialize: () => '',
-      set: () => {}
-    },
-    depends: () => {},
-    fetch,
-    getClientAddress: () => '127.0.0.1',
-    isDataRequest: false,
-    isSubRequest: false,
-    locals: {},
-    params: {},
-    parent: async () => ({}),
-    platform: {},
-    request: new Request('http://localhost/'),
-    route: { id: '/' },
-    setHeaders: () => {},
-    tracing: { span: {} },
-    untrack: (fn: () => unknown) => fn(),
-    url: new URL('http://localhost/'),
-    ...overrides
-  };
+  const event = createMockRequestEvent();
+  return { ...event, ...overrides };
 }
 
 // Return the test user store created in setupTest.ts at runtime. We use a function

@@ -2,9 +2,9 @@
   import { isEmpty } from 'radashi';
   /* region imports */
   import { onMount } from 'svelte';
-  import { toast } from 'svelte-sonner';
   import { fade } from 'svelte/transition';
-  import { superForm, type SuperValidated } from 'sveltekit-superforms';
+  import { toast } from 'svelte-sonner';
+  import { type SuperValidated, superForm } from 'sveltekit-superforms';
   import { waitForTheElement } from 'wait-for-the-element';
 
   import { dev } from '$app/environment';
@@ -12,6 +12,7 @@
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
   import { log } from '$lib/utils';
+
   /* endregion imports */
 
   /* region variables */
@@ -30,6 +31,8 @@
   /* endregion variables */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const form = superForm(data, {
     dataType: 'json',
     id: 'reset',
@@ -55,7 +58,10 @@
   /* endregion form */
 
   /* region lifecycle */
+  let submitted = $state(false);
   onMount(async () => {
+    if (submitted) return;
+    submitted = true;
     $formData.token = token ? token : 'invalid';
     $formData.type = token ? 'resetPassword' : 'requestReset';
     await waitForTheElement('#reset', { timeout: 1000 });

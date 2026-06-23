@@ -45,11 +45,17 @@ export type LocationState = {
 };
 
 export type SearchData = {
+  accessibility?: Record<string, boolean>;
+  denomination?: string;
   flavor?: string;
+  health?: { protocol?: string };
   id: string;
   location?: LocationMeta;
   name: string;
   owner?: string;
+  registration?: { registrationType?: string };
+  security?: Record<string, boolean>;
+  services?: Record<string, boolean>;
   visible: boolean;
 };
 

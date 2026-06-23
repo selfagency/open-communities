@@ -1,54 +1,61 @@
 <script lang="ts">
+  import MoonIcon from '@lucide/svelte/icons/moon';
+  import SunIcon from '@lucide/svelte/icons/sun';
+  import { mode, toggleMode } from 'mode-watcher';
   /* region imports */
   import { createEventDispatcher } from 'svelte';
-
-  import { dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
+  import { Switch } from '$lib/components/ui/switch';
   import { m } from '$lib/paraglide/messages';
   import { state as appState } from '$lib/stores';
 
   import Locale from './locale.svelte';
+
   /*  endregion imports */
 
   /* region variables */
   // props
-  let { mode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props();
+  let { mode: viewMode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props();
 
   // constants
   const dispatch = createEventDispatcher();
   const user = $derived(page.data.user);
+  let isMobile = $derived(appState.isMobile);
   /* endregion variables */
 </script>
 
 <div
-  class={mode === 'mini'
+  class={viewMode === 'mini'
     ? 'mt-8 flex flex-col items-start justify-start'
     : 'flex flex-row items-center justify-between space-x-2'}>
   {#if user?.congregation && !user?.admin}
     <Button
-      variant={mode === 'mini' ? 'link' : 'default'}
+      variant={viewMode === 'mini' ? 'link' : 'default'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto(`/edit?id=${user?.congregation}`);
       }}>
-      {mode === 'full' && $appState.isMobile ? m.edit() : m.editCongregation()}
+      {viewMode === 'full' && isMobile ? m.edit() : m.editCongregation()}
     </Button>
   {:else}
     <Button
-      variant={mode === 'mini' ? 'link' : 'default'}
+      variant={viewMode === 'mini' ? 'link' : 'default'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto('/add');
       }}>
-      {mode === 'full' && $appState.isMobile ? m.add() : m.addCongregation()}
+      {viewMode === 'full' && isMobile ? m.add() : m.addCongregation()}
     </Button>
   {/if}
 
   {#if user?.email}
     <Button
-      variant={mode === 'mini' ? 'link' : 'outline'}
+      variant={viewMode === 'mini' ? 'link' : 'outline'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto('/logout');
@@ -57,15 +64,23 @@
     </Button>
   {:else}
     <Button
-      variant={mode === 'mini' ? 'link' : 'outline'}
+      variant={viewMode === 'mini' ? 'link' : 'outline'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto('/login');
       }}>
       {m.login()}
-      {mode === 'full' && $appState.isMobile ? '' : `/ ${m.signUp()}`}
+      {viewMode === 'full' && isMobile ? '' : `/ ${m.signUp()}`}
     </Button>
   {/if}
 
-  {#if dev}<Locale {mode} />{/if}
+  <Locale mode={viewMode} />
+  <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full px-4' : ''}">
+    <span class="flex flex-row items-center justify-start space-x-1">
+      <SunIcon class="h-4 w-4 text-muted-foreground" />
+      <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
+      <MoonIcon class="h-4 w-4 text-muted-foreground" />
+    </span>
+  </div>
 </div>

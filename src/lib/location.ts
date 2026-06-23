@@ -1,23 +1,53 @@
 /* region imports */
-import type { MapStore } from 'nanostores';
-
-import { map } from 'nanostores';
-
 import { api } from '$lib/api';
 import { log } from '$lib/utils';
 
 import type { TypedPocketBase } from './pocketbase.d';
+import type { Search } from './search';
 import type { City, Country, LocationRecord, LocationState, State } from './types.d';
 
-import { Search } from './search';
 /* endregion imports */
+
+/**
+ * Minimal writable store that satisfies the Svelte store contract.
+ * Replaces nanostores `map()` for per-instance Location state.
+ */
+type StoreReader<T> = { subscribe: (run: (v: T) => void) => () => void };
+type LocationStore = StoreReader<LocationState> & {
+  get(): LocationState;
+  set(v: LocationState): void;
+};
+
+function writable<T>(initial: T): {
+  subscribe: (run: (v: T) => void) => () => void;
+  get: () => T;
+  set: (v: T) => void;
+} {
+  let value = initial;
+  const subs = new Set<(v: T) => void>();
+
+  return {
+    subscribe(run: (v: T) => void) {
+      run(value);
+      subs.add(run);
+      return () => subs.delete(run);
+    },
+    get() {
+      return value;
+    },
+    set(v: T) {
+      value = v;
+      for (const fn of subs) fn(value);
+    }
+  };
+}
 
 export class Location {
   api?: TypedPocketBase;
   countries: Country[];
   default: LocationState;
   search?: Search;
-  state: MapStore<LocationState>;
+  state: LocationStore;
 
   constructor({ countries, search }: { countries: Country[]; search?: Search }) {
     if (search) this.search = search;
@@ -37,7 +67,7 @@ export class Location {
       },
       record: {}
     } as LocationState;
-    this.state = map<LocationState>(this.default);
+    this.state = writable<LocationState>(this.default);
 
     this.setCountry = this.setCountry.bind(this);
     this.setState = this.setState.bind(this);
@@ -51,7 +81,7 @@ export class Location {
       await this.setCountry(record.country);
 
       if (record.state) {
-        await this.setState(record.state, true);
+        await this.setState(record.state, /* preserveCity */ true);
 
         if (record.city) {
           this.setCity(record.city as string);
@@ -96,7 +126,7 @@ export class Location {
     let states: State[] = [];
     try {
       states = await api?.collection('states')?.getFullList({
-        filter: `country="${country?.id}"`
+        filter: api?.filter('country={:country}', { country: country?.id })
       });
 
       if (states)
@@ -132,7 +162,7 @@ export class Location {
     }
   }
 
-  async setState(input: string, loadFn?: boolean) {
+  async setState(input: string, preserveCity?: boolean) {
     const objState = this.state.get();
     const state = objState.localities?.states?.find((s) => s?.id === input) as State;
     const api = this.api as TypedPocketBase;
@@ -141,7 +171,7 @@ export class Location {
 
     try {
       cities = await api?.collection('cities')?.getFullList({
-        filter: `state="${state?.id}"`
+        filter: api?.filter('state={:state}', { state: state?.id })
       });
 
       if (cities)
@@ -164,7 +194,7 @@ export class Location {
             }))
           },
           record: {
-            city: loadFn ? objState.record.city : undefined,
+            city: preserveCity ? objState.record.city : undefined,
             country: objState.record.country as Country,
             latitude: state?.latitude,
             longitude: state?.longitude,

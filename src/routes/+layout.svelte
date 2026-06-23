@@ -1,11 +1,11 @@
 <script lang="ts">
   /* region imports */
   import '../app.css';
-  import type { Snippet } from 'svelte';
 
+  import { ModeWatcher } from 'mode-watcher';
   import posthog from 'posthog-js';
-  import { onMount } from 'svelte';
-
+  import type { Snippet } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
   import Footer from '$lib/components/global/footer.svelte';
@@ -17,8 +17,6 @@
 
   import type { LayoutData } from './$types';
 
-  // import { log } from '$lib/utils';
-  import '../app.css';
   /* endregion imports */
 
   /* Initialize PostHog pageview and pageleave tracking */
@@ -45,7 +43,12 @@
   onNavigate((navigation) => {
     if (browser) {
       setState({ loading: true });
-      if (!document.startViewTransition) return;
+
+      if (!document.startViewTransition) {
+        // No view transitions: set loading=false when navigation completes
+        navigation.complete.then(() => setState({ loading: false }));
+        return;
+      }
 
       return new Promise((resolve) => {
         document.startViewTransition(async () => {
@@ -61,16 +64,16 @@
   /* region reactivity */
   $effect(() => {
     if (innerWidth > 0) {
-      setState({
+      untrack(() => setState({
         isMobile: innerWidth < 640,
         offsetWidth: innerWidth
-      });
+      }));
     }
   });
 
   $effect(() => {
     if (innerHeight > 0) {
-      setState({ offsetHeight: innerHeight });
+      untrack(() => setState({ offsetHeight: innerHeight }));
     }
   });
 </script>
@@ -81,12 +84,24 @@
 </svelte:head>
 
 <div class="flex h-full min-h-screen flex-col items-center justify-between max-w-screen w-full overflow-hidden">
+  {#if data.offline}
+    <div
+      role="alert"
+      class="fixed top-0 z-50 flex w-full items-center justify-center bg-amber-500/90 px-4 py-2 text-sm font-medium text-amber-950 backdrop-blur-sm"
+    >
+      {m.reconnecting()}
+    </div>
+  {/if}
   <Progress />
   <Header />
-  <main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4">
+  <main
+    class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4"
+    class:mt-28={data.offline}
+  >
     {@render children()}
   </main>
   <Footer />
 </div>
 
+<ModeWatcher />
 <Toaster />

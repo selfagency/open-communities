@@ -23,6 +23,7 @@ describe('Combobox', () => {
     expect(screen.getByText('Option Two')).toBeInTheDocument();
   });
 
+  // Skipped: testing-library/svelte ↔ svelte 5 incompatibility prevents event dispatch
   it.skip('opens the list, allows selecting an item and dispatches change with the item id', async () => {
     vi.useFakeTimers();
     render(Combobox, { items, placeholder: 'Pick' });
@@ -49,11 +50,15 @@ describe('Combobox', () => {
     const trigger = screen.getByRole('combobox');
     await userEvent.click(trigger);
 
-    expect(await screen.findByText('No options available')).toBeInTheDocument();
+    expect(await screen.findByText('noOptions')).toBeInTheDocument();
   });
 
   it('does not open when disabled', async () => {
-    const { container } = render(Combobox, { disabled: true, items, placeholder: 'Disabled' });
+    const { container } = render(Combobox, {
+      disabled: true,
+      items,
+      placeholder: 'Disabled'
+    });
 
     // The component uses CSS `pointer-events-none` on the root wrapper when disabled.
     // jsdom doesn't enforce pointer-events in event dispatch, so assert the class is present instead.

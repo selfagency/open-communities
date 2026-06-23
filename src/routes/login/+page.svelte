@@ -11,6 +11,7 @@
   // import { log } from '$lib/utils';
 
   import type { PageProps } from './$types';
+
   /* endregion imports */
 
   /* region variables */
@@ -18,7 +19,9 @@
   const { data }: PageProps = $props();
 
   // locals
-  let tab: 'login' | 'signup' = $state('login');
+  let tab: 'login' | 'signup' = $state(
+    page.url.searchParams.has('signUp') || page.url.searchParams.has('verifyEmail') ? 'signup' : 'login'
+  );
   /* endregion variables */
 
   /* region lifecycle */
@@ -35,6 +38,8 @@
   /* endregion lifecycle */
 
   /* region form */
+  // svelte-ignore state_referenced_locally
+  // Intentional: forms are initialized once from server data (not reactive to prop changes)
   const form = initForm(data.signup);
   export const snapshot = { capture: form.capture, restore: form.restore };
   /*endregion form */
@@ -57,7 +62,7 @@
         {/if}
       </Tabs.Content>
       <Tabs.Content value="signup">
-        {#if tab === 'signup' && data.signup && data.verify}
+        {#if data.signup && data.verify}
           <SignUp {form} verify={data.verify} />
         {/if}
       </Tabs.Content>

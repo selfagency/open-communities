@@ -4,6 +4,7 @@
   import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
   import { m } from '$lib/paraglide/messages';
+
   /* endregion imports */
 
   /* region variables */
@@ -16,7 +17,7 @@
     <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
       <span>{m.contact()}</span>
       {#if $errors.contactName || $errors.contactEmail}
-        <span class="text-red-500">*</span>
+        <span class="text-destructive">*</span>
       {/if}
     </div>
   </Accordion.Trigger>

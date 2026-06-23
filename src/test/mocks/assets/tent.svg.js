@@ -1,13 +1,14 @@
 const markup = `<svg data-testid="mock-tent" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="none"/></svg>`;
 
+/** @param {any} options */
 function TentComponent(options) {
   // Handle both `new TentComponent()` and `TentComponent()` calls
   if (!(this instanceof TentComponent)) {
     return new TentComponent(options);
   }
 
-  const target = options && options.target;
-  const props = (options && options.props) || {};
+  const target = options?.target;
+  const props = options?.props || {};
   if (target) {
     const container = document.createElement('div');
     container.innerHTML = markup;
@@ -23,11 +24,9 @@ function TentComponent(options) {
     }
   }
 }
-TentComponent.$$render = function () {
-  return markup;
-};
+TentComponent.$$render = () => markup;
 TentComponent.prototype.$destroy = function () {
-  if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default TentComponent;

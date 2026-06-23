@@ -1,20 +1,20 @@
 /* region imports */
-import { isEmpty } from 'radashi';
-
-import type { UsersResponse } from '$lib/pocketbase.d';
-
 import { browser } from '$app/environment';
-import { env } from '$env/dynamic/public';
-import { posthogInit } from '$lib/posthog';
-import { initState, state } from '$lib/stores';
+import { initState, setState } from '$lib/stores';
+
 /* endregion imports */
+
+let _initialized = false;
 
 export const load = async ({ data }) => {
   if (browser) {
-    posthogInit(env.PUBLIC_POSTHOG_KEY as string, data.user as UsersResponse);
-
-    if (isEmpty(state?.get())) {
-      initState();
+    if (!_initialized) {
+      // Full init only on first boot
+      initState(data.user?.lang);
+      _initialized = true;
+    } else if (data.user?.lang) {
+      // On subsequent navigations, only sync lang if it changed
+      setState({ lang: data.user.lang });
     }
   }
 

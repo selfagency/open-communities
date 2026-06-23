@@ -1,0 +1,10 @@
+/* Webfont: Miguity-Regular */@font-face {
+    font-family: 'Miguity';
+    src: url('Miguity.eot'); /* IE9 Compat Modes */
+    src: url('Miguity.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('Miguity.woff') format('woff'), /* Modern Browsers */
+         url('Miguity.ttf') format('truetype'); /* Safari, Android, iOS */
+             font-style: normal;
+    font-weight: normal;
+}
+

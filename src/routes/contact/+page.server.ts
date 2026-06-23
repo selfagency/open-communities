@@ -1,16 +1,19 @@
 /* region imports */
-import type { ClientResponseError } from 'pocketbase';
 
 import { fail } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
-
-import type { LocationMeta } from '$lib/types.d';
-
+import { dev } from '$app/environment';
 import { m } from '$lib/paraglide/messages';
+import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import { contactSchema } from '$lib/schemas/contact';
+import { withRetry } from '$lib/server/api';
+import { getCachedCongregations } from '$lib/server/cache';
 import { adminMail } from '$lib/server/mail';
 import { validateCaptcha } from '$lib/server/utils';
+import type { LocationMeta } from '$lib/types.d';
 import { truncateText } from '$lib/utils';
+
 /* endregion imports */
 
 export const load = async (event) => {
@@ -19,14 +22,18 @@ export const load = async (event) => {
   const client = api?.authStore?.record;
 
   try {
-    const congregations = (await api.collection('congregationMeta').getFullList({ fetch })).map((c) => {
-      const location = c.location as LocationMeta;
-      const label = truncateText(
-        `${c.name}${location?.city?.name ? ', ' + location.city.name : ''}${location?.state?.name ? ', ' + location.state.name : ''}${location?.country?.name ? ', ' + location.country.name : ''}`,
-        38
-      );
+    const congregations = (await withRetry(() => getCachedCongregations(api, { fetch }))).map((c) => {
+      const rec = c as CongregationMetaRecord & { id: string };
+      const location = rec.location as LocationMeta;
+      const parts = [
+        rec.name,
+        location?.city?.name ? `, ${location.city.name}` : '',
+        location?.state?.name ? `, ${location.state.name}` : '',
+        location?.country?.name ? `, ${location.country.name}` : ''
+      ];
+      const label = truncateText(parts.join(''), 38);
       return {
-        id: c.id,
+        id: rec.id,
         label: truncateText(label, 38),
         value: label
       };
@@ -52,7 +59,7 @@ export const actions = {
   default: async (event) => {
     const { api, capture, captureException, log } = event.locals;
     const client = api?.authStore?.record;
-    const form = await event.locals.validate(event.request, contactSchema);
+    const form = await event.locals.validate(event, contactSchema);
 
     if (isFunction(capture)) {
       await capture(client?.id, 'contactForm');
@@ -65,20 +72,30 @@ export const actions = {
         });
       }
 
-      await validateCaptcha(form);
+      const captchaValid = await validateCaptcha(form);
+      if (!captchaValid) {
+        return fail(400, { form });
+      }
 
       try {
+        const reasonKey = `contactOptions_${form.data.reason}` as keyof typeof m;
+        const reasonFn = m[reasonKey];
+        if (typeof reasonFn !== 'function') {
+          return fail(400, { form, error: 'Invalid reason' });
+        }
+
         await adminMail(
           {
             email: form.data.email,
             message: `
-						${m[`contactOptions_${form.data.reason}`]()}
+					${(reasonFn as (...args: unknown[]) => string)()}
 
-						${form.data.message}
+					${form.data.message}
 
-						https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
-						`,
-            name: form.data.name
+					https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${encodeURIComponent(form.data.email)}` : ''}
+					`,
+            name: form.data.name,
+            subject: `Contact form: ${form.data.reason}`
           },
           api
         );
@@ -87,7 +104,7 @@ export const actions = {
           await captureException(error, client?.id);
         }
         return fail(400, {
-          error,
+          error: dev ? error : 'An error occurred',
           form
         });
       }

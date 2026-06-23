@@ -1,12 +1,13 @@
 <script lang="ts">
+  import { mode } from 'mode-watcher';
   /* region imports */
   import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
-
+  import { Button } from '$lib/components/ui/button';
+  import type { Location } from '$lib/location';
+  import { darkStyle, lightStyle } from '$lib/map-styles';
+  import type { Search } from '$lib/search';
   import type { LocationMeta } from '$lib/types.d';
 
-  import { Button } from '$lib/components/ui/button';
-  import { Location } from '$lib/location';
-  import { Search } from '$lib/search';
   /* endregion imports */
 
   /* region variables */
@@ -22,10 +23,11 @@
   } = $props();
 
   // constants
+  // svelte-ignore state_referenced_locally
   const { state: searchState } = search;
 
   // locals
-  const center = $derived(() => {
+  const center = $derived.by(() => {
     const loc = $searchState.searchLocation;
     if (loc?.country?.id) {
       return [
@@ -36,7 +38,9 @@
     return [-90, 10] as LngLatLike;
   });
 
-  const zoom = $derived(() => {
+  const mapStyle = $derived(mode.current === 'dark' ? darkStyle : lightStyle);
+
+  const zoom = $derived.by(() => {
     const loc = $searchState.searchLocation;
     if (loc?.country?.id) {
       if (loc.city?.id) return 10;
@@ -48,7 +52,7 @@
   /* endregion variables */
 </script>
 
-{#if (globalThis as Record<string, unknown>).__TEST__}
+{#if (globalThis as any).__TEST__}
   <!-- Test-friendly fallback: render buttons for each location so tests can query labels
 		 without initializing MapLibre / WebGL. -->
   <div class="h-96">
@@ -72,33 +76,31 @@
   </div>
 {:else}
   <MapLibre
-    center={center()}
-    zoom={zoom()}
+    center={center}
+    zoom={zoom}
     minZoom={1}
     class="h-96"
     standardControls
-    style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
-    attributionControl={false}>
+    style={mapStyle}>
     {#each locations as { city, country, latitude, longitude, state } (city?.id)}
       <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
         <Popup offset={[0, -10]}>
-          <Button
-            variant="ghost"
-            class="h-full min-h-max w-full"
-            onclick={() => {
+          <button
+            class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
+            onclick={async () => {
               search.state.setKey('showLocation', true);
-              location.load({
+              await location.load({
                 city: city?.id,
                 country: country?.id,
                 state: state?.id
               });
+              const loc = location.state.get();
+              search.setSearchLocation(loc.record);
             }}>
-            <span class="text-xs">
-              {#if city}{city.name},{/if}
-              {#if state}{state.name},{/if}
-              {#if country}{country.name}{/if}
-            </span>
-          </Button>
+            {#if city}{city.name},{/if}
+            {#if state}{state.name},{/if}
+            {#if country}{country.name}{/if}
+          </button>
         </Popup>
       </DefaultMarker>
     {/each}

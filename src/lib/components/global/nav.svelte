@@ -1,20 +1,23 @@
 <script lang="ts">
   /* region imports */
-  import MenuIcon from 'lucide-svelte/icons/menu';
+  import MenuIcon from "@lucide/svelte/icons/menu";
 
-  import * as Sheet from '$lib/components/ui/sheet';
-  import { m } from '$lib/paraglide/messages';
-  import { state as appState } from '$lib/stores';
+  import * as Sheet from "$lib/components/ui/sheet";
+  import { m } from "$lib/paraglide/messages";
+  import { state as appState } from "$lib/stores";
 
-  import Menu from './menu.svelte';
+  import Menu from "./menu.svelte";
+
   /*  endregion imports */
 
   /* region variables */
   let open = $state(false);
   /* endregion variables */
+
+  let offsetWidth = $derived(appState.offsetWidth);
 </script>
 
-{#if $appState.offsetWidth && $appState.offsetWidth < 420}
+{#if offsetWidth && offsetWidth < 760}
   <Sheet.Root bind:open>
     <Sheet.Trigger>
       <MenuIcon class="mt-2 h-6 w-6" />

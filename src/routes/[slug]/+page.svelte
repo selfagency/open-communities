@@ -1,10 +1,12 @@
 <script lang="ts">
   /* region imports */
+  import DOMPurify from 'isomorphic-dompurify';
   import * as Card from '$lib/components/ui/card';
   import { m } from '$lib/paraglide/messages';
   // import { log } from '$lib/utils';
 
   import type { PageProps } from './$types';
+
   /* endregion imports */
 
   /* region variables */
@@ -14,17 +16,17 @@
 </script>
 
 <svelte:head>
-  <title>{data.content.title} &middot; {m.title()}</title>
+  <title>{data.content?.title ?? ''} &middot; {m.title()}</title>
 </svelte:head>
 
-{#if data.content.id}
+{#if data.content}
   {#key data.content.id}
     <section class="max-w-3xl mx-auto">
       <Card.Root>
         <Card.Header><h1 class="text-3xl">{data.content.title}</h1></Card.Header>
         <Card.Content>
           <div class="prose max-w-none">
-            {@html data.content.content}
+            {@html DOMPurify.sanitize(data.content.content)}
           </div>
         </Card.Content>
       </Card.Root>

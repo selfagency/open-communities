@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import type { SuperFormStub } from '$test/global.d';
-
 import { m } from '$lib/paraglide/messages';
-import { state } from '$lib/stores';
+import { setState } from '$lib/stores';
+import type { SuperFormStub } from '$test/global.d';
 
 import Signup from './signup.svelte';
 
@@ -42,7 +41,7 @@ describe('Signup component', () => {
       },
       formId: 'stub',
       id: 'stub',
-      isTainted: (value: unknown) => false,
+      isTainted: (_value: unknown) => false,
       lastSubmit: null,
       lastValid: null,
       message: '',
@@ -76,7 +75,7 @@ describe('Signup component', () => {
       posted: false,
       valid: true
     };
-    render(Signup, { form, verify });
+    render(Signup, { form: form as any, verify });
 
     // title (may appear multiple times: title, info, button) — ensure at least one match
     const matches = screen.getAllByText(new RegExp(m.signUp(), 'i'));
@@ -89,7 +88,7 @@ describe('Signup component', () => {
   });
 
   it('shows success message when state.form.success is true', () => {
-    state.set({ form: { hasErrors: false, success: true } });
+    setState({ form: { hasErrors: false, success: true } });
     const form = makeForm();
     const verify: SuperValidatedStub = {
       data: {},
@@ -98,11 +97,11 @@ describe('Signup component', () => {
       posted: false,
       valid: true
     };
-    render(Signup, { form, verify });
+    render(Signup, { form: form as any, verify });
 
     expect(screen.getByText(new RegExp(m.signUpSuccess(), 'i'))).toBeInTheDocument();
 
     // reset
-    state.set({ form: { hasErrors: false, success: false } });
+    setState({ form: { hasErrors: false, success: false } });
   });
 });

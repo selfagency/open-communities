@@ -3,9 +3,8 @@
 import { render, screen, within } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
-import type { SecurityRecord } from '$lib/pocketbase.d';
-
 import { m } from '$lib/paraglide/messages';
+import type { SecurityRecord } from '$lib/pocketbase.d';
 
 import Security from './security.svelte';
 

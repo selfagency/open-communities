@@ -10,6 +10,7 @@ services:
     network_mode: 'host'
     volumes:
       - ./pocketbase/pb_data:/pb_data
+      - ./pb_migrations:/pb/pb_migrations
     depends_on:
       - mailpit
 

@@ -1,10 +1,9 @@
 /* region imports */
 import PocketBase from 'pocketbase';
-import { assign, isArray, omit } from 'radashi';
-
+import { isArray, omit } from 'radashi';
+import { env } from '$env/dynamic/public';
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 
-import { env } from '$env/dynamic/public';
 /* endregion imports */
 
 // instantiate pocketbase api service
@@ -24,23 +23,22 @@ async function authenticate(auth: string) {
   return api;
 }
 
-function cleanResponse<T>(response: T, keepDate: boolean = false): T {
-  return convertBooleans(
-    omit(response, [
-      'collectionId' as keyof T,
-      'collectionName' as keyof T,
-      'updated' as keyof T,
-      keepDate ? ('' as keyof T) : ('created' as keyof T)
-    ])
-  ) as T;
+function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate: boolean = false): T {
+  const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
+  if (!keepDate) fields.push('created' as keyof T);
+  return convertBooleans(omit(response, fields)) as T;
 }
 
-function convertBooleans(obj) {
+function convertBooleans(obj: unknown): unknown {
   if (isArray(obj)) {
     return obj.map(convertBooleans);
   } else if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce((acc, key) => {
-      const value = obj[key];
+    const source = obj as Record<string, unknown>;
+    return Object.keys(source).reduce<Record<string, unknown>>((acc, key) => {
+      if (!Object.hasOwn(source, key) || key === '__proto__' || key === 'constructor') {
+        return acc;
+      }
+      const value = source[key];
       if (value === 1) {
         acc[key] = true;
       } else if (value === 0) {
@@ -54,10 +52,9 @@ function convertBooleans(obj) {
   return obj;
 }
 
-function expand(item) {
-  const newItem = assign(item, { ...item.expand });
-  delete newItem.expand;
-  return newItem;
+function expand<T extends Record<string, unknown>>(item: T): Omit<T, 'expand'> {
+  const { expand: _expand, ...rest } = item;
+  return { ...rest, ...(_expand ?? {}) } as Omit<T, 'expand'>; // NOSONAR — TypeScript requires fallback for spread
 }
 
 export { api, authenticate, cleanResponse, expand };

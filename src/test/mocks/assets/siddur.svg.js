@@ -1,13 +1,14 @@
 const markup = `<svg data-testid="mock-siddur" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="none"/></svg>`;
 
+/** @param {any} options */
 function SiddurComponent(options) {
   // Handle both `new SiddurComponent()` and `SiddurComponent()` calls
   if (!(this instanceof SiddurComponent)) {
     return new SiddurComponent(options);
   }
 
-  const target = options && options.target;
-  const props = (options && options.props) || {};
+  const target = options?.target;
+  const props = options?.props || {};
   if (target) {
     const container = document.createElement('div');
     container.innerHTML = markup;
@@ -23,11 +24,9 @@ function SiddurComponent(options) {
     }
   }
 }
-SiddurComponent.$$render = function () {
-  return markup;
-};
+SiddurComponent.$$render = () => markup;
 SiddurComponent.prototype.$destroy = function () {
-  if (this._node && this._node.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default SiddurComponent;

@@ -1,9 +1,6 @@
 /* region imports */
 import * as z from 'zod';
 
-import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-// import { log } from '$lib/utils';
-
 import { m } from '$lib/paraglide/messages';
 
 import {
@@ -85,4 +82,5 @@ export const defaultSchema = z.object({
   visible: z.boolean()
 });
 
-export type DefaultSchema = CongregationMetaRecord;
+export type DefaultSchema = z.infer<typeof defaultSchema>;
+export type FormData = z.infer<typeof defaultSchema>;

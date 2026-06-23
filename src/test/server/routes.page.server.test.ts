@@ -1,36 +1,36 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { HttpResponse, http } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { createMockServerLoadEvent } from '$test/testUtils';
 
-function makeApiStub() {
-  return {
-    authStore: { record: {} },
-    collection() {
-      return {
-        async getFirstListItem() {
-          return { body: 'x', id: 'p1' };
-        },
-        async getFullList() {
-          return [];
-        },
-        async getOne() {
-          return { id: 'o1' };
-        }
-      } as any;
-    }
-  } as any;
-}
+import { congregationMetaViews } from '../../mocks/data/congregations';
+
+const PB = 'http://*:8090';
+
+const server = setupServer(
+  http.get(`${PB}/api/collections/congregationMeta/records`, () =>
+    HttpResponse.json({
+      items: congregationMetaViews,
+      page: 1,
+      perPage: 50,
+      totalItems: congregationMetaViews.length,
+      totalPages: 1
+    })
+  )
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe('routes +page.server quick smoke', () => {
-  let locals: any;
-
-  beforeEach(() => {
-    locals = { api: makeApiStub(), validate: async () => ({}) };
-  });
-
   it('root load returns congregations', async () => {
-    const mod = await import('../../../src/routes/+page.server');
+    const mod = await import('../../routes/+page.server');
+    const { createApi } = await import('../../lib/server/api');
+    const api = createApi();
 
+    const locals = { api, captureException: () => {} };
     const mockEvent = createMockServerLoadEvent({
       locals,
       route: { id: '/' },

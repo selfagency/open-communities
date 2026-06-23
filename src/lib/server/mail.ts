@@ -1,24 +1,49 @@
-/* region imports */
+import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
 import nodemailer from 'nodemailer';
-
-import type { TypedPocketBase } from '$lib/pocketbase.d';
-
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
+/* region imports */
+import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import emailTemplate from '$lib/assets/emailTemplate.html?raw';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 import { log } from '$lib/server/logger';
-/* endregion imports */
 
-// transporter will be created per-call in mailTransport so we can conditionally
-// include auth only when credentials are provided (Mailpit often runs without auth)
+/* endregion imports */
 
 const { ADMIN_EMAIL, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } = env;
 
-export async function adminMail(
-  { email, message, name, record, subject }: Record<string, string>,
-  api: TypedPocketBase
-) {
+// Lazy singleton transporter — created once on first use, reused for all subsequent sends.
+// Avoids TCP setup per email and skips verify() in production (one-time check at creation).
+let _transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo> | null = null;
+
+/**
+ * Sanitize a header value by stripping CR/LF characters and trimming whitespace.
+ * Prevents SMTP header injection attacks (CVE-style via \r\n in user-controlled fields).
+ */
+function sanitizeHeader(value: string | undefined | null): string {
+  return (value ?? '').replace(/[\r\n]/g, ' ').trim();
+}
+
+export interface AdminMailInput {
+  email: string;
+  message: string;
+  name: string;
+  record?: string;
+  subject: string;
+}
+
+export interface TransactionalMailInput {
+  email: string;
+  message: string;
+  name: string;
+  subject: string;
+}
+
+export async function adminMail({ email, message, name, record, subject }: AdminMailInput, api: TypedPocketBase) {
   try {
+    // Build message body (may augment with congregation link)
+    let bodyText = message;
     let congregation: string | undefined;
     let congregationUrl: string | undefined;
 
@@ -27,78 +52,109 @@ export async function adminMail(
       congregation = congMeta.name;
       congregationUrl = `https://opencommunities.info/edit?id=${congMeta.id}`;
       if (congregation) {
-        message += `\n\nListing: ${congregation}\n${congregationUrl}`;
+        bodyText += `\n\nListing: ${congregation}\n${congregationUrl}`;
       }
     }
 
+    // S-10: build headers from user-controlled input — sanitize all fields
+    const safeName = sanitizeHeader(name);
+    const safeEmail = sanitizeHeader(email);
+
     await mailTransport({
-      from: `${name} via Open Communities <${email}>`,
-      message,
-      subject,
-      to: `Open Communities Admin <${ADMIN_EMAIL ?? 'admin@example.test'}>`
+      headerFrom: `${safeName} via Open Communities <${safeEmail}>`,
+      headerTo: `Open Communities Admin <${ADMIN_EMAIL ?? 'admin@example.test'}>`,
+
+      // S-9: sanitize HTML output from marked to prevent email HTML injection
+      bodyText,
+      subject
     });
   } catch (e) {
     log.error('Error sending admin email', e);
   }
 }
 
-export async function mailTransport({ from, message, subject, to }: Record<string, string>) {
+export function closeTransporter() {
+  if (_transporter) {
+    _transporter.close();
+    _transporter = null;
+  }
+}
+
+export async function mailTransport({
+  headerFrom,
+  bodyText,
+  subject,
+  headerTo
+}: {
+  headerFrom: string;
+  bodyText: string;
+  subject: string;
+  headerTo: string;
+}) {
   if (!SMTP_USER || !SMTP_PASS || !SMTP_HOST || !SMTP_PORT) {
     log.warn('SMTP credentials are not set');
   }
 
-  const html = emailTemplate?.replace('%MESSAGE%', `${await marked.parseInline(message)}`);
-  const text = message;
+  // S-9: sanitize HTML output to prevent email injection
+  const messageHtml = await marked.parseInline(bodyText);
+  const sanitized = DOMPurify.sanitize(messageHtml, {
+    ALLOWED_ATTR: ['href'],
+    ALLOWED_TAGS: ['a', 'b', 'i', 'em', 'strong', 'br', 'p']
+  });
+  const html = emailTemplate.replace('%MESSAGE%', sanitized);
+  const text = bodyText;
   const mail = {
-    from,
+    from: headerFrom,
     html,
     subject,
     text,
-    to: [to]
+    to: [headerTo]
   };
 
-  // build transport options and include auth only if provided
-  const transportOpts = {
-    host: SMTP_HOST as string,
-    port: parseInt(SMTP_PORT as string, 10),
-    secure: false,
-    tls: { rejectUnauthorized: false }
-  } as unknown as nodemailer.TransportOptions;
+  const transporter = getTransporter();
 
-  if (SMTP_USER && SMTP_PASS) {
-    // include auth only when provided
-    // reorder pass before user to satisfy lint rule
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (transportOpts as any).auth = { pass: SMTP_PASS, user: SMTP_USER };
-  }
-
-  const transporter = nodemailer.createTransport(transportOpts);
-
-  log.debug('Verifying SMTP transporter');
-  if (typeof transporter.verify === 'function') {
+  // Verify only on first use (dev) or skip in production
+  if (dev && typeof transporter.verify === 'function') {
     try {
       await transporter.verify();
     } catch (err) {
       log.error('SMTP transporter verification failed', err);
       throw err;
     }
-  } else {
-    log.debug('transporter.verify is not available in this runtime, skipping verification');
   }
 
   log.debug('Sending email', mail);
   await transporter.sendMail(mail);
 }
 
-export async function transactionalMail({ email, message, name, subject }: Record<string, string>) {
+export async function transactionalMail({ email, message, name, subject }: TransactionalMailInput) {
   try {
     await mailTransport({
-      from: 'Open Communities <no-reply@m.opencommunities.info>',
-      message,
+      headerFrom: 'Open Communities <no-reply@m.opencommunities.info>',
+      bodyText: message,
       subject,
-      to: `${name} <${email}>`
+      headerTo: `${sanitizeHeader(name)} <${sanitizeHeader(email)}>`
     });
   } catch (e) {
     log.error('Error sending transactional email', e);
   }
+}
+
+function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo> {
+  if (_transporter) return _transporter;
+
+  const smtpPort = Number.parseInt(SMTP_PORT as string, 10);
+  const transportOpts: SMTPTransport.Options = {
+    host: SMTP_HOST as string,
+    port: smtpPort,
+    secure: smtpPort === 465,
+    tls: { rejectUnauthorized: true }
+  };
+
+  if (SMTP_USER && SMTP_PASS) {
+    transportOpts.auth = { pass: SMTP_PASS, user: SMTP_USER };
+  }
+
+  _transporter = nodemailer.createTransport(transportOpts);
+  return _transporter;
 }

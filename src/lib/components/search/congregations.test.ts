@@ -5,6 +5,8 @@ import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 
 import { FakeSearch, setSearchTermsSpy, toggleLocationSpy } from '$test/stubs/fake-search';
 
+vi.mock('$lib/api', () => ({ api: {} }));
+
 // make radashi.sleep immediate while keeping other utilities
 vi.mock('radashi', () => {
   return {
@@ -25,11 +27,15 @@ vi.mock('radashi', () => {
     }),
     omit: vi.fn((obj, keys) => {
       const result = { ...obj };
-      keys.forEach((key) => delete result[key]);
+      for (const key of keys as string[]) {
+        if (Object.hasOwn(result, key)) {
+          delete result[key];
+        }
+      }
       return result;
     }),
     shake: vi.fn((obj) => {
-      const result = {};
+      const result: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(obj)) {
         if (value != null && value !== '' && value !== false) {
           result[key] = value;

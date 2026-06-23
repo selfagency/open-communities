@@ -1,0 +1,184 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/pnpm-lock.yaml",
+      "!**/package-lock.json",
+      "!**/yarn.lock",
+      "!**/pb_data/",
+      "!**/pb_migrations/",
+      "!e2e",
+      "!**/build/",
+      "!**/.svelte-kit/",
+      "!**/node_modules/",
+      "!**/npmlogs/",
+      "!**/test-results/",
+      "!.github/codepilot-instructions.md",
+      "!src/lib/assets/**",
+      "!src/app.css",
+      "!static/**"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 120,
+    "attributePosition": "auto",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "expand": "auto",
+    "useEditorconfig": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnknownProperty": "warn"
+      },
+      "style": {
+        "noParameterAssign": "error",
+        "useConst": "error",
+        "useExponentiationOperator": "error",
+        "useLiteralEnumMembers": "error",
+        "noNonNullAssertion": "warn"
+      },
+      "complexity": {
+        "noForEach": "warn",
+        "noBannedTypes": "error",
+        "noEmptyTypeParameters": "warn",
+        "noStaticOnlyClass": "warn",
+        "noThisInStatic": "error",
+        "noUselessEmptyExport": "warn",
+        "noUselessLoneBlockStatements": "warn",
+        "useDateNow": "warn",
+        "useFlatMap": "warn"
+      },
+      "suspicious": {
+        "noApproximativeNumericConstant": "warn",
+        "noAsyncPromiseExecutor": "error",
+        "noCatchAssign": "error",
+        "noClassAssign": "error",
+        "noCommentText": "error",
+        "noCompareNegZero": "error",
+        "noDebugger": "warn",
+        "noDuplicateSelectorsKeyframeBlock": "warn",
+        "noEvolvingTypes": "off",
+        "noFallthroughSwitchClause": "error",
+        "noFunctionAssign": "error",
+        "noImportAssign": "error",
+        "noShadowRestrictedNames": "warn",
+        "noUnsafeDeclarationMerging": "warn",
+        "useBiomeIgnoreFolder": "off",
+        "useIterableCallbackReturn": "warn"
+      },
+      "security": {
+        "noGlobalEval": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "none",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto",
+      "bracketSpacing": true
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "formatter": {
+      "indentScriptAndStyle": false,
+      "selfCloseVoidElements": "always"
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.js",
+        "**/*.spec.ts",
+        "**/*.spec.js",
+        "**/test/**",
+        "**/mocks/**",
+        "**/stubs/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "complexity": {
+            "noForEach": "off",
+            "noCommaOperator": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noShadowRestrictedNames": "off",
+            "useIterableCallbackReturn": "off"
+          },
+          "a11y": {
+            "useButtonType": "off",
+            "noLabelWithoutControl": "off",
+            "useValidAriaValues": "off"
+          },
+          "security": {
+            "noGlobalEval": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/lib/components/**", "src/test/stubs/**", "src/routes/**/*.svelte"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedFunctionParameters": "off",
+            "noUnusedVariables": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noGlobalAssign": "off",
+            "noShadowRestrictedNames": "off",
+            "noDoubleEquals": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off",
+            "useTemplate": "off"
+          },
+          "a11y": {
+            "useButtonType": "off",
+            "noLabelWithoutControl": "off",
+            "useValidAriaValues": "off",
+            "useSemanticElements": "off",
+            "noSvgWithoutTitle": "off"
+          }
+        }
+      }
+    }
+  ],
+  "assist": {
+    "enabled": true,
+    "actions": { "source": { "organizeImports": "on" } }
+  }
+}

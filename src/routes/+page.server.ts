@@ -1,7 +1,10 @@
 /* region imports */
 import { isFunction } from 'radashi';
 
-import { cleanResponse, handleError } from '$lib/server/api';
+import { cleanResponse, withRetry } from '$lib/server/api';
+import { getCachedCongregations } from '$lib/server/cache';
+import { log } from '$lib/server/logger';
+
 /* endregion imports */
 
 export async function load({ fetch, locals }) {
@@ -11,17 +14,20 @@ export async function load({ fetch, locals }) {
   try {
     return {
       congregations: (
-        await api.collection('congregationMeta').getFullList({
-          fetch,
-          filter: client?.admin ? '' : 'visible=1'
-        })
-      ).map((c) => cleanResponse(c))
-      // content: await api.collection('pages').getFirstListItem(`slug="home-en"`, { fetch })
+        await withRetry(() =>
+          getCachedCongregations(api, {
+            fetch,
+            filter: client?.admin ? '' : 'visible=1'
+          })
+        )
+      ).map((c) => cleanResponse(c as Record<string, unknown>))
     };
   } catch (err) {
     if (isFunction(captureException)) {
       await captureException(err, client?.id);
     }
-    return handleError(err as Error);
+    // Graceful degradation: if PB is down after retries, show empty map
+    log.warn('PocketBase unavailable, returning empty congregation list', err);
+    return { congregations: [] };
   }
 }

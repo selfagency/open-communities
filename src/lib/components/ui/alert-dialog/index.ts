@@ -15,26 +15,26 @@ const Portal = AlertDialogPrimitive.Portal;
 
 export {
   Action,
-  //
-  Root as AlertDialog,
   Action as AlertDialogAction,
   Cancel as AlertDialogCancel,
-  Content as AlertDialogContent,
-  Description as AlertDialogDescription,
-  Footer as AlertDialogFooter,
-  Header as AlertDialogHeader,
-  Overlay as AlertDialogOverlay,
-  Portal as AlertDialogPortal,
-  Title as AlertDialogTitle,
-  Trigger as AlertDialogTrigger,
   Cancel,
+  Content as AlertDialogContent,
   Content,
+  Description as AlertDialogDescription,
   Description,
+  Footer as AlertDialogFooter,
   Footer,
+  Header as AlertDialogHeader,
   Header,
+  Overlay as AlertDialogOverlay,
   Overlay,
+  Portal as AlertDialogPortal,
   Portal,
+  //
+  Root as AlertDialog,
   Root,
+  Title as AlertDialogTitle,
   Title,
+  Trigger as AlertDialogTrigger,
   Trigger
 };
