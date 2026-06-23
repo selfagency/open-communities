@@ -47,7 +47,7 @@ async function main() {
     }
 
     const keys = await listResponse.json();
-    console.log('[captcha-setup] keys:', keys.length, 'keys found');
+    console.log('[captcha-setup] keys:', keys.length, 'keys found'); // NOSONAR — only logging count, not the key data
 
     // Find our key
     let siteKey = null;
