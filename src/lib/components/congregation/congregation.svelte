@@ -16,7 +16,9 @@
   import * as Tabs from "$lib/components/ui/tabs";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { m as mBase } from "$lib/paraglide/messages";
+
   const m = mBase as Record<string, (...args: unknown[]) => string>;
+
   import type {
     AccessibilityRecord,
     CitiesRecord as City,

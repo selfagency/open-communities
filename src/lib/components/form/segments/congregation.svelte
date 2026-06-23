@@ -12,7 +12,9 @@
   import { Textarea } from '$lib/components/ui/textarea';
   import { Location } from '$lib/location';
   import { m as mBase } from '$lib/paraglide/messages';
+
   const m = mBase as Record<string, (...args: unknown[]) => string>;
+
   import type { CongregationMetaRecord } from '$lib/pocketbase.d';
   import type { LocationMeta, LocationRecord } from '$lib/types.d';
   import { log } from '$lib/utils';

@@ -1,5 +1,5 @@
-import posthog from 'posthog-js';
 import type { Properties } from 'posthog-js';
+import posthog from 'posthog-js';
 
 import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';

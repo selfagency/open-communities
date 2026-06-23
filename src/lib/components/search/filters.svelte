@@ -23,7 +23,9 @@
   import { Label } from "$lib/components/ui/label";
   import * as Popover from "$lib/components/ui/popover";
   import { m as mBase } from "$lib/paraglide/messages";
+
   const m = mBase as Record<string, (...args: unknown[]) => string>;
+
   import type { Search } from "$lib/search";
 
   // import { log } from '$lib/utils';
