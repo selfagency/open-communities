@@ -34,6 +34,8 @@
   // locals
   let lang = $state("en" as UsersLangOptions);
 
+  const code = $derived(lang.toUpperCase());
+
   const serverLang = $derived(page.data.lang);
   /* endregion variables */
 
@@ -79,21 +81,20 @@
   /* endregion methods */
 </script>
 
-<DropdownMenu.Root>
-  <DropdownMenu.Trigger
-    class="button {mode === 'mini'
-      ? 'link'
-      : 'ghost'} flex flex-row items-center justify-start space-x-1"
-  >
-    {@const locale = locales.find((f) => f.value === lang)?.label}
+{#if mode === 'mini'}
+  <span class="flex flex-row items-center justify-start space-x-1 px-4 py-2 text-sm text-slate-500">
     <LocaleIcon class="h-4 w-4 text-slate-500" />
-    {#if mode === 'mini'}
-      <span>{locale}</span>
-    {:else}
-      <span class="max-[720px]:hidden">{locale}</span>
-    {/if}
-  </DropdownMenu.Trigger>
-  <DropdownMenu.Content class="w-56">
+    <span>{code}</span>
+  </span>
+{:else}
+  <DropdownMenu.Root>
+    <DropdownMenu.Trigger
+      class="button ghost flex flex-row items-center justify-start space-x-1"
+    >
+      <LocaleIcon class="h-4 w-4 text-slate-500" />
+      <span class="max-[720px]:hidden">{code}</span>
+    </DropdownMenu.Trigger>
+    <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
     <DropdownMenu.Separator />
     <DropdownMenu.RadioGroup
@@ -114,3 +115,4 @@
     </DropdownMenu.RadioGroup>
   </DropdownMenu.Content>
 </DropdownMenu.Root>
+{/if}
