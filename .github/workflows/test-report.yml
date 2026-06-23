@@ -42,8 +42,8 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           # point to the json summary produced by vitest
-          json-summary-path: '../test-results/coverage/coverage-summary.json'
-          json-final-path: '../test-results/coverage/coverage-final.json'
+          json-summary-path: 'test-results/coverage/coverage-summary.json'
+          json-final-path: 'test-results/coverage/coverage-final.json'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on: pr
 
@@ -51,7 +51,7 @@ jobs:
         uses: dorny/test-reporter@v2
         with:
           artifact: test-results
-          path: './junit.xml'
+          path: 'test-results/junit.xml'
           reporter: java-junit
           name: Vitest Tests
           use-actions-summary: 'true'
