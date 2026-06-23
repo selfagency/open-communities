@@ -295,6 +295,16 @@ export class Search {
     this.state.setKey('showLocation', !state.showLocation);
   }
 
+  /** Get or create a nested inner Map. */
+  private _ensureInner<V>(outer: Map<string, V>, key: string, factory: () => V): V {
+    let inner = outer.get(key);
+    if (!inner) {
+      inner = factory();
+      outer.set(key, inner);
+    }
+    return inner;
+  }
+
   /** Build lookup indexes so boolFilter/stringFilter don't scan all records. */
   private _buildIndexes(): void {
     this.data.forEach((record, idx) => {
@@ -305,16 +315,8 @@ export class Search {
           for (const subKey of Object.keys(sub)) {
             if (subKey === '__proto__' || subKey === 'constructor') continue;
             if (sub[subKey]) {
-              let keyMap = this.boolIndex.get(key);
-              if (!keyMap) {
-                keyMap = new Map();
-                this.boolIndex.set(key, keyMap);
-              }
-              let set = keyMap.get(subKey);
-              if (!set) {
-                set = new Set();
-                keyMap.set(subKey, set);
-              }
+              const inner = this._ensureInner(this.boolIndex, key, () => new Map());
+              const set = this._ensureInner(inner, subKey, () => new Set<number>());
               set.add(idx);
             }
           }
@@ -322,24 +324,16 @@ export class Search {
       }
 
       // String filters: denomination, health.protocol, registration.registrationType
+      const indexString = (filter: string, targetKey: string, val: string) => {
+        const map = this._ensureInner(this.stringIndex, filter, () => new Map());
+        const valMap = this._ensureInner(map, targetKey, () => new Map<string, Set<number>>());
+        const set = this._ensureInner(valMap, val, () => new Set<number>());
+        set.add(idx);
+      };
+
       const denom = record.denomination;
       if (denom) {
-        let map = this.stringIndex.get('denomination');
-        if (!map) {
-          map = new Map();
-          this.stringIndex.set('denomination', map);
-        }
-        let valMap = map.get('denomination');
-        if (!valMap) {
-          valMap = new Map();
-          map.set('denomination', valMap);
-        }
-        let set = valMap.get(denom);
-        if (!set) {
-          set = new Set();
-          valMap.set(denom, set);
-        }
-        set.add(idx);
+        indexString('denomination', 'denomination', denom);
       }
 
       for (const filter of ['health', 'registration'] as const) {
@@ -348,22 +342,7 @@ export class Search {
           const targetKey = filter === 'health' ? 'protocol' : 'registrationType';
           const val = sub[targetKey as keyof typeof sub];
           if (val && typeof val === 'string') {
-            let map = this.stringIndex.get(filter);
-            if (!map) {
-              map = new Map();
-              this.stringIndex.set(filter, map);
-            }
-            let valMap = map.get(targetKey);
-            if (!valMap) {
-              valMap = new Map();
-              map.set(targetKey, valMap);
-            }
-            let set = valMap.get(val);
-            if (!set) {
-              set = new Set();
-              valMap.set(val, set);
-            }
-            set.add(idx);
+            indexString(filter, targetKey, val);
           }
         }
       }
