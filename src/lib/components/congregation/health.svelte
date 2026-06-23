@@ -22,7 +22,7 @@
     <Tooltip.Provider>
       <Tooltip.Root>
         <Tooltip.Trigger>
-          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground rtl:mx-1" /></span>
+          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current rtl:mx-1" /></span>
           <span class="sr-only">{m[`health_${health.protocol}`]()}</span>
         </Tooltip.Trigger>
         <Tooltip.Content>
