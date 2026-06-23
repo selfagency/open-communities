@@ -65,9 +65,9 @@ export function captureException(
       message = error;
     } else {
       try {
-        message = JSON.stringify(error);
+        message = JSON.stringify(error, Object.keys(error as object));
       } catch {
-        message = String(error);
+        message = `[${typeof error}]`;
       }
     }
     const err = error instanceof Error ? error : new Error(message);
