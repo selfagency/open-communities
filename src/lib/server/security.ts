@@ -41,6 +41,7 @@ const CSP_DIRECTIVES = {
     '*.opencommunities.info',
     'd1sdjtjk6xzm7.cloudfront.net',
     'data:',
+    'fonts.bunny.net',
     'fonts.cdnfonts.com',
     'fonts.googleapis.com',
     'fonts.gstatic.com',
@@ -82,6 +83,7 @@ const CSP_DIRECTIVES = {
   ],
   'style-src-elem': [
     '*.opencommunities.info',
+    'fonts.bunny.net',
     'fonts.cdnfonts.com',
     'fonts.googleapis.com',
     "'self'",

@@ -33,4 +33,4 @@
   <title>{m.addCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
-<AddForm {form} content={data.content} mode="add" user={data.user as UsersRecord & { id: string }} />
+<AddForm {form} content={data.content} mode="add" user={data.user} />

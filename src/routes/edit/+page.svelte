@@ -43,4 +43,4 @@
   mode="edit"
   deletion={data.form!.delete}
   transfer={data.form!.transfer}
-  user={data.user as UsersRecord & { id: string }} />
+  user={data.user} />

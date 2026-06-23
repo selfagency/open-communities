@@ -138,6 +138,7 @@ yarn-error.log*
 .env.dynamic
 .posthog-events.json
 .zed/
+.claude/
 skills-lock.json
 posthog-setup-report.md
 e2e/pocketbase/pb_data/data.db
