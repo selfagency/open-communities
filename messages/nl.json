@@ -247,5 +247,12 @@
   "passwordRequirements": "Het wachtwoord moet minimaal 12 tekens lang zijn en één hoofdletter, één kleine letter, één cijfer en één symbool bevatten (!@#$%^&amp;*, enz.).",
   "passwordRequirementsFailed": "Niet voldaan aan de wachtwoordvereisten",
   "passwordDescription": "Je wachtwoord moet minimaal 12 tekens lang zijn en ten minste één hoofdletter, één kleine letter en één cijfer bevatten.",
-  "denomination_other": "Ander"
+  "denomination_other": "Ander",
+  "learnMore": "Leer meer",
+  "loading": "Laden...",
+  "noOptions": "Geen opties beschikbaar",
+  "noResults": "Geen resultaten gevonden.",
+  "pagination": "Paginering",
+  "paginationNext": "Ga naar de volgende pagina",
+  "paginationPrevious": "Ga naar de vorige pagina"
 }

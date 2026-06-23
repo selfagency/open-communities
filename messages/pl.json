@@ -247,5 +247,12 @@
   "passwordRequirements": "Hasło musi mieć co najmniej 12 znaków i zawierać jedną wielką literę, jedną małą literę, jedną cyfrę i jeden symbol (!@#$%^&amp;*, itd.)",
   "passwordRequirementsFailed": "Wymagania dotyczące hasła nie zostały spełnione",
   "passwordDescription": "Twoje hasło musi mieć co najmniej 12 znaków i zawierać co najmniej jedną wielką literę, jedną małą literę i jedną cyfrę.",
-  "denomination_other": "Inny"
+  "denomination_other": "Inny",
+  "learnMore": "Dowiedz się więcej",
+  "loading": "Ładowanie...",
+  "noOptions": "Brak dostępnych opcji",
+  "noResults": "Nie znaleziono wyników.",
+  "pagination": "Paginacja",
+  "paginationNext": "Przejdź do następnej strony",
+  "paginationPrevious": "Przejdź do poprzedniej strony"
 }

@@ -247,5 +247,12 @@
   "passwordRequirements": "Le mot de passe doit comporter au moins 12 caractères et inclure une lettre majuscule, une lettre minuscule, un chiffre et un symbole (!@#$%^&amp;*, etc.).",
   "passwordRequirementsFailed": "Exigences relatives au mot de passe non respectées",
   "passwordDescription": "Votre mot de passe doit comporter au moins 12 caractères et contenir au moins une lettre majuscule, une lettre minuscule et un chiffre.",
-  "denomination_other": "Autre"
+  "denomination_other": "Autre",
+  "learnMore": "Apprendre encore plus",
+  "loading": "Chargement...",
+  "noOptions": "Aucune option disponible",
+  "noResults": "Aucun résultat trouvé.",
+  "pagination": "Pagination",
+  "paginationNext": "Passer à la page suivante",
+  "paginationPrevious": "Aller à la page précédente"
 }

@@ -247,5 +247,12 @@
   "passwordRequirements": "A senha deve ter no mínimo 12 caracteres e conter uma letra maiúscula, uma letra minúscula, um número e um símbolo (!@#$%^&amp;*, etc.).",
   "passwordRequirementsFailed": "Requisitos de senha não atendidos",
   "passwordDescription": "Sua senha deve ter no mínimo 12 caracteres e conter pelo menos uma letra maiúscula, uma letra minúscula e um número.",
-  "denomination_other": "Outro"
+  "denomination_other": "Outro",
+  "learnMore": "Saber mais",
+  "loading": "Carregando...",
+  "noOptions": "Nenhuma opção disponível",
+  "noResults": "Nenhum resultado encontrado.",
+  "pagination": "Paginação",
+  "paginationNext": "Acesse a próxima página.",
+  "paginationPrevious": "Ir para a página anterior"
 }

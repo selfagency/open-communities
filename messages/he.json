@@ -247,5 +247,12 @@
   "passwordRequirements": "הסיסמה חייבת להיות באורך של לפחות 12 תווים ולהכיל אות גדולה אחת, אות קטנה אחת, מספר אחד וסמל אחד (!@#$%^&amp;* וכו').",
   "passwordRequirementsFailed": "דרישות הסיסמה לא מולאו",
   "passwordDescription": "הסיסמה שלך חייבת להיות באורך של לפחות 12 תווים ולהכיל לפחות אות גדולה אחת, אות קטנה אחת ומספר אחד.",
-  "denomination_other": "אַחֵר"
+  "denomination_other": "אַחֵר",
+  "learnMore": "למידע נוסף",
+  "loading": "טעינה...",
+  "noOptions": "אין אפשרויות זמינות",
+  "noResults": "לא נמצאו תוצאות.",
+  "pagination": "דִפּוּף",
+  "paginationNext": "עבור לעמוד הבא",
+  "paginationPrevious": "עבור לעמוד הקודם"
 }

@@ -247,5 +247,12 @@
   "passwordRequirements": "La contraseña debe tener al menos 12 caracteres y contener una letra mayúscula, una letra minúscula, un número y un símbolo (!@#$%^&amp;*, etc.).",
   "passwordRequirementsFailed": "No se cumplen los requisitos de contraseña.",
   "passwordDescription": "Tu contraseña debe tener al menos 12 caracteres y contener como mínimo una letra mayúscula, una letra minúscula y un número.",
-  "denomination_other": "Otro"
+  "denomination_other": "Otro",
+  "learnMore": "Más información",
+  "loading": "Cargando...",
+  "noOptions": "No hay opciones disponibles",
+  "noResults": "No se encontraron resultados.",
+  "pagination": "Paginación",
+  "paginationNext": "Ir a la página siguiente",
+  "paginationPrevious": "Ir a la página anterior"
 }

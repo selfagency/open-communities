@@ -247,5 +247,12 @@
   "passwordRequirements": "Das Passwort muss mindestens 12 Zeichen lang sein und einen Großbuchstaben, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen (!@#$%^&amp;* usw.) enthalten.",
   "passwordRequirementsFailed": "Passwortanforderungen nicht erfüllt",
   "passwordDescription": "Ihr Passwort muss mindestens 12 Zeichen lang sein und mindestens einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten.",
-  "denomination_other": "Andere"
+  "denomination_other": "Andere",
+  "learnMore": "Mehr erfahren",
+  "loading": "Laden...",
+  "noOptions": "Keine Optionen verfügbar",
+  "noResults": "Keine Ergebnisse gefunden.",
+  "pagination": "Pagination",
+  "paginationNext": "Weiter zur nächsten Seite",
+  "paginationPrevious": "Zur vorherigen Seite"
 }

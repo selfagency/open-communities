@@ -247,5 +247,12 @@
   "passwordRequirements": "A jelszónak legalább 12 karakter hosszúnak kell lennie, és tartalmaznia kell egy nagybetűt, egy kisbetűt, egy számot és egy szimbólumot (!@#$%^&amp;*, stb.).",
   "passwordRequirementsFailed": "Jelszókövetelmények nem teljesülnek",
   "passwordDescription": "A jelszavadnak legalább 12 karakter hosszúnak kell lennie, és tartalmaznia kell legalább egy nagybetűt, egy kisbetűt és egy számot.",
-  "denomination_other": "Más"
+  "denomination_other": "Más",
+  "learnMore": "Tudj meg többet",
+  "loading": "Terhelés...",
+  "noOptions": "Nincsenek elérhető opciók",
+  "noResults": "Nincs találat.",
+  "pagination": "Lapszámozás",
+  "paginationNext": "Ugrás a következő oldalra",
+  "paginationPrevious": "Ugrás az előző oldalra"
 }
