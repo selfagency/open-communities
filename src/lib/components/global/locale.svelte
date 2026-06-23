@@ -84,10 +84,10 @@
 </script>
 
 <DropdownMenu.Root>
-  <DropdownMenu.Trigger class={mode === 'mini' ? 'button' : buttonClass}
+  <DropdownMenu.Trigger class={mode === 'mini' ? 'text-foreground underline-offset-4 hover:underline inline-flex items-center gap-2 px-4 py-2 text-sm' : buttonClass}
   >
-    <LocaleIcon class="h-4 w-4 stroke-muted-foreground" />
-      <span class={(mode === "mini" ? "" : "max-[720px]:hidden") + "text-muted-foreground"}>{code}</span>
+    <LocaleIcon class="h-4 w-4 {mode === 'mini' ? 'text-foreground' : 'stroke-muted-foreground'}" />
+      <span class={(mode === "mini" ? "text-foreground" : "max-[720px]:hidden text-muted-foreground")}>{code}</span>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>

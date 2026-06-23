@@ -33,6 +33,7 @@
   {#if user?.congregation && !user?.admin}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'default'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto(`/edit?id=${user?.congregation}`);
@@ -42,6 +43,7 @@
   {:else}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'default'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto('/add');
@@ -53,6 +55,7 @@
   {#if user?.email}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'outline'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto('/logout');
@@ -62,6 +65,7 @@
   {:else}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'outline'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
         await goto('/login');
@@ -72,7 +76,7 @@
   {/if}
 
   <Locale mode={viewMode} />
-  <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full' : ''}">
+  <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full px-4' : ''}">
     <span class="flex flex-row items-center justify-start space-x-1">
       <SunIcon class="h-4 w-4 text-muted-foreground" />
       <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />

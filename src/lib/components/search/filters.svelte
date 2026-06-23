@@ -149,7 +149,7 @@
 
 <Popover.Root>
   <Popover.Trigger
-    class="button space-x-2 text-muted-foreground outline rtl:mx-1"
+    class="button space-x-2 text-muted-foreground border-muted-foreground/25! hover:bg-muted-background outline rtl:mx-1"
   >
     <FilterIcon size="18" class="rtl:mx-1" />
     <span>{m.filter()}</span>

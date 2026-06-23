@@ -4,6 +4,7 @@
   import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
   import { Button } from '$lib/components/ui/button';
   import type { Location } from '$lib/location';
+  import { darkStyle, lightStyle } from '$lib/map-styles';
   import type { Search } from '$lib/search';
   import type { LocationMeta } from '$lib/types.d';
 
@@ -37,11 +38,7 @@
     return [-90, 10] as LngLatLike;
   });
 
-  const mapStyle = $derived(
-    mode.current === 'dark'
-      ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-      : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
-  );
+  const mapStyle = $derived(mode.current === 'dark' ? darkStyle : lightStyle);
 
   const zoom = $derived.by(() => {
     const loc = $searchState.searchLocation;
@@ -88,23 +85,22 @@
     {#each locations as { city, country, latitude, longitude, state } (city?.id)}
       <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
         <Popup offset={[0, -10]}>
-          <Button
-            variant="ghost"
-            class="h-full min-h-max w-full"
-            onclick={() => {
+          <button
+            class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
+            onclick={async () => {
               search.state.setKey('showLocation', true);
-              location.load({
+              await location.load({
                 city: city?.id,
                 country: country?.id,
                 state: state?.id
               });
+              const loc = location.state.get();
+              search.setSearchLocation(loc.record);
             }}>
-            <span class="text-xs">
-              {#if city}{city.name},{/if}
-              {#if state}{state.name},{/if}
-              {#if country}{country.name}{/if}
-            </span>
-          </Button>
+            {#if city}{city.name},{/if}
+            {#if state}{state.name},{/if}
+            {#if country}{country.name}{/if}
+          </button>
         </Popup>
       </DefaultMarker>
     {/each}
