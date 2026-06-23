@@ -136,3 +136,4 @@ yarn-error.log*
 .opencode/magic-context/historian
 .tmp
 .env.dynamic
+.posthog-events.json
