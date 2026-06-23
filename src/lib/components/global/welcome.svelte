@@ -10,10 +10,10 @@
 
 <div
   class="relative mt-4 mb-16 flex min-h-56 w-full flex-col items-center justify-center rounded-xl bg-muted p-12 sm:mt-12 sm:mb-24 space-y-4">
-  <Find class="absolute -top-10 -left-5 hidden w-24 fill-foreground sm:block sm:w-32 lg:-left-10" />
-  <Inclusive class="absolute -right-5 -bottom-10 hidden w-24 fill-foreground sm:block sm:w-32 lg:-right-10" />
+  <Find class="absolute -top-10 -left-5 hidden w-24 fill-slate-800 sm:block sm:w-32 lg:-left-10" />
+  <Inclusive class="absolute -right-5 -bottom-10 hidden w-24 fill-slate-800 sm:block sm:w-32 lg:-right-10" />
 
-  <h1 class="pointer-events-none w-full text-center text-xl sm:max-w-[80%] sm:text-3xl md:text-4xl lg:text-5xl">
+  <h1 class="pointer-events-none w-full text-center text-2xl sm:max-w-[80%] sm:text-3xl md:text-4xl lg:text-5xl">
     {m.home_blurb()}
   </h1>
 
