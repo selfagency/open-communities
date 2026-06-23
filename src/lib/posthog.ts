@@ -1,5 +1,5 @@
 import posthog from 'posthog-js';
-import { isEmpty } from 'radashi';
+import type { Properties } from 'posthog-js';
 
 import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';
@@ -7,11 +7,11 @@ import type { UsersResponse } from '$lib/pocketbase.d';
 
 /**
  * Initialize PostHog analytics. Safe to call multiple times — `posthog.init()`
- * is idempotent. Call once on first boot from the root layout load function.
+ * is idempotent. Called once on first boot from `hooks.client.ts` init().
  *
  * Uses the reverse proxy at PUBLIC_POSTHOG_HOST (shomer.opencommunities.info)
- * as api_host, with ui_host pointing to the same instance so toolbar features
- * work correctly.
+ * as api_host, with ui_host pointing to the canonical PostHog UI so toolbar
+ * features work correctly.
  */
 export function initPosthog(user?: UsersResponse) {
   if (!browser || !env.PUBLIC_POSTHOG_KEY) return;
@@ -31,34 +31,37 @@ export function initPosthog(user?: UsersResponse) {
       posthog.identify(user.id);
     }
   } catch (e) {
-    console.error('[PostHog] Init failed (non-blocking):', e);
+    console.error('[PostHog] init failed (non-blocking):', e);
   }
 }
 
-export async function captureException(
+/**
+ * Capture a client-side exception via PostHog's native captureException API.
+ *
+ * No-ops when:
+ * - Running outside the browser (SSR)
+ * - PostHog is not yet initialised (missing key or init() not yet called)
+ *
+ * Non-Error values are coerced to Error so PostHog's exception processor can
+ * parse the stack, apply grouping rules, and enrich the event automatically.
+ *
+ * @param error          The thrown value (Error or unknown)
+ * @param event          Optional navigation event — pathname forwarded as $exception_url
+ * @param additionalProperties  Any extra PostHog properties to attach (e.g. errorId)
+ */
+export function captureException(
   error: unknown,
   event?: { url?: { pathname?: string } },
-  message?: string
-): Promise<void> {
+  additionalProperties?: Properties
+): void {
+  if (!browser || !posthog.__loaded) return;
   try {
-    if (!isEmpty(posthog) && posthog.__loaded) {
-      const err = error as Error;
-      const errorData = {
-        message: err?.message || message || 'Unknown error',
-        name: err?.name || 'UnknownError',
-        stack: err?.stack || new Error().stack,
-        url: event?.url?.pathname || 'unknown',
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
-      };
-
-      posthog.capture('$exception', {
-        $exception_message: errorData.message,
-        $exception_stack_trace_raw: errorData.stack,
-        $exception_type: errorData.name,
-        $exception_url: errorData.url,
-        $exception_user_agent: errorData.userAgent
-      });
-    }
+    const err = error instanceof Error ? error : new Error(String(error ?? 'Unknown error'));
+    const props: Properties = {
+      ...(event?.url?.pathname ? { $exception_url: event.url.pathname } : {}),
+      ...additionalProperties
+    };
+    posthog.captureException(err, props);
   } catch (captureError) {
     console.error('[PostHog] captureException failed:', captureError);
   }

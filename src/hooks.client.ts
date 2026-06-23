@@ -1,25 +1,38 @@
 /* region imports */
-import posthog from 'posthog-js';
 import { dev } from '$app/environment';
-import { initPosthog } from '$lib/posthog';
+import { captureException, initPosthog } from '$lib/posthog';
 import { log } from '$lib/utils';
 /* endregion imports */
 
+/**
+ * SvelteKit client init hook — runs once before the app mounts.
+ * Initialises PostHog without a user; identity is set later via
+ * initPosthog(user) if a session becomes available.
+ */
 export async function init() {
   initPosthog();
 }
 
 export const handleError = async ({ error, event, message, status }) => {
   if (status !== 404) {
-    if (dev) log.debug('event', event);
-    log.error(error);
-    // Use posthog-js's native captureException per official PostHog Svelte docs
-    posthog.captureException(error);
+    const errorId = crypto.randomUUID();
+    const err = error as Error;
+    const url = event?.url?.pathname ?? 'unknown';
+
+    // Structured label gives immediate triage context in the console:
+    // [500] TypeError: Cannot read properties of undefined @ /edit (uuid)
+    log.error(`[${status}] ${err?.name ?? 'Error'}: ${err?.message ?? message ?? 'unknown'} @ ${url} (${errorId})`);
+
+    if (dev && err?.stack) {
+      log.debug(err.stack);
+    }
+
+    captureException(error, event, { errorId });
   }
 
   return {
     message,
-    ...(dev ? { stack: (<Error>error)?.stack } : {}),
+    ...(dev ? { stack: (error as Error)?.stack } : {}),
     status
   };
 };
