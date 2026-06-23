@@ -32,11 +32,11 @@
     </Tooltip.Provider>
   {/if}
 {:else}
-  <div class="col-span-3">
+  <div class="col-span-4">
     <h2 class="label">{m.health()}</h2>
   </div>
 
-  <ul class="col-span-9 space-y-2">
+  <ul class="col-span-8 space-y-2">
     {#if health?.protocol === "other" && health?.otherText === "N/A"}
       {m.health_notApplicable()}
     {:else}

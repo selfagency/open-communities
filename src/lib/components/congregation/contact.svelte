@@ -18,10 +18,10 @@
   /* endregion variables */
 </script>
 
-<div class="col-span-3 flex flex-row items-center justify-start">
+<div class="col-span-4 flex flex-row items-center justify-start">
   <h2 class="label">{m.contact()}</h2>
 </div>
-<div class="col-span-9 flex flex-row items-center justify-start">
+<div class="col-span-8 flex flex-row items-center justify-start">
   {#if contactEmail}
     <a
       href="mailto:{contactEmail}"

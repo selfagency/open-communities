@@ -219,10 +219,10 @@
 
             <div class="grid grid-cols-12 gap-4 text-sm">
               {#if congregation.denomination}
-                <div class="col-span-3 flex flex-row items-start justify-start">
+                <div class="col-span-4 flex flex-row items-start justify-start">
                   <h2 class="label">{m.denomination_affiliation()}</h2>
                 </div>
-                <div class="col-span-9 flex flex-row items-start justify-start">
+                <div class="col-span-8 flex flex-row items-start justify-start">
                   {(m as Record<string, (args?: unknown) => string>)[
                     `denomination_${congregation.denomination}`
                   ]()}
@@ -252,10 +252,10 @@
           <div transition:fade>
             <div class="grid grid-cols-12 gap-4 text-sm">
               {#if congregation.clergy}
-                <div class="col-span-3 flex flex-row items-start justify-start">
+                <div class="col-span-4 flex flex-row items-start justify-start">
                   <h2 class="label">{m.clergy_clergy()}</h2>
                 </div>
-                <div class="col-span-9 flex flex-row items-start justify-start">
+                <div class="col-span-8 flex flex-row items-start justify-start">
                   {congregation.clergy}
                 </div>
               {/if}
@@ -306,10 +306,10 @@
                 {#if fit.flag || health.protocol || !allFalse(accessibility) || !allFalse(security)}
                   <Separator class="col-span-12" />
                 {/if}
-                <div class="col-span-3 flex flex-row items-start justify-start">
+                <div class="col-span-4 flex flex-row items-start justify-start">
                   <h2 class="label">{m.notes()}</h2>
                 </div>
-                <div class="col-span-9 flex flex-row items-start justify-start">
+                <div class="col-span-8 flex flex-row items-start justify-start">
                   <p>{@html DOMPurify.sanitize(notes)}</p>
                 </div>
               {/if}
