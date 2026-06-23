@@ -18,10 +18,11 @@ function getPhClient(): null | PostHog {
   return _phClient;
 }
 
-// Graceful shutdown on process exit
-process.once('beforeExit', () => {
-  closePhClient();
-});
+// Graceful shutdown — flush pending events before exit
+// beforeExit covers natural exit; SIGTERM/SIGINT covers deployment signals
+process.once('beforeExit', closePhClient);
+process.once('SIGTERM', closePhClient);
+process.once('SIGINT', closePhClient);
 
 export async function capture(user: string | undefined, event: string) {
   const phClient = getPhClient();
@@ -40,13 +41,8 @@ export async function captureException(error: unknown, user?: string, other?: Re
   if (!phClient) return;
 
   try {
-    let message: string;
-    if (typeof error === 'string') {
-      message = error;
-    } else if (!(error instanceof Error)) {
-      message = JSON.stringify(error);
-    }
-    const errMsg = error instanceof Error ? error : new Error(message);
+    const errMsg =
+      error instanceof Error ? error : new Error(typeof error === 'string' ? error : JSON.stringify(error));
     phClient.captureException(errMsg, user ?? 'anonymous', other);
     await phClient.flush();
   } catch (phError) {
