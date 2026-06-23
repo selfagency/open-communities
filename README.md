@@ -71,13 +71,13 @@ Made with:
 
 - [Sveltekit](https://kit.svelte.dev/)
 - [Tailwind CSS](https://tailwindcss.com)
-- [nanostores](https://github.com/nanostores/nanostores)
+- [Stately](https://github.com/selfagency/stately)
 - [shadcn-svelte](https://shadcn-svelte.com) and [Bits UI](https://bits-ui.com)
 - [svelte-maplibre](https://github.com/dimfeld/svelte-maplibre) and [MapLibre](https://github.com/maplibre/maplibre-gl-js)
 - [Superforms](https://superforms.rocks/) and [Formsnap](https://formsnap.dev/)
 - [Radashi](https://radashi.js.org/)
 
-Fonts provided by [The Braille Institute](https://www.brailleinstitute.org/freefont/) and [Prioritype Co.](https://www.behance.net/gallery/119990601/Magilio-A-Chic-Serif-Fonts)
+Fonts provided by [Nathatype](https://nathatype.com/) and [Mozilla](https://github.com/mozilla/mozilla-text-type).
 
 Icons by [Lucide](https://lucide.dev/) and [The Noun Project](https://thenounproject.com/) (Ferifrey, Agarunov Oktay-Abraham, filosovis, and Arthur Shlain)
 

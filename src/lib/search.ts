@@ -305,45 +305,47 @@ export class Search {
     return inner;
   }
 
+  /** Index a bool-typed child table record (services, security, accessibility). */
+  private _indexBoolRecord(key: string, record: Record<string, unknown>, idx: number): void {
+    const sub = record[key];
+    if (!sub) return;
+    for (const subKey of Object.keys(sub)) {
+      if (subKey === '__proto__' || subKey === 'constructor') continue;
+      if (sub[subKey]) {
+        const inner = this._ensureInner(this.boolIndex, key, () => new Map());
+        const set = this._ensureInner(inner, subKey, () => new Set<number>());
+        set.add(idx);
+      }
+    }
+  }
+
+  /** Index a string-typed child table value into the string index. */
+  private _indexStringValue(filter: string, targetKey: string, val: string, idx: number): void {
+    const map = this._ensureInner(this.stringIndex, filter, () => new Map());
+    const valMap = this._ensureInner(map, targetKey, () => new Map<string, Set<number>>());
+    const set = this._ensureInner(valMap, val, () => new Set<number>());
+    set.add(idx);
+  }
+
   /** Build lookup indexes so boolFilter/stringFilter don't scan all records. */
   private _buildIndexes(): void {
     this.data.forEach((record, idx) => {
-      // Bool filters: services, security, accessibility
       for (const key of ['services', 'security', 'accessibility'] as const) {
-        const sub = record[key];
-        if (sub) {
-          for (const subKey of Object.keys(sub)) {
-            if (subKey === '__proto__' || subKey === 'constructor') continue;
-            if (sub[subKey]) {
-              const inner = this._ensureInner(this.boolIndex, key, () => new Map());
-              const set = this._ensureInner(inner, subKey, () => new Set<number>());
-              set.add(idx);
-            }
-          }
-        }
+        this._indexBoolRecord(key, record, idx);
       }
-
-      // String filters: denomination, health.protocol, registration.registrationType
-      const indexString = (filter: string, targetKey: string, val: string) => {
-        const map = this._ensureInner(this.stringIndex, filter, () => new Map());
-        const valMap = this._ensureInner(map, targetKey, () => new Map<string, Set<number>>());
-        const set = this._ensureInner(valMap, val, () => new Set<number>());
-        set.add(idx);
-      };
 
       const denom = record.denomination;
       if (denom) {
-        indexString('denomination', 'denomination', denom);
+        this._indexStringValue('denomination', 'denomination', denom, idx);
       }
 
       for (const filter of ['health', 'registration'] as const) {
         const sub = record[filter];
-        if (sub) {
-          const targetKey = filter === 'health' ? 'protocol' : 'registrationType';
-          const val = sub[targetKey as keyof typeof sub];
-          if (val && typeof val === 'string') {
-            indexString(filter, targetKey, val);
-          }
+        if (!sub) continue;
+        const targetKey = filter === 'health' ? 'protocol' : 'registrationType';
+        const val = sub[targetKey as keyof typeof sub];
+        if (val && typeof val === 'string') {
+          this._indexStringValue(filter, targetKey, val, idx);
         }
       }
     });

@@ -2,6 +2,7 @@ import { HttpResponse, http } from 'msw';
 
 import { allPages } from '../../data/pages';
 
+// MSW mock handlers run locally — http is required
 const PB = 'http://*:8090';
 
 export const pageHandlers = [

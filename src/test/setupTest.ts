@@ -54,7 +54,7 @@ if (typeof window !== 'undefined') {
         (URLCtor as unknown as { createObjectURL: () => string }).createObjectURL = () => 'blob://test';
       }
     }
-  } catch (_e) {
+  } catch {
     // be resilient in very locked-down environments
   }
 }
@@ -207,7 +207,7 @@ vi.mock('$lib/paraglide/messages', () => {
     {},
     {
       get: (_target: unknown, prop: unknown) => {
-        const key = String(prop);
+        const key = typeof prop === 'string' ? prop : String(prop);
         return () => key;
       }
     }

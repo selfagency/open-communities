@@ -12,8 +12,8 @@
  */
 
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync, mkdtempSync } from 'node:fs';
-import { resolve, dirname, join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
 
@@ -21,7 +21,7 @@ const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '../..');
 const PB = process.env.PUBLIC_API_ENDPOINT || 'http://localhost:8090';
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
-const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX';
+const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || process.env.PB_TEST_PASSWORD_FALLBACK || 'i3_NL-dfzzFt5TX';
 const CONTAINER = 'e2e-pocketbase-1';
 const SCHEMA_PATH = resolve(ROOT, 'pb_schema.json');
 

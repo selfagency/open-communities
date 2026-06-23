@@ -40,7 +40,9 @@ export async function captureException(error: unknown, user?: string, other?: Re
   if (!phClient) return;
 
   try {
-    phClient.captureException(error instanceof Error ? error : new Error(String(error)), user ?? 'anonymous', other);
+    const errMsg =
+      error instanceof Error ? error : new Error(typeof error === 'string' ? error : JSON.stringify(error));
+    phClient.captureException(errMsg, user ?? 'anonymous', other);
     await phClient.flush();
   } catch (phError) {
     log.error('PostHog captureException failed:', phError);

@@ -36,12 +36,12 @@ migrate((app) => {
   const other = create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, admin: false, lang: 'en', emailVisibility: true });
 
   // Congregations
-  const acc1 = create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true });
-  const fit1 = create('fit', { youngFamilies: true, youngAdults: true, seniors: true, singles: true, interfaith: true, lgbtq: true, beginners: true, families: true });
-  const health1 = create('health', { requiresVax: true, hasAirPurification: true });
-  const reg1 = create('registration', { maxCapacity: 500 });
-  const sec1 = create('security', { securityPresent: true, secureEntry: true, cctv: true, guards: true, emergencyPlan: true });
-  const svc1 = create('services', { fridayNight: true, saturdayMorning: true, holiday: true, hybrid: true, online: true, timeFridayNight: '18:30', timeSaturdayMorning: '09:30' });
+  create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true });
+  create('fit', { youngFamilies: true, youngAdults: true, seniors: true, singles: true, interfaith: true, lgbtq: true, beginners: true, families: true });
+  create('health', { requiresVax: true, hasAirPurification: true });
+  create('registration', { maxCapacity: 500 });
+  create('security', { securityPresent: true, secureEntry: true, cctv: true, guards: true, emergencyPlan: true });
+  create('services', { fridayNight: true, saturdayMorning: true, holiday: true, hybrid: true, online: true, timeFridayNight: '18:30', timeSaturdayMorning: '09:30' });
 
   create('congregations', {
     name: 'Shalom Congregation', clergy: 'rabbi', denomination: 'reform', flavor: 'egalitarian',
@@ -50,7 +50,7 @@ migrate((app) => {
     visible: true, owner: regular.getId(),
   });
 
-  const svc2 = create('services', { fridayNight: true, holiday: true });
+  create('services', { fridayNight: true, holiday: true });
   create('congregations', {
     name: 'Private Minyan', clergy: 'lay-led', denomination: 'conservative', flavor: 'traditional',
     contactName: 'Private Member', contactEmail: 'private@example.test',
@@ -58,7 +58,7 @@ migrate((app) => {
     visible: false, owner: regular.getId(),
   });
 
-  const svc3 = create('services', { saturdayMorning: true, holiday: true });
+  create('services', { saturdayMorning: true, holiday: true });
   create('congregations', {
     name: 'Other Community', clergy: 'rabbi', denomination: 'orthodox', flavor: 'modern',
     contactName: 'Other Rabbi', contactEmail: 'other@example.test',
@@ -66,9 +66,9 @@ migrate((app) => {
     visible: true, owner: other.getId(),
   });
 
-  const acc4 = create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true });
-  const fit4 = create('fit', { interfaith: true, lgbtq: true });
-  const reg4 = create('registration', { requiresRegistration: true });
+  create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true });
+  create('fit', { interfaith: true, lgbtq: true });
+  create('registration', { requiresRegistration: true });
   create('services', { fridayNight: true, hybrid: true, online: true, timeFridayNight: '19:00' });
   create('congregations', {
     name: 'Online Gathering', clergy: '', denomination: 'reconstructionist', flavor: 'online',

@@ -34,7 +34,7 @@ vi.mock('$lib/paraglide/messages', () => {
     {},
     {
       get: (_target: unknown, prop: unknown) => {
-        const key = String(prop);
+        const key = typeof prop === 'string' ? prop : String(prop);
         return () => key;
       }
     }

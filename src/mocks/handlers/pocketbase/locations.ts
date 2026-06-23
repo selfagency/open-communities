@@ -2,6 +2,7 @@ import { HttpResponse, http } from 'msw';
 
 import { allCities, countries, findCitiesByState, findStatesByCountry, states } from '../../data/locations';
 
+// MSW mock handlers run locally — http is required
 const PB = 'http://*:8090';
 
 export const locationHandlers = [
@@ -24,7 +25,8 @@ export const locationHandlers = [
     let items = states;
 
     // Handle PB filter: country={:country}
-    const countryMatch = filter.match(/country\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/);
+    const countryRe = /country\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
+    const countryMatch = countryRe.exec(filter);
     if (countryMatch) {
       items = findStatesByCountry(countryMatch[1]);
     }

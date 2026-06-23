@@ -2,7 +2,7 @@ import { HttpResponse, http } from 'msw';
 
 import { allUsers, findUserByEmail, findUserById, regularUser } from '../../data/users';
 
-// MSW mock handlers run locally — http is required for the mock server
+// MSW mock handlers run locally — http is required
 const PB = 'http://*:8090';
 
 export const userHandlers = [

@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { mode } from 'mode-watcher';
   /* region imports */
   import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
-  import { mode } from 'mode-watcher';
   import { Button } from '$lib/components/ui/button';
   import type { Location } from '$lib/location';
   import type { Search } from '$lib/search';

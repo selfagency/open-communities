@@ -3,6 +3,7 @@ import { HttpResponse, http } from 'msw';
 import type { CongregationFixture } from '../../data/congregations';
 import { allCongregations, congregationMetaViews, findCongregationById } from '../../data/congregations';
 
+// MSW mock handlers run locally — http is required
 const PB = 'http://*:8090';
 
 export const congregationHandlers = [
@@ -10,8 +11,8 @@ export const congregationHandlers = [
   http.get(`${PB}/api/collections/congregationMeta/records`, ({ request }) => {
     const url = new URL(request.url);
     const filter = url.searchParams.get('filter') ?? '';
-    const page = parseInt(url.searchParams.get('page') ?? '1', 10);
-    const perPage = parseInt(url.searchParams.get('perPage') ?? '50', 10);
+    const page = Number.parseInt(url.searchParams.get('page') ?? '1', 10);
+    const perPage = Number.parseInt(url.searchParams.get('perPage') ?? '50', 10);
 
     let items = congregationMetaViews;
 
@@ -45,7 +46,7 @@ export const congregationHandlers = [
       collectionId: 'pbc_congregations',
       collectionName: 'congregations',
       created: new Date().toISOString(),
-      id: `rec_${Math.random().toString(36).slice(2, 17)}`,
+      id: `rec_${crypto.randomUUID().replace(/-/g, '').slice(0, 15)}`,
       updated: new Date().toISOString(),
       ...body
     };
