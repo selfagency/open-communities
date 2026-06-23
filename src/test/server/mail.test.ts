@@ -2,7 +2,7 @@
 
 import { spawn } from 'node:child_process';
 import { sleep, uid } from 'radashi';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import type {
   Collections,
@@ -16,9 +16,20 @@ vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
   default: '<!doctype html><html><body>%MESSAGE%</body></html>'
 }));
 
+// Unmock nodemailer — mail test needs real SMTP transport to Mailpit
+vi.unmock('nodemailer');
+
+// Bypass MSW for Mailpit API calls (localhost:8025)
+import { http, passthrough } from 'msw';
+import { server } from '../../mocks/node';
+
+beforeAll(() => {
+  server.use(http.all('http://localhost:8025/*', () => passthrough()));
+});
+
 // (use shared mocks in src/test/mocks)
 
-import { adminMail, transactionalMail } from './mail';
+import { adminMail, transactionalMail } from '$lib/server/mail';
 
 async function ensureMailpitRunning() {
   const check = async () => {
