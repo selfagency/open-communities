@@ -118,13 +118,14 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Override display font for Hebrew — Suez One has better Hebrew glyph support */
+[dir="rtl"] {
+  --font-display: 'Suez One';
+}
+
 @layer base {
   [dir="rtl"] * {
     direction: rtl;
-  }
-
-  [dir="rtl"] {
-    --font-display: 'Suez One';
   }
   * {
     @apply border-border;
