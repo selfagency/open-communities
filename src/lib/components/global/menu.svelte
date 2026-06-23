@@ -72,6 +72,7 @@
     </Button>
   {/if}
 
+  {#if dev}<Locale mode={viewMode} />{/if}
   <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full' : ''}">
     <span class="flex flex-row items-center justify-start space-x-1">
       <SunIcon class="h-4 w-4 text-muted-foreground" />
@@ -79,5 +80,4 @@
       <MoonIcon class="h-4 w-4 text-muted-foreground" />
     </span>
   </div>
-  {#if dev}<Locale mode={viewMode} />{/if}
 </div>
