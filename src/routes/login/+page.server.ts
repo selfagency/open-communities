@@ -92,7 +92,7 @@ export const actions = {
 
     try {
       if (!form.valid) {
-        log.error('form invalid', form);
+        log.error('form invalid', { errors: form.errors });
         return fail(400, {
           form
         });

@@ -311,7 +311,7 @@ export const actions = {
 
     try {
       if (!form.valid) {
-        log.error('form', form);
+        log.error('form invalid', { errors: form.errors });
         throw new Error('Invalid form data');
       }
 

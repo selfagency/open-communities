@@ -21,6 +21,10 @@ export async function getCachedCountries<T>(
   }
   const data = await api.collection('countries').getFullList(opts);
   _countriesCache.set(cacheKey, { data, timestamp: Date.now() });
+  // Prune stale entries
+  for (const [k, v] of _countriesCache) {
+    if (Date.now() - v.timestamp > COUNTRIES_CACHE_TTL_MS * 2) _countriesCache.delete(k);
+  }
   return data;
 }
 
@@ -44,6 +48,10 @@ export async function getCachedCongregations<T>(
   }
   const data = await api.collection('congregationMeta').getFullList(opts);
   _congregationCache.set(cacheKey, { data, timestamp: Date.now() });
+  // Prune stale entries
+  for (const [k, v] of _congregationCache) {
+    if (Date.now() - v.timestamp > CONGREGATION_CACHE_TTL_MS * 2) _congregationCache.delete(k);
+  }
   return data;
 }
 

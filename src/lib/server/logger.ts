@@ -50,9 +50,7 @@ const log = logger.getSubLogger({
 /* endregion variables */
 
 async function logEvent(statusCode: number, event: RequestEvent) {
-  const requestLogger = log.getSubLogger({
-    name: `request_${crypto.randomUUID()}`
-  });
+  const requestId = crypto.randomUUID();
 
   try {
     // Skip logging for internal requests
@@ -79,7 +77,13 @@ async function logEvent(statusCode: number, event: RequestEvent) {
       try {
         const refererUrl = new URL(referer);
         const refererHostname = refererUrl.hostname;
-        if (refererHostname === 'localhost' || refererHostname === env.PUBLIC_HOSTNAME) {
+        let appHostname: string | undefined;
+        try {
+          appHostname = new URL(env.PUBLIC_HOSTNAME ?? '').hostname;
+        } catch {
+          /* env not set */
+        }
+        if (refererHostname === 'localhost' || (appHostname && refererHostname === appHostname)) {
           referer = refererUrl.pathname;
         }
       } catch {
@@ -110,7 +114,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
       userAgent: event.request.headers.get('user-agent')
     };
 
-    requestLogger[error ? 'error' : 'info']('request', shake(logData));
+    log[error ? 'error' : 'info']('request', shake({ ...logData, requestId }));
   } catch (err) {
     log.error(err);
   }

@@ -3,6 +3,7 @@
 import { fail } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
+import { dev } from '$app/environment';
 import { m } from '$lib/paraglide/messages';
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import { contactSchema } from '$lib/schemas/contact';
@@ -77,15 +78,21 @@ export const actions = {
       }
 
       try {
+        const reasonKey = `contactOptions_${form.data.reason}` as keyof typeof m;
+        const reasonFn = m[reasonKey];
+        if (typeof reasonFn !== 'function') {
+          return fail(400, { form, error: 'Invalid reason' });
+        }
+
         await adminMail(
           {
             email: form.data.email,
             message: `
-					${m[`contactOptions_${form.data.reason}`]()}
+					${(reasonFn as (...args: unknown[]) => string)()}
 
 					${form.data.message}
 
-					https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${form.data.email}` : ''}
+					https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${encodeURIComponent(form.data.email)}` : ''}
 					`,
             name: form.data.name,
             subject: `Contact form: ${form.data.reason}`
@@ -97,7 +104,7 @@ export const actions = {
           await captureException(error, client?.id);
         }
         return fail(400, {
-          error,
+          error: dev ? error : 'An error occurred',
           form
         });
       }

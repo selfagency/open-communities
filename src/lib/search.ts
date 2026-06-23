@@ -1,7 +1,7 @@
 /* region imports */
 
 import Fuzzy from '@leeoniya/ufuzzy';
-import { alphabetical, isEmpty, isEqual, shake, unique } from 'radashi';
+import { alphabetical, isEmpty, isEqual, shake } from 'radashi';
 
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
@@ -128,7 +128,8 @@ export class Search {
             return cityMatch && countryMatch && stateMatch;
           })
           .map((i) => i.id);
-        resultIds = resultIds.filter((i) => locationIds.includes(i));
+        const locationIdSet = new Set(locationIds);
+        resultIds = resultIds.filter((i) => locationIdSet.has(i));
       }
 
       // Filter by Search Text — uses pre-built corpus, no per-call allocation
@@ -137,14 +138,16 @@ export class Search {
           this.fuzzy
             ?.filter(this.searchStrings, (state.searchTerms as string)?.toLowerCase())
             ?.map((i) => this.data[i].id) || [];
-        resultIds = resultIds.filter((i) => searchIds.includes(i));
+        const searchIdSet = new Set(searchIds);
+        resultIds = resultIds.filter((i) => searchIdSet.has(i));
       }
 
       // Apply All Other Filters
       resultIds = this.applyAllFilters(state, resultIds);
 
+      const resultIdSet = new Set(resultIds);
       return alphabetical(
-        this.data.filter((record) => unique(resultIds).includes(record.id)),
+        this.data.filter((record) => resultIdSet.has(record.id)),
         (i) => i.name
       );
     });

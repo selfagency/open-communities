@@ -108,11 +108,8 @@ export const actions = {
       await adminMail(
         {
           email: client.email,
-          message: `
-\t\t\t\t\t\tA new congregation, ${record.name}, has been submitted and requires approval:\\n
-\t\t\t\t\t\thttps://opencommunities.info/edit?id=${record.id}
-\t\t\t\t\t`,
-          name: client.name as string,
+          message: `A new congregation, ${record.name}, has been submitted and requires approval:\nhttps://opencommunities.info/edit?id=${record.id}`,
+          name: client.name ?? '',
           subject: `New congregation submitted`
         },
         api
@@ -130,10 +127,6 @@ export const actions = {
       log.error('add:submit:error', error);
 
       const err = error as ClientResponseError;
-
-      if (err.message === 'Invalid captcha') {
-        setError(form, 'captcha', m.invalidCaptcha());
-      }
 
       if (err.message === 'Failed to create record.') {
         setError(form, 'name', m.exists());

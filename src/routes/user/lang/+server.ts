@@ -15,9 +15,9 @@ export async function POST({ cookies, locals, request }) {
   const { api, captureException } = locals;
   const client = api?.authStore?.record;
 
-  // CSRF protection: reject requests with an origin that does not match the app host
+  // CSRF protection: reject requests with no or mismatched origin
   const origin = request.headers.get('origin');
-  if (origin && origin !== env.PUBLIC_HOSTNAME) {
+  if (!origin || origin !== env.PUBLIC_HOSTNAME) {
     return json({ error: 'Forbidden' }, { status: 403 });
   }
 

@@ -5,6 +5,8 @@ import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import type { UsersResponse } from '$lib/pocketbase.d';
 
+let _initialized = false;
+
 /**
  * Initialize PostHog analytics. Safe to call multiple times — `posthog.init()`
  * is idempotent. Called once on first boot from `hooks.client.ts` init().
@@ -26,6 +28,8 @@ export function initPosthog(user?: UsersResponse) {
       capture_pageview: false,
       persistence: 'localStorage'
     });
+
+    _initialized = true;
 
     if (user) {
       posthog.identify(user.id);
@@ -54,7 +58,7 @@ export function captureException(
   event?: { url?: { pathname?: string } },
   additionalProperties?: Properties
 ): void {
-  if (!browser || !posthog.__loaded) return;
+  if (!browser || !_initialized) return;
   try {
     const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : JSON.stringify(error));
     const props: Properties = {

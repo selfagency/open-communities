@@ -20,7 +20,7 @@ describe('user/lang +server', () => {
 
     const request = new Request('http://localhost/user/lang', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'invalid' })
     });
 
@@ -46,7 +46,7 @@ describe('user/lang +server', () => {
 
     const request = new Request('http://localhost/user/lang', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'en', user: 'other-user' })
     });
 
@@ -71,7 +71,7 @@ describe('user/lang +server', () => {
 
     const request = new Request('http://localhost/user/lang', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'es' })
     });
 
@@ -97,7 +97,7 @@ describe('user/lang +server', () => {
 
     const request = new Request('http://localhost/user/lang', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'en' })
     });
 
@@ -125,7 +125,7 @@ describe('user/lang +server', () => {
 
     const request = new Request('http://localhost/user/lang', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'en' })
     });
 

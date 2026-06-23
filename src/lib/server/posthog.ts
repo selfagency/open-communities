@@ -30,7 +30,6 @@ export async function capture(user: string | undefined, event: string) {
 
   try {
     phClient.capture({ distinctId: user ?? 'anonymous', event });
-    await phClient.flush();
   } catch (error) {
     log.error('PostHog capture failed:', error);
   }
@@ -45,11 +44,10 @@ export async function captureException(error: unknown, user?: string, other?: Re
     try {
       fallbackMessage = typeof error === 'string' ? error : JSON.stringify(error);
     } catch {
-      fallbackMessage = typeof error === 'string' ? error : JSON.stringify(error);
+      fallbackMessage = String(error);
     }
     const errMsg = error instanceof Error ? error : new Error(fallbackMessage);
     phClient.captureException(errMsg, user ?? 'anonymous', other);
-    await phClient.flush();
   } catch (phError) {
     log.error('PostHog captureException failed:', phError);
   }

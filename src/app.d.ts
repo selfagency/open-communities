@@ -6,7 +6,7 @@ import { Logger } from 'tslog';
 import type { $ZodType, output } from 'zod/v4/core';
 import '@poppanator/sveltekit-svg/dist/svg';
 
-import type { CongregationMetaRecord, PagesRecord, TypedPocketBase } from '$lib/pocketbase.d';
+import type { CongregationMetaRecord, PagesRecord, TypedPocketBase, UsersResponse } from '$lib/pocketbase.d';
 import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/schemas';
 
 /* endregion imports */
@@ -24,11 +24,7 @@ declare global {
     interface Locals {
       api: TypedPocketBase;
       capture: (user: string | undefined, event: string) => Promise<void>;
-      captureException: (
-        error: Error | unknown,
-        user?: string,
-        other?: Record<string, number | string>
-      ) => Promise<void>;
+      captureException: (error: unknown, user?: string, other?: Record<string, number | string>) => Promise<void>;
       cookieOpts: SerializeOptions & { path: string };
       error?: string;
       errorId?: string;
@@ -54,7 +50,7 @@ declare global {
       login?: SuperValidated<LoginSchema>;
       offline?: boolean;
       signup?: SuperValidated<UserSchema>;
-      user?: Record<string, unknown> | null;
+      user?: UsersResponse | null;
       verify?: SuperValidated<TokenSchema>;
     }
 

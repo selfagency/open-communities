@@ -30,7 +30,7 @@ export const tokenSchema = z
         thing: m.token()
       })
     }),
-    type: z.string()
+    type: z.enum(['requestReset', 'resetPassword', 'verifyEmail'])
   })
   .superRefine((data, ctx) => {
     if (data.passwordConfirm !== data.password) {

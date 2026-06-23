@@ -43,14 +43,12 @@ describe('server/posthog', () => {
     const { capture } = await import('../../lib/server/posthog');
     await capture('user-1', 'test-event');
     expect(ph().capture).toHaveBeenCalledWith({ distinctId: 'user-1', event: 'test-event' });
-    expect(ph().flush).toHaveBeenCalled();
   });
 
   it('capture uses anonymous distinct id when user is undefined', async () => {
     const { capture } = await import('../../lib/server/posthog');
     await capture(undefined, 'pageview');
     expect(ph().capture).toHaveBeenCalledWith({ distinctId: 'anonymous', event: 'pageview' });
-    expect(ph().flush).toHaveBeenCalled();
   });
 
   it('captureException sends error through PostHog client', async () => {
@@ -58,7 +56,6 @@ describe('server/posthog', () => {
     const error = new Error('test error');
     await captureException(error, 'user-1');
     expect(ph().captureException).toHaveBeenCalledWith(error, 'user-1', undefined);
-    expect(ph().flush).toHaveBeenCalled();
   });
 
   it('captureException wraps non-Error in Error', async () => {

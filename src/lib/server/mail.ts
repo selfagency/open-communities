@@ -152,8 +152,7 @@ function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo>
   };
 
   if (SMTP_USER && SMTP_PASS) {
-    // biome-ignore lint/suspicious/noExplicitAny: nodemailer transport auth typing
-    (transportOpts as any).auth = { pass: SMTP_PASS, user: SMTP_USER };
+    transportOpts.auth = { pass: SMTP_PASS, user: SMTP_USER };
   }
 
   _transporter = nodemailer.createTransport(transportOpts);
