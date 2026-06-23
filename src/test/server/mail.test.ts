@@ -167,7 +167,7 @@ async function findMessageBySubject(subject: string) {
   return undefined;
 }
 
-describe.skipIf(!process.env.MAILPIT_API)('src/lib/server/mail', () => {
+describe('src/lib/server/mail', () => {
   it('sends transactional email via SMTP (mailpit)', async () => {
     await ensureMailpitRunning();
 
