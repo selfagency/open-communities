@@ -1,10 +1,11 @@
 <script lang="ts">
+  import posthog from 'posthog-js';
   import { fade } from 'svelte/transition';
   /* region imports */
   import { toast } from 'svelte-sonner';
   import { type SuperValidated, superForm } from 'sveltekit-superforms';
 
-  import { dev } from '$app/environment';
+  import { browser, dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Loading from '$lib/components/global/loading.svelte';
@@ -56,6 +57,9 @@
     async onUpdate({ result }) {
       setState({ loadingSecondary: false });
       if (result.type === 'success') {
+        if (browser && result.data?.user?.id) {
+          posthog.identify(result.data.user.id);
+        }
         toast.success(m.loginSuccess());
         await goto('/');
       } else {

@@ -25,7 +25,8 @@
     "test:browser": "pnpx dotenv-cli -e .env.test -- vitest run --project browser",
     "test:setup": "pnpx dotenv-cli -e .env.test -- node e2e/cap/setup-captcha.mjs",
     "test:e2e": "pnpx dotenv-cli -e .env.test -e .env.e2e -- playwright test --config e2e/playwright.config.mjs",
-    "machine-translate": "inlang machine translate --project project.inlang"
+    "machine-translate": "inlang machine translate --project project.inlang",
+    "test": "vitest"
   },
   "dependencies": {
     "@deck.gl/core": "^9.3.4",

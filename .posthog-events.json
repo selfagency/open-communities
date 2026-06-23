@@ -1,0 +1,12 @@
+[
+  {
+    "event_name": "login",
+    "event_description": "User successfully authenticated with email and password.",
+    "file": "src/routes/login/+page.server.ts"
+  },
+  {
+    "event_name": "logout",
+    "event_description": "User explicitly logged out of their session.",
+    "file": "src/routes/logout/+page.svelte"
+  }
+]

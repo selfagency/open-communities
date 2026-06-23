@@ -84,7 +84,7 @@ export const actions = {
   },
   login: async (event) => {
     const { cookies, fetch, locals } = event;
-    const { api, captureException, cookieOpts, log } = locals;
+    const { api, capture, captureException, cookieOpts, log } = locals;
     const client = api?.authStore?.record;
 
     const form = await locals.validate(event, loginSchema);
@@ -109,6 +109,10 @@ export const actions = {
       // Use the same cookieOpts from locals to ensure consistency
       cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);
       cookies.set('session', crypto.randomUUID(), cookieOpts);
+
+      if (isFunction(capture)) {
+        await capture((user as UsersRecord & { id: string }).id, 'login');
+      }
 
       return {
         form,

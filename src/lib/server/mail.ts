@@ -143,7 +143,7 @@ export async function transactionalMail({ email, message, name, subject }: Trans
 function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo> {
   if (_transporter) return _transporter;
 
-  const smtpPort = parseInt(SMTP_PORT as string, 10);
+  const smtpPort = Number.parseInt(SMTP_PORT as string, 10);
   const transportOpts: SMTPTransport.Options = {
     host: SMTP_HOST as string,
     port: smtpPort,

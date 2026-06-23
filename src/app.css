@@ -182,7 +182,7 @@
 
 /* Override display font for Hebrew — Suez One has better Hebrew glyph support */
 [dir="rtl"] {
-  --font-serif: "Suez One" !important;
+  --font-serif: "Suez One", serif !important;
 }
 
 [dir="rtl"] h1,
@@ -191,7 +191,7 @@
 [dir="rtl"] h4,
 [dir="rtl"] h5,
 [dir="rtl"] .label {
-  font-family: "Suez One" !important;
+  font-family: "Suez One", serif !important;
 }
 
 @layer base {
@@ -295,7 +295,7 @@ body {
 /* [&_svg] rules kept separate from @apply — tailwind4 CSS parser can't handle nested selectors after @apply */
 .button svg {
   pointer-events: none;
-  shrink: 0;
+  flex-shrink: 0;
 }
 
 .button svg:not([class*="size-"]) {

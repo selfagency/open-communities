@@ -19,7 +19,8 @@ export function initPosthog(user?: UsersResponse) {
   try {
     posthog.init(env.PUBLIC_POSTHOG_KEY, {
       api_host: env.PUBLIC_POSTHOG_HOST,
-      ui_host: env.PUBLIC_POSTHOG_HOST,
+      ui_host: 'https://us.posthog.com',
+      defaults: '2026-01-30',
       capture_exceptions: true,
       capture_pageleave: false,
       capture_pageview: false,
