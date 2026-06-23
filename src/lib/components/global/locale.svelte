@@ -36,7 +36,7 @@
   // locals
   let lang = $state("en" as UsersLangOptions);
 
-  const code = $derived(lang.toUpperCase());
+  const code = $derived(lang?.toUpperCase() ?? '');
 
   const serverLang = $derived(page.data.lang);
   /* endregion variables */

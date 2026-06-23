@@ -49,7 +49,7 @@ describe('Combobox', () => {
     const trigger = screen.getByRole('combobox');
     await userEvent.click(trigger);
 
-    expect(await screen.findByText('No options available')).toBeInTheDocument();
+    expect(await screen.findByText('noOptions')).toBeInTheDocument();
   });
 
   it('does not open when disabled', async () => {
