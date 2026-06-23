@@ -22,7 +22,7 @@
     <Tooltip.Provider>
       <Tooltip.Root>
         <Tooltip.Trigger>
-          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current rtl:mx-1" /></span>
+          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-1" /></span>
           <span class="sr-only">{m[`health_${health.protocol}`]()}</span>
         </Tooltip.Trigger>
         <Tooltip.Content>
@@ -42,14 +42,14 @@
     {:else}
       {#if health?.protocol === "maskingRecommended"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-2" /></span>
+          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-2" /></span>
           <span>{m.health_maskingRecommended()}</span>
         </li>
       {/if}
 
       {#if health?.protocol === "maskingRequired"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><MaskIcon class="mt-1 h-5 w-5 rtl:mx-2" /></span>
+          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-2" /></span>
           <span>{m.health_maskingRequired()}</span>
         </li>
       {/if}

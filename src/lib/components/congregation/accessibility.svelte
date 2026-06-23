@@ -78,7 +78,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger>
-            <AslIcon class="h-4 w-4 text-muted-foreground fill-current rtl:mx-1" />
+            <AslIcon class="h-4 w-4 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-1" />
             <span class="sr-only">{m.accessibility_asl()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -132,7 +132,7 @@
     {#if asl}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <AslIcon class="h-4 w-4 text-muted-foreground fill-current rtl:mx-2" />
+          <AslIcon class="h-4 w-4 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-2" />
           <span class="sr-only">{m.accessibility_asl()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">
