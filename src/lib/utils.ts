@@ -33,7 +33,7 @@ export function truncateText(text: unknown, limit: number = 32, ellipses: boolea
   if (!text || typeof text !== 'string') {
     return '';
   } else {
-    const opts = { ellipsis: '…', limit };
+    const opts = { ellipsis: '...', limit };
     const sliced = fstw(text, opts);
     return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
   }

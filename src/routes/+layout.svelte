@@ -2,10 +2,10 @@
   /* region imports */
   import '../app.css';
 
+  import { ModeWatcher } from 'mode-watcher';
   import posthog from 'posthog-js';
   import type { Snippet } from 'svelte';
   import { onMount, untrack } from 'svelte';
-
   import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
   import Footer from '$lib/components/global/footer.svelte';
@@ -103,4 +103,5 @@
   <Footer />
 </div>
 
+<ModeWatcher />
 <Toaster />
