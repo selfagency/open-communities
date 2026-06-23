@@ -46,7 +46,7 @@ jobs:
           cache: true
           push: true
           env: |
-            POSTHOG_CLI_TOKEN=${{ secrets.POSTHOG_CLI_TOKEN }}, POSTHOG_CLI_ENV_ID=${{ secrets.POSTHOG_CLI_ENV_ID }}
+            POSTHOG_CLI_TOKEN=${{ secrets.POSTHOG_CLI_TOKEN }}, POSTHOG_CLI_ENV_ID=${{ secrets.POSTHOG_CLI_ENV_ID }}, POSTHOG_CLI_API_KEY=${{ secrets.POSTHOG_CLI_API_KEY }}, POSTHOG_CLI_PROJECT_ID=${{ secrets.POSTHOG_CLI_PROJECT_ID }}, POSTHOG_CLI_HOST=${{ secrets.POSTHOG_CLI_HOST }}
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}

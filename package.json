@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "build:maps": "pnpm run build && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap inject --directory ./build && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap upload --directory ./build --delete-after",
     "build:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite build",
     "build:types": "pnpx pocketbase-typegen --db ./pb_data/data.db --out ./src/lib/pocketbase.d.ts",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

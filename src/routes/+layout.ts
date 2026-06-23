@@ -1,7 +1,5 @@
 /* region imports */
 import { browser } from '$app/environment';
-import type { UsersResponse } from '$lib/pocketbase.d';
-import { initPosthog } from '$lib/posthog';
 import { initState, setState } from '$lib/stores';
 
 /* endregion imports */
@@ -12,7 +10,6 @@ export const load = async ({ data }) => {
   if (browser) {
     if (!_initialized) {
       // Full init only on first boot
-      initPosthog(data.user as UsersResponse);
       initState(data.user?.lang);
       _initialized = true;
     } else if (data.user?.lang) {

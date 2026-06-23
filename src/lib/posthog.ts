@@ -24,7 +24,6 @@ export function initPosthog(user?: UsersResponse) {
       capture_exceptions: true,
       capture_pageleave: false,
       capture_pageview: false,
-      autocapture: false,
       persistence: 'localStorage'
     });
 
