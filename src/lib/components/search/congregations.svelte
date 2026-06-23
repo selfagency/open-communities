@@ -1,31 +1,30 @@
 <script lang="ts">
-
-  import WarningIcon from 'lucide-svelte/icons/circle-alert';
-  import ClearIcon from 'lucide-svelte/icons/circle-x';
-  import LocationIcon from 'lucide-svelte/icons/globe';
-  import SearchIcon from 'lucide-svelte/icons/search';
+  import WarningIcon from "@lucide/svelte/icons/circle-alert";
+  import ClearIcon from "@lucide/svelte/icons/circle-x";
+  import LocationIcon from "@lucide/svelte/icons/globe";
+  import SearchIcon from "@lucide/svelte/icons/search";
   /* region imports */
-  import { alphabetical, isEmpty, sleep, unique } from 'radashi';
-  import { onMount, tick, untrack } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import { dev } from '$app/environment';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/state';
-  import CongregationCard from '$lib/components/congregation/congregation.svelte';
-  import { Button } from '$lib/components/ui/button';
-  import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
-  import * as Pagination from '$lib/components/ui/pagination';
-  import { Location as LocationService } from '$lib/location';
-  import { m } from '$lib/paraglide/messages';
-  import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-  import { Search } from '$lib/search';
-  import { state as appState } from '$lib/stores';
-  import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
+  import { alphabetical, isEmpty, sleep, unique } from "radashi";
+  import { onMount, tick, untrack } from "svelte";
+  import { fade } from "svelte/transition";
+  import { dev } from "$app/environment";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/state";
+  import CongregationCard from "$lib/components/congregation/congregation.svelte";
+  import { Button } from "$lib/components/ui/button";
+  import { Input } from "$lib/components/ui/input";
+  import { Label } from "$lib/components/ui/label";
+  import * as Pagination from "$lib/components/ui/pagination";
+  import { Location as LocationService } from "$lib/location";
+  import { m } from "$lib/paraglide/messages";
+  import type { CongregationMetaRecord } from "$lib/pocketbase.d";
+  import { Search } from "$lib/search";
+  import { state as appState } from "$lib/stores";
+  import type { LocationMeta, SearchData, SearchState } from "$lib/types.d";
 
-  import Filters from './filters.svelte';
-  import Location from './location.svelte';
-  import Map from './map.svelte';
+  import Filters from "./filters.svelte";
+  import Location from "./location.svelte";
+  import Map from "./map.svelte";
 
   /* endregion imports */
 
@@ -38,12 +37,15 @@
   // id is handled via +page.svelte load → resolved before this component mounts
   const search = new Search(page.data.congregations as SearchData[], dev);
   const { results, state: searchState } = search;
-  const location = new LocationService({ countries: page.data.countries, search: search });
+  const location = new LocationService({
+    countries: page.data.countries,
+    search: search,
+  });
   const open: Record<string, boolean> = {};
 
   // locals
   let loading = $state(true);
-  let searchTerms = $state('');
+  let searchTerms = $state("");
   let currentPage = $state(1);
   let perPage = $state(9);
   let isPaging = $state(false);
@@ -72,16 +74,26 @@
       const allLocations = resultsValue
         .filter((l) => {
           const location = l.location as LocationMeta;
-          return [location.city?.name, location.state?.name, location.country?.name].every((l) => !isEmpty(l));
+          return [
+            location.city?.name,
+            location.state?.name,
+            location.country?.name,
+          ].every((l) => !isEmpty(l));
         })
         .map((l) => {
           const location = l.location as LocationMeta;
           return {
             city: location.city,
             country: location.country,
-            latitude: location.city?.latitude || location.state?.latitude || location.country?.latitude,
-            longitude: location.city?.longitude || location.state?.longitude || location.country?.longitude,
-            state: location.state
+            latitude:
+              location.city?.latitude ||
+              location.state?.latitude ||
+              location.country?.latitude,
+            longitude:
+              location.city?.longitude ||
+              location.state?.longitude ||
+              location.country?.longitude,
+            state: location.state,
           };
         }) as LocationMeta[];
       return unique(allLocations, (l) => l.city?.id as string);
@@ -103,14 +115,18 @@
   onMount(async () => {
     await tick();
     // Handle ?id= query param — open the congregation card directly
-    const id = page.url.searchParams.get('id');
+    const id = page.url.searchParams.get("id");
     if (id) {
       searchTerms = id;
       open[id] = true;
       // Clean up the URL without navigating
       const url = new URL(page.url);
-      url.searchParams.delete('id');
-      goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true });
+      url.searchParams.delete("id");
+      goto(url.pathname + url.search, {
+        replaceState: true,
+        noScroll: true,
+        keepFocus: true,
+      });
     }
     await sleep(200); // brief delay so the fade-in transition renders
     loading = false;
@@ -135,10 +151,15 @@
 
 <section class="w-full space-y-4">
   {#if loading}
-    <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+    <div
+      class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      aria-busy="true"
+    >
       {#each skeletons as s}
         <div class="col-span-1">
-          <div class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-white p-4">
+          <div
+            class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-white p-4"
+          >
             <div class="space-y-2">
               <div class="h-5 w-3/4 rounded bg-slate-200"></div>
               <div class="h-3 w-1/2 rounded bg-slate-200"></div>
@@ -159,8 +180,11 @@
   {:else}
     <div
       class="flex w-full flex-col items-center justify-between space-y-4 space-x-0 sm:flex-row sm:space-y-0 sm:space-x-4 rtl:sm:space-x-0"
-      transition:fade={{ delay: 300, duration: 300 }}>
-      <div class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500">
+      transition:fade={{ delay: 300, duration: 300 }}
+    >
+      <div
+        class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500"
+      >
         <Label for="search" class="flex w-8 items-center justify-center">
           <SearchIcon size="20" />
           <span class="sr-only">{m.search()}</span>
@@ -170,16 +194,20 @@
             placeholder={m.search()}
             bind:value={searchTerms}
             id="search"
-            class="w-full placeholder:text-gray-500" />
+            class="w-full placeholder:text-gray-500"
+          />
 
-          <span class="absolute top-0 z-10 h-10 w-10 ltr:right-1 rtl:left-1 rtl:mx-1">
+          <span
+            class="absolute top-0 z-10 h-10 w-10 ltr:right-1 rtl:left-1 rtl:mx-1"
+          >
             <Button
               variant="link"
               class="text-slate-500 hover:text-slate-600"
               onclick={() => {
-                searchTerms = '';
+                searchTerms = "";
                 search.setSearchTerms(searchTerms);
-              }}>
+              }}
+            >
               <ClearIcon size="16" />
               <span class="sr-only">{m.clear()}</span>
             </Button>
@@ -187,13 +215,16 @@
         </span>
       </div>
 
-      <div class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto">
+      <div
+        class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto"
+      >
         <Button
           variant="outline"
-          class={`space-x-2 text-slate-500 rtl:mx-1 ${$searchState.showLocation ? 'bg-slate-100' : ''}`}
+          class={`space-x-2 text-slate-500 rtl:mx-1 ${$searchState.showLocation ? "bg-slate-100" : ""}`}
           onclick={() => {
             search.toggleLocation();
-          }}>
+          }}
+        >
           <LocationIcon size="20" class="rtl:mx-1" />
           <span>{m.location()}</span>
         </Button>
@@ -212,29 +243,44 @@
     </div>
 
     {#if $results?.length === 0}
-      <div class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500">
+      <div
+        class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
+      >
         <WarningIcon size="20" />
         <span>{m.nothingFound()}</span>
       </div>
     {:else if pages?.length > 0}
-      <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" class:blurred={isPaging}>
-        {#each pages[currentPage - 1] as congregation (congregation.id + '-' + currentPage)}
+      <div
+        class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        class:blurred={isPaging}
+      >
+        {#each pages[currentPage - 1] as congregation (congregation.id + "-" + currentPage)}
           <div class="col-span-1">
-            <CongregationCard {congregation} open={open[congregation.id] ?? false} />
+            <CongregationCard
+              {congregation}
+              open={open[congregation.id] ?? false}
+            />
           </div>
         {/each}
       </div>
     {/if}
 
-    <div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
-      <Pagination.Root count={$results?.length || 0} {perPage} {onPageChange} siblingCount={isMobile ? 0 : 1}>
+    <div
+      class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100"
+    >
+      <Pagination.Root
+        count={$results?.length || 0}
+        {perPage}
+        {onPageChange}
+        siblingCount={isMobile ? 0 : 1}
+      >
         {#snippet children({ currentPage, pages })}
           <Pagination.Content>
             <Pagination.Item>
               <Pagination.PrevButton />
             </Pagination.Item>
             {#each pages as page (page.key)}
-              {#if page.type === 'ellipsis'}
+              {#if page.type === "ellipsis"}
                 <Pagination.Item>
                   <Pagination.Ellipsis />
                 </Pagination.Item>

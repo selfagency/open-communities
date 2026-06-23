@@ -1,10 +1,10 @@
 <script lang="ts">
   /* region imports */
-  import WebIcon from 'lucide-svelte/icons/globe';
-  import EmailIcon from 'lucide-svelte/icons/mail';
-  import { Button } from '$lib/components/ui/button';
-  import { m } from '$lib/paraglide/messages';
-  import type { RegistrationRecord } from '$lib/pocketbase.d';
+  import WebIcon from "@lucide/svelte/icons/globe";
+  import EmailIcon from "@lucide/svelte/icons/mail";
+  import { Button } from "$lib/components/ui/button";
+  import { m } from "$lib/paraglide/messages";
+  import type { RegistrationRecord } from "$lib/pocketbase.d";
 
   /* endregion imports */
 
@@ -21,15 +21,15 @@
 <div class="col-span-9 flex flex-col items-start justify-between space-y-2">
   {#if registration?.registrationType}
     <div class="flex flex-row items-center justify-start space-x-4">
-      {#if registration.registrationType === 'fixedPrice'}
+      {#if registration.registrationType === "fixedPrice"}
         <span>{m.registration_fixedPrice()}</span>
-      {:else if registration.registrationType === 'free'}
+      {:else if registration.registrationType === "free"}
         <span>{m.registration_free()}</span>
-      {:else if registration.registrationType === 'slidingScale'}
+      {:else if registration.registrationType === "slidingScale"}
         <span>{m.registration_slidingScale()}</span>
-      {:else if registration.registrationType === 'suggestedDonation'}
+      {:else if registration.registrationType === "suggestedDonation"}
         <span>{m.registration_suggestedDonation()}</span>
-      {:else if registration.registrationType === 'other'}
+      {:else if registration.registrationType === "other"}
         <span>{registration.otherText}</span>
       {:else}
         {m.unspecified()}
@@ -42,7 +42,8 @@
       <Button
         variant="outline"
         href="mailto:{registration.email}"
-        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500">
+        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
+      >
         <span><EmailIcon size="16" /></span>
         <span>{m.email()}</span>
       </Button>
@@ -52,7 +53,8 @@
         variant="outline"
         href={registration.url}
         target="_blank"
-        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500">
+        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
+      >
         <span><WebIcon size="16" /></span>
         <span>{m.website()}</span>
       </Button>

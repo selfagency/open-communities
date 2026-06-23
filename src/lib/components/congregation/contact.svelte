@@ -1,8 +1,8 @@
 <script lang="ts">
   /* region imports */
-  import EmailIcon from 'lucide-svelte/icons/mail';
+  import EmailIcon from "@lucide/svelte/icons/mail";
 
-  import { m } from '$lib/paraglide/messages';
+  import { m } from "$lib/paraglide/messages";
 
   /* endregion imports */
 
@@ -10,7 +10,7 @@
   // props
   const {
     contactEmail,
-    contactName
+    contactName,
   }: {
     contactEmail?: string;
     contactName?: string;
@@ -23,7 +23,10 @@
 </div>
 <div class="col-span-9 flex flex-row items-center justify-start">
   {#if contactEmail}
-    <a href="mailto:{contactEmail}" class="flex flex-row items-center justify-center space-x-1 hover:text-slate-500">
+    <a
+      href="mailto:{contactEmail}"
+      class="flex flex-row items-center justify-center space-x-1 hover:text-slate-500"
+    >
       <span><EmailIcon size="18" /></span>
       <span>
         {#if contactName}

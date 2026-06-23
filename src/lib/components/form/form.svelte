@@ -1,36 +1,39 @@
 <script lang="ts">
-
-  import DOMPurify from 'isomorphic-dompurify';
-  import WarningIcon from 'lucide-svelte/icons/circle-alert';
-  import { sleep } from 'radashi';
-  import { getContext, onMount, untrack } from 'svelte';
-  import { fade } from 'svelte/transition';
+  import WarningIcon from "@lucide/svelte/icons/circle-alert";
+  import DOMPurify from "isomorphic-dompurify";
+  import { sleep } from "radashi";
+  import { getContext, onMount, untrack } from "svelte";
+  import { fade } from "svelte/transition";
   /* region imports */
-  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
-  import { browser, dev } from '$app/environment';
-  import Captcha from '$lib/components/global/captcha.svelte';
-  import Loading from '$lib/components/global/loading.svelte';
-  import * as Accordion from '$lib/components/ui/accordion';
-  import * as Alert from '$lib/components/ui/alert';
-  import { Button } from '$lib/components/ui/button';
-  import * as Card from '$lib/components/ui/card';
-  import * as Form from '$lib/components/ui/form';
-  import { Switch } from '$lib/components/ui/switch';
-  import { createInitForm } from '$lib/forms/defaults';
-  import { m } from '$lib/paraglide/messages';
-  import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
-  import { state as appState, setState } from '$lib/stores';
+  import type { SuperForm, SuperValidated } from "sveltekit-superforms";
+  import { browser, dev } from "$app/environment";
+  import Captcha from "$lib/components/global/captcha.svelte";
+  import Loading from "$lib/components/global/loading.svelte";
+  import * as Accordion from "$lib/components/ui/accordion";
+  import * as Alert from "$lib/components/ui/alert";
+  import { Button } from "$lib/components/ui/button";
+  import * as Card from "$lib/components/ui/card";
+  import * as Form from "$lib/components/ui/form";
+  import { Switch } from "$lib/components/ui/switch";
+  import { createInitForm } from "$lib/forms/defaults";
+  import { m } from "$lib/paraglide/messages";
+  import type {
+    CongregationMetaRecord,
+    PagesRecord,
+    UsersRecord,
+  } from "$lib/pocketbase.d";
+  import { state as appState, setState } from "$lib/stores";
 
-  import Delete from './delete.svelte';
-  import Accessibility from './segments/accessibility.svelte';
-  import Congregation from './segments/congregation.svelte';
-  import Contact from './segments/contact.svelte';
-  import Fit from './segments/fit.svelte';
-  import Health from './segments/health.svelte';
-  import Registration from './segments/registration.svelte';
-  import Security from './segments/security.svelte';
-  import Services from './segments/services.svelte';
-  import Transfer from './transfer.svelte';
+  import Delete from "./delete.svelte";
+  import Accessibility from "./segments/accessibility.svelte";
+  import Congregation from "./segments/congregation.svelte";
+  import Contact from "./segments/contact.svelte";
+  import Fit from "./segments/fit.svelte";
+  import Health from "./segments/health.svelte";
+  import Registration from "./segments/registration.svelte";
+  import Security from "./segments/security.svelte";
+  import Services from "./segments/services.svelte";
+  import Transfer from "./transfer.svelte";
 
   /* endregion imports */
 
@@ -40,27 +43,27 @@
     content,
     deletion,
     form,
-    mode = $bindable('add'),
+    mode = $bindable("add"),
     transfer,
-    user
+    user,
   }: {
     content?: PagesRecord;
     deletion?: SuperValidated<any>;
     form: SuperForm<any, any>;
-    mode: 'add' | 'edit';
+    mode: "add" | "edit";
     transfer?: SuperValidated<any>;
     user: UsersRecord & { id: string };
   } = $props();
 
   // constants
-  const congregation = getContext('congregation') as CongregationMetaRecord;
+  const congregation = getContext("congregation") as CongregationMetaRecord;
 
-                          // svelte-ignore state_referenced_locally -- user prop is stable after mount
-                          const initForm = createInitForm(user);
+  // svelte-ignore state_referenced_locally -- user prop is stable after mount
+  const initForm = createInitForm(user);
 
   // locals
-  let title: string = $state('');
-  let view = $state('congregation') as string;
+  let title: string = $state("");
+  let view = $state("congregation") as string;
   /* endregion variables */
 
   /* region methods */
@@ -80,7 +83,10 @@
   /* region lifecycle */
   onMount(async () => {
     if (browser) {
-      setState({ form: { hasErrors: false, success: false }, loadingSecondary: true });
+      setState({
+        form: { hasErrors: false, success: false },
+        loadingSecondary: true,
+      });
 
       if (!$formData?.id) {
         initData();
@@ -99,10 +105,16 @@
   $effect(() => {
     if (appState.form?.success) {
       title = m.success({
-        thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission().toLowerCase()
+        thing:
+          mode === "edit"
+            ? m.edit().toLowerCase()
+            : m.submission().toLowerCase(),
       });
     } else {
-      title = mode === 'edit' ? m.editThing({ thing: $formData.name as string }) : m.addCongregation();
+      title =
+        mode === "edit"
+          ? m.editThing({ thing: $formData.name as string })
+          : m.addCongregation();
     }
   });
   /* endregion reactivity */
@@ -118,14 +130,21 @@
       {#if loadingSecondary}
         <div
           transition:fade={{ delay: 300, duration: 100 }}
-          class="flex h-full min-h-96 w-full flex-col items-center justify-center">
+          class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+        >
           <Card.Content>
             <Loading />
           </Card.Content>
         </div>
       {:else}
         <div transition:fade={{ delay: 300, duration: 100 }}>
-          <form id="addEdit" method="POST" action="?/submit" use:enhance class="min-h-96">
+          <form
+            id="addEdit"
+            method="POST"
+            action="?/submit"
+            use:enhance
+            class="min-h-96"
+          >
             <Card.Header>
               <Card.Title class="font-display text-2xl font-normal">
                 {title}
@@ -133,11 +152,13 @@
             </Card.Header>
             <Card.Content>
               <div class="flex flex-col items-center justify-start">
-                {#if mode === 'add' && content?.content && !formSuccess}
-                  <div class="prose w-full">{@html DOMPurify.sanitize(content.content)}</div>
+                {#if mode === "add" && content?.content && !formSuccess}
+                  <div class="prose w-full">
+                    {@html DOMPurify.sanitize(content.content)}
+                  </div>
                 {/if}
 
-                {#if mode === 'edit' && !user?.admin}
+                {#if mode === "edit" && !user?.admin}
                   <Alert.Root class="bg-slate-50">
                     <WarningIcon size="18" />
                     <Alert.Description class="mt-0.5">
@@ -146,20 +167,25 @@
                   </Alert.Root>
                 {/if}
 
-                {#if mode === 'add' && formSuccess}
+                {#if mode === "add" && formSuccess}
                   <p aria-live="polite">{m.addSuccessNotice()}</p>
                 {/if}
 
-                {#if mode === 'edit' && formSuccess}
+                {#if mode === "edit" && formSuccess}
                   <p aria-live="polite">{m.editSuccessNotice()}</p>
                 {/if}
 
                 {#if !formSuccess}
                   {#if formHasErrors}
-                    <span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
+                    <span
+                      in:fade={{ delay: 300, duration: 150 }}
+                      out:fade={{ delay: 150, duration: 150 }}
+                    >
                       <Alert.Root variant="destructive" class="my-4 bg-red-50">
                         <WarningIcon size="18" />
-                        <Alert.Description class="mt-0.5" aria-live="polite">{m.formErrors()}</Alert.Description>
+                        <Alert.Description class="mt-0.5" aria-live="polite"
+                          >{m.formErrors()}</Alert.Description
+                        >
                       </Alert.Root>
                     </span>
                   {/if}
@@ -176,17 +202,26 @@
                   </Accordion.Root>
 
                   <!-- visibility -->
-                  <div class="my-4 flex flex-row items-start justify-end w-full">
+                  <div
+                    class="my-4 flex flex-row items-start justify-end w-full"
+                  >
                     {#if user?.admin}
                       <Form.Field {form} name="visible">
                         <Form.Control
                           >{#snippet children(props)}
-                            <span class="flex flex-row items-start justify-start space-x-2">
+                            <span
+                              class="flex flex-row items-start justify-start space-x-2"
+                            >
                               <span>
-                                <Form.Label><strong>{m.approved()}</strong></Form.Label>
+                                <Form.Label
+                                  ><strong>{m.approved()}</strong></Form.Label
+                                >
                               </span>
                               <span>
-                                <Switch {...props} bind:checked={$formData.visible as boolean} />
+                                <Switch
+                                  {...props}
+                                  bind:checked={$formData.visible as boolean}
+                                />
                               </span>
                             </span>
                           {/snippet}
@@ -196,7 +231,7 @@
                     {/if}
                   </div>
 
-                  {#if mode === 'add'}
+                  {#if mode === "add"}
                     <Captcha {form} />
                   {/if}
                 {/if}
@@ -205,20 +240,33 @@
           </form>
 
           <!-- actions -->
-          <Card.Footer class="flex flex-col items-center justify-start space-y-4">
+          <Card.Footer
+            class="flex flex-col items-center justify-start space-y-4"
+          >
             {#if !formSuccess}
-              <div class="flex w-full flex-row items-center justify-between space-x-2">
-                {#if mode === 'edit'}
-                  <div class="flex flex-row items-center justify-start space-x-2">
-                    <Delete data={deletion as SuperValidated<any>} id={$formData?.id as string} />
+              <div
+                class="flex w-full flex-row items-center justify-between space-x-2"
+              >
+                {#if mode === "edit"}
+                  <div
+                    class="flex flex-row items-center justify-start space-x-2"
+                  >
+                    <Delete
+                      data={deletion as SuperValidated<any>}
+                      id={$formData?.id as string}
+                    />
                     <Transfer
                       data={transfer as SuperValidated<any>}
                       id={$formData?.id as string}
-                      owner={congregation.owner} />
+                      owner={congregation.owner}
+                    />
                   </div>
                 {/if}
                 <!-- default -->
-                <div class="flex flex-row items-center justify-end space-x-2" class:w-full={mode === 'add'}>
+                <div
+                  class="flex flex-row items-center justify-end space-x-2"
+                  class:w-full={mode === "add"}
+                >
                   <Button
                     variant="outline"
                     type="reset"
@@ -227,21 +275,23 @@
                       e.stopPropagation();
 
                       untrack(() => {
-                        if (mode === 'add') {
+                        if (mode === "add") {
                           initData();
                         } else {
                           formData.set(congregation);
                         }
                       });
-                    }}>
+                    }}
+                  >
                     {m.reset()}
                   </Button>
                   <Form.Button
                     onclick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      form.submit(document.getElementById('addEdit'));
-                    }}>{m.submit()}</Form.Button>
+                      form.submit(document.getElementById("addEdit"));
+                    }}>{m.submit()}</Form.Button
+                  >
                 </div>
               </div>
             {/if}
@@ -252,8 +302,10 @@
   </Card.Root>
 
   {#if dev}
-    {#await import('sveltekit-superforms') then { default: SuperDebug }}
-      <div class="mt-4"><SuperDebug data={$formData} collapsible collapsed /></div>
+    {#await import("sveltekit-superforms") then { default: SuperDebug }}
+      <div class="mt-4">
+        <SuperDebug data={$formData} collapsible collapsed />
+      </div>
     {/await}
   {/if}
 </section>

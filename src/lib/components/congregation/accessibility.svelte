@@ -1,32 +1,40 @@
 <script lang="ts">
   /* region imports */
-  import AdaIcon from 'lucide-svelte/icons/accessibility';
-  import CcIcon from 'lucide-svelte/icons/captions';
-  import WarningIcon from 'lucide-svelte/icons/circle-alert';
-  import EvaIcon from 'lucide-svelte/icons/languages';
-  import AslIcon from '$lib/assets/asl.svg?component';
-  import * as Tooltip from '$lib/components/ui/tooltip';
-  import { m } from '$lib/paraglide/messages';
-  import type { AccessibilityRecord } from '$lib/pocketbase.d';
+  import AdaIcon from "@lucide/svelte/icons/accessibility";
+  import CcIcon from "@lucide/svelte/icons/captions";
+  import WarningIcon from "@lucide/svelte/icons/circle-alert";
+  import EvaIcon from "@lucide/svelte/icons/languages";
+  import AslIcon from "$lib/assets/asl.svg?component";
+  import * as Tooltip from "$lib/components/ui/tooltip";
+  import { m } from "$lib/paraglide/messages";
+  import type { AccessibilityRecord } from "$lib/pocketbase.d";
 
   /* endregion imports */
 
   /* region variables */
   // props
-  const { accessibility, mode = $bindable('mini') }: { accessibility: AccessibilityRecord; mode?: 'full' | 'mini' } =
-    $props();
+  const {
+    accessibility,
+    mode = $bindable("mini"),
+  }: { accessibility: AccessibilityRecord; mode?: "full" | "mini" } = $props();
 
   // constants
-  const ada = $derived(accessibility.inPerson_adaSome || accessibility.inPerson_adaAll);
-  const cc = $derived(accessibility.online_automatedCaptions || accessibility.online_liveCaptions);
+  const ada = $derived(
+    accessibility.inPerson_adaSome || accessibility.inPerson_adaAll,
+  );
+  const cc = $derived(
+    accessibility.online_automatedCaptions || accessibility.online_liveCaptions,
+  );
   const eva = $derived(accessibility.inPerson_eva);
   const asl = $derived(accessibility.inPerson_asl || accessibility.online_asl);
   const other = $derived(accessibility.otherText);
   /* endregion variables */
 </script>
 
-{#if mode === 'mini'}
-  <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
+{#if mode === "mini"}
+  <div
+    class="flex w-full flex-row items-center justify-end space-x-1 antialiased"
+  >
     {#if ada}
       <Tooltip.Provider>
         <Tooltip.Root>
@@ -82,7 +90,7 @@
   </div>
 {/if}
 
-{#if mode === 'full'}
+{#if mode === "full"}
   <div class="col-span-3">
     <h2 class="label">{m.accessibility()}</h2>
   </div>
@@ -165,7 +173,9 @@
           <span class="sr-only">{m.unspecified}</span>
         </span>
 
-        <span class="flex flex-col items-start justify-start">{m.unspecified}</span>
+        <span class="flex flex-col items-start justify-start"
+          >{m.unspecified}</span
+        >
       </li>
     {/if}
   </ul>

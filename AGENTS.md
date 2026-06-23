@@ -373,7 +373,7 @@ cmds = [
 | `tailwind-variants`                   | ^3.2.2   | Component variants             |
 | `tailwind-merge`                      | ^3.6.0   | Class merging                  |
 | `clsx`                                | ^2.1.1   | Class utilities                |
-| `lucide-svelte`                       | ^1.0.1   | Icons                          |
+| `@lucide/svelte`                      | ^1.0.1   | Icons                          |
 | `public-ip`                           | ^8.0.0   | Public IP detection            |
 | `fast-string-truncated-width`         | ^3.0.3   | String truncation              |
 | `@leeoniya/ufuzzy`                    | ^1.0.19  | Fuzzy search                   |

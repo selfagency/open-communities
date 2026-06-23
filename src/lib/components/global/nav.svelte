@@ -1,12 +1,12 @@
 <script lang="ts">
   /* region imports */
-  import MenuIcon from 'lucide-svelte/icons/menu';
+  import MenuIcon from "@lucide/svelte/icons/menu";
 
-  import * as Sheet from '$lib/components/ui/sheet';
-  import { m } from '$lib/paraglide/messages';
-  import { state as appState } from '$lib/stores';
+  import * as Sheet from "$lib/components/ui/sheet";
+  import { m } from "$lib/paraglide/messages";
+  import { state as appState } from "$lib/stores";
 
-  import Menu from './menu.svelte';
+  import Menu from "./menu.svelte";
 
   /*  endregion imports */
 
