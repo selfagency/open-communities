@@ -145,7 +145,9 @@
 </script>
 
 <Popover.Root>
-  <Popover.Trigger class="button space-x-2 text-slate-500 outline rtl:mx-1">
+  <Popover.Trigger
+    class="button space-x-2 text-slate-500 outline rtl:mx-1 bg-white! border-gray-300!"
+  >
     <FilterIcon size="18" class="rtl:mx-1" />
     <span>{m.filter()}</span>
   </Popover.Trigger>

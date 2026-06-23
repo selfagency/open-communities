@@ -87,7 +87,11 @@
   >
     {@const locale = locales.find((f) => f.value === lang)?.label}
     <LocaleIcon class="h-4 w-4 text-slate-500" />
-    <span>{locale}</span>
+    {#if mode === 'mini'}
+      <span>{locale}</span>
+    {:else}
+      <span class="max-[720px]:hidden">{locale}</span>
+    {/if}
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
