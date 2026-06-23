@@ -40,11 +40,13 @@ export default defineConfig(({ mode }) => ({
       project: './project.inlang'
     }),
     svg(),
-    // PostHog sourcemap upload — only during production builds
+    // PostHog sourcemap upload — only during production builds with credentials
     mode === 'production' &&
+      process.env.POSTHOG_CLI_PROJECT_ID &&
+      process.env.POSTHOG_CLI_API_KEY &&
       posthog({
-        personalApiKey: process.env.POSTHOG_CLI_API_KEY!,
-        projectId: process.env.POSTHOG_CLI_PROJECT_ID!,
+        personalApiKey: process.env.POSTHOG_CLI_API_KEY,
+        projectId: Number(process.env.POSTHOG_CLI_PROJECT_ID),
         host: process.env.POSTHOG_CLI_HOST,
         sourcemaps: {
           enabled: true,
