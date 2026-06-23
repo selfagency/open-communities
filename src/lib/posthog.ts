@@ -56,7 +56,7 @@ export function captureException(
 ): void {
   if (!browser || !posthog.__loaded) return;
   try {
-    const err = error instanceof Error ? error : new Error(String(error ?? 'Unknown error'));
+    const err = error instanceof Error ? error : new Error(typeof error === 'string' ? error : JSON.stringify(error));
     const props: Properties = {
       ...(event?.url?.pathname ? { $exception_url: event.url.pathname } : {}),
       ...additionalProperties
