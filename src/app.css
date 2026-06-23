@@ -129,7 +129,7 @@
 [dir="rtl"] h4,
 [dir="rtl"] h5,
 [dir="rtl"] .label {
-  font-family: 'Suez One';
+  font-family: 'Suez One' !important;
 }
 
 @layer base {
