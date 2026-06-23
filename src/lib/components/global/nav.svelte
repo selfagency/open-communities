@@ -17,7 +17,7 @@
   let offsetWidth = $derived(appState.offsetWidth);
 </script>
 
-{#if offsetWidth && offsetWidth < 720}
+{#if offsetWidth && offsetWidth < 760}
   <Sheet.Root bind:open>
     <Sheet.Trigger>
       <MenuIcon class="mt-2 h-6 w-6" />
