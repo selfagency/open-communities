@@ -15,7 +15,9 @@ import { dev } from '$app/environment';
  * - Cap widget CDN: captcha
  *
  * `'unsafe-inline'` on style-src is required for Tailwind's runtime style injection.
- * `'unsafe-inline'` on script-src-elem is removed — we do NOT use inline scripts.
+ * `'unsafe-inline'` on script-src-elem is required for SvelteKit's inline hydration
+ * bootstrap and Cap captcha widget inline scripts. CSP is staged:
+ * report-only in dev, enforced in production.
  */
 const CSP_DIRECTIVES = {
   'base-uri': ["'self'"],
@@ -61,9 +63,17 @@ const CSP_DIRECTIVES = {
     '*.selfagency.dev',
     'basemaps.cartocdn.com',
     'cdn.jsdelivr.net',
-    "'self'"
+    "'self'",
+    "'wasm-unsafe-eval'" // MapLibre GL JS compiles WebAssembly for vector tile rendering
   ],
-  'script-src-elem': ['*.opencommunities.info', '*.posthog.com', '*.selfagency.dev', 'cdn.jsdelivr.net', "'self'"],
+  'script-src-elem': [
+    '*.opencommunities.info',
+    '*.posthog.com',
+    '*.selfagency.dev',
+    'cdn.jsdelivr.net',
+    "'self'",
+    "'unsafe-inline'" // SvelteKit hydration bootstrap + Cap captcha widget inline scripts
+  ],
   'style-src': [
     '*.opencommunities.info',
     '*.selfagency.dev',
