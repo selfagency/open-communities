@@ -31,6 +31,8 @@
     { label: "Українська", value: "uk" },
   ];
 
+  const buttonClass = "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 h-11 px-4 py-2 has-[>svg]:px-3 bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border"
+
   // locals
   let lang = $state("en" as UsersLangOptions);
 
@@ -82,15 +84,10 @@
 </script>
 
 <DropdownMenu.Root>
-  <DropdownMenu.Trigger
-    class="button {mode === 'mini' ? 'link' : 'outline'} flex flex-row items-center justify-start space-x-1"
+  <DropdownMenu.Trigger class={mode === 'mini' ? 'button' : buttonClass}
   >
-    <LocaleIcon class="h-4 w-4 text-slate-500" />
-    {#if mode === 'mini'}
-      <span>{code}</span>
-    {:else}
-      <span class="max-[720px]:hidden">{code}</span>
-    {/if}
+    <LocaleIcon class="h-4 w-4 stroke-slate-500" />
+      <span class={(mode === "mini" ? "" : "max-[720px]:hidden") + "text-slate-500"}>{code}</span>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>

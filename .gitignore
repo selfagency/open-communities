@@ -134,3 +134,4 @@ yarn-debug.log*
 yarn-error.log*
 .playwright-mcp
 .opencode/magic-context/historian
+.tmp
