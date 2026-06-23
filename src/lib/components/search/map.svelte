@@ -1,6 +1,7 @@
 <script lang="ts">
   /* region imports */
   import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
+  import { mode } from 'mode-watcher';
   import { Button } from '$lib/components/ui/button';
   import type { Location } from '$lib/location';
   import type { Search } from '$lib/search';
@@ -35,6 +36,12 @@
     }
     return [-90, 10] as LngLatLike;
   });
+
+  const mapStyle = $derived(
+    mode.current === 'dark'
+      ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+      : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
+  );
 
   const zoom = $derived.by(() => {
     const loc = $searchState.searchLocation;
@@ -77,7 +84,7 @@
     minZoom={1}
     class="h-96"
     standardControls
-    style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json">
+    style={mapStyle}>
     {#each locations as { city, country, latitude, longitude, state } (city?.id)}
       <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
         <Popup offset={[0, -10]}>
