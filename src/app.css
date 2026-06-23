@@ -221,11 +221,11 @@
   }
 
   .filter-label {
-    @apply col-span-5 flex flex-row items-center justify-start text-sm text-slate-500 underline-offset-4 hover:underline;
+    @apply col-span-5 flex flex-row items-center justify-start text-sm text-muted-foreground underline-offset-4 hover:underline;
   }
 
   .filter-status {
-    @apply col-span-1 flex flex-row items-center justify-center text-slate-500;
+    @apply col-span-1 flex flex-row items-center justify-center text-muted-foreground;
   }
 }
 
@@ -242,7 +242,7 @@
 }
 
 .maplibregl-marker > svg g {
-  @apply fill-slate-500;
+  @apply fill-muted-foreground;
 }
 
 h1,
@@ -259,7 +259,7 @@ body {
 }
 
 #captcha {
-  @apply font-sans text-sm text-slate-600;
+  @apply font-sans text-sm text-muted-foreground;
 
   > div > div {
     @apply max-w-full!;
