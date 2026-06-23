@@ -46,7 +46,7 @@ export const congregationHandlers = [
       collectionId: 'pbc_congregations',
       collectionName: 'congregations',
       created: new Date().toISOString(),
-      id: `rec_${crypto.randomUUID().replace(/-/g, '').slice(0, 15)}`,
+      id: `rec_${crypto.randomUUID().replaceAll('-', '').slice(0, 15)}`,
       updated: new Date().toISOString(),
       ...body
     };

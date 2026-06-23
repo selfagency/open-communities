@@ -43,7 +43,7 @@ it('renders markers and clicking opens location', async () => {
 
   await waitFor(() => {
     const text = (container.textContent || '').replace(/\s+/g, ' ');
-    expect(text.includes('City1')).toBe(true);
+    expect(text).toContain('City1');
   });
 
   // click the first button in the rendered container

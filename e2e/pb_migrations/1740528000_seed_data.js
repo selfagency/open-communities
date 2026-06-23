@@ -32,6 +32,7 @@ migrate((app) => {
   const la  = create('cities', { name: 'Los Angeles', state: ca.getId(), country: us.getId(), longitude: -118.2437, latitude: 34.0522 });
 
   // Users
+  // Test fixture credentials — not real passwords
   const regular = create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, admin: false, lang: 'en', emailVisibility: true });
   const other = create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, admin: false, lang: 'en', emailVisibility: true });
 

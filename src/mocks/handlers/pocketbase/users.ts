@@ -2,7 +2,7 @@ import { HttpResponse, http } from 'msw';
 
 import { allUsers, findUserByEmail, findUserById, regularUser } from '../../data/users';
 
-// MSW mock handlers run locally — http is required
+// MSW mock handlers run locally — http is required for the mock server
 const PB = 'http://*:8090';
 
 export const userHandlers = [
@@ -71,7 +71,7 @@ export const userHandlers = [
       created: new Date().toISOString(),
       email: body.email as string,
       emailVisibility: false,
-      id: `user_new_${Math.random().toString(36).slice(2, 10)}`,
+      id: `user_new_${crypto.randomUUID().replaceAll('-', '').slice(0, 8)}`,
       lang: 'en',
       name: (body.name as string) ?? '',
       token: 'mock_new_user_token',

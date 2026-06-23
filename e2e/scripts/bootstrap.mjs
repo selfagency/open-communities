@@ -168,10 +168,11 @@ async function main() {
     createAdmin();
     console.log(`\n✅ Done in ${((Date.now()-start)/1000).toFixed(1)}s`);
     console.log(`   Panel: ${PB}/_/`);
-    console.log(`   Auth:  ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+    console.log(`   Auth:  ${ADMIN_EMAIL}`);
   } catch (e) {
     console.error('\n❌', e.message);
     process.exit(1);
   }
 }
-main();
+
+await main();

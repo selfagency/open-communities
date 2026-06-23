@@ -95,6 +95,11 @@ function isPbError(err: unknown): err is { message: string; status: number } {
 // layout/page load functions already have graceful fallbacks for this case.
 const RETRYABLE_STATUSES = new Set([429, 502, 503, 504, 520, 524]);
 
+/** Random jitter (0–1000ms) for retry backoff to avoid thundering herd. */
+function jitter(): number {
+  return crypto.getRandomValues(new Uint32Array(1))[0] % 1001;
+}
+
 // ~3s total window: 500+1000+2000 + jitter ≈ 4-5s — enough for a local PB restart
 // without blocking SSR for 30+ seconds. Load functions already have graceful
 // fallbacks (return empty arrays) when PB is unreachable.
@@ -123,7 +128,7 @@ async function withRetry<T>(fn: () => Promise<T>, options?: Partial<typeof RETRY
         lastError = err;
         break;
       }
-      const delay = Math.min(config.baseDelayMs * 2 ** attempt + Math.random() * 1000, config.maxDelayMs);
+      const delay = Math.min(config.baseDelayMs * 2 ** attempt + jitter(), config.maxDelayMs);
       log.warn(`PB retry ${attempt + 1}/${config.maxRetries} after ${Math.round(delay)}ms`, err);
       await new Promise((r) => setTimeout(r, delay));
     }
