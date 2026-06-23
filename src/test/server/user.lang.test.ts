@@ -109,7 +109,7 @@ describe('user/lang +server', () => {
     });
 
     const res = await mod.POST(mockEvent as any);
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(200);
   });
 
   it('returns 500 when PB update fails', async () => {

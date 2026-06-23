@@ -2,10 +2,9 @@ import { json } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
 import { z } from 'zod/v4';
 import { env } from '$env/dynamic/public';
-import type { UsersRecord } from '$lib/pocketbase.d';
 import { log } from '$lib/server/logger';
 
-const VALID_LANGS = ['en', 'es', 'fr', 'he'] as const;
+const VALID_LANGS = ['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk'] as const;
 
 const langSchema = z.object({
   lang: z.enum(VALID_LANGS),
@@ -44,20 +43,15 @@ export async function POST({ cookies, locals, request }) {
   }
 
   const targetUser = targetUserId ?? client?.id;
-  if (!targetUser) {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  let result: null | UsersRecord = null;
 
   try {
     cookies.set('lang', lang, locals.cookieOpts);
 
-    result = await api.collection('users').update(targetUser, {
-      lang
-    });
+    if (targetUser) {
+      await api.collection('users').update(targetUser, { lang });
+    }
 
-    return json({ result }, { status: 200 });
+    return json({ success: true }, { status: 200 });
   } catch (error) {
     if (isFunction(captureException)) {
       await captureException(error, client?.id);

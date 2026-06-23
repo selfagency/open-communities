@@ -78,10 +78,15 @@ export enum RegistrationRegistrationTypeOptions {
 }
 
 export enum UsersLangOptions {
+  de = 'de',
   en = 'en',
   es = 'es',
   fr = 'fr',
-  he = 'he'
+  he = 'he',
+  hu = 'hu',
+  pt = 'pt',
+  ru = 'ru',
+  uk = 'uk'
 }
 
 export type AccessibilityRecord = {
