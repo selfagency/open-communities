@@ -4,7 +4,6 @@
   import { mode, toggleMode } from 'mode-watcher';
   /* region imports */
   import { createEventDispatcher } from 'svelte';
-  import { dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
@@ -72,7 +71,7 @@
     </Button>
   {/if}
 
-  {#if dev}<Locale mode={viewMode} />{/if}
+  <Locale mode={viewMode} />
   <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full' : ''}">
     <span class="flex flex-row items-center justify-start space-x-1">
       <SunIcon class="h-4 w-4 text-muted-foreground" />
