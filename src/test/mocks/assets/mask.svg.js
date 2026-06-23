@@ -26,7 +26,7 @@ function MaskComponent(options) {
 }
 MaskComponent.$$render = () => markup;
 MaskComponent.prototype.$destroy = function () {
-  if (this._node?.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default MaskComponent;

@@ -71,7 +71,7 @@ export const useAppStore = defineStore('app', {
     setState(partial: Partial<AppState>) {
       for (const [key, value] of Object.entries(partial)) {
         if (this[key as keyof AppState] !== value) {
-          (this as Record<string, unknown>)[key] = value;
+          (this as unknown as Record<string, unknown>)[key] = value;
         }
       }
     }

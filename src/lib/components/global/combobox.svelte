@@ -1,14 +1,14 @@
 <script lang="ts">
   /* region imports */
-  import CheckIcon from '@lucide/svelte/icons/check';
-  import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
-  import { useId } from 'bits-ui';
-  import { onMount, tick } from 'svelte';
+  import CheckIcon from "@lucide/svelte/icons/check";
+  import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
+  import { useId } from "bits-ui";
+  import { onMount, tick } from "svelte";
 
-  import { cn } from '$lib/utils.js';
+  import { cn } from "$lib/utils.js";
 
-  import * as Command from '../ui/command/index.js';
-  import * as Popover from '../ui/popover/index.js';
+  import * as Command from "../ui/command/index.js";
+  import * as Popover from "../ui/popover/index.js";
 
   /*  endregion imports */
 
@@ -20,7 +20,7 @@
     items,
     onChange,
     placeholder,
-    value = $bindable('')
+    value = $bindable(""),
   }: {
     disabled?: boolean;
     id?: string;
@@ -40,10 +40,10 @@
   let currentItems = $derived(items || []);
   let selectedValueLabel = $derived.by(() => {
     const selected = currentItems.find((item) => item.id === value);
-    return selected?.label ?? placeholder ?? '';
+    return selected?.label ?? placeholder ?? "";
   });
   let commandsInitialized = $state(false);
-  let commandValue = $state('');
+  let commandValue = $state("");
   /* endregion variables */
 
   /* region methods */
@@ -74,27 +74,43 @@
   /* endregion lifecycle */
 </script>
 
-<div class="w-full" class:pointer-events-none={disabled} class:opacity-50={disabled}>
+<div
+  class="w-full"
+  class:pointer-events-none={disabled}
+  class:opacity-50={disabled}
+>
   <Popover.Root bind:open>
     <Popover.Trigger
       {id}
       bind:ref={triggerRef}
-      class="button w-full flex-row items-center !justify-between outline"
+      class="button w-full flex-row items-center justify-between! outline bg-white! border-gray-300!"
       role="combobox"
-      aria-expanded={open}>
+      aria-expanded={open}
+    >
       <span>{selectedValueLabel}</span>
       <ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
     </Popover.Trigger>
     <Popover.Content style="width: {triggerRef?.offsetWidth}px;" class="p-0">
       {#if commandsInitialized && currentItems?.length > 0}
-        <Command.Root value={commandValue} onValueChange={handleCommandValueChange}>
+        <Command.Root
+          value={commandValue}
+          onValueChange={handleCommandValueChange}
+        >
           <Command.Input {placeholder} />
           <Command.List>
             <Command.Empty>No results found.</Command.Empty>
             <Command.Group value={commandGroupId}>
               {#each currentItems as item (item.id)}
-                <Command.Item value={item.label} onSelect={() => handleSelect(item.id)}>
-                  <CheckIcon class={cn('mr-2 size-4', value !== item.id && 'text-transparent')} />
+                <Command.Item
+                  value={item.label}
+                  onSelect={() => handleSelect(item.id)}
+                >
+                  <CheckIcon
+                    class={cn(
+                      "mr-2 size-4",
+                      value !== item.id && "text-transparent",
+                    )}
+                  />
                   {item.label}
                 </Command.Item>
               {/each}

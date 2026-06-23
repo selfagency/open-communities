@@ -26,7 +26,7 @@ function InclusiveComponent(options) {
 }
 InclusiveComponent.$$render = () => markup;
 InclusiveComponent.prototype.$destroy = function () {
-  if (this._node?.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default InclusiveComponent;

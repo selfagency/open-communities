@@ -28,7 +28,7 @@ function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
       fatal: 'fatal'
     };
     otelLogger.emit({
-      severityText: severityMap[logObject._meta?.logLevelId as unknown as string] || 'info',
+      severityText: severityMap[logObject._meta?.logLevelId as unknown as keyof typeof severityMap] || 'info',
       body: typeof logObject === 'object' ? shake(logObject as Record<string, unknown>) : logObject,
       attributes: {
         'service.name': 'open-communities',

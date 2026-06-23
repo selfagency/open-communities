@@ -25,7 +25,11 @@ vi.mock('radashi', () => {
     }),
     omit: vi.fn((obj, keys) => {
       const result = { ...obj };
-      keys.forEach((key: string) => delete result[key]);
+      for (const key of keys as string[]) {
+        if (Object.hasOwn(result, key)) {
+          delete result[key];
+        }
+      }
       return result;
     }),
     shake: vi.fn((obj) => {

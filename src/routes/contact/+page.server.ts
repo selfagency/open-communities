@@ -24,10 +24,13 @@ export const load = async (event) => {
     const congregations = (await withRetry(() => getCachedCongregations(api, { fetch }))).map((c) => {
       const rec = c as CongregationMetaRecord & { id: string };
       const location = rec.location as LocationMeta;
-      const label = truncateText(
-        `${rec.name}${location?.city?.name ? `, ${location.city.name}` : ''}${location?.state?.name ? `, ${location.state.name}` : ''}${location?.country?.name ? `, ${location.country.name}` : ''}`,
-        38
-      );
+      const parts = [
+        rec.name,
+        location?.city?.name ? `, ${location.city.name}` : '',
+        location?.state?.name ? `, ${location.state.name}` : '',
+        location?.country?.name ? `, ${location.country.name}` : ''
+      ];
+      const label = truncateText(parts.join(''), 38);
       return {
         id: rec.id,
         label: truncateText(label, 38),

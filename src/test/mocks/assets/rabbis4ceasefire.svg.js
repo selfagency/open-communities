@@ -26,7 +26,7 @@ function RabbisComponent(options) {
 }
 RabbisComponent.$$render = () => markup;
 RabbisComponent.prototype.$destroy = function () {
-  if (this._node?.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default RabbisComponent;

@@ -16,5 +16,5 @@ export function invalidateAll() {
 }
 
 export async function resolve() {
-  return Promise.resolve();
+  return;
 }

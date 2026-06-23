@@ -96,7 +96,7 @@ vi.mock('cookie', () => ({
           return [k.trim(), decodeURIComponent(r.join('='))];
         })
       );
-    } catch (_e) {
+    } catch {
       return {};
     }
   }
@@ -272,21 +272,21 @@ if (typeof (globalThis as unknown as { process?: unknown }).process === 'undefin
 // `global` identifier in module scope).
 try {
   (0, eval)('global = globalThis');
-} catch (_e) {
+} catch {
   // best-effort; some runtimes prevent eval
 }
 
 // Set deterministic viewport/document sizes used by some tests. Tests expect
 // offset/inner sizes (for example, the stores.initState test expects
 // offsetHeight = 800 and offsetWidth = 500), so make those values stable here.
-if (typeof window !== 'undefined') {
+if (typeof globalThis !== 'undefined') {
   // Force exact values that tests expect
-  Object.defineProperty(window, 'innerWidth', {
+  Object.defineProperty(globalThis, 'innerWidth', {
     configurable: true,
     value: 500,
     writable: true
   });
-  Object.defineProperty(window, 'innerHeight', {
+  Object.defineProperty(globalThis, 'innerHeight', {
     configurable: true,
     value: 800,
     writable: true

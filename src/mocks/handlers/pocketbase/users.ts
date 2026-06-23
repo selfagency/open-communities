@@ -2,6 +2,7 @@ import { HttpResponse, http } from 'msw';
 
 import { allUsers, findUserByEmail, findUserById, regularUser } from '../../data/users';
 
+// MSW mock handlers run locally — http is required for the mock server
 const PB = 'http://*:8090';
 
 export const userHandlers = [
@@ -99,7 +100,8 @@ export const userHandlers = [
     let items = allUsers;
 
     // Handle PB filter syntax: email={:email}
-    const emailMatch = filter.match(/email\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/);
+    const emailRe = /email\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
+    const emailMatch = emailRe.exec(filter);
     if (emailMatch) {
       items = items.filter((u) => u.email === emailMatch[1]);
     }

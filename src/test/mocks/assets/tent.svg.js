@@ -26,7 +26,7 @@ function TentComponent(options) {
 }
 TentComponent.$$render = () => markup;
 TentComponent.prototype.$destroy = function () {
-  if (this._node?.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default TentComponent;

@@ -124,28 +124,26 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       event.cookies.set('auth', '', event.locals.cookieOpts);
       event.cookies.set('session', '', event.locals.cookieOpts);
       requestApi.authStore.clear();
-    } else {
-      if (requestApi?.authStore?.isValid) {
-        pruneAuthRefreshTimestamps();
-        const now = Date.now();
-        // Use the stable session cookie as the cooldown key (not auth cookie, which changes on refresh)
-        let sessionKey = event.cookies.get('session');
-        if (!sessionKey) {
-          sessionKey = crypto.randomUUID();
-          event.cookies.set('session', sessionKey, event.locals.cookieOpts);
-        }
-        const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
-        if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
-          // Hard timeout on auth refresh to avoid blocking SSR on PB latency
-          await Promise.race([
-            requestApi.collection('users').authRefresh(),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
-          ]);
-          authRefreshTimestamps.set(sessionKey, now);
-        }
-        // Re-set the auth cookie on every request to extend its TTL
-        event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
+    } else if (requestApi?.authStore?.isValid) {
+      pruneAuthRefreshTimestamps();
+      const now = Date.now();
+      // Use the stable session cookie as the cooldown key (not auth cookie, which changes on refresh)
+      let sessionKey = event.cookies.get('session');
+      if (!sessionKey) {
+        sessionKey = crypto.randomUUID();
+        event.cookies.set('session', sessionKey, event.locals.cookieOpts);
       }
+      const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
+      if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
+        // Hard timeout on auth refresh to avoid blocking SSR on PB latency
+        await Promise.race([
+          requestApi.collection('users').authRefresh(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
+        ]);
+        authRefreshTimestamps.set(sessionKey, now);
+      }
+      // Re-set the auth cookie on every request to extend its TTL
+      event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
     }
   } catch (error) {
     // Only clear auth store if refresh actually failed, not for other errors

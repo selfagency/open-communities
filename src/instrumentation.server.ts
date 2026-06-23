@@ -33,7 +33,7 @@ if (phKey) {
     }),
     logRecordProcessor: new BatchLogRecordProcessor(
       new OTLPLogExporter({
-        url: `${phHost.replace(/\/+$/, '')}/i/v1/logs`,
+        url: `${phHost}/i/v1/logs`.replace(/\/\/+/g, '/'),
         headers: {
           Authorization: `Bearer ${phKey}`
         }

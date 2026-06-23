@@ -34,6 +34,7 @@ function writableDeep<T extends Record<string, unknown>>(
       return value;
     },
     setKey<K extends keyof T>(k: K, v: T[K]) {
+      if (k === '__proto__' || k === 'constructor') return;
       if (value[k] === v) return; // skip notification on no-op
       value = { ...value, [k]: v };
       notify();
@@ -80,13 +81,13 @@ export class Search {
 
   // Pre-built indexes for fast filtering
   /** Map<filterKey, Map<valueKey, Set<rowIndex>>> */
-  private boolIndex = new Map<string, Map<string, Set<number>>>();
+  private readonly boolIndex = new Map<string, Map<string, Set<number>>>();
   /** Map<filterKey, Map<targetKey, Map<value, Set<number>>>> */
-  private stringIndex = new Map<string, Map<string, Map<string, Set<number>>>>();
+  private readonly stringIndex = new Map<string, Map<string, Map<string, Set<number>>>>();
   /** O(1) id → array index lookup — avoids indexOf in filter hot paths */
-  private idxById = new Map<string, number>();
+  private readonly idxById = new Map<string, number>();
   /** Pre-built fuzzy search strings — built once, reused on every search */
-  private searchStrings: string[] = [];
+  private readonly searchStrings: string[] = [];
 
   constructor(data = [] as SearchData[], debug = false) {
     this.data = alphabetical(data, (i) => i.name);
@@ -302,6 +303,7 @@ export class Search {
         const sub = record[key];
         if (sub) {
           for (const subKey of Object.keys(sub)) {
+            if (subKey === '__proto__' || subKey === 'constructor') continue;
             if (sub[subKey]) {
               let keyMap = this.boolIndex.get(key);
               if (!keyMap) {

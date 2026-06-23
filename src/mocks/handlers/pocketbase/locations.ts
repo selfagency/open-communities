@@ -46,7 +46,8 @@ export const locationHandlers = [
     let items = allCities;
 
     // Handle PB filter: state={:state}
-    const stateMatch = filter.match(/state\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/);
+    const stateRe = /state\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
+    const stateMatch = stateRe.exec(filter);
     if (stateMatch) {
       items = findCitiesByState(stateMatch[1]);
     }

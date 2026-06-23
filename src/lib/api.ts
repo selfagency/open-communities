@@ -35,6 +35,9 @@ function convertBooleans(obj: unknown): unknown {
   } else if (obj !== null && typeof obj === 'object') {
     const source = obj as Record<string, unknown>;
     return Object.keys(source).reduce<Record<string, unknown>>((acc, key) => {
+      if (!Object.hasOwn(source, key) || key === '__proto__' || key === 'constructor') {
+        return acc;
+      }
       const value = source[key];
       if (value === 1) {
         acc[key] = true;

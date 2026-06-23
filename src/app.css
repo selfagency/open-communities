@@ -2,10 +2,9 @@
 @import url("https://fonts.cdnfonts.com/css/atkinson-hyperlegible-2");
 
 @import "tailwindcss";
+@import "tw-animate-css";
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 

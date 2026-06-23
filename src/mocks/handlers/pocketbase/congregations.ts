@@ -90,7 +90,7 @@ import { childTableMap } from '../../data/child-tables';
 
 export const childTableHandlers = childTableNames.map((tableName) =>
   http.get(`${PB}/api/collections/${tableName}/records`, () => {
-    const records = childTableMap[tableName] ?? [];
+    const records = Object.hasOwn(childTableMap, tableName) ? childTableMap[tableName] : [];
     return HttpResponse.json({
       items: records,
       page: 1,

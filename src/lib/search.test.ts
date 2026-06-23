@@ -325,7 +325,7 @@ describe('Search', () => {
       const s = new Search(RECORDS);
       const idx = (s as never as { idxById: Map<string, number> }).idxById;
       for (const [id, i] of idx) {
-        expect(s.data[i].id).toBe(id);
+        expect(s.data.at(i)?.id).toBe(id);
       }
     });
   });

@@ -13,7 +13,8 @@ export const pageHandlers = [
     let items = allPages;
 
     // Handle PB filter: slug={:slug}
-    const slugMatch = filter.match(/slug\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/);
+    const slugRe = /slug\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
+    const slugMatch = slugRe.exec(filter);
     if (slugMatch) {
       items = items.filter((p) => p.slug === slugMatch[1]);
     }

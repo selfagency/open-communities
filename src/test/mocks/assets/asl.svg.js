@@ -29,7 +29,7 @@ function AslComponent(options) {
 }
 AslComponent.$$render = () => markup;
 AslComponent.prototype.$destroy = function () {
-  if (this._node?.parentNode) this._node.parentNode.removeChild(this._node);
+  this._node?.remove();
 };
 
 export default AslComponent;
