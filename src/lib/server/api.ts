@@ -73,7 +73,7 @@ function convertBooleans(obj: unknown): unknown {
 
 function expand<T extends Record<string, unknown>>(item: T): Omit<T, 'expand'> {
   const { expand: _expand, ...rest } = item;
-  return { ...rest, ..._expand } as Omit<T, 'expand'>;
+  return { ...rest, ...(_expand ?? {}) } as Omit<T, 'expand'>;
 }
 
 // Type guard for PocketBase-like errors without depending on the runtime class

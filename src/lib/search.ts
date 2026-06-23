@@ -307,7 +307,7 @@ export class Search {
 
   /** Index a bool-typed child table record (services, security, accessibility). */
   private _indexBoolRecord(key: string, record: Record<string, unknown>, idx: number): void {
-    const sub = record[key];
+    const sub = record[key] as Record<string, unknown> | undefined;
     if (!sub) return;
     for (const subKey of Object.keys(sub)) {
       if (subKey === '__proto__' || subKey === 'constructor') continue;
