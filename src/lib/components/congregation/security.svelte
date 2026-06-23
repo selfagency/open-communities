@@ -52,10 +52,10 @@
 {/if}
 
 {#if mode === "full"}
-  <div class="col-span-4">
+  <div class="col-span-3">
     <h2 class="label">{m.security()}</h2>
   </div>
-  <ul class="col-span-8 space-y-2">
+  <ul class="col-span-9 space-y-2">
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">

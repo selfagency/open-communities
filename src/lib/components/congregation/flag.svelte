@@ -39,10 +39,10 @@
       </Tooltip.Provider>
     </div>
   {:else}
-    <div class="col-span-4">
+    <div class="col-span-3">
       <h2 class="label">{m.flag_short()}</h2>
     </div>
-    <div class="col-span-8">
+    <div class="col-span-9">
       {#if flag === "no"}
         <div class="flex flex-row items-center space-x-2">
           <FlagOff class="h-4 w-4 text-muted-foreground" />

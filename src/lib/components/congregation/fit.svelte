@@ -15,7 +15,7 @@
 <div class="col-span-3">
   <h2 class="label">{m.fit()}</h2>
 </div>
-<div class="col-span-8">
+<div class="col-span-9">
   <ul class="w-full space-y-2">
     {#if fit.publicStatement}
       <li>{m.fit_publicStatement()}</li>

@@ -14,11 +14,11 @@
   /* endregion variables */
 </script>
 
-<div class="col-span-4">
+<div class="col-span-3">
   <h2 class="label">{m.registration()}</h2>
 </div>
 
-<div class="col-span-8 flex flex-col items-start justify-between space-y-2">
+<div class="col-span-9 flex flex-col items-start justify-between space-y-2">
   {#if registration?.registrationType}
     <div class="flex flex-row items-center justify-start space-x-4">
       {#if registration.registrationType === "fixedPrice"}

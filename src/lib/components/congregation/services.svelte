@@ -12,8 +12,8 @@
   /* endregion variables */
 </script>
 
-<div class="col-span-4"><h2 class="label">{m.services()}</h2></div>
-<div class="col-span-8">
+<div class="col-span-3"><h2 class="label">{m.services()}</h2></div>
+<div class="col-span-9">
   <ul class="w-full space-y-2">
     {#if services?.inPerson}
       <li>{m.services_inPerson()}</li>

@@ -78,7 +78,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger>
-            <AslIcon class="h-4 w-4 rtl:mx-1" />
+            <AslIcon class="h-4 w-4 text-muted-foreground rtl:mx-1" />
             <span class="sr-only">{m.accessibility_asl()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -91,10 +91,10 @@
 {/if}
 
 {#if mode === "full"}
-  <div class="col-span-4">
+  <div class="col-span-3">
     <h2 class="label">{m.accessibility()}</h2>
   </div>
-  <ul class="col-span-8 space-y-2">
+  <ul class="col-span-9 space-y-2">
     {#if ada}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
@@ -132,7 +132,7 @@
     {#if asl}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <AslIcon class="h-4 w-4 rtl:mx-2" />
+          <AslIcon class="h-4 w-4 text-muted-foreground rtl:mx-2" />
           <span class="sr-only">{m.accessibility_asl()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">

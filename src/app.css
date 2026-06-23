@@ -206,7 +206,7 @@
     font-variant-ligatures: common-ligatures historical-ligatures contextual;
   }
   .label {
-    @apply font-display pointer-events-none text-secondary-foreground;
+    @apply font-display pointer-events-none text-secondary-foreground tracking-widest;
   }
   label {
     @apply leading-6!;
