@@ -63,7 +63,7 @@
 
   // locals
   let title: string = $state("");
-  let view = $state("congregation") as string;
+  let view = $state("congregation");
   /* endregion variables */
 
   /* region methods */
@@ -77,7 +77,7 @@
   /* region form */
   // svelte-ignore state_referenced_locally
   // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const { enhance, errors, form: formData } = form as SuperForm<any, any>;
+  const { enhance, errors, form: formData } = form;
   /* endregion form */
 
   /* region lifecycle */
@@ -111,10 +111,10 @@
             : m.submission().toLowerCase(),
       });
     } else {
-      title =
-        mode === "edit"
-          ? m.editThing({ thing: $formData.name as string })
-          : m.addCongregation();
+        title =
+          mode === "edit"
+            ? m.editThing({ thing: $formData.name ?? "" })
+            : m.addCongregation();
     }
   });
   /* endregion reactivity */
@@ -220,7 +220,7 @@
                               <span>
                                 <Switch
                                   {...props}
-                                  bind:checked={$formData.visible as boolean}
+                                  bind:checked={$formData.visible}
                                 />
                               </span>
                             </span>
@@ -252,12 +252,12 @@
                     class="flex flex-row items-center justify-start space-x-2"
                   >
                     <Delete
-                      data={deletion as SuperValidated<any>}
-                      id={$formData?.id as string}
+                      data={deletion}
+                      id={$formData?.id ?? ""}
                     />
                     <Transfer
-                      data={transfer as SuperValidated<any>}
-                      id={$formData?.id as string}
+                      data={transfer}
+                      id={$formData?.id ?? ""}
                       owner={congregation.owner}
                     />
                   </div>

@@ -219,13 +219,12 @@
 
             <div class="grid grid-cols-12 gap-4 text-sm">
               {#if congregation.denomination}
+                {@const denomKey = `denomination_${congregation.denomination}`}
                 <div class="col-span-3 flex flex-row items-start justify-start">
                   <h2 class="label">{m.denomination_affiliation()}</h2>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
-                  {(m as Record<string, (args?: unknown) => string>)[
-                    `denomination_${congregation.denomination}`
-                  ]()}
+                  {m[denomKey]()}
                 </div>
               {/if}
 

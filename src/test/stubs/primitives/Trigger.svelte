@@ -8,10 +8,10 @@
 </script>
 
 <button
-  type={type as 'button'}
+  type={type}
   {id}
-  aria-expanded={ariaExpanded as boolean}
-  aria-haspopup={ariaHaspopup as boolean}
+  aria-expanded={ariaExpanded}
+  aria-haspopup={ariaHaspopup}
   class={className}
   {...$$restProps}>
   <slot />

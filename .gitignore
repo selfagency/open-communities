@@ -137,3 +137,7 @@ yarn-error.log*
 .tmp
 .env.dynamic
 .posthog-events.json
+.zed/
+skills-lock.json
+posthog-setup-report.md
+e2e/pocketbase/pb_data/data.db

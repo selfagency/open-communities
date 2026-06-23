@@ -31,7 +31,7 @@ export async function POST({ cookies, locals, request }) {
 
   const parsed = langSchema.safeParse(body);
   if (!parsed.success) {
-    return json({ error: 'Invalid request body: lang must be one of en, es, fr, he' }, { status: 400 });
+    return json({ error: `Invalid language. Must be one of: ${VALID_LANGS.join(', ')}` }, { status: 400 });
   }
 
   const { lang, user: targetUserId } = parsed.data;

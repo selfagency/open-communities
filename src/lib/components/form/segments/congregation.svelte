@@ -22,7 +22,12 @@
 
   /* region variables */
   // props
-  let { errors, form, formData, view = $bindable() } = $props();
+  let { errors, form, formData, view = $bindable() }: {
+    errors?: Record<string, string | string[] | undefined>;
+    form: any;
+    formData: any;
+    view?: string;
+  } = $props();
 
   // contstants
   const {
@@ -246,7 +251,7 @@
             <Select.Trigger id="denomination" class="w-full" {...props}>
               {#if $formData?.denomination}
                 {@const denom = `denomination_${$formData?.denomination}`}
-                {(m as Record<string, (args?: unknown) => string>)[denom]()}
+                {m[denom]()}
               {:else}
                 {m.selectThing({ thing: m.denomination().toLowerCase() })}
               {/if}

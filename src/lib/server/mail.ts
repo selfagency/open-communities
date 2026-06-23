@@ -21,8 +21,8 @@ let _transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo> | null =
  * Sanitize a header value by stripping CR/LF characters and trimming whitespace.
  * Prevents SMTP header injection attacks (CVE-style via \r\n in user-controlled fields).
  */
-function sanitizeHeader(value: string): string {
-  return value.replace(/[\r\n]/g, ' ').trim();
+function sanitizeHeader(value: string | undefined | null): string {
+  return (value ?? '').replace(/[\r\n]/g, ' ').trim();
 }
 
 export interface AdminMailInput {

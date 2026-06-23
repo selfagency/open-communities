@@ -33,8 +33,6 @@ const CSP_DIRECTIVES = {
     'cdn.jsdelivr.net',
     'localhost:3001',
     'localhost:8090',
-    'ws:',
-    'wss:',
     "'self'"
   ],
   'default-src': ["'self'", 'cdn.jsdelivr.net', '*.selfagency.dev', '*.opencommunities.info'],
@@ -92,6 +90,12 @@ const CSP_DIRECTIVES = {
   'worker-src': ["'self'", 'blob:']
 };
 
+/** Production-safe connect-src without bare WebSocket wildcards. */
+const CONNECT_SRC_BASE = CSP_DIRECTIVES['connect-src'];
+
+/** Dev connect-src adds ws:/wss: for Vite HMR. */
+const CONNECT_SRC_DEV = [...CONNECT_SRC_BASE, 'ws:', 'wss:'];
+
 /**
  * Consolidated security header policy.
  *
@@ -99,13 +103,14 @@ const CSP_DIRECTIVES = {
  * sequence() in hooks.server.ts. It MUST be the outermost middleware
  * so security headers are applied before any response processing.
  *
- * CSP is staged: report-only in dev, enforced in production.
- * This lets us tighten inline allowances without breaking live features.
+ * CSP is staged: report-only in dev (with WebSocket for HMR), enforced
+ * in production (no bare ws:/wss: wildcards). This lets us tighten
+ * inline allowances without breaking live features.
  */
 const handle: Handle = helmet({
   contentSecurityPolicy: dev
     ? {
-        directives: CSP_DIRECTIVES,
+        directives: { ...CSP_DIRECTIVES, 'connect-src': CONNECT_SRC_DEV },
         reportOnly: true
       }
     : {

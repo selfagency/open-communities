@@ -1,9 +1,11 @@
 import '@testing-library/jest-dom/vitest';
+import { mount, unmount } from 'svelte';
 import { describe, expect, it, vi } from 'vitest';
 
 import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
+vi.mock('$lib/api', () => ({ api: {} }));
 
 describe('Congregation segment', () => {
   it('renders', async () => {
@@ -12,9 +14,9 @@ describe('Congregation segment', () => {
     const target = document.createElement('div');
 
     // mount the segment via a static host that provides Accordion.Root
-
-    new (Host as any)({ props: { props }, target });
+    const instance = mount(Host as any, { props: { props }, target });
 
     expect(target).toBeTruthy();
+    unmount(instance);
   });
 });

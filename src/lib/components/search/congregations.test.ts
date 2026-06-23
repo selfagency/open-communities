@@ -5,6 +5,8 @@ import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 
 import { FakeSearch, setSearchTermsSpy, toggleLocationSpy } from '$test/stubs/fake-search';
 
+vi.mock('$lib/api', () => ({ api: {} }));
+
 // make radashi.sleep immediate while keeping other utilities
 vi.mock('radashi', () => {
   return {

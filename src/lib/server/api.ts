@@ -180,7 +180,7 @@ function throwAsHttpError(err: unknown): { message: string; status: number } {
   return error(status, clientMessage);
 }
 
-export { api, authenticate, cleanResponse, expand, handleError, loadUser, throwAsHttpError, withRetry };
-
 /** @deprecated Renamed to throwAsHttpError for clarity. */
 const handleError = throwAsHttpError;
+
+export { api, authenticate, cleanResponse, expand, handleError, loadUser, throwAsHttpError, withRetry };

@@ -55,7 +55,7 @@
   /* endregion variables */
 </script>
 
-{#if (globalThis as Record<string, unknown>).__TEST__}
+{#if globalThis.__TEST__}
   <!-- Test-friendly fallback: render buttons for each location so tests can query labels
 		 without initializing MapLibre / WebGL. -->
   <div class="h-96">

@@ -89,7 +89,7 @@
     },
   };
 
-  const icons = {
+  const icons: Record<string, typeof AccessibilityIcon> = {
     accessibility: AccessibilityIcon,
     admin: AdminIcon,
     circle: CircleIcon,
@@ -126,7 +126,7 @@
         ...filters[category],
         [option]: checked,
       },
-    } as Record<string, Record<string, boolean>>;
+    };
   };
 
   const resetFilters = () => {
@@ -170,31 +170,17 @@
               <div class="filter-heading">
                 <span class="filter-icon">
                   {#if category === "denomination" || category === "health" || category === "services"}
-                    {@const Icon = (
-                      icons as unknown as Record<
-                        string,
-                        typeof AccessibilityIcon
-                      >
-                    )[category]}
+                    {@const Icon = icons[category]}
                     <span class="h-4 w-5 fill-muted-foreground">
                       <Icon />
                     </span>
                   {:else}
-                    {@const Icon = (
-                      icons as unknown as Record<
-                        string,
-                        typeof AccessibilityIcon
-                      >
-                    )[category]}
+                    {@const Icon = icons[category]}
                     <Icon size="17" />
                   {/if}
                 </span>
                 <span class="filter-label">
-                  <span
-                    >{(m as Record<string, (args?: unknown) => string>)[
-                      category
-                    ]()}</span
-                  >
+                  <span>{m[category]()}</span>
                 </span>
                 <span class="filter-status">
                   <StatusIcon class="h-4 w-4" />
@@ -219,9 +205,7 @@
                       <span class="filter-label text-muted-foreground">
                         {option === "other"
                           ? m.other()
-                          : (m as Record<string, (args?: unknown) => string>)[
-                              `${category}_${option}`
-                            ]()}
+                          : m[`${category}_${option}`]()}
                       </span>
                     </Label>
                   </span>

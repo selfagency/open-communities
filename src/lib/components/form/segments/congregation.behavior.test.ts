@@ -1,9 +1,11 @@
 import '@testing-library/jest-dom/vitest';
+import { mount, unmount } from 'svelte';
 import { describe, expect, it, vi } from 'vitest';
 
 import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
+vi.mock('$lib/api', () => ({ api: {} }));
 
 describe('Congregation segment (behavior)', () => {
   it('updates name and contactUrl in formData when inputs change', async () => {
@@ -14,8 +16,7 @@ describe('Congregation segment (behavior)', () => {
     const target = document.createElement('div');
 
     // mount the host which provides Accordion.Root and renders Congregation
-
-    new (Host as any)({ props: { props }, target });
+    const instance = mount(Host as any, { props: { props }, target });
 
     // find text inputs (name, contactUrl, clergy etc.). We'll target the first two text inputs.
     const textInputs = Array.from(
@@ -55,5 +56,7 @@ describe('Congregation segment (behavior)', () => {
 
       expect((latest2 as unknown as Record<string, unknown>).contactUrl).toBe('https://example.org/path');
     }
+
+    unmount(instance);
   });
 });
