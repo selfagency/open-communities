@@ -1,5 +1,6 @@
 <script lang="ts">
   import Loading from "@lucide/svelte/icons/loader-circle";
+  import { m } from "$lib/paraglide/messages";
 
   const {
     class: className = "",
@@ -13,10 +14,10 @@
   class:min-h-[50vh]={variant === "full"}
   class={`my-4 flex h-full w-full flex-col items-center justify-center ${className}`}
   role="status"
-  aria-label="Loading…"
+  aria-label={m.loading()}
   in:fade={{ duration: 300 }}
   out:fade={{ duration: 300 }}
 >
   <Loading class="animate-spin" aria-hidden="true" />
-  <span class="sr-only">Loading…</span>
+  <span class="sr-only">{m.loading()}</span>
 </div>

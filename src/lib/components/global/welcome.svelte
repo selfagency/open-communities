@@ -17,5 +17,5 @@
     {m.home_blurb()}
   </h1>
 
-  <Button onclick={async () => await goto('/about')}>Learn more</Button>
+  <Button onclick={async () => await goto('/about')}>{m.learnMore()}</Button>
 </div>

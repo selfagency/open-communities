@@ -89,7 +89,7 @@
       role="alert"
       class="fixed top-0 z-50 flex w-full items-center justify-center bg-amber-500/90 px-4 py-2 text-sm font-medium text-amber-950 backdrop-blur-sm"
     >
-      Reconnecting to database…
+      {m.reconnecting()}
     </div>
   {/if}
   <Progress />

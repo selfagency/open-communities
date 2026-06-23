@@ -4,9 +4,8 @@
   import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
   import { useId } from "bits-ui";
   import { onMount, tick } from "svelte";
-
+  import { m } from "$lib/paraglide/messages";
   import { cn } from "$lib/utils.js";
-
   import * as Command from "../ui/command/index.js";
   import * as Popover from "../ui/popover/index.js";
 
@@ -96,9 +95,9 @@
           value={commandValue}
           onValueChange={handleCommandValueChange}
         >
-          <Command.Input {placeholder} />
+          <Command.Input {placeholder} class="border-gray-300!" />
           <Command.List>
-            <Command.Empty>No results found.</Command.Empty>
+            <Command.Empty>{m.noResults()}</Command.Empty>
             <Command.Group value={commandGroupId}>
               {#each currentItems as item (item.id)}
                 <Command.Item
@@ -118,7 +117,7 @@
           </Command.List>
         </Command.Root>
       {:else}
-        <div class="p-2 text-center text-sm">No options available</div>
+        <div class="p-2 text-center text-sm">{m.noOptions()}</div>
       {/if}
     </Popover.Content>
   </Popover.Root>

@@ -3,6 +3,7 @@
   import { Pagination as PaginationPrimitive } from 'bits-ui';
 
   import { buttonVariants } from '$lib/components/ui/button/index.js';
+  import { m } from '$lib/paraglide/messages';
   import { cn } from '$lib/utils.js';
 
   let {
@@ -15,12 +16,12 @@
 
 {#snippet Fallback()}
   <ChevronLeftIcon class="size-4" />
-  <span>Previous</span>
+  <span>{m.previous()}</span>
 {/snippet}
 
 <PaginationPrimitive.PrevButton
   bind:ref
-  aria-label="Go to previous page"
+  aria-label={m.paginationPrevious()}
   class={cn(
     buttonVariants({
       class: 'gap-1 px-2.5 sm:pl-2.5',
