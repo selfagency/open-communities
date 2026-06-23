@@ -117,9 +117,8 @@ async function seedData(token) {
   const la  = await create('cities', { name: 'Los Angeles', state: ca.id, country: us.id, longitude: -118.2437, latitude: 34.0522 });
 
   // Users (password will be hashed by PB automatically)
-  // NOSONAR — test fixture passwords
-  const regular = await create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, lang: 'en', emailVisibility: true });
-  const other = await create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, lang: 'en', emailVisibility: true });
+  const regular = await create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
+  const other = await create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
 
   // Congregation 1: visible, owned by regular user, full featured
   const cong1 = await create('congregations', { name: 'Shalom Congregation', clergy: 'rabbi', denomination: 'reform', flavor: 'egalitarian', notes: 'A welcoming Reform community', contactName: 'Rabbi Cohen', contactEmail: 'info@shalom.org', contactUrl: 'https://shalom.org', country: us.id, state: ny.id, city: nyc.id, visible: true, owner: regular.id });
