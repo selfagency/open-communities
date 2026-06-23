@@ -82,7 +82,7 @@
     <Popover.Trigger
       {id}
       bind:ref={triggerRef}
-      class="button w-full flex-row items-center justify-between! outline bg-white! border-gray-300!"
+      class="button w-full flex-row items-center justify-between! outline bg-background! border-border!"
       role="combobox"
       aria-expanded={open}
     >
@@ -95,7 +95,7 @@
           value={commandValue}
           onValueChange={handleCommandValueChange}
         >
-          <Command.Input {placeholder} class="border-gray-300!" />
+          <Command.Input {placeholder} class="border-border!" />
           <Command.List>
             <Command.Empty>{m.noResults()}</Command.Empty>
             <Command.Group value={commandGroupId}>

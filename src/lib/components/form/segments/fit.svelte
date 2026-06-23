@@ -36,7 +36,7 @@
       <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
         <span>{m.fit()}</span>
         {#if !hasFit || fitErrors}
-          <span class="text-red-500">*</span>
+          <span class="text-destructive">*</span>
         {/if}
       </div>
     </Accordion.Trigger>
@@ -141,7 +141,7 @@
           </Form.Field>
         {/if}
         {#if fitErrors}
-          <span class="text-xs text-red-500">{m.requiredResponse()}</span>
+          <span class="text-xs text-destructive">{m.requiredResponse()}</span>
         {/if}
       </div>
 

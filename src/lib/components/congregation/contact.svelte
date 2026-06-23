@@ -25,7 +25,7 @@
   {#if contactEmail}
     <a
       href="mailto:{contactEmail}"
-      class="flex flex-row items-center justify-center space-x-1 hover:text-slate-500"
+      class="flex flex-row items-center justify-center space-x-1 hover:text-muted-foreground"
     >
       <span><EmailIcon size="18" /></span>
       <span>

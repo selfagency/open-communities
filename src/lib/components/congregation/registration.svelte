@@ -42,7 +42,7 @@
       <Button
         variant="outline"
         href="mailto:{registration.email}"
-        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
+        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
       >
         <span><EmailIcon size="16" /></span>
         <span>{m.email()}</span>
@@ -53,7 +53,7 @@
         variant="outline"
         href={registration.url}
         target="_blank"
-        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-slate-500"
+        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
       >
         <span><WebIcon size="16" /></span>
         <span>{m.website()}</span>

@@ -158,20 +158,20 @@
       {#each skeletons as s}
         <div class="col-span-1">
           <div
-            class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-white p-4"
+            class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-background p-4"
           >
             <div class="space-y-2">
-              <div class="h-5 w-3/4 rounded bg-slate-200"></div>
-              <div class="h-3 w-1/2 rounded bg-slate-200"></div>
+              <div class="h-5 w-3/4 rounded bg-muted"></div>
+              <div class="h-3 w-1/2 rounded bg-muted"></div>
             </div>
             <div class="mt-4 space-y-2">
-              <div class="h-3 w-full rounded bg-slate-100"></div>
-              <div class="h-3 w-5/6 rounded bg-slate-100"></div>
+              <div class="h-3 w-full rounded bg-muted"></div>
+              <div class="h-3 w-5/6 rounded bg-muted"></div>
             </div>
             <div class="mt-4 flex flex-row space-x-1">
-              <div class="h-6 w-6 rounded-full bg-slate-200"></div>
-              <div class="h-6 w-6 rounded-full bg-slate-200"></div>
-              <div class="h-6 w-6 rounded-full bg-slate-200"></div>
+              <div class="h-6 w-6 rounded-full bg-muted"></div>
+              <div class="h-6 w-6 rounded-full bg-muted"></div>
+              <div class="h-6 w-6 rounded-full bg-muted"></div>
             </div>
           </div>
         </div>
@@ -183,7 +183,7 @@
       transition:fade={{ delay: 300, duration: 300 }}
     >
       <div
-        class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-slate-500"
+        class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-muted-foreground"
       >
         <Label for="search" class="flex w-8 items-center justify-center">
           <SearchIcon size="20" />
@@ -194,7 +194,7 @@
             placeholder={m.search()}
             bind:value={searchTerms}
             id="search"
-            class="w-full placeholder:text-gray-500"
+            class="w-full placeholder:text-muted-foreground"
           />
 
           <span
@@ -202,7 +202,7 @@
           >
             <Button
               variant="link"
-              class="text-slate-500 hover:text-slate-600"
+              class="text-muted-foreground hover:text-secondary-foreground"
               onclick={() => {
                 searchTerms = "";
                 search.setSearchTerms(searchTerms);
@@ -220,7 +220,7 @@
       >
         <Button
           variant="outline"
-          class={`space-x-2 text-slate-500 rtl:mx-1 ${$searchState.showLocation ? "bg-slate-100" : ""}`}
+          class={`space-x-2 text-muted-foreground rtl:mx-1 ${$searchState.showLocation ? "bg-muted" : ""}`}
           onclick={() => {
             search.toggleLocation();
           }}
@@ -244,7 +244,7 @@
 
     {#if $results?.length === 0}
       <div
-        class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-slate-500"
+        class="col-span-3 flex flex-row items-center justify-center space-x-2 py-12 text-muted-foreground"
       >
         <WarningIcon size="20" />
         <span>{m.nothingFound()}</span>

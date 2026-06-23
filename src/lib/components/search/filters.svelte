@@ -146,14 +146,14 @@
 
 <Popover.Root>
   <Popover.Trigger
-    class="button space-x-2 text-slate-500 outline rtl:mx-1 bg-white! border-gray-300!"
+    class="button space-x-2 text-muted-foreground outline rtl:mx-1 bg-background! border-border!"
   >
     <FilterIcon size="18" class="rtl:mx-1" />
     <span>{m.filter()}</span>
   </Popover.Trigger>
   <Popover.Content>
     <div
-      class="flex flex-col items-start justify-start space-y-2 text-slate-500"
+      class="flex flex-col items-start justify-start space-y-2 text-muted-foreground"
     >
       {#each Object.keys(filters) as category, i (i)}
         {#if !isEmpty(filters?.[category]) && !(category === "admin" && !user?.admin)}
@@ -176,7 +176,7 @@
                         typeof AccessibilityIcon
                       >
                     )[category]}
-                    <span class="h-4 w-5 fill-slate-500">
+                    <span class="h-4 w-5 fill-muted-foreground">
                       <Icon />
                     </span>
                   {:else}
@@ -216,7 +216,7 @@
                         updateFilter(category, option, checked ?? false)}
                     />
                     <Label for={`${category}_${option}`}>
-                      <span class="filter-label text-slate-500">
+                      <span class="filter-label text-muted-foreground">
                         {option === "other"
                           ? m.other()
                           : (m as Record<string, (args?: unknown) => string>)[
@@ -232,7 +232,7 @@
         {/if}
       {/each}
       <Button
-        class="filter-heading h-auto p-0 text-slate-500"
+        class="filter-heading h-auto p-0 text-muted-foreground"
         variant="link"
         onclick={resetFilters}
       >

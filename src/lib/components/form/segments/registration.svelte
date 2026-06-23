@@ -41,7 +41,7 @@
       <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
         <span>{m.registration()}</span>
         {#if !hasRegistration || registrationErrors}
-          <span class="text-red-500">*</span>
+          <span class="text-destructive">*</span>
         {/if}
       </div>
     </Accordion.Trigger>
@@ -94,7 +94,7 @@
         </Form.Field>
       {/if}
       {#if registrationErrors?.registrationType}
-        <span class="mt-4 block text-xs text-red-500">{m.requiredResponse()}</span>
+        <span class="mt-4 block text-xs text-destructive">{m.requiredResponse()}</span>
       {/if}
       <div class="question my-4" class:error={registrationInvalid}>
         {m.registration_contact()}
@@ -119,7 +119,7 @@
         <Form.Control
           >{#snippet children(props)}
             <Form.Label for="registration_url">{m.website()}</Form.Label>
-            <div class="text-xs text-slate-500">{m.http()}</div>
+            <div class="text-xs text-muted-foreground">{m.http()}</div>
             <Input
               id="registration_url"
               {...props}
@@ -133,7 +133,7 @@
       </Form.Field>
 
       {#if registrationInvalid}
-        <span class="mt-4 block text-xs text-red-500">
+        <span class="mt-4 block text-xs text-destructive">
           {m.thingRequired({ thing: m.emailOrUrl() })}
         </span>
       {/if}

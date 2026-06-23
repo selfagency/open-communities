@@ -55,12 +55,12 @@
   <Card.Header>
     <Card.Title>
       <h1
-        class="font-display text-xl leading-6 font-normal tracking-wide text-slate-600"
+        class="font-display text-xl leading-6 font-normal tracking-wide text-secondary-foreground"
       >
         {congregation.name}
       </h1>
     </Card.Title>
-    <Card.Description class="text-slate-500 -mt-1">
+    <Card.Description class="text-muted-foreground -mt-1">
       {#if services.onlineOnly}
         <span>{m.services_onlineOnly()}</span
         >{#if location.country.name && location.country.name !== "United States"}<span
@@ -113,7 +113,7 @@
                   await goto(url);
                 }}
               >
-                <EditIcon size="16" class="text-slate-700" />
+                <EditIcon size="16" class="text-secondary-foreground" />
                 <span class="sr-only">{m.edit()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>

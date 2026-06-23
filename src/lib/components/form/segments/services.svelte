@@ -34,7 +34,7 @@
       <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
         <span>{m.services()}</span>
         {#if !hasServices || servicesErrors}
-          <span class="text-red-500">*</span>
+          <span class="text-destructive">*</span>
         {/if}
       </div>
     </Accordion.Trigger>
@@ -168,7 +168,7 @@
           </Form.Field>
         {/if}
         {#if servicesErrors}
-          <span class="text-xs text-red-500">{m.requiredResponse()}</span>
+          <span class="text-xs text-destructive">{m.requiredResponse()}</span>
         {/if}
       </div>
       <div class="mt-4 flex flex-row items-center justify-end">

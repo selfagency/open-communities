@@ -128,7 +128,7 @@
     <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
       <span>{m.congregation()}</span>
       {#if isEmpty($formData?.name) || isEmpty($formData?.clergy) || isEmpty($formData?.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
-        <span class="text-red-500">*</span>
+        <span class="text-destructive">*</span>
       {/if}
     </div>
   </Accordion.Trigger>
@@ -214,7 +214,7 @@
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="contactUrl"><span>{m.website()}</span></Form.Label>
-          <div class="text-xs text-slate-500">{m.http()}</div>
+          <div class="text-xs text-muted-foreground">{m.http()}</div>
           <Input
             id="contactUrl"
             {...props}

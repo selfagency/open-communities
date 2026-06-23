@@ -159,7 +159,7 @@
                 {/if}
 
                 {#if mode === "edit" && !user?.admin}
-                  <Alert.Root class="bg-slate-50">
+                  <Alert.Root class="bg-muted">
                     <WarningIcon size="18" />
                     <Alert.Description class="mt-0.5">
                       {m.editNotice()}
@@ -181,7 +181,7 @@
                       in:fade={{ delay: 300, duration: 150 }}
                       out:fade={{ delay: 150, duration: 150 }}
                     >
-                      <Alert.Root variant="destructive" class="my-4 bg-red-50">
+                      <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
                         <WarningIcon size="18" />
                         <Alert.Description class="mt-0.5" aria-live="polite"
                           >{m.formErrors()}</Alert.Description

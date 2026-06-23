@@ -86,8 +86,8 @@
 <DropdownMenu.Root>
   <DropdownMenu.Trigger class={mode === 'mini' ? 'button' : buttonClass}
   >
-    <LocaleIcon class="h-4 w-4 stroke-slate-500" />
-      <span class={(mode === "mini" ? "" : "max-[720px]:hidden") + "text-slate-500"}>{code}</span>
+    <LocaleIcon class="h-4 w-4 stroke-muted-foreground" />
+      <span class={(mode === "mini" ? "" : "max-[720px]:hidden") + "text-muted-foreground"}>{code}</span>
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>

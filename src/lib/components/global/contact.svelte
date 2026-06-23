@@ -168,7 +168,7 @@
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.contact_message()}</Form.Label>
-              <Form.Description class="text-red-500">
+              <Form.Description class="text-destructive">
                 {#if $formData.reason === 'delete'}
                   {m.contact_account()}
                 {:else if $formData.reason === 'claim'}

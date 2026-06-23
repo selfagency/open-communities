@@ -71,7 +71,7 @@
 
 {#if !isEmpty($locationState.options)}
   <div
-    class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-slate-100 p-2 sm:flex-row sm:space-y-0 sm:space-x-2"
+    class="flex w-full flex-col items-center justify-between space-y-2 rounded-lg bg-muted p-2 sm:flex-row sm:space-y-0 sm:space-x-2"
   >
     <div
       class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-2"
@@ -116,7 +116,7 @@
     <span class="flex w-full flex-row items-center justify-center sm:w-auto">
       <Button variant="link" class="h-auto" onclick={handleReset}>
         <span
-          class="flex flex-row items-center justify-start space-x-1 text-slate-500 hover:text-slate-700"
+          class="flex flex-row items-center justify-start space-x-1 text-muted-foreground hover:text-secondary-foreground"
         >
           <ResetIcon size="16" class="rtl:mx-1" />
           <span>{m.reset()}</span>

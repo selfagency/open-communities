@@ -19,13 +19,13 @@
       <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
         <span>{m.accessibility()}</span>
         {#if $errors.accessibility}
-          <span class="text-red-500">*</span>
+          <span class="text-destructive">*</span>
         {/if}
       </div>
     </Accordion.Trigger>
     <Accordion.Content>
       <div class="question">{m.accessibility_extended()}</div>
-      <div class="mt-2 text-slate-500 italic">
+      <div class="mt-2 text-muted-foreground italic">
         {m.accessibility_note()}
       </div>
       <div class="my-4 space-y-2">

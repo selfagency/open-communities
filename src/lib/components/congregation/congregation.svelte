@@ -108,7 +108,7 @@
             rel="noopener noreferrer"
             class="inline-block max-w-[92%] hyphens-auto"
           >
-            <h1 class="inline-block text-2xl leading-7 text-slate-600">
+            <h1 class="inline-block text-2xl leading-7 text-secondary-foreground">
               <span>{congregation.name}</span>
               <span
                 ><LinkIcon
@@ -121,13 +121,13 @@
           </a>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {:else}
-          <h1 class="inline text-2xl leading-6 text-slate-600">
+          <h1 class="inline text-2xl leading-6 text-secondary-foreground">
             {congregation.name}
           </h1>
         {/if}
       </Dialog.Title>
       <Dialog.Description
-        class="flex w-full flex-row items-center justify-between space-x-2 text-gray-500 -mt-4"
+        class="flex w-full flex-row items-center justify-between space-x-2 text-muted-foreground -mt-4"
       >
         <span class="w-2/3">
           {#if city.name || province.name || country.name}
@@ -148,7 +148,7 @@
             <a href={`/contact?claim=${congregation.id}`}>
               <Badge
                 variant="outline"
-                class="font-normal text-nowrap text-slate-500 hover:bg-slate-100"
+                class="font-normal text-nowrap text-muted-foreground hover:bg-muted"
                 >{m.claimThis()}</Badge
               >
             </a>
@@ -164,7 +164,7 @@
                     await goto(url);
                   }}
                 >
-                  <EditIcon size="16" class="text-slate-500 rtl:mx-1" />
+                  <EditIcon size="16" class="text-muted-foreground rtl:mx-1" />
                   <span class="sr-only">{m.edit()}</span>
                 </Tooltip.Trigger>
                 <Tooltip.Content>
@@ -184,7 +184,7 @@
                   toast.success(m.copied());
                 }}
               >
-                <ShareIcon size="16" class="text-slate-500 rtl:mx-1" />
+                <ShareIcon size="16" class="text-muted-foreground rtl:mx-1" />
                 <span class="sr-only">{m.share()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>

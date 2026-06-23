@@ -36,7 +36,7 @@
       <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
         <span>{m.health()}</span>
         {#if !hasHealth || healthErrors}
-          <span class="text-red-500">*</span>
+          <span class="text-destructive">*</span>
         {/if}
       </div>
     </Accordion.Trigger>
@@ -81,7 +81,7 @@
         <Form.FieldErrors />
       </Form.Field>
       {#if healthErrors?.protocol}
-        <span class="mt-4 block text-xs text-red-500">{m.requiredResponse()}</span>
+        <span class="mt-4 block text-xs text-destructive">{m.requiredResponse()}</span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button variant="secondary" onclick={() => (view = 'security')}>

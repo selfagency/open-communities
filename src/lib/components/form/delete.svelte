@@ -70,7 +70,7 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger
-    class="button border border-red-300 bg-white text-red-500 hover:bg-red-50 hover:text-red-600"
+    class="button border border-destructive/30 bg-background text-destructive hover:bg-destructive/10 hover:text-destructive"
     type="button"
   >
     {m.delete()}
@@ -94,7 +94,7 @@
         <AlertDialog.Header>
           <AlertDialog.Title>{m.warning()}</AlertDialog.Title>
           <AlertDialog.Description>
-            <Alert.Root variant="destructive" class="my-4 bg-red-50">
+            <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
               <WarningIcon size="18" />
               <Alert.Description class="mt-0.5"
                 >{m.warningNote()}</Alert.Description
