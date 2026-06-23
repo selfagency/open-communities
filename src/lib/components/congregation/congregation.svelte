@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DOMPurify from 'isomorphic-dompurify';
   /* region imports */
   import EditIcon from 'lucide-svelte/icons/pencil';
   import ShareIcon from 'lucide-svelte/icons/share';
@@ -90,7 +91,7 @@
   </Dialog.Trigger>
   <Dialog.Content
     data-id={congregation.id}
-    class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-all sm:max-w-[540px] sm:p-8">
+    class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-colors sm:max-w-[540px] sm:p-8">
     <Dialog.Header class="w-full rtl:text-right">
       <Dialog.Title>
         {#if congregation.contactUrl}
@@ -172,15 +173,15 @@
 
     <Tabs.Root bind:value={tab} class="w-full">
       <Tabs.List class="my-4 w-full">
-        <Tabs.Trigger value="about" class="w-1/2 transition-all">{m.about()}</Tabs.Trigger>
-        <Tabs.Trigger value="services" class="w-1/2 transition-all">{m.services()}</Tabs.Trigger>
-        <Tabs.Trigger value="details" class="w-1/2 transition-all">{m.details()}</Tabs.Trigger>
+        <Tabs.Trigger value="about" class="w-1/2 transition-colors">{m.about()}</Tabs.Trigger>
+        <Tabs.Trigger value="services" class="w-1/2 transition-colors">{m.services()}</Tabs.Trigger>
+        <Tabs.Trigger value="details" class="w-1/2 transition-colors">{m.details()}</Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Content value="about" class="transition-all duration-300">
+      <Tabs.Content value="about" class="transition-opacity duration-300">
         {#if tab === 'about'}
           <div transition:fade>
             {#if congregation.flavor}
-              <p class="mb-6 text-sm">{@html congregation.flavor}</p>
+              <p class="mb-6 text-sm">{@html DOMPurify.sanitize(congregation.flavor)}</p>
             {/if}
 
             <div class="grid grid-cols-12 gap-4 text-sm">
@@ -263,7 +264,7 @@
                   <h2 class="label">{m.notes()}</h2>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
-                  <p>{@html notes}</p>
+                  <p>{@html DOMPurify.sanitize(notes)}</p>
                 </div>
               {/if}
             </div>

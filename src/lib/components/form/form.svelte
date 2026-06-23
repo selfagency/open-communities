@@ -147,11 +147,11 @@
                 {/if}
 
                 {#if mode === 'add' && formSuccess}
-                  <p>{m.addSuccessNotice()}</p>
+                  <p aria-live="polite">{m.addSuccessNotice()}</p>
                 {/if}
 
                 {#if mode === 'edit' && formSuccess}
-                  <p>{m.editSuccessNotice()}</p>
+                  <p aria-live="polite">{m.editSuccessNotice()}</p>
                 {/if}
 
                 {#if !formSuccess}
@@ -159,7 +159,7 @@
                     <span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
                       <Alert.Root variant="destructive" class="my-4 bg-red-50">
                         <WarningIcon size="18" />
-                        <Alert.Description class="mt-0.5">{m.formErrors()}</Alert.Description>
+                        <Alert.Description class="mt-0.5" aria-live="polite">{m.formErrors()}</Alert.Description>
                       </Alert.Root>
                     </span>
                   {/if}

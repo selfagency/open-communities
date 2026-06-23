@@ -1,5 +1,6 @@
 <script lang="ts">
   /* region imports */
+  import DOMPurify from 'isomorphic-dompurify';
   import * as Card from '$lib/components/ui/card';
   import { m } from '$lib/paraglide/messages';
   // import { log } from '$lib/utils';
@@ -25,7 +26,7 @@
         <Card.Header><h1 class="text-3xl">{data.content.title}</h1></Card.Header>
         <Card.Content>
           <div class="prose max-w-none">
-            {@html data.content.content}
+            {@html DOMPurify.sanitize(data.content.content)}
           </div>
         </Card.Content>
       </Card.Root>

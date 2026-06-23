@@ -108,9 +108,9 @@
       {#if resetSuccess}
         <div class="flex flex-col items-center justify-center space-y-4">
           <span>{m.passwordSuccess()}</span>
-          <span role="button" tabindex="0" onclick={() => resetter()} onkeypress={() => resetter()}>
+          <button type="button" onclick={() => resetter()}>
             {m.continueToLogin()} →
-          </span>
+          </button>
         </div>
       {/if}
     {:else}

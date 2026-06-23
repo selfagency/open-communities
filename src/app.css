@@ -176,6 +176,11 @@ h3,
 h4,
 h5 {
   @apply font-display !font-normal;
+  text-wrap: balance;
+}
+
+body {
+  text-wrap: pretty;
 }
 
 #captcha {
@@ -203,7 +208,7 @@ h5 {
 }
 
 .button {
-  @apply focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50;
+  @apply focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50;
 }
 
 /* has-[>svg] padding — kept separate from @apply because tailwind4 CSS parser can't handle nested brackets in @apply */
@@ -328,6 +333,30 @@ h5 {
 
 cap-widget {
   width: 100%;
+}
+
+/* Touch: prevent double-tap zoom delay on interactive elements */
+html {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Contain overscroll in dialogs and sheets */
+.dialog-content,
+div[role="dialog"],
+[data-slot="sheet-content"] {
+  overscroll-behavior: contain;
+}
+
+/* Reduced motion: disable all non-essential animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Print stylesheet: hide chrome/navigation, show content */
