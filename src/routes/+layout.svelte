@@ -4,7 +4,7 @@
 
   import posthog from 'posthog-js';
   import type { Snippet } from 'svelte';
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
 
   import { browser } from '$app/environment';
   import { afterNavigate, beforeNavigate, onNavigate } from '$app/navigation';
@@ -64,16 +64,16 @@
   /* region reactivity */
   $effect(() => {
     if (innerWidth > 0) {
-      setState({
+      untrack(() => setState({
         isMobile: innerWidth < 640,
         offsetWidth: innerWidth
-      });
+      }));
     }
   });
 
   $effect(() => {
     if (innerHeight > 0) {
-      setState({ offsetHeight: innerHeight });
+      untrack(() => setState({ offsetHeight: innerHeight }));
     }
   });
 </script>

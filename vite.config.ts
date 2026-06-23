@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
+  ssr: {
+    external: ['@opentelemetry', '@grpc', 'protobufjs']
+  },
   plugins: [
     ViteMcp(),
     mode === 'test' && inlineSveltePlugin(),
