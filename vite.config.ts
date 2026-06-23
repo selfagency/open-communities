@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
+import posthog from '@posthog/rollup-plugin';
 import svg from '@poppanator/sveltekit-svg';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -38,7 +39,20 @@ export default defineConfig(({ mode }) => ({
       outdir: './src/lib/paraglide',
       project: './project.inlang'
     }),
-    svg()
+    svg(),
+    // PostHog sourcemap upload — only during production builds
+    mode === 'production' &&
+      posthog({
+        personalApiKey: process.env.POSTHOG_CLI_API_KEY!,
+        projectId: process.env.POSTHOG_CLI_PROJECT_ID!,
+        host: process.env.POSTHOG_CLI_HOST,
+        sourcemaps: {
+          enabled: true,
+          releaseName: 'open-communities',
+          releaseVersion: process.env.SOURCE_VERSION || process.env.COMMIT_REF || 'dev',
+          deleteAfterUpload: true
+        }
+      })
   ],
 
   // Resolve aliases for both dev/build and Vitest.

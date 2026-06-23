@@ -81,6 +81,9 @@ importers:
       '@poppanator/sveltekit-svg':
         specifier: 7.0.0
         version: 7.0.0(rollup@4.62.2)(svelte@5.56.3(@typescript-eslint/types@8.61.1))(vite@8.1.0(@types/node@26.0.0)(jiti@2.7.0)(yaml@2.9.0))
+      '@posthog/rollup-plugin':
+        specifier: ^1.4.7
+        version: 1.4.7(rollup@4.62.2)
       '@sveltejs/adapter-node':
         specifier: 5.5.6
         version: 5.5.6(@sveltejs/kit@2.67.0(@opentelemetry/api@1.9.1)(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.56.3(@typescript-eslint/types@8.61.1))(vite@8.1.0(@types/node@26.0.0)(jiti@2.7.0)(yaml@2.9.0)))(svelte@5.56.3(@typescript-eslint/types@8.61.1))(typescript@6.0.3)(vite@8.1.0(@types/node@26.0.0)(jiti@2.7.0)(yaml@2.9.0)))
@@ -979,8 +982,21 @@ packages:
   '@poppinss/macroable@1.1.2':
     resolution: {integrity: sha512-FAVBRzzWhYP5mA3lCwLH1A0fKBqq5anyjGet90Z81aRK5c/+LTGUE1zJhZrErjaenBSOOI9BVUs3WVmotneFQA==}
 
+  '@posthog/cli@0.7.30':
+    resolution: {integrity: sha512-Qo665wxrTOUJv7AwHbh1zXdb1UnSX8EaeCRSVBj+VqjR43/461fxoBt30a+dGw5jWqk/5Y0k1FOz0RaV2d6yIg==}
+    engines: {node: '>=14.14', npm: '>=6'}
+    hasBin: true
+
   '@posthog/core@1.37.0':
     resolution: {integrity: sha512-hTSJVKEQ4dYhJLGggr0F6oZ+AwKSlDXr4PPeHfNvcBJ5S1rxoQXFA612zK1ODakuw8J9YSKShVm5yC0HdRvJ4g==}
+
+  '@posthog/plugin-utils@1.1.2':
+    resolution: {integrity: sha512-CS/14cMmny9NN/LHAb4QZdW3TfxhbKzsfyVYMCjsRdE0IKMTrXMr0cPRZxwczsN6VnWvVoy2Dd5wcG6RrIjlYA==}
+
+  '@posthog/rollup-plugin@1.4.7':
+    resolution: {integrity: sha512-bJgQLKZ5gkq79PBGTNqC8S6OAE8QtNIPYbvHnoboIh8qoZ0PS7RRpxuunoeOflxrHxpnM0Id9OxvrkGKJ2JE6w==}
+    peerDependencies:
+      rollup: '>= 4.0.0'
 
   '@posthog/types@1.391.0':
     resolution: {integrity: sha512-oJ6jkqVMq+T4ax9F0rUllJc0KHpSgpaMwTNYWkE70iBiyXDVyhcNBmYnNKzSODgpzsaQNI6VfK8JrRYbkSJZZw==}
@@ -4784,9 +4800,23 @@ snapshots:
   '@poppinss/macroable@1.1.2':
     optional: true
 
+  '@posthog/cli@0.7.30':
+    dependencies:
+      detect-libc: 2.1.2
+
   '@posthog/core@1.37.0':
     dependencies:
       '@posthog/types': 1.391.0
+
+  '@posthog/plugin-utils@1.1.2':
+    dependencies:
+      cross-spawn: 7.0.6
+
+  '@posthog/rollup-plugin@1.4.7(rollup@4.62.2)':
+    dependencies:
+      '@posthog/cli': 0.7.30
+      '@posthog/plugin-utils': 1.1.2
+      rollup: 4.62.2
 
   '@posthog/types@1.391.0': {}
 
