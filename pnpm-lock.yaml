@@ -18,8 +18,8 @@ importers:
         specifier: ^2.20.1
         version: 2.20.1(typescript@6.0.3)
       '@selfagency/stately':
-        specifier: ^0.1.4
-        version: 0.1.4(svelte@5.56.3(@typescript-eslint/types@8.61.1))
+        specifier: ^0.1.5
+        version: 0.1.5(svelte@5.56.3(@typescript-eslint/types@8.61.1))
       isomorphic-dompurify:
         specifier: ^3.18.0
         version: 3.18.0
@@ -1295,8 +1295,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@selfagency/stately@0.1.4':
-    resolution: {integrity: sha512-Bu7EkDiwp4gRt41DWJwUV5KqIrqJstkYe7nzBb/nCVZbLwgzpUFU/3U5yIGJIszNqLyzEqhwZ+fLn9LB96PJDQ==}
+  '@selfagency/stately@0.1.5':
+    resolution: {integrity: sha512-D9xF4Fre98m8FdCsIsvRmYfk2rkR7wIqmXLiHNGXXAWcWBvN2USmVtcI7s5Y7kYZ2mSQTKcOiFsN00iATClT/w==}
+    engines: {node: '>=20'}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -5001,11 +5002,12 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@selfagency/stately@0.1.4(svelte@5.56.3(@typescript-eslint/types@8.61.1))':
+  '@selfagency/stately@0.1.5(svelte@5.56.3(@typescript-eslint/types@8.61.1))':
     dependencies:
-      '@lucide/svelte': 1.21.0(svelte@5.56.3(@typescript-eslint/types@8.61.1))
       lz-string: 1.5.0
       svelte: 5.56.3(@typescript-eslint/types@8.61.1)
+    optionalDependencies:
+      '@lucide/svelte': 1.21.0(svelte@5.56.3(@typescript-eslint/types@8.61.1))
 
   '@sideway/address@4.1.5':
     dependencies:
