@@ -32,7 +32,6 @@ async function main() {
     });
 
     if (!createResponse.ok) {
-      const text = await createResponse.text();
       console.error('[captcha-setup] failed to create key:', createResponse.status);
       process.exit(3);
     }
@@ -43,7 +42,6 @@ async function main() {
     });
 
     if (!listResponse.ok) {
-      const text = await listResponse.text();
       console.error('[captcha-setup] failed to list keys:', listResponse.status);
       process.exit(4);
     }
@@ -88,7 +86,6 @@ async function main() {
         }
       }
     } else {
-      const errorText = await rotateResponse.text();
       console.error('[captcha-setup] failed to rotate secret:', rotateResponse.status);
     }
 

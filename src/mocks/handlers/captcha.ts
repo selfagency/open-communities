@@ -1,8 +1,7 @@
 import { HttpResponse, http } from 'msw';
 
 // MSW mock handlers run locally — http is required for the mock server
-// MSW mock handlers run locally — http is required
-const CAPTCHA = 'http://*:3001';
+const CAPTCHA = 'http://*:3001'; // NOSONAR
 
 export const captchaHandlers = [
   // GET / — Cap health check

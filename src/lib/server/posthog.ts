@@ -41,8 +41,8 @@ export async function captureException(error: unknown, user?: string, other?: Re
   if (!phClient) return;
 
   try {
-    const errMsg =
-      error instanceof Error ? error : new Error(typeof error === 'string' ? error : JSON.stringify(error));
+    const fallbackMessage = typeof error === 'string' ? error : JSON.stringify(error);
+    const errMsg = error instanceof Error ? error : new Error(fallbackMessage);
     phClient.captureException(errMsg, user ?? 'anonymous', other);
     await phClient.flush();
   } catch (phError) {

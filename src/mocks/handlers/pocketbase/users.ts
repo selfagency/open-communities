@@ -2,8 +2,8 @@ import { HttpResponse, http } from 'msw';
 
 import { allUsers, findUserByEmail, findUserById, regularUser } from '../../data/users';
 
-// MSW mock handlers run locally — http is required for the mock server
-const PB = 'http://*:8090';
+// MSW mock handlers run locally — http is required
+const PB = 'http://*:8090'; // NOSONAR
 
 export const userHandlers = [
   // POST /api/collections/users/auth-with-password

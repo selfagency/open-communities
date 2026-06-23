@@ -3,7 +3,7 @@ import { HttpResponse, http } from 'msw';
 import { allPages } from '../../data/pages';
 
 // MSW mock handlers run locally — http is required
-const PB = 'http://*:8090';
+const PB = 'http://*:8090'; // NOSONAR
 
 export const pageHandlers = [
   // GET /api/collections/pages/records — list with filter (by slug)

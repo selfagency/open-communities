@@ -3,7 +3,7 @@ import { HttpResponse, http } from 'msw';
 import { allCities, countries, findCitiesByState, findStatesByCountry, states } from '../../data/locations';
 
 // MSW mock handlers run locally — http is required
-const PB = 'http://*:8090';
+const PB = 'http://*:8090'; // NOSONAR
 
 export const locationHandlers = [
   // GET /api/collections/countries/records

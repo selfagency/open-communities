@@ -4,7 +4,7 @@ import type { CongregationFixture } from '../../data/congregations';
 import { allCongregations, congregationMetaViews, findCongregationById } from '../../data/congregations';
 
 // MSW mock handlers run locally — http is required
-const PB = 'http://*:8090';
+const PB = 'http://*:8090'; // NOSONAR
 
 export const congregationHandlers = [
   // GET /api/collections/congregationMeta/records — list congregations (the view)

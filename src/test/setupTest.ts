@@ -207,7 +207,7 @@ vi.mock('$lib/paraglide/messages', () => {
     {},
     {
       get: (_target: unknown, prop: unknown) => {
-        const key = typeof prop === 'string' ? prop : String(prop);
+        const key = typeof prop === 'string' ? prop : String(prop); // NOSONAR — i18n mock, prop is always a string key
         return () => key;
       }
     }

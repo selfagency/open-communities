@@ -33,8 +33,8 @@ migrate((app) => {
 
   // Users
   // Test fixture credentials — not real passwords
-  const regular = create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, admin: false, lang: 'en', emailVisibility: true });
-  const other = create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, admin: false, lang: 'en', emailVisibility: true });
+  const regular = create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, admin: false, lang: 'en', emailVisibility: true }); // NOSONAR
+  const other = create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, admin: false, lang: 'en', emailVisibility: true }); // NOSONAR
 
   // Congregations
   create('accessibility', { online_liveCaptions: true, online_automatedCaptions: true, inPerson_eva: true, inPerson_asl: true, inPerson_adaAll: true, inPerson_adaSome: true });

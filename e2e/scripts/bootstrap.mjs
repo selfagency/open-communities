@@ -21,7 +21,7 @@ const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '../..');
 const PB = process.env.PUBLIC_API_ENDPOINT || 'http://localhost:8090';
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
-const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || process.env.PB_TEST_PASSWORD_FALLBACK || 'i3_NL-dfzzFt5TX';
+const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || process.env.PB_TEST_PASSWORD_FALLBACK || 'i3_NL-dfzzFt5TX'; // NOSONAR — test fixture fallback
 const CONTAINER = 'e2e-pocketbase-1';
 const SCHEMA_PATH = resolve(ROOT, 'pb_schema.json');
 
@@ -100,7 +100,7 @@ async function seedData(token) {
 
   async function create(col, data) {
     const r = await api('POST', `/collections/${col}/records`, data, token);
-    console.log(`    ✅ ${col}: ${r?.id?.slice(0, 8)}...`);
+    console.log(`    ✅ ${col}: ${r?.id?.slice(0, 8)}...`); // NOSONAR — record IDs, not user data
     return r;
   }
 
@@ -170,7 +170,7 @@ async function main() {
     console.log(`   Panel: ${PB}/_/`);
     console.log(`   Auth:  ${ADMIN_EMAIL}`);
   } catch (e) {
-    console.error('\n❌', e.message);
+    console.error('\n❌', e.message); // NOSONAR — error message, not user data
     process.exit(1);
   }
 }
