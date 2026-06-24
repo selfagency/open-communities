@@ -11,14 +11,14 @@ export const load: PageServerLoad = async ({ locals }) => {
     defaults: {
       name: (user?.name as string) ?? '',
       email: (user?.email as string) ?? '',
-      lang: (user?.lang as string) ?? 'en',
+      lang: (user?.lang as 'en' | 'es' | 'fr' | 'he' | 'de' | 'hu' | 'nl' | 'pl' | 'pt' | 'ru' | 'uk') ?? 'en',
       notifications: (user?.notifications as boolean) ?? true,
       congregation: (user?.congregation as string) ?? '',
       password: '',
       passwordConfirm: '',
       oldPassword: ''
     }
-  });
+  } as any);
   return { form, user };
 };
 
@@ -42,7 +42,7 @@ export const actions = {
         body.passwordConfirm = form.data.passwordConfirm;
       }
       const updated = await client.collection('users').update(client.authStore.record?.id as string, body);
-      client.authStore.save(client.authStore.token, updated);
+      client.authStore.save(client.authStore.token, updated as any);
       return { form, success: true };
     } catch (err: unknown) {
       const msg = (err as { message?: string }).message ?? 'Update failed';

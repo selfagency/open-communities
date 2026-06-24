@@ -56,7 +56,7 @@
                 <TableCell>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger aschild>
+                    <TooltipTrigger>
                         <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(cong.id)}>
                           <PencilIcon class="size-4" />
                         </Button>
@@ -67,7 +67,7 @@
                 </TableCell>
               </TableRow>
             {:else}
-              <TableRow><TableCell colspan="5" class="text-muted-foreground py-8 text-center">No approved congregations</TableCell></TableRow>
+              <TableRow><TableCell colspan={5} class="text-muted-foreground py-8 text-center">No approved congregations</TableCell></TableRow>
             {/each}
           </TableBody>
         </Table>
@@ -102,7 +102,7 @@
                     <div class="flex gap-1">
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger aschild>
+                           <TooltipTrigger>
                             <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(cong.id)}>
                               <PencilIcon class="size-4" />
                             </Button>
@@ -112,7 +112,7 @@
                       </TooltipProvider>
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger aschild>
+                          <TooltipTrigger>
                             <Button variant="default" size="icon" class="size-8" onclick={() => approve(cong.id)}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4"><path d="M20 6L9 17l-5-5"/></svg>
                             </Button>
@@ -122,7 +122,7 @@
                       </TooltipProvider>
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger aschild>
+                          <TooltipTrigger>
                             <Button variant="destructive" size="icon" class="size-8" onclick={() => reject(cong.id)}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </Button>

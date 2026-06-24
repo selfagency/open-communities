@@ -24,7 +24,7 @@ export const userSchema = z
     }),
     emailVisibility: z.boolean().default(true),
     id: z.string().optional(),
-    lang: z.enum(['en', 'es', 'fr', 'he']).default('en'),
+    lang: z.enum(['en', 'es', 'fr', 'he', 'de', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk']).default('en'),
     name: z.string().refine((value) => !!value, {
       message: m.thingRequired({ thing: m.name() })
     }),

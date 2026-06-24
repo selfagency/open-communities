@@ -132,7 +132,7 @@
                 onclick={async () => {
                   lang = v;
                   await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang: v, user: page.data.user?.id }) });
-                  setLocale(v, { reload: true });
+                  setLocale(v as Parameters<typeof setLocale>[0], { reload: true });
                 }}
               >{v.toUpperCase()}</button>
             {/each}

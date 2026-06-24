@@ -34,7 +34,7 @@
               <TableCell class="text-muted-foreground text-xs">{String(p.updated ?? '').slice(0, 10)}</TableCell>
             </TableRow>
           {:else}
-            <TableRow><TableCell colspan="5" class="text-muted-foreground py-8 text-center">No pages yet</TableCell></TableRow>
+            <TableRow><TableCell colspan={5} class="text-muted-foreground py-8 text-center">No pages yet</TableCell></TableRow>
           {/each}
         </TableBody>
       </Table>

@@ -62,7 +62,7 @@
               <TableCell class="text-muted-foreground text-xs">{String(u.created ?? '').slice(0, 10)}</TableCell>
             </TableRow>
           {:else}
-            <TableRow><TableCell colspan="6" class="text-muted-foreground py-8 text-center">No users found</TableCell></TableRow>
+            <TableRow><TableCell colspan={6} class="text-muted-foreground py-8 text-center">No users found</TableCell></TableRow>
           {/each}
         </TableBody>
       </Table>

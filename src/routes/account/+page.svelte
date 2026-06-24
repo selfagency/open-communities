@@ -12,7 +12,7 @@
   let saved = $state(false);
   let unlinked = $state(false);
 
-  const form = superForm(data.form, {
+  const form = superForm(data.form as any, {
     onUpdated({ form: f }) {
       saved = true;
       if (f.valid) toast.success('Profile updated');
@@ -51,7 +51,7 @@
   <form method="POST" action="?/update" use:enhance>
     <ProfileForm {form} {saved} />
     <div class="mt-6">
-      <PasswordCard formData={$formData} errors={$errors} />
+      <PasswordCard formData={$formData as any} errors={$errors as any} />
     </div>
   </form>
 
