@@ -73,7 +73,7 @@ jobs:
         id: test
         continue-on-error: true
         run: |
-          pnpm test -- --coverage --reporter=default --reporter=junit --reporter=json
+          pnpm vitest run --coverage --coverage.enabled=true --reporter=junit --reporter=json --outputFile=test-results/junit.xml
         env:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           CAP_API_KEY: ${{ secrets.CAP_API_KEY }}

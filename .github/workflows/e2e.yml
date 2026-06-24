@@ -87,6 +87,13 @@ jobs:
           timeout 30 bash -c 'until curl -f http://127.0.0.1:8090/api/health >/dev/null 2>&1; do sleep 1; echo "Waiting for PocketBase..."; done'
           echo "PocketBase is ready"
 
+      - name: Bootstrap PocketBase (schema + seed data)
+        run: node e2e/scripts/bootstrap.mjs
+        env:
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+
       - name: Pull Docker image
         run: |
           echo "Pulling Docker image..."

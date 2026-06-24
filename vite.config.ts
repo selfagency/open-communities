@@ -75,12 +75,17 @@ export default defineConfig(({ mode }) => ({
       // you can include other reporters, but 'json-summary' is required, json is recommended
       reporter: ['text', 'json-summary', 'json'],
       // If you want a coverage reports even if your tests are failing, include the reportOnFailure option
-      reportOnFailure: false
+      reportOnFailure: false,
+      reportsDirectory: './test-results/coverage'
     },
     environment: 'jsdom',
     // enable vitest globals (expect, describe, it) so tests can use them without imports
     globals: true,
     reporter: ['junit', 'json', 'verbose'],
+    outputFile: {
+      junit: './test-results/junit.xml',
+      json: './test-results/results.json'
+    },
     // run our test setup before tests so we can mock SvelteKit runtime modules
     setupFiles: ['./src/test/setupTest.ts']
   }
