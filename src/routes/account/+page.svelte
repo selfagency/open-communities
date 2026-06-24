@@ -56,5 +56,5 @@
   </form>
 
   <CongregationCard congregation={data.user?.congregation ?? ''} onUnlink={handleUnlink} />
-  <DangerZone onDelete={handleDelete} />
+  <DangerZone />
 </div>
