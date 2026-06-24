@@ -13,7 +13,7 @@ export default defineConfig({
   testDir: path.join(__dirname, 'tests'),
   timeout: 60_000,
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173',
     headless: true,
     ignoreHTTPSErrors: true,
     viewport: { height: 800, width: 1280 }

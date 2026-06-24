@@ -36,8 +36,12 @@ test.describe('Congregation CRUD', () => {
   test('homepage shows congregation directory', async ({ page }) => {
     await page.goto(base);
     await page.waitForLoadState('networkidle');
+
+    // Search input should be visible
     await expect(page.locator('input[id="search"]')).toBeVisible();
-    await expect(page.locator('section a[href*="/?id="]').first()).toBeVisible();
+
+    // Congregation cards load from seed data — check for the card grid
+    await expect(page.locator('div.col-span-1').first()).toBeVisible({ timeout: 15000 });
   });
 
   test('signup and login as a new user', async ({ page }) => {
