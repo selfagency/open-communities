@@ -203,7 +203,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground max-w-[100vw] min-w-[320px] bg-background pt-4 leading-6;
+    @apply text-foreground font-sans max-w-[100vw] min-w-[320px] bg-background pt-4 leading-6;
     font-variant-ligatures: common-ligatures historical-ligatures contextual;
   }
   .label {
