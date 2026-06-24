@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   test:
-    name: Run tests and upload artifacts
+    name: Unit tests
     if: ${{ github.event_name == 'pull_request' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     services:
@@ -75,6 +75,13 @@ jobs:
       - name: Build application
         run: pnpm build
 
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/
+          if-no-files-found: error
+
       - name: Run tests (vitest) with coverage
         id: test
         continue-on-error: true
@@ -93,23 +100,6 @@ jobs:
           PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
           SMTP_HOST: localhost
           SMTP_PORT: 1025
-
-      - name: Debug coverage and test results
-        run: |
-          echo "=== Coverage directory ==="
-          ls -la coverage/ || echo "No coverage directory"
-          echo "=== Test results directory ==="
-          ls -la test-results/ || echo "No test-results directory"
-          echo "=== All XML files ==="
-          find . -name "*.xml" -type f | head -10
-
-      - name: Ensure test results directory exists
-        run: |
-          mkdir -p test-results
-          # Copy any XML files from root or common locations
-          find . -maxdepth 2 -name "junit*.xml" -type f -exec cp {} test-results/ \;
-          find . -maxdepth 2 -name "*test*.xml" -type f -exec cp {} test-results/ \;
-          ls -la test-results/ || echo "test-results still empty"
 
       - name: Upload test results artifact
         uses: actions/upload-artifact@v4
@@ -135,7 +125,6 @@ jobs:
         if: always() && hashFiles('test-results/junit.xml') != ''
         uses: dorny/test-reporter@v2
         with:
-          artifact: test-results
           path: 'test-results/junit.xml'
           reporter: java-junit
           name: Vitest Tests
@@ -206,8 +195,11 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps --only-shell
 
-      - name: Build application
-        run: pnpm build
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/
 
       - name: Download PocketBase binary
         run: |
