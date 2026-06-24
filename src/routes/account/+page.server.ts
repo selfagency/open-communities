@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import type { RecordModel } from 'pocketbase';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -8,6 +8,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
   const user = client.authStore.record;
+  if (!user?.email) throw error(401, 'Not authenticated');
   const form = await superValidate(zod4(userSchema), {
     defaults: {
       name: (user?.name as string) ?? '',

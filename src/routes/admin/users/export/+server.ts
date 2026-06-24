@@ -4,7 +4,9 @@ import type { RequestHandler } from './$types';
 export const GET: RequestHandler = async ({ locals }) => {
   const client = locals.api;
   const users = await withRetry(() =>
-    client.collection('users').getFullList({ sort: '-created', requestKey: 'admin-export-users' })
+    client
+      .collection('users')
+      .getFullList({ sort: '-created', filter: 'notifications=true', requestKey: 'admin-export-users' })
   );
   const csv =
     ['name,email,lang,verified,admin,'] +

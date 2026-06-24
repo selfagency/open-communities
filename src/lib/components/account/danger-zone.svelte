@@ -7,13 +7,6 @@
 
   let deleting = $state(false);
   let open = $state(false);
-
-  function onDelete() {
-    deleting = true;
-    return async ({ result }: { result: { type: string } }) => {
-      if (result.type === 'success') goto('/');
-    };
-  }
 </script>
 
 <Card>
@@ -27,7 +20,10 @@
         <Button variant="destructive" type="button">Delete Account</Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content>
-        <form method="POST" action="?/deleteAccount" use:enhance={onDelete}>
+        <form method="POST" action="?/deleteAccount" use:enhance={() => {
+        deleting = true;
+        return async ({ result }) => { if (result.type === 'success') goto('/'); };
+      }}>
           <AlertDialog.Header>
             <AlertDialog.Title>Delete Account</AlertDialog.Title>
             <AlertDialog.Description>
