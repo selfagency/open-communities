@@ -20,7 +20,7 @@
 {#if offsetWidth && offsetWidth < 760}
   <Sheet.Root bind:open>
     <Sheet.Trigger>
-      <MenuIcon class="mt-2 h-6 w-6" />
+      <MenuIcon class="mt-2 h-6 w-6 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
       <span class="sr-only">{m.menu()}</span>
     </Sheet.Trigger>
     <Sheet.Content>

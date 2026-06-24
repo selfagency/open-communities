@@ -26,9 +26,9 @@
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
             {#if flag === "no"}
-              <FlagOff size="16" class="rtl:mx-1" />
+              <FlagOff size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
             {:else}
-              <Flag size="16" class="rtl:mx-1" />
+              <Flag size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
             {/if}
             <span class="sr-only">{m[`flag_${flag}`]()}</span>
           </Tooltip.Trigger>
@@ -45,17 +45,17 @@
     <div class="col-span-9">
       {#if flag === "no"}
         <div class="flex flex-row items-center space-x-2">
-          <FlagOff class="h-4 w-4 text-muted-foreground" />
+          <FlagOff class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:group-hover:scale-110" />
           <span>{m.flag_no()}</span>
         </div>
       {:else if flag === "yes"}
         <div class="flex flex-row items-center space-x-2">
-          <Flag class="h-4 w-4 text-muted-foreground" />
+          <Flag class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:group-hover:scale-110" />
           <span>{m.flag_yes()}</span>
         </div>
       {:else if flag === "yesBima"}
         <div class="flex flex-row items-center space-x-2">
-          <Flag class="h-4 w-4 text-muted-foreground" />
+          <Flag class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:group-hover:scale-110" />
           <span>{m.flag_yesBima()}</span>
         </div>
       {/if}

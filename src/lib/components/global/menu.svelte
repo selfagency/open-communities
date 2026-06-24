@@ -106,9 +106,9 @@
   <Locale mode={viewMode} />
   <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full px-4' : ''}">
     <span class="flex flex-row items-center justify-start space-x-1">
-      <SunIcon class="h-4 w-4 text-muted-foreground" />
+      <SunIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
       <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
-      <MoonIcon class="h-4 w-4 text-muted-foreground" />
+      <MoonIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
     </span>
   </div>
 </div>

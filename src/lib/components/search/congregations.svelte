@@ -186,7 +186,7 @@
         class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-muted-foreground"
       >
         <Label for="search" class="flex w-8 items-center justify-center">
-          <SearchIcon size="20" />
+          <SearchIcon size="20" class="transition-transform duration-200 motion-safe:hover:scale-110" />
           <span class="sr-only">{m.search()}</span>
         </Label>
         <span class="w-full">
@@ -208,7 +208,7 @@
                 search.setSearchTerms(searchTerms);
               }}
             >
-              <ClearIcon size="16" />
+              <ClearIcon size="16" class="transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
               <span class="sr-only">{m.clear()}</span>
             </Button>
           </span>
@@ -225,7 +225,7 @@
             search.toggleLocation();
           }}
         >
-          <LocationIcon size="20" class="rtl:mx-1" />
+          <LocationIcon size="20" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
           <span>{m.location()}</span>
         </Button>
         <Filters {search} />

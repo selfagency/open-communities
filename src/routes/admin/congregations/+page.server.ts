@@ -1,24 +1,30 @@
 import { withRetry } from '$lib/server/api';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, url }) => {
+export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
-  const search = url.searchParams.get('q') ?? '';
-  const page = Number(url.searchParams.get('page')) || 1;
-  const perPage = 20;
 
-  const filters: string[] = [];
-  if (search) filters.push(`name ~ "${search.replace(/"/g, '\\"')}"`);
+  function mapCong(c: Record<string, unknown>) {
+    return {
+      id: c.id as string,
+      name: c.name as string,
+      denomination: c.denomination as string,
+      visible: c.visible as boolean,
+      city: c.city as string,
+      state: c.state as string,
+      owner:
+        ((c as Record<string, unknown>).expand as Record<string, { email?: string }> | undefined)?.owner?.email ?? '',
+      created: c.created as string
+    };
+  }
 
-  // Active congregations (visible=true)
-  const activeFilter = ['visible=true', ...filters].join(' && ');
   const [active, pending] = await Promise.all([
     withRetry(() =>
-      client.collection('congregations').getList(page, perPage, {
-        filter: activeFilter || undefined,
+      client.collection('congregations').getFullList({
+        filter: 'visible=true',
         sort: '-created',
         expand: 'owner',
-        requestKey: `admin-cong-${page}`
+        requestKey: 'admin-cong-active'
       })
     ),
     withRetry(() =>
@@ -31,25 +37,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     )
   ]);
 
-  function mapCong(c: Record<string, unknown>) {
-    return {
-      id: c.id as string,
-      name: c.name as string,
-      denomination: c.denomination as string,
-      city: c.city as string,
-      state: c.state as string,
-      owner:
-        ((c as Record<string, unknown>).expand as Record<string, { email?: string }> | undefined)?.owner?.email ?? '',
-      created: c.created as string
-    };
-  }
-
   return {
-    active: active.items.map(mapCong),
-    total: active.totalItems,
-    page,
-    perPage,
-    search,
+    congregations: [...active.map(mapCong), ...pending.map(mapCong)],
+    active: active.map(mapCong),
     pending: pending.map(mapCong)
   };
 };

@@ -25,28 +25,28 @@
 <div class="space-y-8">
   <!-- Stat cards -->
   <div class="grid gap-4 md:grid-cols-3">
-    <Card>
+    <Card class="group">
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="text-sm font-medium">Congregations</CardTitle>
-        <ChurchIcon class="text-muted-foreground size-4" />
+        <ChurchIcon class="text-muted-foreground size-4 transition-transform duration-200 motion-safe:group-hover:scale-110" />
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{stats.congregations}</p>
       </CardContent>
     </Card>
-    <Card>
+    <Card class="group">
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="text-sm font-medium">Users</CardTitle>
-        <UsersIcon class="text-muted-foreground size-4" />
+        <UsersIcon class="text-muted-foreground size-4 transition-transform duration-200 motion-safe:group-hover:scale-110" />
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{stats.users}</p>
       </CardContent>
     </Card>
-    <Card>
+    <Card class="group">
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="text-sm font-medium">Pending Approvals</CardTitle>
-        <ThumbsUpIcon class="text-muted-foreground size-4" />
+        <ThumbsUpIcon class="text-muted-foreground size-4 transition-transform duration-200 motion-safe:group-hover:scale-110" />
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{stats.pendingApprovals}</p>

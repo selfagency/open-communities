@@ -113,7 +113,7 @@
                   await goto(url);
                 }}
               >
-                <EditIcon size="16" class="text-secondary-foreground" />
+                <EditIcon size="16" class="text-secondary-foreground transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:hover:rotate-12 motion-safe:active:scale-90" />
                 <span class="sr-only">{m.edit()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>

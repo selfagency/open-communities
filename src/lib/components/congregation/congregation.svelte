@@ -109,7 +109,7 @@
             href={congregation.contactUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-block max-w-[92%] hyphens-auto"
+            class="group inline-block max-w-[92%] hyphens-auto"
           >
             <h2 class="inline-block text-2xl leading-7 text-secondary-foreground">
               <span>{congregation.name}</span>
@@ -117,7 +117,7 @@
                 ><LinkIcon
                   size="14"
                   color="gray"
-                  class="inline rtl:mx-1"
+                  class="inline rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
                 /></span
               >
             </h2>
@@ -167,7 +167,7 @@
                     await goto(url);
                   }}
                 >
-                  <EditIcon size="16" class="text-muted-foreground rtl:mx-1" />
+                  <EditIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:hover:rotate-12 motion-safe:active:scale-90" />
                   <span class="sr-only">{m.edit()}</span>
                 </Tooltip.Trigger>
                 <Tooltip.Content>
@@ -187,7 +187,7 @@
                   toast.success(m.copied());
                 }}
               >
-                <ShareIcon size="16" class="text-muted-foreground rtl:mx-1" />
+                <ShareIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
                 <span class="sr-only">{m.share()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>
