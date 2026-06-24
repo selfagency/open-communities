@@ -121,7 +121,10 @@
 
         <Captcha {form} />
 
-        <div class="mt-4"><Form.Button>{m.signUp()}</Form.Button></div>
+        <div class="mt-4 flex items-center justify-between">
+          <Form.Button>{m.signUp()}</Form.Button>
+          <a href="/login?login" class="text-primary text-sm underline-offset-4 hover:underline">Already have an account? Log in.</a>
+        </div>
       </form>
 
       {#if dev}

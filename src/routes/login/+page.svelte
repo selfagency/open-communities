@@ -56,9 +56,6 @@
     {:else}
       {#if data.signup && data.verify}
         <SignUp {form} verify={data.verify} />
-        <p class="mt-4 text-center text-sm text-muted-foreground">
-          <a href="/login?login" class="text-primary underline-offset-4 hover:underline">Already have an account? Log in.</a>
-        </p>
       {/if}
     {/if}
   </div>
