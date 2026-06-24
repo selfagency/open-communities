@@ -48,7 +48,7 @@
   const activeCols: ColumnDef<Cong>[] = [
     { accessorKey: 'name', header: 'Name', cell: ({ row }) => nameCell(row.original.name) },
     { accessorKey: 'denomination', header: 'Denomination', cell: ({ row }) => denomCell(row.original.denomination) },
-    { accessorKey: 'location', header: 'Location', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground">${get().v}</span>` })), { v: locationStr(row.original) }) },
+    { id: 'location', header: 'Location', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground">${get().v}</span>` })), { v: locationStr(row.original) }) },
     { accessorKey: 'owner', header: 'Owner', cell: ({ row }) => mutedCell(row.original.owner) },
   ];
 
