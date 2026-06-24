@@ -5,7 +5,6 @@
   /* region imports */
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
-  import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
@@ -25,7 +24,7 @@
   // constants
   const dispatch = createEventDispatcher();
   const user = $derived(page.data.user);
-  let lang = $state('en');
+  let lang = $state(page.data.lang ?? 'en');
   let isMobile = $derived(appState.isMobile);
   /* endregion variables */
 </script>
@@ -123,9 +122,8 @@
                 class="rounded-md px-2 py-1 text-xs font-medium transition-colors {lang === v ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-foreground'}"
                 onclick={async () => {
                   lang = v;
-                  await setLocale(v, { reload: true });
                   await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang: v, user: page.data.user?.id }) });
-                  invalidateAll();
+                  setLocale(v, { reload: true });
                 }}
               >{v.toUpperCase()}</button>
             {/each}
