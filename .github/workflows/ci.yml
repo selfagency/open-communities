@@ -20,7 +20,9 @@ jobs:
           - 1025:1025
           - 8025:8025
     permissions:
+      checks: write
       contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -115,3 +117,25 @@ jobs:
       - name: Fail workflow if tests failed
         if: steps.test.outcome == 'failure'
         run: exit 1
+
+      - name: Report coverage (step summary + PR comment)
+        if: always() && hashFiles('test-results/coverage/coverage-summary.json') != ''
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          json-summary-path: 'test-results/coverage/coverage-summary.json'
+          json-final-path: 'test-results/coverage/coverage-final.json'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment-on: pr
+
+      - name: Publish test report (create check run)
+        if: always() && hashFiles('test-results/junit.xml') != ''
+        uses: dorny/test-reporter@v2
+        with:
+          artifact: test-results
+          path: 'test-results/junit.xml'
+          reporter: java-junit
+          name: Vitest Tests
+          use-actions-summary: 'true'
+          fail-on-empty: 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
