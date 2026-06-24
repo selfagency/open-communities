@@ -118,7 +118,7 @@
           <DropdownMenu.Separator />
           <DropdownMenu.Label class="text-muted-foreground text-xs">Language</DropdownMenu.Label>
           <div class="grid grid-cols-3 gap-1 px-2 py-1">
-            {#each [{l:'English',v:'en'},{l:'Español',v:'es'},{l:'Français',v:'fr'},{l:'עברית',v:'he'},{l:'Deutsch',v:'de'},{l:'Русский',v:'ru'}] as {l,v}}
+            {#each [{l:'English',v:'en'},{l:'Español',v:'es'},{l:'Français',v:'fr'},{l:'עברית',v:'he'},{l:'Deutsch',v:'de'},{l:'Magyar',v:'hu'},{l:'Português',v:'pt'},{l:'Русский',v:'ru'},{l:'Українська',v:'uk'}] as {l,v}}
               <button
                 class="rounded-md px-2 py-1 text-xs font-medium transition-colors {lang === v ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-foreground'}"
                 onclick={async () => {
