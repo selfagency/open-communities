@@ -35,7 +35,8 @@
     "@selfagency/stately": "^0.1.5",
     "isomorphic-dompurify": "^3.18.0",
     "posthog-js": "^1.392.0",
-    "posthog-node": "^5.38.3"
+    "posthog-node": "^5.38.3",
+    "quill": "^2.0.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
