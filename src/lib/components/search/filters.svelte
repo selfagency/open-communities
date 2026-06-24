@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import AccessibilityIcon from "@tabler/icons-svelte/icons/accessible";
+  import AccessibilityIcon from "@tabler/icons-svelte/icons/disabled";
   import SiddurIcon from "@tabler/icons-svelte/icons/book-2";
   import CircleIcon from "@tabler/icons-svelte/icons/circle";
   import CircleCheckIcon from "@tabler/icons-svelte/icons/circle-check";
