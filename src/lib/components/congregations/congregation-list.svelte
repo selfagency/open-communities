@@ -3,7 +3,7 @@
   import CheckIcon from '@tabler/icons-svelte/icons/check';
   import XIcon from '@tabler/icons-svelte/icons/x';
   import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-  import { createColumnHelper } from '@tanstack/table-core';
+  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
@@ -70,12 +70,14 @@
     data: filtered.filter((c) => c.visible),
     columns: activeCols,
     getRowId: (r) => r.id,
+    getCoreRowModel: getCoreRowModel(),
   }));
 
   const pendingTable = $derived(createSvelteTable({
     data: data.pending,
     columns: pendingCols,
     getRowId: (r) => r.id,
+    getCoreRowModel: getCoreRowModel(),
   }));
 </script>
 

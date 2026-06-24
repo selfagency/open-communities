@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createColumnHelper } from '@tanstack/table-core';
+  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
@@ -19,7 +19,7 @@
     colHelper.accessor('updated', { header: 'Updated', cell: ({ row }) => row.original.id }),
   ];
 
-  const table = $derived(createSvelteTable({ data: data.pages, columns, getRowId: (r) => r.id }));
+  const table = $derived(createSvelteTable({ data: data.pages, columns, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
 </script>
 
 <div class="space-y-6">
