@@ -198,7 +198,7 @@
           />
 
           <span
-            class="absolute top-0 z-10 h-11 w-11 ltr:right-1 rtl:left-1 rtl:mx-1"
+            class="absolute top-0 z-10 h-11 w-11 ltr:right-0 rtl:left-0 rtl:mx-1"
           >
             <Button
               variant="link"

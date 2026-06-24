@@ -10,33 +10,29 @@ const source = {
   url: SOURCE_URL
 };
 
-// Theme colors derived from app.css OKLCH values (0 chroma = grayscale)
+// Theme colors derived from current app.css OKLCH values
 // Light:  background=oklch(0.9551 0 0)  foreground=oklch(0.3211 0 0)
-//         primary=oklch(0.4891 0 0)     muted=oklch(0.8853 0 0)
-//         muted-foreground=oklch(0.5103 0 0)  accent=oklch(0.8078 0 0)
-//         border=oklch(0.8576 0 0)
+//         border=oklch(0.8576 0 0)       muted-foreground=oklch(0.5103 0 0)
 // Dark:   background=oklch(0.2178 0 0)  foreground=oklch(0.8853 0 0)
-//         primary=oklch(0.7058 0 0)     muted=oklch(0.285 0 0)
-//         muted-foreground=oklch(0.5999 0 0)  accent=oklch(0.3715 0 0)
-//         border=oklch(0.329 0 0)
+//         border=oklch(0.329 0 0)        muted-foreground=oklch(0.5999 0 0)
 
 const LIGHT = {
-  background: '#f2f2ee',
+  background: '#f3f3ef',
   water: '#e6e4dc',
   land: '#eeebe4',
-  boundary: '#d4c8bc',
+  boundary: '#d6d6d6',
   text: '#7a7a7a',
-  textHalo: '#f2f2ee',
+  textHalo: '#f3f3ef',
   textDim: '#8c8070'
 };
 
 const DARK = {
-  background: '#2e2e2e',
+  background: '#282828',
   water: '#3a3835',
   land: '#343230',
-  boundary: '#555555',
+  boundary: '#484848',
   text: '#969696',
-  textHalo: '#2e2e2e',
+  textHalo: '#282828',
   textDim: '#8c8070'
 };
 
