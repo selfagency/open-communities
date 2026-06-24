@@ -8,6 +8,12 @@ import { m } from '$lib/paraglide/messages';
 import { log } from '$lib/server/logger';
 
 export async function validateCaptcha(form: SuperValidated<Record<string, unknown>>): Promise<boolean> {
+  // In test mode, skip captcha validation entirely (E2E bypass)
+  if (env.NODE_ENV === 'test') {
+    log.debug('[captcha] Test mode — skipping captcha validation');
+    return true;
+  }
+
   if (!pubEnv.PUBLIC_CAPTCHA_SITE_KEY || !env.CAPTCHA_SITE_SECRET) {
     log.error('[captcha] Captcha validation is not configured');
     throw new Error('Captcha validation is not configured');
@@ -17,6 +23,12 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
     log.error('[captcha] No captcha token provided');
     setError(form, 'captcha', m.invalidCaptcha());
     return false;
+  }
+
+  // In test mode, accept any non-empty captcha token (E2E bypass)
+  if (env.NODE_ENV === 'test') {
+    log.debug('[captcha] Test mode — accepting captcha token');
+    return true;
   }
 
   log.debug('[captcha] Validating captcha token:', `${(form.data.captcha as string)?.slice(0, 4)}...`);

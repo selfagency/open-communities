@@ -24,7 +24,15 @@ services:
     image: tiago2/cap:latest
     environment:
       - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
+      - REDIS_URL=redis://redis:6379
     ports:
       - '3001:3000'
+    depends_on:
+      - redis
     volumes:
       - ./cap/data:/usr/src/app/.data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'

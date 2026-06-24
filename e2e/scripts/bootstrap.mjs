@@ -93,6 +93,35 @@ async function importSchema(token) {
   console.log('  ✅ Collections imported');
 }
 
+async function configureSMTP(token) {
+  console.log('📧 Configuring SMTP...');
+  try {
+    const res = await fetch(`${PB}/api/settings`, {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        smtp: {
+          enabled: true,
+          host: 'localhost',
+          port: 1025,
+          authMethod: 'NONE',
+          tls: false
+        }
+      })
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`SMTP config failed: ${res.status} — ${text.slice(0, 100)}`);
+    }
+    console.log('  ✅ SMTP configured (Mailpit)');
+  } catch (err) {
+    console.log(`  ⚠  SMTP config skipped: ${err.message}`);
+  }
+}
+
 async function seedData(token) {
   console.log('🌱 Seeding data...');
 
@@ -163,6 +192,7 @@ async function main() {
     const token = await getToken();
     await verifyToken(token);
     await importSchema(token);
+    await configureSMTP(token);
     await seedData(token);
     // Create superuser for admin panel access (Docker exec, not needed for token)
     try {

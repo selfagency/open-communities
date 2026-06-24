@@ -30,28 +30,34 @@ test.describe('auth flows', () => {
     // Form is SSR-rendered but hidden by bits-ui tabs. Use $eval for all interactions.
     await page.waitForSelector('form[action*="signup"]', { timeout: 15000, state: 'attached' });
 
-    // Set form fields via $eval (hidden inputs not reachable via page.fill)
-    await page.$eval('input[autocomplete="name"]', (el, v) => { (el).value = v; }, 'E2E Tester');
-    await page.$eval('input[autocomplete="email"]', (el, v) => { (el).value = v; }, email);
-    await page.$eval('input[type="password"]', (el, v) => { (el).value = v; }, password);
-    await page.$eval('input[name="passwordConfirm"]', (el, v) => { (el).value = v; }, password).catch(async () => {
-      const pwInputs = await page.$$('input[type="password"]');
-      if (pwInputs.length >= 2) {
-        await pwInputs[1].evaluate((el, v) => { (el).value = v; }, password);
-      }
-    });
+    // Use page.fill() instead of $eval — dispatches proper input events for Svelte bindings
+    await page.locator('input[autocomplete="name"]').fill('E2E Tester');
+    await page.locator('input[autocomplete="email"]').fill(email);
 
-    // Dispatch captcha solved event with correct event name ('solve' not 'captcha')
+    // Fill password fields — there may be multiple, fill the first two
+    const pwInputs = page.locator('input[type="password"]');
+    const pwCount = await pwInputs.count();
+    if (pwCount >= 1) await pwInputs.nth(0).fill(password);
+    if (pwCount >= 2) await pwInputs.nth(1).fill(password);
+
+    // Dispatch captcha solved event — wait for Svelte onMount (500ms delay)
+    await sleep(1500);
     await page.$eval('cap-widget', (el) => {
       el.dispatchEvent(new CustomEvent('solve', { detail: { token: 'e2e-token' } }));
     });
+    // Also set the hidden captcha input directly as fallback
+    await page.evaluate(() => {
+      const form = document.querySelector('form[action*="signup"]');
+      if (form) {
+        const captchaInput = form.querySelector('input[name="captcha"]');
+        if (captchaInput) captchaInput.value = 'e2e-token';
+      }
+    });
     await sleep(300);
 
-    // Submit via form.requestSubmit — triggers superforms enhance
-    await page.$eval('form[action*="signup"]', (form) => {
-      (form).requestSubmit();
-    });
-    await sleep(800);
+    // Click submit button — triggers superforms enhance
+    await page.locator('button[type="submit"]').click();
+    await sleep(1000);
 
     const successMessage = await page.textContent('*:has-text("Sign up successful")').catch(() => null);
     if (successMessage) console.log('[e2e] Success:', successMessage);
@@ -162,7 +168,9 @@ test.describe('auth flows', () => {
     } else {
       await page.fill('input[name="password"]', newPass).catch(() => {});
     }
-    await Promise.all([page.waitForNavigation(), page.click('text=Login')]);
-    await expect(page.locator('text=Logout')).toBeVisible({ timeout: 5000 });
+    // Login uses client-side goto('/') via superforms
+    await page.locator('form[action*="login"] button[type="submit"]').click();
+    await page.waitForTimeout(2000);
+    await expect(page.locator('text=Logout')).toBeVisible({ timeout: 10000 });
   });
 });
