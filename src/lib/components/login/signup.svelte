@@ -2,6 +2,7 @@
 
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
+  import { goto } from '$app/navigation';
   /* region imports */
   import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 
@@ -31,6 +32,14 @@
 
   // Svelte 5: derive store values in script to avoid $ prefix in template
   let formSuccess = $derived(appState.form?.success);
+  let redirectUrl = $derived(page.url.searchParams.get('redirect'));
+
+  // After successful signup, redirect if a redirect URL was provided
+  $effect(() => {
+    if (formSuccess && redirectUrl) {
+      goto(redirectUrl);
+    }
+  });
   /* endregion variables */
 
   /* region form */

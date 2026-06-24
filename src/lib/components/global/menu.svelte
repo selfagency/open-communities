@@ -44,7 +44,7 @@
       }}>
       {viewMode === 'full' && isMobile ? m.edit() : m.editCongregation()}
     </Button>
-  {:else}
+  {:else if user?.email}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'default'}
       class={viewMode === 'mini' ? 'text-foreground' : ''}
@@ -53,6 +53,16 @@
         await goto('/add');
       }}>
       {viewMode === 'full' && isMobile ? m.add() : m.addCongregation()}
+    </Button>
+  {:else}
+    <Button
+      variant={viewMode === 'mini' ? 'link' : 'default'}
+      class={viewMode === 'mini' ? 'text-foreground' : ''}
+      onclick={async () => {
+        dispatch('close');
+        await goto('/login?redirect=/add');
+      }}>
+      {m.addCongregation()}
     </Button>
   {/if}
 
@@ -143,10 +153,9 @@
       class={viewMode === 'mini' ? 'text-foreground' : ''}
       onclick={async () => {
         dispatch('close');
-        await goto('/login');
+        await goto('/login?login');
       }}>
       {m.login()}
-      {viewMode === 'full' && isMobile ? '' : `/ ${m.signUp()}`}
     </Button>
   {/if}
 
