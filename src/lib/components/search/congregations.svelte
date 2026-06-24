@@ -194,11 +194,11 @@
             placeholder={m.search()}
             bind:value={searchTerms}
             id="search"
-            class="w-full placeholder:text-muted-foreground"
+            class="w-full h-11 placeholder:text-muted-foreground"
           />
 
           <span
-            class="absolute top-0 z-10 h-8 w-8 ltr:right-1 rtl:left-1 rtl:mx-1"
+            class="absolute top-0 z-10 h-11 w-11 ltr:right-1 rtl:left-1 rtl:mx-1"
           >
             <Button
               variant="link"
