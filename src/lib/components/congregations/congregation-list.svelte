@@ -26,7 +26,7 @@
   let pendingId = $state<string | null>(null);
   let pendingAction = $state<'approve' | 'reject' | null>(null);
 
-  async function editUrl(id: string) { window.location.href = '/edit?id=' + id; }
+  function editUrl(id: string) { return '/edit?id=' + id; }
   async function confirmAction() {
     if (!pendingId || !pendingAction) return;
     if (pendingAction === 'approve') {
@@ -118,7 +118,7 @@
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Button variant="ghost" size="icon" onclick={() => editUrl(cong.id)}>
+                            <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(cong.id)}>
                               <PencilIcon class="size-4" />
                             </Button>
                           </TooltipTrigger>
