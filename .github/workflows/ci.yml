@@ -142,8 +142,8 @@ jobs:
       pull-requests: write
       security-events: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: fallow-rs/fallow@v2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: fallow-rs/fallow@de03f6ffd28d2d9cc487c31afd39bbc34d0d6d3d # v2
         with:
           format: sarif
           comment: true

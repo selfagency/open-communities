@@ -43,7 +43,7 @@ export const load: PageServerLoad = async (event) => {
     phDigest,
     dailyTrend:
       dailyTrend?.results?.map((r: Array<unknown>) => ({
-        day: r[0] != null ? String(r[0]) : '',
+        day: r[0] !== null && r[0] !== undefined && typeof r[0] !== 'object' ? String(r[0]) : '',
         events: Number(r[1] ?? 0)
       })) ?? [],
     phConfigured: isConfigured()
