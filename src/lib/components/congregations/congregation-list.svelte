@@ -1,6 +1,9 @@
 <script lang="ts">
   import Fuzzy from '@leeoniya/ufuzzy';
+  import CheckIcon from '@tabler/icons-svelte/icons/check';
+  import XIcon from '@tabler/icons-svelte/icons/x';
   import PencilIcon from '@tabler/icons-svelte/icons/pencil';
+  import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';
@@ -20,9 +23,21 @@
       : data.congregations
   );
 
-  function editUrl(id: string) { return '/edit?id=' + id; }
-  async function approve(id: string) { await fetch('/api/admin/congregations/' + id + '/toggle', { method: 'POST' }); window.location.reload(); }
-  async function reject(id: string) { await fetch('/api/admin/congregations/' + id + '/delete', { method: 'DELETE' }); window.location.reload(); }
+  let pendingId = $state<string | null>(null);
+  let pendingAction = $state<'approve' | 'reject' | null>(null);
+
+  async function editUrl(id: string) { window.location.href = '/edit?id=' + id; }
+  async function confirmAction() {
+    if (!pendingId || !pendingAction) return;
+    if (pendingAction === 'approve') {
+      await fetch('/api/admin/congregations/' + pendingId + '/toggle', { method: 'POST' });
+    } else {
+      await fetch('/api/admin/congregations/' + pendingId + '/delete', { method: 'DELETE' });
+    }
+    pendingId = null;
+    pendingAction = null;
+    window.location.reload();
+  }
 </script>
 
 <div class="space-y-8">
@@ -102,34 +117,48 @@
                     <div class="flex gap-1">
                       <TooltipProvider>
                         <Tooltip>
-                           <TooltipTrigger>
-                            <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(cong.id)}>
+                          <TooltipTrigger>
+                            <Button variant="ghost" size="icon" onclick={() => editUrl(cong.id)}>
                               <PencilIcon class="size-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Edit congregation</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Button variant="default" size="icon" class="size-8" onclick={() => approve(cong.id)}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4"><path d="M20 6L9 17l-5-5"/></svg>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Approve</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Button variant="destructive" size="icon" class="size-8" onclick={() => reject(cong.id)}>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-4"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Reject</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <AlertDialog.Root>
+                        <AlertDialog.Trigger>
+                          <Button variant="default" size="icon" class="size-8" onclick={() => { pendingId = cong.id; pendingAction = 'approve'; }}>
+                            <CheckIcon class="size-4" />
+                          </Button>
+                        </AlertDialog.Trigger>
+                        <AlertDialog.Content>
+                          <AlertDialog.Header>
+                            <AlertDialog.Title>Approve Congregation</AlertDialog.Title>
+                            <AlertDialog.Description>Approve "{cong.name}" and make it visible on the directory?</AlertDialog.Description>
+                          </AlertDialog.Header>
+                          <AlertDialog.Footer>
+                            <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
+                            <Button variant="default" onclick={confirmAction}>Approve</Button>
+                          </AlertDialog.Footer>
+                        </AlertDialog.Content>
+                      </AlertDialog.Root>
+                      <AlertDialog.Root>
+                        <AlertDialog.Trigger>
+                          <Button variant="destructive" size="icon" class="size-8" onclick={() => { pendingId = cong.id; pendingAction = 'reject'; }}>
+                            <XIcon class="size-4" />
+                          </Button>
+                        </AlertDialog.Trigger>
+                        <AlertDialog.Content>
+                          <AlertDialog.Header>
+                            <AlertDialog.Title>Reject Congregation</AlertDialog.Title>
+                            <AlertDialog.Description>Reject "{cong.name}"? This will delete the congregation permanently.</AlertDialog.Description>
+                          </AlertDialog.Header>
+                          <AlertDialog.Footer>
+                            <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
+                            <Button variant="destructive" onclick={confirmAction}>Reject</Button>
+                          </AlertDialog.Footer>
+                        </AlertDialog.Content>
+                      </AlertDialog.Root>
                     </div>
                   </TableCell>
                 </TableRow>
