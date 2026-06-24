@@ -257,5 +257,6 @@
   "noResults": "No se encontraron resultados.",
   "pagination": "Paginación",
   "paginationNext": "Ir a la página siguiente",
-  "paginationPrevious": "Ir a la página anterior"
+  "paginationPrevious": "Ir a la página anterior",
+  "alreadyHaveAccount": "¿Ya tienes una cuenta? Inicia sesión."
 }

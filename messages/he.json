@@ -257,5 +257,6 @@
   "noResults": "לא נמצאו תוצאות.",
   "pagination": "דִפּוּף",
   "paginationNext": "עבור לעמוד הבא",
-  "paginationPrevious": "עבור לעמוד הקודם"
+  "paginationPrevious": "עבור לעמוד הקודם",
+  "alreadyHaveAccount": "כבר יש לך חשבון? התחבר"
 }

@@ -257,5 +257,6 @@
   "noResults": "Результаты не найдены.",
   "pagination": "Пагинация",
   "paginationNext": "Перейти на следующую страницу",
-  "paginationPrevious": "Перейти на предыдущую страницу"
+  "paginationPrevious": "Перейти на предыдущую страницу",
+  "alreadyHaveAccount": "Уже есть аккаунт? Войдите."
 }

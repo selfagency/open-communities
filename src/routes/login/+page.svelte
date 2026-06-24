@@ -1,6 +1,5 @@
 <script lang="ts">
   /* region imports */
-  import { onMount } from 'svelte';
 
   import { page } from '$app/state';
   import LoginForm from '$lib/components/login/index.svelte';
@@ -17,18 +16,10 @@
   const { data }: PageProps = $props();
 
   // locals
-  let showingLogin = $state(
+  let showingLogin = $derived(
     page.url.searchParams.has('resetPassword') || page.url.searchParams.has('login')
   );
   /* endregion variables */
-
-  /* region lifecycle */
-  onMount(() => {
-    if (page.url.searchParams.has('resetPassword') || page.url.searchParams.has('login')) {
-      showingLogin = true;
-    }
-  });
-  /* endregion lifecycle */
 
   /* region form */
   // svelte-ignore state_referenced_locally

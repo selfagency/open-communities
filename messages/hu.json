@@ -257,5 +257,6 @@
   "noResults": "Nincs találat.",
   "pagination": "Lapszámozás",
   "paginationNext": "Ugrás a következő oldalra",
-  "paginationPrevious": "Ugrás az előző oldalra"
+  "paginationPrevious": "Ugrás az előző oldalra",
+  "alreadyHaveAccount": "Már van fiókja? Jelentkezzen be."
 }

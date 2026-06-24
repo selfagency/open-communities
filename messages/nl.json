@@ -257,5 +257,6 @@
   "noResults": "Geen resultaten gevonden.",
   "pagination": "Paginering",
   "paginationNext": "Ga naar de volgende pagina",
-  "paginationPrevious": "Ga naar de vorige pagina"
+  "paginationPrevious": "Ga naar de vorige pagina",
+  "alreadyHaveAccount": "Heb je al een account? Log in."
 }

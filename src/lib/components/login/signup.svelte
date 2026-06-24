@@ -123,7 +123,7 @@
 
         <div class="mt-4 flex items-center justify-between">
           <Form.Button>{m.signUp()}</Form.Button>
-          <a href="/login?login" class="text-primary text-sm underline-offset-4 hover:underline">Already have an account? Log in.</a>
+          <a href="/login?login" class="text-primary text-sm font-semibold underline-offset-4 hover:underline">{m.alreadyHaveAccount()}</a>
         </div>
       </form>
 

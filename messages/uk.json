@@ -257,5 +257,6 @@
   "noResults": "Результатів не знайдено.",
   "pagination": "Пагінація",
   "paginationNext": "Перейти на наступну сторінку",
-  "paginationPrevious": "Перейти на попередню сторінку"
+  "paginationPrevious": "Перейти на попередню сторінку",
+  "alreadyHaveAccount": "Вже є обліковий запис? Увійдіть."
 }

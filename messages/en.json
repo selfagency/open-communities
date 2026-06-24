@@ -161,7 +161,6 @@
   "next": "Next",
   "noOptions": "No options available",
   "noResults": "No results found.",
-
   "notes": "Notes",
   "notes_extended": "Anything else we should know?",
   "nothingFound": "No congregations found.",
@@ -261,5 +260,6 @@
   "passwordRequirements": "Password must be at least 12 characters long and contain one uppercase letter, one lowercase letter, one number, and one symbol (!@#$%^&*, etc.)",
   "passwordRequirementsFailed": "Password requirements not met",
   "passwordDescription": "Your password must be at least 12 characters long and contain at least one uppercase letter, one lowercase letter, and one number.",
-  "denomination_other": "Other"
+  "denomination_other": "Other",
+  "alreadyHaveAccount": "Already have an account? Log in."
 }

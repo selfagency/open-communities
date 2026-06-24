@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { superForm } from 'sveltekit-superforms';
+  import type { superForm } from 'sveltekit-superforms';
   import type { SuperForm } from 'sveltekit-superforms';
   import { toast } from 'svelte-sonner';
   import { Button } from '$lib/components/ui/button';
