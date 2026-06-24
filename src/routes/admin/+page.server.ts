@@ -1,5 +1,5 @@
 import { withRetry } from '$lib/server/api';
-import { getWeeklyDigest, queryHogQL, queryTrends } from '$lib/server/posthog-api';
+import { getWeeklyDigest } from '$lib/server/posthog-api';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -15,26 +15,12 @@ export const load: PageServerLoad = async ({ locals }) => {
     )
   ]);
 
-  const weeklyDigest = await getWeeklyDigest(30).catch(() => null);
-
-  // Product analytics queries
-  const [loginTrend, _signupTrend, topPages] = await Promise.all([
-    weeklyDigest ? queryTrends('login', 30, 'week').catch(() => null) : Promise.resolve(null),
-    weeklyDigest ? queryTrends('$pageview', 30, 'day').catch(() => null) : Promise.resolve(null),
-    weeklyDigest
-      ? queryHogQL(`
-          SELECT properties.$pathname, count(DISTINCT person_id) AS visitors
-          FROM events
-          WHERE event = '$pageview'
-            AND timestamp >= now() - INTERVAL 30 DAY
-          GROUP BY properties.$pathname
-          ORDER BY visitors DESC
-          LIMIT 10
-        `).catch(() => null)
-      : Promise.resolve(null)
+  const [weeklyDigest, realtimeDigest] = await Promise.all([
+    getWeeklyDigest(30).catch(() => null),
+    getWeeklyDigest(1).catch(() => null)
   ]);
 
-  // Geographic stats — query base tables directly (views may not auto-populate)
+  // Geographic stats
   const [allCountries, allStates] = await Promise.all([
     withRetry(() =>
       client.collection('countries').getFullList({ sort: '-created', requestKey: 'dash-countries' })
@@ -44,7 +30,6 @@ export const load: PageServerLoad = async ({ locals }) => {
     )
   ]);
 
-  // Count congregations per country/state using the full congregation list
   const allCongs =
     congCount.totalItems + pendingCount.totalItems > 0
       ? await withRetry(() => client.collection('congregations').getFullList({ requestKey: 'dash-cong-all' })).catch(
@@ -89,25 +74,6 @@ export const load: PageServerLoad = async ({ locals }) => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
-  let dailyTrend: Array<{ day: string; events: number }> = [];
-  if (weeklyDigest) {
-    try {
-      const raw = await queryHogQL(`
-        SELECT toStartOfDay(timestamp) AS day, count() AS events
-        FROM events
-        WHERE timestamp >= now() - INTERVAL 30 DAY
-        GROUP BY day
-        ORDER BY day
-      `);
-      dailyTrend = ((raw?.results ?? []) as Array<[string, number]>).map(([day, events]) => ({
-        day: day?.slice(0, 10) ?? '',
-        events: events ?? 0
-      }));
-    } catch {
-      dailyTrend = [];
-    }
-  }
-
   return {
     stats: {
       congregations: congCount.totalItems,
@@ -117,10 +83,6 @@ export const load: PageServerLoad = async ({ locals }) => {
       topStates
     },
     weeklyDigest,
-    dailyTrend,
-    loginTrend,
-    topPages: topPages?.results
-      ? (topPages.results as Array<[string, number]>).map(([path, visitors]) => ({ path, visitors }))
-      : []
+    realtimeDigest
   };
 };

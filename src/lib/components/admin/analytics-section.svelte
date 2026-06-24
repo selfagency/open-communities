@@ -1,34 +1,29 @@
 <script lang="ts">
-  import { scaleBand } from 'd3-scale';
-  import { BarChart } from 'layerchart';
+  import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import * as Chart from '$lib/components/ui/chart/index.js';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   interface PhChange { percent: number; direction: string; long_text: string; }
+  interface PhMetric { current: number; change: PhChange; }
 
   let {
-    digest,
-    dailyTrend = [],
-    loginTrend = [],
-    topPages = [],
+    weeklyDigest,
+    realtimeDigest,
   }: {
-    digest: {
-      visitors: { current: number; change: PhChange };
-      pageviews: { current: number; change: PhChange };
-      sessions: { current: number; change: PhChange };
-      bounce_rate: { current: number; previous: number };
+    weeklyDigest: {
+      visitors: PhMetric; pageviews: PhMetric; sessions: PhMetric;
+      bounce_rate: PhMetric & { current: number; previous: number };
+      avg_session_duration: PhMetric & { current: string; previous: string };
       top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
       top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
+      dashboard_url: string;
     } | null;
-    dailyTrend?: Array<{ day: string; events: number }>;
-    loginTrend?: Array<{ date: string; count: number }>;
-    topPages?: Array<{ path: string; visitors: number }>;
+    realtimeDigest: typeof weeklyDigest;
   } = $props();
 
-  const chartConfig = {
-    events: { label: 'Events', color: 'var(--chart-1)' },
-  } satisfies Chart.ChartConfig;
+  let viewMode = $state<'realtime' | '30d'>('30d');
+
+  const digest = $derived(viewMode === 'realtime' ? realtimeDigest : weeklyDigest);
 
   function fmt(n: number) {
     return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
@@ -36,154 +31,62 @@
 </script>
 
 {#if digest}
-  <div>
-    <h2 class="mb-4 text-lg font-semibold">Analytics</h2>
-    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader class="flex flex-row items-center justify-between pb-2">
-          <CardTitle class="text-sm font-medium">Visitors</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
-          <p class="text-muted-foreground mt-1 text-xs">{digest.visitors.change.long_text}</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader class="flex flex-row items-center justify-between pb-2">
-          <CardTitle class="text-sm font-medium">Page Views</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
-          <p class="text-muted-foreground mt-1 text-xs">{digest.pageviews.change.long_text}</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader class="flex flex-row items-center justify-between pb-2">
-          <CardTitle class="text-sm font-medium">Sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
-          <p class="text-muted-foreground mt-1 text-xs">{digest.sessions.change.long_text}</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader class="flex flex-row items-center justify-between pb-2">
-          <CardTitle class="text-sm font-medium">Bounce Rate</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-3xl font-bold">{digest.bounce_rate.current}%</p>
-          <p class="text-muted-foreground mt-1 text-xs">Previous: {digest.bounce_rate.previous}%</p>
-        </CardContent>
-      </Card>
-    </div>
-
-    {#if dailyTrend.length > 0}
-      <div class="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle class="text-sm font-medium">Daily Events (30 days)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Chart.Container config={chartConfig} class="min-h-[200px] w-full">
-              <BarChart
-                data={dailyTrend}
-                x="day"
-                axis="x"
-                seriesLayout="stack"
-                legend
-                series={[
-                  { key: 'events', label: 'Events', color: 'var(--chart-1)' },
-                ]}
-                props={{
-                  xAxis: { format: (d: string) => d?.slice(5) ?? '' },
-                }}
-              >
-                {#snippet tooltip()}
-                  <Chart.Tooltip />
-                {/snippet}
-              </BarChart>
-            </Chart.Container>
-          </CardContent>
-        </Card>
-      </div>
-    {/if}
-
-    <div class="mt-6 grid gap-6 md:grid-cols-2">
-      <Card>
-        <CardHeader>
-          <CardTitle class="text-sm font-medium">Top Pages</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Page</TableHead>
-                <TableHead class="text-right">Visitors</TableHead>
-                <TableHead class="text-right">Change</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {#each digest.top_pages.slice(0, 10) as page}
-                <TableRow>
-                  <TableCell class="font-medium">{page.path}</TableCell>
-                  <TableCell class="text-right">{page.visitors}</TableCell>
-                  <TableCell class="text-right">{page.change?.percent ?? 0}%</TableCell>
-                </TableRow>
-              {/each}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle class="text-sm font-medium">Top Sources</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Source</TableHead>
-                <TableHead class="text-right">Visitors</TableHead>
-                <TableHead class="text-right">Change</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {#each digest.top_sources.slice(0, 10) as source}
-                <TableRow>
-                  <TableCell class="font-medium">{source.name}</TableCell>
-                  <TableCell class="text-right">{source.visitors}</TableCell>
-                  <TableCell class="text-right">{source.change?.percent ?? 0}%</TableCell>
-                </TableRow>
-              {/each}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+  <div class="flex items-center justify-between">
+    <h3 class="text-lg font-semibold">Web Analytics</h3>
+    <div class="flex gap-1 rounded-lg bg-muted p-1">
+      <Button variant={viewMode === 'realtime' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'realtime'}>Realtime</Button>
+      <Button variant={viewMode === '30d' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = '30d'}>30 Days</Button>
     </div>
   </div>
 
-  {#if loginTrend.length > 0}
+  <div class="mt-4 grid gap-4 md:grid-cols-4">
     <Card>
-      <CardHeader>
-        <CardTitle class="text-sm font-medium">Logins (Weekly)</CardTitle>
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-bold">Visitors</CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="flex flex-wrap gap-3">
-          {#each loginTrend.slice(-12) as entry}
-            <div class="flex flex-col items-center">
-              <span class="text-2xl font-bold">{entry.count}</span>
-              <span class="text-muted-foreground text-xs">{entry.date?.slice(5) ?? ''}</span>
-            </div>
-          {/each}
-        </div>
+        <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
+        {#if digest.visitors.change}
+          <p class="text-muted-foreground mt-1 text-xs">{digest.visitors.change.long_text}</p>
+        {/if}
       </CardContent>
     </Card>
-  {/if}
+    <Card>
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-bold">Page Views</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
+        {#if digest.pageviews.change}
+          <p class="text-muted-foreground mt-1 text-xs">{digest.pageviews.change.long_text}</p>
+        {/if}
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-bold">Sessions</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
+        {#if digest.sessions.change}
+          <p class="text-muted-foreground mt-1 text-xs">{digest.sessions.change.long_text}</p>
+        {/if}
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader class="pb-2">
+        <CardTitle class="text-sm font-bold">Bounce Rate</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
+      </CardContent>
+    </Card>
+  </div>
 
-  {#if topPages.length > 0}
+  <div class="grid gap-4 md:grid-cols-2">
     <Card>
       <CardHeader>
-        <CardTitle class="text-sm font-medium">Top Pages (30d)</CardTitle>
+        <CardTitle class="text-sm font-bold">Top Pages</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -191,18 +94,45 @@
             <TableRow>
               <TableHead>Page</TableHead>
               <TableHead class="text-right">Visitors</TableHead>
+              <TableHead class="text-right">Change</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {#each topPages.slice(0, 10) as page}
+            {#each digest.top_pages.slice(0, 10) as page}
               <TableRow>
-                <TableCell class="font-medium font-mono text-xs">{page.path || '/'}</TableCell>
+                <TableCell class="font-medium">{page.path || '/'}</TableCell>
                 <TableCell class="text-right">{page.visitors}</TableCell>
+                <TableCell class="text-right">{page.change?.percent ?? 0}%</TableCell>
               </TableRow>
             {/each}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
-  {/if}
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-sm font-bold">Top Sources</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Source</TableHead>
+              <TableHead class="text-right">Visitors</TableHead>
+              <TableHead class="text-right">Change</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {#each digest.top_sources.slice(0, 10) as source}
+              <TableRow>
+                <TableCell class="font-medium">{source.name}</TableCell>
+                <TableCell class="text-right">{source.visitors}</TableCell>
+                <TableCell class="text-right">{source.change?.percent ?? 0}%</TableCell>
+              </TableRow>
+            {/each}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  </div>
 {/if}

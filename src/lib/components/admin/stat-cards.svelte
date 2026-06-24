@@ -22,7 +22,16 @@
 <div class="grid gap-4 md:grid-cols-3">
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-medium">Congregations</CardTitle>
+      <CardTitle class="text-sm font-bold">Pending Approvals</CardTitle>
+      <ThumbsUpIcon class="text-muted-foreground size-4" />
+    </CardHeader>
+    <CardContent>
+      <p class="text-3xl font-bold">{pendingApprovals}</p>
+    </CardContent>
+  </Card>
+  <Card>
+    <CardHeader class="flex flex-row items-center justify-between pb-2">
+      <CardTitle class="text-sm font-bold">Congregations</CardTitle>
       <ChurchIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
@@ -31,20 +40,11 @@
   </Card>
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-medium">Users</CardTitle>
+      <CardTitle class="text-sm font-bold">Users</CardTitle>
       <UsersIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
       <p class="text-3xl font-bold">{users}</p>
-    </CardContent>
-  </Card>
-  <Card>
-    <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-medium">Pending Approvals</CardTitle>
-      <ThumbsUpIcon class="text-muted-foreground size-4" />
-    </CardHeader>
-    <CardContent>
-      <p class="text-3xl font-bold">{pendingApprovals}</p>
     </CardContent>
   </Card>
 </div>
