@@ -86,7 +86,7 @@ jobs:
         id: test
         continue-on-error: true
         run: |
-          pnpm vitest run --coverage --coverage.enabled=true --reporter=junit --reporter=json --outputFile=test-results/junit.xml
+          pnpm vitest run --coverage --coverage.enabled=true --reporter=junit --reporter=json
         env:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
@@ -261,3 +261,8 @@ jobs:
         with:
           name: e2e-playwright-report
           path: e2e/playwright-report
+
+      - name: Run accessibility checks (pa11y-ci)
+        continue-on-error: true
+        run: |
+          npx --yes pa11y-ci@latest --urls "http://localhost:4173/ http://localhost:4173/admin http://localhost:4173/admin/congregations http://localhost:4173/admin/users http://localhost:4173/admin/approvals http://localhost:4173/admin/analytics http://localhost:4173/admin/pages http://localhost:4173/admin/settings"
