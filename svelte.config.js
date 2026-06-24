@@ -8,7 +8,7 @@ const config = {
       mode: 'standalone'
     }),
     csrf: {
-      checkOrigin: true
+      trustedOrigins: ['http://localhost:5173', 'http://localhost:4173', 'https://opencommunities.info']
     },
     // Use kit.alias with a proper path so SvelteKit and Vite can resolve $test imports.
     alias: {
