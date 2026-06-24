@@ -3,6 +3,7 @@
   import ThumbsUpIcon from '@tabler/icons-svelte/icons/thumb-up';
   import UsersIcon from '@tabler/icons-svelte/icons/users';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   let {
     congregations = 0,
@@ -54,34 +55,50 @@
     {#if topCountries.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="text-sm font-medium">Top Countries</CardTitle>
+          <CardTitle class="text-sm font-bold">Top Countries</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div class="space-y-2">
-            {#each topCountries as c}
-              <div class="flex items-center justify-between">
-                <span class="text-sm">{c.name}</span>
-                <span class="text-muted-foreground text-sm font-medium">{c.count}</span>
-              </div>
-            {/each}
-          </div>
+        <CardContent class="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Country</TableHead>
+                <TableHead class="text-right">Congregations</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {#each topCountries as c}
+                <TableRow>
+                  <TableCell class="font-medium">{c.name}</TableCell>
+                  <TableCell class="text-right">{c.count}</TableCell>
+                </TableRow>
+              {/each}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     {/if}
     {#if topStates.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="text-sm font-medium">Top US States</CardTitle>
+          <CardTitle class="text-sm font-bold">Top US States</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div class="space-y-2">
-            {#each topStates as s}
-              <div class="flex items-center justify-between">
-                <span class="text-sm">{s.name}</span>
-                <span class="text-muted-foreground text-sm font-medium">{s.count}</span>
-              </div>
-            {/each}
-          </div>
+        <CardContent class="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>State</TableHead>
+                <TableHead class="text-right">Congregations</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {#each topStates as s}
+                <TableRow>
+                  <TableCell class="font-medium">{s.name}</TableCell>
+                  <TableCell class="text-right">{s.count}</TableCell>
+                </TableRow>
+              {/each}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     {/if}
