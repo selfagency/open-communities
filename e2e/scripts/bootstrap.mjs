@@ -132,6 +132,13 @@ async function seedData(token) {
   console.log('🌱 Seeding data...');
 
   const existing = await api('GET', `/collections/users/records?filter=${encodeURIComponent('email="regular@example.test"')}`, null, token);
+  const adminExists = await api('GET', `/collections/users/records?filter=${encodeURIComponent(`email="${ADMIN_EMAIL}"`)}`, null, token);
+
+  // Always ensure admin user exists (may have been created by a different bootstrap version)
+  if (!adminExists?.items?.length) {
+    await create('users', { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, passwordConfirm: ADMIN_PASSWORD, name: 'Admin User', verified: true, admin: true, lang: 'en', emailVisibility: true });
+  }
+
   if (existing?.items?.length > 0) {
     console.log('  ⏭  Already seeded');
     return;
@@ -156,7 +163,6 @@ async function seedData(token) {
   const la  = await create('cities', { name: 'Los Angeles', state: ca.id, country: us.id, longitude: -118.2437, latitude: 34.0522 });
 
   // Users (password will be hashed by PB automatically)
-  const adminUser = await create('users', { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, passwordConfirm: ADMIN_PASSWORD, name: 'Admin User', verified: true, admin: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
   const regular = await create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
   const other = await create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
 
