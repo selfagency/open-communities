@@ -143,3 +143,129 @@ jobs:
           fail-on-empty: 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  e2e:
+    name: E2E tests
+    needs: test
+    if: ${{ !cancelled() && needs.test.result != 'failure' }}
+    runs-on: ubuntu-latest
+    services:
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+      cap:
+        image: tiago2/cap:latest
+        ports:
+          - 3001:3000
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright
+        run: pnpm exec playwright install chromium --with-deps --only-shell
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Download PocketBase binary
+        run: |
+          PB_VERSION=0.29.2
+          mkdir -p .e2e
+          curl -fsSL -o .e2e/pb.zip "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip"
+          unzip -o .e2e/pb.zip -d .e2e
+          chmod +x .e2e/pocketbase
+
+      - name: Start PocketBase
+        run: |
+          nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
+          timeout 30 bash -c 'until curl -f http://127.0.0.1:8090/api/health >/dev/null 2>&1; do sleep 1; done'
+          echo "PocketBase is ready"
+
+      - name: Bootstrap PocketBase
+        run: node e2e/scripts/bootstrap.mjs
+        env:
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+
+      - name: Start preview server
+        run: |
+          nohup node build/index.js > .e2e/app.log 2>&1 &
+          timeout 30 bash -c 'until curl -f http://localhost:4173 >/dev/null 2>&1; do sleep 1; done'
+          echo "App is ready"
+        env:
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
+          NODE_ENV: test
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+          PORT: 4173
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
+          PUBLIC_HOSTNAME: http://localhost:4173
+          SMTP_HOST: localhost
+          SMTP_PORT: 1025
+
+      - name: Run Playwright E2E
+        env:
+          SMTP_HOST: 127.0.0.1
+          SMTP_PORT: 1025
+          MAILPIT_API: http://127.0.0.1:8025/api/v1
+          PB_TEST_BASEURL: http://127.0.0.1:4173
+        run: pnpm exec playwright test --config e2e/playwright.config.mjs
+
+      - name: Upload E2E test results
+        uses: actions/upload-artifact@v4
+        if: always() && hashFiles('e2e/test-results/**') != ''
+        with:
+          name: e2e-test-results
+          path: e2e/test-results
+
+      - name: Upload E2E Playwright report
+        uses: actions/upload-artifact@v4
+        if: always() && hashFiles('e2e/playwright-report/**') != ''
+        with:
+          name: e2e-playwright-report
+          path: e2e/playwright-report
