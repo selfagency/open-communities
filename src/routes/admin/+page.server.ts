@@ -1,5 +1,5 @@
 import { withRetry } from '$lib/server/api';
-import { getWeeklyDigest, queryHogQL } from '$lib/server/posthog-api';
+import { getWeeklyDigest, queryHogQL, queryTrends } from '$lib/server/posthog-api';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   const weeklyDigest = await getWeeklyDigest(30).catch(() => null);
 
   // Product analytics queries
-  const [loginTrend, signupTrend, topPages] = await Promise.all([
+  const [loginTrend, _signupTrend, topPages] = await Promise.all([
     weeklyDigest ? queryTrends('login', 30, 'week').catch(() => null) : Promise.resolve(null),
     weeklyDigest ? queryTrends('$pageview', 30, 'day').catch(() => null) : Promise.resolve(null),
     weeklyDigest
