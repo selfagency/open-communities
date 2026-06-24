@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
 import { z } from 'zod/v4';
-import { env } from '$env/dynamic/public';
 import { log } from '$lib/server/logger';
 
 const VALID_LANGS = ['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk'] as const;
