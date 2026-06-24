@@ -149,7 +149,7 @@
 
 <Popover.Root>
   <Popover.Trigger
-    class="button space-x-2 text-muted-foreground border-muted-foreground/25! outline rtl:mx-1"
+    class="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border bg-background px-2.5 text-sm font-medium shadow-xs outline-none transition-all hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-expanded:bg-muted aria-expanded:text-foreground text-muted-foreground border-muted-foreground/25! rtl:mx-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
   >
     <FilterIcon size="18" class="rtl:mx-1" />
     <span>{m.filter()}</span>
