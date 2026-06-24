@@ -194,7 +194,7 @@
             placeholder={m.search()}
             bind:value={searchTerms}
             id="search"
-            class="w-full placeholder:text-muted-foreground"
+            class="w-full h-11 placeholder:text-muted-foreground"
           />
 
           <span
