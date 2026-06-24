@@ -23,7 +23,7 @@
 <div class="grid gap-4 md:grid-cols-3">
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-bold">Pending Approvals</CardTitle>
+      <CardTitle class="font-serif text-sm font-bold">Pending Approvals</CardTitle>
       <ThumbsUpIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
@@ -32,16 +32,16 @@
   </Card>
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-bold">Congregations</CardTitle>
+      <CardTitle class="font-serif text-sm font-bold">Congregations</CardTitle>
       <ChurchIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
-      <p class="font-serif text-3xl font-bold">{congregations}</p>
+      <p class="text-3xl font-bold">{congregations}</p>
     </CardContent>
   </Card>
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="text-sm font-bold">Users</CardTitle>
+      <CardTitle class="font-serif text-sm font-bold">Users</CardTitle>
       <UsersIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
@@ -55,7 +55,7 @@
     {#if topCountries.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="text-sm font-bold">Top Countries</CardTitle>
+          <CardTitle class="font-serif text-sm font-bold">Top Countries</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -68,8 +68,8 @@
             <TableBody>
               {#each topCountries as c}
                 <TableRow>
-                  <TableCell class="font-serif font-medium">{c.name}</TableCell>
-                  <TableCell class="font-serif text-right">{c.count}</TableCell>
+                  <TableCell class="font-medium">{c.name}</TableCell>
+                  <TableCell class="text-right">{c.count}</TableCell>
                 </TableRow>
               {/each}
             </TableBody>
@@ -80,7 +80,7 @@
     {#if topStates.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="text-sm font-bold">Top US States</CardTitle>
+          <CardTitle class="font-serif text-sm font-bold">Top US States</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -93,8 +93,8 @@
             <TableBody>
               {#each topStates as s}
                 <TableRow>
-                  <TableCell class="font-serif font-medium">{s.name}</TableCell>
-                  <TableCell class="font-serif text-right">{s.count}</TableCell>
+                  <TableCell class="font-medium">{s.name}</TableCell>
+                  <TableCell class="text-right">{s.count}</TableCell>
                 </TableRow>
               {/each}
             </TableBody>
