@@ -33,6 +33,7 @@ const CSP_DIRECTIVES = {
     'cdn.jsdelivr.net',
     'localhost:3001',
     'localhost:8090',
+    'static.cloudflareinsights.com',
     "'self'"
   ],
   'default-src': ["'self'", 'cdn.jsdelivr.net', '*.selfagency.dev', '*.opencommunities.info'],
@@ -62,6 +63,7 @@ const CSP_DIRECTIVES = {
     '*.selfagency.dev',
     'basemaps.cartocdn.com',
     'cdn.jsdelivr.net',
+    'static.cloudflareinsights.com',
     "'self'",
     "'wasm-unsafe-eval'" // MapLibre GL JS compiles WebAssembly for vector tile rendering
   ],
@@ -70,6 +72,7 @@ const CSP_DIRECTIVES = {
     '*.posthog.com',
     '*.selfagency.dev',
     'cdn.jsdelivr.net',
+    'static.cloudflareinsights.com',
     "'self'",
     "'unsafe-inline'" // SvelteKit hydration bootstrap + Cap captcha widget inline scripts
   ],
