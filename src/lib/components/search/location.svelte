@@ -114,11 +114,11 @@
     </div>
 
     <span class="flex w-full flex-row items-center justify-center sm:w-auto">
-      <Button variant="link" class="h-auto" onclick={handleReset}>
+      <Button variant="link" class="group h-auto" onclick={handleReset}>
         <span
           class="flex flex-row items-center justify-start space-x-1 text-muted-foreground hover:text-secondary-foreground"
         >
-          <ResetIcon size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
+          <ResetIcon size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
           <span>{m.reset()}</span>
         </span>
       </Button>

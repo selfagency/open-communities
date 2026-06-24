@@ -23,7 +23,7 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+						class="group data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 					>
 						<Avatar.Root class="size-8 rounded-lg grayscale">
 							<Avatar.Image src={user.avatar} alt={user.name} />
@@ -35,7 +35,7 @@
 								{user.email}
 							</span>
 						</div>
-						<DotsVerticalIcon class="ms-auto size-4 transition-transform duration-200 motion-safe:hover:scale-110" />
+						<DotsVerticalIcon class="ms-auto size-4 transition-transform duration-200 motion-safe:group-hover:scale-110" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>

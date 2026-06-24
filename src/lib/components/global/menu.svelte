@@ -5,11 +5,13 @@
   /* region imports */
   import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation';
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
   import { Switch } from '$lib/components/ui/switch';
   import { m } from '$lib/paraglide/messages';
+  import { setLocale } from '$lib/paraglide/runtime';
   import { state as appState } from '$lib/stores';
 
   import Locale from './locale.svelte';
@@ -23,6 +25,7 @@
   // constants
   const dispatch = createEventDispatcher();
   const user = $derived(page.data.user);
+  let lang = $state('en');
   let isMobile = $derived(appState.isMobile);
   /* endregion variables */
 </script>
@@ -113,13 +116,24 @@
             <DropdownMenu.Item onclick={() => goto('/admin/settings')}>Settings</DropdownMenu.Item>
           {/if}
           <DropdownMenu.Separator />
-          <div class="flex items-center gap-3 px-2 py-1.5">
-            <Locale mode={viewMode} />
-            <span class="flex items-center gap-1">
-              <SunIcon class="size-3.5 text-muted-foreground" />
-              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" class="scale-75" />
-              <MoonIcon class="size-3.5 text-muted-foreground" />
-            </span>
+          <DropdownMenu.Label class="text-muted-foreground text-xs">Language</DropdownMenu.Label>
+          <div class="grid grid-cols-3 gap-1 px-2 py-1">
+            {#each [{l:'English',v:'en'},{l:'Español',v:'es'},{l:'Français',v:'fr'},{l:'עברית',v:'he'},{l:'Deutsch',v:'de'},{l:'Русский',v:'ru'}] as {l,v}}
+              <button
+                class="rounded-md px-2 py-1 text-xs font-medium transition-colors {lang === v ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-foreground'}"
+                onclick={async () => {
+                  lang = v;
+                  await setLocale(v, { reload: true });
+                  await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang: v, user: page.data.user?.id }) });
+                  invalidateAll();
+                }}
+              >{v.toUpperCase()}</button>
+            {/each}
+          </div>
+          <DropdownMenu.Separator />
+          <div class="flex items-center justify-between px-2 py-1.5">
+            <span class="text-muted-foreground text-xs">Dark mode</span>
+            <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
           </div>
           <DropdownMenu.Separator />
           <DropdownMenu.Item onclick={() => goto('/logout')}>Log out</DropdownMenu.Item>

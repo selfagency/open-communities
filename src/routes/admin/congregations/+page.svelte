@@ -75,8 +75,8 @@
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger aschild>
-                        <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(cong.id)}>
-                          <PencilIcon class="size-4" />
+                        <Button variant="ghost" size="icon" class="group" onclick={() => window.location.href = editUrl(cong.id)}>
+                          <PencilIcon class="size-4 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90" />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>Edit congregation</TooltipContent>
@@ -124,8 +124,8 @@
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger aschild>
-                            <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(cong.id)}>
-                              <PencilIcon class="size-4" />
+                            <Button variant="ghost" size="icon" class="group" onclick={() => window.location.href = editUrl(cong.id)}>
+                              <PencilIcon class="size-4 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Edit congregation</TooltipContent>
