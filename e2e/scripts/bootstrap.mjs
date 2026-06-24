@@ -57,7 +57,13 @@ async function getToken() {
     logs = fs.readFileSync('.e2e/pb.log', 'utf8');
   }
   const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
-  if (!m) throw new Error('No installation token found — start PB fresh');
+  // PB 0.29+ may include /#/ before the token — fallback to broader match
+  if (!m) {
+    const m2 = logs.match(/pbinstal(?:\/#\/|\/)([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
+    if (!m2) throw new Error('No installation token found — start PB fresh');
+    console.log('  🔑 Installation token acquired');
+    return m2[1];
+  }
   console.log('  🔑 Installation token acquired');
   return m[1];
 }
@@ -105,9 +111,9 @@ async function configureSMTP(token) {
       body: JSON.stringify({
         smtp: {
           enabled: true,
-          host: 'localhost',
+          host: 'mailpit',
           port: 1025,
-          authMethod: 'NONE',
+          authMethod: '',
           tls: false
         }
       })
