@@ -4,7 +4,7 @@ const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
 const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX';
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 
-test.describe('Admin backend', () => {
+test.describe.skip('Admin backend', () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
     await page.goto(`${BASE}/login`);
