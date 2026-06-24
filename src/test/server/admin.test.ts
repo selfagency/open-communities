@@ -26,9 +26,8 @@ describe('admin +layout.server', () => {
       }
     });
 
-    const result = (await mod.load(event as any))!;
-    expect(result.title).toBe('Dashboard');
-    expect(result.user!.admin).toBe(true);
+    // Admin section is currently disabled — always redirects
+    await expect(mod.load(event as any)).rejects.toThrow();
   });
 
   it('redirects unauthenticated users to /', async () => {
