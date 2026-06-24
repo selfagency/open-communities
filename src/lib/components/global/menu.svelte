@@ -90,7 +90,7 @@
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <button class="flex size-8 items-center justify-center rounded-full hover:bg-muted" aria-label="User menu">
-            <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1" />
+            <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1.25" />
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end" class="w-56">
