@@ -42,7 +42,7 @@
   <div class="mt-4 grid gap-4 md:grid-cols-4">
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-base font-bold">Visitors</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Visitors</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
@@ -53,7 +53,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-base font-bold">Page Views</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Page Views</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
@@ -64,7 +64,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-base font-bold">Sessions</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Sessions</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
@@ -75,7 +75,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-base font-bold">Bounce Rate</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Bounce Rate</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
@@ -86,7 +86,7 @@
   <div class="grid gap-4 md:grid-cols-2">
     <Card>
       <CardHeader>
-        <CardTitle class="font-serif text-base font-bold">Top Pages</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Top Pages</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
@@ -111,7 +111,7 @@
     </Card>
     <Card>
       <CardHeader>
-        <CardTitle class="font-serif text-base font-bold">Top Sources</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Top Sources</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>

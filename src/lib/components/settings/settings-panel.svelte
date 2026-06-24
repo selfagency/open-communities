@@ -14,13 +14,13 @@
 
 <div class="space-y-8">
   <div class="grid gap-6 md:grid-cols-2">
-    <Card><CardHeader><CardTitle class="text-sm font-medium">Node.js</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.nodeVersion}</p></CardContent></Card>
-    <Card><CardHeader><CardTitle class="text-sm font-medium">SMTP</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.smtpHost}:{data.smtpPort || '—'}</p></CardContent></Card>
-    <Card><CardHeader><CardTitle class="text-sm font-medium">PostHog</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.posthogHost}</p></CardContent></Card>
-    <Card><CardHeader><CardTitle class="text-sm font-medium">PocketBase</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.pocketBaseUrl}</p></CardContent></Card>
+    <Card><CardHeader><CardTitle class="font-serif text-sm font-bold tracking-wider">Node.js</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.nodeVersion}</p></CardContent></Card>
+    <Card><CardHeader><CardTitle class="font-serif text-sm font-bold tracking-wider">SMTP</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.smtpHost}:{data.smtpPort || '—'}</p></CardContent></Card>
+    <Card><CardHeader><CardTitle class="font-serif text-sm font-bold tracking-wider">PostHog</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.posthogHost}</p></CardContent></Card>
+    <Card><CardHeader><CardTitle class="font-serif text-sm font-bold tracking-wider">PocketBase</CardTitle></CardHeader><CardContent><p class="font-mono text-sm">{data.pocketBaseUrl}</p></CardContent></Card>
   </div>
   <Card>
-    <CardHeader><CardTitle class="text-sm font-medium">Cache</CardTitle></CardHeader>
+    <CardHeader><CardTitle class="font-serif text-sm font-bold tracking-wider">Cache</CardTitle></CardHeader>
     <CardContent><Button variant="outline" onclick={clearCache} disabled={clearing}>{clearing ? 'Clearing...' : 'Clear Cache'}</Button></CardContent>
   </Card>
 </div>
