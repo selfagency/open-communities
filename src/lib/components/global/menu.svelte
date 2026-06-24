@@ -1,9 +1,14 @@
 <script lang="ts">
   import MoonIcon from '@tabler/icons-svelte/icons/moon';
   import SunIcon from '@tabler/icons-svelte/icons/sun';
-  import UserCircleIcon from '@tabler/icons-svelte/icons/user-circle';
+  import UserCircleIcon from '@tabler/icons-svelte/icons/user-cog';
+  import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
+  import BuildingIcon from '@tabler/icons-svelte/icons/building';
+  import UsersIcon from '@tabler/icons-svelte/icons/users';
+  import FilesIcon from '@tabler/icons-svelte/icons/files';
+  import SettingsIcon from '@tabler/icons-svelte/icons/settings';
   import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-  import LogoutIcon from '@tabler/icons-svelte/icons/logout';
+  import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
   import { mode, toggleMode } from 'mode-watcher';
   /* region imports */
   import { createEventDispatcher } from 'svelte';
@@ -119,11 +124,26 @@
           {#if user?.admin}
             <DropdownMenu.Separator />
             <DropdownMenu.Label class="text-muted-foreground text-xs">Admin</DropdownMenu.Label>
-            <DropdownMenu.Item onclick={() => goto('/admin')}>Dashboard</DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/congregations')}>Congregations</DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/users')}>Users</DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/pages')}>Pages</DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/settings')}>Settings</DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin')}>
+              <DashboardIcon class="mr-2 size-4" />
+              Dashboard
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/congregations')}>
+              <BuildingIcon class="mr-2 size-4" />
+              Congregations
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/users')}>
+              <UsersIcon class="mr-2 size-4" />
+              Users
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/pages')}>
+              <FilesIcon class="mr-2 size-4" />
+              Pages
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/settings')}>
+              <SettingsIcon class="mr-2 size-4" />
+              Settings
+            </DropdownMenu.Item>
           {/if}
           <DropdownMenu.Separator />
           <DropdownMenu.Label class="text-muted-foreground text-xs">Language</DropdownMenu.Label>
@@ -142,7 +162,14 @@
           <DropdownMenu.Separator />
           <div class="flex items-center justify-between px-2 py-1.5">
             <span class="text-muted-foreground text-xs">Dark mode</span>
-            <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
+            <div class="flex items-center gap-2">
+              {#if mode.current === 'dark'}
+                <MoonIcon class="size-4 text-muted-foreground" />
+              {:else}
+                <SunIcon class="size-4 text-muted-foreground" />
+              {/if}
+              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
+            </div>
           </div>
           <DropdownMenu.Separator />
           <DropdownMenu.Item onclick={() => goto('/logout')}>
