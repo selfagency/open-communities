@@ -1,7 +1,7 @@
 <script lang="ts">
-	import LibraryIcon from "@tabler/icons-svelte/icons/building-arch";
 	import ChartBarIcon from "@tabler/icons-svelte/icons/chart-bar";
-	import CheckCircleIcon from "@tabler/icons-svelte/icons/check-circle";
+	import CheckIcon from "@tabler/icons-svelte/icons/circle-check";
+	import BuildingIcon from "@tabler/icons-svelte/icons/building";
 	import DashboardIcon from "@tabler/icons-svelte/icons/dashboard";
 	import FileDescriptionIcon from "@tabler/icons-svelte/icons/file-description";
 	import SettingsIcon from "@tabler/icons-svelte/icons/settings";
@@ -14,8 +14,8 @@
 
 	const adminNav = [
 		{ title: "Dashboard", url: "/admin", icon: DashboardIcon },
-		{ title: "Congregations", url: "/admin/congregations", icon: LibraryIcon },
-		{ title: "Approvals", url: "/admin/approvals", icon: CheckCircleIcon },
+		{ title: "Congregations", url: "/admin/congregations", icon: BuildingIcon },
+		{ title: "Approvals", url: "/admin/approvals", icon: CheckIcon },
 		{ title: "Users", url: "/admin/users", icon: UsersIcon },
 		{ title: "Analytics", url: "/admin/analytics", icon: ChartBarIcon },
 		{ title: "Pages", url: "/admin/pages", icon: FileDescriptionIcon },
