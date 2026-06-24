@@ -5,13 +5,25 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
 
-  const [congCount, userCount, pendingCount] = await Promise.all([
+  const [congCount, userCount, pendingCount, countries, states] = await Promise.all([
     withRetry(() =>
       client.collection('congregations').getList(1, 1, { filter: 'visible=true', requestKey: 'dash-cong' })
     ),
     withRetry(() => client.collection('users').getList(1, 1, { requestKey: 'dash-users' })),
     withRetry(() =>
       client.collection('congregations').getList(1, 1, { filter: 'visible=false', requestKey: 'dash-pending' })
+    ),
+    withRetry(() =>
+      client
+        .collection('countriesByQty')
+        .getList(1, 5, { sort: '-congregation_count', requestKey: 'dash-countries' })
+        .catch(() => ({ items: [] }))
+    ),
+    withRetry(() =>
+      client
+        .collection('statesByQty')
+        .getList(1, 5, { sort: '-congregation_count', requestKey: 'dash-states', filter: "country_code='US'" })
+        .catch(() => ({ items: [] }))
     )
   ]);
 
@@ -40,7 +52,12 @@ export const load: PageServerLoad = async ({ locals }) => {
     stats: {
       congregations: congCount.totalItems,
       users: userCount.totalItems,
-      pendingApprovals: pendingCount.totalItems
+      pendingApprovals: pendingCount.totalItems,
+      topCountries: countries.items.map((c: Record<string, unknown>) => ({
+        name: c.country_name,
+        count: c.congregation_count
+      })),
+      topStates: states.items.map((s: Record<string, unknown>) => ({ name: s.state_name, count: s.congregation_count }))
     },
     weeklyDigest,
     dailyTrend

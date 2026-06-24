@@ -112,9 +112,9 @@
       {#if resetSuccess}
         <div class="flex flex-col items-center justify-center space-y-4">
           <span>{m.passwordSuccess()}</span>
-          <Button variant="link" onclick={() => resetter()}>
+          <button type="button" onclick={() => resetter()}>
             {m.continueToLogin()} →
-          </Button>
+          </button>
         </div>
       {/if}
     {:else}

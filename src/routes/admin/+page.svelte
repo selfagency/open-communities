@@ -10,6 +10,8 @@
     congregations={data.stats.congregations}
     users={data.stats.users}
     pendingApprovals={data.stats.pendingApprovals}
+    topCountries={data.stats.topCountries}
+    topStates={data.stats.topStates}
   />
   <AnalyticsSection digest={data.weeklyDigest} dailyTrend={data.dailyTrend} />
 </div>

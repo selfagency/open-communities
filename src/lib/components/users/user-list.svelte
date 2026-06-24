@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { page } from '$app/state';
   import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
   import { createRawSnippet } from 'svelte';
+  import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
-  import { FlexRender, createSvelteTable, renderSnippet } from '$lib/components/ui/data-table/index.js';
+  import { createSvelteTable, FlexRender, renderSnippet } from '$lib/components/ui/data-table/index.js';
   import { Input } from '$lib/components/ui/input';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 

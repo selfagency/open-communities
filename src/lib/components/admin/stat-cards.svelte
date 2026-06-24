@@ -4,10 +4,18 @@
   import UsersIcon from '@tabler/icons-svelte/icons/users';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 
-  let { congregations = 0, users = 0, pendingApprovals = 0 }: {
+  let {
+    congregations = 0,
+    users = 0,
+    pendingApprovals = 0,
+    topCountries = [],
+    topStates = [],
+  }: {
     congregations: number;
     users: number;
     pendingApprovals: number;
+    topCountries?: Array<{ name: string; count: number }>;
+    topStates?: Array<{ name: string; count: number }>;
   } = $props();
 </script>
 
@@ -40,3 +48,42 @@
     </CardContent>
   </Card>
 </div>
+
+{#if topCountries.length > 0 || topStates.length > 0}
+  <div class="mt-6 grid gap-6 md:grid-cols-2">
+    {#if topCountries.length > 0}
+      <Card>
+        <CardHeader>
+          <CardTitle class="text-sm font-medium">Top Countries</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-2">
+            {#each topCountries as c}
+              <div class="flex items-center justify-between">
+                <span class="text-sm">{c.name}</span>
+                <span class="text-muted-foreground text-sm font-medium">{c.count}</span>
+              </div>
+            {/each}
+          </div>
+        </CardContent>
+      </Card>
+    {/if}
+    {#if topStates.length > 0}
+      <Card>
+        <CardHeader>
+          <CardTitle class="text-sm font-medium">Top US States</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="space-y-2">
+            {#each topStates as s}
+              <div class="flex items-center justify-between">
+                <span class="text-sm">{s.name}</span>
+                <span class="text-muted-foreground text-sm font-medium">{s.count}</span>
+              </div>
+            {/each}
+          </div>
+        </CardContent>
+      </Card>
+    {/if}
+  </div>
+{/if}
