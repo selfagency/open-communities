@@ -49,23 +49,23 @@ async function waitForPB() {
 }
 
 async function getToken() {
-  let logs;
-  try {
-    logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
-  } catch {
-    const fs = await import('node:fs');
-    logs = fs.readFileSync('.e2e/pb.log', 'utf8');
+  // Retry a few times — the startup log may not be flushed yet
+  for (let attempt = 0; attempt < 10; attempt++) {
+    let logs;
+    try {
+      logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
+    } catch {
+      const fs = await import('node:fs');
+      logs = fs.readFileSync('.e2e/pb.log', 'utf8');
+    }
+    const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
+    if (m) {
+      console.log('  🔑 Installation token acquired');
+      return m[1];
+    }
+    await sleep(1000);
   }
-  const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
-  // PB 0.29+ may include /#/ before the token — fallback to broader match
-  if (!m) {
-    const m2 = logs.match(/pbinstal(?:\/#\/|\/)([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
-    if (!m2) throw new Error('No installation token found — start PB fresh');
-    console.log('  🔑 Installation token acquired');
-    return m2[1];
-  }
-  console.log('  🔑 Installation token acquired');
-  return m[1];
+  throw new Error('No installation token found — start PB fresh');
 }
 
 async function verifyToken(token) {
@@ -208,7 +208,7 @@ async function main() {
     await seedData(token);
     // Create superuser for admin panel access (Docker exec, not needed for token)
     try {
-      execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
+      execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data`, { encoding: 'utf8', timeout: 15000 });
       console.log('  👤 Superuser created');
     } catch {
       console.log('  ⏭  Superuser creation skipped (CI or container name mismatch)');
