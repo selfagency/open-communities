@@ -1,12 +1,16 @@
 <script lang="ts">
   import { page } from '$app/state';
+  import { createColumnHelper } from '@tanstack/table-core';
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
+  import { FlexRender, createSvelteTable } from '$lib/components/ui/data-table/index.js';
   import { Input } from '$lib/components/ui/input';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
-  let { data }: { data: { users: any[]; total: number; page: number; perPage: number; search: string } } = $props();
+  interface User { id: string; name: string; email: string; lang: string; verified: boolean; admin: boolean; created: string; }
+
+  let { data }: { data: { users: User[]; total: number; page: number; perPage: number; search: string } } = $props();
   let search = $state(data.search);
 
   function doSearch() {
@@ -27,6 +31,18 @@
     params.set('page', String(data.page + 1));
     window.location.href = '/admin/users?' + params;
   }
+
+  const colHelper = createColumnHelper<User>();
+  const columns = [
+    colHelper.accessor('name', { header: 'Name', cell: ({ row }) => row.original.id }),
+    colHelper.accessor('email', { header: 'Email', cell: ({ row }) => row.original.id }),
+    colHelper.accessor('lang', { header: 'Language', cell: ({ row }) => row.original.id }),
+    colHelper.accessor('verified', { header: 'Status', cell: ({ row }) => row.original.id }),
+    colHelper.accessor('admin', { header: 'Role', cell: ({ row }) => row.original.id }),
+    colHelper.accessor('created', { header: 'Joined', cell: ({ row }) => row.original.id }),
+  ];
+
+  const table = $derived(createSvelteTable({ data: data.users, columns, getRowId: (r) => r.id }));
 </script>
 
 <div class="space-y-6">
@@ -42,24 +58,44 @@
     <CardContent class="p-0">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Language</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Joined</TableHead>
-          </TableRow>
+          {#each table.getHeaderGroups() as hg}
+            <TableRow>
+              {#each hg.headers as h}
+                <TableHead><FlexRender content={h.column.columnDef.header} context={h.getContext()} /></TableHead>
+              {/each}
+            </TableRow>
+          {/each}
         </TableHeader>
         <TableBody>
-          {#each data.users as u}
+          {#each table.getRowModel().rows as row}
             <TableRow>
-              <TableCell class="font-medium">{u.name || '—'}</TableCell>
-              <TableCell>{u.email}</TableCell>
-              <TableCell class="uppercase text-xs">{u.lang ?? 'en'}</TableCell>
-              <TableCell>{#if u.verified}<Badge variant="default" class="text-xs">Verified</Badge>{:else}<Badge variant="secondary" class="text-xs">Unverified</Badge>{/if}</TableCell>
-              <TableCell>{#if u.admin}<Badge variant="default" class="bg-amber-500 text-xs hover:bg-amber-500">Admin</Badge>{:else}<span class="text-muted-foreground text-xs">User</span>{/if}</TableCell>
-              <TableCell class="text-muted-foreground text-xs">{String(u.created ?? '').slice(0, 10)}</TableCell>
+              {#each row.getVisibleCells() as cell}
+                {#if cell.column.id === 'verified'}
+                  <TableCell>
+                    {#if cell.getValue()}
+                      <Badge variant="default" class="text-xs">Verified</Badge>
+                    {:else}
+                      <Badge variant="secondary" class="text-xs">Unverified</Badge>
+                    {/if}
+                  </TableCell>
+                {:else if cell.column.id === 'admin'}
+                  <TableCell>
+                    {#if cell.getValue()}
+                      <Badge variant="default" class="bg-amber-500 text-xs hover:bg-amber-500">Admin</Badge>
+                    {:else}
+                      <span class="text-muted-foreground text-xs">User</span>
+                    {/if}
+                  </TableCell>
+                {:else if cell.column.id === 'name'}
+                  <TableCell class="font-medium">{row.original.name || '—'}</TableCell>
+                {:else if cell.column.id === 'lang'}
+                  <TableCell class="uppercase text-xs">{row.original.lang ?? 'en'}</TableCell>
+                {:else if cell.column.id === 'created'}
+                  <TableCell class="text-muted-foreground text-xs">{String(row.original.created ?? '').slice(0, 10)}</TableCell>
+                {:else}
+                  <TableCell>{cell.getValue() as string}</TableCell>
+                {/if}
+              {/each}
             </TableRow>
           {:else}
             <TableRow><TableCell colspan={6} class="text-muted-foreground py-8 text-center">No users found</TableCell></TableRow>
