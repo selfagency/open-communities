@@ -15,6 +15,7 @@
   import { Input } from "$lib/components/ui/input";
   import { Label } from "$lib/components/ui/label";
   import * as Pagination from "$lib/components/ui/pagination";
+  import { Skeleton } from "$lib/components/ui/skeleton";
   import { Location as LocationService } from "$lib/location";
   import { m } from "$lib/paraglide/messages";
   import type { CongregationMetaRecord } from "$lib/pocketbase.d";
@@ -158,20 +159,20 @@
       {#each skeletons as s}
         <div class="col-span-1">
           <div
-            class="flex h-full min-h-56 animate-pulse flex-col justify-between rounded-xl border bg-background p-4"
+            class="flex h-full min-h-56 flex-col justify-between rounded-xl border bg-background p-4"
           >
             <div class="space-y-2">
-              <div class="h-5 w-3/4 rounded bg-muted"></div>
-              <div class="h-3 w-1/2 rounded bg-muted"></div>
+              <Skeleton class="h-5 w-3/4" />
+              <Skeleton class="h-3 w-1/2" />
             </div>
             <div class="mt-4 space-y-2">
-              <div class="h-3 w-full rounded bg-muted"></div>
-              <div class="h-3 w-5/6 rounded bg-muted"></div>
+              <Skeleton class="h-3 w-full" />
+              <Skeleton class="h-3 w-5/6" />
             </div>
             <div class="mt-4 flex flex-row space-x-1">
-              <div class="h-6 w-6 rounded-full bg-muted"></div>
-              <div class="h-6 w-6 rounded-full bg-muted"></div>
-              <div class="h-6 w-6 rounded-full bg-muted"></div>
+              <Skeleton class="h-6 w-6 rounded-full" />
+              <Skeleton class="h-6 w-6 rounded-full" />
+              <Skeleton class="h-6 w-6 rounded-full" />
             </div>
           </div>
         </div>

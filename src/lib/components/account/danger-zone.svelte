@@ -31,10 +31,14 @@
             </AlertDialog.Description>
           </AlertDialog.Header>
           <AlertDialog.Footer>
-            <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
-            <Button variant="destructive" type="submit" disabled={deleting}>
-              {deleting ? 'Deleting...' : 'Delete Account'}
-            </Button>
+          <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
+          <AlertDialog.Action
+            type="submit"
+            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            disabled={deleting}
+          >
+            {deleting ? 'Deleting...' : 'Delete Account'}
+          </AlertDialog.Action>
           </AlertDialog.Footer>
         </form>
       </AlertDialog.Content>

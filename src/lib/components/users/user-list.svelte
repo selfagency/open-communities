@@ -1,8 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { createColumnHelper, getCoreRowModel, type ColumnDef } from '@tanstack/table-core';
+  import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
   import { createRawSnippet } from 'svelte';
-  import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
   import { FlexRender, createSvelteTable, renderSnippet } from '$lib/components/ui/data-table/index.js';
@@ -33,36 +32,32 @@
     window.location.href = '/admin/users?' + params;
   }
 
+  function s(content: string): string {
+    return content;
+  }
+
   const columns: ColumnDef<User>[] = [
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'email', header: 'Email' },
-    {
-      accessorKey: 'lang',
-      header: () => renderSnippet(createRawSnippet(() => ({ render: () => 'Language' }))),
-      cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="uppercase text-xs">${get().v || 'en'}</span>` })), { v: row.original.lang }),
-    },
+    { accessorKey: 'name', header: 'Name', cell: ({ row }) => s(row.original.name || '—') },
+    { accessorKey: 'email', header: 'Email', cell: ({ row }) => s(row.original.email) },
+    { accessorKey: 'lang', header: 'Language', cell: ({ row }) => s((row.original.lang || 'en').toUpperCase()) },
     {
       accessorKey: 'verified',
       header: 'Status',
       cell: ({ row }) => row.original.verified
-        ? renderSnippet(createRawSnippet(() => ({ render: () => '<span class="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Verified</span>' })))
-        : renderSnippet(createRawSnippet(() => ({ render: () => '<span class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">Unverified</span>' }))),
+        ? renderSnippet(createRawSnippet(() => ({ render: () => '<div class="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Verified</div>' })))
+        : renderSnippet(createRawSnippet(() => ({ render: () => '<div class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">Unverified</div>' }))),
     },
     {
       accessorKey: 'admin',
       header: 'Role',
       cell: ({ row }) => row.original.admin
-        ? renderSnippet(createRawSnippet(() => ({ render: () => '<span class="inline-flex items-center rounded-md bg-amber-500 px-2 py-0.5 text-xs font-medium text-white">Admin</span>' })))
+        ? renderSnippet(createRawSnippet(() => ({ render: () => '<div class="inline-flex items-center rounded-md bg-amber-500 px-2 py-0.5 text-xs font-medium text-white">Admin</div>' })))
         : renderSnippet(createRawSnippet(() => ({ render: () => '<span class="text-muted-foreground text-xs">User</span>' }))),
     },
-    {
-      accessorKey: 'created',
-      header: 'Joined',
-      cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground text-xs">${(get().v || '').slice(0, 10)}</span>` })), { v: row.original.created }),
-    },
+    { accessorKey: 'created', header: 'Joined', cell: ({ row }) => s((row.original.created || '').slice(0, 10)) },
   ];
 
-  const table = $derived(createSvelteTable({ data: data.users, columns, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
+  const table = $derived(createSvelteTable({ get data() { return data.users; }, columns, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
 </script>
 
 <div class="space-y-6">

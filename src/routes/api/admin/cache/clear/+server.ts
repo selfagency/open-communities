@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { clearCountriesCache, clearCongregationCache } from '$lib/server/cache';
+import { clearCongregationCache, clearCountriesCache } from '$lib/server/cache';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async () => {

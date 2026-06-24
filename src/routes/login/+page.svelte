@@ -4,6 +4,7 @@
   import { page } from '$app/state';
   import LoginForm from '$lib/components/login/index.svelte';
   import SignUp from '$lib/components/login/signup.svelte';
+  import { Button } from '$lib/components/ui/button';
   import { m } from '$lib/paraglide/messages';
   import { initForm } from '$lib/signup';
 
@@ -40,9 +41,9 @@
         <LoginForm data={data.login} reset={data.reset} />
       {/if}
       <p class="mt-4 text-center text-sm text-muted-foreground">
-        <button class="text-primary font-semibold underline-offset-4 hover:underline" onclick={() => (showingLogin = false)}>
+        <Button variant="link" class="font-semibold" onclick={() => (showingLogin = false)}>
           Don't have an account? Sign up.
-        </button>
+        </Button>
       </p>
     {:else}
       {#if data.signup && data.verify}

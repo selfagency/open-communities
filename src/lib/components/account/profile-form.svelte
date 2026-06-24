@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { toast } from 'svelte-sonner';
   import type { SuperForm, superForm } from 'sveltekit-superforms';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
-  import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
+  import * as Select from '$lib/components/ui/select';
   import { Switch } from '$lib/components/ui/switch';
 
   let {
@@ -16,6 +15,8 @@
     saved: boolean;
   } = $props();
 
+  // svelte-ignore state_referenced_locally
+  // Intentional: form is initialized once from server data (not reactive to prop changes)
   const { form: formData, errors } = form;
 </script>
 
@@ -23,41 +24,67 @@
   <CardHeader>
     <CardTitle class="text-lg font-bold">Profile</CardTitle>
   </CardHeader>
-  <CardContent class="space-y-4">
+  <CardContent class="space-y-6">
     {#if saved}
       <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">Profile updated successfully.</div>
     {/if}
-    <div class="space-y-2">
-      <Label for="name">Name</Label>
-      <Input id="name" name="name" bind:value={$formData.name as string} required />
-      {#if $errors.name}<p class="text-destructive text-xs">{$errors.name}</p>{/if}
-    </div>
-    <div class="space-y-2">
-      <Label for="email">Email</Label>
-      <Input id="email" name="email" bind:value={$formData.email as string} type="email" required />
-      {#if $errors.email}<p class="text-destructive text-xs">{$errors.email}</p>{/if}
-    </div>
-    <div class="space-y-2">
-      <Label for="lang">Language</Label>
-      <Select type="single" bind:value={$formData.lang as string}>
-        <SelectTrigger id="lang" class="w-full">
-          {$formData.lang === 'en' ? 'English' : $formData.lang === 'es' ? 'Español' : $formData.lang === 'fr' ? 'Français' : $formData.lang === 'he' ? 'עברית' : $formData.lang}
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="en">English</SelectItem>
-          <SelectItem value="es">Español</SelectItem>
-          <SelectItem value="fr">Français</SelectItem>
-          <SelectItem value="he">עברית</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-    <div class="flex items-center gap-3">
-      <Switch id="notifications" checked={$formData.notifications as unknown as boolean} onCheckedChange={(c) => $formData.notifications = c} />
-      <Label for="notifications" class="text-sm">Receive non-transactional email updates</Label>
-    </div>
+
+    <Form.Field {form} name="name">
+      <Form.Control>
+        {#snippet children(props)}
+          <Form.Label for="name">Name</Form.Label>
+          <Input {...props} id="name" name="name" bind:value={$formData.name as string} required />
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="email">
+      <Form.Control>
+        {#snippet children(props)}
+          <Form.Label for="email">Email</Form.Label>
+          <Input {...props} id="email" name="email" bind:value={$formData.email as string} type="email" required />
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="lang">
+      <Form.Control>
+        {#snippet children(props)}
+          <Form.Label for="lang">Language</Form.Label>
+          <Select.Root type="single" bind:value={$formData.lang as string}>
+            <Select.Trigger id="lang" class="w-full" {...props}>
+              {$formData.lang === 'en' ? 'English' : $formData.lang === 'es' ? 'Español' : $formData.lang === 'fr' ? 'Français' : $formData.lang === 'he' ? 'עברית' : $formData.lang}
+            </Select.Trigger>
+            <Select.Content>
+              <Select.Item value="en">English</Select.Item>
+              <Select.Item value="es">Español</Select.Item>
+              <Select.Item value="fr">Français</Select.Item>
+              <Select.Item value="he">עברית</Select.Item>
+            </Select.Content>
+          </Select.Root>
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="notifications">
+      <Form.Control>
+        {#snippet children(props)}
+          <div class="flex items-center gap-3">
+            <Switch {...props} id="notifications" checked={$formData.notifications as unknown as boolean} onCheckedChange={(c) => $formData.notifications = c} />
+            <Form.Label for="notifications" class="text-sm">Receive non-transactional email updates</Form.Label>
+          </div>
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
     {#if $errors._errors?.length}
       <p class="text-destructive text-xs">{String(($errors as any)._errors ?? "")}</p>
     {/if}
+
     <Button type="submit">Save Changes</Button>
   </CardContent>
 </Card>

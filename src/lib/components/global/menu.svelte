@@ -1,15 +1,15 @@
 <script lang="ts">
+  import BuildingIcon from '@tabler/icons-svelte/icons/building';
+  import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
+  import FilesIcon from '@tabler/icons-svelte/icons/files';
+  import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
   import MoonIcon from '@tabler/icons-svelte/icons/moon';
+  import PencilIcon from '@tabler/icons-svelte/icons/pencil';
+  import SettingsIcon from '@tabler/icons-svelte/icons/settings';
   import SunIcon from '@tabler/icons-svelte/icons/sun';
   import UserCircleIcon from '@tabler/icons-svelte/icons/user-circle';
   import UserCogIcon from '@tabler/icons-svelte/icons/user-cog';
-  import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
-  import BuildingIcon from '@tabler/icons-svelte/icons/building';
   import UsersIcon from '@tabler/icons-svelte/icons/users';
-  import FilesIcon from '@tabler/icons-svelte/icons/files';
-  import SettingsIcon from '@tabler/icons-svelte/icons/settings';
-  import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-  import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
   import { mode, toggleMode } from 'mode-watcher';
   /* region imports */
   import { createEventDispatcher } from 'svelte';

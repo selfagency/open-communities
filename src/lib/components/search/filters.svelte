@@ -15,12 +15,13 @@
   import { isEmpty } from "radashi";
   import { untrack } from "svelte";
   import { page } from "$app/state";
-  import { Button } from "$lib/components/ui/button";
+  import { Button, buttonVariants } from "$lib/components/ui/button";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import * as Collapsible from "$lib/components/ui/collapsible";
   import { Label } from "$lib/components/ui/label";
   import * as Popover from "$lib/components/ui/popover";
   import { m as mBase } from "$lib/paraglide/messages";
+  import { cn } from "$lib/utils";
 
   const m = mBase as Record<string, (...args: unknown[]) => string>;
 
@@ -147,7 +148,7 @@
 
 <Popover.Root>
   <Popover.Trigger
-    class="group inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md border bg-white px-2.5 text-sm font-medium shadow-xs outline-none transition-all hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-expanded:bg-muted aria-expanded:text-foreground text-muted-foreground border-muted-foreground/25! rtl:mx-1 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+    class={cn(buttonVariants({ variant: "outline" }), "group gap-2 rtl:mx-1")}
   >
     <FilterIcon size="18" class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
     <span>{m.filter()}</span>

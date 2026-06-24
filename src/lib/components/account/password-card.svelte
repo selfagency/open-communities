@@ -2,15 +2,13 @@
   import type { SuperForm } from 'sveltekit-superforms';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import * as Form from '$lib/components/ui/form';
   import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
 
   let {
-    formData,
-    errors,
+    form,
   }: {
-    formData: { oldPassword?: string; password?: string; passwordConfirm?: string };
-    errors: { oldPassword?: string; password?: string; passwordConfirm?: string; _errors?: string[] };
+    form: SuperForm<any>;
   } = $props();
 </script>
 
@@ -19,18 +17,36 @@
     <CardTitle class="text-lg font-bold">Change Password</CardTitle>
   </CardHeader>
   <CardContent class="space-y-4">
-    <div class="space-y-2">
-      <Label for="oldPassword">Current Password</Label>
-      <Input id="oldPassword" name="oldPassword" type="password" autocomplete="current-password" />
-    </div>
-    <div class="space-y-2">
-      <Label for="password">New Password</Label>
-      <Input id="password" name="password" type="password" autocomplete="new-password" />
-    </div>
-    <div class="space-y-2">
-      <Label for="passwordConfirm">Confirm New Password</Label>
-      <Input id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" />
-    </div>
+    <Form.Field {form} name="oldPassword">
+      <Form.Control>
+        {#snippet children(props)}
+          <Form.Label for="oldPassword">Current Password</Form.Label>
+          <Input {...props} id="oldPassword" name="oldPassword" type="password" autocomplete="current-password" />
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="password">
+      <Form.Control>
+        {#snippet children(props)}
+          <Form.Label for="password">New Password</Form.Label>
+          <Input {...props} id="password" name="password" type="password" autocomplete="new-password" />
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
+    <Form.Field {form} name="passwordConfirm">
+      <Form.Control>
+        {#snippet children(props)}
+          <Form.Label for="passwordConfirm">Confirm New Password</Form.Label>
+          <Input {...props} id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" />
+        {/snippet}
+      </Form.Control>
+      <Form.FieldErrors />
+    </Form.Field>
+
     <Button type="submit">Change Password</Button>
   </CardContent>
 </Card>

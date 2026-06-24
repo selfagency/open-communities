@@ -51,7 +51,7 @@
   <form method="POST" action="?/update" use:enhance>
     <ProfileForm {form} {saved} />
     <div class="mt-6">
-      <PasswordCard formData={$formData as any} errors={$errors as any} />
+      <PasswordCard {form} />
     </div>
   </form>
 
