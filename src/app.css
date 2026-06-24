@@ -337,8 +337,8 @@ body {
 }
 
 .button.outline:hover {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
 }
 
 @media (prefers-color-scheme: dark) {
