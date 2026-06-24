@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from "$lib/utils.js";
 	import type { Snippet } from "svelte";
 	import type { HTMLAnchorAttributes } from "svelte/elements";
+	import { cn, type WithElementRef } from "$lib/utils.js";
 
 	let {
 		ref = $bindable(null),
@@ -33,6 +33,7 @@
 {#if child}
 	{@render child({ props: mergedProps })}
 {:else}
+	<!-- biome-ignore lint/a11y/useValidAnchor: generic component, href provided via restProps -->
 	<a bind:this={ref} {...mergedProps}>
 		{@render children?.()}
 	</a>

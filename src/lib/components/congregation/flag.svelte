@@ -24,7 +24,7 @@
     >
       <Tooltip.Provider>
         <Tooltip.Root>
-          <Tooltip.Trigger>
+          <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
             {#if flag === "no"}
               <FlagOff size="16" class="rtl:mx-1" />
             {:else}
@@ -40,7 +40,7 @@
     </div>
   {:else}
     <div class="col-span-3">
-      <h2 class="label">{m.flag_short()}</h2>
+      <h3 class="label">{m.flag_short()}</h3>
     </div>
     <div class="col-span-9">
       {#if flag === "no"}

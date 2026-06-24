@@ -21,7 +21,7 @@
   {#if health?.protocol === "maskingRecommended" || health?.protocol === "maskingRequired" || (health?.protocol === "other" && health?.otherText !== "N/A")}
     <Tooltip.Provider>
       <Tooltip.Root>
-        <Tooltip.Trigger>
+        <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
           <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-1" /></span>
           <span class="sr-only">{m[`health_${health.protocol}`]()}</span>
         </Tooltip.Trigger>
@@ -33,7 +33,7 @@
   {/if}
 {:else}
   <div class="col-span-3">
-    <h2 class="label">{m.health()}</h2>
+    <h3 class="label">{m.health()}</h3>
   </div>
 
   <ul class="col-span-9 space-y-2">

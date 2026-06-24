@@ -1,14 +1,14 @@
 <script lang="ts">
+  import Check from '@lucide/svelte/icons/check';
+  import X from '@lucide/svelte/icons/x';
+  import { toast } from 'svelte-sonner';
   import { enhance } from '$app/forms';
-  import { AlertDialog as AlertDialogRoot, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '$lib/components/ui/alert-dialog';
+  import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';
   import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
-  import { toast } from 'svelte-sonner';
-  import Check from '@lucide/svelte/icons/check';
-  import X from '@lucide/svelte/icons/x';
 
   let { data } = $props();
 
@@ -129,14 +129,14 @@
   </Tabs>
 </div>
 
-<AlertDialogRoot bind:open={rejectDialogOpen}>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Reject Submission</AlertDialogTitle>
-      <AlertDialogDescription>
+<AlertDialog.Root bind:open={rejectDialogOpen}>
+  <AlertDialog.Content>
+    <AlertDialog.Header>
+      <AlertDialog.Title>Reject Submission</AlertDialog.Title>
+      <AlertDialog.Description>
         Provide a reason for rejection. The submitter will be notified.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
+      </AlertDialog.Description>
+    </AlertDialog.Header>
     <form method="POST" action="?/reject" use:enhance={() => {
       return async ({ update }) => { await update(); rejectDialogOpen = false; toast.success('Rejected'); };
     }}>
@@ -148,12 +148,12 @@
           placeholder="Reason for rejection..."
         />
       </div>
-      <AlertDialogFooter>
-        <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
-        <AlertDialogAction type="submit" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+      <AlertDialog.Footer>
+        <AlertDialog.Cancel type="button">Cancel</AlertDialog.Cancel>
+        <AlertDialog.Action type="submit" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">
           Reject
-        </AlertDialogAction>
-      </AlertDialogFooter>
+        </AlertDialog.Action>
+      </AlertDialog.Footer>
     </form>
-  </AlertDialogContent>
-</AlertDialogRoot>
+  </AlertDialog.Content>
+</AlertDialog.Root>

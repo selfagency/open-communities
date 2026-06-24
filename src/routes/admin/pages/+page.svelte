@@ -1,9 +1,9 @@
 <script lang="ts">
+  import Pencil from '@lucide/svelte/icons/pencil';
+  import { goto } from '$app/navigation';
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import Pencil from '@lucide/svelte/icons/pencil';
-  import { goto } from '$app/navigation';
 
   let { data } = $props();
 </script>

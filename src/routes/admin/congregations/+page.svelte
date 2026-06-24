@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { page } from '$app/state';
-  import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table';
-  import { Badge } from '$lib/components/ui/badge';
-  import { Button } from '$lib/components/ui/button';
-  import { Input } from '$lib/components/ui/input';
-  import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNextButton, PaginationPrevButton } from '$lib/components/ui/pagination';
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
   import Building2 from '@lucide/svelte/icons/building-2';
   import Eye from '@lucide/svelte/icons/eye';
   import EyeOff from '@lucide/svelte/icons/eye-off';
   import Pencil from '@lucide/svelte/icons/pencil';
   import Search from '@lucide/svelte/icons/search';
+  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
   import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import { Badge } from '$lib/components/ui/badge';
+  import { Button } from '$lib/components/ui/button';
+  import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table';
+  import { Input } from '$lib/components/ui/input';
+  import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNextButton, PaginationPrevButton } from '$lib/components/ui/pagination';
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   let { data } = $props();
 
@@ -21,6 +21,7 @@
 
   let search = $state('');
   let statusFilter = $state('all');
+  // svelte-ignore state_referenced_locally
   let currentPage = $state(data.page);
 
   const columnHelper = createColumnHelper<Congregation>();
@@ -63,6 +64,7 @@
     }),
   ];
 
+  // svelte-ignore state_referenced_locally
   const table = createSvelteTable({
     data: data.congregations,
     columns,
@@ -169,7 +171,11 @@
         <PaginationPrevButton />
         {#each Array.from({ length: Math.min(5, Math.ceil(data.total / data.perPage)) }, (_, i) => i + 1) as p}
           <PaginationItem>
-            <PaginationLink href={`/admin/congregations?page=${p}`} isActive={p === currentPage}>{p}</PaginationLink>
+            <a
+              href={`/admin/congregations?page=${p}`}
+              class="inline-flex items-center justify-center rounded-md px-3 py-1 text-sm aria-[current=page]:border aria-[current=page]:bg-background"
+              aria-current={p === currentPage ? 'page' : undefined}
+            >{p}</a>
           </PaginationItem>
         {/each}
         <PaginationNextButton />

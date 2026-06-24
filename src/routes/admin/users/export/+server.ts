@@ -1,5 +1,5 @@
-import type { RequestHandler } from './$types';
 import { withRetry } from '$lib/server/api';
+import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ locals }) => {
   const { api } = locals;

@@ -83,6 +83,13 @@
   <title>{m.title()}</title>
 </svelte:head>
 
+<a
+  href="#main-content"
+  class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+>
+  {m.skipToMain()}
+</a>
+
 <div class="flex h-full min-h-screen flex-col items-center justify-between max-w-screen w-full overflow-hidden">
   {#if data.offline}
     <div
@@ -95,6 +102,7 @@
   <Progress />
   <Header />
   <main
+    id="main-content"
     class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4"
     class:mt-28={data.offline}
   >

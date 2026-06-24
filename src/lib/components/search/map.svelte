@@ -5,6 +5,7 @@
   import { Button } from '$lib/components/ui/button';
   import type { Location } from '$lib/location';
   import { darkStyle, lightStyle } from '$lib/map-styles';
+  import { m } from '$lib/paraglide/messages';
   import type { Search } from '$lib/search';
   import type { LocationMeta } from '$lib/types.d';
 
@@ -75,6 +76,7 @@
     {/each}
   </div>
 {:else}
+  <div role="region" aria-label={m.congregationMap()}>
   <MapLibre
     center={center}
     zoom={zoom}
@@ -105,4 +107,5 @@
       </DefaultMarker>
     {/each}
   </MapLibre>
+  </div>
 {/if}

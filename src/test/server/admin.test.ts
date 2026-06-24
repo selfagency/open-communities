@@ -28,7 +28,7 @@ describe('admin +layout.server', () => {
 
     const result = (await mod.load(event as any))!;
     expect(result.title).toBe('Dashboard');
-    expect(result.user.admin).toBe(true);
+    expect(result.user!.admin).toBe(true);
   });
 
   it('redirects unauthenticated users to /', async () => {
@@ -53,7 +53,7 @@ describe('admin +page.server (dashboard)', () => {
     } as any;
 
     const event = createMockRequestEvent({ locals: { api } });
-    const result = await mod.load(event as any);
+    const result = (await mod.load(event as any))!;
 
     expect(result.stats.congregations).toBe(42);
     expect(result.stats.users).toBe(42);
@@ -78,7 +78,7 @@ describe('admin/congregations +page.server', () => {
       url: new URL('http://localhost/admin/congregations?page=1')
     });
 
-    const result = await mod.load(event as any);
+    const result = (await mod.load(event as any))!;
     expect(result.congregations).toHaveLength(1);
     expect(result.total).toBe(1);
   });
@@ -105,7 +105,7 @@ describe('admin/approvals +page.server', () => {
     const api = { collection: () => ({ getList }) } as any;
 
     const event = createMockRequestEvent({ locals: { api } });
-    const result = await mod.load(event as any);
+    const result = (await mod.load(event as any))!;
 
     expect(result.newSubmissions).toBeDefined();
     expect(result.pendingChanges).toBeDefined();
@@ -182,7 +182,7 @@ describe('admin/users +page.server', () => {
       url: new URL('http://localhost/admin/users?page=1')
     });
 
-    const result = await mod.load(event as any);
+    const result = (await mod.load(event as any))!;
     expect(result.users).toHaveLength(1);
     expect(result.total).toBe(1);
   });
@@ -242,7 +242,7 @@ describe('admin/pages +page.server', () => {
     } as any;
 
     const event = createMockRequestEvent({ locals: { api } });
-    const result = await mod.load(event as any);
+    const result = (await mod.load(event as any))!;
 
     expect(result.pages).toHaveLength(1);
     expect(result.pages[0].title).toBe('About');
@@ -253,7 +253,7 @@ describe('admin/settings +page.server', () => {
   it('loads settings with node version', async () => {
     const mod = await import('../../routes/admin/settings/+page.server');
     const event = createMockRequestEvent({});
-    const result = await mod.load(event as any);
+    const result = (await mod.load(event as any))!;
 
     expect(result.title).toBe('Settings');
     expect(result.nodeVersion).toBeDefined();

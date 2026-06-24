@@ -18,7 +18,7 @@ describe('user/lang +server', () => {
       collection: () => ({ update: async () => ({}) })
     } as any;
 
-    const request = new Request('http://localhost/user/lang', {
+    const request = new Request('http://localhost:5173/user/lang', {
       method: 'POST',
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'invalid' })
@@ -28,7 +28,7 @@ describe('user/lang +server', () => {
       locals: { api, captureException: () => {} },
       request,
       route: { id: '/user/lang' },
-      url: new URL('http://localhost/user/lang')
+      url: new URL('http://localhost:5173/user/lang')
     });
 
     const res = await mod.POST(mockEvent as any);
@@ -44,7 +44,7 @@ describe('user/lang +server', () => {
       collection: () => ({ update: async () => ({}) })
     } as any;
 
-    const request = new Request('http://localhost/user/lang', {
+    const request = new Request('http://localhost:5173/user/lang', {
       method: 'POST',
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'en', user: 'other-user' })
@@ -54,7 +54,7 @@ describe('user/lang +server', () => {
       locals: { api, captureException: () => {} },
       request,
       route: { id: '/user/lang' },
-      url: new URL('http://localhost/user/lang')
+      url: new URL('http://localhost:5173/user/lang')
     });
 
     const res = await mod.POST(mockEvent as any);
@@ -69,7 +69,7 @@ describe('user/lang +server', () => {
       collection: () => ({ update: updateMock })
     } as any;
 
-    const request = new Request('http://localhost/user/lang', {
+    const request = new Request('http://localhost:5173/user/lang', {
       method: 'POST',
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'es' })
@@ -80,7 +80,7 @@ describe('user/lang +server', () => {
       locals: { api, captureException: () => {}, cookieOpts: {} },
       request,
       route: { id: '/user/lang' },
-      url: new URL('http://localhost/user/lang')
+      url: new URL('http://localhost:5173/user/lang')
     });
 
     const res = await mod.POST(mockEvent as any);
@@ -95,7 +95,7 @@ describe('user/lang +server', () => {
       collection: () => ({ update: async () => ({}) })
     } as any;
 
-    const request = new Request('http://localhost/user/lang', {
+    const request = new Request('http://localhost:5173/user/lang', {
       method: 'POST',
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'en' })
@@ -105,7 +105,7 @@ describe('user/lang +server', () => {
       locals: { api, captureException: () => {} },
       request,
       route: { id: '/user/lang' },
-      url: new URL('http://localhost/user/lang')
+      url: new URL('http://localhost:5173/user/lang')
     });
 
     const res = await mod.POST(mockEvent as any);
@@ -123,7 +123,7 @@ describe('user/lang +server', () => {
       })
     } as any;
 
-    const request = new Request('http://localhost/user/lang', {
+    const request = new Request('http://localhost:5173/user/lang', {
       method: 'POST',
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
       body: JSON.stringify({ lang: 'en' })
@@ -134,7 +134,7 @@ describe('user/lang +server', () => {
       locals: { api, captureException: vi.fn(), cookieOpts: {} },
       request,
       route: { id: '/user/lang' },
-      url: new URL('http://localhost/user/lang')
+      url: new URL('http://localhost:5173/user/lang')
     });
 
     const res = await mod.POST(mockEvent as any);

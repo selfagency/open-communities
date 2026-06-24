@@ -111,7 +111,7 @@
             rel="noopener noreferrer"
             class="inline-block max-w-[92%] hyphens-auto"
           >
-            <h1 class="inline-block text-2xl leading-7 text-secondary-foreground">
+            <h2 class="inline-block text-2xl leading-7 text-secondary-foreground">
               <span>{congregation.name}</span>
               <span
                 ><LinkIcon
@@ -120,13 +120,13 @@
                   class="inline rtl:mx-1"
                 /></span
               >
-            </h1>
+            </h2>
           </a>
           <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {:else}
-          <h1 class="inline text-2xl leading-6 text-secondary-foreground">
+          <h2 class="inline text-2xl leading-6 text-secondary-foreground">
             {congregation.name}
-          </h1>
+          </h2>
         {/if}
       </Dialog.Title>
       <Dialog.Description
@@ -224,7 +224,7 @@
               {#if congregation.denomination}
                 {@const denomKey = `denomination_${congregation.denomination}`}
                 <div class="col-span-3 flex flex-row items-start justify-start">
-                  <h2 class="label">{m.denomination_affiliation()}</h2>
+                  <h3 class="label">{m.denomination_affiliation()}</h3>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
                   {m[denomKey]()}
@@ -255,7 +255,7 @@
             <div class="grid grid-cols-12 gap-4 text-sm">
               {#if congregation.clergy}
                 <div class="col-span-3 flex flex-row items-start justify-start">
-                  <h2 class="label">{m.clergy_clergy()}</h2>
+                  <h3 class="label">{m.clergy_clergy()}</h3>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
                   {congregation.clergy}
@@ -309,7 +309,7 @@
                   <Separator class="col-span-12" />
                 {/if}
                 <div class="col-span-3 flex flex-row items-start justify-start">
-                  <h2 class="label">{m.notes()}</h2>
+                  <h3 class="label">{m.notes()}</h3>
                 </div>
                 <div class="col-span-9 flex flex-row items-start justify-start">
                   <p>{@html DOMPurify.sanitize(notes)}</p>

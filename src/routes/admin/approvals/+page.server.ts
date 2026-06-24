@@ -1,7 +1,6 @@
-import { fail } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
 import { withRetry } from '$lib/server/api';
 import { transactionalMail } from '$lib/server/mail';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const { api } = locals;

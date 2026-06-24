@@ -1,16 +1,16 @@
 <script lang="ts">
+  import Download from '@lucide/svelte/icons/download';
+  import Pencil from '@lucide/svelte/icons/pencil';
+  import Search from '@lucide/svelte/icons/search';
+  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table';
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
+  import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table';
   import { Input } from '$lib/components/ui/input';
   import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNextButton, PaginationPrevButton } from '$lib/components/ui/pagination';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
-  import Pencil from '@lucide/svelte/icons/pencil';
-  import Search from '@lucide/svelte/icons/search';
-  import Download from '@lucide/svelte/icons/download';
-  import { goto } from '$app/navigation';
 
   let { data } = $props();
 
@@ -18,6 +18,7 @@
 
   let search = $state('');
   let adminFilter = $state('');
+  // svelte-ignore state_referenced_locally
   let currentPage = $state(data.page);
 
   const columnHelper = createColumnHelper<User>();
@@ -58,6 +59,7 @@
     }),
   ];
 
+  // svelte-ignore state_referenced_locally
   const table = createSvelteTable({
     data: data.users,
     columns,
@@ -152,7 +154,11 @@
         <PaginationPrevButton />
         {#each Array.from({ length: Math.min(5, Math.ceil(data.total / data.perPage)) }, (_, i) => i + 1) as p}
           <PaginationItem>
-            <PaginationLink href={`/admin/users?page=${p}`} isActive={p === currentPage}>{p}</PaginationLink>
+            <a
+              href={`/admin/users?page=${p}`}
+              class="inline-flex items-center justify-center rounded-md px-3 py-1 text-sm aria-[current=page]:border aria-[current=page]:bg-background"
+              aria-current={p === currentPage ? 'page' : undefined}
+            >{p}</a>
           </PaginationItem>
         {/each}
         <PaginationNextButton />

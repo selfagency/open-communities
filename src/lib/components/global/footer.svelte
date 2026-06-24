@@ -13,7 +13,7 @@
     <span class="flex flex-col items-center justify-center">
       <a href="https://rabbis4ceasefire.com/" target="_blank" translate="no">
         <RabbisLogo class="w-24 fill-secondary-foreground hover:fill-foreground sm:w-36" />
-        <span class="sr-only">{m.home_author()}</span>
+        <span class="sr-only">{m.home_author()} (opens in new tab)</span>
       </a>
     </span>
     <span class="pointer-events-none flex flex-row items-center justify-center font-bold sm:w-1/3 sm:justify-start"
@@ -36,7 +36,7 @@
           <span>{m.termsOfService()}</span>
         </a>
       </span>
-      <a class="text-xs text-muted-foreground hover:text-muted-foreground" href="https://self.agency" target="_blank" translate="no">
+      <a class="text-xs text-muted-foreground hover:text-muted-foreground" href="https://self.agency" target="_blank" rel="noopener noreferrer" translate="no">
         <span>
           {@html m.home_credit({
             thing: 'The Self Agency, LLC'

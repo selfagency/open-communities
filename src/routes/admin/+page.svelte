@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import Building2 from '@lucide/svelte/icons/building-2';
-  import Users from '@lucide/svelte/icons/users';
   import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
+  import Users from '@lucide/svelte/icons/users';
+  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 
   let { data } = $props();
 </script>

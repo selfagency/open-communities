@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { page } from '$app/state';
-  import { goto } from '$app/navigation';
-  import * as Sidebar from '$lib/components/ui/sidebar';
-  import * as Breadcrumb from '$lib/components/ui/breadcrumb';
-  import { Separator } from '$lib/components/ui/separator';
-  import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
+  import BarChart3 from '@lucide/svelte/icons/bar-chart-3';
   import Building2 from '@lucide/svelte/icons/building-2';
   import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
-  import Users from '@lucide/svelte/icons/users';
-  import BarChart3 from '@lucide/svelte/icons/bar-chart-3';
   import FileText from '@lucide/svelte/icons/file-text';
+  import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
   import Settings from '@lucide/svelte/icons/settings';
+  import Users from '@lucide/svelte/icons/users';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import * as Breadcrumb from '$lib/components/ui/breadcrumb';
+  import { Separator } from '$lib/components/ui/separator';
+  import * as Sidebar from '$lib/components/ui/sidebar';
 
   let { children } = $props();
 
@@ -36,14 +36,10 @@
       <Sidebar.Menu>
         {#each navItems as { href, label, icon: Icon } (href)}
           <Sidebar.MenuItem>
-            <button
-              class="flex w-full items-center gap-2 rounded-md p-2 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-active:font-medium"
-              class:data-active={isActive(href)}
-              onclick={() => goto(href)}
-            >
-              <Icon class="size-4 shrink-0" />
-              <span class="truncate">{label}</span>
-            </button>
+            <Sidebar.MenuButton isActive={isActive(href)} onclick={() => goto(href)}>
+              <Icon class="size-4" />
+              <span>{label}</span>
+            </Sidebar.MenuButton>
           </Sidebar.MenuItem>
         {/each}
       </Sidebar.Menu>

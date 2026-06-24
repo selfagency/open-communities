@@ -54,11 +54,11 @@
 >
   <Card.Header>
     <Card.Title>
-      <h1
+      <h2
         class="font-display text-xl leading-6 font-normal tracking-wide text-secondary-foreground"
       >
         {congregation.name}
-      </h1>
+      </h2>
     </Card.Title>
     <Card.Description class="text-muted-foreground -mt-1">
       {#if services.onlineOnly}

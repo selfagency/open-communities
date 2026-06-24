@@ -16,6 +16,7 @@
 	role="link"
 	aria-disabled="true"
 	aria-current="page"
+	tabindex="-1"
 	class={cn("text-foreground font-normal", className)}
 	{...restProps}
 >

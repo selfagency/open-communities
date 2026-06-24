@@ -2,7 +2,7 @@
 
 import { spawn } from 'node:child_process';
 import { sleep, uid } from 'radashi';
-import { afterEach, beforeEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type {
   Collections,

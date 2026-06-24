@@ -26,7 +26,7 @@
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}
       <Tooltip.Provider>
         <Tooltip.Root>
-          <Tooltip.Trigger>
+          <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
             <SecurityIcon size="18" />
             <span class="sr-only">{m.security_armedSecurity()}</span>
           </Tooltip.Trigger>
@@ -38,7 +38,7 @@
     {:else if security.privateSecurityUnarmed}
       <Tooltip.Provider>
         <Tooltip.Root>
-          <Tooltip.Trigger>
+          <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
             <UnarmedIcon size="18" />
             <span class="sr-only">{m.security_unarmedSecurity()}</span>
           </Tooltip.Trigger>
@@ -53,7 +53,7 @@
 
 {#if mode === "full"}
   <div class="col-span-3">
-    <h2 class="label">{m.security()}</h2>
+    <h3 class="label">{m.security()}</h3>
   </div>
   <ul class="col-span-9 space-y-2">
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}

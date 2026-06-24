@@ -37,6 +37,7 @@
     "isomorphic-dompurify": "^3.18.0",
     "posthog-js": "^1.392.0",
     "posthog-node": "^5.38.3",
+    "recharts": "^3.9.0",
     "svelte-reactive-preprocessor": "^0.8.3",
     "topojson-client": "^3.1.0"
   },
@@ -64,6 +65,7 @@
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.1",
+    "@tanstack/table-core": "^8.21.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "^5.4.2",
     "@testing-library/user-event": "^14.6.1",
@@ -85,6 +87,7 @@
     "formsnap": "2.0.1",
     "happy-dom": "^20.10.6",
     "jsdom": "29.1.1",
+    "layerchart": "2.0.0-next.43",
     "maplibre-gl": "^5.24.0",
     "marked": "^18.0.5",
     "mode-watcher": "1.1.0",
@@ -126,7 +129,13 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@posthog/cli", "@tailwindcss/oxide", "core-js", "esbuild", "sqlite3"]
+    "onlyBuiltDependencies": [
+      "@posthog/cli",
+      "@tailwindcss/oxide",
+      "core-js",
+      "esbuild",
+      "sqlite3"
+    ]
   },
   "packageManager": "pnpm@10.18.3"
 }
