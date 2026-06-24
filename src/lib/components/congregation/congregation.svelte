@@ -301,7 +301,7 @@
                 {#if fit.flag || health.protocol || !allFalse(accessibility)}<Separator
                     class="col-span-12"
                   />{/if}
-                <Security {security} />
+                <Security {security} mode="full" />
               {/if}
 
               {#if notes}

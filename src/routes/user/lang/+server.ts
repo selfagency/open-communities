@@ -11,13 +11,13 @@ const langSchema = z.object({
   user: z.string().optional()
 });
 
-export async function POST({ cookies, locals, request }) {
+export async function POST({ cookies, locals, request, url }) {
   const { api, captureException } = locals;
   const client = api?.authStore?.record;
 
-  // CSRF protection: reject requests with no or mismatched origin
+  // CSRF protection: reject requests with a mismatched origin
   const origin = request.headers.get('origin');
-  if (!origin || origin !== env.PUBLIC_HOSTNAME) {
+  if (origin && origin !== url.origin) {
     return json({ error: 'Forbidden' }, { status: 403 });
   }
 

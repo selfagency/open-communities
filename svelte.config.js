@@ -7,6 +7,9 @@ const config = {
     adapter: adapter({
       mode: 'standalone'
     }),
+    csrf: {
+      checkOrigin: true
+    },
     // Use kit.alias with a proper path so SvelteKit and Vite can resolve $test imports.
     alias: {
       $test: path.resolve('./src/test')
