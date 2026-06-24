@@ -48,8 +48,15 @@ async function waitForPB() {
   throw new Error('PB did not become healthy within 120s');
 }
 
-function getToken() {
-  const logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
+async function getToken() {
+  let logs;
+  try {
+    logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
+  } catch {
+    // PB may be running natively (not in Docker) — read the log file directly
+    const fs = await import('node:fs');
+    logs = fs.readFileSync('.e2e/pb.log', 'utf8');
+  }
   const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
   if (!m) throw new Error('No installation token found — start PB fresh');
   console.log('  🔑 Installation token acquired');
@@ -150,9 +157,24 @@ async function seedData(token) {
   await create('pages', { title: 'FAQ', slug: 'frequently-asked-questions', lang: 'en', content: '# FAQ\n\nClick "Add Congregation".', published: true });
 }
 
-function createAdmin() {
+async function createAdmin(token) {
   console.log('👤 Creating superuser...');
-  execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
+  try {
+    // Try Docker exec first (local dev)
+    execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
+  } catch {
+    // Fallback: use the API (CI — PB runs natively)
+    const existing = await api('GET', '/collections/_superusers/records?perPage=1', null, token);
+    if (existing?.items?.length > 0) {
+      console.log('  ⏭  Superuser already exists');
+      return;
+    }
+    await api('POST', '/collections/_superusers/records', {
+      email: ADMIN_EMAIL,
+      password: ADMIN_PASSWORD,
+      passwordConfirm: ADMIN_PASSWORD,
+    }, token);
+  }
   console.log('  ✅ Superuser created');
 }
 
@@ -161,7 +183,7 @@ async function main() {
   const start = Date.now();
   try {
     await waitForPB();
-    const token = getToken();
+    const token = await getToken();
     await verifyToken(token);
     await importSchema(token);
     await seedData(token);
