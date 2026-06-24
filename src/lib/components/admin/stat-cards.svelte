@@ -36,7 +36,7 @@
       <ChurchIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
-      <p class="text-3xl font-bold">{congregations}</p>
+      <p class="font-serif text-3xl font-bold">{congregations}</p>
     </CardContent>
   </Card>
   <Card>
@@ -61,15 +61,15 @@
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Country</TableHead>
-                <TableHead class="text-right">Congregations</TableHead>
+                <TableHead class="font-bold">Country</TableHead>
+                <TableHead class="text-right font-bold">Congregations</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {#each topCountries as c}
                 <TableRow>
-                  <TableCell class="font-medium">{c.name}</TableCell>
-                  <TableCell class="text-right">{c.count}</TableCell>
+                  <TableCell class="font-serif font-medium">{c.name}</TableCell>
+                  <TableCell class="font-serif text-right">{c.count}</TableCell>
                 </TableRow>
               {/each}
             </TableBody>
@@ -86,15 +86,15 @@
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>State</TableHead>
-                <TableHead class="text-right">Congregations</TableHead>
+                <TableHead class="font-bold">State</TableHead>
+                <TableHead class="text-right font-bold">Congregations</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {#each topStates as s}
                 <TableRow>
-                  <TableCell class="font-medium">{s.name}</TableCell>
-                  <TableCell class="text-right">{s.count}</TableCell>
+                  <TableCell class="font-serif font-medium">{s.name}</TableCell>
+                  <TableCell class="font-serif text-right">{s.count}</TableCell>
                 </TableRow>
               {/each}
             </TableBody>
