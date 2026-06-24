@@ -160,7 +160,9 @@
             "noExplicitAny": "off",
             "noGlobalAssign": "off",
             "noShadowRestrictedNames": "off",
-            "noDoubleEquals": "off"
+            "noDoubleEquals": "off",
+            "noAssignInExpressions": "warn",
+            "noDocumentCookie": "warn"
           },
           "style": {
             "noNonNullAssertion": "off",
@@ -171,7 +173,9 @@
             "noLabelWithoutControl": "off",
             "useValidAriaValues": "off",
             "useSemanticElements": "off",
-            "noSvgWithoutTitle": "off"
+            "noSvgWithoutTitle": "off",
+            "useValidAnchor": "warn",
+            "noStaticElementInteractions": "warn"
           }
         }
       }

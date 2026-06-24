@@ -7,7 +7,6 @@
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '$lib/components/ui/select';
   import { Switch } from '$lib/components/ui/switch';
   import { m } from '$lib/paraglide/messages';
 
@@ -59,15 +58,12 @@
         </div>
         <div class="space-y-2">
           <Label for="lang">Language</Label>
-          <Select type="single" bind:value={$formData.lang}>
-            <SelectTrigger class="w-full"><SelectValue placeholder="Select language" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Espa&ntilde;ol</SelectItem>
-              <SelectItem value="fr">Fran&ccedil;ais</SelectItem>
-              <SelectItem value="he">עברית</SelectItem>
-            </SelectContent>
-          </Select>
+          <select id="lang" name="lang" bind:value={$formData.lang} class="border-input h-11 w-full rounded-md border bg-transparent px-3 text-sm">
+            <option value="en">English</option>
+            <option value="es">Espa&ntilde;ol</option>
+            <option value="fr">Fran&ccedil;ais</option>
+            <option value="he">עברית</option>
+          </select>
         </div>
         <div class="flex items-center gap-3">
           <Switch id="notifications" checked={$formData.notifications} onCheckedChange={(c) => $formData.notifications = c} />
