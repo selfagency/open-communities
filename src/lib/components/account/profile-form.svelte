@@ -1,7 +1,6 @@
 <script lang="ts">
-  import type { superForm } from 'sveltekit-superforms';
-  import type { SuperForm } from 'sveltekit-superforms';
   import { toast } from 'svelte-sonner';
+  import type { SuperForm, superForm } from 'sveltekit-superforms';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';

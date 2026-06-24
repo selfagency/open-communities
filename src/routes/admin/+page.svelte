@@ -1,6 +1,6 @@
 <script lang="ts">
-  import StatCards from '$lib/components/admin/stat-cards.svelte';
   import AnalyticsSection from '$lib/components/admin/analytics-section.svelte';
+  import StatCards from '$lib/components/admin/stat-cards.svelte';
 
   let { data } = $props();
 </script>

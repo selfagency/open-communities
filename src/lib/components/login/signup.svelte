@@ -2,11 +2,10 @@
 
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { goto } from '$app/navigation';
   /* region imports */
   import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
-
   import { dev } from '$app/environment';
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Captcha from '$lib/components/global/captcha.svelte';
   import Verify from '$lib/components/login/verify.svelte';

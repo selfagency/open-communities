@@ -1,8 +1,8 @@
 <script lang="ts">
   import { scaleBand } from 'd3-scale';
   import { BarChart } from 'layerchart';
-  import * as Chart from '$lib/components/ui/chart/index.js';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import * as Chart from '$lib/components/ui/chart/index.js';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   interface PhChange { percent: number; direction: string; long_text: string; }

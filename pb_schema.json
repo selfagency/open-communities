@@ -125,9 +125,7 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": [
-        "email"
-      ]
+      "identityFields": ["email"]
     },
     "mfa": {
       "enabled": false,
@@ -296,13 +294,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "en",
-          "es",
-          "fr",
-          "he",
-          "de"
-        ]
+        "values": ["en", "es", "fr", "he", "de"]
       },
       {
         "hidden": false,
@@ -356,9 +348,7 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": [
-        "email"
-      ]
+      "identityFields": ["email"]
     },
     "mfa": {
       "enabled": false,
@@ -688,9 +678,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"
-    ],
+    "indexes": ["CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"],
     "system": true
   },
   {
@@ -793,9 +781,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"
-    ],
+    "indexes": ["CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"],
     "system": true
   },
   {
@@ -942,9 +928,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
     "system": false
   },
   {
@@ -1056,9 +1040,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
-    ],
+    "indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
     "system": false
   },
   {
@@ -1268,9 +1250,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
     "system": false
   },
   {
@@ -1384,9 +1364,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
     "system": false
   },
   {
@@ -1472,11 +1450,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "no",
-          "yes",
-          "yesBima"
-        ]
+        "values": ["no", "yes", "yesBima"]
       },
       {
         "cascadeDelete": false,
@@ -1512,9 +1486,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
     "system": false
   },
   {
@@ -1550,12 +1522,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "maskingRequired",
-          "maskingRecommended",
-          "noGuidelines",
-          "other"
-        ]
+        "values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
       },
       {
         "autogeneratePattern": "",
@@ -1605,9 +1572,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
     "system": false
   },
   {
@@ -1696,13 +1661,7 @@
         "required": true,
         "system": false,
         "type": "select",
-        "values": [
-          "en",
-          "de",
-          "es",
-          "fr",
-          "he"
-        ]
+        "values": ["en", "de", "es", "fr", "he"]
       },
       {
         "cascadeDelete": false,
@@ -1738,9 +1697,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
     "system": false
   },
   {
@@ -1798,13 +1755,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "free",
-          "fixedPrice",
-          "slidingScale",
-          "suggestedDonation",
-          "other"
-        ]
+        "values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
       },
       {
         "autogeneratePattern": "",
@@ -1854,9 +1805,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
     "system": false
   },
   {
@@ -1994,9 +1943,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
     "system": false
   },
   {
@@ -2116,9 +2063,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
     "system": false
   },
   {
@@ -2231,9 +2176,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
-    ],
+    "indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
     "system": false
   },
   {

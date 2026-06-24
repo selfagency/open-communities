@@ -7,8 +7,8 @@
   import RegistrationIcon from "@tabler/icons-svelte/icons/clipboard-plus";
   /* region imports */
   import AccessibilityIcon from "@tabler/icons-svelte/icons/disabled";
-  import FilterIcon from "@tabler/icons-svelte/icons/filter";
   import MaskIcon from "@tabler/icons-svelte/icons/face-mask";
+  import FilterIcon from "@tabler/icons-svelte/icons/filter";
   import DenominationIcon from "@tabler/icons-svelte/icons/menorah";
   import OpenIcon from "@tabler/icons-svelte/icons/selector";
   import SecurityIcon from "@tabler/icons-svelte/icons/shield";

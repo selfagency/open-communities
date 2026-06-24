@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from '$app/state';
+  import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { Badge } from '$lib/components/ui/badge';
 
   let { data }: { data: { users: any[]; total: number; page: number; perPage: number; search: string } } = $props();
   let search = $state(data.search);

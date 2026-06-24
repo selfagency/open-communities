@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       passwordConfirm: '',
       oldPassword: ''
     }
-  } as any);
+  });
   return { form, user };
 };
 
@@ -42,7 +42,7 @@ export const actions = {
         body.passwordConfirm = form.data.passwordConfirm;
       }
       const updated = await client.collection('users').update(client.authStore.record?.id as string, body);
-      client.authStore.save(client.authStore.token, updated as any);
+      client.authStore.save(client.authStore.token, updated as Record<string, unknown>);
       return { form, success: true };
     } catch (err: unknown) {
       const msg = (err as { message?: string }).message ?? 'Update failed';

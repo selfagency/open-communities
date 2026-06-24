@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { superForm } from 'sveltekit-superforms';
   import { toast } from 'svelte-sonner';
-  import ProfileForm from '$lib/components/account/profile-form.svelte';
-  import PasswordCard from '$lib/components/account/password-card.svelte';
+  import { superForm } from 'sveltekit-superforms';
   import CongregationCard from '$lib/components/account/congregation-card.svelte';
   import DangerZone from '$lib/components/account/danger-zone.svelte';
+  import PasswordCard from '$lib/components/account/password-card.svelte';
+  import ProfileForm from '$lib/components/account/profile-form.svelte';
   import { m } from '$lib/paraglide/messages';
 
   let { data } = $props();
