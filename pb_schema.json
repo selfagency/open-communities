@@ -125,7 +125,9 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": ["email"]
+      "identityFields": [
+        "email"
+      ]
     },
     "mfa": {
       "enabled": false,
@@ -294,7 +296,13 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["en", "es", "fr", "he", "de"]
+        "values": [
+          "en",
+          "es",
+          "fr",
+          "he",
+          "de"
+        ]
       },
       {
         "hidden": false,
@@ -315,12 +323,6 @@
         "presentable": false,
         "system": false,
         "type": "autodate"
-      },
-      {
-        "name": "notifications",
-        "type": "bool",
-        "required": false,
-        "presentable": false
       }
     ],
     "indexes": [
@@ -348,7 +350,9 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": ["email"]
+      "identityFields": [
+        "email"
+      ]
     },
     "mfa": {
       "enabled": false,
@@ -678,7 +682,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"],
+    "indexes": [
+      "CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"
+    ],
     "system": true
   },
   {
@@ -781,7 +787,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"],
+    "indexes": [
+      "CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"
+    ],
     "system": true
   },
   {
@@ -928,7 +936,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1040,7 +1050,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
+    "indexes": [
+      "CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
+    ],
     "system": false
   },
   {
@@ -1250,7 +1262,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"
+    ],
     "system": false
   },
   {
@@ -1364,7 +1378,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
+    ],
     "system": false
   },
   {
@@ -1450,7 +1466,11 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["no", "yes", "yesBima"]
+        "values": [
+          "no",
+          "yes",
+          "yesBima"
+        ]
       },
       {
         "cascadeDelete": false,
@@ -1486,7 +1506,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1522,7 +1544,12 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
+        "values": [
+          "maskingRequired",
+          "maskingRecommended",
+          "noGuidelines",
+          "other"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -1572,7 +1599,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1661,7 +1690,13 @@
         "required": true,
         "system": false,
         "type": "select",
-        "values": ["en", "de", "es", "fr", "he"]
+        "values": [
+          "en",
+          "de",
+          "es",
+          "fr",
+          "he"
+        ]
       },
       {
         "cascadeDelete": false,
@@ -1697,7 +1732,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
+    ],
     "system": false
   },
   {
@@ -1755,7 +1792,13 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
+        "values": [
+          "free",
+          "fixedPrice",
+          "slidingScale",
+          "suggestedDonation",
+          "other"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -1805,7 +1848,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1943,7 +1988,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2063,7 +2110,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2176,8 +2225,93 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
+    "indexes": [
+      "CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
+    ],
     "system": false
+  },
+  {
+    "id": "pbc_2065122259",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "citiesByQty",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_WHxO",
+        "max": 0,
+        "min": 0,
+        "name": "city_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_kmCf",
+        "max": 0,
+        "min": 0,
+        "name": "state_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_2fOK",
+        "max": 0,
+        "min": 0,
+        "name": "state_code",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2843984708",
+        "max": null,
+        "min": null,
+        "name": "congregation_count",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    ci.id as id,\n    ci.name as city_name,\n    s.name as state_name,\n    s.code as state_code,\n    COUNT(c.id) as congregation_count\nFROM \n    cities ci\nLEFT JOIN congregations c ON c.city = ci.id\nLEFT JOIN states s ON ci.state = s.id\nGROUP BY \n    ci.id, ci.name, s.name, s.code\nHAVING \n    COUNT(c.id) > 0\nORDER BY \n    congregation_count DESC, ci.name\n"
   },
   {
     "id": "o7pypf0j70kmhet",
@@ -2413,5 +2547,253 @@
     "indexes": [],
     "system": false,
     "viewQuery": "SELECT \n    c.id,\n    c.name,\n    c.notes,\n    c.denomination,\n    c.clergy,\n    c.flavor,\n    c.contactName,\n    c.contactEmail,\n    c.contactUrl,\n    c.visible,\n    u.id as owner,\n      json_object(\n        'city', json_object('id', city.id, 'name', city.name, 'longitude', city.longitude, 'latitude', city.latitude),\n        'state', json_object('id', state.id, 'name', state.name, 'code', state.code, 'longitude', state.longitude, 'latitude', state.latitude),\n        'country', json_object('id', country.id, 'name', country.name, 'code', country.code, 'longitude', country.longitude, 'latitude', country.latitude)\n    ) AS location,\n    json_object(\n        'id', a.id,\n        'online_liveCaptions', a.online_liveCaptions,\n        'online_automatedCaptions', a.online_automatedCaptions,\n        'online_asl', a.online_asl,\n        'inPerson_eva', a.inPerson_eva,\n        'inPerson_asl', a.inPerson_asl,\n        'inPerson_adaAll', a.inPerson_adaAll,\n        'inPerson_adaSome', a.inPerson_adaSome,\n        'other', a.other,\n        'otherText', a.otherText\n    ) AS accessibility,\n    json_object(\n        'id', f.id,\n        'publicStatement', f.publicStatement,\n        'clergyMember', f.clergyMember,\n        'multipleClergyMembers', f.multipleClergyMembers,\n        'other', f.other,\n        'otherText', f.otherText,\n        'flag', f.flag\n    ) AS fit,\n    json_object(\n        'id', r.id,\n        'email', r.email,\n        'url', r.url,\n        'registrationType', r.registrationType,\n        'otherText', r.otherText\n    ) AS registration,\n    json_object(\n        'id', h.id,\n        'protocol', h.protocol,\n        'otherText', h.otherText\n    ) AS health,\n    json_object(\n      'id', sc.id,\n      'localPolice', sc.localPolice,\n      'privateSecurityArmed', sc.privateSecurityArmed,\n      'privateSecurityUnarmed', sc.privateSecurityUnarmed,\n      'clergyArmed', sc.clergyArmed,\n      'congregantsArmed', sc.congregantsArmed,\n      'noFirearms', sc.noFirearms\n    ) as security,\n    json_object(\n        'id', sv.id,\n        'inPerson', sv.inPerson,\n        'hybrid', sv.hybrid,\n        'onlineOnly', sv.onlineOnly,\n        'offsite', sv.offsite,\n        'other', sv.other,\n        'otherText', sv.otherText\n    ) AS services\nFROM \n    congregations c\nLEFT JOIN countries country ON c.country = country.id\nLEFT JOIN states state ON c.state = state.id\nLEFT JOIN cities city ON c.city = city.id\nLEFT JOIN accessibility a ON c.id = a.congregation\nLEFT JOIN fit f ON c.id = f.congregation\nLEFT JOIN registration r ON c.id = r.congregation\nLEFT JOIN health h ON c.id = h.congregation\nLEFT JOIN services sv ON c.id = sv.congregation\nLEFT JOIN security sc ON c.id = sc.congregation\nLEFT JOIN users u ON u.congregation = c.id;"
+  },
+  {
+    "id": "pbc_2331436009",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "countriesByQty",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_WGxC",
+        "max": 0,
+        "min": 0,
+        "name": "country_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_R5K4",
+        "max": 0,
+        "min": 0,
+        "name": "country_code",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_TqMu",
+        "max": 0,
+        "min": 0,
+        "name": "country_flag",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2843984708",
+        "max": null,
+        "min": null,
+        "name": "congregation_count",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    co.id as id,\n    co.name as country_name,\n    co.code as country_code,\n    co.flag as country_flag,\n    COUNT(c.id) as congregation_count\nFROM \n    countries co\nLEFT JOIN congregations c ON c.country = co.id\nGROUP BY \n    co.id, co.name, co.code, co.flag\nHAVING \n    COUNT(c.id) > 0\nORDER BY \n    congregation_count DESC, co.name\n"
+  },
+  {
+    "id": "pbc_106475140",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "statesByQty",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_AJRI",
+        "max": 0,
+        "min": 0,
+        "name": "state_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_FnkM",
+        "max": 0,
+        "min": 0,
+        "name": "state_code",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_wEsK",
+        "max": 0,
+        "min": 0,
+        "name": "country_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2843984708",
+        "max": null,
+        "min": null,
+        "name": "congregation_count",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    s.id as id,\n    s.name as state_name,\n    s.code as state_code,\n    co.name as country_name,\n    COUNT(c.id) as congregation_count\nFROM \n    states s\nLEFT JOIN congregations c ON c.state = s.id\nLEFT JOIN countries co ON s.country = co.id\nGROUP BY \n    s.id, s.name, s.code, co.name\nHAVING \n    COUNT(c.id) > 0\nORDER BY \n    congregation_count DESC, s.name\n"
+  },
+  {
+    "id": "pbc_4060801132",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "totalCountries",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number3787364283",
+        "max": null,
+        "min": null,
+        "name": "total_countries",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    'countries_total' as id,\n    COUNT(DISTINCT c.country) as total_countries\nFROM \n    congregations c\nWHERE \n    c.country IS NOT NULL\n"
+  },
+  {
+    "id": "pbc_2253637087",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "totalStates",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2544318433",
+        "max": null,
+        "min": null,
+        "name": "total_us_states",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    'us_states_total' as id,\n    COUNT(DISTINCT c.state) as total_us_states\nFROM \n    congregations c\nINNER JOIN states s ON c.state = s.id\nINNER JOIN countries co ON s.country = co.id\nWHERE \n    co.code = 'US'\n"
   }
 ]
