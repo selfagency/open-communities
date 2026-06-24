@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
-  import WarningIcon from "@lucide/svelte/icons/circle-alert";
-  import MaskIcon from "$lib/assets/mask.svg?component";
+  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
+  import MaskIcon from "@tabler/icons-svelte/icons/mask";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { m } from "$lib/paraglide/messages";
   import type { HealthRecord } from "$lib/pocketbase.d";
@@ -22,7 +22,7 @@
     <Tooltip.Provider>
       <Tooltip.Root>
         <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-1" /></span>
+          <span><MaskIcon size="20" class="text-muted-foreground rtl:mx-1" /></span>
           <span class="sr-only">{m[`health_${health.protocol}`]()}</span>
         </Tooltip.Trigger>
         <Tooltip.Content>
@@ -42,14 +42,14 @@
     {:else}
       {#if health?.protocol === "maskingRecommended"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-2" /></span>
+          <span><MaskIcon size="20" class="text-muted-foreground rtl:mx-2" /></span>
           <span>{m.health_maskingRecommended()}</span>
         </li>
       {/if}
 
       {#if health?.protocol === "maskingRequired"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><MaskIcon class="mt-1 h-5 w-5 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-2" /></span>
+          <span><MaskIcon size="20" class="text-muted-foreground rtl:mx-2" /></span>
           <span>{m.health_maskingRequired()}</span>
         </li>
       {/if}

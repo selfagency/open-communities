@@ -8,7 +8,9 @@ export const GET: RequestHandler = async ({ locals }) => {
   );
   const csv =
     ['name,email,lang,verified,admin,'] +
-    users.map((u: any) => `"${u.name || ''}","${u.email}",${u.lang || 'en'},${u.verified},${u.admin}`).join('\n');
+    users
+      .map((u: Record<string, unknown>) => `"${u.name || ''}","${u.email}",${u.lang || 'en'},${u.verified},${u.admin}`)
+      .join('\n');
   return new Response(csv, {
     headers: { 'content-type': 'text/csv', 'content-disposition': 'attachment; filename=users.csv' }
   });

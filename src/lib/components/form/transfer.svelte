@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import WarningIcon from "@lucide/svelte/icons/circle-alert";
+  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
   import { isEmpty } from "radashi";
   import { onDestroy, onMount } from "svelte";
   import { fade } from "svelte/transition";

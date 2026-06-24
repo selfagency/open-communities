@@ -1,8 +1,8 @@
 <script lang="ts">
+  import LinkIcon from "@tabler/icons-svelte/icons/external-link";
   /* region imports */
-  import EditIcon from "@lucide/svelte/icons/pencil";
-  import ShareIcon from "@lucide/svelte/icons/share";
-  import LinkIcon from "@lucide/svelte/icons/square-arrow-out-up-right";
+  import EditIcon from "@tabler/icons-svelte/icons/pencil";
+  import ShareIcon from "@tabler/icons-svelte/icons/share";
   import DOMPurify from "isomorphic-dompurify";
   import { isEmpty, omit } from "radashi";
   import { fade } from "svelte/transition";

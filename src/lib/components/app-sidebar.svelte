@@ -1,7 +1,7 @@
 <script lang="ts">
+	import BuildingIcon from "@tabler/icons-svelte/icons/building";
 	import ChartBarIcon from "@tabler/icons-svelte/icons/chart-bar";
 	import CheckIcon from "@tabler/icons-svelte/icons/circle-check";
-	import BuildingIcon from "@tabler/icons-svelte/icons/building";
 	import DashboardIcon from "@tabler/icons-svelte/icons/dashboard";
 	import FileDescriptionIcon from "@tabler/icons-svelte/icons/file-description";
 	import SettingsIcon from "@tabler/icons-svelte/icons/settings";

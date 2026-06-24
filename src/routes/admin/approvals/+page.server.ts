@@ -19,11 +19,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   return {
     congregations: list.items.map((c: Record<string, unknown>) => ({
-      id: c.id,
-      name: c.name,
-      denomination: c.denomination,
-      owner: (c as any).expand?.owner?.email ?? '',
-      created: c.created
+      id: c.id as string,
+      name: c.name as string,
+      denomination: c.denomination as string,
+      owner:
+        ((c as Record<string, unknown>).expand as Record<string, { email?: string }> | undefined)?.owner?.email ?? '',
+      created: c.created as string
     })),
     total: list.totalItems,
     tab,

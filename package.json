@@ -50,7 +50,6 @@
     "@inlang/paraglide-js": "2.4.0",
     "@internationalized/date": "^3.12.2",
     "@leeoniya/ufuzzy": "^1.0.19",
-    "@lucide/svelte": "^1.21.0",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/api-logs": "^0.219.0",
     "@opentelemetry/exporter-logs-otlp-http": "^0.219.0",
@@ -135,13 +134,7 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@posthog/cli",
-      "@tailwindcss/oxide",
-      "core-js",
-      "esbuild",
-      "sqlite3"
-    ]
+    "onlyBuiltDependencies": ["@posthog/cli", "@tailwindcss/oxide", "core-js", "esbuild", "sqlite3"]
   },
   "packageManager": "pnpm@10.18.3"
 }

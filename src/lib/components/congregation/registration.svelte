@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
-  import WebIcon from "@lucide/svelte/icons/globe";
-  import EmailIcon from "@lucide/svelte/icons/mail";
+  import WebIcon from "@tabler/icons-svelte/icons/globe";
+  import EmailIcon from "@tabler/icons-svelte/icons/mail";
   import { Button } from "$lib/components/ui/button";
   import { m } from "$lib/paraglide/messages";
   import type { RegistrationRecord } from "$lib/pocketbase.d";

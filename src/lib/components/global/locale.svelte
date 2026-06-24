@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import LocaleIcon from "@lucide/svelte/icons/languages";
+  import LocaleIcon from "@tabler/icons-svelte/icons/language";
   import { onMount, tick } from "svelte";
   import { toast } from "svelte-sonner";
   import { invalidateAll } from "$app/navigation";

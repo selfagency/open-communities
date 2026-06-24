@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Loading from "@lucide/svelte/icons/loader-circle";
+  import Loading from "@tabler/icons-svelte/icons/loader";
   import { m } from "$lib/paraglide/messages";
 
   const {

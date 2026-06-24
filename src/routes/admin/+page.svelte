@@ -1,7 +1,7 @@
 <script lang="ts">
-  import ChurchIcon from '@lucide/svelte/icons/church';
-  import ThumbsUpIcon from '@lucide/svelte/icons/thumbs-up';
-  import UsersIcon from '@lucide/svelte/icons/users';
+  import ChurchIcon from '@tabler/icons-svelte/icons/building-church';
+  import ThumbsUpIcon from '@tabler/icons-svelte/icons/thumb-up';
+  import UsersIcon from '@tabler/icons-svelte/icons/users';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 
   let { data } = $props();

@@ -41,7 +41,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       city: c.city,
       state: c.state,
       country: c.country,
-      owner: (c as any).expand?.owner?.email ?? '',
+      owner:
+        ((c as Record<string, unknown>).expand as Record<string, { email?: string }> | undefined)?.owner?.email ?? '',
       created: c.created
     })),
     total: list.totalItems,

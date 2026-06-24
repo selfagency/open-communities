@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import EditIcon from "@lucide/svelte/icons/pencil";
+  import EditIcon from "@tabler/icons-svelte/icons/pencil";
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import { Badge } from "$lib/components/ui/badge";

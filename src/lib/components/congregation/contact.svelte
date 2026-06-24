@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import EmailIcon from "@lucide/svelte/icons/mail";
+  import EmailIcon from "@tabler/icons-svelte/icons/mail";
 
   import { m } from "$lib/paraglide/messages";
 

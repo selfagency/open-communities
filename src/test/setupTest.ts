@@ -223,14 +223,6 @@ vi.mock('$lib/assets/find.svg?component', async () => {
   const mod = await import('$test/mocks/assets/find.svelte');
   return mod;
 });
-vi.mock('$lib/assets/mask.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/mask.svelte');
-  return mod;
-});
-vi.mock('$lib/assets/asl.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/asl.svelte');
-  return mod;
-});
 vi.mock('$lib/assets/tent.svg?component', async () => {
   const mod = await import('$test/mocks/assets/tent.svelte');
   return mod;
@@ -241,14 +233,6 @@ vi.mock('$lib/assets/inclusive.svg?component', async () => {
 });
 vi.mock('$lib/assets/rabbis4ceasefire.svg?component', async () => {
   const mod = await import('$test/mocks/assets/rabbis4ceasefire.svelte');
-  return mod;
-});
-vi.mock('$lib/assets/menorah.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/menorah.svelte');
-  return mod;
-});
-vi.mock('$lib/assets/siddur.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/siddur.svelte');
   return mod;
 });
 

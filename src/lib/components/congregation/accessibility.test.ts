@@ -80,7 +80,7 @@ describe('Accessibility component', () => {
     const list = screen.getByRole('list') as HTMLElement;
 
     // there should be a warning icon and a visible text node (the message may be a function inlined)
-    const warnSvg = list.querySelector('.lucide-circle-alert');
+    const warnSvg = list.querySelector('.tabler-icon-alert-circle');
     expect(warnSvg).toBeInTheDocument();
 
     const spans = Array.from(list.querySelectorAll('span')) as HTMLSpanElement[];

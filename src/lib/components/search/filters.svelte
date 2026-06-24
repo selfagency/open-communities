@@ -1,22 +1,21 @@
 <script lang="ts">
   /* region imports */
-  import AccessibilityIcon from "@lucide/svelte/icons/accessibility";
-  import OpenIcon from "@lucide/svelte/icons/chevrons-up-down";
-  import CircleIcon from "@lucide/svelte/icons/circle";
-  import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
-  import CircleMinusIcon from "@lucide/svelte/icons/circle-minus";
-  import CloseIcon from "@lucide/svelte/icons/circle-x";
-  import RegistrationIcon from "@lucide/svelte/icons/clipboard-pen";
-  import FilterIcon from "@lucide/svelte/icons/filter";
-  import AdminIcon from "@lucide/svelte/icons/settings";
-  import SecurityIcon from "@lucide/svelte/icons/shield";
+  import AccessibilityIcon from "@tabler/icons-svelte/icons/accessible";
+  import SiddurIcon from "@tabler/icons-svelte/icons/book-2";
+  import CircleIcon from "@tabler/icons-svelte/icons/circle";
+  import CircleCheckIcon from "@tabler/icons-svelte/icons/circle-check";
+  import CircleMinusIcon from "@tabler/icons-svelte/icons/circle-minus";
+  import CloseIcon from "@tabler/icons-svelte/icons/circle-x";
+  import RegistrationIcon from "@tabler/icons-svelte/icons/clipboard-plus";
+  import FilterIcon from "@tabler/icons-svelte/icons/filter";
+  import MaskIcon from "@tabler/icons-svelte/icons/mask";
+  import DenominationIcon from "@tabler/icons-svelte/icons/menorah";
+  import OpenIcon from "@tabler/icons-svelte/icons/selector";
+  import AdminIcon from "@tabler/icons-svelte/icons/settings";
+  import SecurityIcon from "@tabler/icons-svelte/icons/shield";
   import { isEmpty } from "radashi";
   import { untrack } from "svelte";
-
   import { page } from "$app/state";
-  import MaskIcon from "$lib/assets/mask.svg?component";
-  import DenominationIcon from "$lib/assets/menorah.svg?component";
-  import SiddurIcon from "$lib/assets/siddur.svg?component";
   import { Button } from "$lib/components/ui/button";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import * as Collapsible from "$lib/components/ui/collapsible";

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import WarningIcon from "@lucide/svelte/icons/circle-alert";
+  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
   import DOMPurify from "isomorphic-dompurify";
   import { sleep } from "radashi";
   import { getContext, onMount, untrack } from "svelte";

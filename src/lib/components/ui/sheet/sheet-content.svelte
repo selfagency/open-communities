@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import XIcon from '@lucide/svelte/icons/x';
+	import XIcon from '@tabler/icons-svelte/icons/x';
 	import { Dialog as SheetPrimitive } from "bits-ui";
 	import type { ComponentProps, Snippet } from "svelte";
 	import { Button } from "$lib/components/ui/button/index.js";

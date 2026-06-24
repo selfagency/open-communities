@@ -1,10 +1,10 @@
 <script lang="ts">
   /* region imports */
-  import AdaIcon from "@lucide/svelte/icons/accessibility";
-  import CcIcon from "@lucide/svelte/icons/captions";
-  import WarningIcon from "@lucide/svelte/icons/circle-alert";
-  import EvaIcon from "@lucide/svelte/icons/languages";
-  import AslIcon from "$lib/assets/asl.svg?component";
+  import AdaIcon from "@tabler/icons-svelte/icons/accessible";
+  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
+  import AslIcon from "@tabler/icons-svelte/icons/hand-two-fingers";
+  import EvaIcon from "@tabler/icons-svelte/icons/language";
+  import CcIcon from "@tabler/icons-svelte/icons/subtitles";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { m } from "$lib/paraglide/messages";
   import type { AccessibilityRecord } from "$lib/pocketbase.d";
@@ -78,7 +78,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <AslIcon class="h-4 w-4 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-1" />
+            <AslIcon size="16" class="text-muted-foreground rtl:mx-1" />
             <span class="sr-only">{m.accessibility_asl()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -132,7 +132,7 @@
     {#if asl}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <AslIcon class="h-4 w-4 text-muted-foreground fill-current stroke-current stroke-1 rtl:mx-2" />
+          <AslIcon size="16" class="text-muted-foreground rtl:mx-2" />
           <span class="sr-only">{m.accessibility_asl()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">

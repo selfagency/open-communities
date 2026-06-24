@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
-  import Flag from "@lucide/svelte/icons/flag";
-  import FlagOff from "@lucide/svelte/icons/flag-off";
+  import Flag from "@tabler/icons-svelte/icons/flag";
+  import FlagOff from "@tabler/icons-svelte/icons/flag-off";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { m } from "$lib/paraglide/messages";
   import type { FitRecord } from "$lib/pocketbase.d";

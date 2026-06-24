@@ -1,6 +1,6 @@
 <script lang="ts">
-  import MoonIcon from '@lucide/svelte/icons/moon';
-  import SunIcon from '@lucide/svelte/icons/sun';
+  import MoonIcon from '@tabler/icons-svelte/icons/moon';
+  import SunIcon from '@tabler/icons-svelte/icons/sun';
   import { mode, toggleMode } from 'mode-watcher';
   /* region imports */
   import { createEventDispatcher } from 'svelte';

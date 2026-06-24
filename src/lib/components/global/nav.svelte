@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import MenuIcon from "@lucide/svelte/icons/menu";
+  import MenuIcon from "@tabler/icons-svelte/icons/menu";
 
   import * as Sheet from "$lib/components/ui/sheet";
   import { m } from "$lib/paraglide/messages";

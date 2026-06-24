@@ -11,9 +11,7 @@ import Empty from './EmptyIcon.svelte';
 export default Empty;
 
 // Re-export named mocks backed by real Svelte stubs
-export { default as asl } from './asl.svg.js';
 export { default as find } from './find.svg.js';
 export { default as inclusive } from './inclusive.svg.js';
-export { default as mask } from './mask.svg.js';
 export { default as rabbis4ceasefire } from './rabbis4ceasefire.svg.js';
 export { default as tent } from './tent.svg.js';

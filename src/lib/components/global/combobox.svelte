@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
-  import CheckIcon from "@lucide/svelte/icons/check";
-  import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
+  import CheckIcon from "@tabler/icons-svelte/icons/check";
+  import ChevronsUpDownIcon from "@tabler/icons-svelte/icons/selector";
   import { useId } from "bits-ui";
   import { onMount, tick } from "svelte";
   import { m } from "$lib/paraglide/messages";

@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
-  import SecurityIcon from "@lucide/svelte/icons/shield";
-  import UnarmedIcon from "@lucide/svelte/icons/shield-ban";
+  import SecurityIcon from "@tabler/icons-svelte/icons/shield";
+  import UnarmedIcon from "@tabler/icons-svelte/icons/shield-off";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { m } from "$lib/paraglide/messages";
   import type { SecurityRecord } from "$lib/pocketbase.d";

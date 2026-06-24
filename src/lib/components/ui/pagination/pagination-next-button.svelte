@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ChevronRightIcon from '@lucide/svelte/icons/chevron-right';
+  import ChevronRightIcon from '@tabler/icons-svelte/icons/chevron-right';
   import { Pagination as PaginationPrimitive } from 'bits-ui';
 
   import { buttonVariants } from '$lib/components/ui/button/index.js';

@@ -1,6 +1,6 @@
 <script lang="ts">
   /* region imports */
-  import ResetIcon from "@lucide/svelte/icons/circle-x";
+  import ResetIcon from "@tabler/icons-svelte/icons/circle-x";
   import { isEmpty } from "radashi";
   import { untrack } from "svelte";
 

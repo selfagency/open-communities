@@ -79,7 +79,7 @@ Made with:
 
 Fonts provided by [Nathatype](https://nathatype.com/) and [Mozilla](https://github.com/mozilla/mozilla-text-type).
 
-Icons by [Lucide](https://lucide.dev/) and [The Noun Project](https://thenounproject.com/) (Ferifrey, Agarunov Oktay-Abraham, filosovis, and Arthur Shlain)
+Icons by [Tabler Icons](https://tabler.io/icons) and [The Noun Project](https://thenounproject.com/) (Ferifrey, Agarunov Oktay-Abraham, filosovis, and Arthur Shlain)
 
 Illustrations by [Icons8](https://icons8.com/illustrations/style--journal)
 
