@@ -107,9 +107,11 @@
       <!-- Full mode: user circle dropdown -->
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <button class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted" aria-label="User menu">
-            <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1.25" />
-          </button>
+          {#snippet child({ props })}
+            <button {...props} class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted" aria-label="User menu">
+              <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1.25" />
+            </button>
+          {/snippet}
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end" class="w-56">
           <DropdownMenu.Item onclick={() => goto('/account')}>
