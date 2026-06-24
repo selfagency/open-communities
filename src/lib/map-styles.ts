@@ -11,28 +11,29 @@ const source = {
 };
 
 // Theme colors derived from current app.css OKLCH values
-// Light:  background=oklch(0.9551 0 0)  foreground=oklch(0.3211 0 0)
-//         border=oklch(0.8576 0 0)       muted-foreground=oklch(0.5103 0 0)
-// Dark:   background=oklch(0.2178 0 0)  foreground=oklch(0.8853 0 0)
-//         border=oklch(0.329 0 0)        muted-foreground=oklch(0.5999 0 0)
+// Theme colors from app.css OKLCH values via oklchtohex
+// Light:  background=oklch(0.9551 0 0) → #f0f0f0  border=oklch(0.8576 0 0) → #d0d0d0
+//         muted-foreground=oklch(0.5103 0 0) → #666666
+// Dark:   background=oklch(0.2178 0 0) → #1a1a1a  border=oklch(0.329 0 0) → #353535
+//         muted-foreground=oklch(0.5999 0 0) → #808080
 
 const LIGHT = {
-  background: '#f3f3ef',
+  background: '#f0f0f0',
   water: '#e6e4dc',
   land: '#eeebe4',
-  boundary: '#d6d6d6',
-  text: '#7a7a7a',
-  textHalo: '#f3f3ef',
+  boundary: '#d0d0d0',
+  text: '#666666',
+  textHalo: '#f0f0f0',
   textDim: '#8c8070'
 };
 
 const DARK = {
-  background: '#282828',
+  background: '#1a1a1a',
   water: '#3a3835',
   land: '#343230',
-  boundary: '#484848',
-  text: '#969696',
-  textHalo: '#282828',
+  boundary: '#353535',
+  text: '#808080',
+  textHalo: '#1a1a1a',
   textDim: '#8c8070'
 };
 
