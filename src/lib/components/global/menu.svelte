@@ -1,7 +1,8 @@
 <script lang="ts">
   import MoonIcon from '@tabler/icons-svelte/icons/moon';
   import SunIcon from '@tabler/icons-svelte/icons/sun';
-  import UserCircleIcon from '@tabler/icons-svelte/icons/user-cog';
+  import UserCircleIcon from '@tabler/icons-svelte/icons/user-circle';
+  import UserCogIcon from '@tabler/icons-svelte/icons/user-cog';
   import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
   import BuildingIcon from '@tabler/icons-svelte/icons/building';
   import UsersIcon from '@tabler/icons-svelte/icons/users';
@@ -112,7 +113,7 @@
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end" class="w-56">
           <DropdownMenu.Item onclick={() => goto('/account')}>
-            <UserCircleIcon class="mr-2 size-4" />
+            <UserCogIcon class="mr-2 size-4" />
             Manage Account
           </DropdownMenu.Item>
           {#if user?.congregation}
