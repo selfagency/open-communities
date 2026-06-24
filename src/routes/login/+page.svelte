@@ -40,7 +40,7 @@
         <LoginForm data={data.login} reset={data.reset} />
       {/if}
       <p class="mt-4 text-center text-sm text-muted-foreground">
-        <button class="text-primary underline-offset-4 hover:underline" onclick={() => (showingLogin = false)}>
+        <button class="text-primary font-semibold underline-offset-4 hover:underline" onclick={() => (showingLogin = false)}>
           Don't have an account? Sign up.
         </button>
       </p>
