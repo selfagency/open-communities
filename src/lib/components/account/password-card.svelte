@@ -16,7 +16,7 @@
 
 <Card>
   <CardHeader>
-    <CardTitle class="text-lg">Change Password</CardTitle>
+    <CardTitle class="text-lg font-bold">Change Password</CardTitle>
   </CardHeader>
   <CardContent class="space-y-4">
     <div class="space-y-2">

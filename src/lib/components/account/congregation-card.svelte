@@ -16,7 +16,7 @@
 {#if congregation}
   <Card>
     <CardHeader>
-      <CardTitle class="text-lg">Congregation</CardTitle>
+      <CardTitle class="text-lg font-bold">Congregation</CardTitle>
     </CardHeader>
     <CardContent class="space-y-4">
       <p class="text-muted-foreground text-sm">You are linked to a congregation. You can unlink to manage a different one.</p>

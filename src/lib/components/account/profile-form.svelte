@@ -22,7 +22,7 @@
 
 <Card>
   <CardHeader>
-    <CardTitle class="text-lg">Profile</CardTitle>
+    <CardTitle class="text-lg font-bold">Profile</CardTitle>
   </CardHeader>
   <CardContent class="space-y-4">
     {#if saved}

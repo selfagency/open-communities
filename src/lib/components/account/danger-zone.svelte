@@ -18,7 +18,7 @@
 
 <Card>
   <CardHeader>
-    <CardTitle class="text-lg text-destructive">Danger Zone</CardTitle>
+    <CardTitle class="text-lg font-bold text-destructive">Danger Zone</CardTitle>
   </CardHeader>
   <CardContent class="space-y-4">
     <p class="text-muted-foreground text-sm">Permanently delete your account and all associated data.</p>
