@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getChartContext, } from "layerchart";
+	// biome-ignore lint/correctness/noUnusedImports: used as TooltipPrimitive.Root in template
+	import { getChartContext, Tooltip as TooltipPrimitive } from "layerchart";
 	import type { Snippet } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn, type WithElementRef, type WithoutChildren } from "$lib/utils.js";
