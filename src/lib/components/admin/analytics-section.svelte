@@ -10,6 +10,8 @@
   let {
     digest,
     dailyTrend = [],
+    loginTrend = [],
+    topPages = [],
   }: {
     digest: {
       visitors: { current: number; change: PhChange };
@@ -20,6 +22,8 @@
       top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
     } | null;
     dailyTrend?: Array<{ day: string; events: number }>;
+    loginTrend?: Array<{ date: string; count: number }>;
+    topPages?: Array<{ path: string; visitors: number }>;
   } = $props();
 
   const chartConfig = {
@@ -157,4 +161,48 @@
       </Card>
     </div>
   </div>
+
+  {#if loginTrend.length > 0}
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-sm font-medium">Logins (Weekly)</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="flex flex-wrap gap-3">
+          {#each loginTrend.slice(-12) as entry}
+            <div class="flex flex-col items-center">
+              <span class="text-2xl font-bold">{entry.count}</span>
+              <span class="text-muted-foreground text-xs">{entry.date?.slice(5) ?? ''}</span>
+            </div>
+          {/each}
+        </div>
+      </CardContent>
+    </Card>
+  {/if}
+
+  {#if topPages.length > 0}
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-sm font-medium">Top Pages (30d)</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Page</TableHead>
+              <TableHead class="text-right">Visitors</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {#each topPages.slice(0, 10) as page}
+              <TableRow>
+                <TableCell class="font-medium font-mono text-xs">{page.path || '/'}</TableCell>
+                <TableCell class="text-right">{page.visitors}</TableCell>
+              </TableRow>
+            {/each}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  {/if}
 {/if}

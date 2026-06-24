@@ -17,6 +17,23 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   const weeklyDigest = await getWeeklyDigest(30).catch(() => null);
 
+  // Product analytics queries
+  const [loginTrend, signupTrend, topPages] = await Promise.all([
+    weeklyDigest ? queryTrends('login', 30, 'week').catch(() => null) : Promise.resolve(null),
+    weeklyDigest ? queryTrends('$pageview', 30, 'day').catch(() => null) : Promise.resolve(null),
+    weeklyDigest
+      ? queryHogQL(`
+          SELECT properties.$pathname, count(DISTINCT person_id) AS visitors
+          FROM events
+          WHERE event = '$pageview'
+            AND timestamp >= now() - INTERVAL 30 DAY
+          GROUP BY properties.$pathname
+          ORDER BY visitors DESC
+          LIMIT 10
+        `).catch(() => null)
+      : Promise.resolve(null)
+  ]);
+
   // Geographic stats — query base tables directly (views may not auto-populate)
   const [allCountries, allStates] = await Promise.all([
     withRetry(() =>
@@ -100,6 +117,10 @@ export const load: PageServerLoad = async ({ locals }) => {
       topStates
     },
     weeklyDigest,
-    dailyTrend
+    dailyTrend,
+    loginTrend,
+    topPages: topPages?.results
+      ? (topPages.results as Array<[string, number]>).map(([path, visitors]) => ({ path, visitors }))
+      : []
   };
 };

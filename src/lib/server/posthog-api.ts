@@ -94,7 +94,8 @@ export async function queryHogQL(sql: string): Promise<HogQLResult | null> {
         Authorization: `Bearer ${PH_API_KEY}`
       },
       body: JSON.stringify({
-        query: { kind: 'HogQLQuery', query: sql }
+        query: { kind: 'HogQLQuery', query: sql },
+        name: `hogql-${sql.slice(0, 40)}`
       })
     });
 
@@ -108,6 +109,29 @@ export async function queryHogQL(sql: string): Promise<HogQLResult | null> {
     log.error('PostHog HogQL query error', error);
     return null;
   }
+}
+
+/** Query a Trends insight (time-series aggregation). */
+export async function queryTrends(
+  event: string,
+  days = 30,
+  interval: 'day' | 'week' = 'day'
+): Promise<Array<{ date: string; count: number }> | null> {
+  const sql = `
+    SELECT toStartOf${interval === 'week' ? 'Week' : 'Day'}(timestamp) AS date,
+           count(DISTINCT person_id) AS count
+    FROM events
+    WHERE event = '${event.replace(/'/g, "\\'")}'
+      AND timestamp >= now() - INTERVAL ${days} DAY
+    GROUP BY date
+    ORDER BY date
+  `;
+  const result = await queryHogQL(sql);
+  if (!result?.results) return null;
+  return (result.results as Array<[string, number]>).map(([date, count]) => ({
+    date: (date || '').slice(0, 10),
+    count: count ?? 0
+  }));
 }
 
 /** Fetch a saved PostHog insight by its numeric ID or short_id. */
