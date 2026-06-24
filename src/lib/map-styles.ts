@@ -19,7 +19,7 @@ const source = {
 
 const LIGHT = {
   background: '#f0f0f0',
-  water: '#e6e4dc',
+  water: '#d9d9d9',
   land: '#eeebe4',
   boundary: '#d0d0d0',
   text: '#666666',
@@ -29,7 +29,7 @@ const LIGHT = {
 
 const DARK = {
   background: '#1a1a1a',
-  water: '#3a3835',
+  water: '#2a2a2a',
   land: '#343230',
   boundary: '#353535',
   text: '#808080',
