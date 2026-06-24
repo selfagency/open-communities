@@ -1,33 +1,36 @@
 <script lang="ts">
   import { superForm } from 'sveltekit-superforms';
-  import { enhance } from '$app/forms';
-  import { goto } from '$app/navigation';
   import { toast } from 'svelte-sonner';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
-  import { Select, SelectContent, SelectItem, SelectTrigger } from '$lib/components/ui/select';
-  import { Switch } from '$lib/components/ui/switch';
+  import ProfileForm from '$lib/components/account/profile-form.svelte';
+  import PasswordCard from '$lib/components/account/password-card.svelte';
+  import CongregationCard from '$lib/components/account/congregation-card.svelte';
+  import DangerZone from '$lib/components/account/danger-zone.svelte';
   import { m } from '$lib/paraglide/messages';
 
   let { data } = $props();
 
   let saved = $state(false);
+  let unlinked = $state(false);
 
-  const profileForm = superForm(data.form, {
+  const form = superForm(data.form, {
     onUpdated({ form: f }) {
       saved = true;
       if (f.valid) toast.success('Profile updated');
     },
   });
-  const { enhance: profileEnhance, form: formData, errors } = profileForm;
+  const { enhance, form: formData, errors } = form;
 
-  let deleting = $state(false);
-  let unlinked = $state(false);
+  function handleUnlink() {
+    return async ({ result }: { result: { type: string } }) => {
+      if (result.type === 'success') unlinked = true;
+    };
+  }
 
-  function confirmDelete() {
-    return confirm('Are you sure? This cannot be undone.');
+  function handleDelete() {
+    if (!confirm('Are you sure? This cannot be undone.')) return;
+    return async ({ result }: { result: { type: string } }) => {
+      if (result.type === 'success') window.location.href = '/';
+    };
   }
 </script>
 
@@ -41,109 +44,17 @@
     <p class="text-muted-foreground text-sm">Manage your profile and preferences</p>
   </div>
 
-  {#if saved}
-    <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">Profile updated successfully.</div>
-  {/if}
   {#if unlinked}
     <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">You have been unlinked from your congregation.</div>
   {/if}
 
-  <!-- Profile + Password -->
-  <form method="POST" action="?/update" use:profileEnhance>
-    <Card>
-      <CardHeader>
-        <CardTitle class="text-lg">Profile</CardTitle>
-      </CardHeader>
-      <CardContent class="space-y-4">
-        <div class="space-y-2">
-          <Label for="name">Name</Label>
-          <Input id="name" name="name" bind:value={$formData.name} required />
-          {#if $errors.name}<p class="text-destructive text-xs">{$errors.name}</p>{/if}
-        </div>
-        <div class="space-y-2">
-          <Label for="email">Email</Label>
-          <Input id="email" name="email" bind:value={$formData.email} type="email" required />
-          {#if $errors.email}<p class="text-destructive text-xs">{$errors.email}</p>{/if}
-        </div>
-        <div class="space-y-2">
-          <Label for="lang">Language</Label>
-          <Select type="single" bind:value={$formData.lang}>
-            <SelectTrigger id="lang" class="w-full">
-              {$formData.lang === 'en' ? 'English' : $formData.lang === 'es' ? 'Español' : $formData.lang === 'fr' ? 'Français' : $formData.lang === 'he' ? 'עברית' : $formData.lang}
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Español</SelectItem>
-              <SelectItem value="fr">Français</SelectItem>
-              <SelectItem value="he">עברית</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div class="flex items-center gap-3">
-          <Switch id="notifications" checked={$formData.notifications} onCheckedChange={(c) => $formData.notifications = c} />
-          <Label for="notifications" class="text-sm">Receive non-transactional email updates</Label>
-        </div>
-        {#if $errors._errors?.length}
-          <p class="text-destructive text-xs">{$errors._errors.join(', ')}</p>
-        {/if}
-        <Button type="submit">Save Changes</Button>
-      </CardContent>
-    </Card>
-
-    <Card class="mt-6">
-      <CardHeader>
-        <CardTitle class="text-lg">Change Password</CardTitle>
-      </CardHeader>
-      <CardContent class="space-y-4">
-        <div class="space-y-2">
-          <Label for="oldPassword">Current Password</Label>
-          <Input id="oldPassword" name="oldPassword" type="password" autocomplete="current-password" />
-        </div>
-        <div class="space-y-2">
-          <Label for="password">New Password</Label>
-          <Input id="password" name="password" type="password" autocomplete="new-password" />
-        </div>
-        <div class="space-y-2">
-          <Label for="passwordConfirm">Confirm New Password</Label>
-          <Input id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" />
-        </div>
-        <Button type="submit">Change Password</Button>
-      </CardContent>
-    </Card>
+  <form method="POST" action="?/update" use:enhance>
+    <ProfileForm {form} {saved} />
+    <div class="mt-6">
+      <PasswordCard formData={$formData} errors={$errors} />
+    </div>
   </form>
 
-  <!-- Congregation -->
-  {#if data.user?.congregation}
-    <Card>
-      <CardHeader>
-        <CardTitle class="text-lg">Congregation</CardTitle>
-      </CardHeader>
-      <CardContent class="space-y-4">
-        <p class="text-muted-foreground text-sm">You are linked to a congregation. You can unlink to manage a different one.</p>
-        <form method="POST" action="?/unlink" use:enhance={() => { return async ({ result }) => { if (result.type === 'success') unlinked = true; }; }}>
-          <Button variant="outline" type="submit">Unlink from Congregation</Button>
-        </form>
-        <Button variant="outline" onclick={() => goto('/edit?id=' + data.user?.congregation)}>Edit Congregation</Button>
-      </CardContent>
-    </Card>
-  {/if}
-
-  <!-- Danger zone -->
-  <Card>
-    <CardHeader>
-      <CardTitle class="text-lg text-destructive">Danger Zone</CardTitle>
-    </CardHeader>
-    <CardContent class="space-y-4">
-      <p class="text-muted-foreground text-sm">Permanently delete your account and all associated data.</p>
-      <form method="POST" action="?/deleteAccount" use:enhance={() => {
-        if (!confirmDelete()) return;
-        deleting = true;
-        return async ({ result }) => { if (result.type === 'success') goto('/'); };
-      }}>
-        <Button variant="destructive" type="submit" disabled={deleting}>
-          {deleting ? 'Deleting...' : 'Delete Account'}
-        </Button>
-      </form>
-    </CardContent>
-  </Card>
+  <CongregationCard congregation={data.user?.congregation ?? ''} onUnlink={handleUnlink} />
+  <DangerZone onDelete={handleDelete} />
 </div>
