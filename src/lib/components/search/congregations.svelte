@@ -202,13 +202,13 @@
           >
             <Button
               variant="link"
-              class="text-muted-foreground hover:text-secondary-foreground"
+              class="group text-muted-foreground hover:text-secondary-foreground"
               onclick={() => {
                 searchTerms = "";
                 search.setSearchTerms(searchTerms);
               }}
             >
-              <ClearIcon size="16" class="transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
+              <ClearIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
               <span class="sr-only">{m.clear()}</span>
             </Button>
           </span>
@@ -220,12 +220,12 @@
       >
         <Button
           variant="outline"
-          class={`space-x-2 text-muted-foreground rtl:mx-1 ${$searchState.showLocation ? "bg-muted" : ""}`}
+          class="group space-x-2 text-muted-foreground rtl:mx-1 ${$searchState.showLocation ? 'bg-muted' : ''}"
           onclick={() => {
             search.toggleLocation();
           }}
         >
-          <LocationIcon size="20" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
+          <LocationIcon size="20" class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
           <span>{m.location()}</span>
         </Button>
         <Filters {search} />

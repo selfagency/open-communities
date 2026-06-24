@@ -161,13 +161,13 @@
             <Tooltip.Provider>
               <Tooltip.Root>
                 <Tooltip.Trigger
-                  class="button ghost h-8 px-2 py-0"
+                  class="group button ghost h-8 px-2 py-0"
                   onclick={async () => {
                     const url = `/edit?id=${congregation.id}`;
                     await goto(url);
                   }}
                 >
-                  <EditIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:hover:rotate-12 motion-safe:active:scale-90" />
+                  <EditIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90" />
                   <span class="sr-only">{m.edit()}</span>
                 </Tooltip.Trigger>
                 <Tooltip.Content>
@@ -179,7 +179,7 @@
           <Tooltip.Provider>
             <Tooltip.Root>
               <Tooltip.Trigger
-                class="button ghost h-8 px-2 py-0"
+                class="group button ghost h-8 px-2 py-0"
                 onclick={() => {
                   copyText(
                     `https://opencommunities.info?id=${congregation.id}`,
@@ -187,7 +187,7 @@
                   toast.success(m.copied());
                 }}
               >
-                <ShareIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
+                <ShareIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
                 <span class="sr-only">{m.share()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>

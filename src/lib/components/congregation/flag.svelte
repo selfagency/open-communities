@@ -24,11 +24,11 @@
     >
       <Tooltip.Provider>
         <Tooltip.Root>
-          <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
+          <Tooltip.Trigger class="group flex h-7 w-7 items-center justify-center">
             {#if flag === "no"}
-              <FlagOff size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
+              <FlagOff size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
             {:else}
-              <Flag size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:active:scale-90" />
+              <Flag size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
             {/if}
             <span class="sr-only">{m[`flag_${flag}`]()}</span>
           </Tooltip.Trigger>

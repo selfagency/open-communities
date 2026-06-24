@@ -105,7 +105,7 @@
           <Tooltip.Provider>
             <Tooltip.Root>
               <Tooltip.Trigger
-                class="button ghost h-8 px-2 py-0"
+                class="group button ghost h-8 px-2 py-0"
                 onclick={async (e: Event) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -113,7 +113,7 @@
                   await goto(url);
                 }}
               >
-                <EditIcon size="16" class="text-secondary-foreground transition-transform duration-200 motion-safe:hover:scale-110 motion-safe:hover:rotate-12 motion-safe:active:scale-90" />
+                <EditIcon size="16" class="text-secondary-foreground transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90" />
                 <span class="sr-only">{m.edit()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>

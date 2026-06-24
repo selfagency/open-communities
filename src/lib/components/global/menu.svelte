@@ -71,8 +71,16 @@
           <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/settings'); }}>Settings</button>
         {/if}
         <div class="mt-2 border-t pt-2">
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/logout'); }}>Log out</button>
+          <div class="flex items-center gap-3 py-1">
+            <Locale mode={viewMode} />
+            <span class="flex items-center gap-1">
+              <SunIcon class="size-3.5 text-muted-foreground" />
+              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" class="scale-75" />
+              <MoonIcon class="size-3.5 text-muted-foreground" />
+            </span>
+          </div>
         </div>
+        <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/logout'); }}>Log out</button>
       </div>
     {:else}
       <!-- Full mode: user circle dropdown -->
@@ -105,6 +113,15 @@
             <DropdownMenu.Item onclick={() => goto('/admin/settings')}>Settings</DropdownMenu.Item>
           {/if}
           <DropdownMenu.Separator />
+          <div class="flex items-center gap-3 px-2 py-1.5">
+            <Locale mode={viewMode} />
+            <span class="flex items-center gap-1">
+              <SunIcon class="size-3.5 text-muted-foreground" />
+              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" class="scale-75" />
+              <MoonIcon class="size-3.5 text-muted-foreground" />
+            </span>
+          </div>
+          <DropdownMenu.Separator />
           <DropdownMenu.Item onclick={() => goto('/logout')}>Log out</DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
@@ -122,12 +139,14 @@
     </Button>
   {/if}
 
-  <Locale mode={viewMode} />
-  <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full px-4' : ''}">
-    <span class="flex flex-row items-center justify-start space-x-1">
-      <SunIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
-      <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
-      <MoonIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
-    </span>
-  </div>
+  {#if !user?.email}
+    <Locale mode={viewMode} />
+    <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full px-4' : ''}">
+      <span class="flex flex-row items-center justify-start space-x-1">
+        <SunIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
+        <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
+        <MoonIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
+      </span>
+    </div>
+  {/if}
 </div>
