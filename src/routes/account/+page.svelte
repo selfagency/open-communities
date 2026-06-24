@@ -13,15 +13,22 @@
 
   let { data } = $props();
 
-  const form = superForm(data.form, {
+  let saved = $state(false);
+
+  const profileForm = superForm(data.form, {
     onUpdated({ form: f }) {
+      saved = true;
       if (f.valid) toast.success('Profile updated');
     },
   });
-  const { form: formData, errors } = form;
+  const { enhance: profileEnhance, form: formData, errors } = profileForm;
 
   let deleting = $state(false);
   let unlinked = $state(false);
+
+  function confirmDelete() {
+    return confirm('Are you sure? This cannot be undone.');
+  }
 </script>
 
 <svelte:head>
@@ -34,14 +41,15 @@
     <p class="text-muted-foreground text-sm">Manage your profile and preferences</p>
   </div>
 
-  {#if false}
+  {#if saved}
     <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">Profile updated successfully.</div>
   {/if}
   {#if unlinked}
     <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">You have been unlinked from your congregation.</div>
   {/if}
 
-  <form method="POST" action="?/update" use:enhance>
+  <!-- Profile + Password -->
+  <form method="POST" action="?/update" use:profileEnhance>
     <Card>
       <CardHeader>
         <CardTitle class="text-lg">Profile</CardTitle>
@@ -81,35 +89,28 @@
         <Button type="submit">Save Changes</Button>
       </CardContent>
     </Card>
-  </form>
 
-  <!-- Change password (always visible) -->
-  <Card>
-    <CardHeader>
-      <CardTitle class="text-lg">Change Password</CardTitle>
-    </CardHeader>
-    <CardContent class="space-y-4">
-      <form method="POST" action="?/update" use:enhance>
-        <input type="hidden" name="name" value={$formData.name} />
-        <input type="hidden" name="email" value={$formData.email} />
-        <input type="hidden" name="lang" value={$formData.lang} />
-        <input type="hidden" name="notifications" value={String($formData.notifications)} />
+    <Card class="mt-6">
+      <CardHeader>
+        <CardTitle class="text-lg">Change Password</CardTitle>
+      </CardHeader>
+      <CardContent class="space-y-4">
         <div class="space-y-2">
           <Label for="oldPassword">Current Password</Label>
-          <Input id="oldPassword" name="oldPassword" type="password" />
+          <Input id="oldPassword" name="oldPassword" type="password" autocomplete="current-password" />
         </div>
         <div class="space-y-2">
           <Label for="password">New Password</Label>
-          <Input id="password" name="password" type="password" />
+          <Input id="password" name="password" type="password" autocomplete="new-password" />
         </div>
         <div class="space-y-2">
           <Label for="passwordConfirm">Confirm New Password</Label>
-          <Input id="passwordConfirm" name="passwordConfirm" type="password" />
+          <Input id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" />
         </div>
         <Button type="submit">Change Password</Button>
-      </form>
-    </CardContent>
-  </Card>
+      </CardContent>
+    </Card>
+  </form>
 
   <!-- Congregation -->
   {#if data.user?.congregation}
@@ -135,10 +136,11 @@
     <CardContent class="space-y-4">
       <p class="text-muted-foreground text-sm">Permanently delete your account and all associated data.</p>
       <form method="POST" action="?/deleteAccount" use:enhance={() => {
+        if (!confirmDelete()) return;
         deleting = true;
         return async ({ result }) => { if (result.type === 'success') goto('/'); };
       }}>
-        <Button variant="destructive" type="submit" disabled={deleting} onclick={() => confirm('Are you sure? This cannot be undone.')}>
+        <Button variant="destructive" type="submit" disabled={deleting}>
           {deleting ? 'Deleting...' : 'Delete Account'}
         </Button>
       </form>
