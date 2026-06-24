@@ -4,9 +4,19 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
+
+  const [congCount, userCount, pendingCount] = await Promise.all([
+    withRetry(() =>
+      client.collection('congregations').getList(1, 1, { filter: 'visible=true', requestKey: 'dash-cong' })
+    ),
+    withRetry(() => client.collection('users').getList(1, 1, { requestKey: 'dash-users' })),
+    withRetry(() =>
+      client.collection('congregations').getList(1, 1, { filter: 'visible=false', requestKey: 'dash-pending' })
+    )
+  ]);
+
   const weeklyDigest = await getWeeklyDigest(30).catch(() => null);
 
-  // Daily trend data from HogQL
   let dailyTrend: Array<{ day: string; events: number }> = [];
   if (weeklyDigest) {
     try {
@@ -26,19 +36,13 @@ export const load: PageServerLoad = async ({ locals }) => {
     }
   }
 
-  const [congCount, userCount] = await Promise.all([
-    withRetry(() =>
-      client.collection('congregations').getList(1, 1, { filter: 'visible=true', requestKey: 'ana-cong' })
-    ),
-    withRetry(() => client.collection('users').getList(1, 1, { requestKey: 'ana-users' }))
-  ]);
-
   return {
-    weeklyDigest,
-    dailyTrend,
     stats: {
       congregations: congCount.totalItems,
-      users: userCount.totalItems
-    }
+      users: userCount.totalItems,
+      pendingApprovals: pendingCount.totalItems
+    },
+    weeklyDigest,
+    dailyTrend
   };
 };
