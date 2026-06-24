@@ -83,7 +83,7 @@
   {#if accessibility || user?.admin}
     <Card.Footer class="">
       <div class="flex w-full flex-row items-center justify-between space-x-2">
-        <div class="flex w-auto flex-row items-center justify-end space-x-1">
+        <div class="flex w-auto flex-row items-center justify-end">
           {#if !congregation.visible}
             <Badge variant="outline">{m.pending()}</Badge>
           {:else}

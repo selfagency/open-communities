@@ -39,7 +39,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <AdaIcon size="16" class="rtl:mx-1" />
+            <AdaIcon size="16" class="" />
             <span class="sr-only">{m.accessibility_ada()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -52,7 +52,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <CcIcon size="16" class="rtl:mx-1" />
+            <CcIcon size="16" class="" />
             <span class="sr-only">{m.accessibility_cc()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -65,7 +65,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <EvaIcon size="16" class="rtl:mx-1" />
+            <EvaIcon size="16" class="" />
             <span class="sr-only">{m.accessibility_eva()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -78,7 +78,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <AslIcon size="16" class="text-muted-foreground rtl:mx-1" />
+            <AslIcon size="16" class="text-muted-foreground " />
             <span class="sr-only">{m.accessibility_asl()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
