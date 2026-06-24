@@ -195,7 +195,7 @@
           />
 
           {#if searchTerms}
-            <span class="absolute top-0 z-10 ltr:right-1 rtl:left-1">
+            <span class="absolute top-0 z-10 flex h-11 w-11 items-center justify-center ltr:right-0 rtl:left-0">
               <Button
                 variant="link"
                 class="group text-gray-300 hover:text-muted-foreground"
