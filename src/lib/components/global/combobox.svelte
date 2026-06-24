@@ -82,7 +82,7 @@
     <Popover.Trigger
       {id}
       bind:ref={triggerRef}
-      class="group button w-full flex-row items-center justify-between! outline bg-background! border-border!"
+      class="group button w-full flex-row items-center justify-between! outline bg-white! dark:bg-input/30! border-border!"
       role="combobox"
       aria-expanded={open}
     >
