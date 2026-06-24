@@ -28,6 +28,7 @@ export const userSchema = z
     name: z.string().refine((value) => !!value, {
       message: m.thingRequired({ thing: m.name() })
     }),
+    notifications: z.boolean().default(true),
     oldPassword: z.string().optional(),
     password,
     passwordConfirm: z.string()
