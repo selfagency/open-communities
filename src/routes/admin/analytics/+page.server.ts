@@ -1,6 +1,6 @@
 import { withRetry } from '$lib/server/api';
+import { getWeeklyDigest, isConfigured, queryHogQL } from '$lib/server/posthog-api';
 import type { PageServerLoad } from './$types';
-import { getWeeklyDigest, queryHogQL, isConfigured } from '$lib/server/posthog-api';
 
 export const load: PageServerLoad = async (event) => {
   const { api } = event.locals;
@@ -43,7 +43,7 @@ export const load: PageServerLoad = async (event) => {
     phDigest,
     dailyTrend:
       dailyTrend?.results?.map((r: Array<unknown>) => ({
-        day: String(r[0] ?? ''),
+        day: r[0] != null ? String(r[0]) : '',
         events: Number(r[1] ?? 0)
       })) ?? [],
     phConfigured: isConfigured()

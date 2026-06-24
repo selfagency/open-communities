@@ -288,7 +288,13 @@ body {
 }
 
 .button:hover {
-  background-color: hsl(var(--muted));
+  background-color: var(--muted);
+}
+
+@media (prefers-color-scheme: dark) {
+  .button:hover {
+    background-color: color-mix(in oklab, var(--muted) 80%, transparent);
+  }
 }
 
 /* has-[>svg] padding — kept separate from @apply because tailwind4 CSS parser can't handle nested brackets in @apply */

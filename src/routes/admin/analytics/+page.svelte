@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { LineChart } from 'layerchart';
-  import * as Chart from '$lib/components/ui/chart';
-  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
   import Activity from '@lucide/svelte/icons/activity';
   import ArrowDown from '@lucide/svelte/icons/arrow-down';
   import ArrowUp from '@lucide/svelte/icons/arrow-up';
@@ -12,6 +8,10 @@
   import Globe from '@lucide/svelte/icons/globe';
   import MousePointerClick from '@lucide/svelte/icons/mouse-pointer-click';
   import Users from '@lucide/svelte/icons/users';
+  import { LineChart } from 'layerchart';
+  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import * as Chart from '$lib/components/ui/chart';
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   let { data } = $props();
 

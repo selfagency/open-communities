@@ -133,6 +133,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  fallow:
+    name: Fallow analysis
+    needs: test
+    if: ${{ !cancelled() && needs.test.result != 'failure' && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: fallow-rs/fallow@v2
+        with:
+          format: sarif
+          comment: true
+          review-comments: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   e2e:
     name: E2E tests
     needs: test

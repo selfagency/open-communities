@@ -55,7 +55,7 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
         state: mergeObjects(state, options.state || {}),
 
         onStateChange: (updater: Updater<TableState>) => {
-          if (updater instanceof Function) state = updater(state);
+          if (typeof updater === 'function') state = updater(state);
           else state = mergeObjects(state, updater);
 
           options.onStateChange?.(updater);
@@ -74,9 +74,8 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
 }
 
 type MaybeThunk<T extends object> = T | (() => T | null | undefined);
-type Intersection<T extends readonly unknown[]> = (T extends [infer H, ...infer R]
-  ? H & Intersection<R>
-  : unknown) & {};
+type Intersection<T extends readonly unknown[]> = (T extends [infer H, ...infer R] ? H & Intersection<R> : unknown) &
+  Record<string, never>;
 
 /**
  * Lazily merges several objects (or thunks) while preserving

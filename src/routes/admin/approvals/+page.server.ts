@@ -64,11 +64,13 @@ export const actions: Actions = {
       const meta = await api.collection('congregationMeta').getOne(id);
       if (meta.owner) {
         const owner = await api.collection('users').getOne(meta.owner);
+        const reasonSuffix = reason ? ` Reason: ${reason}` : '';
+        const message = `Your congregation "${meta.name}" was not approved.${reasonSuffix}`;
         await transactionalMail({
           email: owner.email,
           name: owner.name || '',
           subject: 'Your congregation submission',
-          message: `Your congregation "${meta.name}" was not approved.${reason ? ` Reason: ${reason}` : ''}`
+          message
         });
       }
     } catch {
