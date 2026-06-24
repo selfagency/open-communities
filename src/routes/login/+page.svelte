@@ -3,12 +3,10 @@
   import { onMount } from 'svelte';
 
   import { page } from '$app/state';
-  import Login from '$lib/components/login/index.svelte';
+  import LoginForm from '$lib/components/login/index.svelte';
   import SignUp from '$lib/components/login/signup.svelte';
-  import * as Tabs from '$lib/components/ui/tabs';
   import { m } from '$lib/paraglide/messages';
   import { initForm } from '$lib/signup';
-  // import { log } from '$lib/utils';
 
   import type { PageProps } from './$types';
 
@@ -19,20 +17,15 @@
   const { data }: PageProps = $props();
 
   // locals
-  let tab: 'login' | 'signup' = $state(
-    page.url.searchParams.has('signUp') || page.url.searchParams.has('verifyEmail') ? 'signup' : 'login'
+  let showingLogin = $state(
+    page.url.searchParams.has('resetPassword') || page.url.searchParams.has('login')
   );
   /* endregion variables */
 
   /* region lifecycle */
   onMount(() => {
-    // log.info('login', data);
-    if (page.url.searchParams.has('signUp') || page.url.searchParams.has('verifyEmail')) {
-      tab = 'signup';
-    }
-
-    if (page.url.searchParams.has('resetPassword')) {
-      tab = 'login';
+    if (page.url.searchParams.has('resetPassword') || page.url.searchParams.has('login')) {
+      showingLogin = true;
     }
   });
   /* endregion lifecycle */
@@ -51,21 +44,22 @@
 
 <div class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
   <div class="w-full max-w-96">
-    <Tabs.Root bind:value={tab}>
-      <Tabs.List class="w-full">
-        <Tabs.Trigger value="login" class="w-1/2">{m.login()}</Tabs.Trigger>
-        <Tabs.Trigger value="signup" class="w-1/2">{m.signUp()}</Tabs.Trigger>
-      </Tabs.List>
-      <Tabs.Content value="login">
-        {#if tab === 'login' && data.login && data.reset}
-          <Login data={data.login} reset={data.reset} />
-        {/if}
-      </Tabs.Content>
-      <Tabs.Content value="signup">
-        {#if data.signup && data.verify}
-          <SignUp {form} verify={data.verify} />
-        {/if}
-      </Tabs.Content>
-    </Tabs.Root>
+    {#if showingLogin}
+      {#if data.login && data.reset}
+        <LoginForm data={data.login} reset={data.reset} />
+      {/if}
+      <p class="mt-4 text-center text-sm text-muted-foreground">
+        <button class="text-primary underline-offset-4 hover:underline" onclick={() => (showingLogin = false)}>
+          Don't have an account? Sign up.
+        </button>
+      </p>
+    {:else}
+      {#if data.signup && data.verify}
+        <SignUp {form} verify={data.verify} />
+        <p class="mt-4 text-center text-sm text-muted-foreground">
+          <a href="/login?login" class="text-primary underline-offset-4 hover:underline">Already have an account? Log in.</a>
+        </p>
+      {/if}
+    {/if}
   </div>
 </div>
