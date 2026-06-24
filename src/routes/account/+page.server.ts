@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import type { RecordModel } from 'pocketbase';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { userSchema } from '$lib/schemas/user';
@@ -11,6 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     defaults: {
       name: (user?.name as string) ?? '',
       email: (user?.email as string) ?? '',
+      emailVisibility: true,
       lang: (user?.lang as 'en' | 'es' | 'fr' | 'he' | 'de' | 'hu' | 'nl' | 'pl' | 'pt' | 'ru' | 'uk') ?? 'en',
       notifications: (user?.notifications as boolean) ?? true,
       congregation: (user?.congregation as string) ?? '',
@@ -42,7 +44,7 @@ export const actions = {
         body.passwordConfirm = form.data.passwordConfirm;
       }
       const updated = await client.collection('users').update(client.authStore.record?.id as string, body);
-      client.authStore.save(client.authStore.token, updated as Record<string, unknown>);
+      client.authStore.save(client.authStore.token, updated as unknown as RecordModel);
       return { form, success: true };
     } catch (err: unknown) {
       const msg = (err as { message?: string }).message ?? 'Update failed';
