@@ -16,8 +16,8 @@
       pageviews: { current: number; change: PhChange };
       sessions: { current: number; change: PhChange };
       bounce_rate: { current: number; previous: number };
-      top_pages: Array<{ path: string; visitors: number; change: PhChange }>;
-      top_sources: Array<{ name: string; visitors: number; change: PhChange }>;
+      top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
+      top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
     } | null;
     dailyTrend?: Array<{ day: string; events: number }>;
   } = $props();
@@ -123,7 +123,7 @@
                 <TableRow>
                   <TableCell class="font-medium">{page.path}</TableCell>
                   <TableCell class="text-right">{page.visitors}</TableCell>
-                  <TableCell class="text-right">{page.change.percent}%</TableCell>
+                  <TableCell class="text-right">{page.change?.percent ?? 0}%</TableCell>
                 </TableRow>
               {/each}
             </TableBody>
@@ -148,7 +148,7 @@
                 <TableRow>
                   <TableCell class="font-medium">{source.name}</TableCell>
                   <TableCell class="text-right">{source.visitors}</TableCell>
-                  <TableCell class="text-right">{source.change.percent}%</TableCell>
+                  <TableCell class="text-right">{source.change?.percent ?? 0}%</TableCell>
                 </TableRow>
               {/each}
             </TableBody>
