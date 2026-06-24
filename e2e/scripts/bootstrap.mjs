@@ -53,7 +53,6 @@ async function getToken() {
   try {
     logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
   } catch {
-    // PB may be running natively (not in Docker) — read the log file directly
     const fs = await import('node:fs');
     logs = fs.readFileSync('.e2e/pb.log', 'utf8');
   }
@@ -63,8 +62,6 @@ async function getToken() {
   return m[1];
 }
 
-// Verify the token actually works before using it for schema import/seeding.
-// Tokens from stale PB logs (e.g. after container restart) may be invalid.
 async function verifyToken(token) {
   try {
     const res = await fetch(`${PB}/api/collections?perPage=1`, {
@@ -124,6 +121,7 @@ async function seedData(token) {
   const la  = await create('cities', { name: 'Los Angeles', state: ca.id, country: us.id, longitude: -118.2437, latitude: 34.0522 });
 
   // Users (password will be hashed by PB automatically)
+  const adminUser = await create('users', { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, passwordConfirm: ADMIN_PASSWORD, name: 'Admin User', verified: true, admin: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
   const regular = await create('users', { email: 'regular@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Regular User', verified: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
   const other = await create('users', { email: 'other@example.test', password: 'TestPass123!', passwordConfirm: 'TestPass123!', name: 'Other User', verified: true, lang: 'en', emailVisibility: true }); // NOSONAR — test fixture
 
@@ -157,29 +155,6 @@ async function seedData(token) {
   await create('pages', { title: 'FAQ', slug: 'frequently-asked-questions', lang: 'en', content: '# FAQ\n\nClick "Add Congregation".', published: true });
 }
 
-async function createAdmin(token) {
-  console.log('👤 Creating superuser...');
-  try {
-    // Try Docker exec first (local dev)
-    execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
-  } catch {
-    // Fallback: create superuser via API using installation token (CI)
-    // The installation token can create the first superuser even though
-    // it can't list existing ones, so we skip the existence check.
-    try {
-      await api('POST', '/collections/_superusers/records', {
-        email: ADMIN_EMAIL,
-        password: ADMIN_PASSWORD,
-        passwordConfirm: ADMIN_PASSWORD,
-      }, token);
-    } catch {
-      // Ignore "already exists" errors — the superuser was likely created
-      // by a previous bootstrap run
-    }
-  }
-  console.log('  ✅ Superuser created');
-}
-
 async function main() {
   console.log('═══════════════════════════════════════\n  PocketBase Bootstrap\n═══════════════════════════════════════\n');
   const start = Date.now();
@@ -189,12 +164,18 @@ async function main() {
     await verifyToken(token);
     await importSchema(token);
     await seedData(token);
-    await createAdmin(token);
+    // Create superuser for admin panel access (Docker exec, not needed for token)
+    try {
+      execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
+      console.log('  👤 Superuser created');
+    } catch {
+      console.log('  ⏭  Superuser creation skipped (CI or container name mismatch)');
+    }
     console.log(`\n✅ Done in ${((Date.now()-start)/1000).toFixed(1)}s`);
     console.log(`   Panel: ${PB}/_/`);
     console.log(`   Auth:  ${ADMIN_EMAIL}`);
   } catch (e) {
-    console.error('\n❌', e.message); // NOSONAR — error message, not user data
+    console.error('\n❌', e.message);
     process.exit(1);
   }
 }
