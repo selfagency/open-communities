@@ -1,25 +1,30 @@
 <script lang="ts">
-  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
-  import { Badge } from '$lib/components/ui/badge';
+  import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
+  import { createRawSnippet } from 'svelte';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
-  import { FlexRender, createSvelteTable } from '$lib/components/ui/data-table/index.js';
+  import { FlexRender, createSvelteTable, renderSnippet } from '$lib/components/ui/data-table/index.js';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   interface Page { id: string; title: string; slug: string; lang: string; published: boolean; updated: string; }
 
   let { data }: { data: { pages: Page[] } } = $props();
 
-  const colHelper = createColumnHelper<Page>();
-  const columns = [
-    colHelper.accessor('title', { header: 'Title', cell: ({ row }) => row.original.id }),
-    colHelper.accessor('slug', { header: 'Slug', cell: ({ row }) => row.original.id }),
-    colHelper.accessor('lang', { header: 'Language', cell: ({ row }) => row.original.id }),
-    colHelper.accessor('published', { header: 'Status', cell: ({ row }) => row.original.id }),
-    colHelper.accessor('updated', { header: 'Updated', cell: ({ row }) => row.original.id }),
+  const columns: ColumnDef<Page>[] = [
+    { accessorKey: 'title', header: 'Title', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="font-medium">${get().v}</span>` })), { v: row.original.title }) },
+    { accessorKey: 'slug', header: 'Slug', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground font-mono text-xs">/${get().v}</span>` })), { v: row.original.slug }) },
+    { accessorKey: 'lang', header: 'Language', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="uppercase text-xs">${get().v || 'en'}</span>` })), { v: row.original.lang }) },
+    {
+      accessorKey: 'published',
+      header: 'Status',
+      cell: ({ row }) => row.original.published
+        ? renderSnippet(createRawSnippet(() => ({ render: () => '<span class="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">Published</span>' })))
+        : renderSnippet(createRawSnippet(() => ({ render: () => '<span class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">Draft</span>' }))),
+    },
+    { accessorKey: 'updated', header: 'Updated', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground text-xs">${(get().v || '').slice(0, 10)}</span>` })), { v: row.original.updated }) },
   ];
 
-  const table = $derived(createSvelteTable({ data: data.pages, columns, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
+  const table = $derived(createSvelteTable({ get data() { return data.pages; }, columns, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
 </script>
 
 <div class="space-y-6">
@@ -31,41 +36,31 @@
     <CardContent class="p-0">
       <Table>
         <TableHeader>
-          {#each table.getHeaderGroups() as hg}
+          {#each table.getHeaderGroups() as hg (hg.id)}
             <TableRow>
-              {#each hg.headers as h}
-                <TableHead><FlexRender content={h.column.columnDef.header} context={h.getContext()} /></TableHead>
+              {#each hg.headers as h (h.id)}
+                <TableHead>
+                  {#if !h.isPlaceholder}
+                    <FlexRender content={h.column.columnDef.header} context={h.getContext()} />
+                  {/if}
+                </TableHead>
               {/each}
             </TableRow>
           {/each}
         </TableHeader>
         <TableBody>
-          {#each table.getRowModel().rows as row}
-            <TableRow>
-              {#each row.getVisibleCells() as cell}
-                {#if cell.column.id === 'published'}
-                  <TableCell>
-                    {#if row.original.published}
-                      <Badge variant="default" class="text-xs">Published</Badge>
-                    {:else}
-                      <Badge variant="secondary" class="text-xs">Draft</Badge>
-                    {/if}
-                  </TableCell>
-                {:else if cell.column.id === 'title'}
-                  <TableCell class="font-medium">{row.original.title}</TableCell>
-                {:else if cell.column.id === 'slug'}
-                  <TableCell class="text-muted-foreground font-mono text-xs">/{row.original.slug}</TableCell>
-                {:else if cell.column.id === 'lang'}
-                  <TableCell class="uppercase text-xs">{row.original.lang ?? 'en'}</TableCell>
-                {:else if cell.column.id === 'updated'}
-                  <TableCell class="text-muted-foreground text-xs">{String(row.original.updated ?? '').slice(0, 10)}</TableCell>
-                {:else}
-                  <TableCell>{cell.getValue() as string}</TableCell>
-                {/if}
+          {#each table.getRowModel().rows as row (row.id)}
+            <TableRow data-state={row.getIsSelected() && 'selected'}>
+              {#each row.getVisibleCells() as cell (cell.id)}
+                <TableCell>
+                  <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+                </TableCell>
               {/each}
             </TableRow>
           {:else}
-            <TableRow><TableCell colspan={5} class="text-muted-foreground py-8 text-center">No pages yet</TableCell></TableRow>
+            <TableRow>
+              <TableCell colspan={columns.length} class="h-24 text-center">No results.</TableCell>
+            </TableRow>
           {/each}
         </TableBody>
       </Table>

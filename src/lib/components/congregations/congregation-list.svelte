@@ -3,20 +3,17 @@
   import CheckIcon from '@tabler/icons-svelte/icons/check';
   import XIcon from '@tabler/icons-svelte/icons/x';
   import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-  import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
+  import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
+  import { createRawSnippet } from 'svelte';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent } from '$lib/components/ui/card';
-  import { FlexRender, createSvelteTable } from '$lib/components/ui/data-table/index.js';
+  import { FlexRender, createSvelteTable, renderSnippet } from '$lib/components/ui/data-table/index.js';
   import { Input } from '$lib/components/ui/input';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '$lib/components/ui/tooltip';
 
-  interface Cong {
-    id: string; name: string; denomination: string; visible: boolean;
-    city: string; state: string; countryCode: string;
-    owner: string; created: string;
-  }
+  interface Cong { id: string; name: string; denomination: string; visible: boolean; city: string; state: string; countryCode: string; owner: string; created: string; }
 
   let { data }: { data: { congregations: Cong[]; active: Cong[]; pending: Cong[] } } = $props();
   let search = $state('');
@@ -24,9 +21,7 @@
   const allCongs = $derived(data.congregations);
   const searchStrings = $derived(allCongs.map((c) => `${c.name} ${c.denomination ?? ''} ${c.city ?? ''} ${c.state ?? ''}`));
   const fuzzy = new Fuzzy();
-  const filtered = $derived(
-    search ? fuzzy.filter(searchStrings, search.toLowerCase())?.map(i => allCongs[i]) ?? allCongs : allCongs
-  );
+  const filtered = $derived(search ? fuzzy.filter(searchStrings, search.toLowerCase())?.map(i => allCongs[i]) ?? allCongs : allCongs);
 
   let pendingId = $state<string | null>(null);
   let pendingAction = $state<'approve' | 'reject' | null>(null);
@@ -46,39 +41,26 @@
     return s || '—';
   }
 
-  const colHelper = createColumnHelper<Cong>();
+  const nameCell = (v: string) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="font-medium">${get().v}</span>` })), { v });
+  const denomCell = (v: string) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="capitalize">${get().v || '—'}</span>` })), { v });
+  const mutedCell = (v: string) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground text-xs">${get().v || '—'}</span>` })), { v });
 
-  const nameCol = colHelper.accessor('name', { header: 'Name', cell: ({ getValue }) => getValue() });
-  const denomCol = colHelper.accessor('denomination', { header: 'Denomination', cell: ({ getValue }) => getValue() || '—' });
-  const locationCol = colHelper.accessor((r) => locationStr(r), { id: 'location', header: 'Location' });
-  const ownerCol = colHelper.accessor('owner', { header: 'Owner' });
-  const dateCol = colHelper.accessor('created', { header: 'Date', cell: ({ getValue }) => (getValue() || '').slice(0, 10) });
-  const editCol = colHelper.display({
-    id: 'edit', header: '',
-    cell: ({ row }) => row.original.id,
-  });
+  const activeCols: ColumnDef<Cong>[] = [
+    { accessorKey: 'name', header: 'Name', cell: ({ row }) => nameCell(row.original.name) },
+    { accessorKey: 'denomination', header: 'Denomination', cell: ({ row }) => denomCell(row.original.denomination) },
+    { accessorKey: 'location', header: 'Location', cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground">${get().v}</span>` })), { v: locationStr(row.original) }) },
+    { accessorKey: 'owner', header: 'Owner', cell: ({ row }) => mutedCell(row.original.owner) },
+  ];
 
-  const actionCol = colHelper.display({
-    id: 'actions', header: '',
-    cell: ({ row }) => row.original.id,
-  });
+  const pendingCols: ColumnDef<Cong>[] = [
+    { accessorKey: 'name', header: 'Name', cell: ({ row }) => nameCell(row.original.name) },
+    { accessorKey: 'denomination', header: 'Denomination', cell: ({ row }) => denomCell(row.original.denomination) },
+    { accessorKey: 'owner', header: 'Submitted By', cell: ({ row }) => mutedCell(row.original.owner) },
+    { accessorKey: 'created', header: 'Date', cell: ({ row }) => mutedCell((row.original.created || '').slice(0, 10)) },
+  ];
 
-  const activeCols = [nameCol, denomCol, locationCol, ownerCol, editCol];
-  const pendingCols = [nameCol, denomCol, dateCol, actionCol];
-
-  const activeTable = $derived(createSvelteTable({
-    data: filtered.filter((c) => c.visible),
-    columns: activeCols,
-    getRowId: (r) => r.id,
-    getCoreRowModel: getCoreRowModel(),
-  }));
-
-  const pendingTable = $derived(createSvelteTable({
-    data: data.pending,
-    columns: pendingCols,
-    getRowId: (r) => r.id,
-    getCoreRowModel: getCoreRowModel(),
-  }));
+  const activeTable = $derived(createSvelteTable({ get data() { return filtered.filter((c) => c.visible); }, columns: activeCols, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
+  const pendingTable = $derived(createSvelteTable({ get data() { return data.pending; }, columns: pendingCols, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
 </script>
 
 <div class="space-y-8">
@@ -94,46 +76,42 @@
       <CardContent class="p-0">
         <Table>
           <TableHeader>
-            {#each activeTable.getHeaderGroups() as hg}
+            {#each activeTable.getHeaderGroups() as hg (hg.id)}
               <TableRow>
-                {#each hg.headers as h}
-                  <TableHead class={h.id === 'edit' ? 'w-16' : ''}>
-                    <FlexRender content={h.column.columnDef.header} context={h.getContext()} />
+                {#each hg.headers as h (h.id)}
+                  <TableHead>
+                    {#if !h.isPlaceholder}
+                      <FlexRender content={h.column.columnDef.header} context={h.getContext()} />
+                    {/if}
                   </TableHead>
                 {/each}
+                <TableHead class="w-16"></TableHead>
               </TableRow>
             {/each}
           </TableHeader>
           <TableBody>
-            {#each activeTable.getRowModel().rows as row}
+            {#each activeTable.getRowModel().rows as row (row.id)}
               <TableRow>
-                {#each row.getVisibleCells() as cell}
-                  {#if cell.column.id === 'edit'}
-                    <TableCell class="w-16">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Button variant="ghost" size="icon" onclick={() => window.location.href = '/edit?id=' + (cell.getValue() as string)}>
-                              <PencilIcon class="size-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Edit congregation</TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </TableCell>
-                  {:else if cell.column.id === 'name'}
-                    <TableCell class="font-medium">{cell.getValue() as string}</TableCell>
-                  {:else if cell.column.id === 'denomination'}
-                    <TableCell class="capitalize">{(cell.getValue() as string) || '—'}</TableCell>
-                  {:else if cell.column.id === 'owner'}
-                    <TableCell class="text-muted-foreground text-xs">{(cell.getValue() as string) || '—'}</TableCell>
-                  {:else}
-                    <TableCell class="text-muted-foreground">{cell.getValue() as string}</TableCell>
-                  {/if}
+                {#each row.getVisibleCells() as cell (cell.id)}
+                  <TableCell>
+                    <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+                  </TableCell>
                 {/each}
+                <TableCell>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button variant="ghost" size="icon" onclick={() => window.location.href = editUrl(row.original.id)}>
+                          <PencilIcon class="size-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Edit congregation</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </TableCell>
               </TableRow>
             {:else}
-              <TableRow><TableCell colspan={5} class="text-muted-foreground py-8 text-center">No approved congregations</TableCell></TableRow>
+              <TableRow><TableCell colspan={activeCols.length + 1} class="h-24 text-center">No approved congregations</TableCell></TableRow>
             {/each}
           </TableBody>
         </Table>
@@ -149,21 +127,25 @@
         <CardContent class="p-0">
           <Table>
             <TableHeader>
-              {#each pendingTable.getHeaderGroups() as hg}
+              {#each pendingTable.getHeaderGroups() as hg (hg.id)}
                 <TableRow>
-                  {#each hg.headers as h}
-                    <TableHead>{h.column.columnDef.header as string}</TableHead>
+                  {#each hg.headers as h (h.id)}
+                    <TableHead>
+                      {#if !h.isPlaceholder}
+                        <FlexRender content={h.column.columnDef.header} context={h.getContext()} />
+                      {/if}
+                    </TableHead>
                   {/each}
                   <TableHead class="w-24"></TableHead>
                 </TableRow>
               {/each}
             </TableHeader>
             <TableBody>
-              {#each pendingTable.getRowModel().rows as row}
+              {#each pendingTable.getRowModel().rows as row (row.id)}
                 <TableRow>
-                  {#each row.getVisibleCells() as cell}
-                    <TableCell class={cell.column.id === 'edit' ? '' : cell.column.id === 'name' ? 'font-medium' : cell.column.id === 'owner' || cell.column.id === 'date' ? 'text-muted-foreground text-xs' : ''}>
-                      {cell.getValue() as string}
+                  {#each row.getVisibleCells() as cell (cell.id)}
+                    <TableCell>
+                      <FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
                     </TableCell>
                   {/each}
                   <TableCell>
@@ -216,7 +198,7 @@
                   </TableCell>
                 </TableRow>
               {:else}
-                <TableRow><TableCell colspan={5} class="text-muted-foreground py-8 text-center">No pending congregations</TableCell></TableRow>
+                <TableRow><TableCell colspan={pendingCols.length + 1} class="h-24 text-center">No pending congregations</TableCell></TableRow>
               {/each}
             </TableBody>
           </Table>
