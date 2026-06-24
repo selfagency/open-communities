@@ -8,10 +8,9 @@
   /* region imports */
   import AccessibilityIcon from "@tabler/icons-svelte/icons/disabled";
   import FilterIcon from "@tabler/icons-svelte/icons/filter";
-  import MaskIcon from "@tabler/icons-svelte/icons/mask";
+  import MaskIcon from "@tabler/icons-svelte/icons/face-mask";
   import DenominationIcon from "@tabler/icons-svelte/icons/menorah";
   import OpenIcon from "@tabler/icons-svelte/icons/selector";
-  import AdminIcon from "@tabler/icons-svelte/icons/settings";
   import SecurityIcon from "@tabler/icons-svelte/icons/shield";
   import { isEmpty } from "radashi";
   import { untrack } from "svelte";
@@ -44,7 +43,7 @@
       online_liveCaptions: false,
       other: false,
     },
-    admin: {
+    status: {
       unapproved: false,
       unclaimed: false,
     },
@@ -93,7 +92,7 @@
 
   const icons: Record<string, any> = {
     accessibility: AccessibilityIcon,
-    admin: AdminIcon,
+    status: CircleCheckIcon,
     circle: CircleIcon,
     circleCheck: CircleCheckIcon,
     circleMinus: CircleMinusIcon,
@@ -158,7 +157,7 @@
       class="flex flex-col items-start justify-start space-y-2 text-muted-foreground"
     >
       {#each Object.keys(filters) as category, i (i)}
-        {#if !isEmpty(filters?.[category]) && !(category === "admin" && !user?.admin)}
+        {#if !isEmpty(filters?.[category]) && !(category === "status" && !user?.admin)}
           {@const StatusIcon =
             icons[
               every(filters[category])
@@ -170,22 +169,17 @@
           <Collapsible.Root>
             <Collapsible.Trigger>
               <div class="group filter-heading">
-                <span class="filter-icon">
-                  {#if category === "denomination" || category === "health" || category === "services"}
-                    {@const Icon = icons[category]}
-                    <span class="h-4 w-5 fill-muted-foreground">
-                      <Icon />
-                    </span>
-                  {:else}
-                    {@const Icon = icons[category]}
-                    <Icon size="17" />
-                  {/if}
-                </span>
+                {#if true}
+                  {@const Icon = icons[category]}
+                  <span class="filter-icon">
+                    <Icon size="16" />
+                  </span>
+                {/if}
                 <span class="filter-label">
                   <span>{m[category]()}</span>
                 </span>
                 <span class="filter-status">
-                  <StatusIcon class="h-4 w-4 motion-safe:group-hover:scale-110 transition-transform duration-200" />
+                  <StatusIcon size="16" class="motion-safe:group-hover:scale-110 transition-transform duration-200" />
                 </span>
                 <span class="filter-icon">
                   <OpenIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110" />

@@ -1,19 +1,27 @@
 <script lang="ts">
+  import { superForm } from 'sveltekit-superforms';
   import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
+  import { toast } from 'svelte-sonner';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '$lib/components/ui/select';
   import { Switch } from '$lib/components/ui/switch';
   import { m } from '$lib/paraglide/messages';
 
   let { data } = $props();
-  let { form, errors } = data.form;
+
+  const form = superForm(data.form, {
+    onUpdated({ form: f }) {
+      if (f.valid) toast.success('Profile updated');
+    },
+  });
+  const { form: formData, errors } = form;
 
   let deleting = $state(false);
   let unlinked = $state(false);
-  let updated = $state(false);
 </script>
 
 <svelte:head>
@@ -26,14 +34,14 @@
     <p class="text-muted-foreground text-sm">Manage your profile and preferences</p>
   </div>
 
-  {#if updated}
+  {#if false}
     <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">Profile updated successfully.</div>
   {/if}
   {#if unlinked}
     <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">You have been unlinked from your congregation.</div>
   {/if}
 
-  <form method="POST" action="?/update" use:enhance={() => { updated = false; return async ({ result }) => { if (result.type === 'success') updated = true; }; }}>
+  <form method="POST" action="?/update" use:enhance>
     <Card>
       <CardHeader>
         <CardTitle class="text-lg">Profile</CardTitle>
@@ -41,29 +49,32 @@
       <CardContent class="space-y-4">
         <div class="space-y-2">
           <Label for="name">Name</Label>
-          <Input id="name" name="name" bind:value={form.name} required />
-          {#if errors?.name}<p class="text-destructive text-xs">{errors.name}</p>{/if}
+          <Input id="name" name="name" bind:value={$formData.name} required />
+          {#if $errors.name}<p class="text-destructive text-xs">{$errors.name}</p>{/if}
         </div>
         <div class="space-y-2">
           <Label for="email">Email</Label>
-          <Input id="email" name="email" bind:value={form.email} type="email" required />
-          {#if errors?.email}<p class="text-destructive text-xs">{errors.email}</p>{/if}
+          <Input id="email" name="email" bind:value={$formData.email} type="email" required />
+          {#if $errors.email}<p class="text-destructive text-xs">{$errors.email}</p>{/if}
         </div>
         <div class="space-y-2">
           <Label for="lang">Language</Label>
-          <select id="lang" name="lang" bind:value={form.lang} class="border-input h-11 w-full rounded-md border bg-transparent px-3 text-sm">
-            <option value="en">English</option>
-            <option value="es">Espa&ntilde;ol</option>
-            <option value="fr">Fran&ccedil;ais</option>
-            <option value="he">עברית</option>
-          </select>
+          <Select type="single" bind:value={$formData.lang}>
+            <SelectTrigger class="w-full"><SelectValue placeholder="Select language" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="es">Espa&ntilde;ol</SelectItem>
+              <SelectItem value="fr">Fran&ccedil;ais</SelectItem>
+              <SelectItem value="he">עברית</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div class="flex items-center gap-3">
-          <Switch id="notifications" name="notifications" checked={form.notifications} onCheckedChange={(c) => form.notifications = c} />
+          <Switch id="notifications" checked={$formData.notifications} onCheckedChange={(c) => $formData.notifications = c} />
           <Label for="notifications" class="text-sm">Receive non-transactional email updates</Label>
         </div>
-        {#if errors?._errors?.length}
-          <p class="text-destructive text-xs">{errors._errors.join(', ')}</p>
+        {#if $errors._errors?.length}
+          <p class="text-destructive text-xs">{$errors._errors.join(', ')}</p>
         {/if}
         <Button type="submit">Save Changes</Button>
       </CardContent>
@@ -77,10 +88,10 @@
     </CardHeader>
     <CardContent class="space-y-4">
       <form method="POST" action="?/update" use:enhance>
-        <input type="hidden" name="name" value={form.name} />
-        <input type="hidden" name="email" value={form.email} />
-        <input type="hidden" name="lang" value={form.lang} />
-        <input type="hidden" name="notifications" value={String(form.notifications)} />
+        <input type="hidden" name="name" value={$formData.name} />
+        <input type="hidden" name="email" value={$formData.email} />
+        <input type="hidden" name="lang" value={$formData.lang} />
+        <input type="hidden" name="notifications" value={String($formData.notifications)} />
         <div class="space-y-2">
           <Label for="oldPassword">Current Password</Label>
           <Input id="oldPassword" name="oldPassword" type="password" />

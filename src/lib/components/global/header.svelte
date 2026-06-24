@@ -14,7 +14,7 @@
       <span>
         <Tent class="w-12 fill-foreground sm:w-16" />
       </span>
-      <h1 class="mt-2 text-2xl sm:text-3xl">{m.title()}</h1>
+      <h1 class="mt-2 text-2xl sm:text-4xl">{m.title()}</h1>
     </a>
   </div>
   <div>

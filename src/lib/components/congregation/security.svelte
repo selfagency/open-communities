@@ -27,7 +27,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <SecurityIcon size="18" />
+            <SecurityIcon size="16" />
             <span class="sr-only">{m.security_armedSecurity()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -39,7 +39,7 @@
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <UnarmedIcon size="18" />
+            <UnarmedIcon size="16" />
             <span class="sr-only">{m.security_unarmedSecurity()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>

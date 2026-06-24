@@ -1,7 +1,7 @@
 <script lang="ts">
   /* region imports */
   import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
-  import MaskIcon from "@tabler/icons-svelte/icons/mask";
+  import MaskIcon from "@tabler/icons-svelte/icons/face-mask";
   import * as Tooltip from "$lib/components/ui/tooltip";
   import { m } from "$lib/paraglide/messages";
   import type { HealthRecord } from "$lib/pocketbase.d";
@@ -22,7 +22,7 @@
     <Tooltip.Provider>
       <Tooltip.Root>
         <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-          <span><MaskIcon size="20" class="text-muted-foreground rtl:mx-1" /></span>
+          <span><MaskIcon size="16" class="text-muted-foreground rtl:mx-1" /></span>
           <span class="sr-only">{m[`health_${health.protocol}`]()}</span>
         </Tooltip.Trigger>
         <Tooltip.Content>

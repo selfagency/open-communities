@@ -84,7 +84,7 @@
 </script>
 
 <DropdownMenu.Root>
-  <DropdownMenu.Trigger aria-label={m.selectLanguage()} class={mode === 'mini' ? 'text-foreground underline-offset-4 hover:underline inline-flex items-center gap-2 px-4 py-2 text-sm' : buttonClass}
+  <DropdownMenu.Trigger aria-label={m.selectLanguage()} class={'group ' + (mode === 'mini' ? 'text-foreground underline-offset-4 hover:underline inline-flex items-center gap-2 px-4 py-2 text-sm' : buttonClass)}
   >
     <LocaleIcon class="h-4 w-4 {mode === 'mini' ? 'text-foreground' : 'stroke-muted-foreground'} transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
       <span class={(mode === "mini" ? "text-foreground" : "max-[720px]:hidden text-muted-foreground")} aria-hidden="true">{code}</span>
