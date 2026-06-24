@@ -2,7 +2,7 @@
   import LinkIcon from "@tabler/icons-svelte/icons/external-link";
   /* region imports */
   import EditIcon from "@tabler/icons-svelte/icons/pencil";
-  import ShareIcon from "@tabler/icons-svelte/icons/share";
+  import ShareIcon from "@tabler/icons-svelte/icons/share-2";
   import DOMPurify from "isomorphic-dompurify";
   import { isEmpty, omit } from "radashi";
   import { fade } from "svelte/transition";

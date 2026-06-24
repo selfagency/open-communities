@@ -1,7 +1,7 @@
 <script lang="ts">
+  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
   /* region imports */
   import AdaIcon from "@tabler/icons-svelte/icons/disabled";
-  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
   import AslIcon from "@tabler/icons-svelte/icons/hand-two-fingers";
   import EvaIcon from "@tabler/icons-svelte/icons/language";
   import CcIcon from "@tabler/icons-svelte/icons/subtitles";

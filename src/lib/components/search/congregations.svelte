@@ -1,8 +1,8 @@
 <script lang="ts">
   import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
   import ClearIcon from "@tabler/icons-svelte/icons/circle-x";
-  import LocationIcon from "@tabler/icons-svelte/icons/world";
   import SearchIcon from "@tabler/icons-svelte/icons/search";
+  import LocationIcon from "@tabler/icons-svelte/icons/world";
   /* region imports */
   import { alphabetical, isEmpty, sleep, unique } from "radashi";
   import { onMount, tick, untrack } from "svelte";

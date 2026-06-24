@@ -1,12 +1,12 @@
 <script lang="ts">
-  /* region imports */
-  import AccessibilityIcon from "@tabler/icons-svelte/icons/disabled";
   import SiddurIcon from "@tabler/icons-svelte/icons/book-2";
   import CircleIcon from "@tabler/icons-svelte/icons/circle";
   import CircleCheckIcon from "@tabler/icons-svelte/icons/circle-check";
   import CircleMinusIcon from "@tabler/icons-svelte/icons/circle-minus";
   import CloseIcon from "@tabler/icons-svelte/icons/circle-x";
   import RegistrationIcon from "@tabler/icons-svelte/icons/clipboard-plus";
+  /* region imports */
+  import AccessibilityIcon from "@tabler/icons-svelte/icons/disabled";
   import FilterIcon from "@tabler/icons-svelte/icons/filter";
   import MaskIcon from "@tabler/icons-svelte/icons/mask";
   import DenominationIcon from "@tabler/icons-svelte/icons/menorah";

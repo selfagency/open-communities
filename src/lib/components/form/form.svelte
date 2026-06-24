@@ -1,10 +1,10 @@
 <script lang="ts">
+  /* region imports */
   import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
   import DOMPurify from "isomorphic-dompurify";
   import { sleep } from "radashi";
   import { getContext, onMount, untrack } from "svelte";
   import { fade } from "svelte/transition";
-  /* region imports */
   import type { SuperForm, SuperValidated } from "sveltekit-superforms";
   import { browser, dev } from "$app/environment";
   import Captcha from "$lib/components/global/captcha.svelte";
@@ -190,7 +190,7 @@
                     </span>
                   {/if}
 
-                  <Accordion.Root type="single" bind:value={view}>
+                  <Accordion.Root type="single" bind:value={view} class="w-full">
                     <Congregation {errors} {form} {formData} bind:view />
                     <Fit {errors} {form} {formData} bind:view />
                     <Services {errors} {form} {formData} bind:view />
