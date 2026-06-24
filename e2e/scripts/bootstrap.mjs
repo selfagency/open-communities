@@ -163,17 +163,19 @@ async function createAdmin(token) {
     // Try Docker exec first (local dev)
     execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}"`, { encoding: 'utf8', timeout: 15000 });
   } catch {
-    // Fallback: use the API (CI — PB runs natively)
-    const existing = await api('GET', '/collections/_superusers/records?perPage=1', null, token);
-    if (existing?.items?.length > 0) {
-      console.log('  ⏭  Superuser already exists');
-      return;
+    // Fallback: create superuser via API using installation token (CI)
+    // The installation token can create the first superuser even though
+    // it can't list existing ones, so we skip the existence check.
+    try {
+      await api('POST', '/collections/_superusers/records', {
+        email: ADMIN_EMAIL,
+        password: ADMIN_PASSWORD,
+        passwordConfirm: ADMIN_PASSWORD,
+      }, token);
+    } catch {
+      // Ignore "already exists" errors — the superuser was likely created
+      // by a previous bootstrap run
     }
-    await api('POST', '/collections/_superusers/records', {
-      email: ADMIN_EMAIL,
-      password: ADMIN_PASSWORD,
-      passwordConfirm: ADMIN_PASSWORD,
-    }, token);
   }
   console.log('  ✅ Superuser created');
 }
@@ -187,7 +189,7 @@ async function main() {
     await verifyToken(token);
     await importSchema(token);
     await seedData(token);
-    createAdmin();
+    await createAdmin(token);
     console.log(`\n✅ Done in ${((Date.now()-start)/1000).toFixed(1)}s`);
     console.log(`   Panel: ${PB}/_/`);
     console.log(`   Auth:  ${ADMIN_EMAIL}`);
