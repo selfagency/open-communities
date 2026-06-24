@@ -1,7 +1,6 @@
 <script lang="ts">
   import MoonIcon from '@tabler/icons-svelte/icons/moon';
   import SunIcon from '@tabler/icons-svelte/icons/sun';
-  import UserCircleIcon from '@tabler/icons-svelte/icons/user-circle';
   import { mode, toggleMode } from 'mode-watcher';
   /* region imports */
   import { createEventDispatcher } from 'svelte';
@@ -100,7 +99,9 @@
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           <button class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted" aria-label="User menu">
-            <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1.25" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="size-8 text-foreground">
+              <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/><path d="M20 21a8 8 0 1 0-16 0"/>
+            </svg>
           </button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end" class="w-56">
