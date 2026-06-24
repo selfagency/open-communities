@@ -169,7 +169,7 @@
             ]}
           <Collapsible.Root>
             <Collapsible.Trigger>
-              <div class="filter-heading">
+              <div class="group filter-heading">
                 <span class="filter-icon">
                   {#if category === "denomination" || category === "health" || category === "services"}
                     {@const Icon = icons[category]}
@@ -185,10 +185,10 @@
                   <span>{m[category]()}</span>
                 </span>
                 <span class="filter-status">
-                  <StatusIcon class="h-4 w-4" />
+                  <StatusIcon class="h-4 w-4 motion-safe:group-hover:scale-110 transition-transform duration-200" />
                 </span>
                 <span class="filter-icon">
-                  <OpenIcon size="16" />
+                  <OpenIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110" />
                 </span>
               </div>
             </Collapsible.Trigger>

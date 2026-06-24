@@ -1,11 +1,11 @@
-import Fuzzy from '@leeoniya/ufuzzy';
-import { page } from '$app/state';
-import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-import { Button } from '$lib/components/ui/button';
-import { Card, CardContent } from '$lib/components/ui/card';
-import { Input } from '$lib/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '$lib/components/ui/tooltip';
+<script lang="ts">
+  import Fuzzy from '@leeoniya/ufuzzy';
+  import PencilIcon from '@tabler/icons-svelte/icons/pencil';
+  import { Button } from '$lib/components/ui/button';
+  import { Card, CardContent } from '$lib/components/ui/card';
+  import { Input } from '$lib/components/ui/input';
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '$lib/components/ui/tooltip';
 
   let { data } = $props();
   let search = $state('');
@@ -23,15 +23,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '$lib/c
       : data.congregations
   );
 
-  function editUrl(id: string) { return `/edit?id=${id}`; }
+  function editUrl(id: string) { return '/edit?id=' + id; }
 
   async function approve(id: string) {
-    await fetch(`/api/admin/congregations/${id}/toggle`, { method: 'POST' });
+    await fetch('/api/admin/congregations/' + id + '/toggle', { method: 'POST' });
     window.location.reload();
   }
 
   async function reject(id: string) {
-    await fetch(`/api/admin/congregations/${id}/delete`, { method: 'DELETE' });
+    await fetch('/api/admin/congregations/' + id + '/delete', { method: 'DELETE' });
     window.location.reload();
   }
 </script>

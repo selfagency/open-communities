@@ -45,17 +45,17 @@
     <div class="col-span-9">
       {#if flag === "no"}
         <div class="flex flex-row items-center space-x-2">
-          <FlagOff class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:group-hover:scale-110" />
+          <FlagOff class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:scale-110" />
           <span>{m.flag_no()}</span>
         </div>
       {:else if flag === "yes"}
         <div class="flex flex-row items-center space-x-2">
-          <Flag class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:group-hover:scale-110" />
+          <Flag class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:scale-110" />
           <span>{m.flag_yes()}</span>
         </div>
       {:else if flag === "yesBima"}
         <div class="flex flex-row items-center space-x-2">
-          <Flag class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:group-hover:scale-110" />
+          <Flag class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:scale-110" />
           <span>{m.flag_yesBima()}</span>
         </div>
       {/if}

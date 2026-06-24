@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { scaleBand } from 'd3-scale';
-  import { BarChart } from 'layerchart';
   import ChurchIcon from '@tabler/icons-svelte/icons/building';
   import ThumbsUpIcon from '@tabler/icons-svelte/icons/thumb-up';
   import UsersIcon from '@tabler/icons-svelte/icons/users';
+  import { scaleBand } from 'd3-scale';
+  import { BarChart } from 'layerchart';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import * as Chart from '$lib/components/ui/chart/index.js';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';

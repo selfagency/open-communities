@@ -82,12 +82,12 @@
     <Popover.Trigger
       {id}
       bind:ref={triggerRef}
-      class="button w-full flex-row items-center justify-between! outline bg-background! border-border!"
+      class="group button w-full flex-row items-center justify-between! outline bg-background! border-border!"
       role="combobox"
       aria-expanded={open}
     >
       <span>{selectedValueLabel}</span>
-      <ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50" />
+      <ChevronsUpDownIcon class="ml-2 size-4 shrink-0 opacity-50 transition-transform duration-200 motion-safe:group-hover:scale-110" />
     </Popover.Trigger>
     <Popover.Content style="width: {triggerRef?.offsetWidth}px;" class="p-0">
       {#if commandsInitialized && currentItems?.length > 0}
