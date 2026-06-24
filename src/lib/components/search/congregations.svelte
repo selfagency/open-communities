@@ -197,14 +197,15 @@
           {#if searchTerms}
             <span class="absolute top-0 z-10 flex h-11 w-11 items-center justify-center ltr:right-0 rtl:left-0">
               <Button
-                variant="link"
-                class="group text-gray-300 hover:text-muted-foreground"
+                variant="ghost"
+                size="icon"
+                class="size-full text-muted-foreground hover:text-foreground"
                 onclick={() => {
                   searchTerms = "";
                   search.setSearchTerms(searchTerms);
                 }}
               >
-                <ClearIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
+                <ClearIcon size="16" />
                 <span class="sr-only">{m.clear()}</span>
               </Button>
             </span>
