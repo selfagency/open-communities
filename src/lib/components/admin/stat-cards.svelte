@@ -57,7 +57,7 @@
         <CardHeader>
           <CardTitle class="text-sm font-bold">Top Countries</CardTitle>
         </CardHeader>
-        <CardContent class="p-0">
+        <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
@@ -82,7 +82,7 @@
         <CardHeader>
           <CardTitle class="text-sm font-bold">Top US States</CardTitle>
         </CardHeader>
-        <CardContent class="p-0">
+        <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
