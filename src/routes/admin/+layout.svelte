@@ -36,10 +36,14 @@
       <Sidebar.Menu>
         {#each navItems as { href, label, icon: Icon } (href)}
           <Sidebar.MenuItem>
-            <Sidebar.MenuButton isActive={isActive(href)} onclick={() => goto(href)}>
-              <Icon class="size-4" />
-              <span>{label}</span>
-            </Sidebar.MenuButton>
+            <button
+              class="flex w-full items-center gap-2 rounded-md p-2 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground data-active:font-medium"
+              class:data-active={isActive(href)}
+              onclick={() => goto(href)}
+            >
+              <Icon class="size-4 shrink-0" />
+              <span class="truncate">{label}</span>
+            </button>
           </Sidebar.MenuItem>
         {/each}
       </Sidebar.Menu>
