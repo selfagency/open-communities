@@ -3,9 +3,8 @@
 	generics="TData, TValue, TContext extends HeaderContext<TData, TValue> | CellContext<TData, TValue>"
 >
 	import type { CellContext, ColumnDefTemplate, HeaderContext } from "@tanstack/table-core";
-	import type { Attachment } from "svelte/attachments";
 	import { RenderComponentConfig, RenderSnippetConfig } from "./render-helpers.js";
-
+	import type { Attachment } from "svelte/attachments";
 	type Props = {
 		/** The cell or header field of the current cell's column definition. */
 		content?: TContext extends HeaderContext<TData, TValue>

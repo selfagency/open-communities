@@ -1,5 +1,5 @@
-import { getWeeklyDigest, queryHogQL } from '$lib/server/posthog-api';
 import { withRetry } from '$lib/server/api';
+import { getWeeklyDigest, queryHogQL } from '$lib/server/posthog-api';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -17,9 +17,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         GROUP BY day
         ORDER BY day
       `);
-      dailyTrend = (raw?.results ?? []).map((r: [string, number]) => ({
-        day: r[0]?.slice(0, 10) ?? '',
-        events: r[1] ?? 0
+      dailyTrend = ((raw?.results ?? []) as Array<[string, number]>).map(([day, events]) => ({
+        day: day?.slice(0, 10) ?? '',
+        events: events ?? 0
       }));
     } catch {
       dailyTrend = [];

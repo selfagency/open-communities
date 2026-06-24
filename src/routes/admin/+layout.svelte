@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AppSidebar from "$lib/components/app-sidebar.svelte";
-	import SiteHeader from "$lib/components/admin/site-header.svelte";
+	import SiteHeader from "$lib/components/site-header.svelte";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 
 	let { children } = $props();

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { scaleBand } from 'd3-scale';
   import { BarChart } from 'layerchart';
-  import * as Chart from '$lib/components/ui/chart/index.js';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import * as Chart from '$lib/components/ui/chart/index.js';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 
   let { data } = $props();
@@ -96,7 +96,7 @@
                 data={dailyTrend}
                 x="day"
                 axis="x"
-                seriesLayout="stacked"
+                seriesLayout="stack"
                 legend
                 series={[
                   { key: 'events', label: 'Events', color: 'var(--chart-1)' },
