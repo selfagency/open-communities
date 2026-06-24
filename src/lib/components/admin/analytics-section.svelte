@@ -32,7 +32,7 @@
 
 {#if digest}
   <div class="flex items-center justify-between">
-    <h3 class="text-lg font-semibold">Web Analytics</h3>
+    <h3 class="font-serif text-2xl font-bold tracking-wider">Web Analytics</h3>
     <div class="flex gap-1 rounded-lg bg-muted p-1">
       <Button variant={viewMode === 'realtime' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'realtime'}>Realtime</Button>
       <Button variant={viewMode === '30d' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = '30d'}>30 Days</Button>
