@@ -183,35 +183,32 @@
       transition:fade={{ delay: 300, duration: 300 }}
     >
       <div
-        class="relative flex w-full min-w-max flex-row items-center justify-start space-x-2 text-muted-foreground"
+        class="relative flex w-full min-w-max flex-row items-center justify-start text-muted-foreground shadow-xs rounded-md"
       >
-        <Label for="search" class="flex w-8 items-center justify-center">
-          <SearchIcon size="20" class="transition-transform duration-200 motion-safe:hover:scale-110" />
-          <span class="sr-only">{m.search()}</span>
-        </Label>
-        <span class="w-full">
+        <SearchIcon size="18" class="absolute left-3 z-10 pointer-events-none" />
+        <span class="relative w-full">
           <Input
             placeholder={m.search()}
             bind:value={searchTerms}
             id="search"
-            class="w-full h-11 placeholder:text-muted-foreground"
+            class="w-full h-11 placeholder:text-muted-foreground shadow-none pl-10 pr-10"
           />
 
-          <span
-            class="absolute top-0 z-10 h-11 w-11 ltr:right-0 rtl:left-0 rtl:mx-1"
-          >
-            <Button
-              variant="link"
-              class="group text-muted-foreground hover:text-secondary-foreground"
-              onclick={() => {
-                searchTerms = "";
-                search.setSearchTerms(searchTerms);
-              }}
-            >
-              <ClearIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
-              <span class="sr-only">{m.clear()}</span>
-            </Button>
-          </span>
+          {#if searchTerms}
+            <span class="absolute top-0 z-10 ltr:right-1 rtl:left-1">
+              <Button
+                variant="link"
+                class="group text-gray-300 hover:text-muted-foreground"
+                onclick={() => {
+                  searchTerms = "";
+                  search.setSearchTerms(searchTerms);
+                }}
+              >
+                <ClearIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
+                <span class="sr-only">{m.clear()}</span>
+              </Button>
+            </span>
+          {/if}
         </span>
       </div>
 
