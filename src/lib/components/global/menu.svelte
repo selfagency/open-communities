@@ -53,6 +53,17 @@
   {/if}
 
   {#if user?.email}
+    {#if user?.admin}
+      <Button
+        variant={viewMode === 'mini' ? 'link' : 'outline'}
+        class={viewMode === 'mini' ? 'text-foreground' : ''}
+        onclick={async () => {
+          dispatch('close');
+          await goto('/admin');
+        }}>
+        Admin
+      </Button>
+    {/if}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'outline'}
       class={viewMode === 'mini' ? 'text-foreground' : ''}
