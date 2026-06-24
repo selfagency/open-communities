@@ -93,7 +93,7 @@ export function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
   const findSourceWithKey = (key: PropertyKey) => {
     for (let i = sources.length - 1; i >= 0; i--) {
       const obj = resolve(sources[i]);
-      if (obj && key in obj) return obj;
+      if (obj && Object.hasOwn(obj, key)) return obj;
     }
     return undefined;
   };
@@ -101,8 +101,8 @@ export function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
   return new Proxy(Object.create(null), {
     get(_, key) {
       const src = findSourceWithKey(key);
-
-      return src?.[key as never];
+      if (!src) return undefined;
+      return Reflect.get(src, key);
     },
 
     has(_, key) {
@@ -129,8 +129,7 @@ export function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
       return {
         configurable: true,
         enumerable: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        value: (src as any)[key],
+        value: Reflect.get(src, key),
         writable: true
       };
     }

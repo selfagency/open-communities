@@ -29,17 +29,18 @@ export function getPayloadConfigFromPayload(config: ChartConfig, payload: Toolti
     configLabelKey = payload.key;
   } else if (payload.name === key) {
     configLabelKey = payload.name;
-  } else if (key in payload && typeof payload[key as keyof typeof payload] === 'string') {
+  } else if (Object.hasOwn(payload, key) && typeof payload[key as keyof typeof payload] === 'string') {
     configLabelKey = payload[key as keyof typeof payload] as string;
   } else if (
     payloadPayload !== undefined &&
-    key in payloadPayload &&
+    Object.hasOwn(payloadPayload, key) &&
     typeof payloadPayload[key as keyof typeof payloadPayload] === 'string'
   ) {
     configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
   }
 
-  return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
+  if (configLabelKey in config) return config[configLabelKey];
+  if (Object.hasOwn(config, key)) return config[key as keyof typeof config];
 }
 
 type ChartContextValue = {
