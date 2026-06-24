@@ -63,53 +63,53 @@
 </script>
 
 <script lang="ts">
+	import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers";
+	import { move } from "@dnd-kit/helpers";
+	import { DragDropProvider } from "@dnd-kit-svelte/svelte";
+	import { useSortable } from "@dnd-kit-svelte/svelte/sortable";
+	import ChevronDownIcon from "@tabler/icons-svelte/icons/chevron-down";
+	import ChevronLeftIcon from "@tabler/icons-svelte/icons/chevron-left";
+	import ChevronRightIcon from "@tabler/icons-svelte/icons/chevron-right";
+	import ChevronsLeftIcon from "@tabler/icons-svelte/icons/chevrons-left";
+	import ChevronsRightIcon from "@tabler/icons-svelte/icons/chevrons-right";
+	import LayoutColumnsIcon from "@tabler/icons-svelte/icons/layout-columns";
+	import PlusIcon from "@tabler/icons-svelte/icons/plus";
 	import {
+		type ColumnDef,
+		type ColumnFiltersState,
 		getCoreRowModel,
 		getFacetedRowModel,
 		getFacetedUniqueValues,
 		getFilteredRowModel,
 		getPaginationRowModel,
 		getSortedRowModel,
-		type ColumnDef,
-		type ColumnFiltersState,
 		type PaginationState,
 		type Row,
 		type RowSelectionState,
 		type SortingState,
 		type VisibilityState,
 	} from "@tanstack/table-core";
-	import type { Schema } from "./schemas.js";
-	import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers";
-	import { createSvelteTable } from "$lib/components/ui/data-table/data-table.svelte.js";
-	import * as Tabs from "$lib/components/ui/tabs/index.js";
-	import * as Table from "$lib/components/ui/table/index.js";
-	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+	import { Badge } from "$lib/components/ui/badge/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
-	import * as Select from "$lib/components/ui/select/index.js";
-	import { Label } from "$lib/components/ui/label/index.js";
+	import { createSvelteTable } from "$lib/components/ui/data-table/data-table.svelte.js";
 	import { FlexRender, renderComponent } from "$lib/components/ui/data-table/index.js";
-	import LayoutColumnsIcon from "@tabler/icons-svelte/icons/layout-columns";
-	import ChevronDownIcon from "@tabler/icons-svelte/icons/chevron-down";
-	import PlusIcon from "@tabler/icons-svelte/icons/plus";
-	import ChevronsLeftIcon from "@tabler/icons-svelte/icons/chevrons-left";
-	import ChevronLeftIcon from "@tabler/icons-svelte/icons/chevron-left";
-	import ChevronRightIcon from "@tabler/icons-svelte/icons/chevron-right";
-	import ChevronsRightIcon from "@tabler/icons-svelte/icons/chevrons-right";
-	import DataTableCheckbox from "./data-table-checkbox.svelte";
-	import DataTableCellViewer from "./data-table-cell-viewer.svelte";
-	import DataTableReviewer from "./data-table-reviewer.svelte";
+	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
+	import { Label } from "$lib/components/ui/label/index.js";
+	import * as Select from "$lib/components/ui/select/index.js";
+	import * as Table from "$lib/components/ui/table/index.js";
+	import * as Tabs from "$lib/components/ui/tabs/index.js";
 	import DataTableActions from "./data-table-actions.svelte";
+	import DataTableCellViewer from "./data-table-cell-viewer.svelte";
+	import DataTableCheckbox from "./data-table-checkbox.svelte";
 	import DataTableDragHandle from "./data-table-drag-handle.svelte";
-	import DataTableType from "./data-table-type.svelte";
+	import DataTableHeaderLimit from "./data-table-header-limit.svelte";
+	import DataTableHeaderTarget from "./data-table-header-target.svelte";
+	import DataTableLimit from "./data-table-limit.svelte";
+	import DataTableReviewer from "./data-table-reviewer.svelte";
 	import DataTableStatus from "./data-table-status.svelte";
 	import DataTableTarget from "./data-table-target.svelte";
-	import DataTableLimit from "./data-table-limit.svelte";
-	import DataTableHeaderTarget from "./data-table-header-target.svelte";
-	import DataTableHeaderLimit from "./data-table-header-limit.svelte";
-	import { DragDropProvider } from "@dnd-kit-svelte/svelte";
-	import { move } from "@dnd-kit/helpers";
-	import { useSortable } from "@dnd-kit-svelte/svelte/sortable";
-	import { Badge } from "$lib/components/ui/badge/index.js";
+	import DataTableType from "./data-table-type.svelte";
+	import type { Schema } from "./schemas.js";
 
 	let { data }: { data: Schema[] } = $props();
 	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });

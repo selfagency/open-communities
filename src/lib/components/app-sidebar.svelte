@@ -1,16 +1,16 @@
 <script lang="ts">
+	import LibraryIcon from "@tabler/icons-svelte/icons/building-arch";
 	import ChartBarIcon from "@tabler/icons-svelte/icons/chart-bar";
 	import CheckCircleIcon from "@tabler/icons-svelte/icons/check-circle";
 	import DashboardIcon from "@tabler/icons-svelte/icons/dashboard";
 	import FileDescriptionIcon from "@tabler/icons-svelte/icons/file-description";
-	import LibraryIcon from "@tabler/icons-svelte/icons/building-arch";
 	import SettingsIcon from "@tabler/icons-svelte/icons/settings";
 	import UsersIcon from "@tabler/icons-svelte/icons/users";
+	import type { ComponentProps } from "svelte";
 	import { page } from "$app/state";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import NavMain from "./nav-main.svelte";
 	import NavUser from "./nav-user.svelte";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import type { ComponentProps } from "svelte";
 
 	const adminNav = [
 		{ title: "Dashboard", url: "/admin", icon: DashboardIcon },

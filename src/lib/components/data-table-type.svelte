@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Badge } from "$lib/components/ui/badge/index.js";
 	import type { Row } from "@tanstack/table-core";
+	import { Badge } from "$lib/components/ui/badge/index.js";
 	import type { Schema } from "./schemas.js";
 
 	let { row }: { row: Row<Schema> } = $props();

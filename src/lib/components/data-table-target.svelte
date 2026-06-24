@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Label } from "$lib/components/ui/label/index.js";
-	import { Input } from "$lib/components/ui/input/index.js";
-	import { toast } from "svelte-sonner";
 	import type { Row } from "@tanstack/table-core";
+	import { toast } from "svelte-sonner";
+	import { Input } from "$lib/components/ui/input/index.js";
+	import { Label } from "$lib/components/ui/label/index.js";
 	import type { Schema } from "./schemas.js";
 
 	let { row }: { row: Row<Schema> } = $props();
