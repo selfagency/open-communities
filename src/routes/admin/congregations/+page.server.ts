@@ -5,25 +5,32 @@ export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
 
   function mapCong(c: Record<string, unknown>) {
+    const expand = c.expand as Record<string, unknown> | undefined;
+    const cityData = expand?.city as Record<string, string> | undefined;
+    const stateData = expand?.state as Record<string, string> | undefined;
+    const countryData = stateData?.country as Record<string, string> | undefined;
     return {
       id: c.id as string,
       name: c.name as string,
       denomination: c.denomination as string,
       visible: c.visible as boolean,
-      city: c.city as string,
-      state: c.state as string,
+      city: cityData?.name ?? '',
+      state: stateData?.name ?? '',
+      countryCode: countryData?.code ?? '',
       owner:
         ((c as Record<string, unknown>).expand as Record<string, { email?: string }> | undefined)?.owner?.email ?? '',
       created: c.created as string
     };
   }
 
+  const expandStr = 'owner,city,state,state.country';
+
   const [active, pending] = await Promise.all([
     withRetry(() =>
       client.collection('congregations').getFullList({
         filter: 'visible=true',
         sort: '-created',
-        expand: 'owner',
+        expand: expandStr,
         requestKey: 'admin-cong-active'
       })
     ),
@@ -31,7 +38,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       client.collection('congregations').getFullList({
         filter: 'visible=false',
         sort: '-created',
-        expand: 'owner',
+        expand: expandStr,
         requestKey: 'admin-cong-pending'
       })
     )

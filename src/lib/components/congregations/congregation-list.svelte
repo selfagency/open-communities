@@ -51,7 +51,7 @@
               <TableRow>
                 <TableCell class="font-medium">{cong.name}</TableCell>
                 <TableCell class="capitalize">{cong.denomination ?? '—'}</TableCell>
-                <TableCell class="text-muted-foreground">{cong.city ?? ''}{cong.state ? `, ${cong.state}` : ''}</TableCell>
+                <TableCell class="text-muted-foreground">{cong.city}{cong.state ? `, ${cong.state}` : ''}{cong.countryCode && cong.countryCode !== 'US' ? ` (${cong.countryCode})` : ''}</TableCell>
                 <TableCell class="text-muted-foreground text-xs">{cong.owner || '—'}</TableCell>
                 <TableCell>
                   <TooltipProvider>
