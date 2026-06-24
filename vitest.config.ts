@@ -33,6 +33,8 @@ export default defineConfig({
       'radashi',
       'svelte-copy',
       'svelte-sonner',
+      'sveltekit-superforms',
+      'sveltekit-superforms/adapters',
       'tailwind-merge',
       'tailwind-variants',
       'tslog',
@@ -76,7 +78,8 @@ export default defineConfig({
         __dirname,
         'src/test/mocks/$lib_server_logger.js'
       ),
-      'sveltekit-superforms': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms.js')
+      'sveltekit-superforms': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms.js'),
+      'sveltekit-superforms/adapters': path.resolve(__dirname, 'src/test/mocks/sveltekit-superforms-adapters.js')
     }
   },
   test: {
@@ -184,6 +187,14 @@ export default defineConfig({
           environment: 'node',
           include: ['src/test/server/**/*.test.{ts,tsx,js,jsx}'],
           name: 'server',
+          resolve: {
+            alias: {
+              'sveltekit-superforms/adapters': path.resolve(
+                __dirname,
+                'src/test/mocks/sveltekit-superforms-adapters.js'
+              )
+            }
+          },
           setupFiles: [path.resolve(__dirname, 'src/test/setupServer.ts')]
         }
       }
