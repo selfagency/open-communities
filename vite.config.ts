@@ -13,6 +13,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig(({ mode }) => ({
   build: {
     sourcemap: true,
+    cssMinify: false,
     rollupOptions: {
       output: {
         manualChunks(id: string) {
