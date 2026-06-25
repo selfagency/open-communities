@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "הקהילה שלך אושרה",
   "transactional_approvedBody": "הקהילה שלך \" {name} \" אושרה וכעת היא גלויה בספרייה.",
   "transactional_rejectedSubject": "הגשת הקהילה שלך",
-  "transactional_rejectedBody": "הקהילה שלך \" {name} \" לא אושרה."
+  "transactional_rejectedBody": "הקהילה שלך \" {name} \" לא אושרה.",
+  "translations": "תרגומים"
 }

@@ -21,7 +21,7 @@ export const deleteSchema = z.object({
 
 export type DeleteSchema = z.infer<typeof deleteSchema>;
 
-export const transferSchema = z.object({
+const transferSchema = z.object({
   email: z.email().refine((value) => !!value, {
     message: m.thingRequired({ thing: m.email() })
   }),

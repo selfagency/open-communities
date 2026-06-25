@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Gyülekezeted jóváhagyásra került",
   "transactional_approvedBody": "A(z) \" {name} \" gyülekezeted jóváhagyásra került, és mostantól látható a címtárban.",
   "transactional_rejectedSubject": "A gyülekezeti beadványod",
-  "transactional_rejectedBody": "A gyülekezeted (\" {name} \" nem lett jóváhagyva."
+  "transactional_rejectedBody": "A gyülekezeted (\" {name} \" nem lett jóváhagyva.",
+  "translations": "Fordítások"
 }

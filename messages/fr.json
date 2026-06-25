@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Votre congrégation a été approuvée",
   "transactional_approvedBody": "Votre congrégation \" {name} \" a été approuvée et est maintenant visible dans l'annuaire.",
   "transactional_rejectedSubject": "Votre soumission de congrégation",
-  "transactional_rejectedBody": "Votre congrégation \" {name} \" n'a pas été approuvée."
+  "transactional_rejectedBody": "Votre congrégation \" {name} \" n'a pas été approuvée.",
+  "translations": "Traductions"
 }

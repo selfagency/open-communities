@@ -15,5 +15,135 @@
   },
   "rules": {
     "unused-dependencies": "warn"
-  }
+  },
+  "ignoreExports": [
+    {
+      "file": "src/lib/components/ui/alert-dialog/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/card/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/button/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/form/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/accordion/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/collapsible/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/dialog/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/pagination/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/popover/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/select/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/tabs/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/tooltip/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/alert/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/table/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/radio-group/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/checkbox/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/command/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/dropdown-menu/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/file-drop-zone/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/input/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/label/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/native-select/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/separator/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/skeleton/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/switch/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/textarea/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/find.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/inclusive.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/rabbis4ceasefire.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/tent.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/server/logger.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/utils.ts",
+      "exports": ["*"]
+    }
+  ]
 }

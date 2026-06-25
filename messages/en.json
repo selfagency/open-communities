@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Your congregation has been approved",
   "transactional_approvedBody": "Your congregation \"{name}\" has been approved and is now visible on the directory.",
   "transactional_rejectedSubject": "Your congregation submission",
-  "transactional_rejectedBody": "Your congregation \"{name}\" was not approved."
+  "transactional_rejectedBody": "Your congregation \"{name}\" was not approved.",
+  "translations": "Translations"
 }

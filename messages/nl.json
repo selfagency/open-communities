@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Uw gemeente is goedgekeurd.",
   "transactional_approvedBody": "Uw gemeente \" {name} \" is goedgekeurd en is nu zichtbaar in de ledenlijst.",
   "transactional_rejectedSubject": "Uw inzending door de gemeente",
-  "transactional_rejectedBody": "Uw gemeente \" {name} \" is niet goedgekeurd."
+  "transactional_rejectedBody": "Uw gemeente \" {name} \" is niet goedgekeurd.",
+  "translations": "Vertalingen"
 }

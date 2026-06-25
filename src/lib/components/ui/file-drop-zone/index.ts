@@ -1,5 +1,4 @@
 import Root from './file-drop-zone.svelte';
-import Textarea from './file-drop-zone-textarea.svelte';
 import Trigger from './file-drop-zone-trigger.svelte';
 import type { FileDropZoneRootProps, FileRejectedReason } from './types';
 
@@ -14,14 +13,14 @@ export function displaySize(bytes: number): string {
 }
 
 // Utilities for working with file sizes
-export const BYTE = 1;
-export const KILOBYTE = 1000;
-export const MEGABYTE = 1000 * KILOBYTE;
-export const GIGABYTE = 1000 * MEGABYTE;
+const BYTE = 1;
+const KILOBYTE = 1000;
+const MEGABYTE = 1000 * KILOBYTE;
+const GIGABYTE = 1000 * MEGABYTE;
 
 // utilities for limiting accepted files
 export const ACCEPT_IMAGE = 'image/*';
-export const ACCEPT_VIDEO = 'video/*';
-export const ACCEPT_AUDIO = 'audio/*';
+const ACCEPT_VIDEO = 'video/*';
+const ACCEPT_AUDIO = 'audio/*';
 
-export { type FileDropZoneRootProps, type FileRejectedReason, Root, Textarea, Trigger };
+export { type FileDropZoneRootProps, type FileRejectedReason, Root, Trigger };

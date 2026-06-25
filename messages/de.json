@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Ihre Gemeinde wurde genehmigt",
   "transactional_approvedBody": "Ihre Gemeinde \" {name} \" wurde genehmigt und ist nun im Verzeichnis sichtbar.",
   "transactional_rejectedSubject": "Ihre Gemeindeeinreichung",
-  "transactional_rejectedBody": "Ihre Versammlung \" {name} \" wurde nicht genehmigt."
+  "transactional_rejectedBody": "Ihre Versammlung \" {name} \" wurde nicht genehmigt.",
+  "translations": "Übersetzungen"
 }

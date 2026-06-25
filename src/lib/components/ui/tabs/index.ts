@@ -11,8 +11,8 @@ export {
   Root,
   //
   Root as Tabs,
+  type TabsListVariant,
   Trigger,
-  Trigger as TabsTrigger
+  Trigger as TabsTrigger,
+  tabsListVariants
 };
-export type { TabsListVariant } from './tabs-list.svelte';
-export { tabsListVariants } from './tabs-list.svelte';

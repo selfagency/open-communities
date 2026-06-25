@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Вашу громаду схвалено",
   "transactional_approvedBody": "Вашу конгрегацію \" {name} \" було схвалено та тепер видно в каталозі.",
   "transactional_rejectedSubject": "Ваша порада для збору",
-  "transactional_rejectedBody": "Вашу конгрегацію \" {name} \" не було схвалено."
+  "transactional_rejectedBody": "Вашу конгрегацію \" {name} \" не було схвалено.",
+  "translations": "Переклади"
 }

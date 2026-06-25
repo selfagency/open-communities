@@ -1,7 +1,7 @@
 // Provide minimal exports used by the app to satisfy imports during tests
 import Generic from './primitives/Generic.svelte';
 
-export const Dialog = {
+const Dialog = {
   Close: Generic,
   Content: Generic,
   Description: Generic,
@@ -12,40 +12,40 @@ export const Dialog = {
   Trigger: Generic
 };
 
-export const Select = {
+const Select = {
   Content: Generic,
   Root: Generic,
   Trigger: Generic
 };
 
-export const Command = {
+const Command = {
   Dialog: Generic,
   Root: Generic
 };
 
-export const Popover = {
+const Popover = {
   Content: Generic,
   Root: Generic,
   Trigger: Generic
 };
 
-export const Collapsible = {
+const Collapsible = {
   Content: Generic,
   Root: Generic,
   Trigger: Generic
 };
 
-export const RadioGroup = {
+const RadioGroup = {
   Item: Generic,
   Root: Generic
 };
 
-export const ScrollArea = {
+const ScrollArea = {
   Root: Generic,
   Scrollbar: Generic
 };
 
-export const useId = () => 'test-id';
+const useId = () => 'test-id';
 
 export default {
   Collapsible,

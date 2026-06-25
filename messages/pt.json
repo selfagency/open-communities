@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Sua congregação foi aprovada.",
   "transactional_approvedBody": "Sua congregação \" {name} \" foi aprovada e agora está visível no diretório.",
   "transactional_rejectedSubject": "Sua contribuição para a congregação",
-  "transactional_rejectedBody": "Sua congregação \" {name} \" não foi aprovada."
+  "transactional_rejectedBody": "Sua congregação \" {name} \" não foi aprovada.",
+  "translations": "Traduções"
 }

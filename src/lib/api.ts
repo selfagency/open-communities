@@ -11,18 +11,6 @@ import type { TypedPocketBase } from '$lib/pocketbase.d';
 const api = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
 api.autoCancellation(false);
 
-async function authenticate(auth: string) {
-  try {
-    if (auth) api.authStore.loadFromCookie(auth);
-    if (api.authStore.isValid) {
-      await api.collection('users').authRefresh();
-    }
-  } catch {
-    api.authStore.clear();
-  }
-  return api;
-}
-
 function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate: boolean = false): T {
   const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
   if (!keepDate) fields.push('created' as keyof T);
@@ -57,4 +45,4 @@ function expand<T extends Record<string, unknown>>(item: T): Omit<T, 'expand'> {
   return { ...rest, ...(_expand ?? {}) } as Omit<T, 'expand'>; // NOSONAR — TypeScript requires fallback for spread
 }
 
-export { api, authenticate, cleanResponse, expand };
+export { api, cleanResponse, expand };

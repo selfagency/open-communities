@@ -55,7 +55,7 @@ export interface InsightResult {
 }
 
 /** Check if PostHog credentials are configured. */
-export function isConfigured(): boolean {
+function isConfigured(): boolean {
   return !!PH_API_KEY && !!PH_PROJECT_ID;
 }
 
@@ -82,7 +82,7 @@ export async function getWeeklyDigest(days = 7): Promise<WeeklyDigest | null> {
 }
 
 /** Execute a HogQL query against PostHog. */
-export async function queryHogQL(sql: string): Promise<HogQLResult | null> {
+async function queryHogQL(sql: string): Promise<HogQLResult | null> {
   if (!isConfigured()) return null;
 
   try {
@@ -112,7 +112,7 @@ export async function queryHogQL(sql: string): Promise<HogQLResult | null> {
 }
 
 /** Query a Trends insight (time-series aggregation). */
-export async function queryTrends(
+async function _queryTrends(
   event: string,
   days = 30,
   interval: 'day' | 'week' = 'day'
@@ -135,7 +135,7 @@ export async function queryTrends(
 }
 
 /** Fetch a saved PostHog insight by its numeric ID or short_id. */
-export async function getInsight(id: number | string): Promise<InsightResult | null> {
+async function _getInsight(id: number | string): Promise<InsightResult | null> {
   if (!isConfigured()) return null;
   try {
     const url = `${PH_HOST}/api/projects/${PH_PROJECT_ID}/insights/${id}/`;
@@ -160,7 +160,7 @@ export async function getInsight(id: number | string): Promise<InsightResult | n
 }
 
 /** List saved insights, optionally filtered by search. */
-export async function listInsights(search?: string): Promise<InsightResult[]> {
+async function _listInsights(search?: string): Promise<InsightResult[]> {
   if (!isConfigured()) return [];
   try {
     const params = new URLSearchParams({ limit: '50' });

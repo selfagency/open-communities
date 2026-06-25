@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Ваша община получила одобрение.",
   "transactional_approvedBody": "Ваша община \" {name} \" одобрена и теперь видна в каталоге.",
   "transactional_rejectedSubject": "Представление вашей общины",
-  "transactional_rejectedBody": "Ваша община \" {name} \" не была одобрена."
+  "transactional_rejectedBody": "Ваша община \" {name} \" не была одобрена.",
+  "translations": "Переводы"
 }

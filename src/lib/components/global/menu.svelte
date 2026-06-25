@@ -93,7 +93,7 @@
           <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/congregations'); }}>{m.adminCongregations()}</button>
           <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/users'); }}>{m.adminUsers()}</button>
           <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/pages'); }}>{m.pages()}</button>
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/translations'); }}>Text</button>
+          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/translations'); }}>{m.translations()}</button>
         {/if}
         <div class="mt-2 border-t pt-2">
           <div class="flex items-center gap-3 py-1">

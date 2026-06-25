@@ -1,7 +1,9 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import TrashIcon from '@tabler/icons-svelte/icons/trash';
   import {
     Accordion, AccordionContent, AccordionItem, AccordionTrigger
   } from '$lib/components/ui/accordion';
@@ -19,12 +21,15 @@
   import { Input } from '$lib/components/ui/input';
   import * as Pagination from '$lib/components/ui/pagination';
   import { Textarea } from '$lib/components/ui/textarea';
+  import { m } from '$lib/paraglide/messages';
 
   let { data } = $props();
 
+  // svelte-ignore state_referenced_locally
   const locales = data.locales as string[];
 
   // Search
+  // svelte-ignore state_referenced_locally
   let searchValue = $state(data.pagination.search);
   let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -42,6 +47,7 @@
   }
 
   // Pagination
+  // svelte-ignore state_referenced_locally
   let currentPage = $state(data.pagination.page);
 
   function onPageChange(p: number) {
@@ -53,10 +59,18 @@
 
   // Accordion — track which key is open
   let openKey = $state('');
+  let mounted = $state(false);
+
+  $effect(() => { mounted = true; });
 
   // Delete state
   let deleteKey = $state('');
   let showDeleteDialog = $state(false);
+
+  function confirmDelete(key: string) {
+    deleteKey = key;
+    showDeleteDialog = true;
+  }
 
   // Add key state
   let showAddDialog = $state(false);
@@ -160,10 +174,11 @@
 </script>
 
 <svelte:head>
-  <title>Text</title>
+  <title>{m.translations()}</title>
 </svelte:head>
 
 <div class="space-y-6">
+  {#if mounted}
   {#if deployError}
     <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">{deployError}</div>
   {/if}
@@ -203,7 +218,7 @@
   <!-- Search -->
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h2 class="text-2xl font-semibold">Text</h2>
+      <h2 class="text-2xl font-semibold">{m.translations()}</h2>
     </div>
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">
@@ -318,10 +333,11 @@
             {#each locales as locale}
               {@const entry = entries.find((e: { locale: string }) => e.locale === locale)}
               <div class="grid grid-cols-[40px_1fr] items-start gap-2">
-                <label class="text-muted-foreground pt-2.5 text-xs font-mono font-medium uppercase">
+                <label for={`text-${key}-${locale}`} class="text-muted-foreground pt-2.5 text-xs font-mono font-medium uppercase">
                   {locale}
                 </label>
                 <Textarea
+                  id={`text-${key}-${locale}`}
                   name={locale}
                   value={getEditValue(key, locale, entry?.value ?? '')}
                   placeholder="—"
@@ -333,10 +349,11 @@
               </div>
             {/each}
 
-            <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center justify-end gap-2 pt-2">
+              <Button type="submit">Save</Button>
               <AlertDialog>
                 <AlertDialogTrigger>
-                  <Button type="button" variant="destructive" size="sm">Delete</Button>
+                  <Button type="button" variant="destructive">Delete</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -360,7 +377,6 @@
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button type="submit" size="sm">Save</Button>
             </div>
           </form>
         </AccordionContent>
@@ -404,4 +420,33 @@
       </Pagination.Root>
     </div>
   {/if}
+  {/if}
 </div>
+
+<!-- Global delete dialog (outside accordion to avoid nested button issues) -->
+{#if mounted}
+<AlertDialog bind:open={showDeleteDialog}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete &ldquo;{deleteKey}&rdquo;?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This will permanently delete this key and all its translations across every locale. This action cannot be undone.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <form method="POST" action="?/delete" use:enhance={() => {
+        return async ({ result }: { result: { type: string } }) => {
+          if (result.type === 'success') {
+            showDeleteDialog = false;
+            goto('/admin/translations', { replaceState: true });
+          }
+        };
+      }}>
+        <input type="hidden" name="key" value={deleteKey} />
+        <AlertDialogAction type="submit" class="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+      </form>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+{/if}

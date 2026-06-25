@@ -10,11 +10,11 @@
 		orientation?: "horizontal" | "vertical";
 	}
 
-	export function setToggleGroupCtx(props: ToggleGroupContext) {
+	function setToggleGroupCtx(props: ToggleGroupContext) {
 		setContext("toggleGroup", props);
 	}
 
-	export function getToggleGroupCtx() {
+	function getToggleGroupCtx() {
 		return getContext<Required<ToggleGroupContext>>("toggleGroup");
 	}
 </script>

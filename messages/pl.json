@@ -378,5 +378,6 @@
   "transactional_approvedSubject": "Twoja kongregacja została zatwierdzona",
   "transactional_approvedBody": "Twoja kongregacja „ {name} ” została zatwierdzona i jest teraz widoczna w katalogu.",
   "transactional_rejectedSubject": "Twoje zgłoszenie do zgromadzenia",
-  "transactional_rejectedBody": "Twoja kongregacja „ {name} ” nie została zatwierdzona."
+  "transactional_rejectedBody": "Twoja kongregacja „ {name} ” nie została zatwierdzona.",
+  "translations": "Tłumaczenia"
 }

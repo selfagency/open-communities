@@ -80,7 +80,7 @@ export function closeTransporter() {
   }
 }
 
-export async function mailTransport({
+async function mailTransport({
   headerFrom,
   bodyText,
   subject,
