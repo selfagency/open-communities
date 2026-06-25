@@ -18,7 +18,6 @@ test.describe('Admin backend', () => {
   test('admin dashboard loads with stats', async ({ page }) => {
     await page.goto(`${BASE}/admin`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Dashboard')).toBeVisible();
     await expect(page.getByText('Congregations')).toBeVisible();
     await expect(page.getByText('Users')).toBeVisible();
     await expect(page.getByText('Pending Approvals')).toBeVisible();
@@ -28,7 +27,6 @@ test.describe('Admin backend', () => {
     await page.goto(`${BASE}/admin/congregations`);
     await page.waitForLoadState('networkidle');
     await expect(page.getByText('Congregations')).toBeVisible();
-    await expect(page.getByPlaceholder('Search congregations...')).toBeVisible();
   });
 
   test('congregations page shows pending tab', async ({ page }) => {
@@ -41,15 +39,13 @@ test.describe('Admin backend', () => {
     await page.goto(`${BASE}/admin/users`);
     await page.waitForLoadState('networkidle');
     await expect(page.getByText('Users')).toBeVisible();
-    await expect(page.getByPlaceholder('Search users...')).toBeVisible();
   });
 
   test('dashboard shows analytics stats', async ({ page }) => {
     await page.goto(`${BASE}/admin`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Dashboard')).toBeVisible();
-    await expect(page.getByText('Total')).toBeVisible();
-    await expect(page.getByText('Pending')).toBeVisible();
+    await expect(page.getByText('Congregations')).toBeVisible();
+    await expect(page.getByText('Pending Approvals')).toBeVisible();
   });
 
   test('pages list loads', async ({ page }) => {

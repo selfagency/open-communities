@@ -19,7 +19,7 @@ test.describe('Congregation CRUD', () => {
   });
 
   test('login as existing user', async ({ page }) => {
-    await page.goto(`${base}/login`);
+    await page.goto(`${base}/login?login`);
     await page.waitForLoadState('networkidle');
 
     // Scope to the login form — signup form also has email/password fields
