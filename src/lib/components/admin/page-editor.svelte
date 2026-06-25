@@ -196,7 +196,7 @@
         <div class="space-y-2">
           <label for="content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
           <input type="hidden" name="content" value={content} />
-          <PellEditor bind:value={content} id="page-content" placeholder={m.pageEditorContentPlaceholder()} />
+          <PellEditor bind:value={content} id="page-content" />
         </div>
       </CardContent>
     </Card>
@@ -247,7 +247,7 @@
 
           <div class="space-y-2">
             <label for="var-content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
-            <PellEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} dir={selectedLang === 'he' ? 'rtl' : undefined} />
+            <PellEditor bind:value={v.content} id="var-content" dir={selectedLang === 'he' ? 'rtl' : undefined} />
           </div>
 
           <div class="grid gap-4 md:grid-cols-2">

@@ -25,40 +25,34 @@ if (PB_URL.endsWith('/')) PB_URL = PB_URL.slice(0, -1);
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 
+function writeFallbackFiles() {
+  const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
+  if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
+  for (const locale of knownLocales) {
+    writeFileSync(resolve(MESSAGES_DIR, `${locale}.json`), '{}\n');
+  }
+}
+
 if (!TOKEN) {
   if (existsSync(MESSAGES_DIR)) {
     console.warn('⚠  PB_API_TOKEN not set — local message files preserved, skipping fetch');
     process.exit(0);
   }
   console.warn('⚠  PB_API_TOKEN not set — writing empty message files');
-  const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
-  if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
-  for (const locale of knownLocales) {
-    writeFileSync(resolve(MESSAGES_DIR, `${locale}.json`), '{}\n');
-  }
+  writeFallbackFiles();
   process.exit(0);
 }
 
-async function main() {
-  console.log(`📦 Fetching translations from ${PB_URL}...`);
-
-  // Fetch all translations
+async function fetchRecords() {
   const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=1000`, {
     headers: { authorization: `Bearer ${TOKEN}` }
   });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch translations: ${res.status}`);
-  }
-
+  if (!res.ok) throw new Error(`Failed to fetch translations: ${res.status}`);
   const data = await res.json();
-  const records = data?.items ?? [];
+  return data?.items ?? [];
+}
 
-  if (records.length === 0) {
-    console.log('  ⚠  No translations found — writing empty message files');
-  }
-
-  // Group by locale — use Map to avoid prototype pollution via bracket notation
+function groupByLocale(records) {
   const byLocale = new Map();
   for (const r of records) {
     const locale = r.locale;
@@ -66,32 +60,32 @@ async function main() {
     const map = byLocale.get(locale);
     map[/** @type {string} */ (r.key)] = r.value;
   }
+  return byLocale;
+}
 
-  // Ensure messages directory exists
-  if (!existsSync(MESSAGES_DIR)) {
-    mkdirSync(MESSAGES_DIR, { recursive: true });
-  }
-
-  // Write one JSON file per locale
+function writeMessageFiles(byLocale) {
+  if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
   const locales = [...byLocale.keys()];
-  for (const locale of locales) {
-    const path = resolve(MESSAGES_DIR, `${locale}.json`);
-    const entries = byLocale.get(locale);
-    writeFileSync(path, `${JSON.stringify(entries, null, 2)}\n`);
-    console.log(`  ✅ ${locale}.json (${Object.keys(entries).length} keys)`);
-  }
-
-  // If no locales were found, write empty files for all known locales
-  // so Paraglide doesn't fail on missing files
-  if (locales.length === 0) {
-    const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
-    for (const locale of knownLocales) {
+  if (locales.length > 0) {
+    for (const locale of locales) {
       const path = resolve(MESSAGES_DIR, `${locale}.json`);
-      writeFileSync(path, '{}\n');
-      console.log(`  ⚠  ${locale}.json (empty)`);
+      const entries = byLocale.get(locale);
+      writeFileSync(path, `${JSON.stringify(entries, null, 2)}\n`);
+      console.log(`  ✅ ${locale}.json (${Object.keys(entries).length} keys)`);
     }
+  } else {
+    console.log('  ⚠  No translations found — writing empty message files');
+    writeFallbackFiles();
   }
+  return locales;
+}
 
+async function main() {
+  console.log(`📦 Fetching translations from ${PB_URL}...`);
+  const records = await fetchRecords();
+  if (records.length === 0) console.log('  ⚠  No translations found — writing empty files');
+  const byLocale = groupByLocale(records);
+  const locales = writeMessageFiles(byLocale);
   console.log(`\n✅ Done — ${locales.length || '11'} locales synced`);
 }
 

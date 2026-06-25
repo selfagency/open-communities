@@ -5,12 +5,10 @@
 
   let {
     value = $bindable(''),
-    placeholder = 'Write content...',
     id = 'pell-editor',
     dir
   }: {
     value: string;
-    placeholder?: string;
     id?: string;
     dir?: 'rtl' | 'ltr';
   } = $props();
