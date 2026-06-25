@@ -60,7 +60,7 @@ jobs:
           PB_URL: https://api.opencommunities.info
 
       - name: Type check
-        run: svelte-kit sync && pnpm svelte-check
+        run: pnpm svelte-kit sync && pnpm svelte-check
 
       - name: Lint
         run: pnpm run check
