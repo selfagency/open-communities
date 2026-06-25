@@ -21,6 +21,18 @@ let {
 // svelte-ignore state_referenced_locally
 // Intentional: form is initialized once from server data (not reactive to prop changes)
 const { form: formData, errors } = form;
+
+function langName(lang: string): string {
+  return lang === 'en'
+    ? 'English'
+    : lang === 'es'
+      ? 'Español'
+      : lang === 'fr'
+        ? 'Français'
+        : lang === 'he'
+          ? 'עברית'
+          : lang;
+}
 </script>
 
 <Card>
@@ -58,8 +70,7 @@ const { form: formData, errors } = form;
           <Form.Label for="lang">{m.language()}</Form.Label>
           <Select.Root type="single" bind:value={$formData.lang as string}>
             <Select.Trigger class="w-full" id="lang" {...props}>
-              // biome-ignore lint/style/noNestedTernary: intentional nested ternary
-              {$formData.lang === 'en' ? 'English' : $formData.lang === 'es' ? 'Español' : $formData.lang === 'fr' ? 'Français' : $formData.lang === 'he' ? 'עברית' : $formData.lang}
+              {langName($formData.lang)}
             </Select.Trigger>
             <Select.Content>
               <Select.Item value="en">English</Select.Item>

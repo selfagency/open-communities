@@ -148,7 +148,6 @@ const table = $derived(
         />
         <Input
           class="h-11 w-64 sm:w-80 pl-10"
-          // biome-ignore lint/style/useBlockStatements: intentional useBlockStatements
           onkeydown={(e) => { if (e.key === 'Enter') doSearch(); }}
           placeholder={m.searchUsers()}
           bind:value={search}

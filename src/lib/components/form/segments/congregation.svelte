@@ -200,7 +200,6 @@ $effect(() => {
               id="state"
               items={$location.options.stateOptions}
               {...props}
-              // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional useSimplifiedLogicExpression
               disabled={!country || !$location.options.stateOptions}
               onChange={handleStateChange}
               placeholder={m.selectThing({
@@ -220,7 +219,6 @@ $effect(() => {
               id="city"
               items={$location.options.cityOptions}
               {...props}
-              // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional useSimplifiedLogicExpression
               disabled={!province || !$location.options.cityOptions}
               onChange={handleCityChange}
               placeholder={m.selectThing({

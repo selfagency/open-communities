@@ -38,7 +38,6 @@ let {
 
 let viewMode = $state<'realtime' | 'week' | 'month'>('realtime');
 
-// biome-ignore lint/style/noNestedTernary: intentional nested ternary
 const digest = $derived(viewMode === 'realtime' ? realtimeDigest : viewMode === 'week' ? weekDigest : monthDigest);
 
 function fmt(n: number) {

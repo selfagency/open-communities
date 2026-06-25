@@ -6,7 +6,6 @@ import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as FileDropZone from '$lib/components/ui/file-drop-zone';
 import { Input } from '$lib/components/ui/input';
 import { Switch } from '$lib/components/ui/switch';
@@ -60,7 +59,7 @@ let content = $state((initialPage?.content as string) ?? '');
 let imageAlt = $state((initialPage?.imageAlt as string) ?? '');
 let imageCaption = $state((initialPage?.imageCaption as string) ?? '');
 let manualSlug = $state(!!initialPage);
-let error = $state('');
+let errMsg = $state('');
 
 // Variant fields for non-English languages
 let variants = $state<Variant[]>(
@@ -77,7 +76,6 @@ let variants = $state<Variant[]>(
 );
 let imageFile = $state<File | null>(null);
 let imagePreview = $state((initialPage?.image as string) ?? '');
-// biome-ignore lint/suspicious/noUnassignedVariables: assigned via Svelte bind:this
 let variantsInput: HTMLInputElement;
 
 let selectedLang = $state('en');
@@ -95,7 +93,6 @@ function generateSlug(val: string): string {
     val
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
-      // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
       .split(/\s+/)
       .filter((w) => w && w.length > 1 && !words.includes(w))
       .join('-')
@@ -129,13 +126,13 @@ function handleImageSelect(files: File[]) {
 
 function handleEnhance() {
   saving = true;
-  error = '';
+  errMsg = '';
   return ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
     saving = false;
     if (result.type === 'success' || result.type === 'redirect') {
       onSuccess();
     } else {
-      error = (result.data?.error as string) ?? m.pageEditorSaveFailed();
+      errMsg = (result.data?.error as string) ?? m.pageEditorSaveFailed();
     }
   };
 }
@@ -155,10 +152,8 @@ function beforeSubmit() {
   variantsInput.value = JSON.stringify(vars);
 }
 </script>
-// biome-ignore lint/style/noRestrictedGlobals: intentional usage
-{#if error}
-  // biome-ignore lint/style/noRestrictedGlobals: intentional usage
-  <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{error}</div>
+{#if errMsg}
+  <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{errMsg}</div>
 {/if}
 
 <form {action} class="space-y-6" method="POST" onsubmit={beforeSubmit} use:enhance={handleEnhance}>
@@ -323,9 +318,7 @@ function beforeSubmit() {
   </div>
 
   <div class="flex gap-2">
-    // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
     <Button disabled={!title || !slug || saving} type="submit">
-      // biome-ignore lint/style/noNestedTernary: intentional nested ternary
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
     <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>

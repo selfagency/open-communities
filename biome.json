@@ -55,7 +55,8 @@
         "noNonNullAssertion": "warn",
         "noExportedImports": "off",
         "noParameterProperties": "off",
-        "useFilenamingConvention": "off"
+        "useFilenamingConvention": "off",
+        "noNestedTernary": "off"
       },
       "complexity": {
         "noForEach": "warn",
@@ -183,7 +184,8 @@
           },
           "style": {
             "noNonNullAssertion": "off",
-            "useTemplate": "off"
+            "useTemplate": "off",
+            "noNestedTernary": "off"
           },
           "a11y": {
             "useButtonType": "off",

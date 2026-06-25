@@ -20,10 +20,8 @@ let {
     {#if childrenProp}
       {@render childrenProp({ errorProps, errors })}
     {:else}
-      // biome-ignore lint/style/noRestrictedGlobals: intentional usage
-      {#each errors as error (error)}
-        // biome-ignore lint/style/noRestrictedGlobals: intentional usage
-        <div {...errorProps} class={cn(errorClasses)}>{error}</div>
+      {#each errors as err (err)}
+        <div {...errorProps} class={cn(errorClasses)}>{err}</div>
       {/each}
     {/if}
   {/snippet}

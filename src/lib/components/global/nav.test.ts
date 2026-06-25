@@ -13,7 +13,6 @@ describe('Nav component', () => {
     render(Nav);
 
     // Mobile layout: Sheet.Trigger includes an sr-only label with the menu key — assert that specific button exists
-    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const trigger = screen.getByRole('button', { name: /menu/i });
     expect(trigger).toBeInTheDocument();
   });
@@ -24,7 +23,6 @@ describe('Nav component', () => {
     render(Nav);
 
     // Desktop layout should not render the Sheet Trigger (button named 'menu')
-    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     expect(screen.queryByRole('button', { name: /menu/i })).not.toBeInTheDocument();
   });
 });
