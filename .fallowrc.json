@@ -1,0 +1,15 @@
+{
+  "$schema": "https://fallow.tools/schema/fallowrc.json",
+  "ignore": [
+    "src/lib/components/ui/**",
+    "e2e/**",
+    "src/test/**",
+    "scripts/**"
+  ],
+  "rules": {
+    "complexity": {
+      "maxCrap": 50,
+      "ignoreTemplates": true
+    }
+  }
+}

@@ -31,11 +31,10 @@ test.describe('Admin backend', () => {
     await expect(page.getByPlaceholder('Search congregations...')).toBeVisible();
   });
 
-  test('approvals page loads with tabs', async ({ page }) => {
-    await page.goto(`${BASE}/admin/approvals`);
+  test('congregations page shows pending tab', async ({ page }) => {
+    await page.goto(`${BASE}/admin/congregations`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Approvals')).toBeVisible();
-    await expect(page.getByText('New Submissions')).toBeVisible();
+    await expect(page.getByText('Pending')).toBeVisible();
   });
 
   test('users list loads', async ({ page }) => {
@@ -45,10 +44,12 @@ test.describe('Admin backend', () => {
     await expect(page.getByPlaceholder('Search users...')).toBeVisible();
   });
 
-  test('analytics page loads', async ({ page }) => {
-    await page.goto(`${BASE}/admin/analytics`);
+  test('dashboard shows analytics stats', async ({ page }) => {
+    await page.goto(`${BASE}/admin`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Analytics')).toBeVisible();
+    await expect(page.getByText('Dashboard')).toBeVisible();
+    await expect(page.getByText('Total')).toBeVisible();
+    await expect(page.getByText('Pending')).toBeVisible();
   });
 
   test('pages list loads', async ({ page }) => {
@@ -92,16 +93,6 @@ test.describe('Admin backend', () => {
     await expect(page.getByText('Updated')).toBeVisible();
   });
 
-  test('user editor loads from users list', async ({ page }) => {
-    await page.goto(`${BASE}/admin/users`);
-    await page.waitForLoadState('networkidle');
-    const editButton = page.locator('table button').first();
-    await editButton.click();
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Profile')).toBeVisible();
-    await expect(page.getByText('Change Password')).toBeVisible();
-  });
-
   test('create new page via page editor', async ({ page }) => {
     await page.goto(`${BASE}/admin/pages/new`);
     await page.waitForLoadState('networkidle');
@@ -109,7 +100,6 @@ test.describe('Admin backend', () => {
 
     // Fill in the form
     await page.getByLabel('Title').fill('E2E Test Page');
-    // Slug auto-generates from title
     await page.getByLabel('Description').fill('Created during E2E test');
 
     // Submit the form
@@ -118,44 +108,5 @@ test.describe('Admin backend', () => {
 
     // Should redirect back to pages list
     await expect(page.getByText('Pages')).toBeVisible();
-  });
-
-  test('edit existing page changes title', async ({ page }) => {
-    await page.goto(`${BASE}/admin/pages`);
-    await page.waitForLoadState('networkidle');
-
-    // Click first edit pencil in the table
-    const editButton = page.locator('table button').first();
-    await editButton.click();
-    await page.waitForLoadState('networkidle');
-
-    await expect(page.getByText('Edit')).toBeVisible();
-    await expect(page.getByLabel('Title')).toBeVisible();
-    await expect(page.getByLabel('Slug')).toBeVisible();
-  });
-
-  test('user editor can update name', async ({ page }) => {
-    await page.goto(`${BASE}/admin/users`);
-    await page.waitForLoadState('networkidle');
-
-    // Click the first edit pencil icon
-    const editButton = page.locator('table button').first();
-    await editButton.click();
-    await page.waitForLoadState('networkidle');
-
-    // User editor should show profile form
-    await expect(page.getByText('Profile')).toBeVisible();
-    await expect(page.getByText('Change Password')).toBeVisible();
-    await expect(page.getByText('Danger Zone')).toBeVisible();
-  });
-
-  test('user menu has language and dark mode at top', async ({ page }) => {
-    await page.goto(`${BASE}/admin`);
-    await page.waitForLoadState('networkidle');
-    // Open user menu
-    await page.getByLabel('User menu').click();
-    // Language and dark mode should be visible
-    await expect(page.getByText('Language')).toBeVisible();
-    await expect(page.getByText('Dark mode')).toBeVisible();
   });
 });

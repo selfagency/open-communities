@@ -47,7 +47,7 @@ interface PostHogInsight {
   last_refresh: string | null;
 }
 
-export interface InsightResult {
+interface InsightResult {
   id: number;
   short_id: string;
   name: string;

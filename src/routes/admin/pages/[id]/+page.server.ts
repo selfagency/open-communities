@@ -15,25 +15,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, 'Page not found');
   }
 
-  const variants = await client
-    .collection('pageVariants')
-    .getFullList({
-      filter: client.filter('page = {:pageId}', { pageId }),
-      requestKey: `page-variants-${pageId}`
-    })
-    .catch(() => []);
-
   return {
-    page: page as Record<string, unknown>,
-    variants: (variants as Array<Record<string, unknown>>).map((v) => ({
-      id: v.id,
-      language: v.language,
-      title: (v.title as string) ?? '',
-      description: (v.description as string) ?? '',
-      content: (v.content as string) ?? '',
-      imageAlt: (v.imageAlt as string) ?? '',
-      imageCaption: (v.imageCaption as string) ?? ''
-    }))
+  page: page as Record<string, unknown>
   };
 };
 
