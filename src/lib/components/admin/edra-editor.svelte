@@ -1,6 +1,6 @@
 <script lang="ts">
-  import EdraEditor from 'edra/dist/edra/shadcn/editor.svelte';
-  import EdraToolBar from 'edra/dist/edra/shadcn/toolbar.svelte';
+  import EdraEditor from '$lib/edra/shadcn/editor.svelte';
+  import EdraToolBar from '$lib/edra/shadcn/toolbar.svelte';
 
   let {
     value = $bindable(''),
