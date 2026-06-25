@@ -24,6 +24,7 @@
     "preview": "pnpx dotenv-cli -c dynamic -- vite preview",
     "preview:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite preview",
     "start": "node build/index.js",
+    "svelte-check": "svelte-check",
     "test": "vitest",
     "test:browser": "pnpx dotenv-cli -e .env.test -- vitest run --project browser",
     "test:e2e": "pnpx dotenv-cli -e .env.test -e .env.e2e -- playwright test --config e2e/playwright.config.mjs",
