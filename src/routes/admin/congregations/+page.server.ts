@@ -44,6 +44,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     )
   ]);
 
+  // fallow-ignore-next-line unused-load-data-keys
   return {
     congregations: [...active.map(mapCong), ...pending.map(mapCong)],
     pending: pending.map(mapCong)

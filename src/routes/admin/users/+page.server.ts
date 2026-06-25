@@ -22,6 +22,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     })
   );
 
+  // fallow-ignore-next-line unused-load-data-keys
   return {
     users: list.items.map((u: Record<string, unknown>) => {
       const expand = u.expand as Record<string, unknown> | undefined;

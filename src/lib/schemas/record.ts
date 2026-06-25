@@ -30,8 +30,9 @@ export const deleteSchema = z.object({
   })
 });
 
-export type DeleteSchema = z.infer<typeof deleteSchema>;
+type DeleteSchema = z.infer<typeof deleteSchema>;
 
+// fallow-ignore-next-line unused-exports
 export const transferSchema = z.object({
   email: z.email().refine((value) => !!value, {
     message: Lazy(() => m.thingRequired({ thing: m.email() }))
@@ -94,4 +95,4 @@ export const defaultSchema = z.object({
 });
 
 export type DefaultSchema = z.infer<typeof defaultSchema>;
-export type FormData = z.infer<typeof defaultSchema>;
+type FormData = z.infer<typeof defaultSchema>;
