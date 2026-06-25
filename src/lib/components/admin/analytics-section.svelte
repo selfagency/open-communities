@@ -2,6 +2,7 @@
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
+  import { invalidateAll } from '$app/navigation';
 
   interface PhChange { percent: number; direction: string; long_text: string; }
   interface PhMetric { current: number; change: PhChange; }
@@ -24,13 +25,19 @@
     monthDigest: Digest | null;
   } = $props();
 
-  let viewMode = $state<'realtime' | 'week' | 'month'>('month');
+  let viewMode = $state<'realtime' | 'week' | 'month'>('realtime');
 
   const digest = $derived(
     viewMode === 'realtime' ? realtimeDigest : viewMode === 'week' ? weekDigest : monthDigest
   );
 
   function fmt(n: number) { return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n); }
+
+  // Auto-refresh every 2 minutes in any mode
+  $effect(() => {
+    const interval = setInterval(() => { invalidateAll(); }, 120_000);
+    return () => clearInterval(interval);
+  });
 </script>
 
 {#if digest}
