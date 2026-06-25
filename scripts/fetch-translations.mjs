@@ -26,8 +26,13 @@ const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 
 if (!TOKEN) {
-  console.error('❌ PB_API_TOKEN is required');
-  process.exit(1);
+  console.warn('⚠  PB_API_TOKEN not set — skipping translation fetch, writing empty message files');
+  const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
+  if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
+  for (const locale of knownLocales) {
+    writeFileSync(resolve(MESSAGES_DIR, `${locale}.json`), '{}\n');
+  }
+  process.exit(0);
 }
 
 async function main() {
@@ -49,12 +54,13 @@ async function main() {
     console.log('  ⚠  No translations found — writing empty message files');
   }
 
-  // Group by locale
-  const byLocale = {};
+  // Group by locale — use Map to avoid prototype pollution via bracket notation
+  const byLocale = new Map();
   for (const r of records) {
     const locale = r.locale;
-    if (!byLocale[locale]) byLocale[locale] = {};
-    byLocale[locale][r.key] = r.value;
+    if (!byLocale.has(locale)) byLocale.set(locale, {});
+    const map = byLocale.get(locale);
+    map[/** @type {string} */ (r.key)] = r.value;
   }
 
   // Ensure messages directory exists
@@ -63,11 +69,12 @@ async function main() {
   }
 
   // Write one JSON file per locale
-  const locales = Object.keys(byLocale);
+  const locales = [...byLocale.keys()];
   for (const locale of locales) {
     const path = resolve(MESSAGES_DIR, `${locale}.json`);
-    writeFileSync(path, `${JSON.stringify(byLocale[locale], null, 2)}\n`);
-    console.log(`  ✅ ${locale}.json (${Object.keys(byLocale[locale]).length} keys)`);
+    const entries = byLocale.get(locale);
+    writeFileSync(path, `${JSON.stringify(entries, null, 2)}\n`);
+    console.log(`  ✅ ${locale}.json (${Object.keys(entries).length} keys)`);
   }
 
   // If no locales were found, write empty files for all known locales

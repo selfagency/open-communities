@@ -37,7 +37,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const keyMap: Record<string, Array<{ locale: string; value: string; id: string }>> = {};
   for (const r of records as Array<Record<string, unknown>>) {
     const key = r.key as string;
-    if (!keyMap[key]) keyMap[key] = [];
+    if (!Object.hasOwn(keyMap, key)) keyMap[key] = [];
     keyMap[key].push({
       id: r.id as string,
       locale: r.locale as string,

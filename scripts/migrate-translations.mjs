@@ -85,7 +85,8 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
   const sortedKeys = [...allKeys].sort((a, b) => a.localeCompare(b));
   for (const key of sortedKeys) {
     for (const locale of locales) {
-      const value = messages[locale]?.[key];
+      const localeMessages = messages.get(locale);
+      const value = localeMessages ? localeMessages[key] : undefined;
       if (value === undefined || value === null) continue;
 
       const mapKey = `${key}|${locale}`;
@@ -135,25 +136,25 @@ async function main() {
 
   // Read all locale files
   const locales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
-  const messages = {};
+  const messages = new Map();
 
   for (const locale of locales) {
     const path = resolve(MESSAGES_DIR, `${locale}.json`);
     try {
       const raw = JSON.parse(readFileSync(path, 'utf-8'));
       const { $schema, ...keys } = raw;
-      messages[locale] = keys;
+      messages.set(locale, keys);
       console.log(`  📖 ${locale}.json (${Object.keys(keys).length} keys)`);
     } catch {
       console.log(`  ⚠  ${locale}.json not found, skipping`);
-      messages[locale] = {};
+      messages.set(locale, {});
     }
   }
 
   // Collect all unique keys across all locales
   const allKeys = new Set();
   for (const locale of locales) {
-    for (const key of Object.keys(messages[locale] || {})) {
+    for (const key of Object.keys(messages.get(locale) || {})) {
       allKeys.add(key);
     }
   }
