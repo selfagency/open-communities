@@ -8,7 +8,7 @@
 
   let { data } = $props();
   // svelte-ignore state_referenced_locally
-const user = data.targetUser;
+  const user = data.targetUser;
   // svelte-ignore state_referenced_locally
   let formError = $state('');
   let formSuccess = $state('');

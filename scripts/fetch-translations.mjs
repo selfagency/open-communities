@@ -13,7 +13,7 @@
  *   MESSAGES_DIR  — output directory (default: messages/)
  */
 
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -69,9 +69,19 @@ function writeMessageFiles(byLocale) {
   if (locales.length > 0) {
     for (const locale of locales) {
       const path = resolve(MESSAGES_DIR, `${locale}.json`);
-      const entries = byLocale.get(locale);
-      writeFileSync(path, `${JSON.stringify(entries, null, 2)}\n`);
-      console.log(`  ✅ ${locale}.json (${Object.keys(entries).length} keys)`);
+      const pbEntries = byLocale.get(locale);
+      // Merge with existing file — PB adds/updates keys but doesn't remove local-only keys
+      let merged = pbEntries;
+      try {
+        if (existsSync(path)) {
+          const existing = JSON.parse(readFileSync(path, 'utf-8'));
+          merged = { ...existing, ...pbEntries };
+        }
+      } catch {
+        // If existing file is unparseable, use PB entries as-is
+      }
+      writeFileSync(path, `${JSON.stringify(merged, null, 2)}\n`);
+      console.log(`  ✅ ${locale}.json (${Object.keys(merged).length} keys)`);
     }
   } else {
     console.log('  ⚠  No translations found — writing empty message files');
