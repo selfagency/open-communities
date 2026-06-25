@@ -1,3 +1,4 @@
+// @ts-nocheck
 const markup = `<svg data-testid="mock-rabbis" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100%" height="100%" fill="none"/></svg>`;
 
 /** @param {any} options */

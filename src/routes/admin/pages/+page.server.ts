@@ -7,14 +7,14 @@ export const load: PageServerLoad = async ({ locals }) => {
     client.collection('pages').getFullList({ sort: '-updated', requestKey: 'admin-pages' })
   );
   return {
-    pages: pages.map((p) => ({
-      id: p.id as string,
-      title: p.title as string,
-      slug: p.slug as string,
-      description: (p.description as string) ?? '',
-      imageAlt: (p.imageAlt as string) ?? '',
-      imageCaption: (p.imageCaption as string) ?? '',
-      updated: p.updated as string
+    pages: pages.map((p: unknown) => ({
+      id: (p as Record<string, unknown>).id as string,
+      title: (p as Record<string, unknown>).title as string,
+      slug: (p as Record<string, unknown>).slug as string,
+      description: ((p as Record<string, unknown>).description as string) ?? '',
+      imageAlt: ((p as Record<string, unknown>).imageAlt as string) ?? '',
+      imageCaption: ((p as Record<string, unknown>).imageCaption as string) ?? '',
+      updated: (p as Record<string, unknown>).updated as string
     }))
   };
 };

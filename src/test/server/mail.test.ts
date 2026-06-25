@@ -7,7 +7,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 import type {
   Collections,
   CongregationMetaResponse,
-  MetaDenominationOptions,
+  CongregationMetaDenominationOptions,
   TypedPocketBase
 } from '$lib/pocketbase.d';
 

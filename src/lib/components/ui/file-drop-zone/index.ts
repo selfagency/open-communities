@@ -1,3 +1,4 @@
+// @ts-ignore: Svelte 5 component default export not recognized by TS
 export { default as Root } from './file-drop-zone.svelte';
 export { default as Trigger } from './file-drop-zone-trigger.svelte';
 

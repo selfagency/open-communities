@@ -170,7 +170,15 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   return response;
 }
 
-export const handleError = async ({ error, event, status }) => {
+export const handleError = async ({
+  error,
+  event,
+  status
+}: {
+  error: unknown;
+  event: RequestEvent;
+  status: number;
+}): Promise<{ errorId: string; message: string } | undefined> => {
   if (status !== 404) {
     const errorId = crypto.randomUUID();
 

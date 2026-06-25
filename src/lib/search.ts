@@ -88,7 +88,7 @@ export class Search {
   debug: boolean;
   fuzzy: Fuzzy;
   ids: string[];
-  results: Readable<CongregationMetaRecord[]>;
+  results: Readable<SearchData[]>;
   state: ReturnType<typeof writableDeep<SearchState>>;
 
   // Pre-built indexes for fast filtering
