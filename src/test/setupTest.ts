@@ -12,6 +12,20 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/svelte';
 import { vi } from 'vitest';
 
+// Mock PocketBase constructor so server API module can be imported in tests
+vi.mock('pocketbase', () => {
+  const MockPB = vi.fn(() => ({
+    autoCancellation: vi.fn().mockReturnThis(),
+    collection: vi.fn().mockReturnThis(),
+    filter: vi.fn(),
+    getFullList: vi.fn().mockResolvedValue([]),
+    getFirstListItem: vi.fn().mockResolvedValue(null),
+    authWithPassword: vi.fn().mockResolvedValue({ record: { id: 'test' } }),
+    authRefresh: vi.fn()
+  }));
+  return { default: MockPB };
+});
+
 // Polyfill Element.animate for jsdom (used by svelte transitions and some UI
 // primitives). jsdom doesn't implement the Web Animations API, so make a
 // minimal no-op implementation that provides a finished promise and lifecycle

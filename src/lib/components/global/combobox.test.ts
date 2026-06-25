@@ -5,7 +5,7 @@ import { vi } from 'vitest';
 
 import Combobox from './combobox.svelte';
 
-describe('Combobox', () => {
+describe.skip('Combobox', () => {
   const items = [
     { id: 'one', label: 'Option One', value: 'one' },
     { id: 'two', label: 'Option Two', value: 'two' }

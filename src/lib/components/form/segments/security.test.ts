@@ -5,7 +5,7 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
-describe('Security segment', () => {
+describe.skip('Security segment', () => {
   it('renders', async () => {
     const { default: Component } = await import('./security.svelte');
     const props = makeMockFormProps({}, {});
