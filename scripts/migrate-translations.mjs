@@ -76,6 +76,33 @@ async function fallbackBatch(requests) {
   }
 }
 
+function buildBatchEntry(key, locale, value, existingEntry) {
+  if (existingEntry) {
+    if (existingEntry.value === value) return null;
+    return {
+      method: 'PATCH',
+      url: `/api/collections/translations/records/${existingEntry.id}`,
+      body: { value },
+      headers: { 'content-type': 'application/json' }
+    };
+  }
+  return {
+    method: 'POST',
+    url: '/api/collections/translations/records',
+    body: { key, locale, value },
+    headers: { 'content-type': 'application/json' }
+  };
+}
+
+async function flushBatch(batch, sent) {
+  if (batch.length === 0) return sent;
+  await batchSend(batch);
+  batch.length = 0;
+  process.stdout.write('.');
+  await new Promise((r) => setTimeout(r, 200));
+  return sent;
+}
+
 async function buildBatchOps(messages, locales, allKeys, existingMap) {
   const batch = [];
   let created = 0;
@@ -89,45 +116,21 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
       const value = localeMessages ? localeMessages[key] : undefined;
       if (value === undefined || value === null) continue;
 
-      const mapKey = `${key}|${locale}`;
-      const existingEntry = existingMap.get(mapKey);
-
-      if (existingEntry) {
-        if (existingEntry.value === value) {
-          skipped++;
-          continue;
-        }
-        batch.push({
-          method: 'PATCH',
-          url: `/api/collections/translations/records/${existingEntry.id}`,
-          body: { value },
-          headers: { 'content-type': 'application/json' }
-        });
-        updated++;
-      } else {
-        batch.push({
-          method: 'POST',
-          url: '/api/collections/translations/records',
-          body: { key, locale, value },
-          headers: { 'content-type': 'application/json' }
-        });
-        created++;
+      const existingEntry = existingMap.get(`${key}|${locale}`);
+      const entry = buildBatchEntry(key, locale, value, existingEntry);
+      if (!entry) {
+        skipped++;
+        continue;
       }
+      if (existingEntry) updated++;
+      else created++;
+      batch.push(entry);
 
-      if (batch.length >= BATCH_SIZE) {
-        await batchSend(batch);
-        batch.length = 0;
-        process.stdout.write('.');
-        await new Promise((r) => setTimeout(r, 200));
-      }
+      if (batch.length >= BATCH_SIZE) await flushBatch(batch);
     }
   }
 
-  if (batch.length > 0) {
-    await batchSend(batch);
-    process.stdout.write('.');
-  }
-
+  if (batch.length > 0) await batchSend(batch);
   return { created, updated, skipped };
 }
 
