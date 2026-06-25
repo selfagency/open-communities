@@ -20,7 +20,8 @@ import { fileURLToPath } from 'node:url';
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '..');
 
-const PB_URL = (process.env.PB_URL || 'http://localhost:8090').replace(/\/+$/, '');
+let PB_URL = process.env.PB_URL || 'http://localhost:8090';
+if (PB_URL.endsWith('/')) PB_URL = PB_URL.slice(0, -1);
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 
@@ -38,8 +39,7 @@ async function main() {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Failed to fetch translations: ${res.status} — ${text.slice(0, 200)}`);
+    throw new Error(`Failed to fetch translations: ${res.status}`);
   }
 
   const data = await res.json();
@@ -66,7 +66,7 @@ async function main() {
   const locales = Object.keys(byLocale);
   for (const locale of locales) {
     const path = resolve(MESSAGES_DIR, `${locale}.json`);
-    writeFileSync(path, JSON.stringify(byLocale[locale], null, 2) + '\n');
+    writeFileSync(path, `${JSON.stringify(byLocale[locale], null, 2)}\n`);
     console.log(`  ✅ ${locale}.json (${Object.keys(byLocale[locale]).length} keys)`);
   }
 
@@ -81,7 +81,7 @@ async function main() {
     }
   }
 
-  console.log(`\n✅ Done — ${records.length} translations across ${locales.length || '11'} locales`);
+  console.log(`\n✅ Done — ${locales.length || '11'} locales synced`);
 }
 
 await main();

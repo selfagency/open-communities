@@ -3,6 +3,7 @@ import type { RecordModel } from 'pocketbase';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { userSchema } from '$lib/schemas/user';
+import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -44,7 +45,9 @@ export const actions = {
         body.password = form.data.password;
         body.passwordConfirm = form.data.passwordConfirm;
       }
-      const updated = await client.collection('users').update(client.authStore.record?.id as string, body);
+      const updated = await withRetry(() =>
+        client.collection('users').update(client.authStore.record?.id as string, body)
+      );
       client.authStore.save(client.authStore.token, updated as unknown as RecordModel);
       return { form, success: true };
     } catch (err: unknown) {
@@ -56,14 +59,16 @@ export const actions = {
 
   unlink: async ({ locals }) => {
     const client = locals.api;
-    await client.collection('users').update(client.authStore.record?.id as string, { congregation: null });
+    await withRetry(() =>
+      client.collection('users').update(client.authStore.record?.id as string, { congregation: null })
+    );
     return { unlinked: true };
   },
 
   deleteAccount: async ({ locals }) => {
     const client = locals.api;
     const id = client.authStore.record?.id as string;
-    await client.collection('users').delete(id);
+    await withRetry(() => client.collection('users').delete(id));
     client.authStore.clear();
     return { deleted: true };
   }

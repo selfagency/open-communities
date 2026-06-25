@@ -48,7 +48,7 @@
     if (!pendingId || !pendingAction) return;
     await fetch('/api/admin/congregations/' + pendingId + (pendingAction === 'approve' ? '/toggle' : '/delete'), { method: pendingAction === 'approve' ? 'POST' : 'DELETE' });
     pendingId = null; pendingAction = null;
-    goto('/admin/congregations');
+    goto('/admin/congregations', { invalidateAll: true });
   }
 
   function locationStr(c: Cong) {

@@ -16,30 +16,28 @@
   interface User { id: string; name: string; email: string; verified: boolean; admin: boolean; congregation: string; congregationName: string; }
 
   let { data }: { data: { users: User[]; total: number; page: number; perPage: number; search: string } } = $props();
-  let search = $state(data.search);
+  // svelte-ignore state_referenced_locally
+  const initialData = data;
+  let search = $state(initialData.search);
 
-  let currentPage = $state(data.page);
+  let currentPage = $state(initialData.page);
 
   function doSearch() {
     const params = new URLSearchParams(page.url.searchParams);
     if (search) params.set('q', search); else params.delete('q');
     params.set('page', '1');
-    goto('/admin/users?' + params);
+    goto('/admin/users?' + params, { invalidateAll: true });
   }
   function onPageChange(p: number) {
     currentPage = p;
     const params = new URLSearchParams(page.url.searchParams);
     params.set('page', String(p));
-    goto('/admin/users?' + params);
-  }
-
-  function s(content: string): string {
-    return content;
+    goto('/admin/users?' + params, { invalidateAll: true });
   }
 
   const columns: ColumnDef<User>[] = [
-    { accessorKey: 'name', header: m.name(), cell: ({ row }) => s(row.original.name || '—') },
-    { accessorKey: 'email', header: m.email(), cell: ({ row }) => s(row.original.email) },
+    { accessorKey: 'name', header: m.name(), cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="font-medium">${get().v || '—'}</span>` })), { v: row.original.name }) },
+    { accessorKey: 'email', header: m.email(), cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => get().v })), { v: row.original.email }) },
     {
       accessorKey: 'verified',
       header: m.status(),

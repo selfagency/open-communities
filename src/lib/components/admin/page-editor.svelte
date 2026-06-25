@@ -11,7 +11,7 @@
   import { Switch } from '$lib/components/ui/switch';
   import { Textarea } from '$lib/components/ui/textarea';
   import { m } from '$lib/paraglide/messages';
-  import QuillEditor from './quill-editor.svelte';
+  import LexicalEditor from './lexical-editor.svelte';
 
   const languages = [
     { code: 'en', label: 'English' },
@@ -49,15 +49,16 @@
     onSuccess?: () => void;
   } = $props();
 
-  // Base page fields (English)
-  let title = $state((page?.title as string) ?? '');
-  let slug = $state((page?.slug as string) ?? '');
-  let description = $state((page?.description as string) ?? '');
-  let content = $state((page?.content as string) ?? '');
-  let imageAlt = $state((page?.imageAlt as string) ?? '');
-  let imageCaption = $state((page?.imageCaption as string) ?? '');
-  let manualSlug = $state(!!page);
+  // Snapshot page prop for initial values (intentionally non-reactive)
   // svelte-ignore state_referenced_locally
+  const initialPage = page;
+  let title = $state((initialPage?.title as string) ?? '');
+  let slug = $state((initialPage?.slug as string) ?? '');
+  let description = $state((initialPage?.description as string) ?? '');
+  let content = $state((initialPage?.content as string) ?? '');
+  let imageAlt = $state((initialPage?.imageAlt as string) ?? '');
+  let imageCaption = $state((initialPage?.imageCaption as string) ?? '');
+  let manualSlug = $state(!!initialPage);
   let error = $state('');
 
   // Variant fields for non-English languages
@@ -72,7 +73,7 @@
     }))
   );
   let imageFile = $state<File | null>(null);
-  let imagePreview = $state((page?.image as string) ?? '');
+  let imagePreview = $state((initialPage?.image as string) ?? '');
   let variantsInput: HTMLInputElement;
 
   let selectedLang = $state('en');
@@ -184,7 +185,7 @@
               {m.pageEditorSlugManual()}
             </label>
           </div>
-          <Input id="slug" name="slug" bind:value={slug} required placeholder={m.pageEditorSlugPlaceholder()} pattern="[a-z0-9-]+" class="font-mono text-sm" />
+          <Input id="slug" name="slug" bind:value={slug} required placeholder={m.pageEditorSlugPlaceholder()} class="font-mono text-sm" />
         </div>
 
         <div class="space-y-2">
@@ -195,7 +196,7 @@
         <div class="space-y-2">
           <label for="content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
           <input type="hidden" name="content" value={content} />
-          <QuillEditor bind:value={content} id="page-content" placeholder={m.pageEditorContentPlaceholder()} />
+          <LexicalEditor bind:value={content} id="page-content" placeholder={m.pageEditorContentPlaceholder()} />
         </div>
       </CardContent>
     </Card>
@@ -246,7 +247,7 @@
 
           <div class="space-y-2">
             <label for="var-content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
-            <QuillEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} dir={selectedLang === 'he' ? 'rtl' : undefined} />
+            <LexicalEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} dir={selectedLang === 'he' ? 'rtl' : undefined} />
           </div>
 
           <div class="grid gap-4 md:grid-cols-2">

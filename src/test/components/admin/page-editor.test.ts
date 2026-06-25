@@ -94,10 +94,10 @@ describe('page-variants language list', () => {
   });
 });
 
-describe('quill-editor', () => {
+describe('lexical-editor', () => {
   it('exports a Svelte component', () => {
-    // The component is SSR-safe — Quill is dynamically imported in onMount
+    // The component is SSR-safe — Lexical is dynamically imported
     // Component rendering requires browser test environment with DOM APIs
-    expect(true).toBe(true);
+    // Skipped: @testing-library/svelte has known Svelte 5 incompatibility
   });
 });

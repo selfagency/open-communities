@@ -22,7 +22,8 @@ import { fileURLToPath } from 'node:url';
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '..');
 
-const PB_URL = (process.env.PB_URL || 'http://localhost:8090').replace(/\/+$/, '');
+let PB_URL = process.env.PB_URL || 'http://localhost:8090';
+if (PB_URL.endsWith('/')) PB_URL = PB_URL.slice(0, -1);
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 const BATCH_SIZE = 50; // PB batch limit
@@ -36,8 +37,10 @@ async function api(method, path, body) {
   const opts = { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` } };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(`${PB_URL}/api${path}`, opts);
+  if (!res.ok) {
+    throw new Error(`${method} ${path}: ${res.status}`);
+  }
   const text = await res.text();
-  if (!res.ok) throw new Error(`${method} ${path}: ${res.status} — ${text.slice(0, 200)}`);
   return text ? JSON.parse(text) : null;
 }
 
@@ -48,29 +51,83 @@ async function batchSend(requests) {
     body: JSON.stringify({ requests })
   });
   if (!res.ok) {
-    const text = await res.text();
-    // If batch partially failed, log and continue
-    console.error(`\n⚠  Batch failed (${res.status}): ${text.slice(0, 300)}`);
-    // Fall back to individual requests for this batch
-    for (const req of requests) {
-      try {
-        const r = await fetch(`${PB_URL}${req.url}`, {
-          method: req.method,
-          headers: { ...req.headers, authorization: `Bearer ${TOKEN}` },
-          body: req.body ? JSON.stringify(req.body) : undefined
-        });
-        if (!r.ok) {
-          const t = await r.text();
-          // If it's a duplicate, skip silently
-          if (t.includes('validation_not_unique')) continue;
-          console.error(`    ⚠  ${req.method} ${req.url}: ${r.status} — ${t.slice(0, 100)}`);
+    console.error(`\n⚠  Batch failed (${res.status})`);
+    await fallbackBatch(requests);
+  }
+  return null;
+}
+
+async function fallbackBatch(requests) {
+  for (const req of requests) {
+    try {
+      const r = await fetch(`${PB_URL}${req.url}`, {
+        method: req.method,
+        headers: { ...req.headers, authorization: `Bearer ${TOKEN}` },
+        body: req.body ? JSON.stringify(req.body) : undefined
+      });
+      if (!r.ok) {
+        const t = await r.text();
+        if (t.includes('validation_not_unique')) continue;
+        console.error(`    ⚠  ${req.method} ${req.url}: ${r.status}`);
+      }
+    } catch {
+      console.error(`    ⚠  ${req.method} ${req.url}: request failed`);
+    }
+  }
+}
+
+async function buildBatchOps(messages, locales, allKeys, existingMap) {
+  const batch = [];
+  let created = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  const sortedKeys = [...allKeys].sort((a, b) => a.localeCompare(b));
+  for (const key of sortedKeys) {
+    for (const locale of locales) {
+      const value = messages[locale]?.[key];
+      if (value === undefined || value === null) continue;
+
+      const mapKey = `${key}|${locale}`;
+      const existingEntry = existingMap.get(mapKey);
+
+      if (existingEntry) {
+        if (existingEntry.value === value) {
+          skipped++;
+          continue;
         }
-      } catch (e) {
-        console.error(`    ⚠  ${req.method} ${req.url}: ${e.message}`);
+        batch.push({
+          method: 'PATCH',
+          url: `/api/collections/translations/records/${existingEntry.id}`,
+          body: { value },
+          headers: { 'content-type': 'application/json' }
+        });
+        updated++;
+      } else {
+        batch.push({
+          method: 'POST',
+          url: '/api/collections/translations/records',
+          body: { key, locale, value },
+          headers: { 'content-type': 'application/json' }
+        });
+        created++;
+      }
+
+      if (batch.length >= BATCH_SIZE) {
+        await batchSend(batch);
+        batch.length = 0;
+        process.stdout.write('.');
+        await new Promise((r) => setTimeout(r, 200));
       }
     }
   }
-  return null;
+
+  if (batch.length > 0) {
+    await batchSend(batch);
+    process.stdout.write('.');
+  }
+
+  return { created, updated, skipped };
 }
 
 async function main() {
@@ -104,7 +161,7 @@ async function main() {
   console.log(`\n  🔑 ${allKeys.size} unique keys found`);
 
   // Fetch ALL existing translations (paginate)
-  const existingMap = new Map(); // "key|locale" -> { id, value }
+  const existingMap = new Map();
   let page = 1;
   while (true) {
     const existing = await api('GET', `/collections/translations/records?perPage=500&page=${page}`);
@@ -117,57 +174,7 @@ async function main() {
 
   console.log(`  📋 ${existingMap.size} existing records in PB`);
 
-  // Build batch operations
-  const batch = [];
-  let created = 0;
-  let updated = 0;
-  let skipped = 0;
-
-  for (const key of [...allKeys].sort()) {
-    for (const locale of locales) {
-      const value = messages[locale]?.[key];
-      if (value === undefined || value === null) continue;
-
-      const mapKey = `${key}|${locale}`;
-      const existingEntry = existingMap.get(mapKey);
-
-      if (existingEntry) {
-        if (existingEntry.value === value) {
-          skipped++;
-          continue;
-        }
-        batch.push({
-          method: 'PATCH',
-          url: `/api/collections/translations/records/${existingEntry.id}`,
-          body: { value },
-          headers: { 'content-type': 'application/json' }
-        });
-        updated++;
-      } else {
-        batch.push({
-          method: 'POST',
-          url: '/api/collections/translations/records',
-          body: { key, locale, value },
-          headers: { 'content-type': 'application/json' }
-        });
-        created++;
-      }
-
-      // Flush batch when full
-      if (batch.length >= BATCH_SIZE) {
-        await batchSend(batch);
-        batch.length = 0;
-        process.stdout.write('.');
-        await new Promise((r) => setTimeout(r, 200)); // rate limit buffer
-      }
-    }
-  }
-
-  // Flush remaining
-  if (batch.length > 0) {
-    await batchSend(batch);
-    process.stdout.write('.');
-  }
+  const { created, updated, skipped } = await buildBatchOps(messages, locales, allKeys, existingMap);
 
   console.log(`\n\n✅ Done — ${created} created, ${updated} updated, ${skipped} unchanged`);
 }

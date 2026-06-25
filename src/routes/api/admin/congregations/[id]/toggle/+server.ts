@@ -9,7 +9,7 @@ export const POST: RequestHandler = async ({ locals, params }) => {
   if (!client?.authStore?.record?.admin) throw error(401, 'Unauthorized');
 
   const cong = await withRetry(() => client.collection('congregations').getOne(params.id, { expand: 'owner' }));
-  await client.collection('congregations').update(params.id, { visible: !cong.visible });
+  await withRetry(() => client.collection('congregations').update(params.id, { visible: !cong.visible }));
 
   // Send approval email if making visible
   if (!cong.visible) {

@@ -22,7 +22,8 @@ export default defineConfig(({ mode }) => ({
     }
   },
   ssr: {
-    external: ['@opentelemetry', '@grpc', 'protobufjs']
+    external: ['@opentelemetry', '@grpc', 'protobufjs'],
+    noExternal: ['svelte-lexical']
   },
   plugins: [
     ViteMcp(),

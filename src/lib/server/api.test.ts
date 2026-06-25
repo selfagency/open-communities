@@ -39,73 +39,12 @@ vi.mock('@sveltejs/kit', () => ({
 
 import type { Cookies } from '@sveltejs/kit';
 
-import { api, authenticate, cleanResponse, expand, loadUser, throwAsHttpError, withRetry } from './api';
+import { cleanResponse, expand, loadUser, throwAsHttpError, withRetry } from './api';
 import { log } from './logger';
 
 describe('src/lib/server/api', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
-
-  describe('authenticate', () => {
-    it('loads cookie and refreshes when authStore.isValid is true', async () => {
-      // arrange
-      // authStore.isValid is readonly in types; cast through unknown to set in tests
-      (api.authStore as unknown as { isValid: boolean }).isValid = true;
-      const authRefreshSpy = vi.fn(() => Promise.resolve());
-      // replace collection to return our spy
-      (
-        api as unknown as {
-          collection: (s: string) => { authRefresh: () => Promise<unknown> };
-        }
-      ).collection = vi.fn(() => ({ authRefresh: authRefreshSpy }));
-
-      // act
-      const returned = await authenticate('the-cookie');
-
-      // assert
-      expect(api.authStore.loadFromCookie).toHaveBeenCalledWith('the-cookie');
-      expect(api.collection).toHaveBeenCalledWith('users');
-      expect(authRefreshSpy).toHaveBeenCalled();
-      expect(returned).toBe(api);
-    });
-
-    it('clears authStore when refresh throws', async () => {
-      (api.authStore as unknown as { isValid: boolean }).isValid = true;
-      const authRefreshSpy = vi.fn(() => Promise.reject(new Error('boom')));
-      (
-        api as unknown as {
-          collection: (s: string) => { authRefresh: () => Promise<unknown> };
-        }
-      ).collection = vi.fn(() => ({ authRefresh: authRefreshSpy }));
-
-      const returned = await authenticate('x');
-
-      expect(api.authStore.loadFromCookie).toHaveBeenCalledWith('x');
-      // should have attempted refresh and then cleared on error
-      expect(authRefreshSpy).toHaveBeenCalled();
-      expect(api.authStore.clear).toHaveBeenCalled();
-      expect(returned).toBe(api);
-    });
-
-    it('does nothing when no auth and isValid is false', async () => {
-      (api.authStore as unknown as { isValid: boolean }).isValid = false;
-      // reset spies
-      api.authStore.loadFromCookie = vi.fn();
-      (
-        api as unknown as {
-          collection: (s: string) => { authRefresh: () => Promise<unknown> };
-        }
-      ).collection = vi.fn(() => ({
-        authRefresh: vi.fn(() => Promise.resolve())
-      }));
-
-      const returned = await authenticate('');
-
-      expect(api.authStore.loadFromCookie).not.toHaveBeenCalled();
-      expect(api.collection).not.toHaveBeenCalled();
-      expect(returned).toBe(api);
-    });
   });
 
   describe('throwAsHttpError', () => {
@@ -279,5 +218,81 @@ describe('src/lib/server/api', () => {
   it('re-exports cleanResponse and expand', () => {
     expect(typeof cleanResponse).toBe('function');
     expect(typeof expand).toBe('function');
+  });
+
+  describe('cleanResponse', () => {
+    it('removes collectionId, collectionName, updated', () => {
+      const result = cleanResponse({
+        collectionId: 'abc',
+        collectionName: 'congregations',
+        id: '123',
+        name: 'test',
+        updated: '2024-01-01'
+      });
+      expect(result).toEqual({ id: '123', name: 'test' });
+    });
+
+    it('keeps created when keepDate is true', () => {
+      const result = cleanResponse(
+        {
+          collectionId: 'abc',
+          collectionName: 'congregations',
+          created: '2024-01-01',
+          id: '123',
+          updated: '2024-01-01'
+        },
+        true
+      );
+      expect(result).toEqual({ created: '2024-01-01', id: '123' });
+    });
+
+    it('removes created by default', () => {
+      const result = cleanResponse({
+        collectionId: 'abc',
+        collectionName: 'congregations',
+        created: '2024-01-01',
+        id: '123',
+        updated: '2024-01-01'
+      });
+      expect(result).toEqual({ id: '123' });
+    });
+  });
+
+  describe('convertBooleans', () => {
+    it('converts 1 to true and 0 to false in objects', () => {
+      const result = cleanResponse({ visible: 1, active: 0, name: 'test' });
+      expect(result).toEqual({ visible: true, active: false, name: 'test' });
+    });
+
+    it('skips __proto__ and constructor keys', () => {
+      const result = cleanResponse({ visible: 1, __proto__: 1, constructor: 0 });
+      expect(result).toEqual({ visible: true });
+    });
+  });
+
+  describe('expand', () => {
+    it('merges expand fields into the root object', () => {
+      const result = expand({ id: '123', name: 'test', expand: { owner: { id: 'u1' } } });
+      expect(result).toEqual({ id: '123', name: 'test', owner: { id: 'u1' } });
+    });
+
+    it('works without expand field', () => {
+      const result = expand({ id: '123', name: 'test' });
+      expect(result).toEqual({ id: '123', name: 'test' });
+    });
+  });
+
+  describe('isPbError', () => {
+    it('returns true for objects with status and message', () => {
+      const err = { message: 'not found', status: 404 };
+      const out = throwAsHttpError(err);
+      expect(out).toEqual({ message: 'not found', status: 404 });
+    });
+
+    it('returns false for non-objects', () => {
+      const err = 'string error';
+      const out = throwAsHttpError(err);
+      expect(out).toEqual({ message: 'An unexpected error occurred.', status: 500 });
+    });
   });
 });

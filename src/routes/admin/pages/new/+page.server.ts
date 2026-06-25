@@ -1,4 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -41,7 +42,7 @@ export const actions = {
         body.image = imageFile;
       }
 
-      const page = await client.collection('pages').create(body);
+      const page = await withRetry(() => client.collection('pages').create(body));
 
       // Create variants
       const variants: Array<{
@@ -54,15 +55,17 @@ export const actions = {
       }> = variantsJson ? JSON.parse(variantsJson) : [];
 
       for (const v of variants) {
-        await client.collection('pageVariants').create({
-          page: page.id,
-          language: v.language,
-          title: v.title || '',
-          description: v.description || '',
-          content: v.content || '',
-          imageAlt: v.imageAlt || '',
-          imageCaption: v.imageCaption || ''
-        });
+        await withRetry(() =>
+          client.collection('pageVariants').create({
+            page: page.id,
+            language: v.language,
+            title: v.title || '',
+            description: v.description || '',
+            content: v.content || '',
+            imageAlt: v.imageAlt || '',
+            imageCaption: v.imageCaption || ''
+          })
+        );
       }
 
       throw redirect(303, '/admin/pages');

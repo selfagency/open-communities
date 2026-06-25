@@ -7,6 +7,10 @@ import {
   type Updater
 } from '@tanstack/table-core';
 
+function isUpdaterFunction<T>(updater: Updater<T>): updater is (prev: T) => T {
+  return typeof updater === 'function';
+}
+
 /**
  * Creates a reactive TanStack table object for Svelte.
  * @param options Table options to create the table with.
@@ -55,7 +59,7 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
         state: mergeObjects(state, options.state || {}),
 
         onStateChange: (updater: Updater<TableState>) => {
-          if (updater instanceof Function) state = updater(state);
+          if (isUpdaterFunction(updater)) state = updater(state);
           else state = mergeObjects(state, updater);
 
           options.onStateChange?.(updater);

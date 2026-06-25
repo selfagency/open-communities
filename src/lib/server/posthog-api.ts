@@ -117,15 +117,16 @@ async function _queryTrends(
   days = 30,
   interval: 'day' | 'week' = 'day'
 ): Promise<Array<{ date: string; count: number }> | null> {
-  const sql = `
-    SELECT toStartOf${interval === 'week' ? 'Week' : 'Day'}(timestamp) AS date,
-           count(DISTINCT person_id) AS count
-    FROM events
-    WHERE event = '${event.replaceAll("'", "\\'")}'
-      AND timestamp >= now() - INTERVAL ${days} DAY
-    GROUP BY date
-    ORDER BY date
-  `;
+  const escapedEvent = event.replace(/'/g, String.raw`\'`);
+  const sql = [
+    `SELECT toStartOf${interval === 'week' ? 'Week' : 'Day'}(timestamp) AS date,`,
+    '       count(DISTINCT person_id) AS count',
+    '    FROM events',
+    `    WHERE event = '${escapedEvent}'`,
+    `      AND timestamp >= now() - INTERVAL ${days} DAY`,
+    '    GROUP BY date',
+    '    ORDER BY date'
+  ].join('\n');
   const result = await queryHogQL(sql);
   if (!result?.results) return null;
   return (result.results as Array<[string, number]>).map(([date, count]) => ({

@@ -18,7 +18,9 @@
       if (f.valid) toast.success('Profile updated');
     },
   });
-  const { enhance, form: formData, errors } = form;
+  const { enhance, form: formData, errors, capture, restore } = form;
+
+  export const snapshot = { capture, restore };
 
   function handleUnlink() {
     return async ({ result }: { result: { type: string } }) => {

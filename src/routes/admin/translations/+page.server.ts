@@ -1,4 +1,6 @@
 import { fail } from '@sveltejs/kit';
+import { withRetry } from '$lib/server/api';
+import { log } from '$lib/server/logger';
 import type { Actions, PageServerLoad } from './$types';
 
 const PER_PAGE = 20;
@@ -29,7 +31,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   for (const r of records as Array<Record<string, unknown>>) {
     localeSet.add(r.locale as string);
   }
-  const locales = [...localeSet].sort();
+  const locales = [...localeSet].sort((a, b) => a.localeCompare(b));
 
   // Group by key
   const keyMap: Record<string, Array<{ locale: string; value: string; id: string }>> = {};
@@ -82,10 +84,12 @@ export const actions = {
     for (const entry of entries) {
       try {
         if (entry.id) {
-          await client.collection('translations').update(entry.id, { value: entry.value });
+          await withRetry(() => client.collection('translations').update(entry.id, { value: entry.value }));
           results.updated++;
         } else {
-          await client.collection('translations').create({ key, locale: entry.locale, value: entry.value });
+          await withRetry(() =>
+            client.collection('translations').create({ key, locale: entry.locale, value: entry.value })
+          );
           results.created++;
         }
       } catch {
@@ -111,7 +115,7 @@ export const actions = {
     let deleted = 0;
     for (const r of records as Array<Record<string, unknown>>) {
       try {
-        await client.collection('translations').delete(r.id as string);
+        await withRetry(() => client.collection('translations').delete(r.id as string));
         deleted++;
       } catch {
         /* skip */
@@ -130,10 +134,11 @@ export const actions = {
     if (!key) return fail(400, { error: 'Key is required' });
 
     try {
-      await client.collection('translations').create({ key, locale: 'en', value: value || '' });
+      await withRetry(() => client.collection('translations').create({ key, locale: 'en', value: value || '' }));
       return { success: true, key };
     } catch (err: unknown) {
-      return fail(400, { error: `Failed to create key: ${(err as Error).message}` });
+      log.error('Failed to create translation key', err);
+      return fail(400, { error: 'Failed to create key' });
     }
   },
 
@@ -147,14 +152,15 @@ export const actions = {
     }
 
     try {
-      const url = `${coolifyUrl.replace(/\/+$/, '')}/api/v1/deploy?uuid=${coolifyAppUuid}&force=true`;
+      const baseUrl = coolifyUrl.replace(/\/+$/, '');
+      const url = `${baseUrl}/api/v1/deploy?uuid=${coolifyAppUuid}&force=true`;
       const res = await fetch(url, {
         headers: { authorization: `Bearer ${coolifyToken}` }
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        return fail(502, { error: `Rebuild failed: ${res.status} — ${text.slice(0, 200)}` });
+        log.error('Coolify redeploy failed', { status: res.status });
+        return fail(502, { error: 'Rebuild failed' });
       }
 
       const data = await res.json();
@@ -166,7 +172,8 @@ export const actions = {
 
       return { deploymentUuid };
     } catch (err: unknown) {
-      return fail(502, { error: `Rebuild failed: ${(err as Error).message}` });
+      log.error('Coolify redeploy error', err);
+      return fail(502, { error: 'Rebuild failed' });
     }
   },
 
@@ -186,20 +193,22 @@ export const actions = {
     }
 
     try {
-      const url = `${coolifyUrl.replace(/\/+$/, '')}/api/v1/deployments/${deploymentUuid}`;
+      const baseUrl = coolifyUrl.replace(/\/+$/, '');
+      const url = `${baseUrl}/api/v1/deployments/${deploymentUuid}`;
       const res = await fetch(url, {
         headers: { authorization: `Bearer ${coolifyToken}` }
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        return fail(502, { error: `Status check failed: ${res.status} — ${text.slice(0, 200)}` });
+        log.error('Coolify status check failed', { status: res.status });
+        return fail(502, { error: 'Status check failed' });
       }
 
       const data = await res.json();
       return { status: data.status as string };
     } catch (err: unknown) {
-      return fail(502, { error: `Status check failed: ${(err as Error).message}` });
+      log.error('Coolify status check error', err);
+      return fail(502, { error: 'Status check failed' });
     }
   }
 } satisfies Actions;

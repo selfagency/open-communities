@@ -1,4 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -9,7 +10,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
   let page: Record<string, unknown>;
   try {
-    page = await client.collection('pages').getOne(pageId);
+    page = await withRetry(() => client.collection('pages').getOne(pageId));
   } catch {
     throw error(404, 'Page not found');
   }
@@ -69,7 +70,7 @@ export const actions = {
         body.image = imageFile;
       }
 
-      await client.collection('pages').update(params.id, body);
+      await withRetry(() => client.collection('pages').update(params.id, body));
 
       // Sync variants
       const variants: Array<{
@@ -94,14 +95,14 @@ export const actions = {
         };
 
         if (v.id) {
-          await client.collection('pageVariants').update(v.id, vBody);
+          await withRetry(() => client.collection('pageVariants').update(v.id, vBody));
         } else {
-          await client.collection('pageVariants').create(vBody);
+          await withRetry(() => client.collection('pageVariants').create(vBody));
         }
       }
 
       return { success: true };
-    } catch (_err: unknown) {
+    } catch {
       return fail(400, { error: 'Save failed' });
     }
   }

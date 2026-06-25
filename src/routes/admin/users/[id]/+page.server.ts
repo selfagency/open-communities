@@ -1,4 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -8,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   const userId = params.id;
   let user: Record<string, unknown>;
   try {
-    user = await client.collection('users').getOne(userId, { expand: 'congregation' });
+    user = await withRetry(() => client.collection('users').getOne(userId, { expand: 'congregation' }));
   } catch {
     throw error(404, 'User not found');
   }
@@ -56,7 +57,7 @@ export const actions = {
     if (!name || !email) return fail(400, { error: 'Name and email are required' });
 
     try {
-      await client.collection('users').update(params.id, { name, email, verified, admin });
+      await withRetry(() => client.collection('users').update(params.id, { name, email, verified, admin }));
       return { success: 'User updated' };
     } catch {
       return fail(400, { error: 'Update failed' });
@@ -68,7 +69,7 @@ export const actions = {
     if (!client?.authStore?.record?.admin) throw redirect(303, '/');
 
     try {
-      await client.collection('users').update(params.id, { congregation: null });
+      await withRetry(() => client.collection('users').update(params.id, { congregation: null }));
       return { success: 'Congregation unlinked' };
     } catch {
       return fail(400, { error: 'Failed to unlink congregation' });
@@ -80,7 +81,7 @@ export const actions = {
     if (!client?.authStore?.record?.admin) throw redirect(303, '/');
 
     try {
-      await client.collection('users').delete(params.id);
+      await withRetry(() => client.collection('users').delete(params.id));
       throw redirect(303, '/admin/users');
     } catch (err: unknown) {
       if ((err as { status?: number }).status === 303) throw err;
@@ -98,7 +99,7 @@ export const actions = {
     if (!congregationId) return fail(400, { error: 'No congregation selected' });
 
     try {
-      await client.collection('users').update(params.id, { congregation: congregationId });
+      await withRetry(() => client.collection('users').update(params.id, { congregation: congregationId }));
       return { success: 'Congregation assigned' };
     } catch {
       return fail(400, { error: 'Failed to assign congregation' });
@@ -110,8 +111,8 @@ export const actions = {
     if (!client?.authStore?.record?.admin) throw redirect(303, '/');
 
     try {
-      const user = await client.collection('users').getOne(params.id);
-      await client.collection('users').requestPasswordReset(user.email as string, { fetch });
+      const user = await withRetry(() => client.collection('users').getOne(params.id));
+      await withRetry(() => client.collection('users').requestPasswordReset(user.email as string, { fetch }));
       return { success: 'Password reset email sent' };
     } catch {
       return fail(400, { error: 'Failed to send password reset' });

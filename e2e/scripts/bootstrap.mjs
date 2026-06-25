@@ -32,8 +32,8 @@ async function api(method, path, body, token) {
   if (token) opts.headers['authorization'] = `Bearer ${token}`;
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(`${PB}/api${path}`, opts);
+  if (!res.ok) throw new Error(`${method} ${path}: ${res.status}`);
   const text = await res.text();
-  if (!res.ok) throw new Error(`${method} ${path}: ${res.status} — ${text.slice(0, 100)}`);
   return text ? JSON.parse(text) : null;
 }
 
@@ -93,7 +93,6 @@ async function importSchema(token) {
     body: JSON.stringify({ collections: schema, deleteMissing: false }),
   });
   if (!res.ok) {
-    const text = await res.text();
     throw new Error(`Schema import failed: ${res.status}`);
   }
   console.log('  ✅ Collections imported');
@@ -119,7 +118,6 @@ async function configureSMTP(token) {
       })
     });
     if (!res.ok) {
-      const text = await res.text();
       throw new Error(`SMTP config failed: ${res.status}`);
     }
     console.log('  ✅ SMTP configured (Mailpit)');
@@ -132,7 +130,8 @@ async function seedData(token) {
   console.log('🌱 Seeding data...');
 
   const existing = await api('GET', `/collections/users/records?filter=${encodeURIComponent('email="regular@example.test"')}`, null, token);
-  const adminExists = await api('GET', `/collections/users/records?filter=${encodeURIComponent(`email="${ADMIN_EMAIL}"`)}`, null, token);
+  const adminFilter = 'email="' + ADMIN_EMAIL + '"';
+  const adminExists = await api('GET', `/collections/users/records?filter=${encodeURIComponent(adminFilter)}`, null, token);
 
   // Always ensure admin user exists (may have been created by a different bootstrap version)
   if (!adminExists?.items?.length) {

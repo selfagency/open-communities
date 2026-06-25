@@ -23,6 +23,6 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
     });
   }
 
-  await client.collection('congregations').delete(params.id);
+  await withRetry(() => client.collection('congregations').delete(params.id));
   return json({ success: true });
 };

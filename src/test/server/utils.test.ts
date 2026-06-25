@@ -72,4 +72,29 @@ describe('validateCaptcha', () => {
 
     globalThis.fetch = originalFetch;
   });
+
+  it('returns true in test mode (NODE_ENV=test) without captcha token', async () => {
+    // Set NODE_ENV to test
+    const privateMod = await import('$env/dynamic/private');
+    const originalEnv = privateMod.env.NODE_ENV;
+    privateMod.env.NODE_ENV = 'test';
+
+    const form = { data: {}, valid: true } as any;
+    const result = await validateCaptcha(form);
+    expect(result).toBe(true);
+
+    privateMod.env.NODE_ENV = originalEnv;
+  });
+
+  it('returns true in test mode with captcha token', async () => {
+    const privateMod = await import('$env/dynamic/private');
+    const originalEnv = privateMod.env.NODE_ENV;
+    privateMod.env.NODE_ENV = 'test';
+
+    const form = { data: { captcha: 'any-token' }, valid: true } as any;
+    const result = await validateCaptcha(form);
+    expect(result).toBe(true);
+
+    privateMod.env.NODE_ENV = originalEnv;
+  });
 });
