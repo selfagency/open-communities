@@ -74,9 +74,6 @@ jobs:
 
       - name: Build application
         run: pnpm build
-        env:
-          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
-          PB_URL: https://api.opencommunities.info
 
       - name: Upload build output
         uses: actions/upload-artifact@v4

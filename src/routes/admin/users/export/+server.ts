@@ -5,7 +5,8 @@ import type { RequestHandler } from './$types';
 function csvEscape(val: unknown): string {
   if (val === null || val === undefined) return '""';
   if (typeof val === 'string') return `"${val.replaceAll('"', '""')}"`;
-  return `"${String(val)}"`;
+  if (typeof val === 'number' || typeof val === 'boolean') return `"${val}"`;
+  return '""';
 }
 
 export const GET: RequestHandler = async ({ locals }) => {
