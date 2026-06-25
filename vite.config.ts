@@ -13,7 +13,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig(({ mode }) => ({
   build: {
     sourcemap: true,
-    cssMinify: false,
+    cssMinify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks(id: string) {
@@ -21,9 +21,6 @@ export default defineConfig(({ mode }) => ({
         }
       }
     }
-  },
-  css: {
-    transformer: 'postcss'
   },
   ssr: {
     external: ['@opentelemetry', '@grpc', 'protobufjs'],
