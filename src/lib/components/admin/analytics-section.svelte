@@ -88,18 +88,18 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminBounceRate()}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
-      </CardContent>
-    </Card>
-    <Card>
-      <CardHeader class="pb-2">
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminAvgSession()}</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{digest.avg_session_duration.current || '—'}</p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader class="pb-2">
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminBounceRate()}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
       </CardContent>
     </Card>
   </div>
