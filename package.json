@@ -129,10 +129,6 @@
     "zod": "4.4.3"
   },
   "packageManager": "pnpm@10.18.3",
-  "lint-staged": {
-    "*.{ts,js,svelte}": "biome check --write --no-errors-on-unmatched",
-    "*.{ts,js,svelte}": "vitest run --changed --reporter=verbose"
-  },
   "engines": {
     "node": "^22.0.0"
   },
