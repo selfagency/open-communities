@@ -13,13 +13,11 @@ function Lazy(fn: () => string): string {
 }
 
 /* region methods */
-const valueSelected = (value: Record<string, unknown>): boolean => {
-  return !listify(value, (_, value) => value).every((value) => !value);
-};
+const valueSelected = (value: Record<string, unknown>): boolean =>
+  !listify(value, (_, value) => value).every((value) => !value);
 
-const hasContact = (value: { email?: null | string; url?: null | string }): boolean => {
-  return !(isEmpty(value?.email) && isEmpty(value?.url));
-};
+const hasContact = (value: { email?: null | string; url?: null | string }): boolean =>
+  !(isEmpty(value?.email) && isEmpty(value?.url));
 /* endregion methods */
 
 export const accessibilitySchema = z.object({

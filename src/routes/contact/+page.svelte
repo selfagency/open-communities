@@ -1,24 +1,24 @@
 <script lang="ts">
-  /* region imports */
-  import Contact from '$lib/components/global/contact.svelte';
-  import { m } from '$lib/paraglide/messages';
+/* region imports */
+import Contact from '$lib/components/global/contact.svelte';
+import { m } from '$lib/paraglide/messages';
 
-  import type { PageProps, Snapshot } from './$types';
+import type { PageProps, Snapshot } from './$types';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const { data }: PageProps = $props();
+/* region variables */
+// props
+const { data }: PageProps = $props();
 
-  // local vars
-  let snapshotData = $state('');
-  /* endregion variables */
+// local vars
+let snapshotData = $state('');
+/* endregion variables */
 
-  export const snapshot: Snapshot<string> = {
-    capture: () => snapshotData,
-    restore: (value) => (snapshotData = value)
-  };
+export const snapshot: Snapshot<string> = {
+  capture: () => snapshotData,
+  restore: (value) => (snapshotData = value)
+};
 </script>
 
 <svelte:head>

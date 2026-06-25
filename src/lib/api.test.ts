@@ -2,33 +2,31 @@ import { describe, expect, it, vi } from 'vitest';
 
 // Why: Prevent the real PocketBase client and env import from running during tests.
 // What: Mock 'pocketbase' and the SvelteKit env module before importing the module under test.
-vi.mock('pocketbase', () => {
-  return {
-    default: class PocketBaseMock {
-      _refreshed = false;
-      authStore = {
-        clear: () => {},
-        isValid: false,
-        loadFromCookie: (_: unknown) => {}
-      };
-      autoCancellationCalledWith: boolean | undefined = undefined;
-      url: string;
-      constructor(url: string) {
-        this.url = url;
-      }
-      autoCancellation(v: boolean) {
-        this.autoCancellationCalledWith = v;
-      }
-      collection(_name: string) {
-        return {
-          authRefresh: async () => {
-            this._refreshed = true;
-          }
-        };
-      }
+vi.mock('pocketbase', () => ({
+  default: class PocketBaseMock {
+    _refreshed = false;
+    authStore = {
+      clear: () => {},
+      isValid: false,
+      loadFromCookie: (_: unknown) => {}
+    };
+    autoCancellationCalledWith: boolean | undefined = undefined;
+    url: string;
+    constructor(url: string) {
+      this.url = url;
     }
-  };
-});
+    autoCancellation(v: boolean) {
+      this.autoCancellationCalledWith = v;
+    }
+    collection(_name: string) {
+      return {
+        authRefresh: async () => {
+          this._refreshed = true;
+        }
+      };
+    }
+  }
+}));
 
 vi.mock('$env/dynamic/public', () => ({
   env: { PUBLIC_API_ENDPOINT: 'https://localhost:8090' }

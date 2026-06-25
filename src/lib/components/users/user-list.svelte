@@ -1,67 +1,137 @@
 <script lang="ts">
-  import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-  import SearchIcon from '@tabler/icons-svelte/icons/search';
-  import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
-  import { createRawSnippet } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/state';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent } from '$lib/components/ui/card';
-  import { createSvelteTable, FlexRender, renderSnippet } from '$lib/components/ui/data-table/index.js';
-  import { Input } from '$lib/components/ui/input';
-  import * as Pagination from '$lib/components/ui/pagination';
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { m } from '$lib/paraglide/messages';
+import PencilIcon from '@tabler/icons-svelte/icons/pencil';
+import SearchIcon from '@tabler/icons-svelte/icons/search';
+import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
+import { createRawSnippet } from 'svelte';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent } from '$lib/components/ui/card';
+import { createSvelteTable, FlexRender, renderSnippet } from '$lib/components/ui/data-table/index.js';
+import { Input } from '$lib/components/ui/input';
+import * as Pagination from '$lib/components/ui/pagination';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
+import { m } from '$lib/paraglide/messages';
 
-  interface User { id: string; name: string; email: string; verified: boolean; admin: boolean; congregation: string; congregationName: string; }
+interface User {
+  admin: boolean;
+  congregation: string;
+  congregationName: string;
+  email: string;
+  id: string;
+  name: string;
+  verified: boolean;
+}
 
-  let { data }: { data: { users: User[]; total: number; page: number; perPage: number; search: string } } = $props();
-  // svelte-ignore state_referenced_locally
-  const initialData = data;
-  let search = $state(initialData.search);
+let { data }: { data: { users: User[]; total: number; page: number; perPage: number; search: string } } = $props();
+// svelte-ignore state_referenced_locally
+const initialData = data;
+let search = $state(initialData.search);
 
-  let currentPage = $state(initialData.page);
+let currentPage = $state(initialData.page);
 
-  function doSearch() {
-    const params = new URLSearchParams(page.url.searchParams);
-    if (search) params.set('q', search); else params.delete('q');
-    params.set('page', '1');
-    goto('/admin/users?' + params, { invalidateAll: true });
+function doSearch() {
+  const params = new URLSearchParams(page.url.searchParams);
+  if (search) {
+    params.set('q', search);
+  } else {
+    params.delete('q');
   }
-  function onPageChange(p: number) {
-    currentPage = p;
-    const params = new URLSearchParams(page.url.searchParams);
-    params.set('page', String(p));
-    goto('/admin/users?' + params, { invalidateAll: true });
+  params.set('page', '1');
+  goto('/admin/users?' + params, { invalidateAll: true });
+}
+function onPageChange(p: number) {
+  currentPage = p;
+  const params = new URLSearchParams(page.url.searchParams);
+  params.set('page', String(p));
+  goto('/admin/users?' + params, { invalidateAll: true });
+}
+
+const columns: ColumnDef<User>[] = [
+  {
+    accessorKey: 'name',
+    header: m.name(),
+    cell: ({ row }) =>
+      renderSnippet(
+        createRawSnippet<[{ v: string }]>((get) => ({
+          render: () => `<span class="font-medium">${get().v || '—'}</span>`
+        })),
+        { v: row.original.name }
+      )
+  },
+  {
+    accessorKey: 'email',
+    header: m.email(),
+    cell: ({ row }) =>
+      renderSnippet(
+        createRawSnippet<[{ v: string }]>((get) => ({ render: () => get().v })),
+        { v: row.original.email }
+      )
+  },
+  {
+    accessorKey: 'verified',
+    header: m.status(),
+    cell: ({ row }) =>
+      row.original.verified
+        ? renderSnippet(
+            createRawSnippet(() => ({
+              render: () =>
+                `<div class="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">${m.verified()}</div>`
+            }))
+          )
+        : renderSnippet(
+            createRawSnippet(() => ({
+              render: () =>
+                `<div class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">${m.unverified()}</div>`
+            }))
+          )
+  },
+  {
+    accessorKey: 'admin',
+    header: m.role(),
+    cell: ({ row }) =>
+      row.original.admin
+        ? renderSnippet(
+            createRawSnippet(() => ({
+              render: () =>
+                `<div class="inline-flex items-center rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">${m.admin()}</div>`
+            }))
+          )
+        : renderSnippet(
+            createRawSnippet(() => ({
+              render: () =>
+                `<div class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">${m.user()}</div>`
+            }))
+          )
+  },
+  {
+    id: 'congregation',
+    header: m.congregation(),
+    cell: ({ row }) =>
+      row.original.congregation
+        ? renderSnippet(
+            createRawSnippet<[{ n: string; i: string }]>((get) => ({
+              render: () =>
+                `<a href="/edit?id=${get().i}" class="text-sm underline-offset-4 hover:underline">${get().n}</a>`
+            })),
+            { n: row.original.congregationName, i: row.original.congregation }
+          )
+        : renderSnippet(
+            createRawSnippet(() => ({ render: () => '<span class="text-muted-foreground text-xs">—</span>' }))
+          )
   }
+];
 
-  const columns: ColumnDef<User>[] = [
-    { accessorKey: 'name', header: m.name(), cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="font-medium">${get().v || '—'}</span>` })), { v: row.original.name }) },
-    { accessorKey: 'email', header: m.email(), cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => get().v })), { v: row.original.email }) },
-    {
-      accessorKey: 'verified',
-      header: m.status(),
-      cell: ({ row }) => row.original.verified
-        ? renderSnippet(createRawSnippet(() => ({ render: () => `<div class="inline-flex items-center rounded-md bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">${m.verified()}</div>` })))
-        : renderSnippet(createRawSnippet(() => ({ render: () => `<div class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">${m.unverified()}</div>` }))),
+const table = $derived(
+  createSvelteTable({
+    get data() {
+      return data.users;
     },
-    {
-      accessorKey: 'admin',
-      header: m.role(),
-      cell: ({ row }) => row.original.admin
-        ? renderSnippet(createRawSnippet(() => ({ render: () => `<div class="inline-flex items-center rounded-md bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">${m.admin()}</div>` })))
-        : renderSnippet(createRawSnippet(() => ({ render: () => `<div class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">${m.user()}</div>` }))),
-    },
-    {
-      id: 'congregation',
-      header: m.congregation(),
-      cell: ({ row }) => row.original.congregation
-        ? renderSnippet(createRawSnippet<[{ n: string; i: string }]>((get) => ({ render: () => `<a href="/edit?id=${get().i}" class="text-sm underline-offset-4 hover:underline">${get().n}</a>` })), { n: row.original.congregationName, i: row.original.congregation })
-        : renderSnippet(createRawSnippet(() => ({ render: () => '<span class="text-muted-foreground text-xs">—</span>' }))),
-    },
-  ];
-
-  const table = $derived(createSvelteTable({ get data() { return data.users; }, columns, getRowId: (r) => r.id, getCoreRowModel: getCoreRowModel() }));
+    columns,
+    getRowId: (r) => r.id,
+    getCoreRowModel: getCoreRowModel()
+  })
+);
 </script>
 
 <div class="space-y-6">
@@ -71,8 +141,16 @@
     </div>
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">
-        <SearchIcon size="18" class="absolute left-3 z-10 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
-        <Input bind:value={search} placeholder={m.searchUsers()} class="h-11 w-64 sm:w-80 pl-10" onkeydown={(e) => { if (e.key === 'Enter') doSearch(); }} />
+        <SearchIcon
+          size="18"
+          class="absolute left-3 z-10 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+        />
+        <Input
+          bind:value={search}
+          placeholder={m.searchUsers()}
+          class="h-11 w-64 sm:w-80 pl-10"
+          onkeydown={(e) => { if (e.key === 'Enter') doSearch(); }}
+        />
       </div>
       <Button variant="outline" onclick={() => goto('/admin/users/export')}>{m.exportCsv()}</Button>
     </div>
@@ -118,13 +196,7 @@
     </CardContent>
   </Card>
   <div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
-    <Pagination.Root
-      count={data.total}
-      perPage={data.perPage}
-      page={currentPage}
-      onPageChange={onPageChange}
-      siblingCount={0}
-    >
+    <Pagination.Root count={data.total} perPage={data.perPage} page={currentPage} {onPageChange} siblingCount={0}>
       {#snippet children({ pages })}
         <Pagination.Content>
           <Pagination.Item>

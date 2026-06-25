@@ -1,6 +1,6 @@
 <script lang="ts">
-  import PageList from '$lib/components/pages/page-list.svelte';
+import PageList from '$lib/components/pages/page-list.svelte';
 
-  let { data } = $props();
+let { data } = $props();
 </script>
 <PageList {data} />

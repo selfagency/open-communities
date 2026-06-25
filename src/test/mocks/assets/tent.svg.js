@@ -14,7 +14,9 @@ function TentComponent(options) {
     container.innerHTML = markup;
     const node = container.firstElementChild;
     if (node) {
-      if (props.class) node.setAttribute('class', String(props.class));
+      if (props.class) {
+        node.setAttribute('class', String(props.class));
+      }
       if (props.size) {
         node.setAttribute('width', String(props.size));
         node.setAttribute('height', String(props.size));

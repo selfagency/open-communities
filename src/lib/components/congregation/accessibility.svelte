@@ -1,40 +1,32 @@
 <script lang="ts">
-  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
-  /* region imports */
-  import AdaIcon from "@tabler/icons-svelte/icons/disabled";
-  import AslIcon from "@tabler/icons-svelte/icons/hand-two-fingers";
-  import EvaIcon from "@tabler/icons-svelte/icons/language";
-  import CcIcon from "@tabler/icons-svelte/icons/subtitles";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import { m } from "$lib/paraglide/messages";
-  import type { AccessibilityRecord } from "$lib/pocketbase.d";
+import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
+/* region imports */
+import AdaIcon from '@tabler/icons-svelte/icons/disabled';
+import AslIcon from '@tabler/icons-svelte/icons/hand-two-fingers';
+import EvaIcon from '@tabler/icons-svelte/icons/language';
+import CcIcon from '@tabler/icons-svelte/icons/subtitles';
+import * as Tooltip from '$lib/components/ui/tooltip';
+import { m } from '$lib/paraglide/messages';
+import type { AccessibilityRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    accessibility,
-    mode = $bindable("mini"),
-  }: { accessibility: AccessibilityRecord; mode?: "full" | "mini" } = $props();
+/* region variables */
+// props
+const { accessibility, mode = $bindable('mini') }: { accessibility: AccessibilityRecord; mode?: 'full' | 'mini' } =
+  $props();
 
-  // constants
-  const ada = $derived(
-    accessibility.inPerson_adaSome || accessibility.inPerson_adaAll,
-  );
-  const cc = $derived(
-    accessibility.online_automatedCaptions || accessibility.online_liveCaptions,
-  );
-  const eva = $derived(accessibility.inPerson_eva);
-  const asl = $derived(accessibility.inPerson_asl || accessibility.online_asl);
-  const other = $derived(accessibility.otherText);
-  /* endregion variables */
+// constants
+const ada = $derived(accessibility.inPerson_adaSome || accessibility.inPerson_adaAll);
+const cc = $derived(accessibility.online_automatedCaptions || accessibility.online_liveCaptions);
+const eva = $derived(accessibility.inPerson_eva);
+const asl = $derived(accessibility.inPerson_asl || accessibility.online_asl);
+const other = $derived(accessibility.otherText);
+/* endregion variables */
 </script>
 
 {#if mode === "mini"}
-  <div
-    class="flex w-full flex-row items-center justify-end space-x-1 antialiased"
-  >
+  <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
     {#if ada}
       <Tooltip.Provider>
         <Tooltip.Root>
@@ -173,9 +165,7 @@
           <span class="sr-only">{m.unspecified()}</span>
         </span>
 
-        <span class="flex flex-col items-start justify-start"
-          >{m.unspecified()}</span
-        >
+        <span class="flex flex-col items-start justify-start">{m.unspecified()}</span>
       </li>
     {/if}
   </ul>

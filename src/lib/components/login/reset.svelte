@@ -1,74 +1,82 @@
 <script lang="ts">
-  import { isEmpty } from 'radashi';
-  /* region imports */
-  import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import { toast } from 'svelte-sonner';
-  import { type SuperValidated, superForm } from 'sveltekit-superforms';
-  import { waitForTheElement } from 'wait-for-the-element';
+import { isEmpty } from 'radashi';
+/* region imports */
+import { onMount } from 'svelte';
+import { fade } from 'svelte/transition';
+import { toast } from 'svelte-sonner';
+import { type SuperValidated, superForm } from 'sveltekit-superforms';
+import { waitForTheElement } from 'wait-for-the-element';
 
-  import { dev } from '$app/environment';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
-  import { log } from '$lib/utils';
+import { dev } from '$app/environment';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
+import { log } from '$lib/utils';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let {
-    data,
-    reset = $bindable(false),
-    sent = $bindable(false),
-    token
-  }: {
-    data: SuperValidated<any>;
-    reset?: boolean;
-    sent?: boolean;
-    token: null | string;
-  } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+let {
+  data,
+  reset = $bindable(false),
+  sent = $bindable(false),
+  token
+}: {
+  data: SuperValidated<any>;
+  reset?: boolean;
+  sent?: boolean;
+  token: null | string;
+} = $props();
+/* endregion variables */
 
-  /* region form */
-  // svelte-ignore state_referenced_locally
-  // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const form = superForm(data, {
-    dataType: 'json',
-    id: 'reset',
-    onError({ result }) {
-      log.error('submission error', result.error.message);
-      toast.error(result.error.message);
-    },
-    async onUpdate({ result }) {
-      if (result.type === 'success') {
-        if ($formData.type === 'resetPassword') {
-          reset = true;
-        }
-        if ($formData.type === 'requestReset') sent = true;
-      } else {
-        if (!isEmpty(result.data.form.errors)) log.error('form errors', result.data.form.errors);
-        if (!isEmpty(result.data.form.errors)) log.error('submission error', result.data.form.errors);
-        toast.error(m.resetFailure);
+/* region form */
+// svelte-ignore state_referenced_locally
+// Intentional: form is initialized once from server data (not reactive to prop changes)
+const form = superForm(data, {
+  dataType: 'json',
+  id: 'reset',
+  onError({ result }) {
+    log.error('submission error', result.error.message);
+    toast.error(result.error.message);
+  },
+  async onUpdate({ result }) {
+    if (result.type === 'success') {
+      if ($formData.type === 'resetPassword') {
+        reset = true;
       }
+      if ($formData.type === 'requestReset') {
+        sent = true;
+      }
+    } else {
+      if (!isEmpty(result.data.form.errors)) {
+        log.error('form errors', result.data.form.errors);
+      }
+      if (!isEmpty(result.data.form.errors)) {
+        log.error('submission error', result.data.form.errors);
+      }
+      toast.error(m.resetFailure);
     }
-  });
+  }
+});
 
-  const { enhance, form: formData } = form;
-  /* endregion form */
+const { enhance, form: formData } = form;
+/* endregion form */
 
-  /* region lifecycle */
-  let submitted = $state(false);
-  onMount(async () => {
-    if (submitted) return;
-    submitted = true;
-    $formData.token = token ? token : 'invalid';
-    $formData.type = token ? 'resetPassword' : 'requestReset';
-    await waitForTheElement('#reset', { timeout: 1000 });
-    const formEl = document.getElementById('reset') as HTMLFormElement;
-    form.submit(formEl);
-  });
-  /* endregion lifecycle */
+/* region lifecycle */
+let submitted = $state(false);
+onMount(async () => {
+  if (submitted) {
+    return;
+  }
+  submitted = true;
+  $formData.token = token ? token : 'invalid';
+  $formData.type = token ? 'resetPassword' : 'requestReset';
+  await waitForTheElement('#reset', { timeout: 1000 });
+  const formEl = document.getElementById('reset') as HTMLFormElement;
+  form.submit(formEl);
+});
+/* endregion lifecycle */
 </script>
 
 <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
@@ -99,7 +107,8 @@
               bind:value={$formData.passwordConfirm}
               type="password"
               required
-              autocomplete="new-password" />
+              autocomplete="new-password"
+            />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />

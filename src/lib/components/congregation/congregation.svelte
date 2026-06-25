@@ -1,96 +1,93 @@
 <script lang="ts">
-  import LinkIcon from "@tabler/icons-svelte/icons/external-link";
-  /* region imports */
-  import EditIcon from "@tabler/icons-svelte/icons/pencil";
-  import ShareIcon from "@tabler/icons-svelte/icons/share-2";
-  import DOMPurify from "isomorphic-dompurify";
-  import { isEmpty, omit } from "radashi";
-  import { fade } from "svelte/transition";
-  import { copyText } from "svelte-copy";
-  import { toast } from "svelte-sonner";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/state";
-  import { Badge } from "$lib/components/ui/badge";
-  import * as Dialog from "$lib/components/ui/dialog";
-  import { Separator } from "$lib/components/ui/separator";
-  import * as Tabs from "$lib/components/ui/tabs";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import { m as mBase } from "$lib/paraglide/messages";
+import LinkIcon from '@tabler/icons-svelte/icons/external-link';
+/* region imports */
+import EditIcon from '@tabler/icons-svelte/icons/pencil';
+import ShareIcon from '@tabler/icons-svelte/icons/share-2';
+import DOMPurify from 'isomorphic-dompurify';
+import { isEmpty, omit } from 'radashi';
+import { fade } from 'svelte/transition';
+import { copyText } from 'svelte-copy';
+import { toast } from 'svelte-sonner';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import { Badge } from '$lib/components/ui/badge';
+import * as Dialog from '$lib/components/ui/dialog';
+import { Separator } from '$lib/components/ui/separator';
+import * as Tabs from '$lib/components/ui/tabs';
+import * as Tooltip from '$lib/components/ui/tooltip';
+import { m as mBase } from '$lib/paraglide/messages';
 
-  const m = mBase as Record<string, (...args: unknown[]) => string>;
+const m = mBase as Record<string, (...args: unknown[]) => string>;
 
-  import type {
-    AccessibilityRecord,
-    CitiesRecord as City,
-    CongregationMetaRecord,
-    CountriesRecord as Country,
-    FitRecord,
-    HealthRecord,
-    RegistrationRecord,
-    SecurityRecord,
-    ServicesRecord,
-    StatesRecord as State,
-  } from "$lib/pocketbase.d";
+import type {
+  AccessibilityRecord,
+  CitiesRecord as City,
+  CongregationMetaRecord,
+  CountriesRecord as Country,
+  FitRecord,
+  HealthRecord,
+  RegistrationRecord,
+  SecurityRecord,
+  ServicesRecord,
+  StatesRecord as State
+} from '$lib/pocketbase.d';
 
-  import Accessibility from "./accessibility.svelte";
-  import Contact from "./contact.svelte";
-  import Fit from "./fit.svelte";
-  import Flag from "./flag.svelte";
-  import Health from "./health.svelte";
-  import Registration from "./registration.svelte";
-  import Security from "./security.svelte";
-  import Services from "./services.svelte";
-  import Tile from "./tile.svelte";
+import Accessibility from './accessibility.svelte';
+import Contact from './contact.svelte';
+import Fit from './fit.svelte';
+import Flag from './flag.svelte';
+import Health from './health.svelte';
+import Registration from './registration.svelte';
+import Security from './security.svelte';
+import Services from './services.svelte';
+import Tile from './tile.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let {
-    congregation,
-    open = $bindable(false),
-  }: {
-    congregation: CongregationMetaRecord & { id: string };
-    open?: boolean;
-  } = $props();
+/* region variables */
+// props
+let {
+  congregation,
+  open = $bindable(false)
+}: {
+  congregation: CongregationMetaRecord & { id: string };
+  open?: boolean;
+} = $props();
 
-  // constants
-  const accessibility = $derived(
-    congregation.accessibility,
-  ) as AccessibilityRecord;
-  const fit = $derived(congregation.fit) as FitRecord;
-  const {
-    city,
-    country,
-    state: province,
-  } = $derived(congregation.location) as {
-    city: City;
-    country: Country;
-    state: State;
-  };
-  const notes = $derived(congregation.notes) as string;
-  const services = $derived(congregation.services) as ServicesRecord;
-  const registration = $derived(
-    congregation.registration,
-  ) as RegistrationRecord;
-  const health = $derived(congregation.health) as HealthRecord;
-  const security = $derived(congregation.security) as SecurityRecord;
-  const user = $derived(page.data.user);
+// constants
+const accessibility = $derived(congregation.accessibility) as AccessibilityRecord;
+const fit = $derived(congregation.fit) as FitRecord;
+const {
+  city,
+  country,
+  state: province
+} = $derived(congregation.location) as {
+  city: City;
+  country: Country;
+  state: State;
+};
+const notes = $derived(congregation.notes) as string;
+const services = $derived(congregation.services) as ServicesRecord;
+const registration = $derived(congregation.registration) as RegistrationRecord;
+const health = $derived(congregation.health) as HealthRecord;
+const security = $derived(congregation.security) as SecurityRecord;
+const user = $derived(page.data.user);
 
-  // locals
-  let tab: "about" | "details" | "services" = $state("about");
-  /* endregion variables */
+// locals
+let tab: 'about' | 'details' | 'services' = $state('about');
+/* endregion variables */
 
-  /* region methods */
-  const allFalse = (obj: Record<string, unknown>) =>
-    Object.values(omit(obj, ["id", "otherText"])).every((v) => !v);
-  /* endregion methods */
+/* region methods */
+const allFalse = (obj: Record<string, unknown>) => Object.values(omit(obj, ['id', 'otherText'])).every((v) => !v);
+/* endregion methods */
 
-  /* region reactivity */
-  $effect(() => {
-    if (!open) tab = "about";
-  });
-  /* endregion reactivity */
+/* region reactivity */
+$effect(() => {
+  if (!open) {
+    tab = 'about';
+  }
+});
+/* endregion reactivity */
 </script>
 
 <Dialog.Root bind:open>
@@ -125,7 +122,7 @@
               >
             </h2>
           </a>
-          <!-- eslint-enable svelte/no-navigation-without-resolve -->
+        <!-- eslint-enable svelte/no-navigation-without-resolve -->
         {:else}
           <h2 class="inline text-2xl leading-6 text-secondary-foreground">
             {congregation.name}
@@ -138,13 +135,21 @@
         <span class="w-2/3" itemprop="location" itemscope itemtype="https://schema.org/Place">
           <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
             {#if city.name || province.name || country.name}
-              {#if city.name}<span itemprop="addressLocality">{city.name}</span
-                >{#if province.name || country.name},{/if}{/if}
-              {#if province.name}<span itemprop="addressRegion">{province.name}</span
-                >{#if country.name && country.name !== "United States"},{/if}{/if}
-              {#if country.name && country.name !== "United States"}<span
-                  itemprop="addressCountry">{country.name}</span
-                >{/if}
+              {#if city.name}
+                <span itemprop="addressLocality">{city.name}</span>
+                {#if province.name || country.name}
+                  ,
+                {/if}
+              {/if}
+              {#if province.name}
+                <span itemprop="addressRegion">{province.name}</span>
+                {#if country.name && country.name !== "United States"}
+                  ,
+                {/if}
+              {/if}
+              {#if country.name && country.name !== "United States"}
+                <span itemprop="addressCountry">{country.name}</span>
+              {/if}
             {:else if services.onlineOnly}
               {m.services_onlineOnly()}
             {/if}
@@ -154,9 +159,7 @@
         <div class="flex w-1/3 flex-row items-center justify-end space-x-1">
           {#if isEmpty(congregation.owner) && !user?.admin}
             <a href={`/contact?claim=${congregation.id}`}>
-              <Badge
-                variant="outline"
-                class="font-normal text-nowrap text-muted-foreground hover:bg-muted"
+              <Badge variant="outline" class="font-normal text-nowrap text-muted-foreground hover:bg-muted"
                 >{m.claimThis()}</Badge
               >
             </a>
@@ -172,7 +175,10 @@
                     await goto(url);
                   }}
                 >
-                  <EditIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90" />
+                  <EditIcon
+                    size="16"
+                    class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90"
+                  />
                   <span class="sr-only">{m.edit()}</span>
                 </Tooltip.Trigger>
                 <Tooltip.Content>
@@ -192,7 +198,10 @@
                   toast.success(m.copied());
                 }}
               >
-                <ShareIcon size="16" class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
+                <ShareIcon
+                  size="16"
+                  class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+                />
                 <span class="sr-only">{m.share()}</span>
               </Tooltip.Trigger>
               <Tooltip.Content>
@@ -206,15 +215,9 @@
 
     <Tabs.Root bind:value={tab} class="w-full">
       <Tabs.List class="my-4 w-full">
-        <Tabs.Trigger value="about" class="w-1/2 transition-colors"
-          >{m.about()}</Tabs.Trigger
-        >
-        <Tabs.Trigger value="services" class="w-1/2 transition-colors"
-          >{m.services()}</Tabs.Trigger
-        >
-        <Tabs.Trigger value="details" class="w-1/2 transition-colors"
-          >{m.details()}</Tabs.Trigger
-        >
+        <Tabs.Trigger value="about" class="w-1/2 transition-colors">{m.about()}</Tabs.Trigger>
+        <Tabs.Trigger value="services" class="w-1/2 transition-colors">{m.services()}</Tabs.Trigger>
+        <Tabs.Trigger value="details" class="w-1/2 transition-colors">{m.details()}</Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="about" class="transition-opacity duration-300">
         {#if tab === "about"}
@@ -237,18 +240,15 @@
               {/if}
 
               {#if !allFalse(fit)}
-                {#if congregation.denomination || congregation.flavor}<Separator
-                    class="col-span-12"
-                  />{/if}
+                {#if congregation.denomination || congregation.flavor}
+                  <Separator class="col-span-12" />
+                {/if}
                 <Fit {fit} />
               {/if}
 
               {#if user?.admin && (congregation.contactName || congregation.contactEmail)}
                 <Separator class="col-span-12" />
-                <Contact
-                  contactName={congregation.contactName}
-                  contactEmail={congregation.contactEmail}
-                />
+                <Contact contactName={congregation.contactName} contactEmail={congregation.contactEmail} />
               {/if}
             </div>
           </div>
@@ -268,14 +268,16 @@
               {/if}
 
               {#if !allFalse(services)}
-                {#if congregation.clergy}<Separator class="col-span-12" />{/if}
+                {#if congregation.clergy}
+                  <Separator class="col-span-12" />
+                {/if}
                 <Services {services} />
               {/if}
 
               {#if !allFalse(registration)}
-                {#if congregation.clergy || !allFalse(services)}<Separator
-                    class="col-span-12"
-                  />{/if}
+                {#if congregation.clergy || !allFalse(services)}
+                  <Separator class="col-span-12" />
+                {/if}
                 <Registration {registration} />
               {/if}
             </div>
@@ -291,21 +293,23 @@
               {/if}
 
               {#if !allFalse(accessibility)}
-                {#if fit.flag}<Separator class="col-span-12" />{/if}
+                {#if fit.flag}
+                  <Separator class="col-span-12" />
+                {/if}
                 <Accessibility {accessibility} mode="full" />
               {/if}
 
               {#if health.protocol}
-                {#if fit.flag || !allFalse(accessibility)}<Separator
-                    class="col-span-12"
-                  />{/if}
+                {#if fit.flag || !allFalse(accessibility)}
+                  <Separator class="col-span-12" />
+                {/if}
                 <Health {health} />
               {/if}
 
               {#if !allFalse(security)}
-                {#if fit.flag || health.protocol || !allFalse(accessibility)}<Separator
-                    class="col-span-12"
-                  />{/if}
+                {#if fit.flag || health.protocol || !allFalse(accessibility)}
+                  <Separator class="col-span-12" />
+                {/if}
                 <Security {security} mode="full" />
               {/if}
 

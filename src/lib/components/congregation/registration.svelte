@@ -1,17 +1,17 @@
 <script lang="ts">
-  import EmailIcon from "@tabler/icons-svelte/icons/mail";
-  /* region imports */
-  import WebIcon from "@tabler/icons-svelte/icons/world";
-  import { Button } from "$lib/components/ui/button";
-  import { m } from "$lib/paraglide/messages";
-  import type { RegistrationRecord } from "$lib/pocketbase.d";
+import EmailIcon from '@tabler/icons-svelte/icons/mail';
+/* region imports */
+import WebIcon from '@tabler/icons-svelte/icons/world';
+import { Button } from '$lib/components/ui/button';
+import { m } from '$lib/paraglide/messages';
+import type { RegistrationRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const { registration }: { registration?: RegistrationRecord } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const { registration }: { registration?: RegistrationRecord } = $props();
+/* endregion variables */
 </script>
 
 <div class="col-span-3">

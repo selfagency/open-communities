@@ -1,54 +1,83 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/navigation';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { m } from '$lib/paraglide/messages';
+import { invalidateAll } from '$app/navigation';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
+import { m } from '$lib/paraglide/messages';
 
-  interface PhChange { percent: number; direction: string; long_text: string; }
-  interface PhMetric { current: number; change: PhChange; }
-  interface Digest {
-    visitors: PhMetric; pageviews: PhMetric; sessions: PhMetric;
-    bounce_rate: PhMetric & { current: number; previous: number };
-    avg_session_duration: PhMetric & { current: string; previous: string };
-    top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
-    top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
-    goals: Array<{ name: string; conversions: number; change: PhChange }>;
-    dashboard_url: string;
-  }
+interface PhChange {
+  direction: string;
+  long_text: string;
+  percent: number;
+}
+interface PhMetric {
+  change: PhChange;
+  current: number;
+}
+interface Digest {
+  avg_session_duration: PhMetric & { current: string; previous: string };
+  bounce_rate: PhMetric & { current: number; previous: number };
+  dashboard_url: string;
+  goals: Array<{ name: string; conversions: number; change: PhChange }>;
+  pageviews: PhMetric;
+  sessions: PhMetric;
+  top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
+  top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
+  visitors: PhMetric;
+}
 
-  let {
-    realtimeDigest,
-    weekDigest,
-    monthDigest,
-  }: {
-    realtimeDigest: Digest | null;
-    weekDigest: Digest | null;
-    monthDigest: Digest | null;
-  } = $props();
+let {
+  realtimeDigest,
+  weekDigest,
+  monthDigest
+}: {
+  realtimeDigest: Digest | null;
+  weekDigest: Digest | null;
+  monthDigest: Digest | null;
+} = $props();
 
-  let viewMode = $state<'realtime' | 'week' | 'month'>('realtime');
+let viewMode = $state<'realtime' | 'week' | 'month'>('realtime');
 
-  const digest = $derived(
-    viewMode === 'realtime' ? realtimeDigest : viewMode === 'week' ? weekDigest : monthDigest
-  );
+const digest = $derived(viewMode === 'realtime' ? realtimeDigest : viewMode === 'week' ? weekDigest : monthDigest);
 
-  function fmt(n: number) { return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n); }
+function fmt(n: number) {
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
+}
 
-  // Auto-refresh every 2 minutes in any mode
-  $effect(() => {
-    const interval = setInterval(() => { invalidateAll(); }, 120_000);
-    return () => clearInterval(interval);
-  });
+// Auto-refresh every 2 minutes in any mode
+$effect(() => {
+  const interval = setInterval(() => {
+    invalidateAll();
+  }, 120_000);
+  return () => clearInterval(interval);
+});
 </script>
 
 {#if digest}
   <div class="flex items-center justify-between">
     <h3 class="font-serif text-2xl font-bold tracking-wider">{m.adminWebAnalytics()}</h3>
     <div class="flex gap-1 rounded-lg bg-muted p-1">
-      <Button variant={viewMode === 'realtime' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'realtime'}>{m.adminRealtime()}</Button>
-      <Button variant={viewMode === 'week' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'week'}>{m.adminWeek()}</Button>
-      <Button variant={viewMode === 'month' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'month'}>{m.adminMonth()}</Button>
+      <Button
+        variant={viewMode === 'realtime' ? 'default' : 'ghost'}
+        size="sm"
+        class="h-7 px-3 text-xs"
+        onclick={() => viewMode = 'realtime'}
+        >{m.adminRealtime()}</Button
+      >
+      <Button
+        variant={viewMode === 'week' ? 'default' : 'ghost'}
+        size="sm"
+        class="h-7 px-3 text-xs"
+        onclick={() => viewMode = 'week'}
+        >{m.adminWeek()}</Button
+      >
+      <Button
+        variant={viewMode === 'month' ? 'default' : 'ghost'}
+        size="sm"
+        class="h-7 px-3 text-xs"
+        onclick={() => viewMode = 'month'}
+        >{m.adminMonth()}</Button
+      >
     </div>
   </div>
 

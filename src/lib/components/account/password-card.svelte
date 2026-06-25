@@ -1,16 +1,16 @@
 <script lang="ts">
-  import type { SuperForm } from 'sveltekit-superforms';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
+import type { SuperForm } from 'sveltekit-superforms';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
 
-  let {
-    form,
-  }: {
-    form: SuperForm<any>;
-  } = $props();
+let {
+  form
+}: {
+  form: SuperForm<any>;
+} = $props();
 </script>
 
 <Card>

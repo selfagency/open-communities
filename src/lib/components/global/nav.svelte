@@ -1,26 +1,28 @@
 <script lang="ts">
-  /* region imports */
-  import MenuIcon from "@tabler/icons-svelte/icons/menu";
+/* region imports */
+import MenuIcon from '@tabler/icons-svelte/icons/menu';
 
-  import * as Sheet from "$lib/components/ui/sheet";
-  import { m } from "$lib/paraglide/messages";
-  import { state as appState } from "$lib/stores";
+import * as Sheet from '$lib/components/ui/sheet';
+import { m } from '$lib/paraglide/messages';
+import { state as appState } from '$lib/stores';
 
-  import Menu from "./menu.svelte";
+import Menu from './menu.svelte';
 
-  /*  endregion imports */
+/*  endregion imports */
 
-  /* region variables */
-  let open = $state(false);
-  /* endregion variables */
+/* region variables */
+let open = $state(false);
+/* endregion variables */
 
-  let offsetWidth = $derived(appState.offsetWidth);
+let offsetWidth = $derived(appState.offsetWidth);
 </script>
 
 {#if offsetWidth && offsetWidth < 760}
   <Sheet.Root bind:open>
     <Sheet.Trigger class="group">
-      <MenuIcon class="mt-2 h-6 w-6 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
+      <MenuIcon
+        class="mt-2 h-6 w-6 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+      />
       <span class="sr-only">{m.menu()}</span>
     </Sheet.Trigger>
     <Sheet.Content>

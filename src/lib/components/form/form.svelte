@@ -1,124 +1,114 @@
 <script lang="ts">
-  /* region imports */
-  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
-  import DOMPurify from "isomorphic-dompurify";
-  import { sleep } from "radashi";
-  import { getContext, onMount, untrack } from "svelte";
-  import { fade } from "svelte/transition";
-  import type { SuperForm, SuperValidated } from "sveltekit-superforms";
-  import { browser, dev } from "$app/environment";
-  import Captcha from "$lib/components/global/captcha.svelte";
-  import Loading from "$lib/components/global/loading.svelte";
-  import * as Accordion from "$lib/components/ui/accordion";
-  import * as Alert from "$lib/components/ui/alert";
-  import { Button } from "$lib/components/ui/button";
-  import * as Card from "$lib/components/ui/card";
-  import * as Form from "$lib/components/ui/form";
-  import { Switch } from "$lib/components/ui/switch";
-  import { createInitForm } from "$lib/forms/defaults";
-  import { m } from "$lib/paraglide/messages";
-  import type {
-    CongregationMetaRecord,
-    PagesRecord,
-    UsersRecord,
-  } from "$lib/pocketbase.d";
-  import { state as appState, setState } from "$lib/stores";
+/* region imports */
+import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
+import DOMPurify from 'isomorphic-dompurify';
+import { sleep } from 'radashi';
+import { getContext, onMount, untrack } from 'svelte';
+import { fade } from 'svelte/transition';
+import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
+import { browser, dev } from '$app/environment';
+import Captcha from '$lib/components/global/captcha.svelte';
+import Loading from '$lib/components/global/loading.svelte';
+import * as Accordion from '$lib/components/ui/accordion';
+import * as Alert from '$lib/components/ui/alert';
+import { Button } from '$lib/components/ui/button';
+import * as Card from '$lib/components/ui/card';
+import * as Form from '$lib/components/ui/form';
+import { Switch } from '$lib/components/ui/switch';
+import { createInitForm } from '$lib/forms/defaults';
+import { m } from '$lib/paraglide/messages';
+import type { CongregationMetaRecord, PagesRecord, UsersRecord } from '$lib/pocketbase.d';
+import { state as appState, setState } from '$lib/stores';
 
-  import Delete from "./delete.svelte";
-  import Accessibility from "./segments/accessibility.svelte";
-  import Congregation from "./segments/congregation.svelte";
-  import Contact from "./segments/contact.svelte";
-  import Fit from "./segments/fit.svelte";
-  import Health from "./segments/health.svelte";
-  import Registration from "./segments/registration.svelte";
-  import Security from "./segments/security.svelte";
-  import Services from "./segments/services.svelte";
+import Delete from './delete.svelte';
+import Accessibility from './segments/accessibility.svelte';
+import Congregation from './segments/congregation.svelte';
+import Contact from './segments/contact.svelte';
+import Fit from './segments/fit.svelte';
+import Health from './segments/health.svelte';
+import Registration from './segments/registration.svelte';
+import Security from './segments/security.svelte';
+import Services from './segments/services.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let {
-    content,
-    deletion = undefined,
-    form,
-    mode = $bindable("add"),
-    user,
-  }: {
-    content?: PagesRecord;
-    deletion?: SuperValidated<any>;
-    form: SuperForm<any, any>;
-    mode: "add" | "edit";
-    user: (UsersRecord & { id: string }) | undefined;
-  } = $props();
+/* region variables */
+// props
+let {
+  content,
+  deletion,
+  form,
+  mode = $bindable('add'),
+  user
+}: {
+  content?: PagesRecord;
+  deletion?: SuperValidated<any>;
+  form: SuperForm<any, any>;
+  mode: 'add' | 'edit';
+  user: (UsersRecord & { id: string }) | undefined;
+} = $props();
 
-  // constants
-  const congregation = getContext("congregation") as CongregationMetaRecord;
+// constants
+const congregation = getContext('congregation') as CongregationMetaRecord;
 
-  // svelte-ignore state_referenced_locally -- user prop is stable after mount
-  const initForm = createInitForm(user);
+// svelte-ignore state_referenced_locally -- user prop is stable after mount
+const initForm = createInitForm(user);
 
-  // locals
-  let title: string = $state("");
-  let view = $state("congregation");
-  /* endregion variables */
+// locals
+let title: string = $state('');
+let view = $state('congregation');
+/* endregion variables */
 
-  /* region methods */
-  function initData() {
-    untrack(() => {
-      formData.set(initForm);
+/* region methods */
+function initData() {
+  untrack(() => {
+    formData.set(initForm);
+  });
+}
+/* endregion methods */
+
+/* region form */
+// svelte-ignore state_referenced_locally
+// Intentional: form is initialized once from server data (not reactive to prop changes)
+const { enhance, errors, form: formData } = form;
+/* endregion form */
+
+/* region lifecycle */
+onMount(async () => {
+  if (browser) {
+    setState({
+      form: { hasErrors: false, success: false },
+      loadingSecondary: true
     });
+
+    if (!$formData?.id) {
+      initData();
+    }
+    // Note: visible permission is enforced server-side in edit/+page.server.ts.
+    // Do NOT mutate $formData here — it can trigger reactive loops in superforms.
+
+    await sleep(500);
+
+    setState({ loadingSecondary: false });
   }
-  /* endregion methods */
+});
+/* endregion lifecycle */
 
-  /* region form */
-  // svelte-ignore state_referenced_locally
-  // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const { enhance, errors, form: formData } = form;
-  /* endregion form */
+/* region reactivity */
+$effect(() => {
+  if (appState.form?.success) {
+    title = m.success({
+      thing: mode === 'edit' ? m.edit().toLowerCase() : m.submission().toLowerCase()
+    });
+  } else {
+    title = mode === 'edit' ? m.editThing({ thing: $formData.name ?? '' }) : m.addCongregation();
+  }
+});
+/* endregion reactivity */
 
-  /* region lifecycle */
-  onMount(async () => {
-    if (browser) {
-      setState({
-        form: { hasErrors: false, success: false },
-        loadingSecondary: true,
-      });
-
-      if (!$formData?.id) {
-        initData();
-      }
-      // Note: visible permission is enforced server-side in edit/+page.server.ts.
-      // Do NOT mutate $formData here — it can trigger reactive loops in superforms.
-
-      await sleep(500);
-
-      setState({ loadingSecondary: false });
-    }
-  });
-  /* endregion lifecycle */
-
-  /* region reactivity */
-  $effect(() => {
-    if (appState.form?.success) {
-      title = m.success({
-        thing:
-          mode === "edit"
-            ? m.edit().toLowerCase()
-            : m.submission().toLowerCase(),
-      });
-    } else {
-        title =
-          mode === "edit"
-            ? m.editThing({ thing: $formData.name ?? "" })
-            : m.addCongregation();
-    }
-  });
-  /* endregion reactivity */
-
-  let loadingSecondary = $derived(appState.loadingSecondary);
-  let formSuccess = $derived(appState.form?.success);
-  let formHasErrors = $derived(appState.form?.hasErrors);
+let loadingSecondary = $derived(appState.loadingSecondary);
+let formSuccess = $derived(appState.form?.success);
+let formHasErrors = $derived(appState.form?.hasErrors);
 </script>
 
 <section class="m-auto w-full" style="max-width: 480px;">
@@ -135,13 +125,7 @@
         </div>
       {:else}
         <div transition:fade={{ delay: 300, duration: 100 }}>
-          <form
-            id="addEdit"
-            method="POST"
-            action="?/submit"
-            use:enhance
-            class="min-h-96"
-          >
+          <form id="addEdit" method="POST" action="?/submit" use:enhance class="min-h-96">
             <Card.Header>
               <Card.Title class="font-display text-2xl font-normal">
                 {title}
@@ -174,15 +158,10 @@
 
                 {#if !formSuccess}
                   {#if formHasErrors}
-                    <span
-                      in:fade={{ delay: 300, duration: 150 }}
-                      out:fade={{ delay: 150, duration: 150 }}
-                    >
+                    <span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
                       <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
                         <WarningIcon size="18" />
-                        <Alert.Description class="mt-0.5" aria-live="polite"
-                          >{m.formErrors()}</Alert.Description
-                        >
+                        <Alert.Description class="mt-0.5" aria-live="polite">{m.formErrors()}</Alert.Description>
                       </Alert.Root>
                     </span>
                   {/if}
@@ -199,26 +178,17 @@
                   </Accordion.Root>
 
                   <!-- visibility -->
-                  <div
-                    class="my-4 flex flex-row items-start justify-end w-full"
-                  >
+                  <div class="my-4 flex flex-row items-start justify-end w-full">
                     {#if user?.admin}
                       <Form.Field {form} name="visible">
                         <Form.Control
                           >{#snippet children(props)}
-                            <span
-                              class="flex flex-row items-start justify-start space-x-2"
-                            >
+                            <span class="flex flex-row items-start justify-start space-x-2">
                               <span>
-                                <Form.Label
-                                  ><strong>{m.approved()}</strong></Form.Label
-                                >
+                                <Form.Label><strong>{m.approved()}</strong></Form.Label>
                               </span>
                               <span>
-                                <Switch
-                                  {...props}
-                                  bind:checked={$formData.visible}
-                                />
+                                <Switch {...props} bind:checked={$formData.visible} />
                               </span>
                             </span>
                           {/snippet}
@@ -237,28 +207,16 @@
           </form>
 
           <!-- actions -->
-          <Card.Footer
-            class="flex flex-col items-center justify-start space-y-4"
-          >
+          <Card.Footer class="flex flex-col items-center justify-start space-y-4">
             {#if !formSuccess}
-              <div
-                class="flex w-full flex-row items-center justify-between space-x-2"
-              >
+              <div class="flex w-full flex-row items-center justify-between space-x-2">
                 {#if mode === "edit"}
-                  <div
-                    class="flex flex-row items-center justify-start space-x-2"
-                  >
-                    <Delete
-                      data={deletion!}
-                      id={$formData?.id ?? ""}
-                    />
+                  <div class="flex flex-row items-center justify-start space-x-2">
+                    <Delete data={deletion!} id={$formData?.id ?? ""} />
                   </div>
                 {/if}
                 <!-- default -->
-                <div
-                  class="flex flex-row items-center justify-end space-x-2"
-                  class:w-full={mode === "add"}
-                >
+                <div class="flex flex-row items-center justify-end space-x-2" class:w-full={mode === "add"}>
                   <Button
                     variant="outline"
                     type="reset"
@@ -282,7 +240,8 @@
                       e.preventDefault();
                       e.stopPropagation();
                       form.submit(document.getElementById("addEdit"));
-                    }}>{m.submit()}</Form.Button
+                    }}
+                    >{m.submit()}</Form.Button
                   >
                 </div>
               </div>

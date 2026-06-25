@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { ScrollArea as ScrollAreaPrimitive } from 'bits-ui';
+import { ScrollArea as ScrollAreaPrimitive } from 'bits-ui';
 
-  import { cn, type WithoutChild } from '$lib/utils.js';
+import { cn, type WithoutChild } from '$lib/utils.js';
 
-  let {
-    children,
-    class: className,
-    orientation = 'vertical',
-    ref = $bindable(null),
-    ...restProps
-  }: WithoutChild<ScrollAreaPrimitive.ScrollbarProps> = $props();
+let {
+  children,
+  class: className,
+  orientation = 'vertical',
+  ref = $bindable(null),
+  ...restProps
+}: WithoutChild<ScrollAreaPrimitive.ScrollbarProps> = $props();
 </script>
 
 <ScrollAreaPrimitive.Scrollbar
@@ -22,7 +22,8 @@
     orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent',
     className
   )}
-  {...restProps}>
+  {...restProps}
+>
   {@render children?.()}
   <ScrollAreaPrimitive.Thumb data-slot="scroll-area-thumb" class="bg-border relative flex-1 rounded-full" />
 </ScrollAreaPrimitive.Scrollbar>

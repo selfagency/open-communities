@@ -1,31 +1,29 @@
 <script lang="ts">
-  /* region imports */
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import { Checkbox } from '$lib/components/ui/checkbox';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import * as RadioGroup from '$lib/components/ui/radio-group';
-  import { m } from '$lib/paraglide/messages';
-  import { valueSet } from '$lib/utils';
+/* region imports */
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+import { Checkbox } from '$lib/components/ui/checkbox';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import * as RadioGroup from '$lib/components/ui/radio-group';
+import { m } from '$lib/paraglide/messages';
+import { valueSet } from '$lib/utils';
 
-  import Required from '../required.svelte';
+import Required from '../required.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+/* region variables */
+// props
+let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
 
-  // constants
-  const hasFit: boolean = $derived(valueSet($formData.fit));
-  /* endregion variables */
+// constants
+const hasFit: boolean = $derived(valueSet($formData.fit));
+/* endregion variables */
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
-  /* endregion methods */
+/* region methods */
+const fixType = (input: any) => input as Record<string, unknown> & { _errors?: string[] | undefined };
+/* endregion methods */
 </script>
 
 <!-- fit -->
@@ -33,7 +31,9 @@
   {@const fitErrors = fixType($errors.fit)?._errors}
   <Accordion.Item value="fit">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.fit()}</span>
         {#if !hasFit || fitErrors}
           <span class="text-destructive">*</span>
@@ -57,7 +57,8 @@
                     checked={$formData.fit.publicStatement}
                     onCheckedChange={(checked) => {
                       $formData.fit.publicStatement = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="publicStatement">{m.fit_publicStatement()}</Form.Label>
@@ -78,7 +79,8 @@
                     checked={$formData.fit.clergyMember}
                     onCheckedChange={(checked) => {
                       $formData.fit.clergyMember = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="clergyMember">{m.fit_clergyMember()}</Form.Label>
@@ -99,7 +101,8 @@
                     checked={$formData.fit.multipleClergyMembers}
                     onCheckedChange={(checked) => {
                       $formData.fit.multipleClergyMembers = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="multipleClergyMembers">{m.fit_multipleClergyMembers()}</Form.Label>
@@ -120,7 +123,8 @@
                     checked={$formData.fit.other}
                     onCheckedChange={(checked) => {
                       $formData.fit.other = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="fit_other">{m.other()}</Form.Label>
@@ -175,7 +179,12 @@
       {/if}
 
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => { view = 'services'; document.querySelector('[data-value="services"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{m.next()} →</Button>
+        <Button
+          variant="secondary"
+          onclick={() => { view = 'services'; document.querySelector('[data-value="services"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          >{m.next()}
+          →</Button
+        >
       </div>
     </Accordion.Content>
   </Accordion.Item>

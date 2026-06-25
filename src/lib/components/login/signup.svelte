@@ -1,59 +1,58 @@
 <script lang="ts">
+import { onMount } from 'svelte';
+import { fade } from 'svelte/transition';
+/* region imports */
+import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
+import { dev } from '$app/environment';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import Captcha from '$lib/components/global/captcha.svelte';
+import Verify from '$lib/components/login/verify.svelte';
+import * as Card from '$lib/components/ui/card';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
+import { state as appState, setState } from '$lib/stores';
 
-  import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  /* region imports */
-  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
-  import { dev } from '$app/environment';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/state';
-  import Captcha from '$lib/components/global/captcha.svelte';
-  import Verify from '$lib/components/login/verify.svelte';
-  import * as Card from '$lib/components/ui/card';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
-  import { state as appState, setState } from '$lib/stores';
+// import { log } from '$lib/utils';
+/* endregion imports */
 
-  // import { log } from '$lib/utils';
-  /* endregion imports */
+/* region variables */
+// props
+let { form, verify }: { form: SuperForm<any>; verify: SuperValidated<any> } = $props();
 
-  /* region variables */
-  // props
-  let { form, verify }: { form: SuperForm<any>; verify: SuperValidated<any> } = $props();
+// locals
+let verified: boolean = $state(false);
+// let captchaLoaded: boolean = false;
 
-  // locals
-  let verified: boolean = $state(false);
-  // let captchaLoaded: boolean = false;
+// constants
+const verifying = $derived(page.url.searchParams.has('verifyEmail'));
 
-  // constants
-  const verifying = $derived(page.url.searchParams.has('verifyEmail'));
+// Svelte 5: derive store values in script to avoid $ prefix in template
+let formSuccess = $derived(appState.form?.success);
+let redirectUrl = $derived(page.url.searchParams.get('redirect'));
 
-  // Svelte 5: derive store values in script to avoid $ prefix in template
-  let formSuccess = $derived(appState.form?.success);
-  let redirectUrl = $derived(page.url.searchParams.get('redirect'));
+// After successful signup, redirect if a redirect URL was provided
+$effect(() => {
+  if (formSuccess && redirectUrl) {
+    goto(redirectUrl);
+  }
+});
+/* endregion variables */
 
-  // After successful signup, redirect if a redirect URL was provided
-  $effect(() => {
-    if (formSuccess && redirectUrl) {
-      goto(redirectUrl);
-    }
-  });
-  /* endregion variables */
+/* region form */
+// svelte-ignore state_referenced_locally
+// Intentional: form is initialized once from server data (not reactive to prop changes)
+const { enhance, form: formData } = form;
+/* endregion form */
 
-  /* region form */
-  // svelte-ignore state_referenced_locally
-  // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const { enhance, form: formData } = form;
-  /* endregion form */
-
-  /* region lifecycle */
-  onMount(async () => {
-    setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
-    $formData.emailVisibility = true;
-    $formData.lang = 'en';
-  });
-  /* endregion lifecycle */
+/* region lifecycle */
+onMount(async () => {
+  setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
+  $formData.emailVisibility = true;
+  $formData.lang = 'en';
+});
+/* endregion lifecycle */
 </script>
 
 <Card.Root>
@@ -83,7 +82,8 @@
         use:enhance
         class="space-y-2"
         in:fade={{ delay: 200, duration: 100 }}
-        out:fade={{ delay: 0, duration: 100 }}>
+        out:fade={{ delay: 0, duration: 100 }}
+      >
         <Form.Field {form} name="name">
           <Form.Control>
             {#snippet children(props)}
@@ -131,7 +131,9 @@
 
         <div class="mt-4 flex items-center justify-between">
           <Form.Button>{m.signUp()}</Form.Button>
-          <a href="/login?login" class="text-primary text-sm font-semibold underline-offset-4 hover:underline">{m.alreadyHaveAccount()}</a>
+          <a href="/login?login" class="text-primary text-sm font-semibold underline-offset-4 hover:underline"
+            >{m.alreadyHaveAccount()}</a
+          >
         </div>
       </form>
 

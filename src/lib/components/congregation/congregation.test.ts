@@ -35,7 +35,9 @@ describe('Congregation component', () => {
     // find the invisible sr-only label for share and click its parent button
     const shareLabel = screen.getByText(m.share());
     const shareButton = shareLabel.closest('button');
-    if (!shareButton) throw new Error('share button not found');
+    if (!shareButton) {
+      throw new Error('share button not found');
+    }
 
     await user.click(shareButton);
 

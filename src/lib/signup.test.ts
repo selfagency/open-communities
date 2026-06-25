@@ -49,9 +49,7 @@ vi.mock('$lib/utils', () => {
 
 // Make isEmpty return false for non-empty and true for empty-ish values
 vi.mock('radashi', () => ({
-  isEmpty: (v: unknown) => {
-    return v == null || (typeof v === 'object' && Object.keys(v as object).length === 0);
-  }
+  isEmpty: (v: unknown) => v == null || (typeof v === 'object' && Object.keys(v as object).length === 0)
 }));
 
 // Grab mocked exports so tests can assert on them

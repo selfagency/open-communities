@@ -3,28 +3,26 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CitiesResponse, StatesResponse } from './pocketbase.d';
 
 // Why: Mock the PocketBase api and logger so Location methods can be tested deterministically.
-vi.mock('$lib/api', () => {
-  return {
-    api: {
-      collection: (name: string) => ({
-        getFullList: () => {
-          const g = globalThis as unknown as {
-            __TEST_CITIES?: unknown[];
-            __TEST_STATES?: unknown[];
-          };
-          if (name === 'states') {
-            return Promise.resolve(g.__TEST_STATES || []);
-          }
-          if (name === 'cities') {
-            return Promise.resolve(g.__TEST_CITIES || []);
-          }
-          return Promise.resolve([]);
+vi.mock('$lib/api', () => ({
+  api: {
+    collection: (name: string) => ({
+      getFullList: () => {
+        const g = globalThis as unknown as {
+          __TEST_CITIES?: unknown[];
+          __TEST_STATES?: unknown[];
+        };
+        if (name === 'states') {
+          return Promise.resolve(g.__TEST_STATES || []);
         }
-      }),
-      filter: (expr: string) => expr
-    }
-  };
-});
+        if (name === 'cities') {
+          return Promise.resolve(g.__TEST_CITIES || []);
+        }
+        return Promise.resolve([]);
+      }
+    }),
+    filter: (expr: string) => expr
+  }
+}));
 
 vi.mock('$lib/utils', () => ({ log: { error: vi.fn() } }));
 

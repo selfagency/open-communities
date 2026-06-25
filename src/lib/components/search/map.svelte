@@ -1,56 +1,60 @@
 <script lang="ts">
-  import { mode } from 'mode-watcher';
-  /* region imports */
-  import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
-  import { Button } from '$lib/components/ui/button';
-  import type { Location } from '$lib/location';
-  import { darkStyle, lightStyle } from '$lib/map-styles';
-  import { m } from '$lib/paraglide/messages';
-  import type { Search } from '$lib/search';
-  import type { LocationMeta } from '$lib/types.d';
+import { mode } from 'mode-watcher';
+/* region imports */
+import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
+import { Button } from '$lib/components/ui/button';
+import type { Location } from '$lib/location';
+import { darkStyle, lightStyle } from '$lib/map-styles';
+import { m } from '$lib/paraglide/messages';
+import type { Search } from '$lib/search';
+import type { LocationMeta } from '$lib/types.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let {
-    location,
-    locations = $bindable([] as LocationMeta[]),
-    search
-  }: {
-    location: Location;
-    locations: LocationMeta[];
-    search: Search;
-  } = $props();
+/* region variables */
+// props
+let {
+  location,
+  locations = $bindable([] as LocationMeta[]),
+  search
+}: {
+  location: Location;
+  locations: LocationMeta[];
+  search: Search;
+} = $props();
 
-  // constants
-  // svelte-ignore state_referenced_locally
-  const { state: searchState } = search;
+// constants
+// svelte-ignore state_referenced_locally
+const { state: searchState } = search;
 
-  // locals
-  const center = $derived.by(() => {
-    const loc = $searchState.searchLocation;
-    if (loc?.country?.id) {
-      return [
-        loc.city?.longitude || loc.state?.longitude || loc.country?.longitude || -90,
-        loc.city?.latitude || loc.state?.latitude || loc.country?.latitude || 10
-      ] as LngLatLike;
+// locals
+const center = $derived.by(() => {
+  const loc = $searchState.searchLocation;
+  if (loc?.country?.id) {
+    return [
+      loc.city?.longitude || loc.state?.longitude || loc.country?.longitude || -90,
+      loc.city?.latitude || loc.state?.latitude || loc.country?.latitude || 10
+    ] as LngLatLike;
+  }
+  return [-90, 10] as LngLatLike;
+});
+
+const mapStyle = $derived(mode.current === 'dark' ? darkStyle : lightStyle);
+
+const zoom = $derived.by(() => {
+  const loc = $searchState.searchLocation;
+  if (loc?.country?.id) {
+    if (loc.city?.id) {
+      return 10;
     }
-    return [-90, 10] as LngLatLike;
-  });
-
-  const mapStyle = $derived(mode.current === 'dark' ? darkStyle : lightStyle);
-
-  const zoom = $derived.by(() => {
-    const loc = $searchState.searchLocation;
-    if (loc?.country?.id) {
-      if (loc.city?.id) return 10;
-      if (loc.state?.id) return 6;
-      return 3;
+    if (loc.state?.id) {
+      return 6;
     }
-    return 1;
-  });
-  /* endregion variables */
+    return 3;
+  }
+  return 1;
+});
+/* endregion variables */
 </script>
 
 {#if (globalThis as any).__TEST__}
@@ -65,11 +69,18 @@
           onclick={() => {
             search.state.setKey('showLocation', true);
             location.load({ city: city?.id, country: country?.id, state: state?.id });
-          }}>
+          }}
+        >
           <span class="text-xs">
-            {#if city}{city.name},{/if}
-            {#if state}{state.name},{/if}
-            {#if country}{country.name}{/if}
+            {#if city}
+              {city.name},
+            {/if}
+            {#if state}
+              {state.name},
+            {/if}
+            {#if country}
+              {country.name}
+            {/if}
           </span>
         </Button>
       </div>
@@ -77,19 +88,13 @@
   </div>
 {:else}
   <div role="region" aria-label={m.congregationMap()}>
-  <MapLibre
-    center={center}
-    zoom={zoom}
-    minZoom={1}
-    class="h-96"
-    standardControls
-    style={mapStyle}>
-    {#each locations as { city, country, latitude, longitude, state } (city?.id)}
-      <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
-        <Popup offset={[0, -10]}>
-          <button
-            class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
-            onclick={async () => {
+    <MapLibre {center} {zoom} minZoom={1} class="h-96" standardControls style={mapStyle}>
+      {#each locations as { city, country, latitude, longitude, state } (city?.id)}
+        <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
+          <Popup offset={[0, -10]}>
+            <button
+              class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
+              onclick={async () => {
               search.state.setKey('showLocation', true);
               await location.load({
                 city: city?.id,
@@ -98,14 +103,21 @@
               });
               const loc = location.state.get();
               search.setSearchLocation(loc.record);
-            }}>
-            {#if city}{city.name},{/if}
-            {#if state}{state.name},{/if}
-            {#if country}{country.name}{/if}
-          </button>
-        </Popup>
-      </DefaultMarker>
-    {/each}
-  </MapLibre>
+            }}
+            >
+              {#if city}
+                {city.name},
+              {/if}
+              {#if state}
+                {state.name},
+              {/if}
+              {#if country}
+                {country.name}
+              {/if}
+            </button>
+          </Popup>
+        </DefaultMarker>
+      {/each}
+    </MapLibre>
   </div>
 {/if}

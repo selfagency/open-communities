@@ -1,32 +1,30 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
-	import type { HTMLAnchorAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "$lib/utils.js";
+import type { Snippet } from 'svelte';
+import type { HTMLAnchorAttributes } from 'svelte/elements';
+import { cn, type WithElementRef } from '$lib/utils.js';
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		href = undefined,
-		child,
-		children,
-		...restProps
-	}: WithElementRef<HTMLAnchorAttributes> & {
-		child?: Snippet<[{ props: HTMLAnchorAttributes }]>;
-	} = $props();
+let {
+  ref = $bindable(null),
+  class: className,
+  href,
+  child,
+  children,
+  ...restProps
+}: WithElementRef<HTMLAnchorAttributes> & {
+  child?: Snippet<[{ props: HTMLAnchorAttributes }]>;
+} = $props();
 
-	const attrs = $derived({
-		"data-slot": "breadcrumb-link",
-		class: cn("hover:text-foreground transition-colors", className),
-		href,
-		...restProps,
-	});
+const attrs = $derived({
+  'data-slot': 'breadcrumb-link',
+  class: cn('transition-colors hover:text-foreground', className),
+  href,
+  ...restProps
+});
 </script>
 
 {#if child}
-	{@render child({ props: attrs })}
+  {@render child({ props: attrs })}
 {:else}
-	<!-- biome-ignore lint/a11y/useValidAnchor: generic component, href provided via restProps -->
-	<a bind:this={ref} {...attrs}>
-		{@render children?.()}
-	</a>
+  <!-- biome-ignore lint/a11y/useValidAnchor: generic component, href provided via restProps -->
+  <a bind:this={ref} {...attrs}> {@render children?.()} </a>
 {/if}

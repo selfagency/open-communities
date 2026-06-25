@@ -91,7 +91,7 @@ async function mailTransport({
   subject: string;
   headerTo: string;
 }) {
-  if (!SMTP_USER || !SMTP_PASS || !SMTP_HOST || !SMTP_PORT) {
+  if (!(SMTP_USER && SMTP_PASS && SMTP_HOST && SMTP_PORT)) {
     log.warn('SMTP credentials are not set');
   }
 
@@ -141,7 +141,9 @@ export async function transactionalMail({ email, message, name, subject }: Trans
 }
 
 function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo> {
-  if (_transporter) return _transporter;
+  if (_transporter) {
+    return _transporter;
+  }
 
   const smtpPort = Number.parseInt(SMTP_PORT as string, 10);
   const transportOpts: SMTPTransport.Options = {

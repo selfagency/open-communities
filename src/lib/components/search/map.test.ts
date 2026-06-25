@@ -48,7 +48,9 @@ it('renders markers and clicking opens location', async () => {
 
   // click the first button in the rendered container
   const firstButton = container.querySelector('button');
-  if (firstButton) await fireEvent.click(firstButton);
+  if (firstButton) {
+    await fireEvent.click(firstButton);
+  }
   // location.load should have been called with the location keys
   expect(loadSpy).toHaveBeenCalledWith({
     city: 'c1',

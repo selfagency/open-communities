@@ -37,7 +37,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const keyMap: Record<string, Array<{ locale: string; value: string; id: string }>> = {};
   for (const r of records as Array<Record<string, unknown>>) {
     const key = r.key as string;
-    if (!Object.hasOwn(keyMap, key)) keyMap[key] = [];
+    if (!Object.hasOwn(keyMap, key)) {
+      keyMap[key] = [];
+    }
     keyMap[key].push({
       id: r.id as string,
       locale: r.locale as string,
@@ -68,7 +70,7 @@ export const actions = {
     const key = form.get('key') as string;
     const entriesJson = form.get('entries') as string;
 
-    if (!key || !entriesJson) {
+    if (!(key && entriesJson)) {
       return fail(400, { error: 'Key and entries are required' });
     }
 
@@ -106,7 +108,9 @@ export const actions = {
     const form = await request.formData();
     const key = form.get('key') as string;
 
-    if (!key) return fail(400, { error: 'Key is required' });
+    if (!key) {
+      return fail(400, { error: 'Key is required' });
+    }
 
     const records = await client
       .collection('translations')
@@ -132,7 +136,9 @@ export const actions = {
     const key = form.get('key') as string;
     const value = form.get('value') as string;
 
-    if (!key) return fail(400, { error: 'Key is required' });
+    if (!key) {
+      return fail(400, { error: 'Key is required' });
+    }
 
     try {
       await withRetry(() => client.collection('translations').create({ key, locale: 'en', value: value || '' }));
@@ -148,7 +154,7 @@ export const actions = {
     const coolifyToken = process.env.COOLIFY_TOKEN;
     const coolifyAppUuid = process.env.COOLIFY_APP_UUID;
 
-    if (!coolifyUrl || !coolifyToken || !coolifyAppUuid) {
+    if (!(coolifyUrl && coolifyToken && coolifyAppUuid)) {
       return fail(500, { error: 'Coolify is not configured' });
     }
 
@@ -189,7 +195,7 @@ export const actions = {
     const coolifyUrl = process.env.COOLIFY_URL;
     const coolifyToken = process.env.COOLIFY_TOKEN;
 
-    if (!coolifyUrl || !coolifyToken) {
+    if (!(coolifyUrl && coolifyToken)) {
       return fail(500, { error: 'Coolify is not configured' });
     }
 

@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('pocketbase', () => {
   // each instance gets its own spies
   return {
-    default: function MockPocketBase(_url: string) {
+    default(_url: string) {
       // @ts-expect-error - we're creating a test double
       this.autoCancellation = vi.fn();
       // authStore with spies and mutable isValid

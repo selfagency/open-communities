@@ -36,7 +36,7 @@ function parseOptions(opt) {
     }
     if (o.boundingBox) {
       options.push(`viewbox=${o.boundingBox.join(',')}`);
-      options.push(`bounded=1`);
+      options.push('bounded=1');
     }
   }
 
@@ -52,9 +52,8 @@ function parseOptions(opt) {
 function parseQuery(query) {
   if (typeof query === 'string') {
     return `q=${query}`;
-  } else {
-    return '';
   }
+  return '';
 }
 
 async function reverse(lat, lon, options) {
@@ -66,10 +65,9 @@ async function reverse(lat, lon, options) {
   if ('error' in json) {
     json.is_error = true;
     return json;
-  } else {
-    json.is_error = false;
-    return json;
   }
+  json.is_error = false;
+  return json;
 }
 
 const pb = new Pocketbase(process.env.PB_ENDPOINT);

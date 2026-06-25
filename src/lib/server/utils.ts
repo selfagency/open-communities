@@ -14,7 +14,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
     return true;
   }
 
-  if (!pubEnv.PUBLIC_CAPTCHA_SITE_KEY || !env.CAPTCHA_SITE_SECRET) {
+  if (!(pubEnv.PUBLIC_CAPTCHA_SITE_KEY && env.CAPTCHA_SITE_SECRET)) {
     log.error('[captcha] Captcha validation is not configured');
     throw new Error('Captcha validation is not configured');
   }

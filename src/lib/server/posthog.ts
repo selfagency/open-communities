@@ -10,8 +10,12 @@ import { log } from '$lib/server/logger';
 let _phClient: null | PostHog = null;
 
 function getPhClient(): null | PostHog {
-  if (!env.PUBLIC_POSTHOG_KEY) return null;
-  if (_phClient) return _phClient;
+  if (!env.PUBLIC_POSTHOG_KEY) {
+    return null;
+  }
+  if (_phClient) {
+    return _phClient;
+  }
   _phClient = new PostHog(env.PUBLIC_POSTHOG_KEY, {
     host: env.PUBLIC_POSTHOG_HOST
   });
@@ -26,7 +30,9 @@ process.once('SIGINT', closePhClient);
 
 export async function capture(user: string | undefined, event: string) {
   const phClient = getPhClient();
-  if (!phClient) return;
+  if (!phClient) {
+    return;
+  }
 
   try {
     phClient.capture({ distinctId: user ?? 'anonymous', event });
@@ -37,7 +43,9 @@ export async function capture(user: string | undefined, event: string) {
 
 export async function captureException(error: unknown, user?: string, other?: Record<string, number | string>) {
   const phClient = getPhClient();
-  if (!phClient) return;
+  if (!phClient) {
+    return;
+  }
 
   try {
     let fallbackMessage: string;

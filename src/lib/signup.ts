@@ -46,11 +46,11 @@ export const initForm = (data: Record<string, unknown>) => {
         if (serverError) {
           log.error('server error message', serverError);
           toast.error(serverError);
-        } else if (!isEmpty(result.data?.form?.errors)) {
-          // If there are field errors but no general error, show generic message
+        } else if (isEmpty(result.data?.form?.errors)) {
+          // Fallback for unknown validation failure
           toast.error(m.signUpFailure());
         } else {
-          // Fallback for unknown validation failure
+          // If there are field errors but no general error, show generic message
           toast.error(m.signUpFailure());
         }
       } else {

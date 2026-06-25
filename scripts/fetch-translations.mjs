@@ -21,13 +21,17 @@ const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '..');
 
 let PB_URL = process.env.PB_URL || 'http://localhost:8090';
-if (PB_URL.endsWith('/')) PB_URL = PB_URL.slice(0, -1);
+if (PB_URL.endsWith('/')) {
+  PB_URL = PB_URL.slice(0, -1);
+}
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 
 function writeFallbackFiles() {
   const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
-  if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
+  if (!existsSync(MESSAGES_DIR)) {
+    mkdirSync(MESSAGES_DIR, { recursive: true });
+  }
   for (const locale of knownLocales) {
     writeFileSync(resolve(MESSAGES_DIR, `${locale}.json`), '{}\n');
   }
@@ -47,7 +51,9 @@ async function fetchRecords() {
   const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=1000`, {
     headers: { authorization: `Bearer ${TOKEN}` }
   });
-  if (!res.ok) throw new Error(`Failed to fetch translations: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch translations: ${res.status}`);
+  }
   const data = await res.json();
   return data?.items ?? [];
 }
@@ -56,7 +62,9 @@ function groupByLocale(records) {
   const byLocale = new Map();
   for (const r of records) {
     const locale = r.locale;
-    if (!byLocale.has(locale)) byLocale.set(locale, {});
+    if (!byLocale.has(locale)) {
+      byLocale.set(locale, {});
+    }
     const map = byLocale.get(locale);
     map[/** @type {string} */ (r.key)] = r.value;
   }
@@ -64,7 +72,9 @@ function groupByLocale(records) {
 }
 
 function writeMessageFiles(byLocale) {
-  if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
+  if (!existsSync(MESSAGES_DIR)) {
+    mkdirSync(MESSAGES_DIR, { recursive: true });
+  }
   const locales = [...byLocale.keys()];
   if (locales.length > 0) {
     for (const locale of locales) {
@@ -93,7 +103,9 @@ function writeMessageFiles(byLocale) {
 async function main() {
   console.log(`📦 Fetching translations from ${PB_URL}...`);
   const records = await fetchRecords();
-  if (records.length === 0) console.log('  ⚠  No translations found — writing empty files');
+  if (records.length === 0) {
+    console.log('  ⚠  No translations found — writing empty files');
+  }
   const byLocale = groupByLocale(records);
   const locales = writeMessageFiles(byLocale);
   console.log(`\n✅ Done — ${locales.length || '11'} locales synced`);

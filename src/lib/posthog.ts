@@ -16,7 +16,9 @@ let _initialized = false;
  * features work correctly.
  */
 export function initPosthog(user?: UsersResponse) {
-  if (!browser || !env.PUBLIC_POSTHOG_KEY) return;
+  if (!(browser && env.PUBLIC_POSTHOG_KEY)) {
+    return;
+  }
 
   try {
     posthog.init(env.PUBLIC_POSTHOG_KEY, {
@@ -58,7 +60,9 @@ export function captureException(
   event?: { url?: { pathname?: string } },
   additionalProperties?: Properties
 ): void {
-  if (!browser || !_initialized) return;
+  if (!(browser && _initialized)) {
+    return;
+  }
   try {
     let message: string;
     if (typeof error === 'string') {

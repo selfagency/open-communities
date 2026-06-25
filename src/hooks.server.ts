@@ -36,7 +36,9 @@ const AUTH_REFRESH_COOLDOWN_MS = 300_000; // 5 minutes
 function pruneAuthRefreshTimestamps() {
   const cutoff = Date.now() - AUTH_REFRESH_COOLDOWN_MS * 2;
   for (const [key, ts] of authRefreshTimestamps) {
-    if (ts < cutoff) authRefreshTimestamps.delete(key);
+    if (ts < cutoff) {
+      authRefreshTimestamps.delete(key);
+    }
   }
 }
 

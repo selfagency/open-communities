@@ -22,7 +22,9 @@ export function superForm(initialData = {}) {
     /** @param {any} next */
     set(next) {
       value = next;
-      for (const s of subscribers) s(value);
+      for (const s of subscribers) {
+        s(value);
+      }
     },
     /** @param {(v: any) => void} fn */
     subscribe(fn) {
@@ -33,7 +35,9 @@ export function superForm(initialData = {}) {
     /** @param {(v: any) => any} updater */
     update(updater) {
       value = updater(value);
-      for (const s of subscribers) s(value);
+      for (const s of subscribers) {
+        s(value);
+      }
     }
   };
 
@@ -53,7 +57,9 @@ export function superForm(initialData = {}) {
     submit: (el) => {
       // If a test installs a spy on globalThis, call it so tests can assert.
       // @ts-expect-error
-      if (globalThis.__TEST_SUPERFORM_SUBMIT__) globalThis.__TEST_SUPERFORM_SUBMIT__(el);
+      if (globalThis.__TEST_SUPERFORM_SUBMIT__) {
+        globalThis.__TEST_SUPERFORM_SUBMIT__(el);
+      }
       // increment an observable counter too
       globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
     }

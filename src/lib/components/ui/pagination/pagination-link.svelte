@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { Pagination as PaginationPrimitive } from 'bits-ui';
+import { Pagination as PaginationPrimitive } from 'bits-ui';
 
-  import { buttonVariants, type Props } from '$lib/components/ui/button/index.js';
-  import { cn } from '$lib/utils.js';
+import { buttonVariants, type Props } from '$lib/components/ui/button/index.js';
+import { cn } from '$lib/utils.js';
 
-  let {
-    children,
-    class: className,
-    isActive,
-    page,
-    ref = $bindable(null),
-    size = 'icon',
-    ...restProps
-  }: PaginationPrimitive.PageProps &
-    Props & {
-      isActive: boolean;
-    } = $props();
+let {
+  children,
+  class: className,
+  isActive,
+  page,
+  ref = $bindable(null),
+  size = 'icon',
+  ...restProps
+}: PaginationPrimitive.PageProps &
+  Props & {
+    isActive: boolean;
+  } = $props();
 </script>
 
 {#snippet Fallback()}
@@ -36,4 +36,5 @@
     className
   )}
   children={children || Fallback}
-  {...restProps} />
+  {...restProps}
+/>

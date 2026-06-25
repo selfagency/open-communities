@@ -30,7 +30,9 @@ api.autoCancellation(false);
 
 async function authenticate(auth: string) {
   try {
-    if (auth) api.authStore.loadFromCookie(auth);
+    if (auth) {
+      api.authStore.loadFromCookie(auth);
+    }
     if (api.authStore.isValid) {
       await api.collection('users').authRefresh();
     }
@@ -42,16 +44,19 @@ async function authenticate(auth: string) {
   return api;
 }
 
-function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate: boolean = false): T {
+function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate = false): T {
   const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
-  if (!keepDate) fields.push('created' as keyof T);
+  if (!keepDate) {
+    fields.push('created' as keyof T);
+  }
   return convertBooleans(omit(response, fields)) as T;
 }
 
 function convertBooleans(obj: unknown): unknown {
   if (isArray(obj)) {
     return obj.map(convertBooleans);
-  } else if (obj !== null && typeof obj === 'object') {
+  }
+  if (obj !== null && typeof obj === 'object') {
     const source = obj as Record<string, unknown>;
     return Object.keys(source).reduce<Record<string, unknown>>((acc, key) => {
       if (!Object.hasOwn(source, key) || key === '__proto__' || key === 'constructor') {
@@ -123,7 +128,9 @@ async function withRetry<T>(fn: () => Promise<T>, options?: Partial<typeof RETRY
       return await fn();
     } catch (err) {
       // Throw immediately on non-retryable errors (e.g., 404, 403)
-      if (!isRetryable(err)) throw err;
+      if (!isRetryable(err)) {
+        throw err;
+      }
       if (attempt >= config.maxRetries) {
         lastError = err;
         break;
@@ -144,15 +151,23 @@ function isRetryable(err: unknown): boolean {
 
 function loadUser(cookies: Cookies): null | (UsersRecord & { email: string; id: string }) {
   const auth = cookies.get('auth');
-  if (!auth) return null;
+  if (!auth) {
+    return null;
+  }
   try {
     const parsed = cookie.parse(auth);
-    if (!parsed.pb_auth) return null;
+    if (!parsed.pb_auth) {
+      return null;
+    }
     const decoded = JSON.parse(parsed.pb_auth);
     const model = decoded?.model;
-    if (typeof model !== 'object' || model === null) return null;
+    if (typeof model !== 'object' || model === null) {
+      return null;
+    }
     // Basic shape validation — id and email must be strings
-    if (typeof model.id !== 'string' || typeof model.email !== 'string') return null;
+    if (typeof model.id !== 'string' || typeof model.email !== 'string') {
+      return null;
+    }
     return model as UsersRecord & { email: string; id: string };
   } catch {
     return null;

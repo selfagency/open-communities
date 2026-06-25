@@ -9,7 +9,9 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
   const user = client.authStore.record;
-  if (!user?.email) throw error(401, 'Not authenticated');
+  if (!user?.email) {
+    throw error(401, 'Not authenticated');
+  }
   const form = await superValidate(zod4(userSchema), {
     defaults: {
       name: (user?.name as string) ?? '',
@@ -32,7 +34,9 @@ export const actions = {
     const client = locals.api;
     const form = await superValidate(request, zod4(userSchema));
 
-    if (!form.valid) return fail(400, { form });
+    if (!form.valid) {
+      return fail(400, { form });
+    }
 
     try {
       const body: Record<string, unknown> = {

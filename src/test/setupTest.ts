@@ -128,7 +128,9 @@ vi.mock('$app/state', () => {
   const userStore = {
     set(next: unknown) {
       _userValue = next;
-      for (const s of _userSubscribers) s(_userValue);
+      for (const s of _userSubscribers) {
+        s(_userValue);
+      }
     },
     subscribe: (fn: (v: unknown) => void) => {
       _userSubscribers.add(fn);
@@ -137,7 +139,9 @@ vi.mock('$app/state', () => {
     },
     update(updater: (v: unknown) => unknown) {
       _userValue = updater(_userValue);
-      for (const s of _userSubscribers) s(_userValue);
+      for (const s of _userSubscribers) {
+        s(_userValue);
+      }
     }
   };
 

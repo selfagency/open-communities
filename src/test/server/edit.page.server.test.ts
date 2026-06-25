@@ -40,7 +40,9 @@ const server = setupServer(
   http.get(`${PB}/api/collections/congregationMeta/records/:id`, ({ params }) => {
     const id = params.id as string;
     const record = [congregationVisible, congregationHidden, congregationOtherOwner].find((c) => c.id === id);
-    if (!record) return HttpResponse.json(null, { status: 404 });
+    if (!record) {
+      return HttpResponse.json(null, { status: 404 });
+    }
     return HttpResponse.json(record);
   })
 );

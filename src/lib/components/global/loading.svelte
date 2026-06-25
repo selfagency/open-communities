@@ -1,13 +1,10 @@
 <script lang="ts">
-  import Loading from "@tabler/icons-svelte/icons/loader";
-  import { m } from "$lib/paraglide/messages";
+import Loading from '@tabler/icons-svelte/icons/loader';
+import { m } from '$lib/paraglide/messages';
 
-  const {
-    class: className = "",
-    variant = "default",
-  }: { class?: string; variant?: "default" | "full" } = $props();
+const { class: className = '', variant = 'default' }: { class?: string; variant?: 'default' | 'full' } = $props();
 
-  import { fade } from "svelte/transition";
+import { fade } from 'svelte/transition';
 </script>
 
 <div

@@ -15,7 +15,9 @@ import { logger } from '$lib/utils';
 function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
   const otelLogger: undefined | { emit: (record: unknown) => void } = (globalThis as Record<string, unknown>)
     .__OTEL_LOGGER__ as undefined | { emit: (record: unknown) => void };
-  if (!otelLogger) return;
+  if (!otelLogger) {
+    return;
+  }
 
   try {
     const severityMap: Record<string, string> = {
@@ -96,9 +98,9 @@ async function logEvent(statusCode: number, event: RequestEvent) {
 
     const sensitiveHeaders = new Set(['auth', 'authorization', 'cookie']);
     const logData: object = {
-      error: error,
-      errorId: errorId,
-      errorStackTrace: errorStackTrace,
+      error,
+      errorId,
+      errorStackTrace,
       headers: dev
         ? Object.fromEntries(
             Array.from(event.request.headers.entries()).filter(([k]) => !sensitiveHeaders.has(k.toLowerCase()))
@@ -107,7 +109,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
       ip: event.request.headers.get('x-forwarded-for') || event.request.headers.get('remote-addr'),
       method: event.request.method,
       pathname: event.url.pathname,
-      referer: referer,
+      referer,
       status: statusCode,
       timeInMs: Date.now() - (event?.locals?.startTimer as number),
       url: event.url.toString(),

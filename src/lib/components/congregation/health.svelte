@@ -1,20 +1,17 @@
 <script lang="ts">
-  /* region imports */
-  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
-  import MaskIcon from "@tabler/icons-svelte/icons/face-mask";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import { m } from "$lib/paraglide/messages";
-  import type { HealthRecord } from "$lib/pocketbase.d";
+/* region imports */
+import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
+import MaskIcon from '@tabler/icons-svelte/icons/face-mask';
+import * as Tooltip from '$lib/components/ui/tooltip';
+import { m } from '$lib/paraglide/messages';
+import type { HealthRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    health,
-    mode = $bindable("full"),
-  }: { health?: HealthRecord; mode?: "full" | "mini" } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const { health, mode = $bindable('full') }: { health?: HealthRecord; mode?: 'full' | 'mini' } = $props();
+/* endregion variables */
 </script>
 
 {#if mode === "mini"}

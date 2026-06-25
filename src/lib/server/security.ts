@@ -129,7 +129,7 @@ const handle: Handle = helmet({
   frameguard: { action: 'deny' },
   hidePoweredBy: true,
   hsts: {
-    maxAge: 31536000,
+    maxAge: 31_536_000,
     includeSubDomains: true,
     preload: true
   },

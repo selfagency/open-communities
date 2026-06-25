@@ -1,34 +1,35 @@
 <script lang="ts">
-  /* region imports */
-  import Flag from "@tabler/icons-svelte/icons/flag";
-  import FlagOff from "@tabler/icons-svelte/icons/flag-off";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import { m } from "$lib/paraglide/messages";
-  import type { FitRecord } from "$lib/pocketbase.d";
+/* region imports */
+import Flag from '@tabler/icons-svelte/icons/flag';
+import FlagOff from '@tabler/icons-svelte/icons/flag-off';
+import * as Tooltip from '$lib/components/ui/tooltip';
+import { m } from '$lib/paraglide/messages';
+import type { FitRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    flag,
-    mode = $bindable("mini"),
-  }: { flag?: FitRecord["flag"]; mode?: "full" | "mini" } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const { flag, mode = $bindable('mini') }: { flag?: FitRecord['flag']; mode?: 'full' | 'mini' } = $props();
+/* endregion variables */
 </script>
 
 {#if flag}
   {#if mode === "mini"}
-    <div
-      class="flex w-full flex-row items-center justify-end space-x-1 antialiased"
-    >
+    <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="group flex h-7 w-7 items-center justify-center">
             {#if flag === "no"}
-              <FlagOff size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
+              <FlagOff
+                size="16"
+                class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+              />
             {:else}
-              <Flag size="16" class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90" />
+              <Flag
+                size="16"
+                class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+              />
             {/if}
             <span class="sr-only">{m[`flag_${flag}`]()}</span>
           </Tooltip.Trigger>
@@ -45,7 +46,9 @@
     <div class="col-span-9">
       {#if flag === "no"}
         <div class="flex flex-row items-center space-x-2">
-          <FlagOff class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:scale-110" />
+          <FlagOff
+            class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:scale-110"
+          />
           <span>{m.flag_no()}</span>
         </div>
       {:else if flag === "yes"}

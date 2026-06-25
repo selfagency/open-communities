@@ -1,15 +1,15 @@
 <script lang="ts">
-  import SearchIcon from '@tabler/icons-svelte/icons/search';
-  import { Command as CommandPrimitive } from 'bits-ui';
+import SearchIcon from '@tabler/icons-svelte/icons/search';
+import { Command as CommandPrimitive } from 'bits-ui';
 
-  import { cn } from '$lib/utils.js';
+import { cn } from '$lib/utils.js';
 
-  let {
-    class: className,
-    ref = $bindable(null),
-    value = $bindable(''),
-    ...restProps
-  }: CommandPrimitive.InputProps = $props();
+let {
+  class: className,
+  ref = $bindable(null),
+  value = $bindable(''),
+  ...restProps
+}: CommandPrimitive.InputProps = $props();
 </script>
 
 <div class="flex h-11 items-center gap-2 border-b px-3" data-slot="command-input-wrapper">
@@ -22,5 +22,6 @@
     )}
     bind:ref
     {...restProps}
-    bind:value />
+    bind:value
+  />
 </div>

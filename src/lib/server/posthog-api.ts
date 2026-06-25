@@ -6,52 +6,52 @@ const PH_PROJECT_ID = env.POSTHOG_CLI_PROJECT_ID;
 const PH_HOST = env.POSTHOG_CLI_HOST || 'https://us.i.posthog.com';
 
 interface PhChange {
-  percent: number;
-  direction: 'Up' | 'Down';
   color: string;
-  text: string;
+  direction: 'Up' | 'Down';
   long_text: string;
+  percent: number;
+  text: string;
 }
 
 interface PhMetric {
+  change: PhChange;
   current: number;
   previous: number;
-  change: PhChange;
 }
 
 export interface WeeklyDigest {
-  visitors: PhMetric;
+  avg_session_duration: PhMetric & { current: string; previous: string };
+  bounce_rate: PhMetric & { current: number; previous: number };
+  dashboard_url: string;
+  goals: Array<{ name: string; conversions: number; change: PhChange }>;
   pageviews: PhMetric;
   sessions: PhMetric;
-  bounce_rate: PhMetric & { current: number; previous: number };
-  avg_session_duration: PhMetric & { current: string; previous: string };
   top_pages: Array<{ host: string; path: string; visitors: number; change: PhChange | null }>;
   top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
-  goals: Array<{ name: string; conversions: number; change: PhChange }>;
-  dashboard_url: string;
+  visitors: PhMetric;
 }
 
 interface HogQLResult {
-  results: Array<Array<unknown>>;
   columns: string[];
+  results: Array<Array<unknown>>;
   types: string[];
 }
 
 interface PostHogInsight {
-  id: number;
-  short_id: string;
-  name: string;
   derived_name: string;
+  id: number;
+  last_refresh: string | null;
+  name: string;
   query: Record<string, unknown> | null;
   result: unknown;
-  last_refresh: string | null;
+  short_id: string;
 }
 
 interface InsightResult {
   id: number;
-  short_id: string;
   name: string;
   result: unknown;
+  short_id: string;
 }
 
 /** Check if PostHog credentials are configured. */
@@ -61,7 +61,9 @@ function isConfigured(): boolean {
 
 /** Fetch the web analytics weekly digest from PostHog. */
 export async function getWeeklyDigest(days = 7): Promise<WeeklyDigest | null> {
-  if (!isConfigured()) return null;
+  if (!isConfigured()) {
+    return null;
+  }
 
   try {
     const url = `${PH_HOST}/api/projects/${PH_PROJECT_ID}/web_analytics/weekly_digest/?days=${days}&compare=true`;
@@ -83,7 +85,9 @@ export async function getWeeklyDigest(days = 7): Promise<WeeklyDigest | null> {
 
 /** Execute a HogQL query against PostHog. */
 async function queryHogQL(sql: string): Promise<HogQLResult | null> {
-  if (!isConfigured()) return null;
+  if (!isConfigured()) {
+    return null;
+  }
 
   try {
     const url = `${PH_HOST}/api/projects/${PH_PROJECT_ID}/query/`;
@@ -130,7 +134,9 @@ async function _queryTrends(
     '    ORDER BY date'
   ].join('\n');
   const result = await queryHogQL(sql);
-  if (!result?.results) return null;
+  if (!result?.results) {
+    return null;
+  }
   return (result.results as Array<[string, number]>).map(([date, count]) => ({
     date: (date || '').slice(0, 10),
     count: count ?? 0
@@ -139,7 +145,9 @@ async function _queryTrends(
 
 /** Fetch a saved PostHog insight by its numeric ID or short_id. */
 async function _getInsight(id: number | string): Promise<InsightResult | null> {
-  if (!isConfigured()) return null;
+  if (!isConfigured()) {
+    return null;
+  }
   try {
     const url = `${PH_HOST}/api/projects/${PH_PROJECT_ID}/insights/${id}/`;
     const res = await fetch(url, {
@@ -164,10 +172,14 @@ async function _getInsight(id: number | string): Promise<InsightResult | null> {
 
 /** List saved insights, optionally filtered by search. */
 async function _listInsights(search?: string): Promise<InsightResult[]> {
-  if (!isConfigured()) return [];
+  if (!isConfigured()) {
+    return [];
+  }
   try {
     const params = new URLSearchParams({ limit: '50' });
-    if (search) params.set('search', search);
+    if (search) {
+      params.set('search', search);
+    }
     const url = `${PH_HOST}/api/projects/${PH_PROJECT_ID}/insights/?${params}`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${PH_API_KEY}` }

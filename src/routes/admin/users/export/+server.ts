@@ -3,15 +3,23 @@ import { withRetry } from '$lib/server/api';
 import type { RequestHandler } from './$types';
 
 function csvEscape(val: unknown): string {
-  if (val === null || val === undefined) return '""';
-  if (typeof val === 'string') return `"${val.replaceAll('"', '""')}"`;
-  if (typeof val === 'number' || typeof val === 'boolean') return `"${val}"`;
+  if (val === null || val === undefined) {
+    return '""';
+  }
+  if (typeof val === 'string') {
+    return `"${val.replaceAll('"', '""')}"`;
+  }
+  if (typeof val === 'number' || typeof val === 'boolean') {
+    return `"${val}"`;
+  }
   return '""';
 }
 
 export const GET: RequestHandler = async ({ locals }) => {
   const client = locals.api;
-  if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+  if (!client?.authStore?.record?.admin) {
+    throw redirect(303, '/');
+  }
 
   const users = await withRetry(() =>
     client.collection('users').getFullList({

@@ -66,9 +66,8 @@ export const load = async ({ fetch, locals, url }) => {
           delete: await validate({ id }, deleteSchema)
         }
       };
-    } else {
-      throw new Error('403');
     }
+    throw new Error('403');
   } catch (error) {
     if ((error as Error).message === '403') {
       redirect(302, '/login');

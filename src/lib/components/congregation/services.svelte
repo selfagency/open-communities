@@ -1,15 +1,14 @@
 <script lang="ts">
+import { m } from '$lib/paraglide/messages';
+/* region imports */
+import type { ServicesRecord } from '$lib/pocketbase.d';
 
-  import { m } from '$lib/paraglide/messages';
-  /* region imports */
-  import type { ServicesRecord } from '$lib/pocketbase.d';
+/* endregion imports */
 
-  /* endregion imports */
-
-  /* region variables */
-  // props
-  const { services }: { services?: ServicesRecord } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const { services }: { services?: ServicesRecord } = $props();
+/* endregion variables */
 </script>
 
 <div class="col-span-3"><h2 class="label">{m.services()}</h2></div>

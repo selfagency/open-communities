@@ -43,9 +43,8 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
       state: {},
       onStateChange() {},
       renderFallbackValue: null,
-      mergeOptions: (defaultOptions: TableOptions<TData>, options: Partial<TableOptions<TData>>) => {
-        return mergeObjects(defaultOptions, options);
-      }
+      mergeOptions: (defaultOptions: TableOptions<TData>, options: Partial<TableOptions<TData>>) =>
+        mergeObjects(defaultOptions, options)
     },
     options
   );
@@ -54,18 +53,21 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
   let state = $state<TableState>(table.initialState);
 
   function updateOptions() {
-    table.setOptions(() => {
-      return mergeObjects(resolvedOptions, options, {
+    table.setOptions(() =>
+      mergeObjects(resolvedOptions, options, {
         state: mergeObjects(state, options.state || {}),
 
         onStateChange: (updater: Updater<TableState>) => {
-          if (isUpdaterFunction(updater)) state = updater(state);
-          else state = mergeObjects(state, updater);
+          if (isUpdaterFunction(updater)) {
+            state = updater(state);
+          } else {
+            state = mergeObjects(state, updater);
+          }
 
           options.onStateChange?.(updater);
         }
-      });
-    });
+      })
+    );
   }
 
   updateOptions();
@@ -98,9 +100,11 @@ function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
   const findSourceWithKey = (key: PropertyKey) => {
     for (let i = sources.length - 1; i >= 0; i--) {
       const obj = resolve(sources[i]);
-      if (obj && key in obj) return obj;
+      if (obj && key in obj) {
+        return obj;
+      }
     }
-    return undefined;
+    return;
   };
 
   return new Proxy(Object.create(null), {
@@ -130,7 +134,9 @@ function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
 
     getOwnPropertyDescriptor(_, key) {
       const src = findSourceWithKey(key);
-      if (!src) return undefined;
+      if (!src) {
+        return;
+      }
       return {
         configurable: true,
         enumerable: true,

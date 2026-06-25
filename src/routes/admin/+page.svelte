@@ -1,8 +1,8 @@
 <script lang="ts">
-  import AnalyticsSection from '$lib/components/admin/analytics-section.svelte';
-  import StatCards from '$lib/components/admin/stat-cards.svelte';
+import AnalyticsSection from '$lib/components/admin/analytics-section.svelte';
+import StatCards from '$lib/components/admin/stat-cards.svelte';
 
-  let { data } = $props();
+let { data } = $props();
 </script>
 
 <div class="space-y-8">

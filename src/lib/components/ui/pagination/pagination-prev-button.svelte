@@ -1,17 +1,12 @@
 <script lang="ts">
-  import ChevronLeftIcon from '@tabler/icons-svelte/icons/chevron-left';
-  import { Pagination as PaginationPrimitive } from 'bits-ui';
+import ChevronLeftIcon from '@tabler/icons-svelte/icons/chevron-left';
+import { Pagination as PaginationPrimitive } from 'bits-ui';
 
-  import { buttonVariants } from '$lib/components/ui/button/index.js';
-  import { m } from '$lib/paraglide/messages';
-  import { cn } from '$lib/utils.js';
+import { buttonVariants } from '$lib/components/ui/button/index.js';
+import { m } from '$lib/paraglide/messages';
+import { cn } from '$lib/utils.js';
 
-  let {
-    children,
-    class: className,
-    ref = $bindable(null),
-    ...restProps
-  }: PaginationPrimitive.PrevButtonProps = $props();
+let { children, class: className, ref = $bindable(null), ...restProps }: PaginationPrimitive.PrevButtonProps = $props();
 </script>
 
 {#snippet Fallback()}
@@ -31,4 +26,5 @@
     className
   )}
   children={children || Fallback}
-  {...restProps} />
+  {...restProps}
+/>

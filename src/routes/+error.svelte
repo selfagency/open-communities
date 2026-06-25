@@ -1,8 +1,8 @@
 <script lang="ts">
-  /* region imports */
-  import { page } from '$app/state';
-  import { m } from '$lib/paraglide/messages';
-  /* endregion imports */
+/* region imports */
+import { page } from '$app/state';
+import { m } from '$lib/paraglide/messages';
+/* endregion imports */
 </script>
 
 <svelte:head>

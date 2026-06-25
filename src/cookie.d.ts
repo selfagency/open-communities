@@ -1,14 +1,14 @@
 declare module 'cookie' {
   export interface SerializeOptions {
-    encode?: (val: string) => string;
-    maxAge?: number;
     domain?: string;
-    path?: string;
+    encode?: (val: string) => string;
     expires?: Date;
     httpOnly?: boolean;
-    secure?: boolean;
-    sameSite?: boolean | 'strict' | 'lax' | 'none';
+    maxAge?: number;
+    path?: string;
     priority?: 'low' | 'medium' | 'high';
+    sameSite?: boolean | 'strict' | 'lax' | 'none';
+    secure?: boolean;
   }
 
   export interface ParseOptions {

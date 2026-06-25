@@ -38,7 +38,9 @@ export class FakeSearch {
   results = (() => {
     // If tests placed a static RESULTS_STORE on the class, use it so all
     // instances share the same store and tests can manipulate it easily.
-    if ((FakeSearch as any).RESULTS_STORE) return (FakeSearch as any).RESULTS_STORE;
+    if ((FakeSearch as any).RESULTS_STORE) {
+      return (FakeSearch as any).RESULTS_STORE;
+    }
 
     let value: CongregationMetaRecord[] = [];
     const subscribers: Array<(v: CongregationMetaRecord[]) => void> = [];
@@ -62,7 +64,9 @@ export class FakeSearch {
         fn(value);
         return () => {
           const idx = subscribers.indexOf(fn);
-          if (idx !== -1) subscribers.splice(idx, 1);
+          if (idx !== -1) {
+            subscribers.splice(idx, 1);
+          }
         };
       },
       value
@@ -101,7 +105,9 @@ export class FakeSearch {
     setKey(key: string, v: unknown) {
       const old = this._value;
       this._value = { ...(this._value || {}), [key]: v } as SearchState;
-      for (const s of this._subscribers) s(this._value, old as SearchState, key as keyof SearchState);
+      for (const s of this._subscribers) {
+        s(this._value, old as SearchState, key as keyof SearchState);
+      }
     },
     subscribe(
       listener: (
@@ -120,7 +126,9 @@ export class FakeSearch {
       listener(this._value as Readonly<SearchState>, undefined, undefined);
       return () => {
         const i = this._subscribers.indexOf(wrapped);
-        if (i !== -1) this._subscribers.splice(i, 1);
+        if (i !== -1) {
+          this._subscribers.splice(i, 1);
+        }
       };
     },
     value: {} as Record<string, unknown>,

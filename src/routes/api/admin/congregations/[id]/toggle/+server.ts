@@ -6,7 +6,9 @@ import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ locals, params }) => {
   const client = locals.api;
-  if (!client?.authStore?.record?.admin) throw error(401, 'Unauthorized');
+  if (!client?.authStore?.record?.admin) {
+    throw error(401, 'Unauthorized');
+  }
 
   const cong = await withRetry(() => client.collection('congregations').getOne(params.id, { expand: 'owner' }));
   await withRetry(() => client.collection('congregations').update(params.id, { visible: !cong.visible }));

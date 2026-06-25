@@ -1,9 +1,9 @@
 declare module 'pell' {
   interface PellAction {
-    name: string;
     icon?: string;
-    title?: string;
+    name: string;
     result?: () => void;
+    title?: string;
   }
 
   interface PellEditor {
@@ -11,10 +11,6 @@ declare module 'pell' {
   }
 
   interface PellOptions {
-    element: HTMLElement;
-    onChange: (html: string) => void;
-    defaultParagraphSeparator?: string;
-    styleWithCSS?: boolean;
     actions?: (string | PellAction)[];
     classes?: {
       actionbar?: string;
@@ -22,6 +18,10 @@ declare module 'pell' {
       content?: string;
       selected?: string;
     };
+    defaultParagraphSeparator?: string;
+    element: HTMLElement;
+    onChange: (html: string) => void;
+    styleWithCSS?: boolean;
   }
 
   export function init(options: PellOptions): PellEditor;

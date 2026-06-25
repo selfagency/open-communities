@@ -50,7 +50,9 @@ export function getUserStore() {
     const store = {
       set(next: unknown) {
         _value = next;
-        for (const s of subs) s(_value);
+        for (const s of subs) {
+          s(_value);
+        }
       },
       subscribe(fn: (v: unknown) => void) {
         subs.add(fn);
@@ -59,7 +61,9 @@ export function getUserStore() {
       },
       update(updater: (v: unknown) => unknown) {
         _value = updater(_value);
-        for (const s of subs) s(_value);
+        for (const s of subs) {
+          s(_value);
+        }
       }
     };
     (globalThis as Record<string, unknown>).__TEST_USER_STORE__ = store;
@@ -119,7 +123,7 @@ export function makeMockFormProps(formData = {}, errors = {}) {
 
   const base = mockSveltekitSuperforms.superForm(formData);
   // shallow clone and set helpful properties
-  const f = Object.assign({}, base);
+  const f = { ...base };
   (f as any).formId = 'test';
   (f as any).options = {};
   (f as any).tainted = false;

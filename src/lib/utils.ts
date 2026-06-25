@@ -29,14 +29,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 /* endregion types */
 
-export function truncateText(text: unknown, limit: number = 32, ellipses: boolean = true) {
+export function truncateText(text: unknown, limit = 32, ellipses = true) {
   if (!text || typeof text !== 'string') {
     return '';
-  } else {
-    const opts = { ellipsis: '...', limit };
-    const sliced = fstw(text, opts);
-    return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
   }
+  const opts = { ellipsis: '...', limit };
+  const sliced = fstw(text, opts);
+  return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
 }
 
 export const flyAndScale = (
@@ -56,12 +55,13 @@ export const flyAndScale = (
     return valueB;
   };
 
-  const styleToString = (style: Record<string, number | string | undefined>): string => {
-    return Object.keys(style).reduce((str, key) => {
-      if (style[key] === undefined) return str;
+  const styleToString = (style: Record<string, number | string | undefined>): string =>
+    Object.keys(style).reduce((str, key) => {
+      if (style[key] === undefined) {
+        return str;
+      }
       return `${str}${key}:${style[key]};`;
     }, '');
-  };
 
   return {
     css: (t) => {
@@ -94,7 +94,9 @@ export const logger = new Logger(
 export const log = logger.getSubLogger({ name: 'frontend' });
 
 export const valueSet = (obj: Record<string, unknown>): boolean => {
-  if (!obj || isEmpty(obj)) return false;
+  if (!obj || isEmpty(obj)) {
+    return false;
+  }
   const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));
   return !isEmpty(shaken);
 };

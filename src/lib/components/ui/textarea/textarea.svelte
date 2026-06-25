@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { HTMLTextareaAttributes } from 'svelte/elements';
+import type { HTMLTextareaAttributes } from 'svelte/elements';
 
-  import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils.js';
+import { cn, type WithElementRef, type WithoutChildren } from '$lib/utils.js';
 
-  let {
-    class: className,
-    ref = $bindable(null),
-    value = $bindable(),
-    ...restProps
-  }: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> = $props();
+let {
+  class: className,
+  ref = $bindable(null),
+  value = $bindable(),
+  ...restProps
+}: WithoutChildren<WithElementRef<HTMLTextareaAttributes>> = $props();
 </script>
 
 <textarea
@@ -19,4 +19,5 @@
     className
   )}
   bind:value
-  {...restProps}></textarea>
+  {...restProps}
+></textarea>

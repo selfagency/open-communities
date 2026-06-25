@@ -8,7 +8,9 @@ const userStore = {
   /** @param {any} next */
   set(next) {
     _userValue = next;
-    for (const s of _userSubscribers) s(_userValue);
+    for (const s of _userSubscribers) {
+      s(_userValue);
+    }
   },
   /** @param {(v: any) => void} fn */
   subscribe(fn) {
@@ -19,7 +21,9 @@ const userStore = {
   /** @param {(v: any) => any} updater */
   update(updater) {
     _userValue = updater(_userValue);
-    for (const s of _userSubscribers) s(_userValue);
+    for (const s of _userSubscribers) {
+      s(_userValue);
+    }
   }
 };
 

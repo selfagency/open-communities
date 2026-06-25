@@ -1,31 +1,29 @@
 <script lang="ts">
-  /* region imports */
+/* region imports */
 
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import * as RadioGroup from '$lib/components/ui/radio-group';
-  import { m } from '$lib/paraglide/messages';
-  import { valueSet } from '$lib/utils';
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import * as RadioGroup from '$lib/components/ui/radio-group';
+import { m } from '$lib/paraglide/messages';
+import { valueSet } from '$lib/utils';
 
-  import Required from '../required.svelte';
+import Required from '../required.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+/* region variables */
+// props
+let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
 
-  // constants
-  const hasHealth: boolean = $derived(valueSet($formData.health));
-  /* endregion variables */
+// constants
+const hasHealth: boolean = $derived(valueSet($formData.health));
+/* endregion variables */
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
-  /* endregion methods */
+/* region methods */
+const fixType = (input: any) => input as Record<string, unknown> & { _errors?: string[] | undefined };
+/* endregion methods */
 </script>
 
 <!-- health -->
@@ -33,7 +31,9 @@
   {@const healthErrors = fixType($errors.health)}
   <Accordion.Item value="health">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.health()}</span>
         {#if !hasHealth || healthErrors}
           <span class="text-destructive">*</span>
@@ -84,8 +84,12 @@
         <span class="mt-4 block text-xs text-destructive">{m.requiredResponse()}</span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => { view = 'security'; document.querySelector('[data-value="security"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
-          {m.next()} →
+        <Button
+          variant="secondary"
+          onclick={() => { view = 'security'; document.querySelector('[data-value="security"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+        >
+          {m.next()}
+          →
         </Button>
       </div>
     </Accordion.Content>

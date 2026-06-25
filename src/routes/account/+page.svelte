@@ -1,40 +1,48 @@
 <script lang="ts">
-  import { toast } from 'svelte-sonner';
-  import { superForm } from 'sveltekit-superforms';
-  import CongregationCard from '$lib/components/account/congregation-card.svelte';
-  import DangerZone from '$lib/components/account/danger-zone.svelte';
-  import PasswordCard from '$lib/components/account/password-card.svelte';
-  import ProfileForm from '$lib/components/account/profile-form.svelte';
-  import { m } from '$lib/paraglide/messages';
+import { toast } from 'svelte-sonner';
+import { superForm } from 'sveltekit-superforms';
+import CongregationCard from '$lib/components/account/congregation-card.svelte';
+import DangerZone from '$lib/components/account/danger-zone.svelte';
+import PasswordCard from '$lib/components/account/password-card.svelte';
+import ProfileForm from '$lib/components/account/profile-form.svelte';
+import { m } from '$lib/paraglide/messages';
 
-  let { data } = $props();
+let { data } = $props();
 
-  let saved = $state(false);
-  let unlinked = $state(false);
+let saved = $state(false);
+let unlinked = $state(false);
 
-  // svelte-ignore state_referenced_locally
-  const form = superForm(data.form as any, {
-    onUpdated({ form: f }) {
-      saved = true;
-      if (f.valid) toast.success('Profile updated');
-    },
-  });
-  const { enhance, form: formData, errors, capture, restore } = form;
-
-  export const snapshot = { capture, restore };
-
-  function handleUnlink() {
-    return async ({ result }: { result: { type: string } }) => {
-      if (result.type === 'success') unlinked = true;
-    };
+// svelte-ignore state_referenced_locally
+const form = superForm(data.form as any, {
+  onUpdated({ form: f }) {
+    saved = true;
+    if (f.valid) {
+      toast.success('Profile updated');
+    }
   }
+});
+const { enhance, form: formData, errors, capture, restore } = form;
 
-  function handleDelete() {
-    if (!confirm('Are you sure? This cannot be undone.')) return;
-    return async ({ result }: { result: { type: string } }) => {
-      if (result.type === 'success') window.location.href = '/';
-    };
+export const snapshot = { capture, restore };
+
+function handleUnlink() {
+  return async ({ result }: { result: { type: string } }) => {
+    if (result.type === 'success') {
+      unlinked = true;
+    }
+  };
+}
+
+function handleDelete() {
+  if (!confirm('Are you sure? This cannot be undone.')) {
+    return;
   }
+  return async ({ result }: { result: { type: string } }) => {
+    if (result.type === 'success') {
+      window.location.href = '/';
+    }
+  };
+}
 </script>
 
 <svelte:head>

@@ -1,28 +1,23 @@
 <script lang="ts">
-  /* region imports */
-  import SecurityIcon from "@tabler/icons-svelte/icons/shield";
-  import UnarmedIcon from "@tabler/icons-svelte/icons/shield-off";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import { m } from "$lib/paraglide/messages";
-  import type { SecurityRecord } from "$lib/pocketbase.d";
+/* region imports */
+import SecurityIcon from '@tabler/icons-svelte/icons/shield';
+import UnarmedIcon from '@tabler/icons-svelte/icons/shield-off';
+import * as Tooltip from '$lib/components/ui/tooltip';
+import { m } from '$lib/paraglide/messages';
+import type { SecurityRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    mode = $bindable("mini"),
-    security,
-  }: { mode?: "full" | "mini"; security: SecurityRecord } = $props();
+/* region variables */
+// props
+const { mode = $bindable('mini'), security }: { mode?: 'full' | 'mini'; security: SecurityRecord } = $props();
 
-  // constants
-  /* endregion variables */
+// constants
+/* endregion variables */
 </script>
 
 {#if mode === "mini"}
-  <div
-    class="flex w-full flex-row items-center justify-end space-x-1 antialiased"
-  >
+  <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}
       <Tooltip.Provider>
         <Tooltip.Root>

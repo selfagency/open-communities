@@ -4,7 +4,9 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
-  if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+  if (!client?.authStore?.record?.admin) {
+    throw redirect(303, '/');
+  }
 
   return {};
 };
@@ -12,7 +14,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions = {
   save: async ({ locals, request }) => {
     const client = locals.api;
-    if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+    if (!client?.authStore?.record?.admin) {
+      throw redirect(303, '/');
+    }
 
     const form = await request.formData();
     const title = form.get('title') as string;
@@ -24,9 +28,12 @@ export const actions = {
     const variantsJson = form.get('variants') as string;
     const imageFile = form.get('image') as File | null;
 
-    if (!title || !slug) return fail(400, { error: 'Title and slug are required' });
-    if (!/^[a-z0-9-]+$/.test(slug))
+    if (!(title && slug)) {
+      return fail(400, { error: 'Title and slug are required' });
+    }
+    if (!/^[a-z0-9-]+$/.test(slug)) {
       return fail(400, { error: 'Slug must contain only lowercase letters, numbers, and hyphens' });
+    }
 
     try {
       const body: Record<string, unknown> = {
@@ -70,7 +77,9 @@ export const actions = {
 
       throw redirect(303, '/admin/pages');
     } catch (err: unknown) {
-      if ((err as { status?: number }).status === 303) throw err;
+      if ((err as { status?: number }).status === 303) {
+        throw err;
+      }
       return fail(400, { error: 'Save failed' });
     }
   }

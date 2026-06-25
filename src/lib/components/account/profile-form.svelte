@@ -1,24 +1,24 @@
 <script lang="ts">
-  import type { SuperForm, superForm } from 'sveltekit-superforms';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import * as Select from '$lib/components/ui/select';
-  import { Switch } from '$lib/components/ui/switch';
-  import { m } from '$lib/paraglide/messages';
+import type { SuperForm, superForm } from 'sveltekit-superforms';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import * as Select from '$lib/components/ui/select';
+import { Switch } from '$lib/components/ui/switch';
+import { m } from '$lib/paraglide/messages';
 
-  let {
-    form,
-    saved,
-  }: {
-    form: ReturnType<typeof superForm>;
-    saved: boolean;
-  } = $props();
+let {
+  form,
+  saved
+}: {
+  form: ReturnType<typeof superForm>;
+  saved: boolean;
+} = $props();
 
-  // svelte-ignore state_referenced_locally
-  // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const { form: formData, errors } = form;
+// svelte-ignore state_referenced_locally
+// Intentional: form is initialized once from server data (not reactive to prop changes)
+const { form: formData, errors } = form;
 </script>
 
 <Card>
@@ -74,7 +74,12 @@
       <Form.Control>
         {#snippet children(props)}
           <div class="flex items-center gap-3">
-            <Switch {...props} id="notifications" checked={$formData.notifications as unknown as boolean} onCheckedChange={(c) => $formData.notifications = c} />
+            <Switch
+              {...props}
+              id="notifications"
+              checked={$formData.notifications as unknown as boolean}
+              onCheckedChange={(c) => $formData.notifications = c}
+            />
             <Form.Label for="notifications" class="text-sm">{m.emailUpdates()}</Form.Label>
           </div>
         {/snippet}

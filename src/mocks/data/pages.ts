@@ -1,7 +1,7 @@
 export interface PageFixture {
-  content: string;
   collectionId: string;
   collectionName: string;
+  content: string;
   created: string;
   description: string;
   id: string;

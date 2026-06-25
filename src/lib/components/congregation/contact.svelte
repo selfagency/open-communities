@@ -1,21 +1,21 @@
 <script lang="ts">
-  /* region imports */
-  import EmailIcon from "@tabler/icons-svelte/icons/mail";
+/* region imports */
+import EmailIcon from '@tabler/icons-svelte/icons/mail';
 
-  import { m } from "$lib/paraglide/messages";
+import { m } from '$lib/paraglide/messages';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    contactEmail,
-    contactName,
-  }: {
-    contactEmail?: string;
-    contactName?: string;
-  } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const {
+  contactEmail,
+  contactName
+}: {
+  contactEmail?: string;
+  contactName?: string;
+} = $props();
+/* endregion variables */
 </script>
 
 <div class="col-span-3 flex flex-row items-center justify-start">

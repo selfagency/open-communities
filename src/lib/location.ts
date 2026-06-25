@@ -37,7 +37,9 @@ function writable<T>(initial: T): {
     },
     set(v: T) {
       value = v;
-      for (const fn of subs) fn(value);
+      for (const fn of subs) {
+        fn(value);
+      }
     }
   };
 }
@@ -50,7 +52,9 @@ export class Location {
   state: LocationStore;
 
   constructor({ countries, search }: { countries: Country[]; search?: Search }) {
-    if (search) this.search = search;
+    if (search) {
+      this.search = search;
+    }
     this.api = api;
 
     this.countries = countries as Country[];
@@ -92,7 +96,9 @@ export class Location {
 
   reset() {
     this.state.set(this.default);
-    if (this.search) this.search.resetLocation();
+    if (this.search) {
+      this.search.resetLocation();
+    }
   }
 
   setCity(input: string) {
@@ -101,7 +107,7 @@ export class Location {
 
     const city = cities?.find((c) => c?.id === input) as City;
 
-    if (city)
+    if (city) {
       this.state.set({
         ...objState,
         locality: {
@@ -116,6 +122,7 @@ export class Location {
           state: objState.record.state as State
         }
       });
+    }
   }
 
   async setCountry(input: string) {
@@ -129,7 +136,7 @@ export class Location {
         filter: api?.filter('country={:country}', { country: country?.id })
       });
 
-      if (states)
+      if (states) {
         this.state.set({
           ...state,
           localities: {
@@ -157,6 +164,7 @@ export class Location {
             state: undefined
           }
         });
+      }
     } catch (err) {
       log.error(err);
     }
@@ -174,7 +182,7 @@ export class Location {
         filter: api?.filter('state={:state}', { state: state?.id })
       });
 
-      if (cities)
+      if (cities) {
         this.state.set({
           ...objState,
           localities: {
@@ -201,6 +209,7 @@ export class Location {
             state: state as State
           }
         });
+      }
     } catch (err) {
       log.error(err);
     }

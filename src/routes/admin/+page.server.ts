@@ -51,8 +51,12 @@ export const load: PageServerLoad = async ({ locals }) => {
   for (const cong of allCongs as Array<Record<string, unknown>>) {
     const coId = cong.country as string;
     const stId = cong.state as string;
-    if (coId) countryCounts[coId] = (countryCounts[coId] || 0) + 1;
-    if (stId) stateCounts[stId] = (stateCounts[stId] || 0) + 1;
+    if (coId) {
+      countryCounts[coId] = (countryCounts[coId] || 0) + 1;
+    }
+    if (stId) {
+      stateCounts[stId] = (stateCounts[stId] || 0) + 1;
+    }
   }
 
   const topCountries = Object.entries(countryCounts)

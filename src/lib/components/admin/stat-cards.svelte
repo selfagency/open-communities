@@ -1,24 +1,24 @@
 <script lang="ts">
-  import CongregationsIcon from '@tabler/icons-svelte/icons/buildings';
-  import ThumbsUpIcon from '@tabler/icons-svelte/icons/circle-check';
-  import UsersIcon from '@tabler/icons-svelte/icons/users';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { m } from '$lib/paraglide/messages';
+import CongregationsIcon from '@tabler/icons-svelte/icons/buildings';
+import ThumbsUpIcon from '@tabler/icons-svelte/icons/circle-check';
+import UsersIcon from '@tabler/icons-svelte/icons/users';
+import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
+import { m } from '$lib/paraglide/messages';
 
-  let {
-    congregations = 0,
-    users = 0,
-    pendingApprovals = 0,
-    topCountries = [],
-    topStates = [],
-  }: {
-    congregations: number;
-    users: number;
-    pendingApprovals: number;
-    topCountries?: Array<{ name: string; count: number }>;
-    topStates?: Array<{ name: string; count: number }>;
-  } = $props();
+let {
+  congregations = 0,
+  users = 0,
+  pendingApprovals = 0,
+  topCountries = [],
+  topStates = []
+}: {
+  congregations: number;
+  users: number;
+  pendingApprovals: number;
+  topCountries?: Array<{ name: string; count: number }>;
+  topStates?: Array<{ name: string; count: number }>;
+} = $props();
 </script>
 
 <div class="grid gap-4 md:grid-cols-3">

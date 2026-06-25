@@ -1,36 +1,38 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { goto } from '$app/navigation';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
+import { enhance } from '$app/forms';
+import { goto } from '$app/navigation';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
 
-  let { data } = $props();
-  // svelte-ignore state_referenced_locally
-  const user = data.targetUser;
-  // svelte-ignore state_referenced_locally
-  let formError = $state('');
-  let formSuccess = $state('');
-  let selectedCong = $state('');
+let { data } = $props();
+// svelte-ignore state_referenced_locally
+const user = data.targetUser;
+// svelte-ignore state_referenced_locally
+let formError = $state('');
+let formSuccess = $state('');
+let selectedCong = $state('');
 
-  function handleUpdate() {
-    return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
-      if (result.type === 'success') {
-        formSuccess = (result.data?.success as string) ?? 'Saved';
-        formError = '';
-      } else {
-        formError = (result.data?.error as string) ?? 'Error';
-        formSuccess = '';
-      }
-    };
-  }
+function handleUpdate() {
+  return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
+    if (result.type === 'success') {
+      formSuccess = (result.data?.success as string) ?? 'Saved';
+      formError = '';
+    } else {
+      formError = (result.data?.error as string) ?? 'Error';
+      formSuccess = '';
+    }
+  };
+}
 
-  function handleDelete() {
-    return async ({ result }: { result: { type: string } }) => {
-      if (result.type === 'redirect') goto('/admin/users');
-    };
-  }
+function handleDelete() {
+  return async ({ result }: { result: { type: string } }) => {
+    if (result.type === 'redirect') {
+      goto('/admin/users');
+    }
+  };
+}
 </script>
 
 <svelte:head>
@@ -39,12 +41,17 @@
 
 <div class="mx-auto max-w-2xl space-y-6 pb-4 -mt-6">
   <div class="mb-4">
-    <a href="/admin/users" class="text-muted-foreground text-sm underline-offset-4 hover:underline">&larr; {m.adminUsers()}</a>
+    <a href="/admin/users" class="text-muted-foreground text-sm underline-offset-4 hover:underline"
+      >&larr; {m.adminUsers()}</a
+    >
   </div>
 
   <div>
     <h1 class="text-2xl font-semibold">{user.name || user.email}</h1>
-    <p class="text-muted-foreground text-sm">{user.email} &middot; {user.admin ? m.admin() : m.user()} &middot; {user.verified ? m.verified() : m.unverified()}</p>
+    <p class="text-muted-foreground text-sm">
+      {user.email}
+      &middot; {user.admin ? m.admin() : m.user()} &middot; {user.verified ? m.verified() : m.unverified()}
+    </p>
   </div>
 
   {#if formSuccess}
@@ -81,7 +88,9 @@
       <CardContent class="space-y-4">
         <p class="text-muted-foreground text-sm">{m.linkedDescription()}</p>
         <div class="flex gap-2">
-          <Button variant="outline" onclick={() => goto('/edit?id=' + user.congregation)}>{m.editCongregation()}</Button>
+          <Button variant="outline" onclick={() => goto('/edit?id=' + user.congregation)}
+            >{m.editCongregation()}</Button
+          >
           <form method="POST" action="?/unlink" use:enhance={handleUpdate}>
             <Button variant="outline" type="submit">{m.unlinkFromCongregation()}</Button>
           </form>
@@ -98,7 +107,11 @@
         {#if data.availableCongregations.length > 0}
           <form method="POST" action="?/assign" use:enhance={handleUpdate}>
             <div class="flex gap-2">
-              <select name="congregationId" bind:value={selectedCong} class="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+              <select
+                name="congregationId"
+                bind:value={selectedCong}
+                class="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
                 <option value="">{m.selectCongregation()}</option>
                 {#each data.availableCongregations as cong (cong.id)}
                   <option value={cong.id}>{cong.name}</option>

@@ -23,7 +23,9 @@ const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '..');
 
 let PB_URL = process.env.PB_URL || 'http://localhost:8090';
-if (PB_URL.endsWith('/')) PB_URL = PB_URL.slice(0, -1);
+if (PB_URL.endsWith('/')) {
+  PB_URL = PB_URL.slice(0, -1);
+}
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 const BATCH_SIZE = 50; // PB batch limit
@@ -35,7 +37,9 @@ if (!TOKEN) {
 
 async function api(method, path, body) {
   const opts = { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` } };
-  if (body) opts.body = JSON.stringify(body);
+  if (body) {
+    opts.body = JSON.stringify(body);
+  }
   const res = await fetch(`${PB_URL}/api${path}`, opts);
   if (!res.ok) {
     throw new Error(`${method} ${path}: ${res.status}`);
@@ -67,7 +71,9 @@ async function fallbackBatch(requests) {
       });
       if (!r.ok) {
         const t = await r.text();
-        if (t.includes('validation_not_unique')) continue;
+        if (t.includes('validation_not_unique')) {
+          continue;
+        }
         console.error(`    ⚠  ${req.method} ${req.url}: ${r.status}`);
       }
     } catch {
@@ -78,7 +84,9 @@ async function fallbackBatch(requests) {
 
 function buildBatchEntry(key, locale, value, existingEntry) {
   if (existingEntry) {
-    if (existingEntry.value === value) return null;
+    if (existingEntry.value === value) {
+      return null;
+    }
     return {
       method: 'PATCH',
       url: `/api/collections/translations/records/${existingEntry.id}`,
@@ -95,7 +103,9 @@ function buildBatchEntry(key, locale, value, existingEntry) {
 }
 
 async function flushBatch(batch, sent) {
-  if (batch.length === 0) return sent;
+  if (batch.length === 0) {
+    return sent;
+  }
   await batchSend(batch);
   batch.length = 0;
   process.stdout.write('.');
@@ -114,7 +124,9 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
     for (const locale of locales) {
       const localeMessages = messages.get(locale);
       const value = localeMessages ? localeMessages[key] : undefined;
-      if (value === undefined || value === null) continue;
+      if (value === undefined || value === null) {
+        continue;
+      }
 
       const existingEntry = existingMap.get(`${key}|${locale}`);
       const entry = buildBatchEntry(key, locale, value, existingEntry);
@@ -122,15 +134,22 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
         skipped++;
         continue;
       }
-      if (existingEntry) updated++;
-      else created++;
+      if (existingEntry) {
+        updated++;
+      } else {
+        created++;
+      }
       batch.push(entry);
 
-      if (batch.length >= BATCH_SIZE) await flushBatch(batch);
+      if (batch.length >= BATCH_SIZE) {
+        await flushBatch(batch);
+      }
     }
   }
 
-  if (batch.length > 0) await batchSend(batch);
+  if (batch.length > 0) {
+    await batchSend(batch);
+  }
   return { created, updated, skipped };
 }
 
@@ -172,7 +191,9 @@ async function main() {
     for (const r of existing?.items ?? []) {
       existingMap.set(`${r.key}|${r.locale}`, { id: r.id, value: r.value });
     }
-    if (!existing?.items?.length || existing.items.length < 500) break;
+    if (!existing?.items?.length || existing.items.length < 500) {
+      break;
+    }
     page++;
   }
 

@@ -4,7 +4,9 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const client = locals.api;
-  if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+  if (!client?.authStore?.record?.admin) {
+    throw redirect(303, '/');
+  }
 
   const userId = params.id;
   let user: Record<string, unknown>;
@@ -46,7 +48,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 export const actions = {
   update: async ({ locals, params, request }) => {
     const client = locals.api;
-    if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+    if (!client?.authStore?.record?.admin) {
+      throw redirect(303, '/');
+    }
 
     const formData = await request.formData();
     const name = formData.get('name') as string;
@@ -54,7 +58,9 @@ export const actions = {
     const verified = formData.get('verified') === 'true';
     const admin = formData.get('admin') === 'true';
 
-    if (!name || !email) return fail(400, { error: 'Name and email are required' });
+    if (!(name && email)) {
+      return fail(400, { error: 'Name and email are required' });
+    }
 
     try {
       await withRetry(() => client.collection('users').update(params.id, { name, email, verified, admin }));
@@ -66,7 +72,9 @@ export const actions = {
 
   unlink: async ({ locals, params }) => {
     const client = locals.api;
-    if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+    if (!client?.authStore?.record?.admin) {
+      throw redirect(303, '/');
+    }
 
     try {
       await withRetry(() => client.collection('users').update(params.id, { congregation: null }));
@@ -78,25 +86,33 @@ export const actions = {
 
   deleteAccount: async ({ locals, params }) => {
     const client = locals.api;
-    if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+    if (!client?.authStore?.record?.admin) {
+      throw redirect(303, '/');
+    }
 
     try {
       await withRetry(() => client.collection('users').delete(params.id));
       throw redirect(303, '/admin/users');
     } catch (err: unknown) {
-      if ((err as { status?: number }).status === 303) throw err;
+      if ((err as { status?: number }).status === 303) {
+        throw err;
+      }
       return fail(400, { error: 'Failed to delete account' });
     }
   },
 
   assign: async ({ locals, params, request }) => {
     const client = locals.api;
-    if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+    if (!client?.authStore?.record?.admin) {
+      throw redirect(303, '/');
+    }
 
     const formData = await request.formData();
     const congregationId = formData.get('congregationId') as string;
 
-    if (!congregationId) return fail(400, { error: 'No congregation selected' });
+    if (!congregationId) {
+      return fail(400, { error: 'No congregation selected' });
+    }
 
     try {
       await withRetry(() => client.collection('users').update(params.id, { congregation: congregationId }));
@@ -108,7 +124,9 @@ export const actions = {
 
   resetPassword: async ({ locals, params }) => {
     const client = locals.api;
-    if (!client?.authStore?.record?.admin) throw redirect(303, '/');
+    if (!client?.authStore?.record?.admin) {
+      throw redirect(303, '/');
+    }
 
     try {
       const user = await withRetry(() => client.collection('users').getOne(params.id));

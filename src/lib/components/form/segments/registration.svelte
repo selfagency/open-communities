@@ -1,32 +1,30 @@
 <script lang="ts">
-  /* region imports */
-  import { isEmpty } from 'radashi';
+/* region imports */
+import { isEmpty } from 'radashi';
 
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import * as RadioGroup from '$lib/components/ui/radio-group';
-  import { m } from '$lib/paraglide/messages';
-  import { valueSet } from '$lib/utils';
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import * as RadioGroup from '$lib/components/ui/radio-group';
+import { m } from '$lib/paraglide/messages';
+import { valueSet } from '$lib/utils';
 
-  import Required from '../required.svelte';
+import Required from '../required.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+/* region variables */
+// props
+let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
 
-  // constants
-  const hasRegistration: boolean = $derived(valueSet($formData.registration));
-  /* endregion variables */
+// constants
+const hasRegistration: boolean = $derived(valueSet($formData.registration));
+/* endregion variables */
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
-  /* endregion methods */
+/* region methods */
+const fixType = (input: any) => input as Record<string, unknown> & { _errors?: string[] | undefined };
+/* endregion methods */
 </script>
 
 <!-- registration -->
@@ -38,7 +36,9 @@
     fixType($errors.registration)?._errors}
   <Accordion.Item value="registration">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.registration()}</span>
         {#if !hasRegistration || registrationErrors}
           <span class="text-destructive">*</span>
@@ -110,7 +110,8 @@
               bind:value={$formData.registration.email}
               onchange={() => {
                 $formData.registration.email = $formData.registration.email.trim();
-              }} />
+              }}
+            />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -126,7 +127,8 @@
               bind:value={$formData.registration.url}
               onchange={() => {
                 $formData.registration.url = $formData.registration.url.trim();
-              }} />
+              }}
+            />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -138,7 +140,12 @@
         </span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => { view = 'contact'; document.querySelector('[data-value="contact"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{m.next()} →</Button>
+        <Button
+          variant="secondary"
+          onclick={() => { view = 'contact'; document.querySelector('[data-value="contact"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          >{m.next()}
+          →</Button
+        >
       </div>
     </Accordion.Content>
   </Accordion.Item>

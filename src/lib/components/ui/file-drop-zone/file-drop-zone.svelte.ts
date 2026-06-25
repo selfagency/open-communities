@@ -31,7 +31,9 @@ class FileDropZoneState {
       currentTarget: EventTarget;
     }
   ) {
-    if (this.opts.disabled.current || !this.canUploadFiles) return;
+    if (this.opts.disabled.current || !this.canUploadFiles) {
+      return;
+    }
 
     e.preventDefault();
 
@@ -45,11 +47,15 @@ class FileDropZoneState {
       currentTarget: EventTarget & HTMLInputElement;
     }
   ) {
-    if (this.opts.disabled.current) return;
+    if (this.opts.disabled.current) {
+      return;
+    }
 
     const selectedFiles = e.currentTarget.files;
 
-    if (!selectedFiles) return;
+    if (!selectedFiles) {
+      return;
+    }
 
     await this.upload(Array.from(selectedFiles));
 
@@ -58,13 +64,17 @@ class FileDropZoneState {
   }
 
   shouldAcceptFile(file: File, fileNumber: number): FileRejectedReason | undefined {
-    if (this.opts.maxFileSize.current !== undefined && file.size > this.opts.maxFileSize.current)
+    if (this.opts.maxFileSize.current !== undefined && file.size > this.opts.maxFileSize.current) {
       return 'Maximum file size exceeded';
+    }
 
-    if (this.opts.maxFiles.current !== undefined && fileNumber > this.opts.maxFiles.current)
+    if (this.opts.maxFiles.current !== undefined && fileNumber > this.opts.maxFiles.current) {
       return 'Maximum files uploaded';
+    }
 
-    if (!this.opts.accept.current) return undefined;
+    if (!this.opts.accept.current) {
+      return;
+    }
 
     const acceptedTypes = this.opts.accept.current.split(',').map((a) => a.trim().toLowerCase());
     const fileType = file.type.toLowerCase();
@@ -86,9 +96,11 @@ class FileDropZoneState {
       return fileType === pattern;
     });
 
-    if (!isAcceptable) return 'File type not allowed';
+    if (!isAcceptable) {
+      return 'File type not allowed';
+    }
 
-    return undefined;
+    return;
   }
 
   upload = async (uploadFiles: File[]) => {
@@ -115,14 +127,19 @@ class FileDropZoneState {
   };
 
   canUploadFiles = $derived.by(() => {
-    if (this.opts.disabled.current) return false;
-    if (this.uploading) return false;
+    if (this.opts.disabled.current) {
+      return false;
+    }
+    if (this.uploading) {
+      return false;
+    }
     if (
       this.opts.maxFiles.current !== undefined &&
       this.opts.fileCount.current !== undefined &&
       this.opts.fileCount.current >= this.opts.maxFiles.current
-    )
+    ) {
       return false;
+    }
     return true;
   });
 

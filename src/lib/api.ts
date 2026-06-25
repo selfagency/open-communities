@@ -11,16 +11,19 @@ import type { TypedPocketBase } from '$lib/pocketbase.d';
 const api = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
 api.autoCancellation(false);
 
-function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate: boolean = false): T {
+function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate = false): T {
   const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
-  if (!keepDate) fields.push('created' as keyof T);
+  if (!keepDate) {
+    fields.push('created' as keyof T);
+  }
   return convertBooleans(omit(response, fields)) as T;
 }
 
 function convertBooleans(obj: unknown): unknown {
   if (isArray(obj)) {
     return obj.map(convertBooleans);
-  } else if (obj !== null && typeof obj === 'object') {
+  }
+  if (obj !== null && typeof obj === 'object') {
     const source = obj as Record<string, unknown>;
     return Object.keys(source).reduce<Record<string, unknown>>((acc, key) => {
       if (!Object.hasOwn(source, key) || key === '__proto__' || key === 'constructor') {

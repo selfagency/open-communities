@@ -1,29 +1,30 @@
 <script lang="ts">
-  import { ScrollArea as ScrollAreaPrimitive } from 'bits-ui';
+import { ScrollArea as ScrollAreaPrimitive } from 'bits-ui';
 
-  import { cn, type WithoutChild } from '$lib/utils.js';
+import { cn, type WithoutChild } from '$lib/utils.js';
 
-  import { Scrollbar } from './index.js';
+import { Scrollbar } from './index.js';
 
-  let {
-    children,
-    class: className,
-    orientation = 'vertical',
-    ref = $bindable(null),
-    scrollbarXClasses = '',
-    scrollbarYClasses = '',
-    ...restProps
-  }: WithoutChild<ScrollAreaPrimitive.RootProps> & {
-    orientation?: 'both' | 'horizontal' | 'vertical' | undefined;
-    scrollbarXClasses?: string | undefined;
-    scrollbarYClasses?: string | undefined;
-  } = $props();
+let {
+  children,
+  class: className,
+  orientation = 'vertical',
+  ref = $bindable(null),
+  scrollbarXClasses = '',
+  scrollbarYClasses = '',
+  ...restProps
+}: WithoutChild<ScrollAreaPrimitive.RootProps> & {
+  orientation?: 'both' | 'horizontal' | 'vertical' | undefined;
+  scrollbarXClasses?: string | undefined;
+  scrollbarYClasses?: string | undefined;
+} = $props();
 </script>
 
 <ScrollAreaPrimitive.Root bind:ref data-slot="scroll-area" class={cn('relative', className)} {...restProps}>
   <ScrollAreaPrimitive.Viewport
     data-slot="scroll-area-viewport"
-    class="ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1">
+    class="ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1"
+  >
     {@render children?.()}
   </ScrollAreaPrimitive.Viewport>
   {#if orientation === 'vertical' || orientation === 'both'}

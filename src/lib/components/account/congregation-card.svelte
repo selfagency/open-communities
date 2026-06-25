@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { goto } from '$app/navigation';
-  import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-  import { m } from '$lib/paraglide/messages';
+import { enhance } from '$app/forms';
+import { goto } from '$app/navigation';
+import { Button } from '$lib/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import { m } from '$lib/paraglide/messages';
 
-  let {
-    congregation,
-    onUnlink,
-  }: {
-    congregation: string;
-    onUnlink: () => void;
-  } = $props();
+let {
+  congregation,
+  onUnlink
+}: {
+  congregation: string;
+  onUnlink: () => void;
+} = $props();
 </script>
 
 {#if congregation}

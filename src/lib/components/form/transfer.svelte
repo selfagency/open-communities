@@ -1,103 +1,103 @@
 <script lang="ts">
-  /* region imports */
-  import WarningIcon from "@tabler/icons-svelte/icons/alert-circle";
-  import { isEmpty } from "radashi";
-  import { onDestroy, onMount } from "svelte";
-  import { fade } from "svelte/transition";
-  import { toast } from "svelte-sonner";
-  import { type SuperValidated, superForm } from "sveltekit-superforms";
+/* region imports */
+import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
+import { isEmpty } from 'radashi';
+import { onDestroy, onMount } from 'svelte';
+import { fade } from 'svelte/transition';
+import { toast } from 'svelte-sonner';
+import { type SuperValidated, superForm } from 'sveltekit-superforms';
 
-  import { dev } from "$app/environment";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/state";
-  import Loading from "$lib/components/global/loading.svelte";
-  import * as Alert from "$lib/components/ui/alert";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import * as Form from "$lib/components/ui/form";
-  import { Input } from "$lib/components/ui/input";
-  import { m } from "$lib/paraglide/messages";
-  import { state as appState, setState } from "$lib/stores";
-  import { log } from "$lib/utils";
+import { dev } from '$app/environment';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import Loading from '$lib/components/global/loading.svelte';
+import * as Alert from '$lib/components/ui/alert';
+import * as AlertDialog from '$lib/components/ui/alert-dialog';
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
+import { state as appState, setState } from '$lib/stores';
+import { log } from '$lib/utils';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    data,
-    id,
-    owner,
-  }: {
-    data: SuperValidated<any>;
-    id: string;
-    owner?: string;
-  } = $props();
+/* region variables */
+// props
+const {
+  data,
+  id,
+  owner
+}: {
+  data: SuperValidated<any>;
+  id: string;
+  owner?: string;
+} = $props();
 
-  // derived
-  const user = $derived(page.data.user);
+// derived
+const user = $derived(page.data.user);
 
-  // locals
-  let open: boolean = $derived(page.url.searchParams.has("transfer"));
-  /* endregion variables */
+// locals
+let open: boolean = $derived(page.url.searchParams.has('transfer'));
+/* endregion variables */
 
-  /* region form */
-  // svelte-ignore state_referenced_locally
-  // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const form = superForm(data, {
-    dataType: "json",
-    id: "transferCongregation",
-    onError({ result }) {
-      setState({ loadingSecondary: false });
-      log.error(result.error.message);
-      toast.error(result.error.message);
-    },
-    onResult() {
-      setState({ loadingSecondary: false });
-    },
-    onSubmit() {
-      setState({ loadingSecondary: true });
-    },
-    async onUpdate({ result }) {
-      setState({
-        form: { hasErrors: false, success: false },
-        loadingSecondary: false,
-      });
-
-      if (result.type === "success") {
-        setState({ form: { hasErrors: false, success: true } });
-        toast.success(m.transferSuccess());
-        open = false;
-      } else {
-        setState({ form: { hasErrors: true, success: false } });
-        if (!isEmpty(result.data.form.errors)) {
-          log.error("form errors", result.data.form.errors);
-        }
-        if (!isEmpty(result.data.form.errors)) {
-          log.error("submission error", result.data.form.errors);
-        }
-        toast.error(m.transferFailure());
-      }
-    },
-  });
-
-  const { enhance, form: formData } = form;
-  /* endregion form */
-
-  let loadingSecondary = $derived(appState.loadingSecondary);
-
-  /* region lifecycle */
-  onMount(() => {
-    formData.set({
-      email: page.url.searchParams.get("transfer"),
-      id,
-      owner,
-    });
-  });
-
-  onDestroy(() => {
+/* region form */
+// svelte-ignore state_referenced_locally
+// Intentional: form is initialized once from server data (not reactive to prop changes)
+const form = superForm(data, {
+  dataType: 'json',
+  id: 'transferCongregation',
+  onError({ result }) {
     setState({ loadingSecondary: false });
+    log.error(result.error.message);
+    toast.error(result.error.message);
+  },
+  onResult() {
+    setState({ loadingSecondary: false });
+  },
+  onSubmit() {
+    setState({ loadingSecondary: true });
+  },
+  async onUpdate({ result }) {
+    setState({
+      form: { hasErrors: false, success: false },
+      loadingSecondary: false
+    });
+
+    if (result.type === 'success') {
+      setState({ form: { hasErrors: false, success: true } });
+      toast.success(m.transferSuccess());
+      open = false;
+    } else {
+      setState({ form: { hasErrors: true, success: false } });
+      if (!isEmpty(result.data.form.errors)) {
+        log.error('form errors', result.data.form.errors);
+      }
+      if (!isEmpty(result.data.form.errors)) {
+        log.error('submission error', result.data.form.errors);
+      }
+      toast.error(m.transferFailure());
+    }
+  }
+});
+
+const { enhance, form: formData } = form;
+/* endregion form */
+
+let loadingSecondary = $derived(appState.loadingSecondary);
+
+/* region lifecycle */
+onMount(() => {
+  formData.set({
+    email: page.url.searchParams.get('transfer'),
+    id,
+    owner
   });
-  /* endregion lifecycle */
+});
+
+onDestroy(() => {
+  setState({ loadingSecondary: false });
+});
+/* endregion lifecycle */
 </script>
 
 {#if user?.admin}
@@ -134,9 +134,7 @@
 
               <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
                 <WarningIcon size="18" />
-                <Alert.Description class="mt-0.5"
-                  >{m.warningNote()}</Alert.Description
-                >
+                <Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
               </Alert.Root>
 
               <Form.Field {form} name="id">
@@ -165,7 +163,8 @@
                 event.preventDefault();
                 open = false;
                 await goto(`${page.url.pathname}?id=${id}`);
-              }}>{m.cancel()}</AlertDialog.Cancel
+              }}
+              >{m.cancel()}</AlertDialog.Cancel
             >
             <AlertDialog.Action
               onclick={(e) => {
