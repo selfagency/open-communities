@@ -308,8 +308,14 @@ jobs:
 
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
+        id: pa11y
         run: |
           npx --yes pa11y-ci@latest --json > .e2e/pa11y-report.json 2>&1 || true
+          # Write summary to GitHub step summary
+          echo '### Accessibility Report' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat .e2e/pa11y-report.json >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo 'No results' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Upload pa11y report
         if: always()
