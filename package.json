@@ -33,6 +33,8 @@
   "dependencies": {
     "@inlang/paraglide-js": "^2.20.2",
     "@selfagency/stately": "^0.1.5",
+    "@tiptap/core": "^3.27.1",
+    "edra": "^2.0.24",
     "isomorphic-dompurify": "^3.18.0",
     "lexical": "^0.45.0",
     "posthog-js": "^1.393.4",
@@ -129,11 +131,20 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@posthog/cli", "@tailwindcss/oxide", "core-js", "esbuild", "msw", "sqlite3"]
+    "onlyBuiltDependencies": [
+      "@posthog/cli",
+      "@tailwindcss/oxide",
+      "core-js",
+      "esbuild",
+      "msw",
+      "sqlite3"
+    ]
   },
   "packageManager": "pnpm@10.18.3",
   "jsrepo": {
     "rootDir": "src/lib/components/ui",
-    "include": ["src/lib/components/ui"]
+    "include": [
+      "src/lib/components/ui"
+    ]
   }
 }

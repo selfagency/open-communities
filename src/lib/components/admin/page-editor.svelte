@@ -11,7 +11,7 @@
   import { Switch } from '$lib/components/ui/switch';
   import { Textarea } from '$lib/components/ui/textarea';
   import { m } from '$lib/paraglide/messages';
-  import LexicalEditor from './lexical-editor.svelte';
+  import EdraEditor from './edra-editor.svelte';
 
   const languages = [
     { code: 'en', label: 'English' },
@@ -196,7 +196,7 @@
         <div class="space-y-2">
           <label for="content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
           <input type="hidden" name="content" value={content} />
-          <LexicalEditor bind:value={content} id="page-content" placeholder={m.pageEditorContentPlaceholder()} />
+          <EdraEditor bind:value={content} id="page-content" placeholder={m.pageEditorContentPlaceholder()} />
         </div>
       </CardContent>
     </Card>
@@ -247,7 +247,7 @@
 
           <div class="space-y-2">
             <label for="var-content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
-            <LexicalEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} dir={selectedLang === 'he' ? 'rtl' : undefined} />
+            <EdraEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} dir={selectedLang === 'he' ? 'rtl' : undefined} />
           </div>
 
           <div class="grid gap-4 md:grid-cols-2">

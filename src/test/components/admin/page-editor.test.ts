@@ -94,9 +94,9 @@ describe('page-variants language list', () => {
   });
 });
 
-describe('lexical-editor', () => {
+describe('edra-editor', () => {
   it('exports a Svelte component', () => {
-    // The component is SSR-safe — Lexical is dynamically imported
+    // The component is SSR-safe — Tiptap is dynamically imported
     // Component rendering requires browser test environment with DOM APIs
     // Skipped: @testing-library/svelte has known Svelte 5 incompatibility
   });
