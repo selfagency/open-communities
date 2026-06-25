@@ -1,6 +1,10 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "ignoreUnknown": false,
     "includes": [
@@ -38,7 +42,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended",
+      "recommended": true,
       "correctness": {
         "noUnusedImports": "error",
         "noUnknownProperty": "warn"
@@ -149,7 +153,11 @@
       }
     },
     {
-      "includes": ["src/lib/components/**", "src/test/stubs/**", "src/routes/**/*.svelte"],
+      "includes": [
+        "src/lib/components/**",
+        "src/test/stubs/**",
+        "src/routes/**/*.svelte"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -183,6 +191,15 @@
   ],
   "assist": {
     "enabled": true,
-    "actions": { "source": { "organizeImports": "on" } }
-  }
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/svelte",
+    "ultracite/biome/vitest"
+  ]
 }

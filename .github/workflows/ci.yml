@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -311,11 +312,33 @@ jobs:
         id: pa11y
         run: |
           npx --yes pa11y-ci@latest --json > .e2e/pa11y-report.json 2>&1 || true
-          # Write summary to GitHub step summary
-          echo '### Accessibility Report' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat .e2e/pa11y-report.json >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo 'No results' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          # Build summary
+          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
+          echo '| URL | Result |' >> .e2e/pa11y-summary.md
+          echo '|-----|--------|' >> .e2e/pa11y-summary.md
+          node -e "
+            const r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8'));
+            const results = r.results || r;
+            for (const [url, data] of Object.entries(results)) {
+              const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
+              const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
+              process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+            }
+          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
+          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Find or create pa11y PR comment
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENT_ID=$(gh api "/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" --jq '.[] | select(.body | startswith("## ♿ Accessibility Report")) | .id' | head -1)
+          BODY=$(cat .e2e/pa11y-summary.md)
+          if [ -n "$COMMENT_ID" ]; then
+            gh api "/repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -X PATCH -f body="$BODY" > /dev/null
+          else
+            gh api "/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -X POST -f body="$BODY" > /dev/null
+          fi
 
       - name: Upload pa11y report
         if: always()

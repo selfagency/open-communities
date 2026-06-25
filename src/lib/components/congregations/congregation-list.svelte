@@ -19,7 +19,7 @@
 
   interface Cong { id: string; name: string; denomination: string; visible: boolean; city: string; state: string; countryCode: string; owner: string; ownerId: string; created: string; }
 
-  let { data }: { data: { congregations: Cong[]; active: Cong[]; pending: Cong[] } } = $props();
+  let { data }: { data: { congregations: Cong[]; pending: Cong[] } } = $props();
   let search = $state('');
 
   const allCongs = $derived(data.congregations);
