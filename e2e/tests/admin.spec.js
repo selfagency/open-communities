@@ -6,7 +6,7 @@ const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 test.describe('Admin backend', () => {
   test.beforeEach(async ({ page }) => {
     // Login via the app's login form
-    await page.goto(`${BASE}/login`);
+    await page.goto(`${BASE}/login?login`);
     await page.waitForLoadState('networkidle');
     const loginForm = page.locator('form[action*="login"]');
     await loginForm.locator('input[autocomplete="email"]').fill(ADMIN_EMAIL);
@@ -60,7 +60,7 @@ test.describe('Admin backend', () => {
   test('non-admin user is redirected from admin', async ({ page }) => {
     await page.goto(`${BASE}/logout`);
     await page.waitForLoadState('networkidle');
-    await page.goto(`${BASE}/login`);
+    await page.goto(`${BASE}/login?login`);
     await page.waitForLoadState('networkidle');
     const loginForm = page.locator('form[action*="login"]');
     await loginForm.locator('input[autocomplete="email"]').fill('regular@example.test');
