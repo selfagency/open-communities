@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit';
+import { m } from '$lib/paraglide/messages';
 import { withRetry } from '$lib/server/api';
 import { transactionalMail } from '$lib/server/mail';
-import { m } from '$lib/paraglide/messages';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {

@@ -125,7 +125,9 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": ["email"]
+      "identityFields": [
+        "email"
+      ]
     },
     "mfa": {
       "enabled": false,
@@ -294,7 +296,13 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["en", "es", "fr", "he", "de"]
+        "values": [
+          "en",
+          "es",
+          "fr",
+          "he",
+          "de"
+        ]
       },
       {
         "hidden": false,
@@ -342,7 +350,9 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": ["email"]
+      "identityFields": [
+        "email"
+      ]
     },
     "mfa": {
       "enabled": false,
@@ -672,7 +682,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"],
+    "indexes": [
+      "CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"
+    ],
     "system": true
   },
   {
@@ -775,7 +787,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"],
+    "indexes": [
+      "CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"
+    ],
     "system": true
   },
   {
@@ -922,7 +936,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1034,7 +1050,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
+    "indexes": [
+      "CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
+    ],
     "system": false
   },
   {
@@ -1244,7 +1262,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"
+    ],
     "system": false
   },
   {
@@ -1358,7 +1378,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
+    ],
     "system": false
   },
   {
@@ -1444,7 +1466,11 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["no", "yes", "yesBima"]
+        "values": [
+          "no",
+          "yes",
+          "yesBima"
+        ]
       },
       {
         "cascadeDelete": false,
@@ -1480,7 +1506,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1516,7 +1544,12 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
+        "values": [
+          "maskingRequired",
+          "maskingRecommended",
+          "noGuidelines",
+          "other"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -1566,7 +1599,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1669,7 +1704,19 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["en", "de", "es", "fr", "he", "hu", "nl", "pl", "pt", "ru", "uk"]
+        "values": [
+          "en",
+          "de",
+          "es",
+          "fr",
+          "he",
+          "hu",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "uk"
+        ]
       },
       {
         "cascadeDelete": false,
@@ -1848,7 +1895,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
+    ],
     "system": false
   },
   {
@@ -1906,7 +1955,13 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
+        "values": [
+          "free",
+          "fixedPrice",
+          "slidingScale",
+          "suggestedDonation",
+          "other"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -1956,7 +2011,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2094,7 +2151,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2214,7 +2273,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2327,7 +2388,110 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
+    "indexes": [
+      "CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
+    ],
+    "system": false
+  },
+  {
+    "id": "zazkgi402rwfnc2",
+    "listRule": "@request.auth.admin = true",
+    "viewRule": "@request.auth.admin = true",
+    "createRule": "@request.auth.admin = true",
+    "updateRule": "@request.auth.admin = true",
+    "deleteRule": "@request.auth.admin = true",
+    "name": "translations",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_translations_key",
+        "max": 128,
+        "min": 1,
+        "name": "key",
+        "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select_translations_locale",
+        "maxSelect": 1,
+        "name": "locale",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "select",
+        "values": [
+          "en",
+          "de",
+          "es",
+          "fr",
+          "he",
+          "hu",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "uk"
+        ]
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_translations_value",
+        "max": 0,
+        "min": 0,
+        "name": "value",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_translations_key_locale` ON `translations` (`key`, `locale`)"
+    ],
     "system": false
   },
   {
@@ -2357,7 +2521,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_WHxO",
+        "id": "_clone_eJKJ",
         "max": 0,
         "min": 0,
         "name": "city_name",
@@ -2371,7 +2535,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_kmCf",
+        "id": "_clone_rpt2",
         "max": 0,
         "min": 0,
         "name": "state_name",
@@ -2385,7 +2549,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_2fOK",
+        "id": "_clone_yPoB",
         "max": 0,
         "min": 0,
         "name": "state_code",
@@ -2440,7 +2604,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_rR8n",
+        "id": "_clone_5gDO",
         "max": 0,
         "min": 0,
         "name": "name",
@@ -2454,7 +2618,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_sfaK",
+        "id": "_clone_64CO",
         "max": 0,
         "min": 0,
         "name": "notes",
@@ -2467,7 +2631,7 @@
       },
       {
         "hidden": false,
-        "id": "_clone_whPG",
+        "id": "_clone_Fxku",
         "maxSelect": 1,
         "name": "denomination",
         "presentable": false,
@@ -2490,7 +2654,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_ZFhp",
+        "id": "_clone_9TZl",
         "max": 0,
         "min": 0,
         "name": "clergy",
@@ -2504,7 +2668,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_NP1U",
+        "id": "_clone_HHoV",
         "max": 0,
         "min": 0,
         "name": "flavor",
@@ -2518,7 +2682,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_LcSC",
+        "id": "_clone_xmJ7",
         "max": 0,
         "min": 0,
         "name": "contactName",
@@ -2532,7 +2696,7 @@
       {
         "exceptDomains": null,
         "hidden": false,
-        "id": "_clone_oB3Q",
+        "id": "_clone_KdHW",
         "name": "contactEmail",
         "onlyDomains": null,
         "presentable": false,
@@ -2543,7 +2707,7 @@
       {
         "exceptDomains": null,
         "hidden": false,
-        "id": "_clone_Z1ns",
+        "id": "_clone_zkWt",
         "name": "contactUrl",
         "onlyDomains": null,
         "presentable": false,
@@ -2553,7 +2717,7 @@
       },
       {
         "hidden": false,
-        "id": "_clone_N3Ly",
+        "id": "_clone_XUOH",
         "name": "visible",
         "presentable": false,
         "required": false,
@@ -2675,7 +2839,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_WGxC",
+        "id": "_clone_fqm6",
         "max": 0,
         "min": 0,
         "name": "country_name",
@@ -2689,7 +2853,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_R5K4",
+        "id": "_clone_6Ft0",
         "max": 0,
         "min": 0,
         "name": "country_code",
@@ -2703,7 +2867,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_TqMu",
+        "id": "_clone_7q3n",
         "max": 0,
         "min": 0,
         "name": "country_flag",
@@ -2758,7 +2922,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_AJRI",
+        "id": "_clone_Nwzd",
         "max": 0,
         "min": 0,
         "name": "state_name",
@@ -2772,7 +2936,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_FnkM",
+        "id": "_clone_p1B2",
         "max": 0,
         "min": 0,
         "name": "state_code",
@@ -2786,7 +2950,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_wEsK",
+        "id": "_clone_nmqK",
         "max": 0,
         "min": 0,
         "name": "country_name",

@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "vite build",
+    "build": "node scripts/fetch-translations.mjs && vite build",
     "build:maps": "pnpm run build && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap inject --directory ./build && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap upload --directory ./build --delete-after",
     "build:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite build",
     "build:types": "pnpx pocketbase-typegen --db ./pb_data/data.db --out ./src/lib/pocketbase.d.ts",
@@ -139,19 +139,11 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@posthog/cli",
-      "@tailwindcss/oxide",
-      "core-js",
-      "esbuild",
-      "sqlite3"
-    ]
+    "onlyBuiltDependencies": ["@posthog/cli", "@tailwindcss/oxide", "core-js", "esbuild", "sqlite3"]
   },
   "packageManager": "pnpm@10.18.3",
   "jsrepo": {
     "rootDir": "src/lib/components/ui",
-    "include": [
-      "src/lib/components/ui"
-    ]
+    "include": ["src/lib/components/ui"]
   }
 }

@@ -76,7 +76,7 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
 type MaybeThunk<T extends object> = T | (() => T | null | undefined);
 type Intersection<T extends readonly unknown[]> = (T extends [infer H, ...infer R]
   ? H & Intersection<R>
-  : unknown) & {};
+  : unknown) & {}; // NOSONAR — empty type intersection is a TypeScript idiom for "not null"
 
 /**
  * Lazily merges several objects (or thunks) while preserving

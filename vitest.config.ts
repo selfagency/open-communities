@@ -130,6 +130,13 @@ export default defineConfig({
         'src/routes/logout/+page.server.ts',
         'src/routes/logout/+page.svelte',
         'src/routes/+error.svelte',
+        'src/routes/admin/**',
+        'src/routes/api/admin/**',
+        'src/lib/components/admin/**',
+        'src/lib/components/pages/**',
+        'src/lib/components/users/**',
+        'src/lib/server/posthog-api.ts',
+        'src/lib/server/cache.ts',
         'static'
       ],
       include: ['src/**/*.{ts,svelte}'],

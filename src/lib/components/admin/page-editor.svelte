@@ -236,27 +236,27 @@
 
           <div class="space-y-2">
             <label for="var-title" class="text-sm font-bold block mb-2">{m.pageEditorVariantTitleLabel()}</label>
-            <Input id="var-title" bind:value={v.title} />
+            <Input id="var-title" bind:value={v.title} dir={selectedLang === 'he' ? 'rtl' : undefined} />
           </div>
 
           <div class="space-y-2">
             <label for="var-desc" class="text-sm font-bold block mb-2">{m.pageEditorDescriptionLabel()}</label>
-            <Textarea id="var-desc" bind:value={v.description} />
+            <Textarea id="var-desc" bind:value={v.description} dir={selectedLang === 'he' ? 'rtl' : undefined} />
           </div>
 
           <div class="space-y-2">
             <label for="var-content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
-            <QuillEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} />
+            <QuillEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} dir={selectedLang === 'he' ? 'rtl' : undefined} />
           </div>
 
           <div class="grid gap-4 md:grid-cols-2">
             <div class="space-y-2">
               <label for="var-imgalt" class="text-sm font-bold block mb-2">{m.pageEditorVariantImageAltLabel()}</label>
-              <Input id="var-imgalt" bind:value={v.imageAlt} />
+              <Input id="var-imgalt" bind:value={v.imageAlt} dir={selectedLang === 'he' ? 'rtl' : undefined} />
             </div>
             <div class="space-y-2">
               <label for="var-imgcap" class="text-sm font-bold block mb-2">{m.pageEditorVariantImageCaptionLabel()}</label>
-              <Input id="var-imgcap" bind:value={v.imageCaption} />
+              <Input id="var-imgcap" bind:value={v.imageCaption} dir={selectedLang === 'he' ? 'rtl' : undefined} />
             </div>
           </div>
         </CardContent>

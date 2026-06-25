@@ -43,7 +43,7 @@ interface PostHogInsight {
   name: string;
   derived_name: string;
   query: Record<string, unknown> | null;
-  result: unknown | null;
+  result: unknown;
   last_refresh: string | null;
 }
 
@@ -51,7 +51,7 @@ export interface InsightResult {
   id: number;
   short_id: string;
   name: string;
-  result: unknown | null;
+  result: unknown;
 }
 
 /** Check if PostHog credentials are configured. */
@@ -121,7 +121,7 @@ export async function queryTrends(
     SELECT toStartOf${interval === 'week' ? 'Week' : 'Day'}(timestamp) AS date,
            count(DISTINCT person_id) AS count
     FROM events
-    WHERE event = '${event.replace(/'/g, "\\'")}'
+    WHERE event = '${event.replaceAll("'", "\\'")}'
       AND timestamp >= now() - INTERVAL ${days} DAY
     GROUP BY date
     ORDER BY date
