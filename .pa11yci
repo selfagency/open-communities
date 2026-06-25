@@ -1,0 +1,23 @@
+{
+  "defaults": {
+    "timeout": 30000,
+    "viewport": {
+      "width": 1280,
+      "height": 1024
+    },
+    "standard": "WCAG2AA",
+    "ignore": [
+      "notice"
+    ],
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+    }
+  },
+  "urls": [
+    "http://localhost:4173/",
+    "http://localhost:4173/admin",
+    "http://localhost:4173/admin/congregations",
+    "http://localhost:4173/admin/users",
+    "http://localhost:4173/admin/pages"
+  ]
+}

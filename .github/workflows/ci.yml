@@ -309,4 +309,11 @@ jobs:
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
         run: |
-          npx --yes pa11y-ci@latest --urls "http://localhost:4173/ http://localhost:4173/admin http://localhost:4173/admin/congregations http://localhost:4173/admin/users http://localhost:4173/admin/pages"
+          npx --yes pa11y-ci@latest --json > .e2e/pa11y-report.json 2>&1 || true
+
+      - name: Upload pa11y report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa11y-report
+          path: .e2e/pa11y-report.json
