@@ -17,8 +17,10 @@ import { untrack } from 'svelte';
 import { page } from '$app/state';
 import { Button, buttonVariants } from '$lib/components/ui/button';
 import { Checkbox } from '$lib/components/ui/checkbox';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace pattern
 import * as Collapsible from '$lib/components/ui/collapsible';
 import { Label } from '$lib/components/ui/label';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace pattern
 import * as Popover from '$lib/components/ui/popover';
 import { m as mBase } from '$lib/paraglide/messages';
 import { cn } from '$lib/utils';
@@ -155,7 +157,7 @@ $effect(() => {
   <Popover.Content>
     <div class="flex flex-col items-start justify-start space-y-2 text-muted-foreground">
       {#each Object.keys(filters) as category, i (i)}
-        {#if !isEmpty(filters?.[category]) && !(category === "status" && !user?.admin)}
+        {#if !(isEmpty(filters?.[category]) || (category === "status" && !user?.admin))}
           {@const StatusIcon =
             icons[
               every(filters[category])

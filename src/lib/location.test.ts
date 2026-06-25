@@ -28,7 +28,7 @@ vi.mock('$lib/utils', () => ({ log: { error: vi.fn() } }));
 
 import { Location } from './location';
 
-const country = {
+const country: any = {
   code: 'CO',
   id: 'c1',
   latitude: 1,

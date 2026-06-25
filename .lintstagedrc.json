@@ -1,6 +1,4 @@
 {
   "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": ["pnpm dlx ultracite fix"],
-  "*.{ts,js,svelte}": [
-    "vitest run --changed --reporter=verbose 2>&1 | tail -20"
-  ]
+  "*.{ts,js,svelte}": ["vitest run --changed"]
 }

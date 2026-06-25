@@ -148,7 +148,7 @@ const table = $derived(
         />
         <Input
           class="h-11 w-64 sm:w-80 pl-10"
-          onkeydown={(e) => { if (e.key === 'Enter') doSearch(); }}
+          onkeydown={(e) => { if (e.key === 'Enter') { doSearch(); } }}
           placeholder={m.searchUsers()}
           bind:value={search}
         />

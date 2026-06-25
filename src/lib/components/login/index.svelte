@@ -100,8 +100,7 @@ let loadingSecondary = $derived(appState.loadingSecondary);
         <Loading />
       </div>
     {:else if resetting}
-      // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
-      {#if !sentSuccess && !resetSuccess}
+      {#if !(sentSuccess || resetSuccess)}
         <Reset
           data={reset}
           token={page.url.searchParams.get('resetPassword')}

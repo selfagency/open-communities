@@ -220,7 +220,7 @@ describe('src/lib/server/mail', () => {
             // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
             getOne: async (id: string) => {
               const now = new Date().toISOString();
-              const resp: CongregationMetaResponse = {
+              const resp = {
                 accessibility: null,
                 clergy: '',
                 collectionId: 'cong_meta_col',
@@ -244,7 +244,7 @@ describe('src/lib/server/mail', () => {
                 services: null,
                 updated: now,
                 visible: true
-              } as CongregationMetaResponse;
+              } as unknown as CongregationMetaResponse;
               return resp;
             }
           };

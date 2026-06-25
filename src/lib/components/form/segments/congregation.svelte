@@ -200,7 +200,7 @@ $effect(() => {
               id="state"
               items={$location.options.stateOptions}
               {...props}
-              disabled={!country || !$location.options.stateOptions}
+              disabled={!(country && $location.options.stateOptions)}
               onChange={handleStateChange}
               placeholder={m.selectThing({
                 thing: m.location_state().toLowerCase()
@@ -219,7 +219,7 @@ $effect(() => {
               id="city"
               items={$location.options.cityOptions}
               {...props}
-              disabled={!province || !$location.options.cityOptions}
+              disabled={!(province && $location.options.cityOptions)}
               onChange={handleCityChange}
               placeholder={m.selectThing({
                 thing: m.location_city().toLowerCase()

@@ -70,7 +70,7 @@ function langName(lang: string): string {
           <Form.Label for="lang">{m.language()}</Form.Label>
           <Select.Root type="single" bind:value={$formData.lang as string}>
             <Select.Trigger class="w-full" id="lang" {...props}>
-              {langName($formData.lang)}
+              {langName($formData.lang as string)}
             </Select.Trigger>
             <Select.Content>
               <Select.Item value="en">English</Select.Item>

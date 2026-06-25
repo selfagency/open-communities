@@ -101,8 +101,7 @@ const fixType = (input: any) => input as unknown as Record<string, unknown> & { 
       {/if}
       <div class="question my-4" class:error={registrationInvalid}>
         {m.registration_contact()}
-        // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
-        <Required set={!isEmpty($formData.registration.email) || !isEmpty($formData.registration.url)} />
+        <Required set={!(isEmpty($formData.registration.email) && isEmpty($formData.registration.url))} />
       </div>
       <Form.Field {form} name="registration_email">
         <Form.Control

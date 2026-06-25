@@ -23,6 +23,8 @@ const cc = $derived(accessibility.online_automatedCaptions || accessibility.onli
 const eva = $derived(accessibility.inPerson_eva);
 const asl = $derived(accessibility.inPerson_asl || accessibility.online_asl);
 const other = $derived(accessibility.otherText);
+// biome-ignore lint/complexity/useSimplifiedLogicExpression: rule produces worse code
+const noAccessibilityFeatures = $derived(!(ada || cc) && !eva && !other);
 /* endregion variables */
 </script>
 
@@ -158,8 +160,7 @@ const other = $derived(accessibility.otherText);
         <span class="flex flex-col items-start justify-start">{other}</span>
       </li>
     {/if}
-    // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
-    {#if !ada && !cc && !eva && !other}
+    {#if noAccessibilityFeatures}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
           <WarningIcon class="rtl:mx-2" size="18" />

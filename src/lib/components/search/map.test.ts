@@ -16,10 +16,9 @@ import { FakeSearch } from '$test/stubs/fake-search';
 import Map from './map.svelte';
 
 it('renders markers and clicking opens location', async () => {
-  const locations = [
+  const locations: any[] = [
     {
       city: { id: 'c1', latitude: 10, longitude: 20, name: 'City1' },
-      // @ts-expect-error: partial test fixture
       country: { id: 'co1', name: 'Country1' },
       state: undefined
     }
@@ -29,10 +28,10 @@ it('renders markers and clicking opens location', async () => {
   const loadSpy = vi.fn();
   const fakeLocation = createFakeLocation(
     {
-      city: undefined, // @ts-expect-error: partial test fixture
+      city: undefined,
       country: { id: 'co1' },
       state: undefined
-    },
+    } as any,
     { countryOptions: [{ id: 'co1', label: 'Country1', value: 'Country1' }] }
   );
 

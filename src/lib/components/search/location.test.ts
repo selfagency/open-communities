@@ -35,8 +35,8 @@ it('renders when location options present and reset calls reset', async () => {
 
 // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 it('calls search.setSearchLocation when country is selected', async () => {
-  const record = {
-    city: undefined, // @ts-expect-error: partial test fixture
+  const record: any = {
+    city: undefined,
     country: { id: 'c1' },
     state: undefined
   };
