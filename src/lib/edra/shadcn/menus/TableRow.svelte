@@ -1,14 +1,13 @@
 <script lang="ts">
+	import type { ShouldShowProps } from '../../types.js';
+	import { type Editor } from '@tiptap/core';
 	import ArrowDownFromLine from '@lucide/svelte/icons/arrow-down-from-line';
 	import ArrowUpFromLine from '@lucide/svelte/icons/arrow-up-from-line';
 	import Trash from '@lucide/svelte/icons/trash';
-	import type { Editor } from '@tiptap/core';
 	import Button from '../../../components/ui/button/button.svelte';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	import { isRowGripSelected } from '../../extensions/table/utils.js';
-	import type { ShouldShowProps } from '../../types.js';
 	import EdraToolTip from '../components/EdraToolTip.svelte';
-
+	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	interface Props {
 		editor: Editor;
 	}

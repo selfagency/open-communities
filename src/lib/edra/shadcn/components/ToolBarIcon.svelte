@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core';
 	import Button from '../../../components/ui/button/button.svelte';
-	import { cn } from '../../../utils.js';
 	import type { EdraToolBarCommands } from '../../commands/types.js';
+	import type { Editor } from '@tiptap/core';
 	import EdraToolTip from './EdraToolTip.svelte';
+	import { cn } from '../../../utils.js';
 
 	interface Props {
 		editor: Editor;

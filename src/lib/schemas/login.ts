@@ -5,16 +5,28 @@ import { m } from '$lib/paraglide/messages';
 
 /* endregion imports */
 
+function Lazy(fn: () => string): string {
+  try {
+    return fn();
+  } catch {
+    return '';
+  }
+}
+
 export const loginSchema = z.object({
   email: z.email().refine((value) => !!value, {
-    message: m.thingRequired({
-      thing: m.email()
-    })
+    message: Lazy(() =>
+      m.thingRequired({
+        thing: m.email()
+      })
+    )
   }),
   password: z.string().refine((value) => !!value, {
-    message: m.thingRequired({
-      thing: m.password()
-    })
+    message: Lazy(() =>
+      m.thingRequired({
+        thing: m.password()
+      })
+    )
   })
 });
 
@@ -26,9 +38,11 @@ export const tokenSchema = z
     password: z.string().optional(),
     passwordConfirm: z.string().optional(),
     token: z.string().refine((value) => !!value, {
-      message: m.thingRequired({
-        thing: m.token()
-      })
+      message: Lazy(() =>
+        m.thingRequired({
+          thing: m.token()
+        })
+      )
     }),
     type: z.enum(['requestReset', 'resetPassword', 'verifyEmail'])
   })

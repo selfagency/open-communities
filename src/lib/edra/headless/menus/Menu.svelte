@@ -1,12 +1,12 @@
 <script lang="ts">
-
-	import { isTextSelection } from '@tiptap/core';
 	import commands from '../../commands/toolbar-commands.js';
 	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	import type { EdraToolbarProps, ShouldShowProps } from '../../types.js';
-	import ToolBarIcon from '../components/ToolBarIcon.svelte';
+
+	import { isTextSelection } from '@tiptap/core';
 	import FontSize from '../components/toolbar/FontSize.svelte';
 	import QuickColors from '../components/toolbar/QuickColors.svelte';
+	import ToolBarIcon from '../components/ToolBarIcon.svelte';
 
 	const {
 		editor,

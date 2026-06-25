@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Clipboard from '@lucide/svelte/icons/clipboard';
-	import Duplicate from '@lucide/svelte/icons/copy';
-	import GripVertical from '@lucide/svelte/icons/grip-vertical';
-	import RemoveFormatting from '@lucide/svelte/icons/remove-formatting';
-	import Delete from '@lucide/svelte/icons/trash-2';
 	import type { Editor } from '@tiptap/core';
-	import type { Node } from '@tiptap/pm/model';
-	import type { NodeSelection } from '@tiptap/pm/state';
 	import { onMount } from 'svelte';
-	import { Button } from '../../components/ui/button/index.js';
-	import * as DropdownMenu from '../../components/ui/dropdown-menu/index.js';
+	import GripVertical from '@lucide/svelte/icons/grip-vertical';
 	import { DragHandlePlugin } from '../extensions/drag-handle/index.js';
+	import { Button } from '../../components/ui/button/index.js';
+	import type { Node } from '@tiptap/pm/model';
+	import * as DropdownMenu from '../../components/ui/dropdown-menu/index.js';
+	import RemoveFormatting from '@lucide/svelte/icons/remove-formatting';
+	import Duplicate from '@lucide/svelte/icons/copy';
+	import Clipboard from '@lucide/svelte/icons/clipboard';
+	import Delete from '@lucide/svelte/icons/trash-2';
+	import { NodeSelection } from '@tiptap/pm/state';
 
 	interface Props {
 		editor: Editor;

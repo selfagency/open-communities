@@ -1,10 +1,16 @@
-/* region imports */
 import { isEmpty, listify } from 'radashi';
+import { m } from '$lib/paraglide/messages';
 import * as z from 'zod';
 
-import { m } from '$lib/paraglide/messages';
-
 /* endregion imports */
+
+function Lazy(fn: () => string): string {
+  try {
+    return fn();
+  } catch {
+    return '';
+  }
+}
 
 /* region methods */
 const valueSelected = (value: Record<string, unknown>): boolean => {
@@ -42,7 +48,7 @@ export const fitSchema = z
     publicStatement: z.boolean()
   })
   .refine(valueSelected, {
-    message: m.requiredResponse()
+    message: Lazy(() => m.requiredResponse())
   });
 
 export type FitSchema = z.infer<typeof fitSchema>;
@@ -55,12 +61,12 @@ export const registrationSchema = z
     registrationType: z
       .enum(['free', 'slidingScale', 'fixedPrice', 'suggestedDonation', 'other'])
       .refine((value) => !!value, {
-        message: m.requiredResponse()
+        message: Lazy(() => m.requiredResponse())
       }),
     url: z.preprocess((val) => (val === '' ? undefined : val), z.string().url().nullable().optional())
   })
   .refine(hasContact, {
-    message: m.thingRequired({ thing: m.emailOrUrl() })
+    message: Lazy(() => m.thingRequired({ thing: m.emailOrUrl() }))
   });
 
 export type RegistrationSchema = z.infer<typeof registrationSchema>;
@@ -69,7 +75,7 @@ export const healthSchema = z.object({
   id: z.string().optional(),
   otherText: z.string().optional(),
   protocol: z.enum(['maskingRequired', 'maskingRecommended', 'noGuidelines', 'other']).refine((value) => !!value, {
-    message: m.requiredResponse()
+    message: Lazy(() => m.requiredResponse())
   })
 });
 
@@ -100,7 +106,7 @@ export const servicesSchema = z
     otherText: z.string().optional()
   })
   .refine(valueSelected, {
-    message: m.requiredResponse()
+    message: Lazy(() => m.requiredResponse())
   });
 
 export type ServicesSchema = z.infer<typeof servicesSchema>;

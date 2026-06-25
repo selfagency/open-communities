@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { NodeViewProps } from '@tiptap/core';
 	import MediaPlaceHolder from '../../components/MediaPlaceHolder.svelte';
+	import type { NodeViewProps } from '@tiptap/core';
 
 	const { editor }: NodeViewProps = $props();
-
 	import Audio from '@lucide/svelte/icons/audio-lines';
 
 	function handleClick() {

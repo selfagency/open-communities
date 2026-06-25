@@ -1,7 +1,6 @@
 <script lang="ts">
+	import { NodeViewWrapper, NodeViewContent } from 'svelte-tiptap';
 	import type { NodeViewProps } from '@tiptap/core';
-	import { NodeViewContent, NodeViewWrapper } from 'svelte-tiptap';
-
 	const { node, updateAttributes, extension }: NodeViewProps = $props();
 
 	let preRef = $state<HTMLPreElement>();

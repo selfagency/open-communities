@@ -1,13 +1,13 @@
 <script lang="ts">
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import Heading from '@lucide/svelte/icons/heading';
-	import Paragraph from '@lucide/svelte/icons/pilcrow';
 	import type { Editor } from '@tiptap/core';
-	import { buttonVariants } from '../../../../components/ui/button/index.js';
 	import * as DropdownMenu from '../../../../components/ui/dropdown-menu/index.js';
-	import { cn } from '../../../../utils.js';
+	import Heading from '@lucide/svelte/icons/heading';
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import commands from '../../../commands/toolbar-commands.js';
+	import { cn } from '../../../../utils.js';
 	import EdraToolTip from '../EdraToolTip.svelte';
+	import Paragraph from '@lucide/svelte/icons/pilcrow';
+	import { buttonVariants } from '../../../../components/ui/button/index.js';
 
 	interface Props {
 		editor: Editor;

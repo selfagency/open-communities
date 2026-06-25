@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Copy from '@lucide/svelte/icons/copy';
-	import Trash from '@lucide/svelte/icons/trash';
+	import type { ShouldShowProps } from '../../types.js';
+	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	import type { Editor } from '@tiptap/core';
 	import { Button } from '../../../components/ui/button/index.js';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
-	import type { ShouldShowProps } from '../../types.js';
+	import Copy from '@lucide/svelte/icons/copy';
+	import Trash from '@lucide/svelte/icons/trash';
 
 	interface Props {
 		editor: Editor;

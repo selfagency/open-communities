@@ -1,21 +1,20 @@
-import { mergeAttributes, Node } from '@tiptap/core';
+import { Editor, Node, mergeAttributes } from '@tiptap/core';
 import { SvelteNodeViewRenderer } from 'svelte-tiptap';
-export const VideoPlaceholder = (content) =>
-  Node.create({
+export const VideoPlaceholder = (content) => Node.create({
     name: 'video-placeholder',
     addOptions() {
-      return {
-        HTMLAttributes: {},
-        onDrop: () => {},
-        onDropRejected: () => {},
-        onEmbed: () => {}
-      };
+        return {
+            HTMLAttributes: {},
+            onDrop: () => { },
+            onDropRejected: () => { },
+            onEmbed: () => { }
+        };
     },
     parseHTML() {
-      return [{ tag: `div[data-type="${this.name}"]` }];
+        return [{ tag: `div[data-type="${this.name}"]` }];
     },
     renderHTML({ HTMLAttributes }) {
-      return ['div', mergeAttributes(HTMLAttributes)];
+        return ['div', mergeAttributes(HTMLAttributes)];
     },
     group: 'block',
     draggable: true,
@@ -23,15 +22,15 @@ export const VideoPlaceholder = (content) =>
     content: 'inline*',
     isolating: true,
     addNodeView() {
-      return SvelteNodeViewRenderer(content);
+        return SvelteNodeViewRenderer(content);
     },
     addCommands() {
-      return {
-        insertVideoPlaceholder: () => (props) => {
-          return props.commands.insertContent({
-            type: 'video-placeholder'
-          });
-        }
-      };
+        return {
+            insertVideoPlaceholder: () => (props) => {
+                return props.commands.insertContent({
+                    type: 'video-placeholder'
+                });
+            }
+        };
     }
-  });
+});

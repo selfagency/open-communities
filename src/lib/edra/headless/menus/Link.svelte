@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type { ShouldShowProps } from '../../types.js';
+	import BubbleMenu from '../../components/BubbleMenu.svelte';
+	import type { Editor } from '@tiptap/core';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Trash from '@lucide/svelte/icons/trash';
-	import type { Editor } from '@tiptap/core';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
-	import type { ShouldShowProps } from '../../types.js';
 
 	interface Props {
 		editor: Editor;

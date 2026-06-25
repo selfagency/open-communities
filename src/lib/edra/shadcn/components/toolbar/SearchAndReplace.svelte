@@ -1,18 +1,18 @@
 <script lang="ts">
+	import { Button } from '../../../../components/ui/button/index.js';
+	import type { Editor } from '@tiptap/core';
+	import Search from '@lucide/svelte/icons/search';
+	import * as Popover from '../../../../components/ui/popover/index.js';
+	import { Input } from '../../../../components/ui/input/index.js';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
-	import CaseSensitive from '@lucide/svelte/icons/case-sensitive';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
+	import CaseSensitive from '@lucide/svelte/icons/case-sensitive';
 	import Replace from '@lucide/svelte/icons/replace';
 	import ReplaceAll from '@lucide/svelte/icons/replace-all';
-	import Search from '@lucide/svelte/icons/search';
-	import type { Editor } from '@tiptap/core';
-	import { slide } from 'svelte/transition';
-	import { Button } from '../../../../components/ui/button/index.js';
-	import { Input } from '../../../../components/ui/input/index.js';
-	import * as Popover from '../../../../components/ui/popover/index.js';
 	import { cn } from '../../../../utils.js';
+	import { slide } from 'svelte/transition';
 	import EdraToolTip from '../EdraToolTip.svelte';
 
 	interface Props {

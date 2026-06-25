@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core';
+	import { Editor } from '@tiptap/core';
 
 	interface Props {
 		editor: Editor;

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core';
 	import type { EdraToolBarCommands } from '../../commands/types.js';
+	import { type Editor } from '@tiptap/core';
 
 	interface Props {
 		editor: Editor;

@@ -1,15 +1,15 @@
 <script lang="ts">
+	import { onDestroy, onMount, type Snippet } from 'svelte';
+	import { NodeViewWrapper } from 'svelte-tiptap';
+	import type { NodeViewProps } from '@tiptap/core';
 
 	import AlignCenter from '@lucide/svelte/icons/align-center';
 	import AlignLeft from '@lucide/svelte/icons/align-left';
 	import AlignRight from '@lucide/svelte/icons/align-right';
-	import Captions from '@lucide/svelte/icons/captions';
 	import CopyIcon from '@lucide/svelte/icons/copy';
 	import Fullscreen from '@lucide/svelte/icons/fullscreen';
 	import Trash from '@lucide/svelte/icons/trash';
-	import type { NodeViewProps } from '@tiptap/core';
-	import { onDestroy, onMount, type Snippet } from 'svelte';
-	import { NodeViewWrapper } from 'svelte-tiptap';
+	import Captions from '@lucide/svelte/icons/captions';
 
 	import { duplicateContent } from '../../utils.js';
 

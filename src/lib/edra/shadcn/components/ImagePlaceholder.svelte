@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { NodeViewProps } from '@tiptap/core';
 	import MediaPlaceHolder from '../../components/MediaPlaceHolder.svelte';
+	import type { NodeViewProps } from '@tiptap/core';
 
 	const { editor }: NodeViewProps = $props();
-
 	import Image from '@lucide/svelte/icons/image';
 	import { buttonVariants } from '../../../components/ui/button/button.svelte';
 

@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { type Editor } from '@tiptap/core';
 	import ArrowLeftFromLine from '@lucide/svelte/icons/arrow-left-from-line';
 	import ArrowRightFromLine from '@lucide/svelte/icons/arrow-right-from-line';
 	import Trash from '@lucide/svelte/icons/trash';
-	import type { Editor } from '@tiptap/core';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
-	import { isColumnGripSelected } from '../../extensions/table/utils.js';
 	import type { ShouldShowProps } from '../../types.js';
-
+	import { isColumnGripSelected } from '../../extensions/table/utils.js';
+	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	interface Props {
 		editor: Editor;
 	}
