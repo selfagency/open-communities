@@ -1,6 +1,6 @@
 {
   "$schema": "https://fallow.tools/schema/fallowrc.json",
-  "ignore": [
+  "ignorePatterns": [
     "src/lib/components/ui/**",
     "e2e/**",
     "src/test/**",
