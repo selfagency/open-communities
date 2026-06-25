@@ -1,2 +1,3 @@
-pnpm run check
+pnpm run svelte-check
 pnpm dlx lint-staged
+pnpm exec fallow audit

@@ -60,14 +60,10 @@ export function superForm(initialData = {}) {
     /** @param {any} el */
     submit: (el) => {
       // If a test installs a spy on globalThis, call it so tests can assert.
-      // @ts-expect-error
-      // @ts-expect-error: globalThis custom test property
       if (globalThis.__TEST_SUPERFORM_SUBMIT__) {
-        // @ts-expect-error: globalThis custom test property
         globalThis.__TEST_SUPERFORM_SUBMIT__(el);
       }
       // increment an observable counter too
-      // @ts-expect-error: globalThis custom test property
       globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
     }
   };

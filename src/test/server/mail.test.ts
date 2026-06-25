@@ -230,7 +230,6 @@ describe('src/lib/server/mail', () => {
                 contactName: '',
                 contactUrl: '',
                 created: now,
-                denomination: 'other' as MetaDenominationOptions,
                 expand: undefined,
                 fit: null,
                 flavor: '',

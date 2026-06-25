@@ -105,7 +105,7 @@ export const actions = {
             .collection('users')
             .authWithPassword(form.data.email as string, form.data.password as string, { fetch })
         ).record as unknown as Record<string, unknown>
-      ) as UsersRecord;
+      ) as unknown as UsersRecord;
 
       // Use the same cookieOpts from locals to ensure consistency
       cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);

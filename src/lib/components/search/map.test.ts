@@ -19,7 +19,8 @@ it('renders markers and clicking opens location', async () => {
   const locations = [
     {
       city: { id: 'c1', latitude: 10, longitude: 20, name: 'City1' },
-      country: { id: 'co1', name: 'Country1' },
+      // @ts-expect-error: partial test fixture
+    country: { id: 'co1', name: 'Country1' },
       state: undefined
     }
   ];
@@ -27,7 +28,8 @@ it('renders markers and clicking opens location', async () => {
   const search = new FakeSearch() as unknown as Search;
   const loadSpy = vi.fn();
   const fakeLocation = createFakeLocation(
-    { city: undefined, country: { id: 'co1' }, state: undefined },
+    { city: undefined, // @ts-expect-error: partial test fixture
+    country: { id: 'co1' }, state: undefined },
     { countryOptions: [{ id: 'co1', label: 'Country1', value: 'Country1' }] }
   );
 
