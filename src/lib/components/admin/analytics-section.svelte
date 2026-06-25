@@ -5,29 +5,32 @@
 
   interface PhChange { percent: number; direction: string; long_text: string; }
   interface PhMetric { current: number; change: PhChange; }
+  interface Digest {
+    visitors: PhMetric; pageviews: PhMetric; sessions: PhMetric;
+    bounce_rate: PhMetric & { current: number; previous: number };
+    avg_session_duration: PhMetric & { current: string; previous: string };
+    top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
+    top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
+    dashboard_url: string;
+  }
 
   let {
-    weeklyDigest,
     realtimeDigest,
+    weekDigest,
+    monthDigest,
   }: {
-    weeklyDigest: {
-      visitors: PhMetric; pageviews: PhMetric; sessions: PhMetric;
-      bounce_rate: PhMetric & { current: number; previous: number };
-      avg_session_duration: PhMetric & { current: string; previous: string };
-      top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
-      top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
-      dashboard_url: string;
-    } | null;
-    realtimeDigest: typeof weeklyDigest;
+    realtimeDigest: Digest | null;
+    weekDigest: Digest | null;
+    monthDigest: Digest | null;
   } = $props();
 
-  let viewMode = $state<'realtime' | '30d'>('30d');
+  let viewMode = $state<'realtime' | 'week' | 'month'>('month');
 
-  const digest = $derived(viewMode === 'realtime' ? realtimeDigest : weeklyDigest);
+  const digest = $derived(
+    viewMode === 'realtime' ? realtimeDigest : viewMode === 'week' ? weekDigest : monthDigest
+  );
 
-  function fmt(n: number) {
-    return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
-  }
+  function fmt(n: number) { return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n); }
 </script>
 
 {#if digest}
@@ -35,7 +38,8 @@
     <h3 class="font-serif text-2xl font-bold tracking-wider">Web Analytics</h3>
     <div class="flex gap-1 rounded-lg bg-muted p-1">
       <Button variant={viewMode === 'realtime' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'realtime'}>Realtime</Button>
-      <Button variant={viewMode === '30d' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = '30d'}>30 Days</Button>
+      <Button variant={viewMode === 'week' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'week'}>Week</Button>
+      <Button variant={viewMode === 'month' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'month'}>Month</Button>
     </div>
   </div>
 
@@ -46,7 +50,7 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
-        {#if digest.visitors.change && viewMode === '30d'}
+        {#if digest.visitors.change && viewMode === 'week'}
           <p class="text-muted-foreground mt-1 text-xs">{digest.visitors.change.long_text}</p>
         {/if}
       </CardContent>
@@ -57,7 +61,7 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
-        {#if digest.pageviews.change && viewMode === '30d'}
+        {#if digest.pageviews.change && viewMode === 'week'}
           <p class="text-muted-foreground mt-1 text-xs">{digest.pageviews.change.long_text}</p>
         {/if}
       </CardContent>
@@ -68,7 +72,7 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
-        {#if digest.sessions.change && viewMode === '30d'}
+        {#if digest.sessions.change && viewMode === 'week'}
           <p class="text-muted-foreground mt-1 text-xs">{digest.sessions.change.long_text}</p>
         {/if}
       </CardContent>

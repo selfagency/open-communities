@@ -15,9 +15,10 @@ export const load: PageServerLoad = async ({ locals }) => {
     )
   ]);
 
-  const [weeklyDigest, realtimeDigest] = await Promise.all([
+  const [monthDigest, realtimeDigest, weekDigest] = await Promise.all([
     getWeeklyDigest(30).catch(() => null),
-    getWeeklyDigest(1).catch(() => null)
+    getWeeklyDigest(1).catch(() => null),
+    getWeeklyDigest(7).catch(() => null)
   ]);
 
   // Geographic stats
@@ -82,7 +83,8 @@ export const load: PageServerLoad = async ({ locals }) => {
       topCountries,
       topStates
     },
-    weeklyDigest,
-    realtimeDigest
+    monthDigest,
+    realtimeDigest,
+    weekDigest
   };
 };

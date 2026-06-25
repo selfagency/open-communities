@@ -13,5 +13,5 @@
     topCountries={data.stats.topCountries}
     topStates={data.stats.topStates}
   />
-  <AnalyticsSection weeklyDigest={data.weeklyDigest} realtimeDigest={data.realtimeDigest} />
+  <AnalyticsSection realtimeDigest={data.realtimeDigest} weekDigest={data.weekDigest} monthDigest={data.monthDigest} />
 </div>
