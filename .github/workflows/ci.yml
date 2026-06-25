@@ -227,6 +227,7 @@ jobs:
 
       - name: Start preview server
         run: |
+          mkdir -p .e2e
           nohup node build/index.js > .e2e/app.log 2>&1 &
           timeout 30 bash -c 'until curl -f http://localhost:4173 >/dev/null 2>&1; do sleep 1; done'
           echo "App is ready"
