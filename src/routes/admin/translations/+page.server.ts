@@ -88,7 +88,7 @@ export const actions = {
     const results = await Promise.allSettled(
       entries.map((entry) =>
         entry.id
-          ? withRetry(() => client.collection('translations').update(entry.id, { value: entry.value }))
+          ? withRetry(() => client.collection('translations').update(entry.id!, { value: entry.value }))
           : withRetry(() => client.collection('translations').create({ key, locale: entry.locale, value: entry.value }))
       )
     );

@@ -63,22 +63,21 @@ export const actions = {
 
   unlink: async ({ locals }) => {
     const client = locals.api;
-    if (!client.authStore?.record?.id) {
+    const uid = client.authStore?.record?.id;
+    if (!uid) {
       throw error(401, 'Not authenticated');
     }
-    await withRetry(() =>
-      client.collection('users').update(client.authStore.record.id as string, { congregation: null })
-    );
+    await withRetry(() => client.collection('users').update(uid, { congregation: null }));
     return { unlinked: true };
   },
 
   deleteAccount: async ({ cookies, locals }) => {
     const client = locals.api;
-    if (!client.authStore?.record?.id) {
+    const uid = client.authStore?.record?.id;
+    if (!uid) {
       throw error(401, 'Not authenticated');
     }
-    const id = client.authStore.record.id as string;
-    await withRetry(() => client.collection('users').delete(id));
+    await withRetry(() => client.collection('users').delete(uid));
     client.authStore.clear();
     cookies.set('auth', '', { ...locals.cookieOpts, maxAge: 0 });
     cookies.set('session', '', { ...locals.cookieOpts, maxAge: 0 });

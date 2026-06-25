@@ -16,7 +16,7 @@ function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate 
   if (!keepDate) {
     fields.push('created' as keyof T);
   }
-  return omit(response, fields);
+  return omit(response, fields) as Partial<T>;
 }
 
 function expand<T extends Record<string, unknown>>(item: T): Omit<T, 'expand'> {

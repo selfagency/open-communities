@@ -38,7 +38,8 @@ export const actions = {
     const imageAlt = form.get('imageAlt') as string;
     const imageCaption = form.get('imageCaption') as string;
     const variantsJson = form.get('variants') as string;
-    const imageFile = form.get('image') as File | null;
+    const imageRaw = form.get('image');
+    const imageFile = imageRaw instanceof File ? imageRaw : null;
 
     if (!(title && slug)) {
       return fail(400, { error: 'Title and slug are required' });
@@ -60,8 +61,8 @@ export const actions = {
 
       if (imageFile?.size && imageFile.size > 0) {
         body.image = imageFile;
-      } else if (typeof imageFile === 'string' && imageFile.startsWith('data:image/')) {
-        const base64 = imageFile.split(',')[1];
+      } else if (typeof imageRaw === 'string' && imageRaw.startsWith('data:image/')) {
+        const base64 = imageRaw.split(',')[1];
         const buffer = Buffer.from(base64, 'base64');
         body.image = new File([buffer], 'upload.png', { type: 'image/png' });
       }
