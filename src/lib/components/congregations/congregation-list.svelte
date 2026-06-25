@@ -94,7 +94,7 @@
         <SearchIcon size="18" class="absolute left-3 z-10 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
         <Input bind:value={search} placeholder={m.searchCongregations()} class="h-11 w-64 sm:w-80 pl-10" />
       </div>
-      {#if search}<p class="text-muted-foreground text-sm">{filtered.filter(c => c.visible).length} results</p>{/if}
+      {#if search}<p class="text-muted-foreground text-sm">{m.searchResults({ count: filtered.filter(c => c.visible).length })}</p>{/if}
     </div>
   </div>
   <Card>

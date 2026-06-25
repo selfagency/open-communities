@@ -10,6 +10,7 @@
   import { Input } from '$lib/components/ui/input';
   import { Switch } from '$lib/components/ui/switch';
   import { Textarea } from '$lib/components/ui/textarea';
+  import { m } from '$lib/paraglide/messages';
   import QuillEditor from './quill-editor.svelte';
 
   const languages = [
@@ -114,7 +115,7 @@
       if (result.type === 'success' || result.type === 'redirect') {
         onSuccess();
       } else {
-        error = (result.data?.error as string) ?? 'Save failed';
+        error = (result.data?.error as string) ?? m.pageEditorSaveFailed();
       }
     };
   }
@@ -161,47 +162,47 @@
     <!-- English: base page fields -->
     <Card>
       <CardHeader>
-        <CardTitle class="text-lg font-bold">{page?.id ? 'Edit' : 'New Page'}</CardTitle>
+        <CardTitle class="text-lg font-bold">{page?.id ? m.pageEditorTitleEdit() : m.pageEditorTitleNew()}</CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
         <div class="space-y-2">
           <label for="title" class="text-sm font-bold block mb-2">
-            <span>Title</span>
+            <span>{m.pageEditorTitleLabel()}</span>
             <Required set={!isEmpty(title)} />
           </label>
-          <Input id="title" name="title" bind:value={title} required oninput={handleTitleChange} placeholder="Page title" />
+          <Input id="title" name="title" bind:value={title} required oninput={handleTitleChange} placeholder={m.pageEditorTitlePlaceholder()} />
         </div>
 
         <div class="space-y-2">
           <div class="flex items-center gap-3">
             <label for="slug" class="text-sm font-bold block">
-              <span>Slug</span>
+              <span>{m.pageEditorSlugLabel()}</span>
               <Required set={!isEmpty(slug)} />
             </label>
             <label class="flex items-center gap-1.5 text-xs text-muted-foreground ml-auto">
-              <Switch bind:checked={manualSlug} aria-label="Manual slug" class="scale-75" />
-              Manual
+              <Switch bind:checked={manualSlug} aria-label={m.pageEditorSlugManual()} class="scale-75" />
+              {m.pageEditorSlugManual()}
             </label>
           </div>
-          <Input id="slug" name="slug" bind:value={slug} required placeholder="page-slug" pattern="[a-z0-9-]+" class="font-mono text-sm" />
+          <Input id="slug" name="slug" bind:value={slug} required placeholder={m.pageEditorSlugPlaceholder()} pattern="[a-z0-9-]+" class="font-mono text-sm" />
         </div>
 
         <div class="space-y-2">
-          <label for="description" class="text-sm font-bold block mb-2">Description</label>
-          <Textarea id="description" name="description" bind:value={description} placeholder="Brief description of the page" />
+          <label for="description" class="text-sm font-bold block mb-2">{m.pageEditorDescriptionLabel()}</label>
+          <Textarea id="description" name="description" bind:value={description} placeholder={m.pageEditorDescriptionPlaceholder()} />
         </div>
 
         <div class="space-y-2">
-          <label for="content" class="text-sm font-bold block mb-2">Content</label>
+          <label for="content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
           <input type="hidden" name="content" value={content} />
-          <QuillEditor bind:value={content} id="page-content" placeholder="Page content..." />
+          <QuillEditor bind:value={content} id="page-content" placeholder={m.pageEditorContentPlaceholder()} />
         </div>
       </CardContent>
     </Card>
 
     <Card>
       <CardHeader>
-        <CardTitle class="text-lg font-bold">Image</CardTitle>
+        <CardTitle class="text-lg font-bold">{m.pageEditorImage()}</CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
         <FileDropZone.Root accept={FileDropZone.ACCEPT_IMAGE} onUpload={handleImageSelect}>
@@ -212,12 +213,12 @@
         <input type="hidden" name="image" value={imagePreview} />
         <div class="space-y-4 pt-4">
           <div class="space-y-2">
-            <label for="imageAlt" class="text-sm font-bold block mb-2">Alt Text</label>
-            <Input id="imageAlt" name="imageAlt" bind:value={imageAlt} placeholder="Descriptive alt text" />
+            <label for="imageAlt" class="text-sm font-bold block mb-2">{m.pageEditorImageAltLabel()}</label>
+            <Input id="imageAlt" name="imageAlt" bind:value={imageAlt} placeholder={m.pageEditorImageAltPlaceholder()} />
           </div>
           <div class="space-y-2">
-            <label for="imageCaption" class="text-sm font-bold block mb-2">Caption</label>
-            <Input id="imageCaption" name="imageCaption" bind:value={imageCaption} placeholder="Image caption" />
+            <label for="imageCaption" class="text-sm font-bold block mb-2">{m.pageEditorImageCaptionLabel()}</label>
+            <Input id="imageCaption" name="imageCaption" bind:value={imageCaption} placeholder={m.pageEditorImageCaptionPlaceholder()} />
           </div>
         </div>
       </CardContent>
@@ -228,33 +229,33 @@
     {#if v}
       <Card>
         <CardHeader>
-          <CardTitle class="text-lg font-bold">{languages.find((l) => l.code === selectedLang)?.label ?? selectedLang} Variant</CardTitle>
+          <CardTitle class="text-lg font-bold">{m.pageEditorVariantTitle({ lang: languages.find((l) => l.code === selectedLang)?.label ?? selectedLang })}</CardTitle>
         </CardHeader>
         <CardContent class="space-y-4">
-          <p class="text-muted-foreground text-xs italic">Leave blank to fall back to English.</p>
+          <p class="text-muted-foreground text-xs italic">{m.pageEditorVariantFallback()}</p>
 
           <div class="space-y-2">
-            <label for="var-title" class="text-sm font-bold block mb-2">Title</label>
+            <label for="var-title" class="text-sm font-bold block mb-2">{m.pageEditorVariantTitleLabel()}</label>
             <Input id="var-title" bind:value={v.title} />
           </div>
 
           <div class="space-y-2">
-            <label for="var-desc" class="text-sm font-bold block mb-2">Description</label>
+            <label for="var-desc" class="text-sm font-bold block mb-2">{m.pageEditorDescriptionLabel()}</label>
             <Textarea id="var-desc" bind:value={v.description} />
           </div>
 
           <div class="space-y-2">
-            <label for="var-content" class="text-sm font-bold block mb-2">Content</label>
-            <QuillEditor bind:value={v.content} id="var-content" placeholder="Content in {selectedLang}..." />
+            <label for="var-content" class="text-sm font-bold block mb-2">{m.pageEditorContentLabel()}</label>
+            <QuillEditor bind:value={v.content} id="var-content" placeholder={m.pageEditorVariantContentPlaceholder({ lang: selectedLang })} />
           </div>
 
           <div class="grid gap-4 md:grid-cols-2">
             <div class="space-y-2">
-              <label for="var-imgalt" class="text-sm font-bold block mb-2">Image Alt Text</label>
+              <label for="var-imgalt" class="text-sm font-bold block mb-2">{m.pageEditorVariantImageAltLabel()}</label>
               <Input id="var-imgalt" bind:value={v.imageAlt} />
             </div>
             <div class="space-y-2">
-              <label for="var-imgcap" class="text-sm font-bold block mb-2">Image Caption</label>
+              <label for="var-imgcap" class="text-sm font-bold block mb-2">{m.pageEditorVariantImageCaptionLabel()}</label>
               <Input id="var-imgcap" bind:value={v.imageCaption} />
             </div>
           </div>
@@ -266,8 +267,8 @@
 
   <div class="flex gap-2">
     <Button type="submit" disabled={!title || !slug || saving}>
-      {saving ? 'Saving...' : page?.id ? 'Update Page' : 'Create Page'}
+      {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
-    <Button variant="outline" type="button" onclick={() => goto('/admin/pages')}>Cancel</Button>
+    <Button variant="outline" type="button" onclick={() => goto('/admin/pages')}>{m.pageEditorCancel()}</Button>
   </div>
 </form>

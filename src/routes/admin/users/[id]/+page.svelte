@@ -93,12 +93,12 @@
         <CardTitle class="text-lg font-bold">{m.congregation()}</CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
-        <p class="text-muted-foreground text-sm">No congregation linked.</p>
+        <p class="text-muted-foreground text-sm">{m.noCongregationLinked()}</p>
         {#if data.availableCongregations.length > 0}
           <form method="POST" action="?/assign" use:enhance={handleUpdate}>
             <div class="flex gap-2">
               <select name="congregationId" bind:value={selectedCong} class="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                <option value="">Select a congregation...</option>
+                <option value="">{m.selectCongregation()}</option>
                 {#each data.availableCongregations as cong (cong.id)}
                   <option value={cong.id}>{cong.name}</option>
                 {/each}
@@ -107,7 +107,7 @@
             </div>
           </form>
         {:else}
-          <p class="text-muted-foreground text-xs">No unassigned congregations available.</p>
+          <p class="text-muted-foreground text-xs">{m.noUnassignedCongregations()}</p>
         {/if}
       </CardContent>
     </Card>

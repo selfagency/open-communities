@@ -40,7 +40,7 @@
   const columns: ColumnDef<Page>[] = [
     { accessorKey: 'title', header: m.pageTitle(), size: 200, cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="font-medium">${get().v}</span>` })), { v: row.original.title }) },
     { accessorKey: 'slug', header: m.slug(), size: 100, cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground font-mono text-xs truncate inline-block">/${get().v}</span>` })), { v: row.original.slug }) },
-    { accessorKey: 'description', header: 'Description', size: 400, cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground text-xs truncate inline-block max-w-sm">${get().v || '—'}</span>` })), { v: row.original.description }) },
+    { accessorKey: 'description', header: m.description(), size: 400, cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground text-xs truncate inline-block max-w-sm">${get().v || '—'}</span>` })), { v: row.original.description }) },
     { accessorKey: 'updated', header: m.updated(), size: 120, cell: ({ row }) => renderSnippet(createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="text-muted-foreground text-xs">${(get().v || '').slice(0, 10)}</span>` })), { v: row.original.updated }) },
   ];
 

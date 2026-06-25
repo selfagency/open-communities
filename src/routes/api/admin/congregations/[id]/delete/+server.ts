@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit';
 import { withRetry } from '$lib/server/api';
 import { transactionalMail } from '$lib/server/mail';
+import { m } from '$lib/paraglide/messages';
 import type { RequestHandler } from './$types';
 
 export const DELETE: RequestHandler = async ({ locals, params }) => {
@@ -17,8 +18,8 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
     await transactionalMail({
       email: owner.owner.email,
       name: owner.owner.name ?? '',
-      subject: 'Your congregation submission',
-      message: `Your congregation "${cong.name}" was not approved.`
+      subject: m.transactional_rejectedSubject(),
+      message: m.transactional_rejectedBody({ name: cong.name as string })
     });
   }
 
