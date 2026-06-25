@@ -22,6 +22,9 @@ export default defineConfig(({ mode }) => ({
       }
     }
   },
+  css: {
+    transformer: 'postcss'
+  },
   ssr: {
     external: ['@opentelemetry', '@grpc', 'protobufjs'],
     noExternal: ['svelte-lexical']
