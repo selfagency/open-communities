@@ -17,8 +17,6 @@
     "deps:up": "docker-compose -f e2e/docker-compose.yml up -d --build",
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
     "fix": "ultracite fix",
-    "format": "biome check --write .",
-    "lint": "biome check .",
     "machine-translate": "inlang machine translate --project project.inlang",
     "prepare": "husky",
     "preview": "pnpx dotenv-cli -c dynamic -- vite preview",
