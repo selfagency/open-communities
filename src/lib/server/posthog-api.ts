@@ -33,7 +33,7 @@ export interface WeeklyDigest {
 
 interface HogQLResult {
   columns: string[];
-  results: Array<Array<unknown>>;
+  results: unknown[][];
   types: string[];
 }
 
@@ -137,7 +137,7 @@ async function _queryTrends(
   if (!result?.results) {
     return null;
   }
-  return (result.results as Array<[string, number]>).map(([date, count]) => ({
+  return (result.results as [string, number][]).map(([date, count]) => ({
     date: (date || '').slice(0, 10),
     count: count ?? 0
   }));

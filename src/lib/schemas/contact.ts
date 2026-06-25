@@ -1,4 +1,5 @@
 /* region imports */
+// biome-ignore lint/performance/noNamespaceImport: Zod namespace convention
 import * as z from 'zod';
 /* endregion imports */
 

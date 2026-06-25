@@ -21,10 +21,10 @@ let {
     </CardHeader>
     <CardContent class="space-y-4">
       <p class="text-muted-foreground text-sm">{m.linkedDescription()}</p>
-      <form method="POST" action="?/unlink" use:enhance={onUnlink}>
-        <Button variant="outline" type="submit">{m.unlinkFromCongregation()}</Button>
+      <form action="?/unlink" method="POST" use:enhance={onUnlink}>
+        <Button type="submit" variant="outline">{m.unlinkFromCongregation()}</Button>
       </form>
-      <Button variant="outline" onclick={() => goto('/edit?id=' + congregation)}>{m.editCongregation()}</Button>
+      <Button onclick={() => goto('/edit?id=' + congregation)} variant="outline">{m.editCongregation()}</Button>
     </CardContent>
   </Card>
 {/if}

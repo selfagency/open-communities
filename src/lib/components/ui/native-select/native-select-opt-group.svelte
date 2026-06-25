@@ -5,6 +5,6 @@ import type { WithElementRef } from '$lib/utils.js';
 let { ref = $bindable(null), children, ...restProps }: WithElementRef<HTMLOptgroupAttributes> = $props();
 </script>
 
-<optgroup bind:this={ref} data-slot="native-select-opt-group" {...restProps}>
+<optgroup data-slot="native-select-opt-group" bind:this={ref} {...restProps}>
   {@render children?.()}
 </optgroup>

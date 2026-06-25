@@ -94,17 +94,17 @@ async function updateLang() {
     <LocaleIcon
       class="h-4 w-4 {mode === 'mini' ? 'text-foreground' : 'stroke-muted-foreground'} transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
     />
-    <span class={(mode === "mini" ? "text-foreground" : "max-[720px]:hidden text-muted-foreground")} aria-hidden="true"
+    <span aria-hidden="true" class={(mode === "mini" ? "text-foreground" : "max-[720px]:hidden text-muted-foreground")}
       >{code}</span
     >
   </DropdownMenu.Trigger>
   <DropdownMenu.Content class="w-56">
     <DropdownMenu.Label>{m.language()}</DropdownMenu.Label>
     <DropdownMenu.Separator />
-    <DropdownMenu.RadioGroup bind:value={lang} onValueChange={() => updateLang()}>
+    <DropdownMenu.RadioGroup onValueChange={() => updateLang()} bind:value={lang}>
       {#each locales as { label, value }, i (i)}
-        <DropdownMenu.RadioItem {value} class="flex flex-row items-center justify-start space-x-2">
-          <Badge variant="outline" class="text-xs font-normal">{value.toUpperCase()}</Badge>
+        <DropdownMenu.RadioItem class="flex flex-row items-center justify-start space-x-2" {value}>
+          <Badge class="text-xs font-normal" variant="outline">{value.toUpperCase()}</Badge>
           <span lang={value}>{label}</span>
         </DropdownMenu.RadioItem>
       {/each}

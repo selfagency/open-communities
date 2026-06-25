@@ -142,17 +142,17 @@ const table = $derived(
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">
         <SearchIcon
-          size="18"
           class="absolute left-3 z-10 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+          size="18"
         />
         <Input
-          bind:value={search}
-          placeholder={m.searchUsers()}
           class="h-11 w-64 sm:w-80 pl-10"
           onkeydown={(e) => { if (e.key === 'Enter') doSearch(); }}
+          placeholder={m.searchUsers()}
+          bind:value={search}
         />
       </div>
-      <Button variant="outline" onclick={() => goto('/admin/users/export')}>{m.exportCsv()}</Button>
+      <Button onclick={() => goto('/admin/users/export')} variant="outline">{m.exportCsv()}</Button>
     </div>
   </div>
   <Card>
@@ -181,14 +181,14 @@ const table = $derived(
                 </TableCell>
               {/each}
               <TableCell>
-                <Button variant="ghost" size="icon" onclick={() => goto('/admin/users/' + row.original.id)}>
+                <Button onclick={() => goto('/admin/users/' + row.original.id)} size="icon" variant="ghost">
                   <PencilIcon class="size-4" />
                 </Button>
               </TableCell>
             </TableRow>
           {:else}
             <TableRow>
-              <TableCell colspan={columns.length + 1} class="h-24 text-center">{m.noResults()}</TableCell>
+              <TableCell class="h-24 text-center" colspan={columns.length + 1}>{m.noResults()}</TableCell>
             </TableRow>
           {/each}
         </TableBody>
@@ -196,7 +196,7 @@ const table = $derived(
     </CardContent>
   </Card>
   <div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
-    <Pagination.Root count={data.total} perPage={data.perPage} page={currentPage} {onPageChange} siblingCount={0}>
+    <Pagination.Root count={data.total} {onPageChange} page={currentPage} perPage={data.perPage} siblingCount={0}>
       {#snippet children({ pages })}
         <Pagination.Content>
           <Pagination.Item>
@@ -209,7 +209,7 @@ const table = $derived(
               </Pagination.Item>
             {:else}
               <Pagination.Item>
-                <Pagination.Link {page} isActive={currentPage == page.value}>
+                <Pagination.Link isActive={currentPage == page.value} {page}>
                   {page.value}
                 </Pagination.Link>
               </Pagination.Item>

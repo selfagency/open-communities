@@ -90,7 +90,7 @@ const flag = $derived((congregation?.fit as FitRecord)?.flag);
             <Badge variant="outline">{m.pending()}</Badge>
           {:else}
             {#if security}
-              <Security {security} mode="mini" />
+              <Security mode="mini" {security} />
             {/if}
             {#if health}
               <Health {health} mode="mini" />
@@ -116,8 +116,8 @@ const flag = $derived((congregation?.fit as FitRecord)?.flag);
                 }}
               >
                 <EditIcon
-                  size="16"
                   class="text-secondary-foreground transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90"
+                  size="16"
                 />
                 <span class="sr-only">{m.edit()}</span>
               </Tooltip.Trigger>

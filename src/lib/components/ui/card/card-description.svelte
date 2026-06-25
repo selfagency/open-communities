@@ -10,6 +10,6 @@ let {
 }: WithElementRef<HTMLAttributes<HTMLParagraphElement>> = $props();
 </script>
 
-<p bind:this={ref} data-slot="card-description" class={cn("text-muted-foreground text-sm", className)} {...restProps}>
+<p class={cn("text-muted-foreground text-sm", className)} data-slot="card-description" bind:this={ref} {...restProps}>
   {@render children?.()}
 </p>

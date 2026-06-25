@@ -1,9 +1,9 @@
 <script lang="ts">
 import { getContext, onDestroy } from 'svelte';
 
-type BoolStore = {
+interface BoolStore {
   subscribe: (fn: (v: boolean) => void) => () => void;
-};
+}
 
 const ctx = getContext<{ open?: BoolStore }>('TEST_SHEET');
 

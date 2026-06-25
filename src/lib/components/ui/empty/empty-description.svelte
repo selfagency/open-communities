@@ -11,12 +11,12 @@ let {
 </script>
 
 <div
-  bind:this={ref}
-  data-slot="empty-description"
   class={cn(
 		"text-sm/relaxed text-muted-foreground [&>a:hover]:text-primary text-sm/relaxed [&>a]:underline [&>a]:underline-offset-4",
 		className
 	)}
+  data-slot="empty-description"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

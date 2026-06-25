@@ -8,10 +8,10 @@ let { data } = $props();
 <div class="space-y-8">
   <StatCards
     congregations={data.stats.congregations}
-    users={data.stats.users}
     pendingApprovals={data.stats.pendingApprovals}
     topCountries={data.stats.topCountries}
     topStates={data.stats.topStates}
+    users={data.stats.users}
   />
-  <AnalyticsSection realtimeDigest={data.realtimeDigest} weekDigest={data.weekDigest} monthDigest={data.monthDigest} />
+  <AnalyticsSection monthDigest={data.monthDigest} realtimeDigest={data.realtimeDigest} weekDigest={data.weekDigest} />
 </div>

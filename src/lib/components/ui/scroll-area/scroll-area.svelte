@@ -20,18 +20,18 @@ let {
 } = $props();
 </script>
 
-<ScrollAreaPrimitive.Root bind:ref data-slot="scroll-area" class={cn('relative', className)} {...restProps}>
+<ScrollAreaPrimitive.Root class={cn('relative', className)} data-slot="scroll-area" bind:ref {...restProps}>
   <ScrollAreaPrimitive.Viewport
-    data-slot="scroll-area-viewport"
     class="ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1"
+    data-slot="scroll-area-viewport"
   >
     {@render children?.()}
   </ScrollAreaPrimitive.Viewport>
   {#if orientation === 'vertical' || orientation === 'both'}
-    <Scrollbar orientation="vertical" class={scrollbarYClasses} />
+    <Scrollbar class={scrollbarYClasses} orientation="vertical" />
   {/if}
   {#if orientation === 'horizontal' || orientation === 'both'}
-    <Scrollbar orientation="horizontal" class={scrollbarXClasses} />
+    <Scrollbar class={scrollbarXClasses} orientation="horizontal" />
   {/if}
   <ScrollAreaPrimitive.Corner />
 </ScrollAreaPrimitive.Root>

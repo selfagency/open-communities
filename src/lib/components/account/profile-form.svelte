@@ -34,7 +34,7 @@ const { form: formData, errors } = form;
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="name">{m.name()}</Form.Label>
-          <Input {...props} id="name" name="name" bind:value={$formData.name as string} required />
+          <Input {...props} id="name" name="name" required bind:value={$formData.name as string} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -44,7 +44,7 @@ const { form: formData, errors } = form;
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="email">{m.email()}</Form.Label>
-          <Input {...props} id="email" name="email" bind:value={$formData.email as string} type="email" required />
+          <Input {...props} id="email" name="email" required type="email" bind:value={$formData.email as string} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -55,7 +55,7 @@ const { form: formData, errors } = form;
         {#snippet children(props)}
           <Form.Label for="lang">{m.language()}</Form.Label>
           <Select.Root type="single" bind:value={$formData.lang as string}>
-            <Select.Trigger id="lang" class="w-full" {...props}>
+            <Select.Trigger class="w-full" id="lang" {...props}>
               {$formData.lang === 'en' ? 'English' : $formData.lang === 'es' ? 'Español' : $formData.lang === 'fr' ? 'Français' : $formData.lang === 'he' ? 'עברית' : $formData.lang}
             </Select.Trigger>
             <Select.Content>
@@ -76,11 +76,11 @@ const { form: formData, errors } = form;
           <div class="flex items-center gap-3">
             <Switch
               {...props}
-              id="notifications"
               checked={$formData.notifications as unknown as boolean}
+              id="notifications"
               onCheckedChange={(c) => $formData.notifications = c}
             />
-            <Form.Label for="notifications" class="text-sm">{m.emailUpdates()}</Form.Label>
+            <Form.Label class="text-sm" for="notifications">{m.emailUpdates()}</Form.Label>
           </div>
         {/snippet}
       </Form.Control>

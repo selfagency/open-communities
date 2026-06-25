@@ -48,21 +48,21 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
               {m.health_extended()}
               <Required set={hasHealth} />
             </div>
-            <RadioGroup.Root {...props} bind:value={$formData.health.protocol} required>
+            <RadioGroup.Root {...props} required bind:value={$formData.health.protocol}>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="maskingRequired" id="maskingRequired" />
+                <RadioGroup.Item id="maskingRequired" value="maskingRequired" />
                 <Form.Label for="maskingRequired">{m.health_maskingRequired()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
+                <RadioGroup.Item id="maskingRecommended" value="maskingRecommended" />
                 <Form.Label for="maskingRecommended">{m.health_maskingRecommended()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="noGuidelines" id="noGuidelines" />
+                <RadioGroup.Item id="noGuidelines" value="noGuidelines" />
                 <Form.Label for="noGuidelines">{m.health_noGuidelines()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="other" id="other" />
+                <RadioGroup.Item id="other" value="other" />
                 <Form.Label for="other">{m.other()}</Form.Label>
               </div>
             </RadioGroup.Root>
@@ -85,8 +85,8 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button
-          variant="secondary"
           onclick={() => { view = 'security'; document.querySelector('[data-value="security"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
         >
           {m.next()}
           →

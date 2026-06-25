@@ -11,9 +11,9 @@ let {
 </script>
 
 <tfoot
-  bind:this={ref}
-  data-slot="table-footer"
   class={cn("bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", className)}
+  data-slot="table-footer"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

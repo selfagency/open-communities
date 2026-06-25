@@ -109,11 +109,11 @@ const nestLabel = $derived(visibleSeries.length === 1 && indicator !== 'dot');
 
 <TooltipPrimitive.Root variant="none">
   <div
-    bind:this={ref}
     class={cn(
 			"border-border/50 bg-background grid min-w-[9rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
 			className
 		)}
+    bind:this={ref}
     {...restProps}
   >
     {#if !nestLabel}
@@ -148,7 +148,6 @@ const nestLabel = $derived(visibleSeries.length === 1 && indicator !== 'dot');
               <itemConfig.icon />
             {:else if !hideIndicator}
               <div
-                style="--color-bg: {indicatorColor}; --color-border: {indicatorColor};"
                 class={cn(
 									"shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
 									{
@@ -159,6 +158,7 @@ const nestLabel = $derived(visibleSeries.length === 1 && indicator !== 'dot');
 										"my-0.5": nestLabel && indicator === "dashed",
 									}
 								)}
+                style="--color-bg: {indicatorColor}; --color-border: {indicatorColor};"
               ></div>
             {/if}
             <div

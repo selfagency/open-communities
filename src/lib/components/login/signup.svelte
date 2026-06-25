@@ -64,7 +64,7 @@ onMount(async () => {
   </Card.Header>
   <Card.Content>
     {#if verifying && !verified}
-      <Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
+      <Verify data={verify} token={page.url.searchParams.get('verifyEmail')} bind:verified />
     {:else if verified}
       <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
         {m.verified_extended()}
@@ -77,10 +77,10 @@ onMount(async () => {
       <div class="mb-4">{m.signUpInfo()}</div>
 
       <form
-        method="POST"
         action="?/signup"
-        use:enhance
         class="space-y-2"
+        method="POST"
+        use:enhance
         in:fade={{ delay: 200, duration: 100 }}
         out:fade={{ delay: 0, duration: 100 }}
       >
@@ -88,7 +88,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input {...props} bind:value={$formData.name} autocomplete="name" />
+              <Input {...props} autocomplete="name" bind:value={$formData.name} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -98,7 +98,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} bind:value={$formData.email} autocomplete="email" />
+              <Input {...props} autocomplete="email" bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -108,7 +108,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.password()}</Form.Label>
-              <Input {...props} bind:value={$formData.password} type="password" autocomplete="new-password" />
+              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.password} />
             {/snippet}
           </Form.Control>
           <Form.Description>
@@ -121,7 +121,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.confirmPassword()}</Form.Label>
-              <Input {...props} bind:value={$formData.passwordConfirm} type="password" autocomplete="new-password" />
+              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.passwordConfirm} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -131,7 +131,7 @@ onMount(async () => {
 
         <div class="mt-4 flex items-center justify-between">
           <Form.Button>{m.signUp()}</Form.Button>
-          <a href="/login?login" class="text-primary text-sm font-semibold underline-offset-4 hover:underline"
+          <a class="text-primary text-sm font-semibold underline-offset-4 hover:underline" href="/login?login"
             >{m.alreadyHaveAccount()}</a
           >
         </div>

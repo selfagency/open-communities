@@ -59,7 +59,7 @@ function handleDelete() {
     <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">{m.unlinkedNotice()}</div>
   {/if}
 
-  <form method="POST" action="?/update" use:enhance>
+  <form action="?/update" method="POST" use:enhance>
     <ProfileForm {form} {saved} />
     <div class="mt-6">
       <PasswordCard {form} />

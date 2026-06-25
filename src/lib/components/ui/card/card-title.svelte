@@ -11,9 +11,9 @@ let {
 </script>
 
 <div
-  bind:this={ref}
-  data-slot="card-title"
   class={cn("text-base leading-snug font-medium group-data-[size=sm]/card:text-sm", className)}
+  data-slot="card-title"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

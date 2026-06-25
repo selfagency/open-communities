@@ -64,12 +64,12 @@ const zoom = $derived.by(() => {
     {#each locations as { city, country, state } (city?.id)}
       <div>
         <Button
-          variant="ghost"
           class="h-full min-h-max w-full"
           onclick={() => {
             search.state.setKey('showLocation', true);
             location.load({ city: city?.id, country: country?.id, state: state?.id });
           }}
+          variant="ghost"
         >
           <span class="text-xs">
             {#if city}
@@ -87,8 +87,8 @@ const zoom = $derived.by(() => {
     {/each}
   </div>
 {:else}
-  <div role="region" aria-label={m.congregationMap()}>
-    <MapLibre {center} {zoom} minZoom={1} class="h-96" standardControls style={mapStyle}>
+  <div aria-label={m.congregationMap()} role="region">
+    <MapLibre {center} class="h-96" minZoom={1} standardControls style={mapStyle} {zoom}>
       {#each locations as { city, country, latitude, longitude, state } (city?.id)}
         <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
           <Popup offset={[0, -10]}>

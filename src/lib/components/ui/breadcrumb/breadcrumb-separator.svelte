@@ -7,11 +7,11 @@ let { ref = $bindable(null), class: className, children, ...restProps }: WithEle
 </script>
 
 <li
-  bind:this={ref}
-  data-slot="breadcrumb-separator"
-  role="presentation"
   aria-hidden="true"
   class={cn("[&>svg]:size-3.5", className)}
+  data-slot="breadcrumb-separator"
+  role="presentation"
+  bind:this={ref}
   {...restProps}
 >
   {#if children}

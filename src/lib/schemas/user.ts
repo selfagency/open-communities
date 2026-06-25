@@ -1,3 +1,4 @@
+// biome-ignore lint/performance/noNamespaceImport: Zod namespace convention
 import * as z from 'zod';
 
 import { m } from '$lib/paraglide/messages';

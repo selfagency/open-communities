@@ -23,11 +23,8 @@ let {
 {/snippet}
 
 <PaginationPrimitive.Page
-  bind:ref
-  {page}
   aria-current={isActive ? 'page' : undefined}
-  data-slot="pagination-link"
-  data-active={isActive}
+  children={children || Fallback}
   class={cn(
     buttonVariants({
       size,
@@ -35,6 +32,9 @@ let {
     }),
     className
   )}
-  children={children || Fallback}
+  data-active={isActive}
+  data-slot="pagination-link"
+  {page}
+  bind:ref
   {...restProps}
 />

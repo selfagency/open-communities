@@ -19,7 +19,7 @@ const { health, mode = $bindable('full') }: { health?: HealthRecord; mode?: 'ful
     <Tooltip.Provider>
       <Tooltip.Root>
         <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-          <span><MaskIcon size="16" class="text-muted-foreground " /></span>
+          <span><MaskIcon class="text-muted-foreground " size="16" /></span>
           <span class="sr-only">{m[`health_${health.protocol}`]()}</span>
         </Tooltip.Trigger>
         <Tooltip.Content>
@@ -39,21 +39,21 @@ const { health, mode = $bindable('full') }: { health?: HealthRecord; mode?: 'ful
     {:else}
       {#if health?.protocol === "maskingRecommended"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><MaskIcon size="20" class="text-muted-foreground rtl:mx-2" /></span>
+          <span><MaskIcon class="text-muted-foreground rtl:mx-2" size="20" /></span>
           <span>{m.health_maskingRecommended()}</span>
         </li>
       {/if}
 
       {#if health?.protocol === "maskingRequired"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><MaskIcon size="20" class="text-muted-foreground rtl:mx-2" /></span>
+          <span><MaskIcon class="text-muted-foreground rtl:mx-2" size="20" /></span>
           <span>{m.health_maskingRequired()}</span>
         </li>
       {/if}
 
       {#if health?.protocol === "noGuidelines"}
         <li class="flex flex-row items-center justify-start space-x-1">
-          <span><WarningIcon size="18" class="rtl:mx-2" /></span>
+          <span><WarningIcon class="rtl:mx-2" size="18" /></span>
           <span>{m.health_noGuidelines()}</span>
         </li>
       {/if}

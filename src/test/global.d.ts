@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-export type SuperFormStub = {
+export interface SuperFormStub {
   allErrors: Record<string, unknown>;
   capture: () => void;
   constraints: Record<string, unknown>;
@@ -52,4 +52,4 @@ export type SuperFormStub = {
   valid: boolean;
   validate: () => Promise<void>;
   validateForm: () => Promise<void>;
-};
+}

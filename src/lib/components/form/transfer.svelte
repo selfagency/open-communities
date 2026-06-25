@@ -114,16 +114,16 @@ onDestroy(() => {
     <AlertDialog.Content>
       {#if loadingSecondary}
         <div
-          transition:fade={{ delay: 300, duration: 100 }}
           class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+          transition:fade={{ delay: 300, duration: 100 }}
         >
           <Loading />
         </div>
       {:else}
         <form
+          action="?/transfer"
           id="transfer"
           method="POST"
-          action="?/transfer"
           use:enhance
           transition:fade={{ delay: 300, duration: 100 }}
         >
@@ -132,7 +132,7 @@ onDestroy(() => {
             <AlertDialog.Description class="space-y-4">
               <div>{m.transfer_desc()}</div>
 
-              <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
+              <Alert.Root class="my-4 bg-destructive/10" variant="destructive">
                 <WarningIcon size="18" />
                 <Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
               </Alert.Root>

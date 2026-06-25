@@ -58,24 +58,24 @@ $effect(() => {
     <h3 class="font-serif text-2xl font-bold tracking-wider">{m.adminWebAnalytics()}</h3>
     <div class="flex gap-1 rounded-lg bg-muted p-1">
       <Button
-        variant={viewMode === 'realtime' ? 'default' : 'ghost'}
-        size="sm"
         class="h-7 px-3 text-xs"
         onclick={() => viewMode = 'realtime'}
+        size="sm"
+        variant={viewMode === 'realtime' ? 'default' : 'ghost'}
         >{m.adminRealtime()}</Button
       >
       <Button
-        variant={viewMode === 'week' ? 'default' : 'ghost'}
-        size="sm"
         class="h-7 px-3 text-xs"
         onclick={() => viewMode = 'week'}
+        size="sm"
+        variant={viewMode === 'week' ? 'default' : 'ghost'}
         >{m.adminWeek()}</Button
       >
       <Button
-        variant={viewMode === 'month' ? 'default' : 'ghost'}
-        size="sm"
         class="h-7 px-3 text-xs"
         onclick={() => viewMode = 'month'}
+        size="sm"
+        variant={viewMode === 'month' ? 'default' : 'ghost'}
         >{m.adminMonth()}</Button
       >
     </div>

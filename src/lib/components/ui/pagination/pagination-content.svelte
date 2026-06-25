@@ -12,9 +12,9 @@ let {
 </script>
 
 <ul
-  bind:this={ref}
-  data-slot="pagination-content"
   class={cn('flex flex-row items-center gap-1', className)}
+  data-slot="pagination-content"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

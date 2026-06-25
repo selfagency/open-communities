@@ -11,9 +11,9 @@ let {
 </script>
 
 <option
-  bind:this={ref}
-  data-slot="native-select-option"
   class={cn("bg-[Canvas] text-[CanvasText]", className)}
+  data-slot="native-select-option"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

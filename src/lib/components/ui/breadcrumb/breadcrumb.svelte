@@ -12,10 +12,10 @@ let {
 </script>
 
 <nav
-  bind:this={ref}
-  data-slot="breadcrumb"
   aria-label="breadcrumb"
   class={cn("cn-breadcrumb", className)}
+  data-slot="breadcrumb"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

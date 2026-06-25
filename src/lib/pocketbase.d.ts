@@ -89,7 +89,7 @@ export enum UsersLangOptions {
   uk = 'uk'
 }
 
-export type AccessibilityRecord = {
+export interface AccessibilityRecord {
   congregation: RecordIdString;
   inPerson_adaAll?: boolean;
   inPerson_adaSome?: boolean;
@@ -100,7 +100,7 @@ export type AccessibilityRecord = {
   online_liveCaptions?: boolean;
   other?: boolean;
   otherText?: string;
-};
+}
 // Response types include system fields and match responses from the PocketBase API
 export type AccessibilityResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<AccessibilityRecord>;
 
@@ -111,25 +111,25 @@ export type AuthSystemFields<T = never> = BaseSystemFields<T> & {
   verified: boolean;
 };
 // System fields
-export type BaseSystemFields<T = never> = {
+export interface BaseSystemFields<T = never> {
   collectionId: string;
   collectionName: Collections;
   created: IsoDateString;
   expand?: T;
   id: RecordIdString;
   updated: IsoDateString;
-};
+}
 
-export type CitiesRecord = {
+export interface CitiesRecord {
   country?: RecordIdString;
   latitude?: number;
   longitude?: number;
   name?: string;
   state?: RecordIdString;
-};
+}
 
 export type CitiesResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<CitiesRecord>;
-export type CollectionRecords = {
+export interface CollectionRecords {
   accessibility: AccessibilityRecord;
   cities: CitiesRecord;
   congregationMeta: CongregationMetaRecord;
@@ -143,9 +143,9 @@ export type CollectionRecords = {
   services: ServicesRecord;
   states: StatesRecord;
   users: UsersRecord;
-};
+}
 
-export type CollectionResponses = {
+export interface CollectionResponses {
   accessibility: AccessibilityResponse;
   cities: CitiesResponse;
   congregationMeta: CongregationMetaResponse;
@@ -159,8 +159,8 @@ export type CollectionResponses = {
   services: ServicesResponse;
   states: StatesResponse;
   users: UsersResponse;
-};
-export type CongregationMetaRecord<
+}
+export interface CongregationMetaRecord<
   Taccessibility = unknown,
   Tfit = unknown,
   Thealth = unknown,
@@ -168,7 +168,7 @@ export type CongregationMetaRecord<
   Tregistration = unknown,
   Tsecurity = unknown,
   Tservices = unknown
-> = {
+> {
   accessibility?: null | Taccessibility;
   clergy?: string;
   contactEmail?: string;
@@ -186,7 +186,7 @@ export type CongregationMetaRecord<
   security?: null | Tsecurity;
   services?: null | Tservices;
   visible?: boolean;
-};
+}
 
 export type CongregationMetaResponse<
   Taccessibility = unknown,
@@ -199,7 +199,7 @@ export type CongregationMetaResponse<
   Texpand = unknown
 > = BaseSystemFields<Texpand> &
   Required<CongregationMetaRecord<Taccessibility, Tfit, Thealth, Tlocation, Tregistration, Tsecurity, Tservices>>;
-export type CongregationsRecord = {
+export interface CongregationsRecord {
   city?: RecordIdString;
   clergy?: string;
   contactEmail?: string;
@@ -212,20 +212,20 @@ export type CongregationsRecord = {
   notes?: string;
   state?: RecordIdString;
   visible?: boolean;
-};
+}
 
 export type CongregationsResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<CongregationsRecord>;
-export type CountriesRecord = {
+export interface CountriesRecord {
   code?: string;
   flag?: string;
   latitude?: number;
   longitude?: number;
   name?: string;
-};
+}
 
 export type CountriesResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<CountriesRecord>;
 
-export type FitRecord = {
+export interface FitRecord {
   clergyMember?: boolean;
   congregation: RecordIdString;
   flag?: FitFlagOptions;
@@ -233,39 +233,39 @@ export type FitRecord = {
   other?: boolean;
   otherText?: string;
   publicStatement?: boolean;
-};
+}
 
 export type FitResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<FitRecord>;
 
-export type HealthRecord = {
+export interface HealthRecord {
   congregation: RecordIdString;
   otherText?: string;
   protocol?: HealthProtocolOptions;
-};
+}
 export type HealthResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<HealthRecord>;
 
 export type HTMLString = string;
 // Alias types for improved usability
 export type IsoDateString = string;
-export type PagesRecord = {
+export interface PagesRecord {
   content?: HTMLString;
   description?: string;
   lang: PagesLangOptions;
   sisters?: RecordIdString[];
   slug: string;
   title: string;
-};
+}
 export type PagesResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<PagesRecord>;
 export type RecordIdString = string;
-export type RegistrationRecord = {
+export interface RegistrationRecord {
   congregation: RecordIdString;
   email?: string;
   otherText?: string;
   registrationType?: RegistrationRegistrationTypeOptions;
   url?: string;
-};
+}
 export type RegistrationResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<RegistrationRecord>;
-export type SecurityRecord = {
+export interface SecurityRecord {
   clergyArmed?: boolean;
   congregantsArmed?: boolean;
   congregation?: RecordIdString;
@@ -275,9 +275,9 @@ export type SecurityRecord = {
   otherText?: string;
   privateSecurityArmed?: boolean;
   privateSecurityUnarmed?: boolean;
-};
+}
 export type SecurityResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<SecurityRecord>;
-export type ServicesRecord = {
+export interface ServicesRecord {
   congregation: RecordIdString;
   hybrid?: boolean;
   inPerson?: boolean;
@@ -285,15 +285,15 @@ export type ServicesRecord = {
   onlineOnly?: boolean;
   other?: boolean;
   otherText?: string;
-};
+}
 export type ServicesResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<ServicesRecord>;
-export type StatesRecord = {
+export interface StatesRecord {
   code?: string;
   country?: RecordIdString;
   latitude?: number;
   longitude?: number;
   name?: string;
-};
+}
 export type StatesResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<StatesRecord>;
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -314,12 +314,12 @@ export type TypedPocketBase = PocketBase & {
   collection(idOrName: 'users'): RecordService<UsersResponse>;
 };
 
-export type UsersRecord = {
+export interface UsersRecord {
   admin?: boolean;
   congregation?: RecordIdString;
   lang?: UsersLangOptions;
   name?: string;
-};
+}
 
 // Type for usage with type asserted PocketBase instance
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions

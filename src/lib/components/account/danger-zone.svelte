@@ -18,12 +18,12 @@ let open = $state(false);
     <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
     <AlertDialog.Root bind:open>
       <AlertDialog.Trigger>
-        <Button variant="destructive" type="button">{m.deleteAccount()}</Button>
+        <Button type="button" variant="destructive">{m.deleteAccount()}</Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content>
         <form
-          method="POST"
           action="?/deleteAccount"
+          method="POST"
           use:enhance={() => {
         deleting = true;
         return async ({ result }) => { if (result.type === 'success') goto('/'); };
@@ -38,9 +38,9 @@ let open = $state(false);
           <AlertDialog.Footer>
             <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
             <AlertDialog.Action
-              type="submit"
               class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleting}
+              type="submit"
             >
               {deleting ? m.deleting() : m.deleteAccount()}
             </AlertDialog.Action>

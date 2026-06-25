@@ -169,10 +169,10 @@ const pendingTable = $derived(
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">
         <SearchIcon
-          size="18"
           class="absolute left-3 z-10 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+          size="18"
         />
-        <Input bind:value={search} placeholder={m.searchCongregations()} class="h-11 w-64 sm:w-80 pl-10" />
+        <Input class="h-11 w-64 sm:w-80 pl-10" placeholder={m.searchCongregations()} bind:value={search} />
       </div>
       {#if search}
         <p class="text-muted-foreground text-sm">
@@ -210,7 +210,7 @@ const pendingTable = $derived(
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <Button variant="ghost" size="icon" onclick={() => goto(editUrl(row.original.id))}>
+                      <Button onclick={() => goto(editUrl(row.original.id))} size="icon" variant="ghost">
                         <PencilIcon class="size-4" />
                       </Button>
                     </TooltipTrigger>
@@ -221,7 +221,7 @@ const pendingTable = $derived(
             </TableRow>
           {:else}
             <TableRow
-              ><TableCell colspan={activeCols.length + 1} class="h-24 text-center"
+              ><TableCell class="h-24 text-center" colspan={activeCols.length + 1}
                 >{m.noApprovedCongregations()}</TableCell
               ></TableRow
             >
@@ -233,9 +233,9 @@ const pendingTable = $derived(
   <div class="flex w-full scale-90 flex-row items-center justify-center pt-2 sm:scale-100">
     <Pagination.Root
       count={activeFiltered.length}
-      perPage={PER_PAGE}
-      page={currentPage}
       {onPageChange}
+      page={currentPage}
+      perPage={PER_PAGE}
       siblingCount={0}
     >
       {#snippet children({ pages })}
@@ -246,7 +246,7 @@ const pendingTable = $derived(
               <Pagination.Item><Pagination.Ellipsis /></Pagination.Item>
             {:else}
               <Pagination.Item
-                ><Pagination.Link {page} isActive={currentPage == page.value}
+                ><Pagination.Link isActive={currentPage == page.value} {page}
                   >{page.value}</Pagination.Link
                 ></Pagination.Item
               >
@@ -292,7 +292,7 @@ const pendingTable = $derived(
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Button variant="ghost" size="icon" onclick={() => goto(editUrl(row.original.id))}>
+                            <Button onclick={() => goto(editUrl(row.original.id))} size="icon" variant="ghost">
                               <PencilIcon class="size-4" />
                             </Button>
                           </TooltipTrigger>
@@ -302,10 +302,10 @@ const pendingTable = $derived(
                       <AlertDialog.Root>
                         <AlertDialog.Trigger>
                           <Button
-                            variant="default"
-                            size="icon"
                             class="size-8"
                             onclick={() => { pendingId = row.original.id; pendingAction = 'approve'; }}
+                            size="icon"
+                            variant="default"
                           >
                             <CheckIcon class="size-4" />
                           </Button>
@@ -319,17 +319,17 @@ const pendingTable = $derived(
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
                             <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button variant="default" onclick={confirmAction}>{m.approve()}</Button>
+                            <Button onclick={confirmAction} variant="default">{m.approve()}</Button>
                           </AlertDialog.Footer>
                         </AlertDialog.Content>
                       </AlertDialog.Root>
                       <AlertDialog.Root>
                         <AlertDialog.Trigger>
                           <Button
-                            variant="destructive"
-                            size="icon"
                             class="size-8"
                             onclick={() => { pendingId = row.original.id; pendingAction = 'reject'; }}
+                            size="icon"
+                            variant="destructive"
                           >
                             <XIcon class="size-4" />
                           </Button>
@@ -343,7 +343,7 @@ const pendingTable = $derived(
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
                             <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button variant="destructive" onclick={confirmAction}>{m.reject()}</Button>
+                            <Button onclick={confirmAction} variant="destructive">{m.reject()}</Button>
                           </AlertDialog.Footer>
                         </AlertDialog.Content>
                       </AlertDialog.Root>
@@ -352,7 +352,7 @@ const pendingTable = $derived(
                 </TableRow>
               {:else}
                 <TableRow
-                  ><TableCell colspan={pendingCols.length + 1} class="h-24 text-center"
+                  ><TableCell class="h-24 text-center" colspan={pendingCols.length + 1}
                     >{m.noResults()}</TableCell
                   ></TableRow
                 >

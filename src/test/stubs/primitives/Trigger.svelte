@@ -8,6 +8,6 @@ export let id: string | undefined;
 export let className: string | undefined;
 </script>
 
-<button {type} {id} aria-expanded={ariaExpanded} aria-haspopup={ariaHaspopup} class={className} {...$$restProps}>
+<button aria-expanded={ariaExpanded} aria-haspopup={ariaHaspopup} class={className} {id} {type} {...$$restProps}>
   <slot />
 </button>

@@ -22,7 +22,7 @@ let {
 </script>
 
 <div class="grid gap-4 md:grid-cols-3">
-  <a href="/admin/congregations" class="block cursor-pointer no-underline">
+  <a class="block cursor-pointer no-underline" href="/admin/congregations">
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminPendingApprovals()}</CardTitle>
@@ -33,7 +33,7 @@ let {
       </CardContent>
     </Card>
   </a>
-  <a href="/admin/congregations" class="block cursor-pointer no-underline">
+  <a class="block cursor-pointer no-underline" href="/admin/congregations">
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminCongregations()}</CardTitle>
@@ -44,7 +44,7 @@ let {
       </CardContent>
     </Card>
   </a>
-  <a href="/admin/users" class="block cursor-pointer no-underline">
+  <a class="block cursor-pointer no-underline" href="/admin/users">
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminUsers()}</CardTitle>

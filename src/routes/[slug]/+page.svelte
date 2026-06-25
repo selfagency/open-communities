@@ -28,10 +28,10 @@ const imageCaption = $derived((variant?.imageCaption as string) || (page?.imageC
 <svelte:head>
   <title>{title} &middot; {m.title()}</title>
   {#if description}
-    <meta name="description" content={description} />
+    <meta content={description} name="description" />
   {/if}
   {#if image}
-    <meta property="og:image" content={image} />
+    <meta content={image} property="og:image" />
   {/if}
 </svelte:head>
 
@@ -41,12 +41,12 @@ const imageCaption = $derived((variant?.imageCaption as string) || (page?.imageC
       <Card.Root>
         <Card.Header>
           <h1 class="text-3xl" itemprop="name">{title}</h1>
-          <meta itemprop="description" content={description} />
-          <meta itemprop="url" content={'https://opencommunities.info/' + (page.slug as string)} />
+          <meta content={description} itemprop="description" />
+          <meta content={'https://opencommunities.info/' + (page.slug as string)} itemprop="url" />
         </Card.Header>
         {#if image}
           <figure class="px-6 pb-2">
-            <img src={image} alt={imageAlt} class="w-full rounded-lg object-cover" itemprop="image" />
+            <img alt={imageAlt} class="w-full rounded-lg object-cover" itemprop="image" src={image} />
             {#if imageCaption}
               <figcaption class="text-muted-foreground mt-2 text-center text-sm italic">
                 {imageCaption}

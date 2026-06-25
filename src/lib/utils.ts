@@ -17,12 +17,12 @@ export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'childre
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 
 /* region types */
-type FlyAndScaleParams = {
+interface FlyAndScaleParams {
   duration?: number;
   start?: number;
   x?: number;
   y?: number;
-};
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

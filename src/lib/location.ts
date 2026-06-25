@@ -12,7 +12,9 @@ import type { City, Country, LocationRecord, LocationState, State } from './type
  * Minimal writable store that satisfies the Svelte store contract.
  * Replaces nanostores `map()` for per-instance Location state.
  */
-type StoreReader<T> = { subscribe: (run: (v: T) => void) => () => void };
+interface StoreReader<T> {
+  subscribe: (run: (v: T) => void) => () => void;
+}
 type LocationStore = StoreReader<LocationState> & {
   get(): LocationState;
   set(v: LocationState): void;

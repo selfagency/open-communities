@@ -41,8 +41,8 @@ import { m } from '$lib/paraglide/messages';
       <a
         class="text-xs text-muted-foreground hover:text-muted-foreground"
         href="https://self.agency"
-        target="_blank"
         rel="noopener noreferrer"
+        target="_blank"
         translate="no"
       >
         <span>

@@ -24,7 +24,7 @@ describe('Combobox', () => {
   });
 
   // Skipped: testing-library/svelte ↔ svelte 5 incompatibility prevents event dispatch
-  it.skip('opens the list, allows selecting an item and dispatches change with the item id', async () => {
+  it('opens the list, allows selecting an item and dispatches change with the item id', async () => {
     vi.useFakeTimers();
     render(Combobox, { items, placeholder: 'Pick' });
     vi.runAllTimers();

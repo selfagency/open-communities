@@ -51,7 +51,7 @@ const log = logger.getSubLogger({
 });
 /* endregion variables */
 
-async function logEvent(statusCode: number, event: RequestEvent) {
+function logEvent(statusCode: number, event: RequestEvent) {
   const requestId = crypto.randomUUID();
 
   try {

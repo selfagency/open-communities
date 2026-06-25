@@ -10,6 +10,6 @@ let {
 }: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
 </script>
 
-<div bind:this={ref} data-slot="empty-title" class={cn("text-sm font-medium tracking-tight", className)} {...restProps}>
+<div class={cn("text-sm font-medium tracking-tight", className)} data-slot="empty-title" bind:this={ref} {...restProps}>
   {@render children?.()}
 </div>

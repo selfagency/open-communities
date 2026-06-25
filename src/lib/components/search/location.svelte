@@ -76,49 +76,49 @@ $effect(() => {
     <div class="flex w-full flex-col items-center justify-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-2">
       <span class="w-full sm:w-1/3">
         <Combobox
+          disabled={!$locationState.options?.countryOptions?.length}
           items={$locationState.options.countryOptions}
-          value={country}
           onChange={handleCountryChange}
           placeholder={m.selectThing({
             thing: m.location_country().toLowerCase(),
           })}
-          disabled={!$locationState.options?.countryOptions?.length}
+          value={country}
         />
       </span>
 
       <span class="w-full sm:w-1/3">
         <Combobox
+          disabled={!$locationState.options?.stateOptions?.length}
           items={$locationState.options.stateOptions}
-          value={province}
           onChange={handleStateChange}
           placeholder={m.selectThing({
             thing: m.location_state().toLowerCase(),
           })}
-          disabled={!$locationState.options?.stateOptions?.length}
+          value={province}
         />
       </span>
 
       <span class="w-full sm:w-1/3">
         <Combobox
+          disabled={!$locationState.options?.cityOptions?.length}
           items={$locationState.options.cityOptions}
-          value={city}
           onChange={handleCityChange}
           placeholder={m.selectThing({
             thing: m.location_city().toLowerCase(),
           })}
-          disabled={!$locationState.options?.cityOptions?.length}
+          value={city}
         />
       </span>
     </div>
 
     <span class="flex w-full flex-row items-center justify-center sm:w-auto">
-      <Button variant="link" class="group h-auto" onclick={handleReset}>
+      <Button class="group h-auto" onclick={handleReset} variant="link">
         <span
           class="flex flex-row items-center justify-start space-x-1 text-muted-foreground hover:text-secondary-foreground"
         >
           <ResetIcon
-            size="16"
             class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+            size="16"
           />
           <span>{m.reset()}</span>
         </span>

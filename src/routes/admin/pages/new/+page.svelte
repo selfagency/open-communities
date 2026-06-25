@@ -11,7 +11,7 @@ let { data } = $props();
 
 <div class="mx-auto max-w-3xl pb-4">
   <div class="mb-4">
-    <a href="/admin/pages" class="text-muted-foreground text-sm underline-offset-4 hover:underline"
+    <a class="text-muted-foreground text-sm underline-offset-4 hover:underline" href="/admin/pages"
       >&larr; {m.pages()}</a
     >
   </div>

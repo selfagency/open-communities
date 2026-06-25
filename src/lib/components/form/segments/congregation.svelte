@@ -159,11 +159,11 @@ $effect(() => {
             autocomplete="off"
             id="name"
             {...props}
-            bind:value={$formData.name}
-            required
             onchange={() => {
               $formData.name = $formData?.name?.trim();
             }}
+            required
+            bind:value={$formData.name}
           />
         {/snippet}
       </Form.Control>
@@ -179,11 +179,11 @@ $effect(() => {
               id="country"
               items={$location.options.countryOptions}
               {...props}
-              value={country}
+              onChange={handleCountryChange}
               placeholder={m.selectThing({
                 thing: m.location_country().toLowerCase()
               })}
-              onChange={handleCountryChange}
+              value={country}
             />
           {/snippet}
         </Form.Control>
@@ -197,12 +197,12 @@ $effect(() => {
               id="state"
               items={$location.options.stateOptions}
               {...props}
-              value={province}
+              disabled={!country || !$location.options.stateOptions}
+              onChange={handleStateChange}
               placeholder={m.selectThing({
                 thing: m.location_state().toLowerCase()
               })}
-              disabled={!country || !$location.options.stateOptions}
-              onChange={handleStateChange}
+              value={province}
             />
           {/snippet}
         </Form.Control>
@@ -216,12 +216,12 @@ $effect(() => {
               id="city"
               items={$location.options.cityOptions}
               {...props}
-              value={city}
+              disabled={!province || !$location.options.cityOptions}
+              onChange={handleCityChange}
               placeholder={m.selectThing({
                 thing: m.location_city().toLowerCase()
               })}
-              disabled={!province || !$location.options.cityOptions}
-              onChange={handleCityChange}
+              value={city}
             />
           {/snippet}
         </Form.Control>
@@ -237,10 +237,10 @@ $effect(() => {
           <Input
             id="contactUrl"
             {...props}
-            bind:value={$formData.contactUrl}
             onchange={() => {
               $formData.contactUrl = $formData?.contactUrl.trim();
             }}
+            bind:value={$formData.contactUrl}
           />
         {/snippet}
       </Form.Control>
@@ -253,7 +253,7 @@ $effect(() => {
             <span>{m.clergy_extended()}</span>
             <Required set={!isEmpty($formData?.clergy)} />
           </Form.Label>
-          <Input id="clergy" {...props} bind:value={$formData.clergy} required />
+          <Input id="clergy" {...props} required bind:value={$formData.clergy} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -262,8 +262,8 @@ $effect(() => {
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="denomination"><span>{m.denomination_extended()}</span></Form.Label>
-          <Select.Root type="single" name="denomination" bind:value={$formData.denomination}>
-            <Select.Trigger id="denomination" class="w-full" {...props}>
+          <Select.Root name="denomination" type="single" bind:value={$formData.denomination}>
+            <Select.Trigger class="w-full" id="denomination" {...props}>
               {#if $formData?.denomination}
                 {@const denom = `denomination_${$formData?.denomination}`}
                 {m[denom]()}
@@ -288,7 +288,7 @@ $effect(() => {
             <span>{m.flavor_extended()}</span>
             <Required set={!isEmpty($formData?.flavor)} />
           </Form.Label>
-          <Textarea id="flavor" {...props} bind:value={$formData.flavor} required />
+          <Textarea id="flavor" {...props} required bind:value={$formData.flavor} />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -304,8 +304,8 @@ $effect(() => {
     </Form.Field>
     <div class="mt-4 flex flex-row items-center justify-end">
       <Button
-        variant="secondary"
         onclick={() => { view = 'fit'; document.querySelector('[data-value="fit"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+        variant="secondary"
         >{m.next()}
         →</Button
       >

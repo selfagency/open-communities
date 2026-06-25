@@ -41,10 +41,10 @@ export const snapshot = { capture: form.capture, restore: form.restore };
 
 {#if isAdmin}
   <div class="m-auto mb-4" style="max-width: 480px;">
-    <a href="/admin/congregations" class="text-muted-foreground text-sm underline-offset-4 hover:underline"
+    <a class="text-muted-foreground text-sm underline-offset-4 hover:underline" href="/admin/congregations"
       >&larr; {m.adminCongregations()}</a
     >
   </div>
 {/if}
 
-<EditForm {form} mode="edit" deletion={data.form!.delete} user={data.user as UsersRecord & { id: string }} />
+<EditForm deletion={data.form!.delete} {form} mode="edit" user={data.user as UsersRecord & { id: string }} />

@@ -27,9 +27,6 @@ setChartContext({
 </script>
 
 <div
-  bind:this={ref}
-  data-chart={chartId}
-  data-slot="chart"
   class={cn(
 		"flex aspect-video justify-center overflow-visible text-xs",
 		// Overrides
@@ -73,8 +70,11 @@ setChartContext({
 		"[&_.lc-root-container]:w-full",
 		className
 	)}
+  data-chart={chartId}
+  data-slot="chart"
+  bind:this={ref}
   {...restProps}
 >
-  <ChartStyle id={chartId} {config} />
+  <ChartStyle {config} id={chartId} />
   {@render children?.()}
 </div>

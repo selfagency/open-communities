@@ -53,29 +53,29 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
       <Form.Field {form} name="protocol">
         <Form.Control
           >{#snippet children(props)}
-            <RadioGroup.Root {...props} bind:value={$formData.registration.registrationType} required>
+            <RadioGroup.Root {...props} required bind:value={$formData.registration.registrationType}>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="free" id="free" />
+                <RadioGroup.Item id="free" value="free" />
                 <Form.Label for="free">{m.registration_free()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="fixedPrice" id="fixedPrice" />
+                <RadioGroup.Item id="fixedPrice" value="fixedPrice" />
                 <Form.Label for="fixedPrice">{m.registration_fixedPrice()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="slidingScale" id="slidingScale" />
+                <RadioGroup.Item id="slidingScale" value="slidingScale" />
                 <Form.Label for="slidingScale">
                   {m.registration_slidingScale()}
                 </Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
+                <RadioGroup.Item id="suggestedDonation" value="suggestedDonation" />
                 <Form.Label for="suggestedDonation">
                   {m.registration_suggestedDonation()}
                 </Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="other" id="other" />
+                <RadioGroup.Item id="other" value="other" />
                 <Form.Label for="other">{m.other()}</Form.Label>
               </div>
             </RadioGroup.Root>
@@ -107,10 +107,10 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
             <Input
               id="registration_email"
               {...props}
-              bind:value={$formData.registration.email}
               onchange={() => {
                 $formData.registration.email = $formData.registration.email.trim();
               }}
+              bind:value={$formData.registration.email}
             />
           {/snippet}
         </Form.Control>
@@ -124,10 +124,10 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
             <Input
               id="registration_url"
               {...props}
-              bind:value={$formData.registration.url}
               onchange={() => {
                 $formData.registration.url = $formData.registration.url.trim();
               }}
+              bind:value={$formData.registration.url}
             />
           {/snippet}
         </Form.Control>
@@ -141,8 +141,8 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button
-          variant="secondary"
           onclick={() => { view = 'contact'; document.querySelector('[data-value="contact"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
           >{m.next()}
           →</Button
         >

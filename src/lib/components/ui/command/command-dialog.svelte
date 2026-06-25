@@ -33,9 +33,9 @@ let {
     <Command
       class="**:data-[slot=command-input-wrapper]:h-12 [&_[data-command-group]]:px-2 [&_[data-command-group]:not([hidden])_~[data-command-group]]:pt-0 [&_[data-command-input-wrapper]_svg]:h-5 [&_[data-command-input-wrapper]_svg]:w-5 [&_[data-command-input]]:h-12 [&_[data-command-item]]:px-2 [&_[data-command-item]]:py-3 [&_[data-command-item]_svg]:h-5 [&_[data-command-item]_svg]:w-5"
       {...restProps}
-      bind:value
-      bind:ref
       {children}
+      bind:ref
+      bind:value
     />
   </Dialog.Content>
 </Dialog.Root>

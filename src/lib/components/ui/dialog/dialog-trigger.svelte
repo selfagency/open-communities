@@ -4,4 +4,4 @@ import { Dialog as DialogPrimitive } from 'bits-ui';
 let { ref = $bindable(null), ...restProps }: DialogPrimitive.TriggerProps = $props();
 </script>
 
-<DialogPrimitive.Trigger bind:ref data-slot="dialog-trigger" {...restProps} />
+<DialogPrimitive.Trigger data-slot="dialog-trigger" bind:ref {...restProps} />

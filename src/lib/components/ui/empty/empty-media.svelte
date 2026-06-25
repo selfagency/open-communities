@@ -31,10 +31,10 @@ let {
 </script>
 
 <div
-  bind:this={ref}
+  class={cn(emptyMediaVariants({ variant }), className)}
   data-slot="empty-icon"
   data-variant={variant}
-  class={cn(emptyMediaVariants({ variant }), className)}
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

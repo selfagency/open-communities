@@ -6,8 +6,8 @@ let { ref = $bindable(null), class: className, ...restProps }: AvatarPrimitive.I
 </script>
 
 <AvatarPrimitive.Image
-  bind:ref
-  data-slot="avatar-image"
   class={cn("rounded-full aspect-square size-full object-cover", className)}
+  data-slot="avatar-image"
+  bind:ref
   {...restProps}
 />

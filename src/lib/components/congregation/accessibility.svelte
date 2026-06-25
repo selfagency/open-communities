@@ -31,7 +31,7 @@ const other = $derived(accessibility.otherText);
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <AdaIcon size="16" class="" />
+            <AdaIcon class="" size="16" />
             <span class="sr-only">{m.accessibility_ada()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -44,7 +44,7 @@ const other = $derived(accessibility.otherText);
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <CcIcon size="16" class="" />
+            <CcIcon class="" size="16" />
             <span class="sr-only">{m.accessibility_cc()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -57,7 +57,7 @@ const other = $derived(accessibility.otherText);
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <EvaIcon size="16" class="" />
+            <EvaIcon class="" size="16" />
             <span class="sr-only">{m.accessibility_eva()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -70,7 +70,7 @@ const other = $derived(accessibility.otherText);
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
-            <AslIcon size="16" class="text-muted-foreground " />
+            <AslIcon class="text-muted-foreground " size="16" />
             <span class="sr-only">{m.accessibility_asl()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -90,7 +90,7 @@ const other = $derived(accessibility.otherText);
     {#if ada}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <AdaIcon size="18" class="rtl:mx-2" />
+          <AdaIcon class="rtl:mx-2" size="18" />
           <span class="sr-only">{m.accessibility_ada()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">
@@ -107,7 +107,7 @@ const other = $derived(accessibility.otherText);
     {#if cc}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <CcIcon size="18" class="rtl:mx-2" />
+          <CcIcon class="rtl:mx-2" size="18" />
           <span class="sr-only">{m.accessibility_cc()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">
@@ -124,7 +124,7 @@ const other = $derived(accessibility.otherText);
     {#if asl}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <AslIcon size="16" class="text-muted-foreground rtl:mx-2" />
+          <AslIcon class="text-muted-foreground rtl:mx-2" size="16" />
           <span class="sr-only">{m.accessibility_asl()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">
@@ -141,7 +141,7 @@ const other = $derived(accessibility.otherText);
     {#if eva}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <EvaIcon size="18" class="rtl:mx-2" />
+          <EvaIcon class="rtl:mx-2" size="18" />
           <span class="sr-only">{m.accessibility_eva()}</span>
         </span>
         <span class="flex flex-col items-start justify-start">
@@ -161,7 +161,7 @@ const other = $derived(accessibility.otherText);
     {#if !ada && !cc && !eva && !other}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">
-          <WarningIcon size="18" class="rtl:mx-2" />
+          <WarningIcon class="rtl:mx-2" size="18" />
           <span class="sr-only">{m.unspecified()}</span>
         </span>
 

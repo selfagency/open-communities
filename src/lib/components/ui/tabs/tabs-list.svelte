@@ -32,9 +32,9 @@ let {
 </script>
 
 <TabsPrimitive.List
-  bind:ref
+  class={cn(tabsListVariants({ variant }), className)}
   data-slot="tabs-list"
   data-variant={variant}
-  class={cn(tabsListVariants({ variant }), className)}
+  bind:ref
   {...restProps}
 />

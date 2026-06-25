@@ -1,4 +1,4 @@
-import * as path from 'node:path';
+import { resolve } from 'node:path';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
@@ -39,36 +39,33 @@ export default defineConfig({
   resolve: {
     alias: {
       // specific $app aliases must come before the generic '$app' alias
-      '$app/environment': path.resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
-      '$app/environment.js': path.resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
-      '$app/navigation': path.resolve(import.meta.dirname, 'src/test/mocks/$app/navigation.js'),
-      '$app/navigation.js': path.resolve(import.meta.dirname, 'src/test/mocks/$app/navigation.js'),
-      '$app/state': path.resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
-      '$app/state.js': path.resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
-      '$app/state.ts': path.resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
-      '$app/state/index': path.resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
-      '$app/stores': path.resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
-      '$app/stores.js': path.resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/environment': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
+      '$app/environment.js': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
+      '$app/navigation': resolve(import.meta.dirname, 'src/test/mocks/$app/navigation.js'),
+      '$app/navigation.js': resolve(import.meta.dirname, 'src/test/mocks/$app/navigation.js'),
+      '$app/state': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/state.js': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/state.ts': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/state/index': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/stores': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/stores.js': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
       // eslint-disable-next-line perfectionist/sort-objects
-      $app: path.resolve(import.meta.dirname, 'src/test/mocks/$app'),
-      '$env/dynamic/private': path.resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/private.js'),
-      '$env/dynamic/public': path.resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/public.js'),
-      '$env/static/private': path.resolve(import.meta.dirname, 'src/test/mocks/$env/static/private.js'),
-      '$env/static/public': path.resolve(import.meta.dirname, 'src/test/mocks/$env/static/public.js'),
-      $lib: path.resolve(import.meta.dirname, 'src/lib'),
+      $app: resolve(import.meta.dirname, 'src/test/mocks/$app'),
+      '$env/dynamic/private': resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/private.js'),
+      '$env/dynamic/public': resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/public.js'),
+      '$env/static/private': resolve(import.meta.dirname, 'src/test/mocks/$env/static/private.js'),
+      '$env/static/public': resolve(import.meta.dirname, 'src/test/mocks/$env/static/public.js'),
+      $lib: resolve(import.meta.dirname, 'src/lib'),
       // substitute server logger with a lightweight mock during tests
-      '$lib/server/logger': path.resolve(import.meta.dirname, 'src/test/mocks/$lib_server_logger.js'),
-      $test: path.resolve(import.meta.dirname, 'src/test'),
-      formsnap: path.resolve(import.meta.dirname, 'src/test/stubs/formsnap.js'),
-      [path.resolve(import.meta.dirname, 'src/lib/server/logger.ts')]: path.resolve(
+      '$lib/server/logger': resolve(import.meta.dirname, 'src/test/mocks/$lib_server_logger.js'),
+      $test: resolve(import.meta.dirname, 'src/test'),
+      formsnap: resolve(import.meta.dirname, 'src/test/stubs/formsnap.js'),
+      [resolve(import.meta.dirname, 'src/lib/server/logger.ts')]: resolve(
         import.meta.dirname,
         'src/test/mocks/$lib_server_logger.js'
       ),
-      'sveltekit-superforms': path.resolve(import.meta.dirname, 'src/test/mocks/sveltekit-superforms.js'),
-      'sveltekit-superforms/adapters': path.resolve(
-        import.meta.dirname,
-        'src/test/mocks/sveltekit-superforms-adapters.js'
-      )
+      'sveltekit-superforms': resolve(import.meta.dirname, 'src/test/mocks/sveltekit-superforms.js'),
+      'sveltekit-superforms/adapters': resolve(import.meta.dirname, 'src/test/mocks/sveltekit-superforms-adapters.js')
     }
   },
   test: {
@@ -174,7 +171,7 @@ export default defineConfig({
           exclude: ['src/test/server/**'],
           include: ['src/**/*.test.{ts,tsx,js,jsx}'],
           name: 'browser',
-          setupFiles: ['vitest-browser-svelte', path.resolve(import.meta.dirname, 'src/test/setupTest.ts')]
+          setupFiles: ['vitest-browser-svelte', resolve(import.meta.dirname, 'src/test/setupTest.ts')]
         }
       },
       {
@@ -185,13 +182,13 @@ export default defineConfig({
           name: 'server',
           resolve: {
             alias: {
-              'sveltekit-superforms/adapters': path.resolve(
+              'sveltekit-superforms/adapters': resolve(
                 import.meta.dirname,
                 'src/test/mocks/sveltekit-superforms-adapters.js'
               )
             }
           },
-          setupFiles: [path.resolve(import.meta.dirname, 'src/test/setupServer.ts')]
+          setupFiles: [resolve(import.meta.dirname, 'src/test/setupServer.ts')]
         }
       }
     ]

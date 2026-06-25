@@ -80,14 +80,14 @@ $effect(() => {
 });
 </script>
 
-<svelte:window bind:innerWidth bind:innerHeight />
+<svelte:window bind:innerHeight bind:innerWidth />
 <svelte:head>
   <title>{m.title()}</title>
 </svelte:head>
 
 <a
-  href="#main-content"
   class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+  href="#main-content"
 >
   {m.skipToMain()}
 </a>
@@ -95,15 +95,15 @@ $effect(() => {
 <div class="flex h-full min-h-screen flex-col items-center justify-between max-w-screen w-full overflow-hidden">
   {#if data.offline}
     <div
-      role="alert"
       class="fixed top-0 z-50 flex w-full items-center justify-center bg-amber-500/90 px-4 py-2 text-sm font-medium text-amber-950 backdrop-blur-sm"
+      role="alert"
     >
       {m.reconnecting()}
     </div>
   {/if}
   <Progress />
   <Header />
-  <main id="main-content" class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4" class:mt-28={data.offline}>
+  <main class="container mx-auto mt-24 max-w-[1024px] min-w-[300px] p-4" id="main-content" class:mt-28={data.offline}>
     {@render children()}
   </main>
   <Footer />

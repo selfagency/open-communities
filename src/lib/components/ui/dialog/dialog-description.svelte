@@ -7,8 +7,8 @@ let { class: className, ref = $bindable(null), ...restProps }: DialogPrimitive.D
 </script>
 
 <DialogPrimitive.Description
-  bind:ref
-  data-slot="dialog-description"
   class={cn('text-muted-foreground text-sm', className)}
+  data-slot="dialog-description"
+  bind:ref
   {...restProps}
 />

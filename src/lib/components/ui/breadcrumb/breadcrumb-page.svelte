@@ -11,13 +11,13 @@ let {
 </script>
 
 <span
-  bind:this={ref}
+  aria-current="page"
+  aria-disabled="true"
+  class={cn("text-foreground font-normal", className)}
   data-slot="breadcrumb-page"
   role="link"
-  aria-disabled="true"
-  aria-current="page"
   tabindex="-1"
-  class={cn("text-foreground font-normal", className)}
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

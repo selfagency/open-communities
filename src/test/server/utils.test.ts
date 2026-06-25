@@ -47,10 +47,7 @@ describe('validateCaptcha', () => {
   it('returns false when captcha verification API fails', async () => {
     // Mock fetch to return unsuccessful response
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = async () =>
-      new Response(JSON.stringify({ success: false }), {
-        headers: { 'content-type': 'application/json' }
-      });
+    globalThis.fetch = async () => Response.json({ success: false });
 
     const form = { data: { captcha: 'some-token' }, valid: true } as any;
     const result = await validateCaptcha(form);
@@ -61,10 +58,7 @@ describe('validateCaptcha', () => {
 
   it('returns true when captcha verification succeeds', async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = async () =>
-      new Response(JSON.stringify({ success: true }), {
-        headers: { 'content-type': 'application/json' }
-      });
+    globalThis.fetch = async () => Response.json({ success: true });
 
     const form = { data: { captcha: 'valid-token' }, valid: true } as any;
     const result = await validateCaptcha(form);

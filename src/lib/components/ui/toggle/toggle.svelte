@@ -43,9 +43,9 @@ let {
 </script>
 
 <TogglePrimitive.Root
-  bind:ref
-  bind:pressed
-  data-slot="toggle"
   class={cn(toggleVariants({ variant, size }), className)}
+  data-slot="toggle"
+  bind:pressed
+  bind:ref
   {...restProps}
 />

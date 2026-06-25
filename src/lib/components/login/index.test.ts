@@ -8,13 +8,13 @@ import Index from './index.svelte';
 
 describe('Login index component', () => {
   // minimal shape matching the parts of SuperValidated used by the component/tests
-  type SuperStub = {
+  interface SuperStub {
     data: Record<string, unknown>;
     errors: Record<string, string[]>; // match ValidationErrors<any> type
     id: string;
     posted: boolean;
     valid: boolean;
-  };
+  }
   it('renders the login title by default', () => {
     const valid: SuperStub = { data: {}, errors: {}, id: 'test', posted: false, valid: true };
     render(Index, { data: valid, reset: valid });

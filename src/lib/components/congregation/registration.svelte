@@ -40,9 +40,9 @@ const { registration }: { registration?: RegistrationRecord } = $props();
   <div class="flex flex-row items-center justify-start space-x-4">
     {#if registration?.email}
       <Button
-        variant="outline"
-        href="mailto:{registration.email}"
         class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
+        href="mailto:{registration.email}"
+        variant="outline"
       >
         <span><EmailIcon size="16" /></span>
         <span>{m.email()}</span>
@@ -50,10 +50,10 @@ const { registration }: { registration?: RegistrationRecord } = $props();
     {/if}
     {#if registration?.url}
       <Button
-        variant="outline"
+        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
         href={registration.url}
         target="_blank"
-        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
+        variant="outline"
       >
         <span><WebIcon size="16" /></span>
         <span>{m.website()}</span>

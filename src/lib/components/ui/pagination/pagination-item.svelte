@@ -6,6 +6,6 @@ import type { WithElementRef } from '$lib/utils.js';
 let { children, ref = $bindable(null), ...restProps }: WithElementRef<HTMLLiAttributes> = $props();
 </script>
 
-<li bind:this={ref} data-slot="pagination-item" {...restProps}>
+<li data-slot="pagination-item" bind:this={ref} {...restProps}>
   {@render children?.()}
 </li>

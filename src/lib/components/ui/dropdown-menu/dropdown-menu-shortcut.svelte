@@ -11,9 +11,9 @@ let {
 </script>
 
 <span
-  bind:this={ref}
-  data-slot="dropdown-menu-shortcut"
   class={cn("text-muted-foreground group-focus/dropdown-menu-item:text-accent-foreground ml-auto text-xs tracking-widest", className)}
+  data-slot="dropdown-menu-shortcut"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

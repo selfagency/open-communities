@@ -160,15 +160,15 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
               </div>
               <RadioGroup.Root {...props} bind:value={$formData.fit.flag}>
                 <div class="flex items-center space-x-2">
-                  <RadioGroup.Item value="no" id="no" />
+                  <RadioGroup.Item id="no" value="no" />
                   <Form.Label for="no">{m.flag_no()}</Form.Label>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <RadioGroup.Item value="yes" id="yes" />
+                  <RadioGroup.Item id="yes" value="yes" />
                   <Form.Label for="yes">{m.flag_yes()}</Form.Label>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <RadioGroup.Item value="yesBima" id="yesBima" />
+                  <RadioGroup.Item id="yesBima" value="yesBima" />
                   <Form.Label for="yesBima">{m.flag_yesBima()}</Form.Label>
                 </div>
               </RadioGroup.Root>
@@ -180,8 +180,8 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
 
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button
-          variant="secondary"
           onclick={() => { view = 'services'; document.querySelector('[data-value="services"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
           >{m.next()}
           →</Button
         >

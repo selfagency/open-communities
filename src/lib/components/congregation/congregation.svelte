@@ -95,29 +95,29 @@ $effect(() => {
     <Tile {congregation} />
   </Dialog.Trigger>
   <Dialog.Content
+    class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-colors sm:max-w-[540px] sm:p-8"
     data-id={congregation.id}
     itemscope
     itemtype="https://schema.org/ReligiousOrganization"
-    class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-colors sm:max-w-[540px] sm:p-8"
   >
     <Dialog.Header class="w-full rtl:text-right">
       <Dialog.Title>
         {#if congregation.contactUrl}
           <!-- external link -->
           <a
-            href={congregation.contactUrl}
-            target="_blank"
-            rel="noopener noreferrer"
             class="group inline-block max-w-[92%] hyphens-auto"
+            href={congregation.contactUrl}
             itemprop="url"
+            rel="noopener noreferrer"
+            target="_blank"
           >
             <h2 class="inline-block text-2xl leading-7 text-secondary-foreground">
               <span itemprop="name">{congregation.name}</span>
               <span
                 ><LinkIcon
-                  size="14"
-                  color="gray"
                   class="inline rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
+                  color="gray"
+                  size="14"
                 /></span
               >
             </h2>
@@ -159,7 +159,7 @@ $effect(() => {
         <div class="flex w-1/3 flex-row items-center justify-end space-x-1">
           {#if isEmpty(congregation.owner) && !user?.admin}
             <a href={`/contact?claim=${congregation.id}`}>
-              <Badge variant="outline" class="font-normal text-nowrap text-muted-foreground hover:bg-muted"
+              <Badge class="font-normal text-nowrap text-muted-foreground hover:bg-muted" variant="outline"
                 >{m.claimThis()}</Badge
               >
             </a>
@@ -176,8 +176,8 @@ $effect(() => {
                   }}
                 >
                   <EditIcon
-                    size="16"
                     class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-12 motion-safe:active:scale-90"
+                    size="16"
                   />
                   <span class="sr-only">{m.edit()}</span>
                 </Tooltip.Trigger>
@@ -199,8 +199,8 @@ $effect(() => {
                 }}
               >
                 <ShareIcon
-                  size="16"
                   class="text-muted-foreground rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+                  size="16"
                 />
                 <span class="sr-only">{m.share()}</span>
               </Tooltip.Trigger>
@@ -213,13 +213,13 @@ $effect(() => {
       </Dialog.Description>
     </Dialog.Header>
 
-    <Tabs.Root bind:value={tab} class="w-full">
+    <Tabs.Root class="w-full" bind:value={tab}>
       <Tabs.List class="my-4 w-full">
-        <Tabs.Trigger value="about" class="w-1/2 transition-colors">{m.about()}</Tabs.Trigger>
-        <Tabs.Trigger value="services" class="w-1/2 transition-colors">{m.services()}</Tabs.Trigger>
-        <Tabs.Trigger value="details" class="w-1/2 transition-colors">{m.details()}</Tabs.Trigger>
+        <Tabs.Trigger class="w-1/2 transition-colors" value="about">{m.about()}</Tabs.Trigger>
+        <Tabs.Trigger class="w-1/2 transition-colors" value="services">{m.services()}</Tabs.Trigger>
+        <Tabs.Trigger class="w-1/2 transition-colors" value="details">{m.details()}</Tabs.Trigger>
       </Tabs.List>
-      <Tabs.Content value="about" class="transition-opacity duration-300">
+      <Tabs.Content class="transition-opacity duration-300" value="about">
         {#if tab === "about"}
           <div transition:fade>
             {#if congregation.flavor}
@@ -248,7 +248,7 @@ $effect(() => {
 
               {#if user?.admin && (congregation.contactName || congregation.contactEmail)}
                 <Separator class="col-span-12" />
-                <Contact contactName={congregation.contactName} contactEmail={congregation.contactEmail} />
+                <Contact contactEmail={congregation.contactEmail} contactName={congregation.contactName} />
               {/if}
             </div>
           </div>
@@ -310,7 +310,7 @@ $effect(() => {
                 {#if fit.flag || health.protocol || !allFalse(accessibility)}
                   <Separator class="col-span-12" />
                 {/if}
-                <Security {security} mode="full" />
+                <Security mode="full" {security} />
               {/if}
 
               {#if notes}

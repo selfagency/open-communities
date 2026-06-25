@@ -62,23 +62,23 @@ let {
 
 {#if href}
   <a
-    bind:this={ref}
-    data-slot="button"
-    class={cn(buttonVariants({ variant, size }), className)}
-    href={disabled ? undefined : href}
     aria-disabled={disabled}
+    class={cn(buttonVariants({ variant, size }), className)}
+    data-slot="button"
+    href={disabled ? undefined : href}
     tabindex={disabled ? -1 : undefined}
+    bind:this={ref}
     {...restProps}
   >
     {@render children?.()}
   </a>
 {:else}
   <button
-    bind:this={ref}
-    data-slot="button"
     class={cn(buttonVariants({ variant, size }), className)}
-    {type}
+    data-slot="button"
     {disabled}
+    {type}
+    bind:this={ref}
     {...restProps}
   >
     {@render children?.()}

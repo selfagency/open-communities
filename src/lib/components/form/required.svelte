@@ -12,8 +12,8 @@ let { set = $bindable(false) }: { set: boolean } = $props();
 </script>
 
 <Badge
-  variant="outline"
   class={set ? 'bg-muted text-muted-foreground' : 'border-destructive/20 bg-destructive/10 text-destructive'}
+  variant="outline"
 >
   <span class="font-normal">{m.required()}</span>
 </Badge>

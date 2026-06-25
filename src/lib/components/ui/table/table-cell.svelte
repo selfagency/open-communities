@@ -6,9 +6,9 @@ let { ref = $bindable(null), class: className, children, ...restProps }: WithEle
 </script>
 
 <td
-  bind:this={ref}
-  data-slot="table-cell"
   class={cn("p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0", className)}
+  data-slot="table-cell"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

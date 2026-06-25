@@ -14,7 +14,9 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 type Subscriber<T> = (v: T) => void;
 type Unsubscriber = () => void;
-type Readable<T> = { subscribe: (run: Subscriber<T>) => Unsubscriber };
+interface Readable<T> {
+  subscribe: (run: Subscriber<T>) => Unsubscriber;
+}
 
 function writableDeep<T extends Record<string, unknown>>(
   initial: T

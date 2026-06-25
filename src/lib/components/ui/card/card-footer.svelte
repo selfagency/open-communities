@@ -11,9 +11,9 @@ let {
 </script>
 
 <div
-  bind:this={ref}
-  data-slot="card-footer"
   class={cn("px-4 py-2 group-data-[size=sm]/card:px-3 group-data-[size=sm]/card:py-1.5 flex items-center", className)}
+  data-slot="card-footer"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

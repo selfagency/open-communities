@@ -80,16 +80,16 @@ onMount(async () => {
 </script>
 
 <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
-  <form id="verify" method="POST" action="?/acct" use:enhance>
-    <input type="hidden" name="token" bind:value={$formData.token} />
-    <input type="hidden" name="type" bind:value={$formData.type} />
+  <form action="?/acct" id="verify" method="POST" use:enhance>
+    <input name="token" type="hidden" bind:value={$formData.token} />
+    <input name="type" type="hidden" bind:value={$formData.type} />
 
     {#if $formData.type === 'resetPassword'}
       <Form.Field {form} name="password">
         <Form.Control>
           {#snippet children(props)}
             <Form.Label>{m.password()}</Form.Label>
-            <Input {...props} bind:value={$formData.password} required autocomplete="new-password" />
+            <Input {...props} autocomplete="new-password" required bind:value={$formData.password} />
           {/snippet}
         </Form.Control>
         <Form.Description>
@@ -104,10 +104,10 @@ onMount(async () => {
             <Form.Label>{m.confirmPassword()}</Form.Label>
             <Input
               {...props}
-              bind:value={$formData.passwordConfirm}
-              type="password"
-              required
               autocomplete="new-password"
+              required
+              type="password"
+              bind:value={$formData.passwordConfirm}
             />
           {/snippet}
         </Form.Control>
@@ -122,7 +122,7 @@ onMount(async () => {
         <Form.Control>
           {#snippet children(props)}
             <Form.Label>{m.email()}</Form.Label>
-            <Input {...props} bind:value={$formData.email} required autocomplete="email" />
+            <Input {...props} autocomplete="email" required bind:value={$formData.email} />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />

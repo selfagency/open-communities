@@ -10,7 +10,7 @@ let { ref = $bindable(null), class: className, children, ...rest }: FileDropZone
 const triggerState = useFileDropZoneTrigger();
 </script>
 
-<label bind:this={ref} class={cn('group/file-drop-zone-trigger', className)} {...triggerState.props} {...rest}>
+<label class={cn('group/file-drop-zone-trigger', className)} bind:this={ref} {...triggerState.props} {...rest}>
   {#if children}
     {@render children()}
   {:else}

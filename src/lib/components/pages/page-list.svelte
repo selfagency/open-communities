@@ -118,12 +118,12 @@ const table = $derived(
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">
         <SearchIcon
-          size="18"
           class="absolute left-3 z-10 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
+          size="18"
         />
-        <Input bind:value={search} placeholder={m.searchPages()} class="h-11 w-64 sm:w-80 pl-10" />
+        <Input class="h-11 w-64 sm:w-80 pl-10" placeholder={m.searchPages()} bind:value={search} />
       </div>
-      <Button variant="default" onclick={() => goto('/admin/pages/new')}>{m.newPage()}</Button>
+      <Button onclick={() => goto('/admin/pages/new')} variant="default">{m.newPage()}</Button>
     </div>
   </div>
   <Card>
@@ -152,14 +152,14 @@ const table = $derived(
                 </TableCell>
               {/each}
               <TableCell>
-                <Button variant="ghost" size="icon" onclick={() => goto('/admin/pages/' + row.original.id)}>
+                <Button onclick={() => goto('/admin/pages/' + row.original.id)} size="icon" variant="ghost">
                   <PencilIcon class="size-4" />
                 </Button>
               </TableCell>
             </TableRow>
           {:else}
             <TableRow>
-              <TableCell colspan={columns.length + 1} class="h-24 text-center">{m.noResults()}</TableCell>
+              <TableCell class="h-24 text-center" colspan={columns.length + 1}>{m.noResults()}</TableCell>
             </TableRow>
           {/each}
         </TableBody>
@@ -167,7 +167,7 @@ const table = $derived(
     </CardContent>
   </Card>
   <div class="flex w-full scale-90 flex-row items-center justify-center pt-2 sm:scale-100">
-    <Pagination.Root count={filtered.length} perPage={PER_PAGE} page={currentPage} {onPageChange} siblingCount={0}>
+    <Pagination.Root count={filtered.length} {onPageChange} page={currentPage} perPage={PER_PAGE} siblingCount={0}>
       {#snippet children({ pages })}
         <Pagination.Content>
           <Pagination.Item><Pagination.PrevButton /></Pagination.Item>
@@ -176,7 +176,7 @@ const table = $derived(
               <Pagination.Item><Pagination.Ellipsis /></Pagination.Item>
             {:else}
               <Pagination.Item
-                ><Pagination.Link {page} isActive={currentPage == page.value}
+                ><Pagination.Link isActive={currentPage == page.value} {page}
                   >{page.value}</Pagination.Link
                 ></Pagination.Item
               >

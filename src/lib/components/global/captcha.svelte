@@ -56,12 +56,12 @@ onDestroy(() => {
 /* endregion lifecycle */
 </script>
 
-<Form.Field {form} name="captcha" class="w-full">
+<Form.Field class="w-full" {form} name="captcha">
   <Form.Control>
     <div class="my-4 w-full">
       <cap-widget
-        id="captcha"
         data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
+        id="captcha"
       ></cap-widget>
     </div>
   </Form.Control>

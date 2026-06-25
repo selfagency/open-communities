@@ -48,7 +48,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   for (const s of allStates) {
     stateCountryMap[s.id as string] = (s.country as string) || '';
   }
-  for (const cong of allCongs as Array<Record<string, unknown>>) {
+  for (const cong of allCongs as Record<string, unknown>[]) {
     const coId = cong.country as string;
     const stId = cong.state as string;
     if (coId) {

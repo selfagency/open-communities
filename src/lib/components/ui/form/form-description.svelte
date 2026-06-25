@@ -7,8 +7,8 @@ let { class: className, ref = $bindable(null), ...restProps }: WithoutChild<Form
 </script>
 
 <FormPrimitive.Description
-  bind:ref
-  data-slot="form-description"
   class={cn('text-muted-foreground text-sm', className)}
+  data-slot="form-description"
+  bind:ref
   {...restProps}
 />

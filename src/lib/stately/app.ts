@@ -1,7 +1,7 @@
 import { createLocalStorageAdapter, createMemoryStorageAdapter, defineStore } from '@selfagency/stately';
 import { browser } from '$app/environment';
 
-export type AppState = {
+export interface AppState {
   form?: { hasErrors: boolean; success: boolean };
   isMobile: boolean;
   lang: string;
@@ -10,7 +10,7 @@ export type AppState = {
   offsetHeight: number;
   offsetWidth: number;
   showIntro: boolean;
-};
+}
 
 /**
  * Global application state store.

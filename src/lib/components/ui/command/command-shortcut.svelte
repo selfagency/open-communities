@@ -12,9 +12,9 @@ let {
 </script>
 
 <span
-  bind:this={ref}
-  data-slot="command-shortcut"
   class={cn('text-muted-foreground ml-auto text-xs tracking-widest', className)}
+  data-slot="command-shortcut"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

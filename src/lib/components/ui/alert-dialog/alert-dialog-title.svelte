@@ -7,8 +7,8 @@ let { class: className, ref = $bindable(null), ...restProps }: AlertDialogPrimit
 </script>
 
 <AlertDialogPrimitive.Title
-  bind:ref
-  data-slot="alert-dialog-title"
   class={cn('text-lg font-semibold', className)}
+  data-slot="alert-dialog-title"
+  bind:ref
   {...restProps}
 />

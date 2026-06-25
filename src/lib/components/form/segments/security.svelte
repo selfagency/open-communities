@@ -207,8 +207,8 @@ const fixType = (input: any) => input as Record<string, unknown> & { _errors?: s
       </div>
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button
-          variant="secondary"
           onclick={() => { view = 'registration'; document.querySelector('[data-value="registration"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
         >
           {m.next()}
           →

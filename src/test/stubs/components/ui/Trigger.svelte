@@ -1,9 +1,9 @@
 <script lang="ts">
 import { getContext } from 'svelte';
 
-type SheetContext = {
+interface SheetContext {
   toggle?: () => void;
-};
+}
 
 const ctx = getContext<SheetContext>('TEST_SHEET');
 

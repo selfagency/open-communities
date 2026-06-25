@@ -11,9 +11,9 @@ let {
 </script>
 
 <div
-  bind:this={ref}
-  data-slot="select-label"
   class={cn("text-muted-foreground px-1.5 py-1 text-xs", className)}
+  data-slot="select-label"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

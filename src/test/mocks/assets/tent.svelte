@@ -4,14 +4,14 @@ export let size;
 </script>
 
 <svg
-  data-testid="mock-tent"
+  aria-hidden="true"
   class={cls}
-  width={size}
+  data-testid="mock-tent"
+  focusable="false"
   height={size}
   viewBox="0 0 24 24"
+  width={size}
   xmlns="http://www.w3.org/2000/svg"
-  aria-hidden="true"
-  focusable="false"
 >
-  <rect width="100%" height="100%" fill="none" />
+  <rect fill="none" height="100%" width="100%" />
 </svg>

@@ -11,7 +11,7 @@ import Nav from './nav.svelte';
   class="fixed top-0 left-0 z-40 flex h-18 w-screen min-w-max flex-row items-center justify-between space-x-2 bg-background p-4 shadow"
 >
   <div>
-    <a href="/" class="flex flex-row items-center justify-start space-x-2">
+    <a class="flex flex-row items-center justify-start space-x-2" href="/">
       <span>
         <Tent class="w-12 fill-foreground sm:w-16" />
       </span>

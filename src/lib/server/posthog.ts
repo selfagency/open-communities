@@ -28,6 +28,7 @@ process.once('beforeExit', closePhClient);
 process.once('SIGTERM', closePhClient);
 process.once('SIGINT', closePhClient);
 
+// biome-ignore lint/suspicious/useAwait: SvelteKit async signature
 export async function capture(user: string | undefined, event: string) {
   const phClient = getPhClient();
   if (!phClient) {

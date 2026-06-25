@@ -8,8 +8,8 @@ let { class: className, ref = $bindable(null), ...restProps }: AlertDialogPrimit
 </script>
 
 <AlertDialogPrimitive.Action
-  bind:ref
-  data-slot="alert-dialog-action"
   class={cn(buttonVariants(), className)}
+  data-slot="alert-dialog-action"
+  bind:ref
   {...restProps}
 />

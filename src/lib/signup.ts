@@ -21,6 +21,7 @@ export const initForm = (data: Record<string, unknown>) => {
     onSubmit() {
       setState({ loadingSecondary: true });
     },
+    // biome-ignore lint/suspicious/useAwait: SvelteKit async signature
     async onUpdate({ result }) {
       setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
 

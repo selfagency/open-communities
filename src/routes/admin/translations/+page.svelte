@@ -226,7 +226,7 @@ const statusLabels: Record<string, string> = {
               </div>
             {/if}
             <div class="flex justify-center">
-              <Button variant="outline" onclick={cancelDeploy}>Close</Button>
+              <Button onclick={cancelDeploy} variant="outline">Close</Button>
             </div>
           </div>
         </DialogContent>
@@ -242,20 +242,20 @@ const statusLabels: Record<string, string> = {
         <div class="relative shadow-xs">
           <svg
             class="absolute left-3 z-10 top-1/2 size-[18px] -translate-y-1/2 pointer-events-none text-muted-foreground"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <circle cx="11" cy="11" r="8" />
             <path d="m21 21-4.3-4.3" />
           </svg>
           <Input
+            class="h-11 w-64 sm:w-80 pl-10"
+            oninput={onSearchInput}
             placeholder="Search keys and translations..."
             value={searchValue}
-            oninput={onSearchInput}
-            class="h-11 w-64 sm:w-80 pl-10"
           />
         </div>
         <AlertDialog bind:open={showWarning}>
@@ -275,17 +275,17 @@ const statusLabels: Record<string, string> = {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <form method="POST" action="?/redeploy" use:enhance={handleEnhance} onsubmit={startDeploy}>
+              <form action="?/redeploy" method="POST" onsubmit={startDeploy} use:enhance={handleEnhance}>
                 <AlertDialogAction
-                  type="submit"
                   class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  type="submit"
                   >Deploy</AlertDialogAction
                 >
               </form>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <Button variant="outline" onclick={() => { addKey = ''; addValue = ''; showAddDialog = true; }}>
+        <Button onclick={() => { addKey = ''; addValue = ''; showAddDialog = true; }} variant="outline">
           <CirclePlusIcon class="mr-1.5 size-4" />
           Add Key
         </Button>
@@ -295,8 +295,8 @@ const statusLabels: Record<string, string> = {
     <!-- Add Key Dialog -->
     <Dialog bind:open={showAddDialog}>
       <form
-        method="POST"
         action="?/add"
+        method="POST"
         use:enhance={() => {
       return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
         if (result.type === 'success' && result.data?.key) {
@@ -319,16 +319,16 @@ const statusLabels: Record<string, string> = {
           </DialogHeader>
           <div class="space-y-4 py-4">
             <div class="space-y-2">
-              <label for="add-key" class="text-sm font-medium">Key</label>
-              <Input id="add-key" name="key" bind:value={addKey} placeholder="myNewKey" required />
+              <label class="text-sm font-medium" for="add-key">Key</label>
+              <Input id="add-key" name="key" placeholder="myNewKey" required bind:value={addKey} />
             </div>
             <div class="space-y-2">
-              <label for="add-value" class="text-sm font-medium">English Value</label>
-              <Input id="add-value" name="value" bind:value={addValue} placeholder="My New Key" />
+              <label class="text-sm font-medium" for="add-value">English Value</label>
+              <Input id="add-value" name="value" placeholder="My New Key" bind:value={addValue} />
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <Button variant="outline" onclick={() => (showAddDialog = false)}>Cancel</Button>
+            <Button onclick={() => (showAddDialog = false)} variant="outline">Cancel</Button>
             <Button type="submit">Create</Button>
           </div>
         </DialogContent>
@@ -359,8 +359,9 @@ const statusLabels: Record<string, string> = {
           </AccordionTrigger>
           <AccordionContent>
             <form
-              method="POST"
               action="?/save"
+              class="space-y-3"
+              method="POST"
               use:enhance={() => {
               return async ({ result }: { result: { type: string } }) => {
                 if (result.type === 'success') {
@@ -368,29 +369,28 @@ const statusLabels: Record<string, string> = {
                 }
               };
             }}
-              class="space-y-3"
             >
-              <input type="hidden" name="key" value={key} />
-              <input type="hidden" name="entries" value={JSON.stringify(buildEntries(key, entries))} />
+              <input name="key" type="hidden" value={key} />
+              <input name="entries" type="hidden" value={JSON.stringify(buildEntries(key, entries))} />
 
               {#each locales as locale}
                 {@const entry = entries.find((e: { locale: string }) => e.locale === locale)}
                 <div class="grid grid-cols-[40px_1fr] items-start gap-2">
                   <label
-                    for={`text-${key}-${locale}`}
                     class="text-muted-foreground pt-2.5 text-xs font-mono font-medium uppercase"
+                    for={`text-${key}-${locale}`}
                   >
                     {locale}
                   </label>
                   <Textarea
+                    class="min-h-[40px] text-base leading-relaxed bg-white dark:bg-white/5"
                     id={`text-${key}-${locale}`}
                     name={locale}
-                    value={getEditValue(key, locale, entry?.value ?? '')}
-                    placeholder="—"
-                    class="min-h-[40px] text-base leading-relaxed bg-white dark:bg-white/5"
-                    style={locale === 'he' ? 'direction: rtl' : undefined}
                     oninput={(e) => setEditValue(key, locale, (e.target as HTMLTextAreaElement).value)}
+                    placeholder="—"
                     rows={1}
+                    style={locale === 'he' ? 'direction: rtl' : undefined}
+                    value={getEditValue(key, locale, entry?.value ?? '')}
                   />
                 </div>
               {/each}
@@ -411,8 +411,8 @@ const statusLabels: Record<string, string> = {
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <form
-                        method="POST"
                         action="?/delete"
+                        method="POST"
                         use:enhance={() => {
                       return async ({ result }: { result: { type: string } }) => {
                         if (result.type === 'success') {
@@ -421,10 +421,10 @@ const statusLabels: Record<string, string> = {
                       };
                     }}
                       >
-                        <input type="hidden" name="key" value={key} />
+                        <input name="key" type="hidden" value={key} />
                         <AlertDialogAction
-                          type="submit"
                           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          type="submit"
                           >Delete</AlertDialogAction
                         >
                       </form>
@@ -444,9 +444,9 @@ const statusLabels: Record<string, string> = {
       <div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
         <Pagination.Root
           count={data.pagination.total}
-          perPage={data.pagination.perPage}
-          page={currentPage}
           {onPageChange}
+          page={currentPage}
+          perPage={data.pagination.perPage}
           siblingCount={0}
         >
           {#snippet children({ pages })}
@@ -461,7 +461,7 @@ const statusLabels: Record<string, string> = {
                   </Pagination.Item>
                 {:else}
                   <Pagination.Item>
-                    <Pagination.Link page={p} isActive={currentPage == p.value}>
+                    <Pagination.Link isActive={currentPage == p.value} page={p}>
                       {p.value}
                     </Pagination.Link>
                   </Pagination.Item>
@@ -492,8 +492,8 @@ const statusLabels: Record<string, string> = {
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
         <form
-          method="POST"
           action="?/delete"
+          method="POST"
           use:enhance={() => {
         return async ({ result }: { result: { type: string } }) => {
           if (result.type === 'success') {
@@ -503,8 +503,8 @@ const statusLabels: Record<string, string> = {
         };
       }}
         >
-          <input type="hidden" name="key" value={deleteKey} />
-          <AlertDialogAction type="submit" class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          <input name="key" type="hidden" value={deleteKey} />
+          <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" type="submit"
             >Delete</AlertDialogAction
           >
         </form>

@@ -6,8 +6,8 @@ let { ref = $bindable(null), class: className, ...restProps }: TabsPrimitive.Con
 </script>
 
 <TabsPrimitive.Content
-  bind:ref
-  data-slot="tabs-content"
   class={cn("text-sm flex-1 outline-none", className)}
+  data-slot="tabs-content"
+  bind:ref
   {...restProps}
 />

@@ -39,11 +39,11 @@ let {
 </script>
 
 <svelte:element
-  this={href ? "a" : "span"}
-  bind:this={ref}
+  class={cn(badgeVariants({ variant }), className)}
   data-slot="badge"
   {href}
-  class={cn(badgeVariants({ variant }), className)}
+  this={href ? "a" : "span"}
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

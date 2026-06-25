@@ -22,13 +22,13 @@ const { flag, mode = $bindable('mini') }: { flag?: FitRecord['flag']; mode?: 'fu
           <Tooltip.Trigger class="group flex h-7 w-7 items-center justify-center">
             {#if flag === "no"}
               <FlagOff
-                size="16"
                 class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+                size="16"
               />
             {:else}
               <Flag
-                size="16"
                 class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+                size="16"
               />
             {/if}
             <span class="sr-only">{m[`flag_${flag}`]()}</span>

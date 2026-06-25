@@ -24,8 +24,8 @@ const {
 <div class="col-span-9 flex flex-row items-center justify-start">
   {#if contactEmail}
     <a
-      href="mailto:{contactEmail}"
       class="flex flex-row items-center justify-center space-x-1 hover:text-muted-foreground"
+      href="mailto:{contactEmail}"
     >
       <span><EmailIcon size="18" /></span>
       <span>

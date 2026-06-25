@@ -8,13 +8,13 @@ import type { SuperFormStub } from '$test/global.d';
 import Signup from './signup.svelte';
 
 describe('Signup component', () => {
-  type SuperValidatedStub = {
+  interface SuperValidatedStub {
     data: Record<string, unknown>;
     errors: { _errors?: string[] };
     id: string;
     posted: boolean;
     valid: boolean;
-  };
+  }
 
   function makeForm(): SuperFormStub {
     const store = {

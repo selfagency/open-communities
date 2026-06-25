@@ -1,4 +1,4 @@
-import * as sitemap from 'super-sitemap';
+import { response as sitemapResponse } from 'super-sitemap';
 import { withRetry } from '$lib/server/api';
 import type { RequestHandler } from './$types';
 
@@ -34,7 +34,7 @@ export const GET: RequestHandler = async ({ locals }) => {
     // Graceful degradation — sitemap without pages
   }
 
-  return await sitemap.response({
+  return await sitemapResponse({
     origin: 'https://opencommunities.info',
 
     excludeRoutePatterns: [

@@ -34,9 +34,9 @@ onMount(() => {
 </svelte:head>
 
 <AddForm
-  {form}
   content={data.content}
-  mode="add"
   deletion={undefined}
+  {form}
+  mode="add"
   user={data.user as UsersRecord & { id: string }}
 />

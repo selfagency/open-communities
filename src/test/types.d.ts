@@ -1,5 +1,5 @@
 // Stub type matching SuperForm<any> structure
-type SuperFormStub = {
+interface SuperFormStub {
   constraints: unknown;
   enhance: () => void;
   errors: unknown;
@@ -18,4 +18,4 @@ type SuperFormStub = {
   submit: () => void;
   valid: boolean;
   validate: () => void;
-};
+}

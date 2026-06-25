@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-type FormOptions = {
-  [k: string]: unknown;
+interface FormOptions {
   onError?: (args: unknown) => unknown;
   onResult?: () => unknown;
   onSubmit?: () => unknown;
   onUpdate?: (args: unknown) => Promise<unknown> | unknown;
-};
-type FormReturn = { data: unknown; errors: unknown; options: unknown };
+  [k: string]: unknown;
+}
+interface FormReturn {
+  data: unknown;
+  errors: unknown;
+  options: unknown;
+}
 type SuperFormMockShape = ((data: unknown, opts: unknown) => FormReturn) & {
   lastOptions?: FormOptions;
   mock: { results: Array<{ value: FormReturn }> };

@@ -15,11 +15,11 @@ let {
 <div class="flex h-11 items-center gap-2 border-b px-3" data-slot="command-input-wrapper">
   <SearchIcon class="size-4 shrink-0 opacity-50" />
   <CommandPrimitive.Input
-    data-slot="command-input"
     class={cn(
       'placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
       className
     )}
+    data-slot="command-input"
     bind:ref
     {...restProps}
     bind:value

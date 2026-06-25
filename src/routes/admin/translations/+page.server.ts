@@ -28,14 +28,14 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // Collect distinct locales from data
   const localeSet = new Set<string>();
-  for (const r of records as Array<Record<string, unknown>>) {
+  for (const r of records as Record<string, unknown>[]) {
     localeSet.add(r.locale as string);
   }
   const locales = [...localeSet].sort((a, b) => a.localeCompare(b));
 
   // Group by key
   const keyMap: Record<string, Array<{ locale: string; value: string; id: string }>> = {};
-  for (const r of records as Array<Record<string, unknown>>) {
+  for (const r of records as Record<string, unknown>[]) {
     const key = r.key as string;
     if (!Object.hasOwn(keyMap, key)) {
       keyMap[key] = [];
@@ -118,7 +118,7 @@ export const actions = {
       .catch(() => []);
 
     let deleted = 0;
-    for (const r of records as Array<Record<string, unknown>>) {
+    for (const r of records as Record<string, unknown>[]) {
       try {
         await withRetry(() => client.collection('translations').delete(r.id as string));
         deleted++;

@@ -78,17 +78,17 @@ onMount(() => {
   <AlertDialog.Content>
     {#if loadingSecondary}
       <div
-        transition:fade={{ delay: 300, duration: 100 }}
         class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+        transition:fade={{ delay: 300, duration: 100 }}
       >
         <Loading />
       </div>
     {:else}
-      <form id="delete" method="POST" action="?/delete" use:enhance transition:fade={{ delay: 300, duration: 100 }}>
+      <form action="?/delete" id="delete" method="POST" use:enhance transition:fade={{ delay: 300, duration: 100 }}>
         <AlertDialog.Header>
           <AlertDialog.Title>{m.warning()}</AlertDialog.Title>
           <AlertDialog.Description>
-            <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
+            <Alert.Root class="my-4 bg-destructive/10" variant="destructive">
               <WarningIcon size="18" />
               <Alert.Description class="mt-0.5">{m.warningNote()}</Alert.Description>
             </Alert.Root>
@@ -106,13 +106,13 @@ onMount(() => {
         <AlertDialog.Footer>
           <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
           <AlertDialog.Action
-            type="submit"
             onclick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               const formEl = document.getElementById("delete");
               if (form) form.submit(formEl);
             }}
+            type="submit"
           >
             {m.continue()}
           </AlertDialog.Action>
@@ -122,7 +122,7 @@ onMount(() => {
     {#if dev}
       {#await import("sveltekit-superforms") then { default: SuperDebug }}
         <div class="mt-4">
-          <SuperDebug data={$formData} collapsible collapsed />
+          <SuperDebug collapsed collapsible data={$formData} />
         </div>
       {/await}
     {/if}

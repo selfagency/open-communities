@@ -16,10 +16,10 @@ let {
 </script>
 
 <CommandPrimitive.Group
-  bind:ref
-  data-slot="command-group"
   class={cn('text-foreground overflow-hidden p-1', className)}
+  data-slot="command-group"
   value={value ?? heading ?? `----${useId()}`}
+  bind:ref
   {...restProps}
 >
   {#if heading}

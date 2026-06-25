@@ -92,8 +92,8 @@ let loadingSecondary = $derived(appState.loadingSecondary);
   <Card.Content>
     {#if loading || loadingSecondary}
       <div
-        transition:fade={{ delay: 300, duration: 100 }}
         class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+        transition:fade={{ delay: 300, duration: 100 }}
       >
         <Loading />
       </div>
@@ -114,16 +114,16 @@ let loadingSecondary = $derived(appState.loadingSecondary);
       {#if resetSuccess}
         <div class="flex flex-col items-center justify-center space-y-4">
           <span>{m.passwordSuccess()}</span>
-          <button type="button" onclick={() => resetter()}>{m.continueToLogin()} →</button>
+          <button onclick={() => resetter()} type="button">{m.continueToLogin()} →</button>
         </div>
       {/if}
     {:else}
-      <form method="POST" action="?/login" use:enhance class="space-y-2">
+      <form action="?/login" class="space-y-2" method="POST" use:enhance>
         <Form.Field {form} name="email">
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} bind:value={$formData.email} autocomplete="email" />
+              <Input {...props} autocomplete="email" bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -133,7 +133,7 @@ let loadingSecondary = $derived(appState.loadingSecondary);
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.password()}</Form.Label>
-              <Input {...props} bind:value={$formData.password} type="password" autocomplete="current-password" />
+              <Input {...props} autocomplete="current-password" type="password" bind:value={$formData.password} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -141,7 +141,7 @@ let loadingSecondary = $derived(appState.loadingSecondary);
 
         <div class="mt-4">
           <Form.Button>{m.login()}</Form.Button>
-          <Button variant="link" onclick={() => (resetting = true)}>{m.forgotPassword()}</Button>
+          <Button onclick={() => (resetting = true)} variant="link">{m.forgotPassword()}</Button>
         </div>
       </form>
     {/if}

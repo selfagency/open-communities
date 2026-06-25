@@ -27,5 +27,5 @@ export const snapshot: Snapshot<string> = {
 
 <section class="flex h-full w-full flex-col items-center justify-center" style="min-height: 50vh;">
   <h1 class="font-display mb-8 text-2xl text-secondary-foreground">{m.contact_contactUs()}</h1>
-  <Contact data={data.form} congregations={data.congregations} bind:snapshot={snapshotData} />
+  <Contact congregations={data.congregations} data={data.form} bind:snapshot={snapshotData} />
 </section>

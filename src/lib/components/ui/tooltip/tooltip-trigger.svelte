@@ -1,7 +1,7 @@
-<script lang="ts" generics="T = never">
+<script generics="T = never" lang="ts">
 import { Tooltip as TooltipPrimitive } from 'bits-ui';
 
 let { ref = $bindable(null), ...restProps }: TooltipPrimitive.TriggerProps<T> = $props();
 </script>
 
-<TooltipPrimitive.Trigger bind:ref data-slot="tooltip-trigger" {...restProps} />
+<TooltipPrimitive.Trigger data-slot="tooltip-trigger" bind:ref {...restProps} />

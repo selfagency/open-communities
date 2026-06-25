@@ -15,7 +15,7 @@ let {
 
 <FormPrimitive.Label {...restProps} bind:ref>
   {#snippet child({ props })}
-    <Label {...props} for={htmlFor} data-slot="form-label" class={cn('data-[fs-error]:text-destructive', className)}>
+    <Label {...props} class={cn('data-[fs-error]:text-destructive', className)} data-slot="form-label" for={htmlFor}>
       {@render children?.()}
     </Label>
   {/snippet}

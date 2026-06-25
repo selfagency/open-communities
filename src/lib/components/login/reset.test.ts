@@ -7,13 +7,13 @@ import Reset from './reset.svelte';
 
 describe('Reset component', () => {
   // match expected shape used in tests
-  type SuperStub = {
+  interface SuperStub {
     data: Record<string, unknown>;
     errors: Record<string, string[]>;
     id: string;
     posted: boolean;
     valid: boolean;
-  };
+  }
 
   it('shows password fields when token is provided', () => {
     const valid: SuperStub = { data: {}, errors: {}, id: 't', posted: false, valid: true };

@@ -73,7 +73,7 @@ $effect(() => {
 </script>
 
 {#if isProgressVisible}
-  <div id="nav-progress" in:fade class="fixed top-0 left-0 z-50 w-screen">
-    <Progress value={progress} class="rounded-none" />
+  <div class="fixed top-0 left-0 z-50 w-screen" id="nav-progress" in:fade>
+    <Progress class="rounded-none" value={progress} />
   </div>
 {/if}

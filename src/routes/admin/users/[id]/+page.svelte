@@ -41,7 +41,7 @@ function handleDelete() {
 
 <div class="mx-auto max-w-2xl space-y-6 pb-4 -mt-6">
   <div class="mb-4">
-    <a href="/admin/users" class="text-muted-foreground text-sm underline-offset-4 hover:underline"
+    <a class="text-muted-foreground text-sm underline-offset-4 hover:underline" href="/admin/users"
       >&larr; {m.adminUsers()}</a
     >
   </div>
@@ -61,19 +61,19 @@ function handleDelete() {
     <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">{formError}</div>
   {/if}
 
-  <form method="POST" action="?/update" use:enhance={handleUpdate}>
+  <form action="?/update" method="POST" use:enhance={handleUpdate}>
     <Card>
       <CardHeader>
         <CardTitle class="text-lg font-bold">{m.profile()}</CardTitle>
       </CardHeader>
       <CardContent class="space-y-4">
         <div class="space-y-2">
-          <label for="name" class="text-sm font-medium">{m.name()}</label>
-          <Input id="name" name="name" value={user.name} required />
+          <label class="text-sm font-medium" for="name">{m.name()}</label>
+          <Input id="name" name="name" required value={user.name} />
         </div>
         <div class="space-y-2">
-          <label for="email" class="text-sm font-medium">{m.email()}</label>
-          <Input id="email" name="email" type="email" value={user.email} required />
+          <label class="text-sm font-medium" for="email">{m.email()}</label>
+          <Input id="email" name="email" required type="email" value={user.email} />
         </div>
         <Button type="submit">{m.saveChanges()}</Button>
       </CardContent>
@@ -88,11 +88,11 @@ function handleDelete() {
       <CardContent class="space-y-4">
         <p class="text-muted-foreground text-sm">{m.linkedDescription()}</p>
         <div class="flex gap-2">
-          <Button variant="outline" onclick={() => goto('/edit?id=' + user.congregation)}
+          <Button onclick={() => goto('/edit?id=' + user.congregation)} variant="outline"
             >{m.editCongregation()}</Button
           >
-          <form method="POST" action="?/unlink" use:enhance={handleUpdate}>
-            <Button variant="outline" type="submit">{m.unlinkFromCongregation()}</Button>
+          <form action="?/unlink" method="POST" use:enhance={handleUpdate}>
+            <Button type="submit" variant="outline">{m.unlinkFromCongregation()}</Button>
           </form>
         </div>
       </CardContent>
@@ -105,19 +105,19 @@ function handleDelete() {
       <CardContent class="space-y-4">
         <p class="text-muted-foreground text-sm">{m.noCongregationLinked()}</p>
         {#if data.availableCongregations.length > 0}
-          <form method="POST" action="?/assign" use:enhance={handleUpdate}>
+          <form action="?/assign" method="POST" use:enhance={handleUpdate}>
             <div class="flex gap-2">
               <select
+                class="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 name="congregationId"
                 bind:value={selectedCong}
-                class="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 <option value="">{m.selectCongregation()}</option>
                 {#each data.availableCongregations as cong (cong.id)}
                   <option value={cong.id}>{cong.name}</option>
                 {/each}
               </select>
-              <Button variant="default" type="submit" disabled={!selectedCong}>{m.assign()}</Button>
+              <Button disabled={!selectedCong} type="submit" variant="default">{m.assign()}</Button>
             </div>
           </form>
         {:else}
@@ -132,8 +132,8 @@ function handleDelete() {
       <CardTitle class="text-lg font-bold">{m.changePassword()}</CardTitle>
     </CardHeader>
     <CardContent>
-      <form method="POST" action="?/resetPassword" use:enhance={handleUpdate}>
-        <Button variant="outline" type="submit">{m.resetPasswordEmail()}</Button>
+      <form action="?/resetPassword" method="POST" use:enhance={handleUpdate}>
+        <Button type="submit" variant="outline">{m.resetPasswordEmail()}</Button>
       </form>
     </CardContent>
   </Card>
@@ -144,8 +144,8 @@ function handleDelete() {
     </CardHeader>
     <CardContent class="space-y-4">
       <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
-      <form method="POST" action="?/deleteAccount" use:enhance={handleDelete}>
-        <Button variant="destructive" type="submit">{m.deleteAccount()}</Button>
+      <form action="?/deleteAccount" method="POST" use:enhance={handleDelete}>
+        <Button type="submit" variant="destructive">{m.deleteAccount()}</Button>
       </form>
     </CardContent>
   </Card>

@@ -14,7 +14,7 @@ let {
 } = $props();
 </script>
 
-<FormPrimitive.FieldErrors bind:ref class={cn('text-destructive text-sm font-medium', className)} {...restProps}>
+<FormPrimitive.FieldErrors class={cn('text-destructive text-sm font-medium', className)} bind:ref {...restProps}>
   {#snippet children({ errorProps, errors })}
     {#if childrenProp}
       {@render childrenProp({ errorProps, errors })}

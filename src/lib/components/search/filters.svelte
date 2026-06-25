@@ -147,8 +147,8 @@ $effect(() => {
 <Popover.Root>
   <Popover.Trigger class={cn(buttonVariants({ variant: "outline" }), "group gap-2 rtl:mx-1")}>
     <FilterIcon
-      size="18"
       class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+      size="18"
     />
     <span>{m.filter()}</span>
   </Popover.Trigger>
@@ -177,10 +177,10 @@ $effect(() => {
                   <span>{m[category]()}</span>
                 </span>
                 <span class="filter-status">
-                  <StatusIcon size="16" class="motion-safe:group-hover:scale-110 transition-transform duration-200" />
+                  <StatusIcon class="motion-safe:group-hover:scale-110 transition-transform duration-200" size="16" />
                 </span>
                 <span class="filter-icon">
-                  <OpenIcon size="16" class="transition-transform duration-200 motion-safe:group-hover:scale-110" />
+                  <OpenIcon class="transition-transform duration-200 motion-safe:group-hover:scale-110" size="16" />
                 </span>
               </div>
             </Collapsible.Trigger>
@@ -189,9 +189,9 @@ $effect(() => {
                 {#each Object.keys(filters[category]) as option, i (i)}
                   <span class="filter-item">
                     <Checkbox
-                      id={`${category}_${option}`}
-                      class="scale-75"
                       checked={filters[category][option]}
+                      class="scale-75"
+                      id={`${category}_${option}`}
                       onCheckedChange={(checked) =>
                         updateFilter(category, option, checked ?? false)}
                     />
@@ -209,7 +209,7 @@ $effect(() => {
           </Collapsible.Root>
         {/if}
       {/each}
-      <Button class="filter-heading h-auto p-0 text-muted-foreground" variant="link" onclick={resetFilters}>
+      <Button class="filter-heading h-auto p-0 text-muted-foreground" onclick={resetFilters} variant="link">
         <span class="filter-icon"><CloseIcon size="16" /></span>
         <span class="filter-label"><span>{m.reset()}</span></span>
       </Button>

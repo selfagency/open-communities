@@ -73,29 +73,29 @@ onMount(() => {
 /* endregion lifecycle */
 </script>
 
-<div class="w-full" class:pointer-events-none={disabled} class:opacity-50={disabled}>
+<div class="w-full" class:opacity-50={disabled} class:pointer-events-none={disabled}>
   <Popover.Root bind:open>
     <Popover.Trigger
-      {id}
-      bind:ref={triggerRef}
-      class="group button w-full flex-row items-center justify-between! outline bg-white! dark:bg-input/30! border-border!"
-      role="combobox"
       aria-expanded={open}
+      class="group button w-full flex-row items-center justify-between! outline bg-white! dark:bg-input/30! border-border!"
+      {id}
+      role="combobox"
+      bind:ref={triggerRef}
     >
       <span>{selectedValueLabel}</span>
       <ChevronsUpDownIcon
         class="ml-2 size-4 shrink-0 opacity-50 transition-transform duration-200 motion-safe:group-hover:scale-110"
       />
     </Popover.Trigger>
-    <Popover.Content style="width: {triggerRef?.offsetWidth}px;" class="p-0">
+    <Popover.Content class="p-0" style="width: {triggerRef?.offsetWidth}px;">
       {#if commandsInitialized && currentItems?.length > 0}
-        <Command.Root value={commandValue} onValueChange={handleCommandValueChange}>
-          <Command.Input {placeholder} class="border-border!" />
+        <Command.Root onValueChange={handleCommandValueChange} value={commandValue}>
+          <Command.Input class="border-border!" {placeholder} />
           <Command.List>
             <Command.Empty>{m.noResults()}</Command.Empty>
             <Command.Group value={commandGroupId}>
               {#each currentItems as item (item.id)}
-                <Command.Item value={item.label} onSelect={() => handleSelect(item.id)}>
+                <Command.Item onSelect={() => handleSelect(item.id)} value={item.label}>
                   <CheckIcon
                     class={cn(
                       "mr-2 size-4",

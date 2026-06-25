@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   // clean up global
-  delete (globalThis as any).__TEST_SUPERFORM_SUBMIT__;
+  (globalThis as any).__TEST_SUPERFORM_SUBMIT__ = undefined;
   submitSpy.mockClear();
 });
 

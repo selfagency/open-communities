@@ -11,9 +11,9 @@ let {
 </script>
 
 <caption
-  bind:this={ref}
-  data-slot="table-caption"
   class={cn("text-muted-foreground mt-4 text-sm", className)}
+  data-slot="table-caption"
+  bind:this={ref}
   {...restProps}
 >
   {@render children?.()}

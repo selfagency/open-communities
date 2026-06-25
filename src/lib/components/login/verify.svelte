@@ -71,13 +71,13 @@ onMount(async () => {
 /* endregion lifecycle */
 </script>
 
-<div in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }} class="space-y-4">
+<div class="space-y-4" in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
   <div>{m.verifying()}</div>
 
   {#if $formData.token && $formData.type}
-    <form id="verify" method="POST" action="?/acct" use:enhance>
-      <input type="hidden" name="token" bind:value={$formData.token} />
-      <input type="hidden" name="type" bind:value={$formData.type} />
+    <form action="?/acct" id="verify" method="POST" use:enhance>
+      <input name="token" type="hidden" bind:value={$formData.token} />
+      <input name="type" type="hidden" bind:value={$formData.type} />
     </form>
   {/if}
 

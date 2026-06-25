@@ -6,11 +6,11 @@ let { ref = $bindable(null), class: className, ...restProps }: NavigationMenuPri
 </script>
 
 <NavigationMenuPrimitive.List
-  bind:ref
-  data-slot="navigation-menu-list"
   class={cn(
 		"gap-0 group flex flex-1 list-none items-center justify-center",
 		className
 	)}
+  data-slot="navigation-menu-list"
+  bind:ref
   {...restProps}
 />

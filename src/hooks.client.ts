@@ -9,11 +9,11 @@ import { log } from '$lib/utils';
  * Initialises PostHog without a user; identity is set later via
  * initPosthog(user) if a session becomes available.
  */
-export async function init() {
+export function init() {
   initPosthog();
 }
 
-export const handleError = async ({ error, event, message, status }) => {
+export const handleError = ({ error, event, message, status }) => {
   if (status !== 404) {
     const errorId = crypto.randomUUID();
     const err = error as Error;

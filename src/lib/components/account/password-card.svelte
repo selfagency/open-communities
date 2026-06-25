@@ -22,7 +22,7 @@ let {
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="oldPassword">{m.currentPassword()}</Form.Label>
-          <Input {...props} id="oldPassword" name="oldPassword" type="password" autocomplete="current-password" />
+          <Input {...props} autocomplete="current-password" id="oldPassword" name="oldPassword" type="password" />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -32,7 +32,7 @@ let {
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="password">{m.newPassword()}</Form.Label>
-          <Input {...props} id="password" name="password" type="password" autocomplete="new-password" />
+          <Input {...props} autocomplete="new-password" id="password" name="password" type="password" />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />
@@ -42,7 +42,7 @@ let {
       <Form.Control>
         {#snippet children(props)}
           <Form.Label for="passwordConfirm">{m.confirmPassword()}</Form.Label>
-          <Input {...props} id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" />
+          <Input {...props} autocomplete="new-password" id="passwordConfirm" name="passwordConfirm" type="password" />
         {/snippet}
       </Form.Control>
       <Form.FieldErrors />

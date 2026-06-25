@@ -116,8 +116,8 @@ let formHasErrors = $derived(appState.form?.hasErrors);
     <div>
       {#if loadingSecondary}
         <div
-          transition:fade={{ delay: 300, duration: 100 }}
           class="flex h-full min-h-96 w-full flex-col items-center justify-center"
+          transition:fade={{ delay: 300, duration: 100 }}
         >
           <Card.Content>
             <Loading />
@@ -125,7 +125,7 @@ let formHasErrors = $derived(appState.form?.hasErrors);
         </div>
       {:else}
         <div transition:fade={{ delay: 300, duration: 100 }}>
-          <form id="addEdit" method="POST" action="?/submit" use:enhance class="min-h-96">
+          <form action="?/submit" class="min-h-96" id="addEdit" method="POST" use:enhance>
             <Card.Header>
               <Card.Title class="font-display text-2xl font-normal">
                 {title}
@@ -159,14 +159,14 @@ let formHasErrors = $derived(appState.form?.hasErrors);
                 {#if !formSuccess}
                   {#if formHasErrors}
                     <span in:fade={{ delay: 300, duration: 150 }} out:fade={{ delay: 150, duration: 150 }}>
-                      <Alert.Root variant="destructive" class="my-4 bg-destructive/10">
+                      <Alert.Root class="my-4 bg-destructive/10" variant="destructive">
                         <WarningIcon size="18" />
-                        <Alert.Description class="mt-0.5" aria-live="polite">{m.formErrors()}</Alert.Description>
+                        <Alert.Description aria-live="polite" class="mt-0.5">{m.formErrors()}</Alert.Description>
                       </Alert.Root>
                     </span>
                   {/if}
 
-                  <Accordion.Root type="single" bind:value={view} class="w-full">
+                  <Accordion.Root class="w-full" type="single" bind:value={view}>
                     <Congregation {errors} {form} {formData} bind:view />
                     <Fit {errors} {form} {formData} bind:view />
                     <Services {errors} {form} {formData} bind:view />
@@ -218,8 +218,6 @@ let formHasErrors = $derived(appState.form?.hasErrors);
                 <!-- default -->
                 <div class="flex flex-row items-center justify-end space-x-2" class:w-full={mode === "add"}>
                   <Button
-                    variant="outline"
-                    type="reset"
                     onclick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -232,6 +230,8 @@ let formHasErrors = $derived(appState.form?.hasErrors);
                         }
                       });
                     }}
+                    type="reset"
+                    variant="outline"
                   >
                     {m.reset()}
                   </Button>
@@ -255,7 +255,7 @@ let formHasErrors = $derived(appState.form?.hasErrors);
   {#if dev}
     {#await import("sveltekit-superforms") then { default: SuperDebug }}
       <div class="mt-4">
-        <SuperDebug data={$formData} collapsible collapsed />
+        <SuperDebug collapsed collapsible data={$formData} />
       </div>
     {/await}
   {/if}

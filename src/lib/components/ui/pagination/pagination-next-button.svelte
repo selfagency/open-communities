@@ -15,8 +15,8 @@ let { children, class: className, ref = $bindable(null), ...restProps }: Paginat
 {/snippet}
 
 <PaginationPrimitive.NextButton
-  bind:ref
   aria-label={m.paginationNext()}
+  children={children || Fallback}
   class={cn(
     buttonVariants({
       class: 'gap-1 px-2.5 sm:pr-2.5',
@@ -25,6 +25,6 @@ let { children, class: className, ref = $bindable(null), ...restProps }: Paginat
     }),
     className
   )}
-  children={children || Fallback}
+  bind:ref
   {...restProps}
 />

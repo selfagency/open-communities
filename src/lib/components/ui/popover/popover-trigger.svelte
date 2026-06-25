@@ -6,4 +6,4 @@ import { cn } from '$lib/utils.js';
 let { class: className, ref = $bindable(null), ...restProps }: PopoverPrimitive.TriggerProps = $props();
 </script>
 
-<PopoverPrimitive.Trigger bind:ref data-slot="popover-trigger" class={cn('', className)} {...restProps} />
+<PopoverPrimitive.Trigger class={cn('', className)} data-slot="popover-trigger" bind:ref {...restProps} />

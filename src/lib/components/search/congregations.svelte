@@ -142,7 +142,7 @@ let isMobile = $derived(appState.isMobile);
 
 <section class="w-full space-y-4">
   {#if loading}
-    <div class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+    <div aria-busy="true" class="grid w-full auto-cols-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {#each skeletons as s}
         <div class="col-span-1">
           <div class="flex h-full min-h-56 flex-col justify-between rounded-xl border bg-background p-4">
@@ -171,25 +171,25 @@ let isMobile = $derived(appState.isMobile);
       <div
         class="relative flex w-full min-w-max flex-row items-center justify-start text-muted-foreground shadow-xs rounded-md"
       >
-        <SearchIcon size="18" class="absolute left-3 z-10 pointer-events-none" />
+        <SearchIcon class="absolute left-3 z-10 pointer-events-none" size="18" />
         <span class="relative w-full">
           <Input
+            class="w-full h-11 placeholder:text-muted-foreground shadow-none pl-10 pr-10"
+            id="search"
             placeholder={m.search()}
             bind:value={searchTerms}
-            id="search"
-            class="w-full h-11 placeholder:text-muted-foreground shadow-none pl-10 pr-10"
           />
 
           {#if searchTerms}
             <span class="absolute top-0 z-10 flex h-11 w-11 items-center justify-center ltr:right-0 rtl:left-0">
               <Button
-                variant="ghost"
-                size="icon"
                 class="size-full text-muted-foreground hover:text-foreground"
                 onclick={() => {
                   searchTerms = "";
                   search.setSearchTerms(searchTerms);
                 }}
+                size="icon"
+                variant="ghost"
               >
                 <ClearIcon size="16" />
                 <span class="sr-only">{m.clear()}</span>
@@ -201,15 +201,15 @@ let isMobile = $derived(appState.isMobile);
 
       <div class="flex w-full flex-row items-center justify-end space-x-2 sm:w-auto">
         <Button
-          variant="outline"
           class="group space-x-2 text-muted-foreground rtl:mx-1 ${$searchState.showLocation ? 'bg-muted' : ''}"
           onclick={() => {
             search.toggleLocation();
           }}
+          variant="outline"
         >
           <LocationIcon
-            size="20"
             class="rtl:mx-1 transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+            size="20"
           />
           <span>{m.location()}</span>
         </Button>
@@ -243,7 +243,7 @@ let isMobile = $derived(appState.isMobile);
     {/if}
 
     <div class="flex w-full scale-90 flex-row items-center justify-center pt-4 sm:scale-100">
-      <Pagination.Root count={$results?.length || 0} {perPage} {onPageChange} siblingCount={isMobile ? 0 : 1}>
+      <Pagination.Root count={$results?.length || 0} {onPageChange} {perPage} siblingCount={isMobile ? 0 : 1}>
         {#snippet children({ currentPage, pages })}
           <Pagination.Content>
             <Pagination.Item>
@@ -256,7 +256,7 @@ let isMobile = $derived(appState.isMobile);
                 </Pagination.Item>
               {:else}
                 <Pagination.Item>
-                  <Pagination.Link {page} isActive={currentPage == page.value}>
+                  <Pagination.Link isActive={currentPage == page.value} {page}>
                     {page.value}
                   </Pagination.Link>
                 </Pagination.Item>

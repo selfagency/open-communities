@@ -112,9 +112,9 @@ $effect(() => {
       </span>
     {:else}
       <form
+        class="space-y-4"
         method="POST"
         use:enhance
-        class="space-y-4"
         in:fade={{ delay: 200, duration: 100 }}
         out:fade={{ delay: 0, duration: 100 }}
       >
@@ -122,7 +122,7 @@ $effect(() => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input {...props} bind:value={$formData.name} required />
+              <Input {...props} required bind:value={$formData.name} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -132,7 +132,7 @@ $effect(() => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} bind:value={$formData.email} required />
+              <Input {...props} required bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -167,14 +167,14 @@ $effect(() => {
                 <Combobox
                   items={congregations}
                   {...props}
-                  bind:value={congregation}
-                  placeholder={m.selectThing({
-                    thing: m.congregation().toLowerCase()
-                  })}
                   disabled={$formData.reason !== 'suggest' && $formData.reason !== 'claim'}
                   onChange={(id) => {
                     $formData.record = id;
                   }}
+                  placeholder={m.selectThing({
+                    thing: m.congregation().toLowerCase()
+                  })}
+                  bind:value={congregation}
                 />
               {/snippet}
             </Form.Control>
@@ -193,7 +193,7 @@ $effect(() => {
                   {m.contact_proof()}
                 {/if}
               </Form.Description>
-              <Textarea {...props} bind:value={$formData.message} rows={8} required />
+              <Textarea {...props} required rows={8} bind:value={$formData.message} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
