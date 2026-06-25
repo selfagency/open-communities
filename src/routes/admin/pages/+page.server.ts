@@ -9,12 +9,12 @@ export const load: PageServerLoad = async ({ locals }) => {
   return {
     pages: pages.map((p: Record<string, unknown>) => ({
       id: p.id as string,
-      title: p.title,
-      slug: p.slug,
+      title: p.title as string,
+      slug: p.slug as string,
       description: (p.description as string) ?? '',
       imageAlt: (p.imageAlt as string) ?? '',
       imageCaption: (p.imageCaption as string) ?? '',
-      updated: p.updated
+      updated: p.updated as string
     }))
   };
 };

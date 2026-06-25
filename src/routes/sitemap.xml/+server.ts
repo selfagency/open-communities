@@ -52,11 +52,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 
     paramValues: {
       // CMS pages via [slug] route
-      '/[slug]': pageSlugs.map((slug) => ({
-        values: [slug],
-        changefreq: 'monthly' as const,
-        priority: 0.5
-      }))
+      '/[slug]': pageSlugs.map((slug) => [slug])
     },
 
     additionalPaths: [

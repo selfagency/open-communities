@@ -84,7 +84,8 @@ export const actions = {
     for (const entry of entries) {
       try {
         if (entry.id) {
-          await withRetry(() => client.collection('translations').update(entry.id, { value: entry.value }));
+          const eid = entry.id;
+          await withRetry(() => client.collection('translations').update(eid, { value: entry.value }));
           results.updated++;
         } else {
           await withRetry(() =>

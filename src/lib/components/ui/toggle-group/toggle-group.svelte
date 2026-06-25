@@ -14,7 +14,7 @@
 		setContext("toggleGroup", props);
 	}
 
-	function getToggleGroupCtx() {
+	export function getToggleGroupCtx() {
 		return getContext<Required<ToggleGroupContext>>("toggleGroup");
 	}
 </script>

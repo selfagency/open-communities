@@ -95,7 +95,8 @@ export const actions = {
         };
 
         if (v.id) {
-          await withRetry(() => client.collection('pageVariants').update(v.id, vBody));
+          const vid = v.id;
+          await withRetry(() => client.collection('pageVariants').update(vid, vBody));
         } else {
           await withRetry(() => client.collection('pageVariants').create(vBody));
         }

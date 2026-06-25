@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import pell from 'pell';
+  import { onMount } from 'svelte';
   import 'pell/dist/pell.min.css';
 
   let {
@@ -52,7 +52,7 @@
 </script>
 
 <div class="pell-wrapper" data-editor-id={id} class:rtl={dir === 'rtl'}>
-  <div bind:this={editorEl} aria-placeholder={placeholder}></div>
+  <div bind:this={editorEl}></div>
 </div>
 
 <style>

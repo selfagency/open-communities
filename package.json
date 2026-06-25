@@ -127,20 +127,11 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@posthog/cli",
-      "@tailwindcss/oxide",
-      "core-js",
-      "esbuild",
-      "msw",
-      "sqlite3"
-    ]
+    "onlyBuiltDependencies": ["@posthog/cli", "@tailwindcss/oxide", "core-js", "esbuild", "msw", "sqlite3"]
   },
   "packageManager": "pnpm@10.18.3",
   "jsrepo": {
     "rootDir": "src/lib/components/ui",
-    "include": [
-      "src/lib/components/ui"
-    ]
+    "include": ["src/lib/components/ui"]
   }
 }
