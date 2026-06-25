@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ locals }) => {
       requestKey: 'admin-export-users'
     })
   );
-  const header = 'name,email,congregation,congregation_city,congregation_state,congregation_country';
+  const header = 'name,email,notifications,congregation,congregation_city,congregation_state,congregation_country';
   const rows = users
     .map((u: Record<string, unknown>) => {
       const expand = u.expand as Record<string, unknown> | undefined;
@@ -27,7 +27,8 @@ export const GET: RequestHandler = async ({ locals }) => {
       const cityData = congExpand?.city as Record<string, string> | undefined;
       const stateData = congExpand?.state as Record<string, string> | undefined;
       const countryData = congExpand?.country as Record<string, string> | undefined;
-      return `${csvEscape(u.name)},${csvEscape(u.email)},${csvEscape(congData?.name ?? '')},${csvEscape(cityData?.name ?? '')},${csvEscape(stateData?.name ?? '')},${csvEscape(countryData?.name ?? '')}`;
+      const optedOut = u.notifications === false ? 'yes' : '';
+      return `${csvEscape(u.name)},${csvEscape(u.email)},${csvEscape(optedOut)},${csvEscape(congData?.name ?? '')},${csvEscape(cityData?.name ?? '')},${csvEscape(stateData?.name ?? '')},${csvEscape(countryData?.name ?? '')}`;
     })
     .join('\n');
   const csv = `${header}\n${rows}`;
