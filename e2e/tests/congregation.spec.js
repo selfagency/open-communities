@@ -42,8 +42,8 @@ test.describe('Congregation CRUD', () => {
     // Use the input ID rendered by shadcn-svelte Form.Field (inside accordion)
     // Force to true since the input is inside a collapsed accordion
     const nameInput = page.locator('#name');
-    await nameInput.waitFor({ state: 'attached', timeout: 10000 });
-    await nameInput.fill(congregationName, { force: true });
+    await nameInput.waitFor({ state: 'visible', timeout: 10000 });
+    await nameInput.fill(congregationName);
 
     const contactInput = page.locator('input[name="contactEmail"]');
     if (await contactInput.isVisible()) {

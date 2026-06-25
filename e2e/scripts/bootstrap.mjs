@@ -94,7 +94,7 @@ async function importSchema(token) {
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Schema import failed: ${res.status} — ${text.slice(0, 200)}`);
+    throw new Error(`Schema import failed: ${res.status}`);
   }
   console.log('  ✅ Collections imported');
 }
@@ -120,7 +120,7 @@ async function configureSMTP(token) {
     });
     if (!res.ok) {
       const text = await res.text();
-      throw new Error(`SMTP config failed: ${res.status} — ${text.slice(0, 100)}`);
+      throw new Error(`SMTP config failed: ${res.status}`);
     }
     console.log('  ✅ SMTP configured (Mailpit)');
   } catch (err) {

@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
+// Skipped: @testing-library/svelte has a known incompatibility with Svelte 5
+// (The $ name is reserved compile error). See AGENTS.md.
 describe.skip('Menu component (logged in)', () => {
   it('shows edit and logout when user has congregation and email', async () => {
     const fakeSearchParams = { get: () => null, has: () => false };

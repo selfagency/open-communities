@@ -3,6 +3,8 @@
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
+  import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
+  import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
   import TrashIcon from '@tabler/icons-svelte/icons/trash';
   import {
     Accordion, AccordionContent, AccordionItem, AccordionTrigger
@@ -232,7 +234,10 @@
       </div>
       <AlertDialog bind:open={showWarning}>
         <AlertDialogTrigger>
-          <Button variant="outline">Rebuild</Button>
+          <Button variant="outline">
+            <RefreshIcon class="mr-1.5 size-4" />
+            Rebuild
+          </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -250,7 +255,10 @@
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <Button variant="outline" onclick={() => { addKey = ''; addValue = ''; showAddDialog = true; }}>Add Key</Button>
+      <Button variant="outline" onclick={() => { addKey = ''; addValue = ''; showAddDialog = true; }}>
+        <CirclePlusIcon class="mr-1.5 size-4" />
+        Add Key
+      </Button>
     </div>
   </div>
 
