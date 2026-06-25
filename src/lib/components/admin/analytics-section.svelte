@@ -12,6 +12,7 @@
     avg_session_duration: PhMetric & { current: string; previous: string };
     top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
     top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
+    goals: Array<{ name: string; conversions: number; change: PhChange }>;
     dashboard_url: string;
   }
 
@@ -50,7 +51,7 @@
     </div>
   </div>
 
-  <div class="mt-4 grid gap-4 md:grid-cols-4">
+  <div class="mt-4 grid gap-4 md:grid-cols-5">
     <Card>
       <CardHeader class="pb-2">
         <CardTitle class="font-serif text-lg font-bold tracking-wider">Visitors</CardTitle>
@@ -90,6 +91,14 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
+      </CardContent>
+    </Card>
+    <Card>
+      <CardHeader class="pb-2">
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Avg. Session</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{digest.avg_session_duration.current || '—'}</p>
       </CardContent>
     </Card>
   </div>
@@ -146,4 +155,32 @@
       </CardContent>
     </Card>
   </div>
+
+  {#if digest.goals?.length > 0}
+    <Card>
+      <CardHeader>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Conversions</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead class="font-bold">Goal</TableHead>
+              <TableHead class="text-right font-bold">Conversions</TableHead>
+              <TableHead class="text-right font-bold">Change</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {#each digest.goals as goal}
+              <TableRow>
+                <TableCell class="font-medium">{goal.name}</TableCell>
+                <TableCell class="text-right">{goal.conversions}</TableCell>
+                <TableCell class="text-right">{goal.change?.percent ?? 0}%</TableCell>
+              </TableRow>
+            {/each}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  {/if}
 {/if}
