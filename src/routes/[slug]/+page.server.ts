@@ -36,8 +36,8 @@ export async function load({ cookies, fetch, locals, params }) {
     }
 
     return {
-      page: page as Record<string, unknown>,
-      variant: variant as Record<string, unknown> | null
+      page: page as unknown as Record<string, unknown>,
+      variant: variant as unknown as Record<string, unknown> | null
     };
   } catch (err) {
     if (isFunction(captureException)) {

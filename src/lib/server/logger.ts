@@ -13,7 +13,7 @@ import { logger } from '$lib/utils';
 // OpenTelemetry log bridge — emits log records via the OTel logger
 // configured in src/instrumentation.server.ts, if available.
 function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
-  const otelLogger: undefined | { emit: (record: unknown) => void } = (globalThis as Record<string, unknown>)
+  const otelLogger: undefined | { emit: (record: unknown) => void } = (globalThis as unknown as Record<string, unknown>)
     .__OTEL_LOGGER__ as undefined | { emit: (record: unknown) => void };
   if (!otelLogger) {
     return;
@@ -31,7 +31,7 @@ function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
     };
     otelLogger.emit({
       severityText: severityMap[logObject._meta?.logLevelId as unknown as keyof typeof severityMap] || 'info',
-      body: typeof logObject === 'object' ? shake(logObject as Record<string, unknown>) : logObject,
+      body: typeof logObject === 'object' ? shake(logObject as unknown as Record<string, unknown>) : logObject,
       attributes: {
         'service.name': 'open-communities',
         'service.version': '1.0.0',

@@ -57,7 +57,7 @@ function convertBooleans(obj: unknown): unknown {
     return obj.map(convertBooleans);
   }
   if (obj !== null && typeof obj === 'object') {
-    const source = obj as Record<string, unknown>;
+    const source = obj as unknown as Record<string, unknown>;
     return Object.keys(source).reduce<Record<string, unknown>>((acc, key) => {
       if (!Object.hasOwn(source, key) || key === '__proto__' || key === 'constructor') {
         return acc;
@@ -89,7 +89,7 @@ function isPbError(err: unknown): err is { message: string; status: number } {
     err !== null &&
     'status' in err &&
     'message' in err &&
-    typeof (err as Record<string, unknown>).status === 'number'
+    typeof (err as unknown as Record<string, unknown>).status === 'number'
   );
 }
 

@@ -20,7 +20,7 @@ let { errors, form, formData, loading = $bindable(), view = $bindable() } = $pro
 const hasServices: boolean = $derived(valueSet($formData.services));
 
 /* region methods */
-const fixType = (input: any) => input as Record<string, unknown> & { _errors?: string[] | undefined };
+const fixType = (input: any) => input as unknown as Record<string, unknown> & { _errors?: string[] | undefined };
 /* endregion methods */
 </script>
 

@@ -13,8 +13,8 @@ import type { PageProps } from './$types';
 // props
 const { data }: PageProps = $props();
 
-const page = $derived(data.page as Record<string, unknown> | undefined);
-const variant = $derived(data.variant as Record<string, unknown> | null);
+const page = $derived(data.page as unknown as Record<string, unknown> | undefined);
+const variant = $derived(data.variant as unknown as Record<string, unknown> | null);
 
 const title = $derived((variant?.title as string) || (page?.title as string) || '');
 const description = $derived((variant?.description as string) || (page?.description as string) || '');

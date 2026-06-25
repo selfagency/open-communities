@@ -35,7 +35,7 @@ describe('Contact segment (behavior)', () => {
     );
     unsub();
 
-    expect((latest as unknown as Record<string, unknown>).contactName).toBe('Alice');
-    expect((latest as unknown as Record<string, unknown>).contactEmail).toBe('alice@example.org');
+    expect((latest as unknown as unknown as Record<string, unknown>).contactName).toBe('Alice');
+    expect((latest as unknown as unknown as Record<string, unknown>).contactEmail).toBe('alice@example.org');
   });
 });

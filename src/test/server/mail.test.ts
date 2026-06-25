@@ -70,6 +70,7 @@ async function ensureMailpitRunning() {
     child.unref();
   } catch (e) {
     // ignore spawn errors for local runs; we'll still poll for a running service
+    // biome-ignore lint/complexity/noVoid: intentional catch discard
     void e;
     const deadline = Date.now() + 10_000;
     while (Date.now() < deadline) {

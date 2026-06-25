@@ -108,7 +108,7 @@ function wireFakeSearch() {
 
 beforeEach(() => {
   // signal components to skip artificial delays during tests
-  (globalThis as Record<string, unknown>).__TEST__ = true;
+  (globalThis as unknown as Record<string, unknown>).__TEST__ = true;
   currentResults = [];
   setSearchTermsSpy.mockClear();
   toggleLocationSpy.mockClear();

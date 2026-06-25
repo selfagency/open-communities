@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, 'User not found');
   }
 
-  const expand = user.expand as Record<string, unknown> | undefined;
+  const expand = user.expand as unknown as Record<string, unknown> | undefined;
   const congData = (expand?.congregation as Record<string, string> | undefined) || null;
 
   const available = await client
@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       congregation: (user.congregation as string) ?? '',
       congregationName: congData?.name ?? ''
     },
-    availableCongregations: (available as Record<string, unknown>[]).map((c) => ({
+    availableCongregations: (available as unknown as Record<string, unknown>[]).map((c) => ({
       id: c.id as string,
       name: c.name as string
     }))

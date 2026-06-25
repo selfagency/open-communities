@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   }
 
   return {
-    page: page as Record<string, unknown>
+    page: page as unknown as Record<string, unknown>
   };
 };
 

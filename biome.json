@@ -20,9 +20,9 @@
       "!**/npmlogs/",
       "!**/test-results/",
       "!.github/codepilot-instructions.md",
-      "!src/lib/assets",
+      "!src/lib/assets/**",
       "!src/app.css",
-      "!static"
+      "!static/**"
     ]
   },
   "formatter": {
@@ -55,6 +55,38 @@
         "noExportedImports": "off",
         "noParameterProperties": "off",
         "useFilenamingConvention": "off"
+      },
+      "complexity": {
+        "noForEach": "warn",
+        "noBannedTypes": "error",
+        "noEmptyTypeParameters": "warn",
+        "noStaticOnlyClass": "warn",
+        "noThisInStatic": "error",
+        "noUselessEmptyExport": "warn",
+        "noUselessLoneBlockStatements": "warn",
+        "useDateNow": "warn",
+        "useFlatMap": "warn"
+      },
+      "suspicious": {
+        "noApproximativeNumericConstant": "warn",
+        "noAsyncPromiseExecutor": "error",
+        "noCatchAssign": "error",
+        "noClassAssign": "error",
+        "noCommentText": "error",
+        "noCompareNegZero": "error",
+        "noDebugger": "warn",
+        "noDuplicateSelectorsKeyframeBlock": "warn",
+        "noEvolvingTypes": "off",
+        "noFallthroughSwitchClause": "error",
+        "noFunctionAssign": "error",
+        "noImportAssign": "error",
+        "noShadowRestrictedNames": "warn",
+        "noUnsafeDeclarationMerging": "warn",
+        "useBiomeIgnoreFolder": "off",
+        "useIterableCallbackReturn": "warn"
+      },
+      "security": {
+        "noGlobalEval": "warn"
       },
       "performance": {
         "noBarrelFile": "off"
@@ -115,14 +147,7 @@
           "suspicious": {
             "noExplicitAny": "off",
             "noShadowRestrictedNames": "off",
-            "useIterableCallbackReturn": "off",
-            "noEmptyBlockStatements": "off",
-            "useAwait": "off",
-            "noUnassignedVariables": "off"
-          },
-          "performance": {
-            "useTopLevelRegex": "off",
-            "noNamespaceImport": "off"
+            "useIterableCallbackReturn": "off"
           },
           "a11y": {
             "useButtonType": "off",
@@ -153,15 +178,11 @@
             "noShadowRestrictedNames": "off",
             "noDoubleEquals": "off",
             "noAssignInExpressions": "warn",
-            "noDocumentCookie": "warn",
-            "noUnassignedVariables": "off",
-            "useAwait": "off"
+            "noDocumentCookie": "warn"
           },
           "style": {
             "noNonNullAssertion": "off",
-            "useTemplate": "off",
-            "noRestrictedGlobals": "off",
-            "noNestedTernary": "off"
+            "useTemplate": "off"
           },
           "a11y": {
             "useButtonType": "off",
@@ -171,12 +192,6 @@
             "noSvgWithoutTitle": "off",
             "useValidAnchor": "warn",
             "noStaticElementInteractions": "warn"
-          },
-          "complexity": {
-            "noVoid": "off"
-          },
-          "performance": {
-            "noNamespaceImport": "off"
           }
         }
       }

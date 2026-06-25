@@ -1,5 +1,4 @@
 <script lang="ts">
-// biome-ignore lint/correctness/noUnusedImports: used as TooltipPrimitive.Root in template
 import { getChartContext, Tooltip as TooltipPrimitive } from 'layerchart';
 import type { Snippet } from 'svelte';
 import type { HTMLAttributes } from 'svelte/elements';
@@ -71,7 +70,7 @@ const formattedLabel = $derived.by(() => {
     chart.config,
     item,
     key,
-    tooltipData as Record<string, unknown> | null
+    tooltipData as unknown as Record<string, unknown> | null
   );
 
   let value: unknown;

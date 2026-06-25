@@ -17,7 +17,7 @@ const { data }: PageProps = $props();
 
 // svelte-ignore state_referenced_locally
 // Intentional: form is initialized once from server data (not reactive to prop changes)
-const form = initForm(data.form?.default as unknown as Record<string, unknown>, 'add', data.user?.admin);
+const form = initForm(data.form?.default as unknown as unknown as Record<string, unknown>, 'add', data.user?.admin);
 
 export const snapshot = { capture: form.capture, restore: form.restore };
 /*endregion variables */

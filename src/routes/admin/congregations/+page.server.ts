@@ -2,7 +2,7 @@ import { withRetry } from '$lib/server/api';
 import type { PageServerLoad } from './$types';
 
 function mapCong(c: Record<string, unknown>) {
-  const expand = c.expand as Record<string, unknown> | undefined;
+  const expand = c.expand as unknown as Record<string, unknown> | undefined;
   const cityData = expand?.city as Record<string, string> | undefined;
   const stateData = expand?.state as Record<string, string> | undefined;
   const countryData = stateData?.country as Record<string, string> | undefined;

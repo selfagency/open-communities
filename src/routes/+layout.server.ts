@@ -16,7 +16,7 @@ export async function load({ cookies, fetch, locals }) {
     const countries = await withRetry(() => getCachedCountries(api, { fetch }));
 
     return {
-      countries: countries.map((c) => cleanResponse(c as Record<string, unknown>)),
+      countries: countries.map((c) => cleanResponse(c as unknown as Record<string, unknown>)),
       lang,
       offline: false,
       user

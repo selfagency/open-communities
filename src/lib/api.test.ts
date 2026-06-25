@@ -54,7 +54,7 @@ describe('src/lib/api', () => {
       updated: '2025-01-01'
     } as const;
 
-    const out = cleanResponse(input as unknown as Record<string, unknown>);
+    const out = cleanResponse(input as unknown as unknown as Record<string, unknown>);
 
     expect(out).not.toHaveProperty('collectionId');
     expect(out).not.toHaveProperty('collectionName');
@@ -80,7 +80,7 @@ describe('src/lib/api', () => {
       updated: '2025-01-01'
     } as const;
 
-    const out = cleanResponse(input as unknown as Record<string, unknown>, true);
+    const out = cleanResponse(input as unknown as unknown as Record<string, unknown>, true);
 
     expect(out).not.toHaveProperty('collectionId');
     expect(out).not.toHaveProperty('collectionName');
@@ -114,7 +114,7 @@ describe('src/lib/api', () => {
     const input = [
       { a: 1, collectionId: 'x' },
       { a: 0, collectionId: 'y' }
-    ] as unknown as Record<string, unknown>;
+    ] as unknown as unknown as Record<string, unknown>;
     const out = cleanResponse(input as any);
     // Boolean conversion should apply to array elements
     expect(out).toBeDefined();

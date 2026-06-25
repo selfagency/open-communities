@@ -48,7 +48,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   for (const s of allStates) {
     stateCountryMap[s.id as string] = (s.country as string) || '';
   }
-  for (const cong of allCongs as Record<string, unknown>[]) {
+  for (const cong of allCongs as unknown as Record<string, unknown>[]) {
     const coId = cong.country as string;
     const stId = cong.state as string;
     if (coId) {
@@ -68,11 +68,11 @@ export const load: PageServerLoad = async ({ locals }) => {
     .filter(([id]) => {
       const coId = stateCountryMap[id];
       const co = allCountries.find((c: Record<string, unknown>) => c.id === coId);
-      return co && (co as Record<string, unknown>).code === 'US';
+      return co && (co as unknown as Record<string, unknown>).code === 'US';
     })
     .map(([id, count]) => ({
       name:
-        ((allStates.find((s: Record<string, unknown>) => s.id === id) as Record<string, unknown>)?.name as string) ||
+        ((allStates.find((s: Record<string, unknown>) => s.id === id) as unknown as Record<string, unknown>)?.name as string) ||
         id,
       count
     }))

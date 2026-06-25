@@ -13,7 +13,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
   const cong = await withRetry(() => client.collection('congregations').getOne(params.id, { expand: 'owner' }));
 
   // Send rejection email before deleting
-  const owner = (cong as Record<string, unknown>).expand as
+  const owner = (cong as unknown as Record<string, unknown>).expand as
     | Record<string, { email?: string; name?: string }>
     | undefined;
   if (owner?.owner?.email) {

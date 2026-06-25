@@ -20,7 +20,7 @@ export async function load({ fetch, locals }) {
             filter: client?.admin ? '' : 'visible=1'
           })
         )
-      ).map((c) => cleanResponse(c as Record<string, unknown>))
+      ).map((c) => cleanResponse(c as unknown as Record<string, unknown>))
     };
   } catch (err) {
     if (isFunction(captureException)) {

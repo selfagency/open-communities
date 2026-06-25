@@ -12,6 +12,7 @@ import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/s
 /* endregion imports */
 
 declare global {
+  // biome-ignore lint/style/noNamespace: required by SvelteKit
   namespace App {
     interface Error {
       code?: string;

@@ -340,7 +340,7 @@ export class Search {
 
   /** Index a bool-typed child table record (services, security, accessibility). */
   private _indexBoolRecord(key: string, record: Record<string, unknown>, idx: number): void {
-    const sub = record[key] as Record<string, unknown> | undefined;
+    const sub = record[key] as unknown as Record<string, unknown> | undefined;
     if (!sub) {
       return;
     }

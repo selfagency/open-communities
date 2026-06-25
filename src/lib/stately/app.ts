@@ -74,7 +74,7 @@ export const useAppStore = defineStore('app', {
           continue;
         }
         if (this[key as keyof AppState] !== value) {
-          (this as unknown as Record<string, unknown>)[key] = value;
+          (this as unknown as unknown as Record<string, unknown>)[key] = value;
         }
       }
     }

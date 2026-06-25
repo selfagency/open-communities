@@ -25,6 +25,5 @@ const attrs = $derived({
 {#if child}
   {@render child({ props: attrs })}
 {:else}
-  <!-- biome-ignore lint/a11y/useValidAnchor: generic component, href provided via restProps -->
   <a bind:this={ref} {...attrs}> {@render children?.()} </a>
 {/if}

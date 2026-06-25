@@ -31,9 +31,9 @@ export const GET: RequestHandler = async ({ locals }) => {
   const header = 'name,email,email_opted_out,congregation,congregation_city,congregation_state,congregation_country';
   const rows = users
     .map((u: Record<string, unknown>) => {
-      const expand = u.expand as Record<string, unknown> | undefined;
-      const congData = expand?.congregation as Record<string, unknown> | undefined;
-      const congExpand = congData?.expand as Record<string, unknown> | undefined;
+      const expand = u.expand as unknown as Record<string, unknown> | undefined;
+      const congData = expand?.congregation as unknown as Record<string, unknown> | undefined;
+      const congExpand = congData?.expand as unknown as Record<string, unknown> | undefined;
       const cityData = congExpand?.city as Record<string, string> | undefined;
       const stateData = congExpand?.state as Record<string, string> | undefined;
       const countryData = congExpand?.country as Record<string, string> | undefined;

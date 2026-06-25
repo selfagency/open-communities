@@ -22,7 +22,7 @@ const hasFit: boolean = $derived(valueSet($formData.fit));
 /* endregion variables */
 
 /* region methods */
-const fixType = (input: any) => input as Record<string, unknown> & { _errors?: string[] | undefined };
+const fixType = (input: any) => input as unknown as Record<string, unknown> & { _errors?: string[] | undefined };
 /* endregion methods */
 </script>
 
