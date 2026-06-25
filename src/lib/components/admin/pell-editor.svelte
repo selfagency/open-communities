@@ -1,0 +1,94 @@
+<script lang="ts">
+  import { onMount } from 'svelte';
+  import pell from 'pell';
+  import 'pell/dist/pell.min.css';
+
+  let {
+    value = $bindable(''),
+    placeholder = 'Write content...',
+    id = 'pell-editor',
+    dir
+  }: {
+    value: string;
+    placeholder?: string;
+    id?: string;
+    dir?: 'rtl' | 'ltr';
+  } = $props();
+
+  let editorEl: HTMLDivElement;
+  let editor: ReturnType<typeof pell.init>;
+
+  onMount(() => {
+    if (!editorEl) return;
+
+    editor = pell.init({
+      element: editorEl,
+      defaultParagraphSeparator: 'p',
+      styleWithCSS: false,
+      onChange: (html: string) => {
+        value = html;
+      },
+      actions: [
+        'bold',
+        'italic',
+        'underline',
+        'strikethrough',
+        'heading1',
+        'heading2',
+        'paragraph',
+        'quote',
+        'olist',
+        'ulist',
+        'code',
+        'line',
+        'link'
+      ]
+    });
+
+    if (value) {
+      editor.content.innerHTML = value;
+    }
+  });
+</script>
+
+<div class="pell-wrapper" data-editor-id={id} class:rtl={dir === 'rtl'}>
+  <div bind:this={editorEl} aria-placeholder={placeholder}></div>
+</div>
+
+<style>
+  .pell-wrapper {
+    min-height: 300px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .pell-wrapper :global(.pell-content) {
+    min-height: 280px;
+    padding: 1rem;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .pell-wrapper.rtl :global(.pell-content) {
+    direction: rtl;
+  }
+  .pell-wrapper :global(.pell-content) {
+    height: auto;
+  }
+  .pell-wrapper :global(.pell-actionbar) {
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border);
+  }
+  .pell-wrapper :global(.pell-button) {
+    background-color: var(--background);
+    color: var(--foreground);
+    border: none;
+    padding: 0.5rem 0.6rem;
+    cursor: pointer;
+  }
+  .pell-wrapper :global(.pell-button:hover) {
+    background-color: var(--accent);
+  }
+  .pell-wrapper :global(.pell-button-selected) {
+    background-color: var(--accent);
+  }
+</style>

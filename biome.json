@@ -19,7 +19,6 @@
       "!.github/codepilot-instructions.md",
       "!src/lib/assets/**",
       "!src/app.css",
-      "!src/lib/edra/**",
       "!static/**"
     ]
   },

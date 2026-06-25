@@ -13,5 +13,5 @@
     "lib": ["DOM", "ESNext"],
     "types": ["node", "nodemailer", "web"]
   },
-  "exclude": ["src/lib/edra", "node_modules"]
+  "exclude": ["node_modules"]
 }
