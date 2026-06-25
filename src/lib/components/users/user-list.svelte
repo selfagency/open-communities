@@ -3,6 +3,17 @@ import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
+
+/** HTML-escape a string for safe interpolation in createRawSnippet. */
+function escapeHtml(s: string): string {
+  return s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { Button } from '$lib/components/ui/button';
@@ -55,7 +66,7 @@ const columns: ColumnDef<User>[] = [
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
-          render: () => `<span class="font-medium">${get().v || '—'}</span>`
+          render: () => `<span class="font-medium">${escapeHtml(get().v || '—')}</span>`
         })),
         { v: row.original.name }
       )
@@ -65,7 +76,7 @@ const columns: ColumnDef<User>[] = [
     header: m.email(),
     cell: ({ row }) =>
       renderSnippet(
-        createRawSnippet<[{ v: string }]>((get) => ({ render: () => get().v })),
+        createRawSnippet<[{ v: string }]>((get) => ({ render: () => escapeHtml(get().v) })),
         { v: row.original.email }
       )
   },
@@ -113,7 +124,7 @@ const columns: ColumnDef<User>[] = [
         ? renderSnippet(
             createRawSnippet<[{ n: string; i: string }]>((get) => ({
               render: () =>
-                `<a href="/edit?id=${get().i}" class="text-sm underline-offset-4 hover:underline">${get().n}</a>`
+                `<a href="/edit?id=${encodeURIComponent(get().i)}" class="text-sm underline-offset-4 hover:underline">${escapeHtml(get().n)}</a>`
             })),
             { n: row.original.congregationName, i: row.original.congregation }
           )

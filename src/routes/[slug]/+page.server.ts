@@ -3,9 +3,10 @@ import { error } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
+import type { PageServerLoad } from './$types';
 /* endregion imports */
 
-export async function load({ cookies, fetch, locals, params }) {
+export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) => {
   const { api, captureException } = locals;
   const lang = cookies.get('lang') || 'en';
 
@@ -28,7 +29,9 @@ export async function load({ cookies, fetch, locals, params }) {
         variant = await withRetry(() =>
           api
             .collection('pageVariants')
-            .getFirstListItem(api.filter('page={:pageId} && language="en"', { pageId: page.id }), { fetch })
+            .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { pageId: page.id, lang: 'en' }), {
+              fetch
+            })
         );
       } catch {
         // No variant at all — render page without localized content
@@ -61,4 +64,4 @@ export async function load({ cookies, fetch, locals, params }) {
     log.warn('PocketBase unavailable for slug page', err);
     return { page: undefined, variant: null };
   }
-}
+};

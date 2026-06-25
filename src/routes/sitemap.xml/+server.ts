@@ -2,8 +2,9 @@ import { response as sitemapResponse } from 'super-sitemap';
 import { withRetry } from '$lib/server/api';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ locals }) => {
+export const GET: RequestHandler = async ({ locals, url }) => {
   const client = locals.api;
+  const origin = url.origin;
 
   // Fetch all visible congregation IDs for the sitemap
   let congregationIds: string[] = [];
@@ -35,7 +36,7 @@ export const GET: RequestHandler = async ({ locals }) => {
   }
 
   return await sitemapResponse({
-    origin: 'https://opencommunities.info',
+    origin,
 
     excludeRoutePatterns: [
       '^/admin.*',

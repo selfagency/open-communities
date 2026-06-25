@@ -23,7 +23,8 @@
       "!src/lib/assets/**",
       "!src/app.css",
       "!static/**",
-      "!**/flex-render.svelte"
+      "!**/flex-render.svelte",
+      "!docker"
     ]
   },
   "formatter": {
@@ -158,6 +159,16 @@
           },
           "security": {
             "noGlobalEval": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/pb_hooks/*.js", "docker/**", "e2e/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "off"
           }
         }
       }

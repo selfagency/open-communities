@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   const available = await client
     .collection('congregations')
     .getFullList({
-      filter: 'owner = null',
+      filter: client.filter('owner = null'),
       sort: 'name',
       requestKey: 'admin-user-avail-congs'
     })
@@ -49,21 +49,41 @@ export const actions = {
   update: async ({ locals, params, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
-      throw redirect(303, '/');
+      throw error(401, 'Unauthorized');
     }
 
     const formData = await request.formData();
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
-    const verified = formData.get('verified') === 'true';
-    const admin = formData.get('admin') === 'true';
 
     if (!(name && email)) {
       return fail(400, { error: 'Name and email are required' });
     }
 
+    const body: Record<string, unknown> = { name, email };
+    if (formData.has('verified')) {
+      body.verified = formData.get('verified') === 'true';
+    }
+    if (formData.has('admin')) {
+      const admin = formData.get('admin') === 'true';
+      // Refuse self-demotion
+      if (params.id === client.authStore.record?.id && !admin) {
+        return fail(400, { error: 'Cannot demote yourself' });
+      }
+      // Refuse demoting the last admin
+      if (!admin) {
+        const adminCount = await withRetry(() =>
+          client.collection('users').getList(1, 1, { filter: client.filter('admin = {:admin}', { admin: true }) })
+        );
+        if (adminCount.totalItems <= 1) {
+          return fail(400, { error: 'Cannot demote the last admin' });
+        }
+      }
+      body.admin = admin;
+    }
+
     try {
-      await withRetry(() => client.collection('users').update(params.id, { name, email, verified, admin }));
+      await withRetry(() => client.collection('users').update(params.id, body));
       return { success: 'User updated' };
     } catch {
       return fail(400, { error: 'Update failed' });
@@ -73,7 +93,7 @@ export const actions = {
   unlink: async ({ locals, params }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
-      throw redirect(303, '/');
+      throw error(401, 'Unauthorized');
     }
 
     try {
@@ -87,7 +107,7 @@ export const actions = {
   deleteAccount: async ({ locals, params }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
-      throw redirect(303, '/');
+      throw error(401, 'Unauthorized');
     }
 
     try {
@@ -104,7 +124,7 @@ export const actions = {
   assign: async ({ locals, params, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
-      throw redirect(303, '/');
+      throw error(401, 'Unauthorized');
     }
 
     const formData = await request.formData();
@@ -125,7 +145,7 @@ export const actions = {
   resetPassword: async ({ locals, params }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
-      throw redirect(303, '/');
+      throw error(401, 'Unauthorized');
     }
 
     try {

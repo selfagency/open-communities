@@ -3035,5 +3035,197 @@
     "indexes": [],
     "system": false,
     "viewQuery": "SELECT \n    'us_states_total' as id,\n    COUNT(DISTINCT c.state) as total_us_states\nFROM \n    congregations c\nINNER JOIN states s ON c.state = s.id\nINNER JOIN countries co ON s.country = co.id\nWHERE \n    co.code = 'US'\n"
+  },
+  {
+    "id": "pbc_audit_logs",
+    "name": "audit_logs",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "text3208210256",
+        "name": "id",
+        "type": "text",
+        "system": true,
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "select_event_type",
+        "name": "event_type",
+        "type": "select",
+        "system": false,
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "create",
+            "update",
+            "delete",
+            "create_request",
+            "update_request",
+            "delete_request",
+            "auth"
+          ]
+        }
+      },
+      {
+        "id": "text_collection_name",
+        "name": "collection_name",
+        "type": "text",
+        "system": false,
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "text_record_id",
+        "name": "record_id",
+        "type": "text",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "relation_user",
+        "name": "user",
+        "type": "relation",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": []
+        }
+      },
+      {
+        "id": "text_request_ip",
+        "name": "request_ip",
+        "type": "text",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "text_request_url",
+        "name": "request_url",
+        "type": "text",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "date_timestamp",
+        "name": "timestamp",
+        "type": "date",
+        "system": false,
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "json_before_changes",
+        "name": "before_changes",
+        "type": "json",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 2000000
+        }
+      },
+      {
+        "id": "json_after_changes",
+        "name": "after_changes",
+        "type": "json",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 2000000
+        }
+      },
+      {
+        "id": "autodate2990389176",
+        "name": "created",
+        "type": "autodate",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "onCreate": true,
+          "onUpdate": false
+        }
+      },
+      {
+        "id": "autodate3332085495",
+        "name": "updated",
+        "type": "autodate",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "onCreate": true,
+          "onUpdate": true
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_audit_collection_name ON audit_logs (collection_name)",
+      "CREATE INDEX idx_audit_record_id ON audit_logs (record_id)",
+      "CREATE INDEX idx_audit_timestamp ON audit_logs (timestamp)",
+      "CREATE INDEX idx_audit_user ON audit_logs (user)",
+      "CREATE INDEX idx_audit_event_type ON audit_logs (event_type)",
+      "CREATE INDEX idx_audit_collection_timestamp ON audit_logs (collection_name, timestamp)",
+      "CREATE INDEX idx_audit_user_timestamp ON audit_logs (user, timestamp)"
+    ],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null
   }
 ]

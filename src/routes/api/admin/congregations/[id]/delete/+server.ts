@@ -13,18 +13,20 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
   const cong = await withRetry(() => client.collection('congregations').getOne(params.id, { expand: 'owner' }));
 
   // Send rejection email before deleting
+  let emailSent = false;
   const owner = (cong as unknown as Record<string, unknown>).expand as
     | Record<string, { email?: string; name?: string }>
     | undefined;
   if (owner?.owner?.email) {
-    await transactionalMail({
+    const result = await transactionalMail({
       email: owner.owner.email,
       name: owner.owner.name ?? '',
       subject: m.transactional_rejectedSubject(),
       message: m.transactional_rejectedBody({ name: cong.name as string })
     });
+    emailSent = result.ok;
   }
 
   await withRetry(() => client.collection('congregations').delete(params.id));
-  return json({ success: true });
+  return json({ success: true, emailSent });
 };

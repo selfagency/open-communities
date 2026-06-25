@@ -251,7 +251,9 @@ function beforeSubmit() {
               <FileDropZone.Trigger />
             {/snippet}
           </FileDropZone.Root>
-          <input name="image" type="hidden" value={imagePreview} />
+          {#if imagePreview}
+            <input name="image" type="hidden" value={imagePreview} />
+          {/if}
           <div class="space-y-4 pt-4">
             <div class="space-y-2">
               <label class="text-sm font-bold block mb-2" for="imageAlt">{m.pageEditorImageAltLabel()}</label>

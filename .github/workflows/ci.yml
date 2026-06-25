@@ -239,12 +239,12 @@ jobs:
 
       - name: Start Docker Compose (PB, Mailpit, Cap, Redis)
         run: |
-          docker compose -f e2e/docker-compose.yml up -d
+          docker compose -f docker/docker-compose.yml up -d
           timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
           echo "All services ready"
 
       - name: Bootstrap PocketBase
-        run: node e2e/scripts/bootstrap.mjs
+        run: node docker/scripts/bootstrap.mjs
         env:
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
@@ -287,11 +287,11 @@ jobs:
 
       - name: Docker Compose logs (on failure)
         if: failure()
-        run: docker compose -f e2e/docker-compose.yml logs --tail=50
+        run: docker compose -f docker/docker-compose.yml logs --tail=50
 
       - name: Tear down Docker Compose
         if: always()
-        run: docker compose -f e2e/docker-compose.yml down -v
+        run: docker compose -f docker/docker-compose.yml down -v
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4

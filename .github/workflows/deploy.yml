@@ -13,6 +13,21 @@ jobs:
     environment: Production
 
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Deploy PB hooks to PocketHost
+        env:
+          PHIO_USERNAME: ${{ secrets.POCKETHOST_EMAIL }}
+          PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
+        run: |
+          npm install -g phio
+          phio deploy -v
+
       - name: Deploy to Coolify
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' \
+            --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'

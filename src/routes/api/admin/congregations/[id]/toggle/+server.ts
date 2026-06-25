@@ -14,19 +14,21 @@ export const POST: RequestHandler = async ({ locals, params }) => {
   await withRetry(() => client.collection('congregations').update(params.id, { visible: !cong.visible }));
 
   // Send approval email if making visible
+  let emailSent = false;
   if (!cong.visible) {
     const owner = (cong as unknown as Record<string, unknown>).expand as
       | Record<string, { email?: string; name?: string }>
       | undefined;
     if (owner?.owner?.email) {
-      await transactionalMail({
+      const result = await transactionalMail({
         email: owner.owner.email,
         name: owner.owner.name ?? '',
         subject: m.transactional_approvedSubject(),
         message: m.transactional_approvedBody({ name: cong.name as string })
       });
+      emailSent = result.ok;
     }
   }
 
-  return json({ success: true });
+  return json({ success: true, emailSent });
 };

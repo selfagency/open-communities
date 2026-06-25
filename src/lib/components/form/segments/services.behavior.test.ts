@@ -6,6 +6,7 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
+// biome-ignore lint/suspicious/noSkippedTests: @testing-library/svelte × Svelte 5 incompatibility — see AGENTS.md
 describe.skip('Services segment (behavior)', () => {
   it('toggles inPerson checkbox and updates formData store', async () => {
     const { default: ServicesHost } = await import('$test/components/ServicesHost.svelte');

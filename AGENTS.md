@@ -121,7 +121,7 @@ pnpm deps:bootstrap    # Create superuser, import schema, seed data
 pnpm deps:reset        # Full wipe: down -v → up → bootstrap
 ```
 
-The bootstrap script (e2e/scripts/bootstrap.mjs):
+The bootstrap script (docker/scripts/bootstrap.mjs):
 - Extracts PB's installation token from startup logs
 - Imports all collections from `pb_schema.json` via `PUT /api/collections/import`
 - Seeds locations (countries/states/cities), test users, congregations (with child records), and static pages

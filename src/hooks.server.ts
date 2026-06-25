@@ -123,8 +123,8 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   // auth
   try {
     if (event.url.pathname === '/logout') {
-      event.cookies.set('auth', '', event.locals.cookieOpts);
-      event.cookies.set('session', '', event.locals.cookieOpts);
+      event.cookies.set('auth', '', { ...event.locals.cookieOpts, maxAge: 0 });
+      event.cookies.set('session', '', { ...event.locals.cookieOpts, maxAge: 0 });
       requestApi.authStore.clear();
     } else if (requestApi?.authStore?.isValid) {
       pruneAuthRefreshTimestamps();

@@ -1,9 +1,21 @@
 <script lang="ts">
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '$lib/components/ui/alert-dialog';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { Input } from '$lib/components/ui/input';
+import { Switch } from '$lib/components/ui/switch';
 import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
@@ -13,6 +25,7 @@ const user = data.targetUser;
 let formError = $state('');
 let formSuccess = $state('');
 let selectedCong = $state('');
+let showDeleteDialog = $state(false);
 
 function handleUpdate() {
   // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
@@ -76,6 +89,16 @@ function handleDelete() {
         <div class="space-y-2">
           <label class="text-sm font-medium" for="email">{m.email()}</label>
           <Input id="email" name="email" required type="email" value={user.email} />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="text-sm font-medium" for="verified">{m.verified()}</label>
+          <Switch aria-label={m.verified()} id="verified" name="verified" checked={user.verified} />
+          <input name="verified" type="hidden" value={String(user.verified)} />
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="text-sm font-medium" for="admin">{m.admin()}</label>
+          <Switch aria-label={m.admin()} id="admin" name="admin" checked={user.admin} />
+          <input name="admin" type="hidden" value={String(user.admin)} />
         </div>
         <Button type="submit">{m.saveChanges()}</Button>
       </CardContent>
@@ -146,9 +169,29 @@ function handleDelete() {
     </CardHeader>
     <CardContent class="space-y-4">
       <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
-      <form action="?/deleteAccount" method="POST" use:enhance={handleDelete}>
-        <Button type="submit" variant="destructive">{m.deleteAccount()}</Button>
-      </form>
+      <AlertDialog bind:open={showDeleteDialog}>
+        <AlertDialogTrigger>
+          <Button type="button" variant="destructive">{m.deleteAccount()}</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{m.deleteAccount()}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {m.deleteAccountDescription()}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <form action="?/deleteAccount" method="POST" use:enhance={handleDelete}>
+              <AlertDialogAction
+                class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                type="submit"
+                >{m.deleteAccount()}</AlertDialogAction
+              >
+            </form>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </CardContent>
   </Card>
 </div>

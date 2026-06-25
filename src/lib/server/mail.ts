@@ -127,7 +127,12 @@ async function mailTransport({
   await transporter.sendMail(mail);
 }
 
-export async function transactionalMail({ email, message, name, subject }: TransactionalMailInput) {
+export async function transactionalMail({
+  email,
+  message,
+  name,
+  subject
+}: TransactionalMailInput): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
     await mailTransport({
       headerFrom: 'Open Communities <no-reply@m.opencommunities.info>',
@@ -135,8 +140,11 @@ export async function transactionalMail({ email, message, name, subject }: Trans
       subject,
       headerTo: `${sanitizeHeader(name)} <${sanitizeHeader(email)}>`
     });
+    return { ok: true };
   } catch (e) {
+    const error = (e as { message?: string }).message ?? 'Unknown email error';
     log.error('Error sending transactional email', e);
+    return { ok: false, error };
   }
 }
 

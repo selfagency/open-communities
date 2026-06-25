@@ -1,11 +1,12 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { defineConfig, devices } from '@playwright/test';
+const path = require('node:path');
+const { fileURLToPath } = require('node:url');
+const { defineConfig, devices } = require('@playwright/test');
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(__filename);
 const __dirname = path.dirname(__filename);
 
-export default defineConfig({
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
+module.exports = defineConfig({
   expect: { timeout: 5000 },
   fullyParallel: true,
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],

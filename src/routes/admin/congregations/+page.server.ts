@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   const [active, pending] = await Promise.all([
     withRetry(() =>
       client.collection('congregations').getFullList({
-        filter: 'visible=true',
+        filter: client.filter('visible={:v}', { v: true }),
         sort: '-created',
         expand: expandStr,
         requestKey: 'admin-cong-active'
@@ -36,7 +36,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     ),
     withRetry(() =>
       client.collection('congregations').getFullList({
-        filter: 'visible=false',
+        filter: client.filter('visible={:v}', { v: false }),
         sort: '-created',
         expand: expandStr,
         requestKey: 'admin-cong-pending'

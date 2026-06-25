@@ -27,7 +27,7 @@ export const actions = {
   save: async ({ locals, params, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
-      throw redirect(303, '/');
+      throw error(401, 'Unauthorized');
     }
 
     const form = await request.formData();
@@ -60,6 +60,10 @@ export const actions = {
 
       if (imageFile?.size && imageFile.size > 0) {
         body.image = imageFile;
+      } else if (typeof imageFile === 'string' && imageFile.startsWith('data:image/')) {
+        const base64 = imageFile.split(',')[1];
+        const buffer = Buffer.from(base64, 'base64');
+        body.image = new File([buffer], 'upload.png', { type: 'image/png' });
       }
 
       await withRetry(() => client.collection('pages').update(params.id, body));

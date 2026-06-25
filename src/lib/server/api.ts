@@ -4,7 +4,7 @@ import type { Cookies } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import cookie from 'cookie';
 import PocketBase from 'pocketbase';
-import { isArray, omit } from 'radashi';
+import { omit } from 'radashi';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import type { TypedPocketBase, UsersRecord } from '$lib/pocketbase.d';
@@ -44,36 +44,12 @@ async function authenticate(auth: string) {
   return api;
 }
 
-function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate = false): T {
+function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate = false): Partial<T> {
   const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
   if (!keepDate) {
     fields.push('created' as keyof T);
   }
-  return convertBooleans(omit(response, fields)) as T;
-}
-
-function convertBooleans(obj: unknown): unknown {
-  if (isArray(obj)) {
-    return obj.map(convertBooleans);
-  }
-  if (obj !== null && typeof obj === 'object') {
-    const source = obj as unknown as Record<string, unknown>;
-    return Object.keys(source).reduce<Record<string, unknown>>((acc, key) => {
-      if (!Object.hasOwn(source, key) || key === '__proto__' || key === 'constructor') {
-        return acc;
-      }
-      const value = source[key];
-      if (value === 1) {
-        acc[key] = true;
-      } else if (value === 0) {
-        acc[key] = false;
-      } else {
-        acc[key] = convertBooleans(value);
-      }
-      return acc;
-    }, {});
-  }
-  return obj;
+  return omit(response, fields);
 }
 
 function expand<T extends Record<string, unknown>>(item: T): Omit<T, 'expand'> {

@@ -1,4 +1,4 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { RecordModel } from 'pocketbase';
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -63,17 +63,25 @@ export const actions = {
 
   unlink: async ({ locals }) => {
     const client = locals.api;
+    if (!client.authStore?.record?.id) {
+      throw error(401, 'Not authenticated');
+    }
     await withRetry(() =>
-      client.collection('users').update(client.authStore.record?.id as string, { congregation: null })
+      client.collection('users').update(client.authStore.record.id as string, { congregation: null })
     );
     return { unlinked: true };
   },
 
-  deleteAccount: async ({ locals }) => {
+  deleteAccount: async ({ cookies, locals }) => {
     const client = locals.api;
-    const id = client.authStore.record?.id as string;
+    if (!client.authStore?.record?.id) {
+      throw error(401, 'Not authenticated');
+    }
+    const id = client.authStore.record.id as string;
     await withRetry(() => client.collection('users').delete(id));
     client.authStore.clear();
-    return { deleted: true };
+    cookies.set('auth', '', { ...locals.cookieOpts, maxAge: 0 });
+    cookies.set('session', '', { ...locals.cookieOpts, maxAge: 0 });
+    throw redirect(303, '/');
   }
 } satisfies Actions;

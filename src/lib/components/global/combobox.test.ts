@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 
 import Combobox from './combobox.svelte';
 
+// biome-ignore lint/suspicious/noSkippedTests: @testing-library/svelte × Svelte 5 incompatibility — see AGENTS.md
 describe.skip('Combobox', () => {
   const items = [
     { id: 'one', label: 'Option One', value: 'one' },

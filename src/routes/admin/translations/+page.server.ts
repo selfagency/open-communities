@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { error, fail } from '@sveltejs/kit';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import type { Actions, PageServerLoad } from './$types';
@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     .getFullList({
       filter: filter || undefined,
       sort: 'key,locale',
-      requestKey: `admin-translations-${page}-${search.slice(0, 20)}`
+      requestKey: `admin-translations-${page}`
     })
     .catch(() => []);
 
@@ -66,6 +66,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 export const actions = {
   save: async ({ locals, request }) => {
     const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
     const form = await request.formData();
     const key = form.get('key') as string;
     const entriesJson = form.get('entries') as string;
@@ -81,30 +84,42 @@ export const actions = {
       return fail(400, { error: 'Invalid entries JSON' });
     }
 
-    const results = { created: 0, updated: 0, errors: 0 };
+    // Parallel save with rollback on partial failure
+    const results = await Promise.allSettled(
+      entries.map((entry) =>
+        entry.id
+          ? withRetry(() => client.collection('translations').update(entry.id, { value: entry.value }))
+          : withRetry(() => client.collection('translations').create({ key, locale: entry.locale, value: entry.value }))
+      )
+    );
 
-    for (const entry of entries) {
-      try {
-        if (entry.id) {
-          const eid = entry.id;
-          await withRetry(() => client.collection('translations').update(eid, { value: entry.value }));
-          results.updated++;
-        } else {
-          await withRetry(() =>
-            client.collection('translations').create({ key, locale: entry.locale, value: entry.value })
-          );
-          results.created++;
-        }
-      } catch {
-        results.errors++;
+    const created: string[] = [];
+    let updated = 0;
+    const errors: number[] = [];
+    results.forEach((r, i) => {
+      if (r.status === 'fulfilled' && !entries[i].id) {
+        created.push(r.value.id);
+      } else if (r.status === 'fulfilled' && entries[i].id) {
+        updated++;
+      } else {
+        errors.push(i);
       }
+    });
+
+    // Roll back creates if any entry failed
+    if (errors.length > 0 && created.length > 0) {
+      await Promise.allSettled(created.map((id) => withRetry(() => client.collection('translations').delete(id))));
+      return fail(500, { error: 'Save failed — rolled back', created: created.length, updated, errors: errors.length });
     }
 
-    return { success: true, ...results };
+    return { success: true, created: created.length, updated, errors: errors.length };
   },
 
   delete: async ({ locals, request }) => {
     const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
     const form = await request.formData();
     const key = form.get('key') as string;
 
@@ -132,6 +147,9 @@ export const actions = {
 
   add: async ({ locals, request }) => {
     const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
     const form = await request.formData();
     const key = form.get('key') as string;
     const value = form.get('value') as string;
@@ -149,7 +167,11 @@ export const actions = {
     }
   },
 
-  redeploy: async () => {
+  redeploy: async ({ locals }) => {
+    const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
     const coolifyUrl = process.env.COOLIFY_URL;
     const coolifyToken = process.env.COOLIFY_TOKEN;
     const coolifyAppUuid = process.env.COOLIFY_APP_UUID;
@@ -184,7 +206,11 @@ export const actions = {
     }
   },
 
-  status: async ({ request }) => {
+  status: async ({ locals, request }) => {
+    const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
     const form = await request.formData();
     const deploymentUuid = form.get('uuid') as string;
 

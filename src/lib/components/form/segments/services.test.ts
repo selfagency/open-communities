@@ -5,6 +5,7 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
+// biome-ignore lint/suspicious/noSkippedTests: @testing-library/svelte × Svelte 5 incompatibility — see AGENTS.md
 describe.skip('Services segment', () => {
   it('renders', async () => {
     // import the ServicesHost which mounts Services inside Accordion.Root

@@ -3,9 +3,6 @@ services:
     build:
       context: ./pocketbase
       dockerfile: Dockerfile
-      args:
-        PB_VERSION: '0.29.2'
-        PB_ARCH: 'amd64'
     image: opencommunities-pocketbase:local
     ports:
       - '8090:8090'
@@ -15,7 +12,7 @@ services:
     depends_on:
       - mailpit
     networks:
-      - e2e
+      - dev
 
   mailpit:
     image: axllent/mailpit:latest
@@ -23,7 +20,7 @@ services:
       - '1025:1025'
       - '8025:8025'
     networks:
-      - e2e
+      - dev
 
   cap:
     image: tiago2/cap:latest
@@ -37,15 +34,15 @@ services:
     volumes:
       - ./cap/data:/usr/src/app/.data
     networks:
-      - e2e
+      - dev
 
   redis:
     image: redis:7-alpine
     ports:
       - '6379:6379'
     networks:
-      - e2e
+      - dev
 
 networks:
-  e2e:
+  dev:
     driver: bridge

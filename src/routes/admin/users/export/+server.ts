@@ -1,24 +1,32 @@
-import { redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { withRetry } from '$lib/server/api';
 import type { RequestHandler } from './$types';
+
+const CSV_LEADING_FORMULA_RE = /^[=+\-@\t\r]/;
 
 function csvEscape(val: unknown): string {
   if (val === null || val === undefined) {
     return '""';
   }
+  let s: string;
   if (typeof val === 'string') {
-    return `"${val.replaceAll('"', '""')}"`;
+    s = val;
+  } else if (typeof val === 'number' || typeof val === 'boolean') {
+    s = String(val);
+  } else {
+    return '""';
   }
-  if (typeof val === 'number' || typeof val === 'boolean') {
-    return `"${val}"`;
+  // OWASP CSV injection mitigation: prefix leading =,+,-,@ with single quote
+  if (CSV_LEADING_FORMULA_RE.test(s)) {
+    s = `'${s}`;
   }
-  return '""';
+  return `"${s.replaceAll('"', '""')}"`;
 }
 
 export const GET: RequestHandler = async ({ locals }) => {
   const client = locals.api;
   if (!client?.authStore?.record?.admin) {
-    throw redirect(303, '/');
+    throw error(401, 'Unauthorized');
   }
 
   const users = await withRetry(() =>
