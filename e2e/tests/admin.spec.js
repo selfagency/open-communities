@@ -18,40 +18,40 @@ test.describe('Admin backend', () => {
   test('admin dashboard loads with stats', async ({ page }) => {
     await page.goto(`${BASE}/admin`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Congregations')).toBeVisible();
-    await expect(page.getByText('Users')).toBeVisible();
-    await expect(page.getByText('Pending Approvals')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Congregations' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Users' })).toBeVisible();
+    await expect(page.getByText('Pending Approvals').first()).toBeVisible();
   });
 
   test('congregations list loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/congregations`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Congregations')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Congregations' })).toBeVisible();
   });
 
   test('congregations page shows pending tab', async ({ page }) => {
     await page.goto(`${BASE}/admin/congregations`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Pending')).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Pending' })).toBeVisible();
   });
 
   test('users list loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/users`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Users')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
   });
 
   test('dashboard shows analytics stats', async ({ page }) => {
     await page.goto(`${BASE}/admin`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Congregations')).toBeVisible();
-    await expect(page.getByText('Pending Approvals')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Congregations' })).toBeVisible();
+    await expect(page.getByText('Pending Approvals').first()).toBeVisible();
   });
 
   test('pages list loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/pages`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText('Pages')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pages' })).toBeVisible();
   });
 
   test('non-admin user is redirected from admin', async ({ page }) => {
