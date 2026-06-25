@@ -5,6 +5,7 @@ import AdaIcon from '@tabler/icons-svelte/icons/disabled';
 import AslIcon from '@tabler/icons-svelte/icons/hand-two-fingers';
 import EvaIcon from '@tabler/icons-svelte/icons/language';
 import CcIcon from '@tabler/icons-svelte/icons/subtitles';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m } from '$lib/paraglide/messages';
 import type { AccessibilityRecord } from '$lib/pocketbase.d';
@@ -157,7 +158,7 @@ const other = $derived(accessibility.otherText);
         <span class="flex flex-col items-start justify-start">{other}</span>
       </li>
     {/if}
-
+    // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
     {#if !ada && !cc && !eva && !other}
       <li class="flex flex-row items-start justify-start space-x-1">
         <span class="flex flex-col items-start justify-start">

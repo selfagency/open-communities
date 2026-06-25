@@ -1,5 +1,6 @@
 <script lang="ts">
 import Congregation from '$lib/components/form/segments/congregation.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
 
 // svelte-ignore state_referenced_locally

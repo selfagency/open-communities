@@ -2,10 +2,13 @@
 /* region imports */
 import { isEmpty } from 'radashi';
 
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
 import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as RadioGroup from '$lib/components/ui/radio-group';
 import { m } from '$lib/paraglide/messages';
 import { valueSet } from '$lib/utils';
@@ -98,6 +101,7 @@ const fixType = (input: any) => input as unknown as Record<string, unknown> & { 
       {/if}
       <div class="question my-4" class:error={registrationInvalid}>
         {m.registration_contact()}
+        // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
         <Required set={!isEmpty($formData.registration.email) || !isEmpty($formData.registration.url)} />
       </div>
       <Form.Field {form} name="registration_email">

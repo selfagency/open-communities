@@ -10,8 +10,11 @@ import { type SuperValidated, superForm } from 'sveltekit-superforms';
 import { dev } from '$app/environment';
 import { goto } from '$app/navigation';
 import Loading from '$lib/components/global/loading.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Alert from '$lib/components/ui/alert';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { m } from '$lib/paraglide/messages';
 import { state as appState, setState } from '$lib/stores';
@@ -110,6 +113,7 @@ onMount(() => {
               e.preventDefault();
               e.stopPropagation();
               const formEl = document.getElementById("delete");
+              // biome-ignore lint/style/useBlockStatements: intentional single-expression block
               if (form) form.submit(formEl);
             }}
             type="submit"

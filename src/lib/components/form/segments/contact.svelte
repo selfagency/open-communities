@@ -1,6 +1,8 @@
 <script lang="ts">
 /* region imports */
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
 import { m } from '$lib/paraglide/messages';

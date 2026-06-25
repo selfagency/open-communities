@@ -5,6 +5,7 @@ import type { Snippet } from 'svelte';
 
 import { cn, type WithoutChildrenOrChild } from '$lib/utils.js';
 
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Dialog from './index.js';
 
 let {

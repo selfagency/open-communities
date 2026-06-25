@@ -11,9 +11,12 @@ import { toast } from 'svelte-sonner';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { Badge } from '$lib/components/ui/badge';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Dialog from '$lib/components/ui/dialog';
 import { Separator } from '$lib/components/ui/separator';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tabs from '$lib/components/ui/tabs';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m as mBase } from '$lib/paraglide/messages';
 

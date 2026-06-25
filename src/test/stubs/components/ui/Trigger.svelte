@@ -7,6 +7,7 @@ interface SheetContext {
 
 const ctx = getContext<SheetContext>('TEST_SHEET');
 
+// biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
 const toggle = typeof ctx?.toggle === 'function' ? ctx.toggle : () => {};
 </script>
 

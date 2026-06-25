@@ -42,6 +42,7 @@ export async function capture(user: string | undefined, event: string) {
   }
 }
 
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 export async function captureException(error: unknown, user?: string, other?: Record<string, number | string>) {
   const phClient = getPhClient();
   if (!phClient) {

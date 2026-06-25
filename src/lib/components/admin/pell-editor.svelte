@@ -13,6 +13,7 @@ let {
   dir?: 'rtl' | 'ltr';
 } = $props();
 
+// biome-ignore lint/suspicious/noUnassignedVariables: assigned via Svelte bind:this
 let editorEl: HTMLDivElement;
 let editor: ReturnType<typeof pell.init>;
 

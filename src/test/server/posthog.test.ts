@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$lib/server/logger', () => ({
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
   log: { error: () => {}, debug: () => {}, warn: () => {} }
 }));
 

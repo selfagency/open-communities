@@ -1,4 +1,5 @@
 <script generics="T extends Record<string, unknown>, U extends FormPathLeaves<T>" lang="ts">
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as FormPrimitive from 'formsnap';
 import type { HTMLAttributes } from 'svelte/elements';
 import type { FormPathLeaves } from 'sveltekit-superforms';

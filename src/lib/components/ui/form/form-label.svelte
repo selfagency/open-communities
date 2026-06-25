@@ -1,4 +1,5 @@
 <script lang="ts">
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as FormPrimitive from 'formsnap';
 
 import { Label } from '$lib/components/ui/label/index.js';

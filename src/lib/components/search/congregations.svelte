@@ -14,6 +14,7 @@ import CongregationCard from '$lib/components/congregation/congregation.svelte';
 import { Button } from '$lib/components/ui/button';
 import { Input } from '$lib/components/ui/input';
 import { Label } from '$lib/components/ui/label';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Pagination from '$lib/components/ui/pagination';
 import { Skeleton } from '$lib/components/ui/skeleton';
 import { Location as LocationService } from '$lib/location';

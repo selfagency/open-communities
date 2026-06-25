@@ -2,6 +2,7 @@
 /* region imports */
 import MenuIcon from '@tabler/icons-svelte/icons/menu';
 
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Sheet from '$lib/components/ui/sheet';
 import { m } from '$lib/paraglide/messages';
 import { state as appState } from '$lib/stores';

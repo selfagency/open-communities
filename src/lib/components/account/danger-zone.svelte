@@ -1,6 +1,7 @@
 <script lang="ts">
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
@@ -26,6 +27,8 @@ let open = $state(false);
           method="POST"
           use:enhance={() => {
         deleting = true;
+        // biome-ignore lint/style/useBlockStatements: intentional single-expression block
+        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
         return async ({ result }) => { if (result.type === 'success') goto('/'); };
       }}
         >

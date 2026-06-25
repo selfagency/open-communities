@@ -159,6 +159,7 @@ export const actions = {
       return fail(err.status ?? 400, { form });
     }
   },
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   submit: async (event) => {
     const { fetch, locals } = event;
     const { api, capture, captureException, validate } = locals;

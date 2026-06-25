@@ -25,6 +25,7 @@ export const locationHandlers = [
     let items = states;
 
     // Handle PB filter: country={:country}
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const countryRe = /country\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
     const countryMatch = countryRe.exec(filter);
     if (countryMatch) {
@@ -48,6 +49,7 @@ export const locationHandlers = [
     let items = allCities;
 
     // Handle PB filter: state={:state}
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const stateRe = /state\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
     const stateMatch = stateRe.exec(filter);
     if (stateMatch) {

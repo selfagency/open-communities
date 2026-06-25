@@ -9,9 +9,12 @@ import { dev } from '$app/environment';
 import { page } from '$app/state';
 import Captcha from '$lib/components/global/captcha.svelte';
 import Combobox from '$lib/components/global/combobox.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Card from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Select from '$lib/components/ui/select';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m as mBase } from '$lib/paraglide/messages';
@@ -44,6 +47,7 @@ const form = superForm(data, {
     log.error('submission error', result.error.message);
     toast.error(result.error.message);
   },
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   async onUpdate({ form: f, result }) {
     if (!f.valid || result.type !== 'success') {
       log.error('form error', result.data.form.errors);
@@ -63,6 +67,7 @@ snapshot = { capture, restore };
 /* endregion form */
 
 /* region lifecycle */
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 onMount(async () => {
   if (!$formData.reason) {
     $formData.reason = 'question';

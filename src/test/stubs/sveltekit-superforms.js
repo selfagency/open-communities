@@ -44,26 +44,30 @@ export function superForm(initialData = {}) {
   return {
     capture: () => ({}),
     constraints: {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     enhance: () => {},
     errors: {},
     form: store,
     formId: 'test-form',
     message: '',
     restore: () => ({}),
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setConstraints: () => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setErrors: () => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setMessage: () => {},
     /** @param {any} el */
     submit: (el) => {
       // If a test installs a spy on globalThis, call it so tests can assert.
       // @ts-expect-error
-      // @ts-ignore: globalThis custom test property
+      // @ts-expect-error: globalThis custom test property
       if (globalThis.__TEST_SUPERFORM_SUBMIT__) {
-        // @ts-ignore: globalThis custom test property
+        // @ts-expect-error: globalThis custom test property
         globalThis.__TEST_SUPERFORM_SUBMIT__(el);
       }
       // increment an observable counter too
-      // @ts-ignore: globalThis custom test property
+      // @ts-expect-error: globalThis custom test property
       globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
     }
   };

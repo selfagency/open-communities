@@ -1,4 +1,5 @@
 <script lang="ts">
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
 
 // accept optional child component and its props via $props() to remain

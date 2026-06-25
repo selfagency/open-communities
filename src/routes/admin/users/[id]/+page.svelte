@@ -15,6 +15,7 @@ let formSuccess = $state('');
 let selectedCong = $state('');
 
 function handleUpdate() {
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
     if (result.type === 'success') {
       formSuccess = (result.data?.success as string) ?? 'Saved';
@@ -27,6 +28,7 @@ function handleUpdate() {
 }
 
 function handleDelete() {
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   return async ({ result }: { result: { type: string } }) => {
     if (result.type === 'redirect') {
       goto('/admin/users');

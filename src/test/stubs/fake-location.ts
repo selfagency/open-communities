@@ -31,6 +31,7 @@ export function createFakeLocation(record: LocationMeta = {}, opts: Partial<Loca
     state: {
       subscribe: (fn: (v: LocationState) => void) => {
         fn(state);
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         return () => {};
       }
     }

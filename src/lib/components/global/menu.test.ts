@@ -11,7 +11,9 @@ describe('Menu component (anonymous)', () => {
     const { default: Menu } = await import('./menu.svelte');
     render(Menu);
 
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     expect(screen.getByText(/login|Login/i)).toBeInTheDocument();
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     expect(screen.getByText(/add|Add/i)).toBeInTheDocument();
   });
 });

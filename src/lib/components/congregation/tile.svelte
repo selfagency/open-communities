@@ -4,7 +4,9 @@ import EditIcon from '@tabler/icons-svelte/icons/pencil';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { Badge } from '$lib/components/ui/badge';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Card from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m } from '$lib/paraglide/messages';
 import type {

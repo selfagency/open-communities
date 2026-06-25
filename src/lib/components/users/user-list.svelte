@@ -9,6 +9,7 @@ import { Button } from '$lib/components/ui/button';
 import { Card, CardContent } from '$lib/components/ui/card';
 import { createSvelteTable, FlexRender, renderSnippet } from '$lib/components/ui/data-table/index.js';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Pagination from '$lib/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 import { m } from '$lib/paraglide/messages';
@@ -147,6 +148,7 @@ const table = $derived(
         />
         <Input
           class="h-11 w-64 sm:w-80 pl-10"
+          // biome-ignore lint/style/useBlockStatements: intentional useBlockStatements
           onkeydown={(e) => { if (e.key === 'Enter') doSearch(); }}
           placeholder={m.searchUsers()}
           bind:value={search}

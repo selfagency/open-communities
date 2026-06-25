@@ -20,9 +20,12 @@ const { prototype } = Element;
 
 if (typeof window !== 'undefined' && !prototype.animate) {
   prototype.animate = (() => ({
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     cancel: () => {},
     finished: Promise.resolve(),
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     play: () => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     pause: () => {}
   })) as unknown as typeof prototype.animate;
 }
@@ -67,8 +70,10 @@ if (typeof globalThis.document === 'undefined') {
   // Minimal document/body mock with the shape used by bits-ui body-scroll-lock
   (globalThis as Record<string, unknown>).document = {
     body: {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setAttribute: () => {},
       style: {
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         removeProperty: () => {}
       }
     }
@@ -167,6 +172,7 @@ vi.mock('$app/state', () => {
         data: { user: userStore },
         url: { searchParams: fakeSearchParams }
       });
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       return () => {};
     },
     // provide a minimal url with searchParams used in components
@@ -194,6 +200,7 @@ vi.mock('svelte-sonner', () => ({
 // so those stubs are used directly.
 
 // Use internal test API to centralize test stubs
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as testApi from '$test/api';
 
 // Provide a test stub for formsnap primitives used by the form UI wrappers

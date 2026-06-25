@@ -7,9 +7,11 @@ describe('Locale component', () => {
   it('renders current language label in mini mode', () => {
     render(Locale, { mode: 'mini' });
     // The trigger contains the language label (English root default)
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     expect(screen.getByText(/English|EN|en/i)).toBeInTheDocument();
   });
 
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   it('renders trigger with correct aria attributes', async () => {
     const { container } = render(Locale);
     const trigger = container.querySelector('button') as HTMLElement;

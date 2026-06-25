@@ -1,5 +1,6 @@
 <script lang="ts">
 import Form from '$lib/components/form/form.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
 
 // accept props via normal Svelte API (tests pass props when instantiating the host)

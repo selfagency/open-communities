@@ -29,6 +29,7 @@ it('renders when location options present and reset calls reset', async () => {
   expect(fakeLocation.reset).toHaveBeenCalled();
 });
 
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 it('calls search.setSearchLocation when country is selected', async () => {
   const record = { city: undefined, country: { id: 'c1' }, state: undefined };
   const fakeLocation = createFakeLocation(record, {

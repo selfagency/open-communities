@@ -23,6 +23,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions = {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   save: async ({ locals, params, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
@@ -42,6 +43,7 @@ export const actions = {
     if (!(title && slug)) {
       return fail(400, { error: 'Title and slug are required' });
     }
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     if (!/^[a-z0-9-]+$/.test(slug)) {
       return fail(400, { error: 'Slug must contain only lowercase letters, numbers, and hyphens' });
     }

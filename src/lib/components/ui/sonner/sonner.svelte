@@ -1,7 +1,6 @@
 <script lang="ts">
 import { mode } from 'mode-watcher';
 import type { ToasterProps as SonnerProps } from 'svelte-sonner';
-// biome-ignore lint/correctness/noUnusedImports: used as <Sonner> in template
 import { Toaster as Sonner } from 'svelte-sonner';
 
 let { ...restProps }: SonnerProps = $props();

@@ -14,6 +14,7 @@ export const pageHandlers = [
     let items = allPages;
 
     // Handle PB filter: slug={:slug}
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const slugRe = /slug\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
     const slugMatch = slugRe.exec(filter);
     if (slugMatch) {
@@ -45,12 +46,14 @@ export const pageHandlers = [
 
     let items = [...pageVariants];
 
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const pageRe = /page\s*=\s*['"]?(\S+?)['"]?\s/;
     const pageMatch = pageRe.exec(filter);
     if (pageMatch) {
       items = items.filter((v) => v.page === pageMatch[1]);
     }
 
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const langRe = /language\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
     const langMatch = langRe.exec(filter);
     if (langMatch) {

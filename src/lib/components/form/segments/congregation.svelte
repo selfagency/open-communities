@@ -4,10 +4,13 @@ import { isEmpty } from 'radashi';
 import { getContext, onMount, untrack } from 'svelte';
 import { page } from '$app/state';
 import Combobox from '$lib/components/global/combobox.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
 import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Select from '$lib/components/ui/select';
 import { Textarea } from '$lib/components/ui/textarea';
 import { Location } from '$lib/location';
@@ -197,6 +200,7 @@ $effect(() => {
               id="state"
               items={$location.options.stateOptions}
               {...props}
+              // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional useSimplifiedLogicExpression
               disabled={!country || !$location.options.stateOptions}
               onChange={handleStateChange}
               placeholder={m.selectThing({
@@ -216,6 +220,7 @@ $effect(() => {
               id="city"
               items={$location.options.cityOptions}
               {...props}
+              // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional useSimplifiedLogicExpression
               disabled={!province || !$location.options.cityOptions}
               onChange={handleCityChange}
               placeholder={m.selectThing({

@@ -9,10 +9,14 @@ import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
 import { browser, dev } from '$app/environment';
 import Captcha from '$lib/components/global/captcha.svelte';
 import Loading from '$lib/components/global/loading.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Accordion from '$lib/components/ui/accordion';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Alert from '$lib/components/ui/alert';
 import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Card from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Switch } from '$lib/components/ui/switch';
 import { createInitForm } from '$lib/forms/defaults';

@@ -40,6 +40,7 @@ describe('[slug] +page.server', () => {
     const api = createApi();
 
     const mockEvent = createMockServerLoadEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {} },
       params: { slug: 'about' },
       route: { id: '/[slug]' },
@@ -62,6 +63,7 @@ describe('[slug] +page.server', () => {
     const api = createApi();
 
     const mockEvent = createMockServerLoadEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {} },
       params: { slug: 'nonexistent' },
       route: { id: '/[slug]' },

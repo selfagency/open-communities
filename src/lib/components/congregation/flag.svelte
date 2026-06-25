@@ -2,6 +2,7 @@
 /* region imports */
 import Flag from '@tabler/icons-svelte/icons/flag';
 import FlagOff from '@tabler/icons-svelte/icons/flag-off';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m } from '$lib/paraglide/messages';
 import type { FitRecord } from '$lib/pocketbase.d';

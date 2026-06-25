@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
 
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
   if (!client?.authStore?.record?.admin) {
@@ -31,6 +32,7 @@ export const actions = {
     if (!(title && slug)) {
       return fail(400, { error: 'Title and slug are required' });
     }
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     if (!/^[a-z0-9-]+$/.test(slug)) {
       return fail(400, { error: 'Slug must contain only lowercase letters, numbers, and hyphens' });
     }

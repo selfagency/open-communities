@@ -4,12 +4,15 @@
 export function createMockRequestEvent(overrides: Partial<Record<string, unknown>> = {}) {
   return {
     cookies: {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       delete: () => {},
       get: () => '',
       getAll: () => [],
       serialize: () => '',
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       set: () => {}
     },
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     depends: () => {},
     fetch,
     getClientAddress: () => '127.0.0.1',
@@ -22,6 +25,7 @@ export function createMockRequestEvent(overrides: Partial<Record<string, unknown
     platform: {},
     request: new Request('http://localhost/'),
     route: { id: '/' },
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setHeaders: () => {},
     tracing: { enabled: false, root: {} as any, current: {} as any },
     untrack: <T>(fn: () => T) => fn(),
@@ -91,21 +95,28 @@ export const mockSveltekitSuperforms = {
 
     return {
       allErrors: () => [],
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
       constraints: {},
       delayed,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       enhance: () => {},
       errors: errorsStore,
       form: formStore,
       isTainted: () => false,
       message,
       posted,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       reset: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       restore: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       submit: () => {},
       submitting,
       timeout,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       validate: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       validateField: () => {}
     };
   },

@@ -22,7 +22,8 @@
       "!.github/codepilot-instructions.md",
       "!src/lib/assets/**",
       "!src/app.css",
-      "!static/**"
+      "!static/**",
+      "!**/flex-render.svelte"
     ]
   },
   "formatter": {

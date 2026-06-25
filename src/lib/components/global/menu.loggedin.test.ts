@@ -14,6 +14,7 @@ describe('Menu component (logged in)', () => {
         data: { user: fakeUser },
         subscribe: (fn: (v: unknown) => void) => {
           fn({ data: { user: fakeUser }, url: { searchParams: fakeSearchParams } });
+          // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
           return () => {};
         },
         url: { searchParams: fakeSearchParams }
@@ -25,6 +26,7 @@ describe('Menu component (logged in)', () => {
     render(Menu);
 
     // wait for the DOM to show the logout button
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const btn = await screen.findByText(/logout|Logout/i);
     expect(btn).toBeInTheDocument();
     expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(2);

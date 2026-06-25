@@ -3,6 +3,7 @@
 import Fuzzy from '@leeoniya/ufuzzy';
 import { alphabetical, isEmpty, isEqual, shake } from 'radashi';
 
+// biome-ignore lint/correctness/noUnusedImports: used in template as component
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 

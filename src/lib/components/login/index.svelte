@@ -11,7 +11,9 @@ import { page } from '$app/state';
 import Loading from '$lib/components/global/loading.svelte';
 import Reset from '$lib/components/login/reset.svelte';
 import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Card from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
 import { m } from '$lib/paraglide/messages';
@@ -98,6 +100,7 @@ let loadingSecondary = $derived(appState.loadingSecondary);
         <Loading />
       </div>
     {:else if resetting}
+      // biome-ignore lint/complexity/useSimplifiedLogicExpression: intentional logic expression
       {#if !sentSuccess && !resetSuccess}
         <Reset
           data={reset}

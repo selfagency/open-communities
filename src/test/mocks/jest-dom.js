@@ -1,6 +1,7 @@
 // Lightweight re-export of the jest-dom matchers so importing
 // '@testing-library/jest-dom' in tests doesn't call expect.extend
 // at module-eval time (which can run before Vitest sets up globals).
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as matchers from '@testing-library/jest-dom/matchers';
 
 // Export the matcher object as the default and named exports so both

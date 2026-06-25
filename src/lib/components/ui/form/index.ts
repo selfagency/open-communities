@@ -1,3 +1,4 @@
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as FormPrimitive from 'formsnap';
 
 import Button from './form-button.svelte';

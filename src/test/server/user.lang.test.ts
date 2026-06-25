@@ -7,6 +7,7 @@ vi.mock('$env/dynamic/public', () => ({
 }));
 
 vi.mock('$lib/server/logger', () => ({
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
   log: { error: () => {} }
 }));
 
@@ -25,6 +26,7 @@ describe('user/lang +server', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {} },
       request,
       route: { id: '/user/lang' },
@@ -51,6 +53,7 @@ describe('user/lang +server', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {} },
       request,
       route: { id: '/user/lang' },
@@ -76,7 +79,9 @@ describe('user/lang +server', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       cookies: { get: () => '', set: () => {}, serialize: () => '' },
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {}, cookieOpts: {} },
       request,
       route: { id: '/user/lang' },
@@ -102,6 +107,7 @@ describe('user/lang +server', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {} },
       request,
       route: { id: '/user/lang' },
@@ -117,6 +123,7 @@ describe('user/lang +server', () => {
     const api = {
       authStore: { record: { id: 'u1' } },
       collection: () => ({
+        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
         update: async () => {
           throw new Error('PB error');
         }
@@ -130,6 +137,7 @@ describe('user/lang +server', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       cookies: { get: () => '', set: () => {}, serialize: () => '' },
       locals: { api, captureException: vi.fn(), cookieOpts: {} },
       request,

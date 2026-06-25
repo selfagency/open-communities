@@ -2,6 +2,7 @@
 /* region imports */
 import SecurityIcon from '@tabler/icons-svelte/icons/shield';
 import UnarmedIcon from '@tabler/icons-svelte/icons/shield-off';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m } from '$lib/paraglide/messages';
 import type { SecurityRecord } from '$lib/pocketbase.d';

@@ -35,6 +35,7 @@ describe('Login index component', () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   it('shows loading when loadingSecondary is true', async () => {
     // set loading secondary to true
     setState({ loadingSecondary: true });

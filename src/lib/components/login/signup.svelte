@@ -8,7 +8,9 @@ import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import Captcha from '$lib/components/global/captcha.svelte';
 import Verify from '$lib/components/login/verify.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Card from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
 import { m } from '$lib/paraglide/messages';
@@ -47,6 +49,7 @@ const { enhance, form: formData } = form;
 /* endregion form */
 
 /* region lifecycle */
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 onMount(async () => {
   setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
   $formData.emailVisibility = true;

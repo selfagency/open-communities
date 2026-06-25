@@ -6,6 +6,7 @@ import type { SuperForm } from 'sveltekit-superforms';
 
 import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { log } from '$lib/utils';
 

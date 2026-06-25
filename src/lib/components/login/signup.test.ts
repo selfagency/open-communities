@@ -18,20 +18,25 @@ describe('Signup component', () => {
 
   function makeForm(): SuperFormStub {
     const store = {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       set: (_value: unknown) => {},
       subscribe(fn: (v: unknown) => void) {
         fn({});
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         return () => {};
       },
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       update: (_fn: (value: unknown) => unknown) => {}
     };
     return {
       allErrors: {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
       constraints: {},
       data: {},
       delay: 0,
       delayed: false,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       enhance: () => ({ destroy: () => {} }),
       errors: {},
       form: {
@@ -47,21 +52,33 @@ describe('Signup component', () => {
       message: '',
       options: {},
       posted: false,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       reset: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       restore: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setConstraints: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setErrors: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setField: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setFields: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setMessage: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setPosted: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setValid: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       submit: () => {},
       submitting: false,
       tainted: false,
       timeout: 0,
       valid: true,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       validate: async () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       validateForm: async () => {}
     };
   }

@@ -53,6 +53,7 @@ describe('Combobox', () => {
     expect(await screen.findByText('noOptions')).toBeInTheDocument();
   });
 
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   it('does not open when disabled', async () => {
     const { container } = render(Combobox, {
       disabled: true,

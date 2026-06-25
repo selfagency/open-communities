@@ -11,8 +11,11 @@ import { dev } from '$app/environment';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import Loading from '$lib/components/global/loading.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Alert from '$lib/components/ui/alert';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
 import { m } from '$lib/paraglide/messages';
@@ -57,6 +60,7 @@ const form = superForm(data, {
   onSubmit() {
     setState({ loadingSecondary: true });
   },
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   async onUpdate({ result }) {
     setState({
       form: { hasErrors: false, success: false },

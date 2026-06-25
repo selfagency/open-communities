@@ -6,8 +6,10 @@ vi.mock('pocketbase', () => ({
   default: class PocketBaseMock {
     _refreshed = false;
     authStore = {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       clear: () => {},
       isValid: false,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       loadFromCookie: (_: unknown) => {}
     };
     autoCancellationCalledWith: boolean | undefined = undefined;
@@ -20,6 +22,7 @@ vi.mock('pocketbase', () => ({
     }
     collection(_name: string) {
       return {
+        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
         authRefresh: async () => {
           this._refreshed = true;
         }

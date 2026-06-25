@@ -8,6 +8,7 @@ import { type SuperValidated, superForm } from 'sveltekit-superforms';
 import { waitForTheElement } from 'wait-for-the-element';
 
 import { dev } from '$app/environment';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
 import { m } from '$lib/paraglide/messages';
@@ -40,6 +41,7 @@ const form = superForm(data, {
     log.error('submission error', result.error.message);
     toast.error(result.error.message);
   },
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   async onUpdate({ result }) {
     if (result.type === 'success') {
       if ($formData.type === 'resetPassword') {

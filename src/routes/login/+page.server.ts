@@ -43,6 +43,7 @@ export const actions = {
         });
       }
 
+      // biome-ignore lint/style/useDefaultSwitchClause: all cases handled explicitly
       switch (form.data.type) {
         case 'requestReset':
           await api.collection('users').requestPasswordReset(form.data.email as string, { fetch });
@@ -127,6 +128,7 @@ export const actions = {
       return fail(err.status ?? 401, { form });
     }
   },
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   logout: async (event) => {
     const { cookies, locals } = event;
 

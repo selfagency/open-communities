@@ -4,12 +4,7 @@ import { spawn } from 'node:child_process';
 import { sleep, uid } from 'radashi';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type {
-  Collections,
-  CongregationMetaResponse,
-  CongregationMetaDenominationOptions,
-  TypedPocketBase
-} from '$lib/pocketbase.d';
+import type { Collections, CongregationMetaResponse, TypedPocketBase } from '$lib/pocketbase.d';
 
 // mock the raw email template asset so mail.ts can call .replace() on it
 vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
@@ -222,6 +217,7 @@ describe('src/lib/server/mail', () => {
       collection: (name: string) => {
         if (name === 'congregationMeta') {
           return {
+            // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
             getOne: async (id: string) => {
               const now = new Date().toISOString();
               const resp: CongregationMetaResponse = {

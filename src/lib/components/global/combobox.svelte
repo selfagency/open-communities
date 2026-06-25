@@ -6,7 +6,9 @@ import { useId } from 'bits-ui';
 import { onMount, tick } from 'svelte';
 import { m } from '$lib/paraglide/messages';
 import { cn } from '$lib/utils.js';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Command from '../ui/command/index.js';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Popover from '../ui/popover/index.js';
 
 /*  endregion imports */

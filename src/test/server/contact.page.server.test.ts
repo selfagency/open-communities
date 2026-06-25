@@ -64,7 +64,9 @@ describe('contact +page.server', () => {
 
       const locals = {
         api,
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         captureException: () => {},
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         log: { error: () => {} },
         validate: async () => ({
           data: {

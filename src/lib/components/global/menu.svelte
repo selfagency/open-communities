@@ -17,7 +17,9 @@ import { createEventDispatcher } from 'svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as NativeSelect from '$lib/components/ui/native-select';
 import { Switch } from '$lib/components/ui/switch';
 import { m } from '$lib/paraglide/messages';

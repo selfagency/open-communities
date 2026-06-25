@@ -41,6 +41,7 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
   const resolvedOptions: TableOptionsResolved<TData> = mergeObjects(
     {
       state: {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       onStateChange() {},
       renderFallbackValue: null,
       mergeOptions: (defaultOptions: TableOptions<TData>, options: Partial<TableOptions<TData>>) =>

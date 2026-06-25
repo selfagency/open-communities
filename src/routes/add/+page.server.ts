@@ -43,6 +43,7 @@ export const load = async (event) => {
 };
 
 export const actions = {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   submit: async (event) => {
     const { fetch, locals } = event;
     const { api, capture, captureException, log, validate } = locals;

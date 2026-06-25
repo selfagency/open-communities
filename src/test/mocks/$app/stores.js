@@ -41,6 +41,7 @@ export const page = {
   /** @param {(v: any) => void} fn */
   subscribe(fn) {
     fn({ data: { user: userStore }, url: { searchParams: fakeSearchParams } });
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     return () => {};
   },
   url: { searchParams: fakeSearchParams }

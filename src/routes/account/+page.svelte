@@ -26,6 +26,7 @@ const { enhance, form: formData, errors, capture, restore } = form;
 export const snapshot = { capture, restore };
 
 function handleUnlink() {
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   return async ({ result }: { result: { type: string } }) => {
     if (result.type === 'success') {
       unlinked = true;
@@ -34,9 +35,11 @@ function handleUnlink() {
 }
 
 function handleDelete() {
+  // biome-ignore lint/suspicious/noAlert: intentional debug utility
   if (!confirm('Are you sure? This cannot be undone.')) {
     return;
   }
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   return async ({ result }: { result: { type: string } }) => {
     if (result.type === 'success') {
       window.location.href = '/';

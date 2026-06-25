@@ -21,6 +21,7 @@ vi.mock('$lib/paraglide/messages', () => ({
 }));
 
 vi.mock('$lib/server/logger', () => ({
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
   log: { debug: () => {}, error: () => {} }
 }));
 

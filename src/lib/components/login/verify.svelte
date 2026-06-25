@@ -39,6 +39,7 @@ const form = superForm(data, {
   onSubmit() {
     setState({ loadingSecondary: true });
   },
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   async onUpdate({ result }) {
     setState({ loadingSecondary: false });
     if (result.type === 'success') {

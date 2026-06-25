@@ -2,6 +2,7 @@
 /* region imports */
 import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
 import MaskIcon from '@tabler/icons-svelte/icons/face-mask';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m } from '$lib/paraglide/messages';
 import type { HealthRecord } from '$lib/pocketbase.d';

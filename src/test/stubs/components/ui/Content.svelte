@@ -11,6 +11,7 @@ const ctx = getContext<{ open?: BoolStore }>('TEST_SHEET');
 const defaultOpen: BoolStore = {
   subscribe: (fn: (v: boolean) => void) => {
     fn(false);
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     return () => {};
   }
 };

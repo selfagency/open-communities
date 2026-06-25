@@ -7,11 +7,13 @@ import XIcon from '@tabler/icons-svelte/icons/x';
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 import { goto } from '$app/navigation';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent } from '$lib/components/ui/card';
 import { createSvelteTable, FlexRender, renderSnippet } from '$lib/components/ui/data-table/index.js';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Pagination from '$lib/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '$lib/components/ui/tooltip';
@@ -54,6 +56,7 @@ function onPageChange(p: number) {
 
 // Reset to page 1 when search changes
 $effect(() => {
+  // biome-ignore lint/suspicious/noUnusedExpressions: intentional expression
   filtered.length;
   currentPage = 1;
 });

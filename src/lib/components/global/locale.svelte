@@ -6,6 +6,7 @@ import { toast } from 'svelte-sonner';
 import { invalidateAll } from '$app/navigation';
 import { page } from '$app/state';
 import { Badge } from '$lib/components/ui/badge';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 import { m } from '$lib/paraglide/messages';
 import { setLocale } from '$lib/paraglide/runtime';

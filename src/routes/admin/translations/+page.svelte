@@ -22,6 +22,7 @@ import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Pagination from '$lib/components/ui/pagination';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
@@ -154,6 +155,7 @@ function pollStatus() {
 }
 
 function handleEnhance() {
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
     if (result.type === 'success') {
       const d = result.data;
@@ -298,6 +300,7 @@ const statusLabels: Record<string, string> = {
         action="?/add"
         method="POST"
         use:enhance={() => {
+      // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
       return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
         if (result.type === 'success' && result.data?.key) {
           showAddDialog = false;
@@ -363,6 +366,7 @@ const statusLabels: Record<string, string> = {
               class="space-y-3"
               method="POST"
               use:enhance={() => {
+              // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
               return async ({ result }: { result: { type: string } }) => {
                 if (result.type === 'success') {
                   resetEditState(key);
@@ -414,6 +418,7 @@ const statusLabels: Record<string, string> = {
                         action="?/delete"
                         method="POST"
                         use:enhance={() => {
+                      // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
                       return async ({ result }: { result: { type: string } }) => {
                         if (result.type === 'success') {
                           goto('/admin/translations', { replaceState: true });
@@ -495,6 +500,7 @@ const statusLabels: Record<string, string> = {
           action="?/delete"
           method="POST"
           use:enhance={() => {
+        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
         return async ({ result }: { result: { type: string } }) => {
           if (result.type === 'success') {
             showDeleteDialog = false;

@@ -26,10 +26,12 @@ describe('Footer component', () => {
     render(Footer);
 
     // in test env messages return keys; match the home_credit key instead of literal text
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const credit = screen.getByRole('link', { name: /home_credit/i });
     expect(credit).toHaveAttribute('href', 'https://self.agency');
     expect(credit).toHaveAttribute('target', '_blank');
 
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const rabbis = screen.getByRole('link', { name: /home_author/i });
     expect(rabbis).toHaveAttribute('href', 'https://rabbis4ceasefire.com/');
   });

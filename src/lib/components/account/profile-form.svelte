@@ -2,8 +2,10 @@
 import type { SuperForm, superForm } from 'sveltekit-superforms';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Select from '$lib/components/ui/select';
 import { Switch } from '$lib/components/ui/switch';
 import { m } from '$lib/paraglide/messages';
@@ -56,6 +58,7 @@ const { form: formData, errors } = form;
           <Form.Label for="lang">{m.language()}</Form.Label>
           <Select.Root type="single" bind:value={$formData.lang as string}>
             <Select.Trigger class="w-full" id="lang" {...props}>
+              // biome-ignore lint/style/noNestedTernary: intentional nested ternary
               {$formData.lang === 'en' ? 'English' : $formData.lang === 'es' ? 'Español' : $formData.lang === 'fr' ? 'Français' : $formData.lang === 'he' ? 'עברית' : $formData.lang}
             </Select.Trigger>
             <Select.Content>
