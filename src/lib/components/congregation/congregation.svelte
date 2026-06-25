@@ -99,6 +99,8 @@
   </Dialog.Trigger>
   <Dialog.Content
     data-id={congregation.id}
+    itemscope
+    itemtype="https://schema.org/ReligiousOrganization"
     class="flex max-h-[85vh] min-h-[35vh] max-w-[360px] min-w-[360px] flex-col items-start justify-start overflow-y-scroll p-6 transition-colors sm:max-w-[540px] sm:p-8"
   >
     <Dialog.Header class="w-full rtl:text-right">
@@ -110,9 +112,10 @@
             target="_blank"
             rel="noopener noreferrer"
             class="group inline-block max-w-[92%] hyphens-auto"
+            itemprop="url"
           >
             <h2 class="inline-block text-2xl leading-7 text-secondary-foreground">
-              <span>{congregation.name}</span>
+              <span itemprop="name">{congregation.name}</span>
               <span
                 ><LinkIcon
                   size="14"
@@ -132,18 +135,20 @@
       <Dialog.Description
         class="flex w-full flex-row items-center justify-between space-x-2 text-muted-foreground -mt-4"
       >
-        <span class="w-2/3">
-          {#if city.name || province.name || country.name}
-            {#if city.name}<span>{city.name}</span
-              >{#if province.name || country.name},{/if}{/if}
-            {#if province.name}<span>{province.name}</span
-              >{#if country.name && country.name !== "United States"},{/if}{/if}
-            {#if country.name && country.name !== "United States"}<span
-                >{country.name}</span
-              >{/if}
-          {:else if services.onlineOnly}
-            {m.services_onlineOnly()}
-          {/if}
+        <span class="w-2/3" itemprop="location" itemscope itemtype="https://schema.org/Place">
+          <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+            {#if city.name || province.name || country.name}
+              {#if city.name}<span itemprop="addressLocality">{city.name}</span
+                >{#if province.name || country.name},{/if}{/if}
+              {#if province.name}<span itemprop="addressRegion">{province.name}</span
+                >{#if country.name && country.name !== "United States"},{/if}{/if}
+              {#if country.name && country.name !== "United States"}<span
+                  itemprop="addressCountry">{country.name}</span
+                >{/if}
+            {:else if services.onlineOnly}
+              {m.services_onlineOnly()}
+            {/if}
+          </span>
         </span>
 
         <div class="flex w-1/3 flex-row items-center justify-end space-x-1">
@@ -215,7 +220,7 @@
         {#if tab === "about"}
           <div transition:fade>
             {#if congregation.flavor}
-              <p class="mb-6 text-sm">
+              <p class="mb-6 text-sm" itemprop="description">
                 {@html DOMPurify.sanitize(congregation.flavor)}
               </p>
             {/if}

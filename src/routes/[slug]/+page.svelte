@@ -21,10 +21,14 @@
 
 {#if data.page}
   {#key data.page.id}
-    <section class="max-w-3xl mx-auto">
+    <section class="max-w-3xl mx-auto" itemscope itemtype="https://schema.org/WebPage">
       <Card.Root>
-        <Card.Header><h1 class="text-3xl">{data.variant?.title || data.page.title}</h1></Card.Header>
-        <Card.Content>
+        <Card.Header>
+          <h1 class="text-3xl" itemprop="name">{data.variant?.title || data.page.title}</h1>
+          <meta itemprop="description" content={data.variant?.description || data.page.description || ''} />
+          <meta itemprop="url" content={'https://opencommunities.info/' + data.page.slug} />
+        </Card.Header>
+        <Card.Content itemprop="mainContent">
           {#if data.variant?.content}
             <div class="prose max-w-none">
               {@html DOMPurify.sanitize(data.variant.content as string)}

@@ -38,7 +38,8 @@
     "posthog-js": "^1.392.0",
     "posthog-node": "^5.38.3",
     "quill": "^2.0.3",
-    "stopwords-iso": "^1.1.0"
+    "stopwords-iso": "^1.1.0",
+    "super-sitemap": "^1.0.12"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
@@ -138,11 +139,19 @@
     "node": "^22.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@posthog/cli", "@tailwindcss/oxide", "core-js", "esbuild", "sqlite3"]
+    "onlyBuiltDependencies": [
+      "@posthog/cli",
+      "@tailwindcss/oxide",
+      "core-js",
+      "esbuild",
+      "sqlite3"
+    ]
   },
   "packageManager": "pnpm@10.18.3",
   "jsrepo": {
     "rootDir": "src/lib/components/ui",
-    "include": ["src/lib/components/ui"]
+    "include": [
+      "src/lib/components/ui"
+    ]
   }
 }

@@ -32,6 +32,9 @@ importers:
       stopwords-iso:
         specifier: ^1.1.0
         version: 1.1.0
+      super-sitemap:
+        specifier: ^1.0.12
+        version: 1.0.12(svelte@5.56.4(@typescript-eslint/types@8.61.1))
     devDependencies:
       '@biomejs/biome':
         specifier: 2.5.1
@@ -3631,6 +3634,11 @@ packages:
   super-regex@0.2.0:
     resolution: {integrity: sha512-WZzIx3rC1CvbMDloLsVw0lkZVKJWbrkJ0k1ghKFmcnPrW1+jWbgTkTEWVtD9lMdmI4jZEz40+naBxl1dCUhXXw==}
     engines: {node: '>=14.16'}
+
+  super-sitemap@1.0.12:
+    resolution: {integrity: sha512-C3gfAS1RZxL5bbZGtgnIOitMhfqAt8RmhW8AWTia6c8n9RW3Zx7f/SxVeFWZD0I1nUAx2pkxuWazVtev0Nmb5w==}
+    peerDependencies:
+      svelte: '>=4.0.0 <6.0.0'
 
   superstruct@2.0.2:
     resolution: {integrity: sha512-uV+TFRZdXsqXTL2pRvujROjdZQ4RAlBUS5BTh9IGm+jTqQntYThciG/qu57Gs69yjnVUSqdxF9YLmSnpupBW9A==}
@@ -7738,6 +7746,10 @@ snapshots:
       clone-regexp: 3.0.0
       function-timeout: 0.1.1
       time-span: 5.1.0
+
+  super-sitemap@1.0.12(svelte@5.56.4(@typescript-eslint/types@8.61.1)):
+    dependencies:
+      svelte: 5.56.4(@typescript-eslint/types@8.61.1)
 
   superstruct@2.0.2:
     optional: true
