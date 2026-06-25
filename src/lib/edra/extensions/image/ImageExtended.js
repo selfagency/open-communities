@@ -1,33 +1,33 @@
-import { SvelteNodeViewRenderer } from 'svelte-tiptap';
 import Image, {} from '@tiptap/extension-image';
+import { SvelteNodeViewRenderer } from 'svelte-tiptap';
 export const ImageExtended = (component) => {
-    return Image.extend({
-        addAttributes() {
-            return {
-                src: {
-                    default: null
-                },
-                alt: {
-                    default: null
-                },
-                title: {
-                    default: null
-                },
-                width: {
-                    default: '100%'
-                },
-                height: {
-                    default: null
-                },
-                align: {
-                    default: 'left'
-                }
-            };
+  return Image.extend({
+    addAttributes() {
+      return {
+        src: {
+          default: null
         },
-        addNodeView: () => {
-            return SvelteNodeViewRenderer(component);
+        alt: {
+          default: null
+        },
+        title: {
+          default: null
+        },
+        width: {
+          default: '100%'
+        },
+        height: {
+          default: null
+        },
+        align: {
+          default: 'left'
         }
-    }).configure({
-        allowBase64: true
-    });
+      };
+    },
+    addNodeView: () => {
+      return SvelteNodeViewRenderer(component);
+    }
+  }).configure({
+    allowBase64: true
+  });
 };

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import CaseSensitive from '@lucide/svelte/icons/case-sensitive';
 	import Replace from '@lucide/svelte/icons/replace';
 	import ReplaceAll from '@lucide/svelte/icons/replace-all';
 	import Search from '@lucide/svelte/icons/search';
+	import type { Editor } from '@tiptap/core';
 
 	interface Props {
 		editor: Editor;

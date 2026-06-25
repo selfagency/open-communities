@@ -1,7 +1,8 @@
 import type { Editor } from '@tiptap/core';
+
 interface Props {
-    editor: Editor;
+  editor: Editor;
 }
-declare const QuickColors: import("svelte").Component<Props, {}, "">;
+declare const QuickColors: import('svelte').Component<Props, {}, ''>;
 type QuickColors = ReturnType<typeof QuickColors>;
 export default QuickColors;

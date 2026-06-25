@@ -1,6 +1,7 @@
 <script lang="ts">
-	import * as Tooltip from '../../../components/ui/tooltip/index.js';
 	import type { Snippet } from 'svelte';
+	import * as Tooltip from '../../../components/ui/tooltip/index.js';
+
 	interface Props {
 		tooltip: string;
 		children: Snippet<[]>;

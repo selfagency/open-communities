@@ -1,12 +1,12 @@
 <script lang="ts">
-	import * as DropdownMenu from '../../../../components/ui/dropdown-menu/index.js';
-	import commands from '../../../commands/toolbar-commands.js';
-	import type { Editor } from '@tiptap/core';
 	import AlignLeft from '@lucide/svelte/icons/align-left';
-	import EdraToolTip from '../EdraToolTip.svelte';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import type { Editor } from '@tiptap/core';
 	import { buttonVariants } from '../../../../components/ui/button/index.js';
+	import * as DropdownMenu from '../../../../components/ui/dropdown-menu/index.js';
 	import { cn } from '../../../../utils.js';
+	import commands from '../../../commands/toolbar-commands.js';
+	import EdraToolTip from '../EdraToolTip.svelte';
 
 	interface Props {
 		editor: Editor;

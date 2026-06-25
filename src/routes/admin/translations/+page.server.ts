@@ -152,7 +152,7 @@ export const actions = {
     }
 
     try {
-      const baseUrl = coolifyUrl.replace(/\/+$/, '');
+      const baseUrl = coolifyUrl.endsWith('/') ? coolifyUrl.slice(0, -1) : coolifyUrl;
       const url = `${baseUrl}/api/v1/deploy?uuid=${coolifyAppUuid}&force=true`;
       const res = await fetch(url, {
         headers: { authorization: `Bearer ${coolifyToken}` }
@@ -193,7 +193,7 @@ export const actions = {
     }
 
     try {
-      const baseUrl = coolifyUrl.replace(/\/+$/, '');
+      const baseUrl = coolifyUrl.endsWith('/') ? coolifyUrl.slice(0, -1) : coolifyUrl;
       const url = `${baseUrl}/api/v1/deployments/${deploymentUuid}`;
       const res = await fetch(url, {
         headers: { authorization: `Bearer ${coolifyToken}` }

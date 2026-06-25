@@ -3,8 +3,9 @@ import { withRetry } from '$lib/server/api';
 import type { RequestHandler } from './$types';
 
 function csvEscape(val: unknown): string {
-  const s = typeof val === 'string' ? val : String(val ?? '');
-  return `"${s.replaceAll('"', '""')}"`;
+  if (val === null || val === undefined) return '""';
+  if (typeof val === 'string') return `"${val.replaceAll('"', '""')}"`;
+  return `"${String(val)}"`;
 }
 
 export const GET: RequestHandler = async ({ locals }) => {

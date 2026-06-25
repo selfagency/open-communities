@@ -117,7 +117,7 @@ async function _queryTrends(
   days = 30,
   interval: 'day' | 'week' = 'day'
 ): Promise<Array<{ date: string; count: number }> | null> {
-  const escapedEvent = event.replace(/'/g, String.raw`\'`);
+  const escapedEvent = event.replaceAll("'", "\\'");
   const sql = [
     `SELECT toStartOf${interval === 'week' ? 'Week' : 'Day'}(timestamp) AS date,`,
     '       count(DISTINCT person_id) AS count',

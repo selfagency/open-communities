@@ -1,20 +1,21 @@
-import { Node, mergeAttributes } from '@tiptap/core';
+import { mergeAttributes, Node } from '@tiptap/core';
 import { SvelteNodeViewRenderer } from 'svelte-tiptap';
-export const IFramePlaceholder = (content) => Node.create({
+export const IFramePlaceholder = (content) =>
+  Node.create({
     name: 'iframe-placeholder',
     addOptions() {
-        return {
-            HTMLAttributes: {},
-            onDrop: () => { },
-            onDropRejected: () => { },
-            onEmbed: () => { }
-        };
+      return {
+        HTMLAttributes: {},
+        onDrop: () => {},
+        onDropRejected: () => {},
+        onEmbed: () => {}
+      };
     },
     parseHTML() {
-        return [{ tag: `div[data-type="${this.name}"]` }];
+      return [{ tag: `div[data-type="${this.name}"]` }];
     },
     renderHTML({ HTMLAttributes }) {
-        return ['div', mergeAttributes(HTMLAttributes)];
+      return ['div', mergeAttributes(HTMLAttributes)];
     },
     group: 'block',
     draggable: true,
@@ -22,15 +23,15 @@ export const IFramePlaceholder = (content) => Node.create({
     content: 'inline*',
     isolating: true,
     addNodeView() {
-        return SvelteNodeViewRenderer(content);
+      return SvelteNodeViewRenderer(content);
     },
     addCommands() {
-        return {
-            insertIFramePlaceholder: () => (props) => {
-                return props.commands.insertContent({
-                    type: 'iframe-placeholder'
-                });
-            }
-        };
+      return {
+        insertIFramePlaceholder: () => (props) => {
+          return props.commands.insertContent({
+            type: 'iframe-placeholder'
+          });
+        }
+      };
     }
-});
+  });

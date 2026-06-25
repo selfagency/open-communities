@@ -1,6 +1,6 @@
 import type { Editor } from '@tiptap/core';
-import { DecorationSet, type EditorView } from '@tiptap/pm/view';
 import { Node } from '@tiptap/pm/model';
+import { DecorationSet, type EditorView } from '@tiptap/pm/view';
 /**
  * Check if the current browser is in mac or not
  */
@@ -10,7 +10,10 @@ export declare const isMac: boolean;
  * @param editor Editor - editor instance
  * @param maxSize number - max size of the image to be pasted in MB, default is 2MB
  */
-export declare function getHandlePaste(editor: Editor, maxSize?: number): (view: EditorView, event: ClipboardEvent) => void;
+export declare function getHandlePaste(
+  editor: Editor,
+  maxSize?: number
+): (view: EditorView, event: ClipboardEvent) => void;
 export declare const findColors: (doc: Node) => DecorationSet;
 /**
  * Dupilcate content at the current selection

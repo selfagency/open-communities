@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount, type Snippet } from 'svelte';
-	import { BubbleMenuPlugin, type BubbleMenuPluginProps } from '@tiptap/extension-bubble-menu';
 	import type { Editor } from '@tiptap/core';
+	import { BubbleMenuPlugin, type BubbleMenuPluginProps } from '@tiptap/extension-bubble-menu';
+	import { onMount, type Snippet } from 'svelte';
 
 	type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 

@@ -1,8 +1,8 @@
 <script lang="ts">
+	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import type { Editor } from '@tiptap/core';
 	import { Button, buttonVariants } from '../../../../components/ui/button/index.js';
 	import * as Popover from '../../../../components/ui/popover/index.js';
-	import type { Editor } from '@tiptap/core';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import { cn } from '../../../../utils.js';
 	import EdraToolTip from '../EdraToolTip.svelte';
 

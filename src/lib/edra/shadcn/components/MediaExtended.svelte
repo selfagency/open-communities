@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { onDestroy, onMount, type Snippet } from 'svelte';
-	import { NodeViewWrapper } from 'svelte-tiptap';
-	import type { NodeViewProps } from '@tiptap/core';
-	import { cn } from '../../../utils.js';
-	import { Button, buttonVariants } from '../../../components/ui/button/index.js';
 
 	import AlignCenter from '@lucide/svelte/icons/align-center';
 	import AlignLeft from '@lucide/svelte/icons/align-left';
 	import AlignRight from '@lucide/svelte/icons/align-right';
-	import EllipsisVertical from '@lucide/svelte/icons/ellipsis-vertical';
+	import Captions from '@lucide/svelte/icons/captions';
 	import CopyIcon from '@lucide/svelte/icons/copy';
+	import EllipsisVertical from '@lucide/svelte/icons/ellipsis-vertical';
 	import Fullscreen from '@lucide/svelte/icons/fullscreen';
 	import Trash from '@lucide/svelte/icons/trash';
-	import Captions from '@lucide/svelte/icons/captions';
-
+	import type { NodeViewProps } from '@tiptap/core';
+	import { onDestroy, onMount, type Snippet } from 'svelte';
+	import { NodeViewWrapper } from 'svelte-tiptap';
+	import { Button, buttonVariants } from '../../../components/ui/button/index.js';
 	import * as DropdownMenu from '../../../components/ui/dropdown-menu/index.js';
+	import { cn } from '../../../utils.js';
 	import { duplicateContent } from '../../utils.js';
 
 	interface MediaExtendedProps extends NodeViewProps {

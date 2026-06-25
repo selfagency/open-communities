@@ -1,15 +1,14 @@
 <script lang="ts">
+	import { isTextSelection } from '@tiptap/core';
+	import { cn } from '../../../utils.js';
 	import commands from '../../commands/toolbar-commands.js';
 	import BubbleMenu from '../../components/BubbleMenu.svelte';
 	import type { EdraToolbarProps, ShouldShowProps } from '../../types.js';
-
-	import { cn } from '../../../utils.js';
-	import { isTextSelection } from '@tiptap/core';
+	import ToolBarIcon from '../components/ToolBarIcon.svelte';
 	import Alignment from '../components/toolbar/Alignment.svelte';
 	import FontSize from '../components/toolbar/FontSize.svelte';
 	import Headings from '../components/toolbar/Headings.svelte';
 	import QuickColors from '../components/toolbar/QuickColors.svelte';
-	import ToolBarIcon from '../components/ToolBarIcon.svelte';
 
 	const {
 		editor,
@@ -75,16 +74,12 @@
 	const isTableGripSelected = (node: HTMLElement) => {
 		let container = node;
 		while (container && !['TD', 'TH'].includes(container.tagName)) {
-			container = container.parentElement!;
+			container = container.parentElement;
+			if (!container) return false;
 		}
-		const gripColumn =
-			container && container.querySelector && container.querySelector('a.grip-column.selected');
-		const gripRow =
-			container && container.querySelector && container.querySelector('a.grip-row.selected');
-		if (gripColumn || gripRow) {
-			return true;
-		}
-		return false;
+		const gripColumn = container?.querySelector?.('a.grip-column.selected');
+		const gripRow = container?.querySelector?.('a.grip-row.selected');
+		return !!(gripColumn || gripRow);
 	};
 </script>
 

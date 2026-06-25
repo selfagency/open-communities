@@ -1,7 +1,7 @@
 <script lang="ts">
+	import GripVertical from '@lucide/svelte/icons/grip-vertical';
 	import type { Editor } from '@tiptap/core';
 	import { onMount } from 'svelte';
-	import GripVertical from '@lucide/svelte/icons/grip-vertical';
 	import { DragHandlePlugin } from '../extensions/drag-handle/index.js';
 
 	interface Props {
