@@ -26,7 +26,11 @@ const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 
 if (!TOKEN) {
-  console.warn('⚠  PB_API_TOKEN not set — skipping translation fetch, writing empty message files');
+  if (existsSync(MESSAGES_DIR)) {
+    console.warn('⚠  PB_API_TOKEN not set — local message files preserved, skipping fetch');
+    process.exit(0);
+  }
+  console.warn('⚠  PB_API_TOKEN not set — writing empty message files');
   const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
   if (!existsSync(MESSAGES_DIR)) mkdirSync(MESSAGES_DIR, { recursive: true });
   for (const locale of knownLocales) {

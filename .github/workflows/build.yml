@@ -50,7 +50,7 @@ jobs:
           cache: true
           push: true
           env: |
-            POSTHOG_CLI_API_KEY=${{ secrets.POSTHOG_CLI_API_KEY }}, POSTHOG_CLI_PROJECT_ID=${{ secrets.POSTHOG_CLI_PROJECT_ID }}, POSTHOG_CLI_HOST=${{ secrets.POSTHOG_CLI_HOST }}, SOURCE_VERSION=${{ github.sha }}, npm_config_engine_strict=false
+            POSTHOG_CLI_API_KEY=${{ secrets.POSTHOG_CLI_API_KEY }}, POSTHOG_CLI_PROJECT_ID=${{ secrets.POSTHOG_CLI_PROJECT_ID }}, POSTHOG_CLI_HOST=${{ secrets.POSTHOG_CLI_HOST }}, SOURCE_VERSION=${{ github.sha }}, npm_config_engine_strict=false, PB_API_TOKEN=${{ secrets.PB_API_TOKEN }}, PB_URL=https://api.opencommunities.info
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
