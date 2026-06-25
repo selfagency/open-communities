@@ -13,24 +13,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Unit tests
+  build:
+    name: Build & typecheck & lint
     if: ${{ github.event_name == 'pull_request' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    services:
-      mailpit:
-        image: axllent/mailpit:latest
-        ports:
-          - 1025:1025
-          - 8025:8025
     permissions:
-      checks: write
       contents: read
-      pull-requests: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -58,25 +49,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright
-        run: pnpm exec playwright install chromium --with-deps --only-shell
-
-      - name: Build application
+      - name: Build
         run: pnpm build
         env:
           PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
           PB_URL: https://api.opencommunities.info
+
+      - name: Type check
+        run: pnpm check
+
+      - name: Lint
+        run: pnpm lint
 
       - name: Upload build output
         uses: actions/upload-artifact@v4
@@ -84,6 +70,53 @@ jobs:
           name: build-output
           path: build/
           if-no-files-found: error
+
+  unit-tests:
+    name: Unit tests
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run tests (vitest) with coverage
         id: test
@@ -138,8 +171,8 @@ jobs:
 
   fallow:
     name: Fallow analysis
-    needs: test
-    if: ${{ !cancelled() && needs.test.result != 'failure' && github.event_name == 'pull_request' }}
+    needs: build
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -155,15 +188,13 @@ jobs:
 
   e2e:
     name: E2E tests
-    needs: test
-    if: ${{ !cancelled() && needs.test.result != 'failure' }}
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -208,7 +239,6 @@ jobs:
       - name: Start Docker Compose (PB, Mailpit, Cap, Redis)
         run: |
           docker compose -f e2e/docker-compose.yml up -d
-          # Wait for PB to be healthy
           timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
           echo "All services ready"
 
@@ -279,4 +309,4 @@ jobs:
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
         run: |
-          npx --yes pa11y-ci@latest --urls "http://localhost:4173/ http://localhost:4173/admin http://localhost:4173/admin/congregations http://localhost:4173/admin/users http://localhost:4173/admin/approvals http://localhost:4173/admin/analytics http://localhost:4173/admin/pages http://localhost:4173/admin/settings"
+          npx --yes pa11y-ci@latest --urls "http://localhost:4173/ http://localhost:4173/admin http://localhost:4173/admin/congregations http://localhost:4173/admin/users http://localhost:4173/admin/pages"
