@@ -266,6 +266,8 @@ jobs:
           SMTP_PORT: 1025
           MAILPIT_API: http://127.0.0.1:8025/api/v1
           PB_TEST_BASEURL: http://127.0.0.1:4173
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: pnpm exec playwright test --config e2e/playwright.config.mjs
 
       - name: Upload E2E test results

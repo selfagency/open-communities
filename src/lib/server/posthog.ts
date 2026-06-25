@@ -10,6 +10,8 @@ import { log } from '$lib/server/logger';
 let _phClient: null | PostHog = null;
 
 function getPhClient(): null | PostHog {
+  // Disable PostHog in test environments — the client would 403 on invalid keys
+  if (process.env.NODE_ENV === 'test') return null;
   if (!env.PUBLIC_POSTHOG_KEY) return null;
   if (_phClient) return _phClient;
   _phClient = new PostHog(env.PUBLIC_POSTHOG_KEY, {
