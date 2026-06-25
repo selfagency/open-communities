@@ -21,33 +21,39 @@
 </script>
 
 <div class="grid gap-4 md:grid-cols-3">
-  <Card>
-    <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="font-serif text-lg font-bold tracking-wider">Pending Approvals</CardTitle>
-      <ThumbsUpIcon class="text-muted-foreground size-4" />
-    </CardHeader>
-    <CardContent>
-      <p class="text-3xl font-bold">{pendingApprovals}</p>
-    </CardContent>
-  </Card>
-  <Card>
-    <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="font-serif text-lg font-bold tracking-wider">Congregations</CardTitle>
-      <CongregationsIcon class="text-muted-foreground size-4" />
-    </CardHeader>
-    <CardContent>
-      <p class="text-3xl font-bold">{congregations}</p>
-    </CardContent>
-  </Card>
-  <Card>
-    <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="font-serif text-lg font-bold tracking-wider">Users</CardTitle>
-      <UsersIcon class="text-muted-foreground size-4" />
-    </CardHeader>
-    <CardContent>
-      <p class="text-3xl font-bold">{users}</p>
-    </CardContent>
-  </Card>
+  <a href="/admin/congregations" class="block cursor-pointer no-underline">
+    <Card>
+      <CardHeader class="flex flex-row items-center justify-between pb-2">
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Pending Approvals</CardTitle>
+        <ThumbsUpIcon class="text-muted-foreground size-4" />
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{pendingApprovals}</p>
+      </CardContent>
+    </Card>
+  </a>
+  <a href="/admin/congregations" class="block cursor-pointer no-underline">
+    <Card>
+      <CardHeader class="flex flex-row items-center justify-between pb-2">
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Congregations</CardTitle>
+        <CongregationsIcon class="text-muted-foreground size-4" />
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{congregations}</p>
+      </CardContent>
+    </Card>
+  </a>
+  <a href="/admin/users" class="block cursor-pointer no-underline">
+    <Card>
+      <CardHeader class="flex flex-row items-center justify-between pb-2">
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">Users</CardTitle>
+        <UsersIcon class="text-muted-foreground size-4" />
+      </CardHeader>
+      <CardContent>
+        <p class="text-3xl font-bold">{users}</p>
+      </CardContent>
+    </Card>
+  </a>
 </div>
 
 {#if topCountries.length > 0 || topStates.length > 0}
