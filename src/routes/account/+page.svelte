@@ -12,6 +12,7 @@
   let saved = $state(false);
   let unlinked = $state(false);
 
+  // svelte-ignore state_referenced_locally
   const form = superForm(data.form as any, {
     onUpdated({ form: f }) {
       saved = true;
