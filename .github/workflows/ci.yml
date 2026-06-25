@@ -158,16 +158,6 @@ jobs:
     needs: test
     if: ${{ !cancelled() && needs.test.result != 'failure' }}
     runs-on: ubuntu-latest
-    services:
-      mailpit:
-        image: axllent/mailpit:latest
-        ports:
-          - 1025:1025
-          - 8025:8025
-      cap:
-        image: tiago2/cap:latest
-        ports:
-          - 3001:3000
     permissions:
       contents: read
 
@@ -215,25 +205,12 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps --only-shell
 
-      - name: Download build output
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: build/
-
-      - name: Download PocketBase binary
+      - name: Start Docker Compose (PB, Mailpit, Cap, Redis)
         run: |
-          PB_VERSION=0.29.2
-          mkdir -p .e2e
-          curl -fsSL -o .e2e/pb.zip "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip"
-          unzip -o .e2e/pb.zip -d .e2e
-          chmod +x .e2e/pocketbase
-
-      - name: Start PocketBase
-        run: |
-          nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
-          timeout 30 bash -c 'until curl -f http://127.0.0.1:8090/api/health >/dev/null 2>&1; do sleep 1; done'
-          echo "PocketBase is ready"
+          docker compose -f e2e/docker-compose.yml up -d
+          # Wait for PB to be healthy
+          timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
+          echo "All services ready"
 
       - name: Bootstrap PocketBase
         run: node e2e/scripts/bootstrap.mjs
@@ -241,6 +218,12 @@ jobs:
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: build/
 
       - name: Start preview server
         run: |
@@ -262,13 +245,21 @@ jobs:
 
       - name: Run Playwright E2E
         env:
-          SMTP_HOST: 127.0.0.1
+          SMTP_HOST: localhost
           SMTP_PORT: 1025
-          MAILPIT_API: http://127.0.0.1:8025/api/v1
-          PB_TEST_BASEURL: http://127.0.0.1:4173
+          MAILPIT_API: http://localhost:8025/api/v1
+          PB_TEST_BASEURL: http://localhost:4173
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: pnpm exec playwright test --config e2e/playwright.config.mjs
+
+      - name: Docker Compose logs (on failure)
+        if: failure()
+        run: docker compose -f e2e/docker-compose.yml logs --tail=50
+
+      - name: Tear down Docker Compose
+        if: always()
+        run: docker compose -f e2e/docker-compose.yml down -v
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4

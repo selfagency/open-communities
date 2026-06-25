@@ -7,18 +7,23 @@ services:
         PB_VERSION: '0.29.2'
         PB_ARCH: 'amd64'
     image: opencommunities-pocketbase:local
-    network_mode: 'host'
+    ports:
+      - '8090:8090'
     volumes:
       - ./pocketbase/pb_data:/pb_data
       - ./pb_migrations:/pb/pb_migrations
     depends_on:
       - mailpit
+    networks:
+      - e2e
 
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - '8025:8025'
       - '1025:1025'
+      - '8025:8025'
+    networks:
+      - e2e
 
   cap:
     image: tiago2/cap:latest
@@ -31,8 +36,16 @@ services:
       - redis
     volumes:
       - ./cap/data:/usr/src/app/.data
+    networks:
+      - e2e
 
   redis:
     image: redis:7-alpine
     ports:
       - '6379:6379'
+    networks:
+      - e2e
+
+networks:
+  e2e:
+    driver: bridge
