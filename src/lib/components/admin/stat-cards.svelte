@@ -23,7 +23,7 @@
 <div class="grid gap-4 md:grid-cols-3">
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="font-serif text-sm font-bold tracking-wider">Pending Approvals</CardTitle>
+      <CardTitle class="font-serif text-base font-bold tracking-wider">Pending Approvals</CardTitle>
       <ThumbsUpIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
@@ -32,7 +32,7 @@
   </Card>
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="font-serif text-sm font-bold tracking-wider">Congregations</CardTitle>
+      <CardTitle class="font-serif text-base font-bold tracking-wider">Congregations</CardTitle>
       <ChurchIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
@@ -41,7 +41,7 @@
   </Card>
   <Card>
     <CardHeader class="flex flex-row items-center justify-between pb-2">
-      <CardTitle class="font-serif text-sm font-bold tracking-wider">Users</CardTitle>
+      <CardTitle class="font-serif text-base font-bold tracking-wider">Users</CardTitle>
       <UsersIcon class="text-muted-foreground size-4" />
     </CardHeader>
     <CardContent>
@@ -55,7 +55,7 @@
     {#if topCountries.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="font-serif text-sm font-bold tracking-wider">Top Countries</CardTitle>
+          <CardTitle class="font-serif text-base font-bold tracking-wider">Top Countries</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -80,7 +80,7 @@
     {#if topStates.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="font-serif text-sm font-bold tracking-wider">Top US States</CardTitle>
+          <CardTitle class="font-serif text-base font-bold tracking-wider">Top US States</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
