@@ -125,9 +125,7 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": [
-        "email"
-      ]
+      "identityFields": ["email"]
     },
     "mfa": {
       "enabled": false,
@@ -296,13 +294,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "en",
-          "es",
-          "fr",
-          "he",
-          "de"
-        ]
+        "values": ["en", "es", "fr", "he", "de"]
       },
       {
         "hidden": false,
@@ -323,14 +315,6 @@
         "presentable": false,
         "system": false,
         "type": "autodate"
-      },
-      {
-        "name": "notifications",
-        "type": "bool",
-        "required": false,
-        "presentable": false,
-        "hidden": false,
-        "system": false
       }
     ],
     "indexes": [
@@ -358,9 +342,7 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": [
-        "email"
-      ]
+      "identityFields": ["email"]
     },
     "mfa": {
       "enabled": false,
@@ -690,9 +672,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"
-    ],
+    "indexes": ["CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"],
     "system": true
   },
   {
@@ -795,9 +775,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"
-    ],
+    "indexes": ["CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"],
     "system": true
   },
   {
@@ -944,9 +922,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
     "system": false
   },
   {
@@ -1058,9 +1034,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
-    ],
+    "indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
     "system": false
   },
   {
@@ -1270,9 +1244,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
     "system": false
   },
   {
@@ -1386,9 +1358,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
     "system": false
   },
   {
@@ -1474,11 +1444,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "no",
-          "yes",
-          "yesBima"
-        ]
+        "values": ["no", "yes", "yesBima"]
       },
       {
         "cascadeDelete": false,
@@ -1514,9 +1480,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
     "system": false
   },
   {
@@ -1552,12 +1516,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "maskingRequired",
-          "maskingRecommended",
-          "noGuidelines",
-          "other"
-        ]
+        "values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
       },
       {
         "autogeneratePattern": "",
@@ -1607,9 +1566,146 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"
+    "indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
+    "system": false
+  },
+  {
+    "id": "pbc_2472443737",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "@request.auth.admin = true ",
+    "updateRule": "@request.auth.admin = true",
+    "deleteRule": "@request.auth.admin = true",
+    "name": "pageVariants",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text724990059",
+        "max": 0,
+        "min": 0,
+        "name": "title",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "convertURLs": false,
+        "hidden": false,
+        "id": "editor4274335913",
+        "maxSize": 0,
+        "name": "content",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "editor"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1843675174",
+        "max": 0,
+        "min": 0,
+        "name": "description",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1272794934",
+        "max": 0,
+        "min": 0,
+        "name": "imageAlt",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1877985714",
+        "max": 0,
+        "min": 0,
+        "name": "imageCaption",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select3571151285",
+        "maxSelect": 1,
+        "name": "language",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": ["en", "de", "es", "fr", "he", "hu", "nl", "pl", "pt", "ru", "uk"]
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "qdpun4yrifka7lx",
+        "hidden": false,
+        "id": "relation336246304",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "page",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
     ],
+    "indexes": [],
     "system": false
   },
   {
@@ -1691,33 +1787,45 @@
       },
       {
         "hidden": false,
-        "id": "0vxu5mkf",
+        "id": "file3309110367",
         "maxSelect": 1,
-        "name": "lang",
+        "maxSize": 0,
+        "mimeTypes": [],
+        "name": "image",
         "presentable": false,
-        "required": true,
-        "system": false,
-        "type": "select",
-        "values": [
-          "en",
-          "de",
-          "es",
-          "fr",
-          "he"
-        ]
-      },
-      {
-        "cascadeDelete": false,
-        "collectionId": "qdpun4yrifka7lx",
-        "hidden": false,
-        "id": "ado6jnjl",
-        "maxSelect": 2147483647,
-        "minSelect": 0,
-        "name": "sisters",
-        "presentable": false,
+        "protected": false,
         "required": false,
         "system": false,
-        "type": "relation"
+        "thumbs": [],
+        "type": "file"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1272794934",
+        "max": 0,
+        "min": 0,
+        "name": "imageAlt",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1877985714",
+        "max": 0,
+        "min": 0,
+        "name": "imageCaption",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
         "hidden": false,
@@ -1740,9 +1848,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
     "system": false
   },
   {
@@ -1800,13 +1906,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "free",
-          "fixedPrice",
-          "slidingScale",
-          "suggestedDonation",
-          "other"
-        ]
+        "values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
       },
       {
         "autogeneratePattern": "",
@@ -1856,9 +1956,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
     "system": false
   },
   {
@@ -1996,9 +2094,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
     "system": false
   },
   {
@@ -2118,9 +2214,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
     "system": false
   },
   {
@@ -2233,9 +2327,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
-    ],
+    "indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
     "system": false
   },
   {

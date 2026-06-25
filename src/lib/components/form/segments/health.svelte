@@ -33,7 +33,7 @@
   {@const healthErrors = fixType($errors.health)}
   <Accordion.Item value="health">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
         <span>{m.health()}</span>
         {#if !hasHealth || healthErrors}
           <span class="text-destructive">*</span>
@@ -84,7 +84,7 @@
         <span class="mt-4 block text-xs text-destructive">{m.requiredResponse()}</span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'security')}>
+        <Button variant="secondary" onclick={() => { view = 'security'; document.querySelector('[data-value="security"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
           {m.next()} →
         </Button>
       </div>

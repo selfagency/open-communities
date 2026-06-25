@@ -1,11 +1,11 @@
 <script lang="ts">
   import BuildingIcon from '@tabler/icons-svelte/icons/building';
+  import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
   import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
   import FilesIcon from '@tabler/icons-svelte/icons/files';
   import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
   import MoonIcon from '@tabler/icons-svelte/icons/moon';
   import PencilIcon from '@tabler/icons-svelte/icons/pencil';
-  import SettingsIcon from '@tabler/icons-svelte/icons/settings';
   import SunIcon from '@tabler/icons-svelte/icons/sun';
   import UserCircleIcon from '@tabler/icons-svelte/icons/user-circle';
   import UserCogIcon from '@tabler/icons-svelte/icons/user-cog';
@@ -17,11 +17,11 @@
   import { page } from '$app/state';
   import { Button } from '$lib/components/ui/button';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+  import * as NativeSelect from '$lib/components/ui/native-select';
   import { Switch } from '$lib/components/ui/switch';
   import { m } from '$lib/paraglide/messages';
   import { setLocale } from '$lib/paraglide/runtime';
   import { state as appState } from '$lib/stores';
-
   import Locale from './locale.svelte';
 
   /*  endregion imports */
@@ -42,7 +42,7 @@
   class={viewMode === 'mini'
     ? 'mt-8 flex flex-col items-start justify-start'
     : 'flex flex-row items-center justify-between space-x-2'}>
-  {#if user?.congregation && !user?.admin}
+  {#if user?.congregation}
     <Button
       variant={viewMode === 'mini' ? 'link' : 'default'}
       class={viewMode === 'mini' ? 'text-foreground' : ''}
@@ -50,6 +50,7 @@
         dispatch('close');
         await goto(`/edit?id=${user?.congregation}`);
       }}>
+      <PencilIcon class="size-4" />
       {viewMode === 'full' && isMobile ? m.edit() : m.editCongregation()}
     </Button>
   {:else if user?.email}
@@ -60,6 +61,7 @@
         dispatch('close');
         await goto('/add');
       }}>
+      <CirclePlusIcon class="size-4" />
       {viewMode === 'full' && isMobile ? m.add() : m.addCongregation()}
     </Button>
   {:else}
@@ -70,6 +72,7 @@
         dispatch('close');
         await goto('/login?redirect=/add');
       }}>
+      <CirclePlusIcon class="size-4" />
       {m.addCongregation()}
     </Button>
   {/if}
@@ -78,106 +81,99 @@
     {#if viewMode === 'mini'}
       <!-- Mini mode: inline list -->
       <div class="flex flex-col items-start gap-1 px-4 py-2">
-        <span class="text-muted-foreground text-xs font-semibold uppercase">Account</span>
-        <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/account'); }}>Manage Account</button>
+        <span class="text-muted-foreground text-xs font-semibold uppercase">{m.account()}</span>
+        <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/account'); }}>{m.manageAccount()}</button>
         {#if user?.congregation}
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/edit?id=' + user?.congregation); }}>Edit Congregation</button>
+          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/edit?id=' + user?.congregation); }}>{m.editCongregation()}</button>
         {/if}
         {#if user?.admin}
-          <span class="text-muted-foreground mt-2 text-xs font-semibold uppercase">Admin</span>
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin'); }}>Dashboard</button>
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/congregations'); }}>Congregations</button>
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/users'); }}>Users</button>
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/pages'); }}>Pages</button>
-          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/settings'); }}>Settings</button>
+          <span class="text-muted-foreground mt-2 text-xs font-semibold uppercase">{m.admin()}</span>
+          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin'); }}>{m.dashboard()}</button>
+          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/congregations'); }}>{m.adminCongregations()}</button>
+          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/users'); }}>{m.adminUsers()}</button>
+          <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/admin/pages'); }}>{m.pages()}</button>
         {/if}
         <div class="mt-2 border-t pt-2">
           <div class="flex items-center gap-3 py-1">
             <Locale mode={viewMode} />
             <span class="flex items-center gap-1">
               <SunIcon class="size-3.5 text-muted-foreground" />
-              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" class="scale-75" />
+              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label={m.toggleDarkMode()} class="scale-75" />
               <MoonIcon class="size-3.5 text-muted-foreground" />
             </span>
           </div>
         </div>
-        <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/logout'); }}>Log out</button>
+        <button class="text-foreground text-sm underline-offset-4 hover:underline" onclick={() => { dispatch('close'); goto('/logout'); }}>{m.logout()}</button>
       </div>
     {:else}
       <!-- Full mode: user circle dropdown -->
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           {#snippet child({ props })}
-            <button {...props} class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted" aria-label="User menu">
+            <button {...props} class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted" aria-label={m.userMenu()}>
               <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1.25" />
             </button>
           {/snippet}
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end" class="w-56">
-          <DropdownMenu.Item onclick={() => goto('/account')}>
-            <UserCogIcon class="mr-2 size-4" />
-            Manage Account
-          </DropdownMenu.Item>
-          {#if user?.congregation}
-            <DropdownMenu.Item onclick={() => goto('/edit?id=' + user?.congregation)}>
-              <PencilIcon class="mr-2 size-4" />
-              Edit Congregation
-            </DropdownMenu.Item>
-          {/if}
-          {#if user?.admin}
-            <DropdownMenu.Separator />
-            <DropdownMenu.Label class="text-muted-foreground text-xs">Admin</DropdownMenu.Label>
-            <DropdownMenu.Item onclick={() => goto('/admin')}>
-              <DashboardIcon class="mr-2 size-4" />
-              Dashboard
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/congregations')}>
-              <BuildingIcon class="mr-2 size-4" />
-              Congregations
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/users')}>
-              <UsersIcon class="mr-2 size-4" />
-              Users
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/pages')}>
-              <FilesIcon class="mr-2 size-4" />
-              Pages
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/settings')}>
-              <SettingsIcon class="mr-2 size-4" />
-              Settings
-            </DropdownMenu.Item>
-          {/if}
-          <DropdownMenu.Separator />
-          <DropdownMenu.Label class="text-muted-foreground text-xs">Language</DropdownMenu.Label>
-          <div class="grid grid-cols-3 gap-1 px-2 py-1">
-            {#each [{l:'English',v:'en'},{l:'Español',v:'es'},{l:'Français',v:'fr'},{l:'עברית',v:'he'},{l:'Deutsch',v:'de'},{l:'Magyar',v:'hu'},{l:'Português',v:'pt'},{l:'Русский',v:'ru'},{l:'Українська',v:'uk'}] as {l,v}}
-              <button
-                class="rounded-md px-2 py-1 text-xs font-medium transition-colors {lang === v ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-foreground'}"
-                onclick={async () => {
-                  lang = v;
-                  await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang: v, user: page.data.user?.id }) });
-                  setLocale(v as Parameters<typeof setLocale>[0], { reload: true });
-                }}
-              >{v.toUpperCase()}</button>
-            {/each}
-          </div>
-          <DropdownMenu.Separator />
           <div class="flex items-center justify-between px-2 py-1.5">
-            <span class="text-muted-foreground text-xs">Dark mode</span>
+            <span class="text-muted-foreground text-xs">Language</span>
+            <NativeSelect.Root bind:value={lang} onchange={async () => {
+              await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang, user: page.data.user?.id }) });
+              setLocale(lang as Parameters<typeof setLocale>[0], { reload: true });
+            }}>
+              <NativeSelect.Option value="en">English</NativeSelect.Option>
+              <NativeSelect.Option value="de">Deutsch</NativeSelect.Option>
+              <NativeSelect.Option value="es">Español</NativeSelect.Option>
+              <NativeSelect.Option value="fr">Français</NativeSelect.Option>
+              <NativeSelect.Option value="he">עברית</NativeSelect.Option>
+              <NativeSelect.Option value="hu">Magyar</NativeSelect.Option>
+              <NativeSelect.Option value="nl">Nederlands</NativeSelect.Option>
+              <NativeSelect.Option value="pl">Polski</NativeSelect.Option>
+              <NativeSelect.Option value="pt">Português</NativeSelect.Option>
+              <NativeSelect.Option value="ru">Русский</NativeSelect.Option>
+              <NativeSelect.Option value="uk">Українська</NativeSelect.Option>
+            </NativeSelect.Root>
+          </div>
+          <div class="flex items-center justify-between px-2 py-1.5">
+            <span class="text-muted-foreground text-xs">{m.darkMode()}</span>
             <div class="flex items-center gap-2">
               {#if mode.current === 'dark'}
                 <MoonIcon class="size-4 text-muted-foreground" />
               {:else}
                 <SunIcon class="size-4 text-muted-foreground" />
               {/if}
-              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
+              <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label={m.toggleDarkMode()} />
             </div>
           </div>
-          <DropdownMenu.Separator />
+          {#if user?.admin}
+            <DropdownMenu.Separator />
+            <DropdownMenu.Label class="text-muted-foreground text-xs">{m.admin()}</DropdownMenu.Label>
+            <DropdownMenu.Item onclick={() => goto('/admin')}>
+              <DashboardIcon class="mr-2 size-4" />
+              {m.dashboard()}
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/congregations')}>
+              <BuildingIcon class="mr-2 size-4" />
+              {m.adminCongregations()}
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/users')}>
+              <UsersIcon class="mr-2 size-4" />
+              {m.adminUsers()}
+            </DropdownMenu.Item>
+            <DropdownMenu.Item onclick={() => goto('/admin/pages')}>
+              <FilesIcon class="mr-2 size-4" />
+              {m.pages()}
+            </DropdownMenu.Item>
+            <DropdownMenu.Separator />
+          {/if}
+          <DropdownMenu.Item onclick={() => goto('/account')}>
+            <UserCogIcon class="mr-2 size-4" />
+            {m.manageAccount()}
+          </DropdownMenu.Item>
           <DropdownMenu.Item onclick={() => goto('/logout')}>
             <LogoutIcon class="mr-2 size-4" />
-            Log out
+            {m.logout()}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
@@ -199,7 +195,7 @@
     <div class="flex flex-row items-center justify-start space-x-2 {viewMode === 'mini' ? 'mt-4 w-full px-4' : ''}">
       <span class="flex flex-row items-center justify-start space-x-1">
         <SunIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
-        <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label="Toggle dark mode" />
+        <Switch checked={mode.current === 'dark'} onCheckedChange={toggleMode} aria-label={m.toggleDarkMode()} />
         <MoonIcon class="h-4 w-4 text-muted-foreground transition-transform duration-200 motion-safe:hover:rotate-90" />
       </span>
     </div>

@@ -13,7 +13,7 @@ import type {
   SecurityRecord,
   ServicesRecord
 } from '$lib/pocketbase.d';
-import { defaultSchema, deleteSchema, transferSchema } from '$lib/schemas/record';
+import { defaultSchema, deleteSchema } from '$lib/schemas/record';
 import { cleanResponse, throwAsHttpError } from '$lib/server/api';
 import { clearCongregationCache } from '$lib/server/cache';
 import { log } from '$lib/server/logger';
@@ -63,8 +63,7 @@ export const load = async ({ fetch, locals, url }) => {
             }),
             defaultSchema
           ),
-          delete: await validate({ id }, deleteSchema),
-          transfer: await validate({ id }, transferSchema)
+          delete: await validate({ id }, deleteSchema)
         }
       };
     } else {
@@ -283,63 +282,6 @@ export const actions = {
       return {
         form
       };
-    } catch (error) {
-      const err = error as ClientResponseError;
-      if (isFunction(captureException)) {
-        await captureException(error, client?.id);
-      }
-
-      return fail(err.status ?? 400, { form });
-    }
-  },
-  transfer: async (event) => {
-    const { fetch, locals } = event;
-    const { api, capture, captureException, log, validate } = locals;
-    const client = api?.authStore?.record;
-
-    const form = await validate(event, transferSchema);
-    const data = form.data;
-
-    try {
-      if (isFunction(capture)) {
-        await capture(client?.id, 'transferCongregation');
-      }
-    } catch (captureError) {
-      // Log capture error but don't fail the action
-      log.error('PostHog capture failed:', captureError);
-    }
-
-    try {
-      if (!form.valid) {
-        log.error('form invalid', { errors: form.errors });
-        throw new Error('Invalid form data');
-      }
-
-      if (!client?.admin) {
-        const error = new Error('Forbidden') as ClientResponseError;
-        error.status = 403;
-        throw error;
-      }
-
-      const user = await api.collection('users').getFirstListItem(api.filter('email={:email}', { email: data.email }), {
-        fetch
-      });
-
-      const batch = api.createBatch();
-      if (!isEmpty(data.owner)) {
-        batch.collection('users').update(data.owner, { congregation: '' });
-      }
-      batch.collection('users').update(user?.id, { congregation: data.id });
-      await batch.send({ fetch });
-
-      await transactionalMail({
-        email: user.email,
-        message: m.transactional_claimedSuccess({ locale: user.lang || 'en' }),
-        name: user.name,
-        subject: m.transactional_subject({ locale: user.lang || 'en' })
-      });
-
-      return { form };
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {

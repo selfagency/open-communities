@@ -70,7 +70,7 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger
-    class="button border border-destructive/30 bg-background text-destructive hover:bg-destructive/10 hover:text-destructive"
+    class="button destructive"
     type="button"
   >
     {m.delete()}

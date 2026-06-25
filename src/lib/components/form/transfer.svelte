@@ -103,7 +103,7 @@
 {#if user?.admin}
   <AlertDialog.Root bind:open>
     <AlertDialog.Trigger
-      class="button border border-destructive/30 bg-background text-destructive hover:bg-destructive/10 hover:text-destructive"
+      class="button border border-destructive/20 bg-background text-destructive/80 hover:bg-destructive/5 hover:text-destructive"
       onclick={(e: Event) => {
         e.preventDefault();
         open = true;

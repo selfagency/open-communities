@@ -3,6 +3,7 @@
   import { goto } from '$app/navigation';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+  import { m } from '$lib/paraglide/messages';
 
   let {
     congregation,
@@ -16,14 +17,14 @@
 {#if congregation}
   <Card>
     <CardHeader>
-      <CardTitle class="text-lg font-bold">Congregation</CardTitle>
+      <CardTitle class="text-lg font-bold">{m.congregation()}</CardTitle>
     </CardHeader>
     <CardContent class="space-y-4">
-      <p class="text-muted-foreground text-sm">You are linked to a congregation. You can unlink to manage a different one.</p>
+      <p class="text-muted-foreground text-sm">{m.linkedDescription()}</p>
       <form method="POST" action="?/unlink" use:enhance={onUnlink}>
-        <Button variant="outline" type="submit">Unlink from Congregation</Button>
+        <Button variant="outline" type="submit">{m.unlinkFromCongregation()}</Button>
       </form>
-      <Button variant="outline" onclick={() => goto('/edit?id=' + congregation)}>Edit Congregation</Button>
+      <Button variant="outline" onclick={() => goto('/edit?id=' + congregation)}>{m.editCongregation()}</Button>
     </CardContent>
   </Card>
 {/if}

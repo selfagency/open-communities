@@ -33,7 +33,6 @@
   import Registration from "./segments/registration.svelte";
   import Security from "./segments/security.svelte";
   import Services from "./segments/services.svelte";
-  import Transfer from "./transfer.svelte";
 
   /* endregion imports */
 
@@ -44,14 +43,12 @@
     deletion = undefined,
     form,
     mode = $bindable("add"),
-    transfer = undefined,
     user,
   }: {
     content?: PagesRecord;
     deletion?: SuperValidated<any>;
     form: SuperForm<any, any>;
     mode: "add" | "edit";
-    transfer?: SuperValidated<any>;
     user: (UsersRecord & { id: string }) | undefined;
   } = $props();
 
@@ -254,11 +251,6 @@
                     <Delete
                       data={deletion!}
                       id={$formData?.id ?? ""}
-                    />
-                    <Transfer
-                      data={transfer!}
-                      id={$formData?.id ?? ""}
-                      owner={congregation.owner}
                     />
                   </div>
                 {/if}

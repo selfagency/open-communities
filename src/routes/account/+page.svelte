@@ -40,12 +40,12 @@
 
 <div class="mx-auto max-w-2xl space-y-8 py-8">
   <div>
-    <h1 class="text-2xl font-semibold">Account</h1>
-    <p class="text-muted-foreground text-sm">Manage your profile and preferences</p>
+    <h1 class="text-2xl font-semibold">{m.account()}</h1>
+    <p class="text-muted-foreground text-sm">{m.accountDescription()}</p>
   </div>
 
   {#if unlinked}
-    <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">You have been unlinked from your congregation.</div>
+    <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">{m.unlinkedNotice()}</div>
   {/if}
 
   <form method="POST" action="?/update" use:enhance>

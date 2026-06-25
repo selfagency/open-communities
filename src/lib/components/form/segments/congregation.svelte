@@ -133,7 +133,7 @@
 
 <Accordion.Item value="congregation">
   <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-    <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+    <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
       <span>{m.congregation()}</span>
       {#if isEmpty($formData?.name) || isEmpty($formData?.clergy) || isEmpty($formData?.flavor) || $errors.name || $errors.city || $errors.state || $errors.country || $errors.clergy || $errors.flavor}
         <span class="text-destructive">*</span>
@@ -291,7 +291,7 @@
       <Form.FieldErrors />
     </Form.Field>
     <div class="mt-4 flex flex-row items-center justify-end">
-      <Button variant="secondary" onclick={() => (view = 'fit')}>{m.next()} →</Button>
+      <Button variant="secondary" onclick={() => { view = 'fit'; document.querySelector('[data-value="fit"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{m.next()} →</Button>
     </div>
   </Accordion.Content>
 </Accordion.Item>

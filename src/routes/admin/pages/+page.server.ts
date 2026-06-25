@@ -11,8 +11,9 @@ export const load: PageServerLoad = async ({ locals }) => {
       id: p.id,
       title: p.title,
       slug: p.slug,
-      lang: p.lang,
-      published: p.published,
+      description: (p.description as string) ?? '',
+      imageAlt: (p.imageAlt as string) ?? '',
+      imageCaption: (p.imageCaption as string) ?? '',
       updated: p.updated
     }))
   };

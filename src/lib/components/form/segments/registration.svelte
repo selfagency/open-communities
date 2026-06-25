@@ -38,7 +38,7 @@
     fixType($errors.registration)?._errors}
   <Accordion.Item value="registration">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
         <span>{m.registration()}</span>
         {#if !hasRegistration || registrationErrors}
           <span class="text-destructive">*</span>
@@ -138,7 +138,7 @@
         </span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'contact')}>{m.next()} →</Button>
+        <Button variant="secondary" onclick={() => { view = 'contact'; document.querySelector('[data-value="contact"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{m.next()} →</Button>
       </div>
     </Accordion.Content>
   </Accordion.Item>

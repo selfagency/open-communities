@@ -18,7 +18,9 @@ export const load: PageServerLoad = async ({ locals }) => {
       state: stateData?.name ?? '',
       countryCode: countryData?.code ?? '',
       owner:
-        ((c as Record<string, unknown>).expand as Record<string, { email?: string }> | undefined)?.owner?.email ?? '',
+        ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.email as string) ?? '',
+      ownerId:
+        ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.id as string) ?? '',
       created: c.created as string
     };
   }

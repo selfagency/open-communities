@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const client = locals.api;
   const search = url.searchParams.get('q') ?? '';
   const page = Number(url.searchParams.get('page')) || 1;
-  const perPage = 20;
+  const perPage = 18;
 
   // Build filter
   let filter = '';
@@ -17,21 +17,26 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const list = await withRetry(() =>
     client.collection('users').getList(page, perPage, {
       filter: filter || undefined,
-      sort: '-created',
+      sort: 'name',
+      expand: 'congregation',
       requestKey: `admin-users-${page}`
     })
   );
 
   return {
-    users: list.items.map((u: Record<string, unknown>) => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      lang: u.lang,
-      verified: u.verified,
-      admin: u.admin,
-      created: u.created
-    })),
+    users: list.items.map((u: Record<string, unknown>) => {
+      const expand = u.expand as Record<string, unknown> | undefined;
+      const congData = expand?.congregation as Record<string, string> | undefined;
+      return {
+        id: u.id as string,
+        name: (u.name as string) ?? '',
+        email: (u.email as string) ?? '',
+        verified: (u.verified as boolean) ?? false,
+        admin: (u.admin as boolean) ?? false,
+        congregation: (u.congregation as string) ?? '',
+        congregationName: congData?.name ?? ''
+      };
+    }),
     total: list.totalItems,
     page,
     perPage,

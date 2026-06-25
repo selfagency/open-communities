@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { invalidateAll } from '$app/navigation';
   import { Button } from '$lib/components/ui/button';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { invalidateAll } from '$app/navigation';
   import { m } from '$lib/paraglide/messages';
 
   interface PhChange { percent: number; direction: string; long_text: string; }

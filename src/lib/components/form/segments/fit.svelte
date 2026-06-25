@@ -33,7 +33,7 @@
   {@const fitErrors = fixType($errors.fit)?._errors}
   <Accordion.Item value="fit">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
         <span>{m.fit()}</span>
         {#if !hasFit || fitErrors}
           <span class="text-destructive">*</span>
@@ -175,7 +175,7 @@
       {/if}
 
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'services')}>{m.next()} →</Button>
+        <Button variant="secondary" onclick={() => { view = 'services'; document.querySelector('[data-value="services"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{m.next()} →</Button>
       </div>
     </Accordion.Content>
   </Accordion.Item>

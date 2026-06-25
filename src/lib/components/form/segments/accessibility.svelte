@@ -16,7 +16,7 @@
 {#if $formData.accessibility}
   <Accordion.Item value="accessibility">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
         <span>{m.accessibility()}</span>
         {#if $errors.accessibility}
           <span class="text-destructive">*</span>
@@ -212,7 +212,7 @@
       </div>
 
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'health')}>{m.next()} →</Button>
+        <Button variant="secondary" onclick={() => { view = 'health'; document.querySelector('[data-value="health"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{m.next()} →</Button>
       </div>
     </Accordion.Content>
   </Accordion.Item>

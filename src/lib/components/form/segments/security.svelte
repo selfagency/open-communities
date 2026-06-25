@@ -25,7 +25,7 @@
   {@const securityErrors = fixType($errors.security)?._errors}
   <Accordion.Item value="security">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
         <span>{m.security()}</span>
         {#if securityErrors}
           <span class="text-destructive">*</span>
@@ -199,7 +199,7 @@
         {/if}
       </div>
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'registration')}>
+        <Button variant="secondary" onclick={() => { view = 'registration'; document.querySelector('[data-value="registration"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
           {m.next()} →
         </Button>
       </div>

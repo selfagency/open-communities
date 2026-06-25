@@ -14,7 +14,7 @@
 
 <Accordion.Item value="contact">
   <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-    <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+    <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
       <span>{m.contact()}</span>
       {#if $errors.contactName || $errors.contactEmail}
         <span class="text-destructive">*</span>

@@ -31,7 +31,7 @@
   {@const servicesErrors = fixType($errors.services)?._errors}
   <Accordion.Item value="services">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider">
         <span>{m.services()}</span>
         {#if !hasServices || servicesErrors}
           <span class="text-destructive">*</span>
@@ -172,7 +172,7 @@
         {/if}
       </div>
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'accessibility')}>
+        <Button variant="secondary" onclick={() => { view = 'accessibility'; document.querySelector('[data-value="accessibility"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>
           {m.next()} →
         </Button>
       </div>

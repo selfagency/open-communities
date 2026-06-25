@@ -14,6 +14,7 @@
   /* region variables */
   // props
   const { data }: PageProps = $props();
+  const isAdmin = $derived(!!data.user?.admin);
   /* endregion variables */
 
   /* region lifecycle */
@@ -38,9 +39,14 @@
   <title>{m.editCongregation()} &middot; {m.title()}</title>
 </svelte:head>
 
+{#if isAdmin}
+  <div class="m-auto mb-4" style="max-width: 480px;">
+    <a href="/admin/congregations" class="text-muted-foreground text-sm underline-offset-4 hover:underline">&larr; {m.adminCongregations()}</a>
+  </div>
+{/if}
+
 <EditForm
   {form}
   mode="edit"
   deletion={data.form!.delete}
-  transfer={data.form!.transfer}
   user={data.user as UsersRecord & { id: string }} />
