@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   const variants = await client
     .collection('pageVariants')
     .getFullList({
-      filter: `page = "${pageId}"`,
+      filter: client.filter('page = {:pageId}', { pageId }),
       requestKey: `page-variants-${pageId}`
     })
     .catch(() => []);
@@ -52,6 +52,8 @@ export const actions = {
     const imageFile = form.get('image') as File | null;
 
     if (!title || !slug) return fail(400, { error: 'Title and slug are required' });
+    if (!/^[a-z0-9-]+$/.test(slug))
+      return fail(400, { error: 'Slug must contain only lowercase letters, numbers, and hyphens' });
 
     try {
       const body: Record<string, unknown> = {
@@ -99,8 +101,8 @@ export const actions = {
       }
 
       return { success: true };
-    } catch (err: unknown) {
-      return fail(400, { error: (err as { message?: string }).message ?? 'Save failed' });
+    } catch (_err: unknown) {
+      return fail(400, { error: 'Save failed' });
     }
   }
 } satisfies Actions;

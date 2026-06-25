@@ -10,8 +10,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   // Build filter
   let filter = '';
   if (search) {
-    const escaped = search.replace(/"/g, '\\"');
-    filter = `email ~ "${escaped}" || name ~ "${escaped}"`;
+    filter = client.filter('email ~ {:search} || name ~ {:search}', { search });
   }
 
   const list = await withRetry(() =>

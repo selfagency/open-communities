@@ -56,6 +56,7 @@
   let imageAlt = $state((page?.imageAlt as string) ?? '');
   let imageCaption = $state((page?.imageCaption as string) ?? '');
   let manualSlug = $state(!!page);
+  // svelte-ignore state_referenced_locally
   let error = $state('');
 
   // Variant fields for non-English languages

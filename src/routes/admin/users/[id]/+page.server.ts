@@ -50,14 +50,16 @@ export const actions = {
     const formData = await request.formData();
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
+    const verified = formData.get('verified') === 'true';
+    const admin = formData.get('admin') === 'true';
 
     if (!name || !email) return fail(400, { error: 'Name and email are required' });
 
     try {
-      await client.collection('users').update(params.id, { name, email });
+      await client.collection('users').update(params.id, { name, email, verified, admin });
       return { success: 'User updated' };
-    } catch (err: unknown) {
-      return fail(400, { error: (err as { message?: string }).message ?? 'Update failed' });
+    } catch {
+      return fail(400, { error: 'Update failed' });
     }
   },
 

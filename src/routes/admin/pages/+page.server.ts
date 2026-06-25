@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ locals }) => {
   );
   return {
     pages: pages.map((p: Record<string, unknown>) => ({
-      id: p.id,
+      id: p.id as string,
       title: p.title,
       slug: p.slug,
       description: (p.description as string) ?? '',
