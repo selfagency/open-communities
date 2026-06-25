@@ -350,7 +350,6 @@
             {/each}
 
             <div class="flex items-center justify-end gap-2 pt-2">
-              <Button type="submit">Save</Button>
               <AlertDialog>
                 <AlertDialogTrigger>
                   <Button type="button" variant="destructive">Delete</Button>
@@ -377,6 +376,7 @@
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+              <Button type="submit">Save</Button>
             </div>
           </form>
         </AccordionContent>
