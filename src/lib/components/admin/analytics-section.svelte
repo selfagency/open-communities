@@ -46,7 +46,7 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
-        {#if digest.visitors.change}
+        {#if digest.visitors.change && viewMode === '30d'}
           <p class="text-muted-foreground mt-1 text-xs">{digest.visitors.change.long_text}</p>
         {/if}
       </CardContent>
@@ -57,7 +57,7 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
-        {#if digest.pageviews.change}
+        {#if digest.pageviews.change && viewMode === '30d'}
           <p class="text-muted-foreground mt-1 text-xs">{digest.pageviews.change.long_text}</p>
         {/if}
       </CardContent>
@@ -68,7 +68,7 @@
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
-        {#if digest.sessions.change}
+        {#if digest.sessions.change && viewMode === '30d'}
           <p class="text-muted-foreground mt-1 text-xs">{digest.sessions.change.long_text}</p>
         {/if}
       </CardContent>
@@ -92,9 +92,9 @@
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Page</TableHead>
-              <TableHead class="text-right">Visitors</TableHead>
-              <TableHead class="text-right">Change</TableHead>
+              <TableHead class="font-bold">Page</TableHead>
+              <TableHead class="text-right font-bold">Visitors</TableHead>
+              <TableHead class="text-right font-bold">Change</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -117,9 +117,9 @@
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Source</TableHead>
-              <TableHead class="text-right">Visitors</TableHead>
-              <TableHead class="text-right">Change</TableHead>
+              <TableHead class="font-bold">Source</TableHead>
+              <TableHead class="text-right font-bold">Visitors</TableHead>
+              <TableHead class="text-right font-bold">Change</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
