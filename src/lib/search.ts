@@ -368,7 +368,7 @@ export class Search {
   private _buildIndexes(): void {
     this.data.forEach((record, idx) => {
       for (const key of ['services', 'security', 'accessibility'] as const) {
-        this._indexBoolRecord(key, record, idx);
+        this._indexBoolRecord(key, record as unknown as Record<string, unknown>, idx);
       }
 
       const denom = record.denomination;

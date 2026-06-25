@@ -68,6 +68,7 @@ export interface SearchState {
   searchLocation?: LocationMeta;
   searchTerms?: string;
   showLocation?: boolean;
+  [key: string]: unknown;
 }
 
 export interface SelectOption {

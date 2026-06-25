@@ -45,7 +45,7 @@ export const load = async ({ fetch, locals, url }) => {
 
       const congregation = cleanResponse(
         await api.collection('congregationMeta').getFirstListItem(api.filter('id={:id}', { id }), { fetch })
-      ) as RecordWithId;
+      ) as unknown as RecordWithId;
 
       const location = congregation.location as LocationMeta;
 

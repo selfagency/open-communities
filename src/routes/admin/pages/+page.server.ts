@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     client.collection('pages').getFullList({ sort: '-updated', requestKey: 'admin-pages' })
   );
   return {
-    pages: pages.map((p: Record<string, unknown>) => ({
+    pages: pages.map((p) => ({
       id: p.id as string,
       title: p.title as string,
       slug: p.slug as string,

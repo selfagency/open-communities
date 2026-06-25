@@ -39,7 +39,9 @@ describe('Registration segment (behavior)', () => {
     );
     unsub();
 
-    const reg = (latest as unknown as unknown as Record<string, unknown>).registration as unknown as Record<string, unknown> | undefined;
+    const reg = (latest as unknown as unknown as Record<string, unknown>).registration as unknown as
+      | Record<string, unknown>
+      | undefined;
     expect(reg?.email).toBe('user@example.com');
     expect(reg?.url).toBe('https://example.com/page');
   });

@@ -67,13 +67,17 @@ export const load: PageServerLoad = async ({ locals }) => {
   const topStates = Object.entries(stateCounts)
     .filter(([id]) => {
       const coId = stateCountryMap[id];
-      const co = allCountries.find((c: Record<string, unknown>) => c.id === coId);
+      const co = allCountries.find((c) => (c as unknown as Record<string, unknown>).id === coId);
       return co && (co as unknown as Record<string, unknown>).code === 'US';
     })
     .map(([id, count]) => ({
       name:
-        ((allStates.find((s: Record<string, unknown>) => s.id === id) as unknown as Record<string, unknown>)?.name as string) ||
-        id,
+        ((
+          allStates.find((s) => (s as unknown as Record<string, unknown>).id === id) as unknown as Record<
+            string,
+            unknown
+          >
+        )?.name as string) || id,
       count
     }))
     .sort((a, b) => b.count - a.count)

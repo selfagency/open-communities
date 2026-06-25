@@ -45,7 +45,9 @@ describe('Security segment (behavior)', () => {
     );
     unsub();
 
-    const security = (latest as unknown as unknown as Record<string, unknown>)?.security as unknown as Record<string, unknown> | undefined;
+    const security = (latest as unknown as unknown as Record<string, unknown>)?.security as unknown as
+      | Record<string, unknown>
+      | undefined;
     expect(
       Boolean(security?.localPolice) ||
         Boolean(security?.privateSecurityArmed) ||

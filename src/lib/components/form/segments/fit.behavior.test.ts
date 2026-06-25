@@ -43,7 +43,9 @@ describe('Fit segment (behavior)', () => {
     );
     unsub();
 
-    const fit = (latest as unknown as unknown as Record<string, unknown>)?.fit as unknown as Record<string, unknown> | undefined;
+    const fit = (latest as unknown as unknown as Record<string, unknown>)?.fit as unknown as
+      | Record<string, unknown>
+      | undefined;
     expect(
       Boolean(fit?.clergyMember) ||
         Boolean(fit?.publicStatement) ||

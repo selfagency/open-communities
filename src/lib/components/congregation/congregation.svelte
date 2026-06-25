@@ -79,6 +79,10 @@ let tab: 'about' | 'details' | 'services' = $state('about');
 
 /* region methods */
 const allFalse = (obj: Record<string, unknown>) => Object.values(omit(obj, ['id', 'otherText'])).every((v) => !v);
+
+function af(obj: object) {
+  return allFalse(obj as Record<string, unknown>);
+}
 /* endregion methods */
 
 /* region reactivity */
@@ -239,7 +243,7 @@ $effect(() => {
                 </div>
               {/if}
 
-              {#if !allFalse(fit)}
+              {#if !af(fit)}
                 {#if congregation.denomination || congregation.flavor}
                   <Separator class="col-span-12" />
                 {/if}
@@ -267,15 +271,15 @@ $effect(() => {
                 </div>
               {/if}
 
-              {#if !allFalse(services)}
+              {#if !af(services)}
                 {#if congregation.clergy}
                   <Separator class="col-span-12" />
                 {/if}
                 <Services {services} />
               {/if}
 
-              {#if !allFalse(registration)}
-                {#if congregation.clergy || !allFalse(services)}
+              {#if !af(registration)}
+                {#if congregation.clergy || !af(services)}
                   <Separator class="col-span-12" />
                 {/if}
                 <Registration {registration} />
@@ -292,7 +296,7 @@ $effect(() => {
                 <Flag flag={fit.flag} mode="full" />
               {/if}
 
-              {#if !allFalse(accessibility)}
+              {#if !af(accessibility)}
                 {#if fit.flag}
                   <Separator class="col-span-12" />
                 {/if}
@@ -300,21 +304,21 @@ $effect(() => {
               {/if}
 
               {#if health.protocol}
-                {#if fit.flag || !allFalse(accessibility)}
+                {#if fit.flag || !af(accessibility)}
                   <Separator class="col-span-12" />
                 {/if}
                 <Health {health} />
               {/if}
 
-              {#if !allFalse(security)}
-                {#if fit.flag || health.protocol || !allFalse(accessibility)}
+              {#if !af(security)}
+                {#if fit.flag || health.protocol || !af(accessibility)}
                   <Separator class="col-span-12" />
                 {/if}
                 <Security mode="full" {security} />
               {/if}
 
               {#if notes}
-                {#if fit.flag || health.protocol || !allFalse(accessibility) || !allFalse(security)}
+                {#if fit.flag || health.protocol || !af(accessibility) || !af(security)}
                   <Separator class="col-span-12" />
                 {/if}
                 <div class="col-span-3 flex flex-row items-start justify-start">

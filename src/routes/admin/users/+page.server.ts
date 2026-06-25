@@ -24,7 +24,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // fallow-ignore-next-line unused-load-data-keys
   return {
-    users: list.items.map((u: Record<string, unknown>) => {
+    users: list.items.map((u) => {
       const expand = u.expand as unknown as Record<string, unknown> | undefined;
       const congData = expand?.congregation as Record<string, string> | undefined;
       return {

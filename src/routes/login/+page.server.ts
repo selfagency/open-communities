@@ -103,7 +103,7 @@ export const actions = {
           await api
             .collection('users')
             .authWithPassword(form.data.email as string, form.data.password as string, { fetch })
-        ).record
+        ).record as unknown as Record<string, unknown>
       ) as UsersRecord;
 
       // Use the same cookieOpts from locals to ensure consistency

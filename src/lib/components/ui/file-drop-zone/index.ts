@@ -1,5 +1,5 @@
-import Root from './file-drop-zone.svelte';
-import Trigger from './file-drop-zone-trigger.svelte';
+export { default as Root } from './file-drop-zone.svelte';
+export { default as Trigger } from './file-drop-zone-trigger.svelte';
 
 export function displaySize(bytes: number): string {
   if (bytes < KILOBYTE) {
@@ -29,4 +29,3 @@ const ACCEPT_VIDEO = 'video/*';
 const ACCEPT_AUDIO = 'audio/*';
 
 export type { FileDropZoneRootProps, FileRejectedReason } from './types';
-export { Root, Trigger };
