@@ -3,6 +3,7 @@
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
   import { invalidateAll } from '$app/navigation';
+  import { m } from '$lib/paraglide/messages';
 
   interface PhChange { percent: number; direction: string; long_text: string; }
   interface PhMetric { current: number; change: PhChange; }
@@ -43,18 +44,18 @@
 
 {#if digest}
   <div class="flex items-center justify-between">
-    <h3 class="font-serif text-2xl font-bold tracking-wider">Web Analytics</h3>
+    <h3 class="font-serif text-2xl font-bold tracking-wider">{m.adminWebAnalytics()}</h3>
     <div class="flex gap-1 rounded-lg bg-muted p-1">
-      <Button variant={viewMode === 'realtime' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'realtime'}>Realtime</Button>
-      <Button variant={viewMode === 'week' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'week'}>Week</Button>
-      <Button variant={viewMode === 'month' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'month'}>Month</Button>
+      <Button variant={viewMode === 'realtime' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'realtime'}>{m.adminRealtime()}</Button>
+      <Button variant={viewMode === 'week' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'week'}>{m.adminWeek()}</Button>
+      <Button variant={viewMode === 'month' ? 'default' : 'ghost'} size="sm" class="h-7 px-3 text-xs" onclick={() => viewMode = 'month'}>{m.adminMonth()}</Button>
     </div>
   </div>
 
   <div class="mt-4 grid gap-4 md:grid-cols-5">
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Visitors</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminVisitors()}</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
@@ -65,7 +66,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Page Views</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminPageViews()}</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
@@ -76,7 +77,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Sessions</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminSessions()}</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
@@ -87,7 +88,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Bounce Rate</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminBounceRate()}</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
@@ -95,7 +96,7 @@
     </Card>
     <Card>
       <CardHeader class="pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Avg. Session</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminAvgSession()}</CardTitle>
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{digest.avg_session_duration.current || '—'}</p>
@@ -106,15 +107,15 @@
   <div class="grid gap-4 md:grid-cols-2">
     <Card>
       <CardHeader>
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Top Pages</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminTopPages()}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead class="font-bold">Page</TableHead>
-              <TableHead class="text-right font-bold">Visitors</TableHead>
-              <TableHead class="text-right font-bold">Change</TableHead>
+              <TableHead class="font-bold">{m.adminPage()}</TableHead>
+              <TableHead class="text-right font-bold">{m.adminVisitors()}</TableHead>
+              <TableHead class="text-right font-bold">{m.adminChange()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -131,15 +132,15 @@
     </Card>
     <Card>
       <CardHeader>
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Top Sources</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminTopSources()}</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead class="font-bold">Source</TableHead>
-              <TableHead class="text-right font-bold">Visitors</TableHead>
-              <TableHead class="text-right font-bold">Change</TableHead>
+              <TableHead class="font-bold">{m.adminSource()}</TableHead>
+              <TableHead class="text-right font-bold">{m.adminVisitors()}</TableHead>
+              <TableHead class="text-right font-bold">{m.adminChange()}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -155,32 +156,4 @@
       </CardContent>
     </Card>
   </div>
-
-  {#if digest.goals?.length > 0}
-    <Card>
-      <CardHeader>
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Conversions</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead class="font-bold">Goal</TableHead>
-              <TableHead class="text-right font-bold">Conversions</TableHead>
-              <TableHead class="text-right font-bold">Change</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {#each digest.goals as goal}
-              <TableRow>
-                <TableCell class="font-medium">{goal.name}</TableCell>
-                <TableCell class="text-right">{goal.conversions}</TableCell>
-                <TableCell class="text-right">{goal.change?.percent ?? 0}%</TableCell>
-              </TableRow>
-            {/each}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  {/if}
 {/if}

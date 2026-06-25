@@ -4,6 +4,7 @@
   import UsersIcon from '@tabler/icons-svelte/icons/users';
   import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
+  import { m } from '$lib/paraglide/messages';
 
   let {
     congregations = 0,
@@ -24,7 +25,7 @@
   <a href="/admin/congregations" class="block cursor-pointer no-underline">
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Pending Approvals</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminPendingApprovals()}</CardTitle>
         <ThumbsUpIcon class="text-muted-foreground size-4" />
       </CardHeader>
       <CardContent>
@@ -35,7 +36,7 @@
   <a href="/admin/congregations" class="block cursor-pointer no-underline">
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Congregations</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminCongregations()}</CardTitle>
         <CongregationsIcon class="text-muted-foreground size-4" />
       </CardHeader>
       <CardContent>
@@ -46,7 +47,7 @@
   <a href="/admin/users" class="block cursor-pointer no-underline">
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
-        <CardTitle class="font-serif text-lg font-bold tracking-wider">Users</CardTitle>
+        <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminUsers()}</CardTitle>
         <UsersIcon class="text-muted-foreground size-4" />
       </CardHeader>
       <CardContent>
@@ -61,14 +62,14 @@
     {#if topCountries.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="font-serif text-lg font-bold tracking-wider">Top Countries</CardTitle>
+          <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminTopCountries()}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead class="font-bold">Country</TableHead>
-                <TableHead class="text-right font-bold">Congregations</TableHead>
+                <TableHead class="font-bold">{m.adminCountry()}</TableHead>
+                <TableHead class="text-right font-bold">{m.adminCongregations()}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,14 +87,14 @@
     {#if topStates.length > 0}
       <Card>
         <CardHeader>
-          <CardTitle class="font-serif text-lg font-bold tracking-wider">Top US States</CardTitle>
+          <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminTopStates()}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead class="font-bold">State</TableHead>
-                <TableHead class="text-right font-bold">Congregations</TableHead>
+                <TableHead class="font-bold">{m.adminState()}</TableHead>
+                <TableHead class="text-right font-bold">{m.adminCongregations()}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
