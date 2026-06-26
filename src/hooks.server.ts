@@ -2,9 +2,7 @@
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
-import pkg from 'cookie';
-
-const { parseCookie } = pkg;
+import cookie from 'cookie';
 
 import { publicIp } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
@@ -151,7 +149,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       // Re-set the auth cookie on every request — extract the raw JWT
       // instead of the full Set-Cookie string (exportToCookie returns a full header)
       const exported = requestApi.authStore.exportToCookie();
-      const parsed = parseCookie(exported);
+      const parsed = cookie.parseCookie(exported);
       event.cookies.set('auth', parsed.pb_auth ?? '', event.locals.cookieOpts);
     }
   } catch (error) {

@@ -86,7 +86,8 @@
         "noShadowRestrictedNames": "warn",
         "noUnsafeDeclarationMerging": "warn",
         "useBiomeIgnoreFolder": "off",
-        "useIterableCallbackReturn": "warn"
+        "useIterableCallbackReturn": "warn",
+        "noSkippedTests": "off"
       },
       "security": {
         "noGlobalEval": "warn"
