@@ -187,7 +187,7 @@ let isMobile = $derived(appState.isMobile);
             </button>
           {/snippet}
         </Sheet.Trigger>
-        <Sheet.Content class="top-[72px] w-72 max-sm:w-full" showCloseButton={false} side="top">
+        <Sheet.Content class="z-40 w-72 pt-18 max-sm:w-full" showCloseButton={false} side="right">
           <div class="flex flex-col gap-4 px-4 py-6">
             <div class="flex items-center justify-between">
               <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
@@ -311,7 +311,6 @@ let isMobile = $derived(appState.isMobile);
 
 <style>
 :global([data-slot="sheet-overlay"]) {
-  pointer-events: none;
-  opacity: 0 !important;
+  z-index: 30 !important;
 }
 </style>

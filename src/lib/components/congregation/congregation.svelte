@@ -221,10 +221,16 @@ $effect(() => {
     </Dialog.Header>
 
     <Tabs.Root class="w-full" bind:value={tab}>
-      <Tabs.List class="my-4 w-full">
-        <Tabs.Trigger class="w-1/2 transition-colors" value="about">{m.about()}</Tabs.Trigger>
-        <Tabs.Trigger class="w-1/2 transition-colors" value="services">{m.services()}</Tabs.Trigger>
-        <Tabs.Trigger class="w-1/2 transition-colors" value="details">{m.details()}</Tabs.Trigger>
+      <Tabs.List class="my-4 w-full h-11">
+        <Tabs.Trigger class="w-1/2 py-2 data-active:border-b-2 data-active:border-foreground" value="about"
+          >{m.about()}</Tabs.Trigger
+        >
+        <Tabs.Trigger class="w-1/2 py-2 data-active:border-b-2 data-active:border-foreground" value="services"
+          >{m.services()}</Tabs.Trigger
+        >
+        <Tabs.Trigger class="w-1/2 py-2 data-active:border-b-2 data-active:border-foreground" value="details"
+          >{m.details()}</Tabs.Trigger
+        >
       </Tabs.List>
       <Tabs.Content class="transition-opacity duration-300" value="about">
         {#if tab === "about"}

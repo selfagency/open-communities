@@ -14,6 +14,7 @@ import Loading from '$lib/components/global/loading.svelte';
 import * as Alert from '$lib/components/ui/alert';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
+import { Button } from '$lib/components/ui/button';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { m } from '$lib/paraglide/messages';
@@ -75,8 +76,8 @@ onMount(() => {
 </script>
 
 <AlertDialog.Root>
-  <AlertDialog.Trigger class="button destructive" type="button">
-    {m.delete()}
+  <AlertDialog.Trigger>
+    <Button variant="destructive">{m.delete()}</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     {#if loadingSecondary}

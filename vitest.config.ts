@@ -35,7 +35,11 @@ export default defineConfig({
     svelte({
       compilerOptions: {
         compatibility: { componentApi: 4 }
-      }
+      },
+      // Disable prebundling — conflicts with optimizeDeps.disabled below.
+      // Without this, Vitest forces optimizeDeps.disabled to "build" which
+      // re-enables Rolldown and breaks on node:module resolution in CI.
+      prebundleSvelteLibraries: false
     })
   ],
   resolve: {
@@ -155,32 +159,37 @@ export default defineConfig({
       junit: './test-results/junit.xml'
     },
     projects: [
-      {
-        // Inherit plugins, resolve aliases, optimizeDeps from root config
-        extends: true,
-        test: {
-          browser: {
-            enabled: true,
-            headless: true,
-            instances: [{ browser: 'chromium' }],
-            provider: playwright()
-          },
-          environment: 'happy-dom',
-          exclude: ['src/test/server/**'],
-          include: ['src/**/*.test.{ts,tsx,js,jsx}'],
-          name: 'browser',
-          server: {
-            deps: {
-              optimizer: {
-                web: {
-                  enabled: false
-                }
+      // Browser project skipped in CI — Rolldown can't resolve node:module
+      // without a tsconfig when loading Playwright browser provider.
+      ...(process.env.CI
+        ? []
+        : [
+            {
+              extends: true,
+              test: {
+                browser: {
+                  enabled: true,
+                  headless: true,
+                  instances: [{ browser: 'chromium' }],
+                  provider: playwright()
+                },
+                environment: 'happy-dom',
+                exclude: ['src/test/server/**'],
+                include: ['src/**/*.test.{ts,tsx,js,jsx}'],
+                name: 'browser',
+                server: {
+                  deps: {
+                    optimizer: {
+                      web: {
+                        enabled: false
+                      }
+                    }
+                  }
+                },
+                setupFiles: ['vitest-browser-svelte', resolve(import.meta.dirname, 'src/test/setupTest.ts')]
               }
             }
-          },
-          setupFiles: ['vitest-browser-svelte', resolve(import.meta.dirname, 'src/test/setupTest.ts')]
-        }
-      },
+          ]),
       {
         extends: true,
         test: {
