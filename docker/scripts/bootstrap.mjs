@@ -65,19 +65,30 @@ async function getToken() {
 
   // PB v0.22+ removed the installation token system.
   // Create superuser via docker exec, then authenticate.
-  try {
-    execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data 2>/dev/null`, { encoding: 'utf8', timeout: 15000 });
-    const res = await fetch(`${PB}/api/admins/auth-with-password`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      console.log('  🔑 Created superuser and authenticated');
-      return data.token;
+  // Try both superuser upsert (v0.22+) and admin create (legacy)
+  const commands = [
+    `docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data`,
+    `docker exec ${CONTAINER} /pb/pocketbase admin create "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data`,
+    `docker exec ${CONTAINER} /pb/pocketbase superuser create "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data`
+  ];
+  for (const cmd of commands) {
+    try {
+      execSync(cmd, { encoding: 'utf8', timeout: 15000 });
+      console.log('  👤 Superuser created');
+      const res = await fetch(`${PB}/api/admins/auth-with-password`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log('  🔑 Authenticated');
+        return data.token;
+      }
+    } catch (e) {
+      console.log(`  ⏭  ${cmd.split('/pb/pocketbase')[1].split('"')[0].trim()} failed, trying next...`);
     }
-  } catch { /* fall through */ }
+  }
 
   throw new Error('Failed to create superuser or authenticate');
 }

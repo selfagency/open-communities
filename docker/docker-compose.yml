@@ -11,7 +11,7 @@ services:
       - '8090:8090'
     volumes:
       - ./pocketbase/pb_data:/pb_data
-      - ./pb_migrations:/pb/pb_migrations
+      - ./pb_migrations:/pb_data/pb_migrations
     depends_on:
       - mailpit
     networks:
