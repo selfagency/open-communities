@@ -63,7 +63,8 @@ async function getToken() {
     }
   } catch { /* fall through */ }
 
-  // Second try: create superuser via docker exec (works when PB has data but no superuser yet)
+  // PB v0.22+ removed the installation token system.
+  // Create superuser via docker exec, then authenticate.
   try {
     execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data 2>/dev/null`, { encoding: 'utf8', timeout: 15000 });
     const res = await fetch(`${PB}/api/admins/auth-with-password`, {
@@ -78,23 +79,7 @@ async function getToken() {
     }
   } catch { /* fall through */ }
 
-  // Third try: extract installation token from startup logs (fresh PB)
-  for (let attempt = 0; attempt < 10; attempt++) {
-    let logs;
-    try {
-      logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
-    } catch {
-      const fs = await import('node:fs');
-      logs = fs.readFileSync('.docker/pb.log', 'utf8');
-    }
-    const m = logs.match(/pbinstal\/(\S+)/);
-    if (m) {
-      console.log('  🔑 Installation token acquired');
-      return m[1];
-    }
-    await sleep(1000);
-  }
-  throw new Error('No installation token found — start PB fresh');
+  throw new Error('Failed to create superuser or authenticate');
 }
 
 async function verifyToken(token) {
