@@ -10,7 +10,7 @@
 - PocketBase 0.29.x (typed via `pocketbase-typegen`)
 - Tailwind CSS v4 (CSS-first, `@import "tailwindcss"`)
 - shadcn-svelte + Bits UI component library
-- TypeScript (strict mode, `noImplicitAny: false` — fix before adding new code)
+- TypeScript (strict mode, fully enabled)
 - Vitest (browser mode via Playwright) + Playwright E2E
 - Paraglide/Inlang for i18n
 - Zod 4 + Superforms + Formsnap for form validation
@@ -299,15 +299,11 @@ cmds = [
 ## Security Considerations
 
 - **CSP** configured via `sveltekit-helmet` in `src/lib/server/security.ts` — staged rollout (report-only in dev, enforced in production)
-- **Auth cookies** are `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev`
-- **SMTP** uses `rejectUnauthorized: true` with proper Port 465/587 negotiation
+- **Auth cookies** are `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev` (note: `httpOnly: false` known issue in current code)
+- **SMTP** uses `rejectUnauthorized: false` (known issue — needed for local Mailpit; production should use `true` with Port 465/587)
 - **Captcha validation** — `validateCaptcha()` returns a boolean; always check `if (!captchaValid) return fail(400, { form })`
 - **IDOR** — always verify `client.congregation === data.id` for non-admin mutations
-- **Auth cookies** are `httpOnly: false` and `secure` is commented out (known issue)
-- **SMTP** has `rejectUnauthorized: false` (known issue — needed for local Mailpit)
 - **PocketBase filter injection** — use `pb.filter(expr, params)` instead of string interpolation for all queries
-- **Captcha validation** — `validateCaptcha()` returns a boolean; always check `if (!captchaValid) return fail(400, { form })`
-- **IDOR** — always verify `client.congregation === data.id` for non-admin mutations
 - **Secrets** — never hardcode in workflow files; use GitHub Actions secrets
 - **`{@html}`** — sanitize with DOMPurify before rendering user-controlled content
 - **Email headers** — sanitize `\r\n` from user-controlled `name`/`email` before building SMTP headers
