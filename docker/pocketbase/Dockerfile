@@ -1,22 +1,20 @@
-# ---- Build stage ----
-FROM golang:1.25-alpine AS builder
-
-RUN apk add --no-cache git ca-certificates
-
-WORKDIR /build
-
-# Initialize Go module and fetch dependencies
-RUN go mod init github.com/selfagency/open-communities/pocketbase
-COPY cmd/main.go ./cmd/main.go
-RUN go mod tidy
-RUN CGO_ENABLED=0 GOOS=linux go build -o /pb/pocketbase ./cmd/
-
-# ---- Runtime stage ----
+# PocketBase for local development
+# Uses the standard PB binary (pb-audit is deployed via pb_hooks/ on PocketHost)
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates
+ARG PB_VERSION=0.29.2
+ARG PB_ARCH=amd64
 
-COPY --from=builder /pb/pocketbase /pb/pocketbase
+RUN apk add --no-cache \
+    unzip \
+    ca-certificates \
+    curl
+
+# download and unzip PocketBase for the requested architecture
+RUN curl -fsSL -o /tmp/pb.zip \
+  "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${PB_ARCH}.zip" \
+  && unzip /tmp/pb.zip -d /pb/ \
+  && rm -f /tmp/pb.zip
 
 EXPOSE 8090
 
