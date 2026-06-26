@@ -1,7 +1,7 @@
 # Multi-stage build: build the project inside the image, then produce a small runtime image
 # checkov:skip=CKV_DOCKER_2:HEALTHCHECK not needed for build-stage image
 # checkov:skip=CKV_DOCKER_3:Root needed for CI build process
-FROM node:20 AS builder
+FROM node:22 AS builder
 WORKDIR /app
 
 # Install pnpm and copy lockfiles first for better cache use
@@ -13,7 +13,7 @@ COPY . .
 # Skip optional dependencies to avoid native optional binaries (like rollup native) failing on some platforms
 RUN pnpm install --no-optional && pnpm build
 
-FROM node:20-alpine AS runtime
+FROM node:22-alpine AS runtime
 WORKDIR /app
 
 # Create non-root user for security
