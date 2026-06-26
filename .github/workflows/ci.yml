@@ -63,9 +63,6 @@ jobs:
       - name: Lint
         run: pnpm run check
 
-      - name: Fallow audit
-        run: pnpm exec fallow audit
-
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
@@ -149,6 +146,9 @@ jobs:
       - name: Fail workflow if tests failed
         if: steps.test.outcome == 'failure'
         run: exit 1
+
+      - name: Fallow audit
+        run: pnpm exec fallow audit
 
       - name: Report coverage (step summary + PR comment)
         if: always() && hashFiles('test-results/coverage/coverage-summary.json') != ''
