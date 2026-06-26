@@ -173,16 +173,16 @@ let isMobile = $derived(appState.isMobile);
                   class="absolute left-0 top-[2px] h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
                   class:top-[9px]={open}
                   class:rotate-45={open}
-                />
+                ></span>
                 <span
                   class="absolute left-0 top-[9px] h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
                   class:opacity-0={open}
-                />
+                ></span>
                 <span
                   class="absolute bottom-[2px] left-0 h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
                   class:top-[9px]={open}
                   class:-rotate-45={open}
-                />
+                ></span>
               </div>
             </button>
           {/snippet}
