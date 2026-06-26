@@ -6,6 +6,8 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   // Configure dependency optimization to prevent test instability
   optimizeDeps: {
+    // Disabled due to Rolldown runtime not resolving node:module in CI
+    disabled: true,
     include: [
       '@leeoniya/ufuzzy',
       '@sveltejs/kit',
@@ -71,12 +73,7 @@ export default defineConfig({
   test: {
     // Root-level: coverage, reporters, and output are shared across projects.
     // Test-specific config (environment, browser, setup) lives in each project below.
-    server: {
-      deps: {
-        // Fix rolldown runtime resolving node:module in CI
-        fallbackCJS: true
-      }
-    },
+
     coverage: {
       exclude: [
         '.svelte-kit',

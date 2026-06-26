@@ -22,7 +22,7 @@ const ROOT = resolve(DIR, '../..');
 const PB = process.env.PUBLIC_API_ENDPOINT || 'http://localhost:8090';
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
 const ADMIN_PASSWORD = process.env.PB_TEST_PASSWORD || process.env.PB_TEST_PASSWORD_FALLBACK || 'i3_NL-dfzzFt5TX'; // NOSONAR — test fixture fallback
-const CONTAINER = 'e2e-pocketbase-1';
+const CONTAINER = 'docker-pocketbase-1';
 const SCHEMA_PATH = resolve(ROOT, 'pb_schema.json');
 
 /* ── Helpers ── */
@@ -56,7 +56,7 @@ async function getToken() {
       logs = execSync(`docker logs ${CONTAINER} 2>&1`, { encoding: 'utf8', timeout: 10000 });
     } catch {
       const fs = await import('node:fs');
-      logs = fs.readFileSync('.e2e/pb.log', 'utf8');
+      logs = fs.readFileSync('.docker/pb.log', 'utf8');
     }
     const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
     if (m) {
