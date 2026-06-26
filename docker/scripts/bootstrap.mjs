@@ -75,18 +75,23 @@ async function getToken() {
     try {
       execSync(cmd, { encoding: 'utf8', timeout: 15000 });
       console.log('  👤 Superuser created');
-      const res = await fetch(`${PB}/api/admins/auth-with-password`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        console.log('  🔑 Authenticated');
-        return data.token;
+      // Try both superuser auth endpoints
+      for (const authUrl of [`${PB}/api/admins/auth-with-password`, `${PB}/api/collections/_superusers/auth-with-password`]) {
+        const res = await fetch(authUrl, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          console.log('  🔑 Authenticated');
+          return data.token;
+        }
+        console.log(`  ⏭  ${authUrl}: ${res.status}`);
       }
     } catch (e) {
-      console.log(`  ⏭  ${cmd.split('/pb/pocketbase')[1].split('"')[0].trim()} failed, trying next...`);
+      const msg = e.message || String(e);
+      console.log(`  ⏭  ${cmd.split('/pb/pocketbase')[1].split('"')[0].trim()} failed: ${msg}`);
     }
   }
 
