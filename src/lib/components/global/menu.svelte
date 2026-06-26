@@ -187,11 +187,8 @@ let isMobile = $derived(appState.isMobile);
             </button>
           {/snippet}
         </Sheet.Trigger>
-        <Sheet.Content class="w-72 max-sm:w-full">
-          <Sheet.Header>
-            <Sheet.Title>{m.menu()}</Sheet.Title>
-          </Sheet.Header>
-          <div class="flex flex-col gap-4 px-4 py-6">
+        <Sheet.Content class="w-72 max-sm:w-full" side="left" showCloseButton={false}>
+          <div class="flex flex-col gap-4 px-4 py-6 pt-16">
             <div class="flex items-center justify-between">
               <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
               <NativeSelect.Root
