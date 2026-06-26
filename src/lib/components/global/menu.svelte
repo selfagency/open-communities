@@ -5,9 +5,7 @@ import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
 import FilesIcon from '@tabler/icons-svelte/icons/files';
 import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
-import MenuIcon from '@tabler/icons-svelte/icons/menu';
 import MoonIcon from '@tabler/icons-svelte/icons/moon';
-import XIcon from '@tabler/icons-svelte/icons/x';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SunIcon from '@tabler/icons-svelte/icons/sun';
 import UserCogIcon from '@tabler/icons-svelte/icons/user-cog';
@@ -168,13 +166,24 @@ let isMobile = $derived(appState.isMobile);
             <button
               {...props}
               aria-label={m.userMenu()}
-              class="flex size-8 items-center justify-center hover:bg-muted"
+              class="group flex size-8 items-center justify-center hover:bg-muted"
             >
-              {#if open}
-                <XIcon class="size-6 text-foreground" />
-              {:else}
-                <MenuIcon class="size-6 text-foreground" />
-              {/if}
+              <div class="relative size-5">
+                <span
+                  class="absolute left-0 top-[2px] h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
+                  class:top-[9px]={open}
+                  class:rotate-45={open}
+                />
+                <span
+                  class="absolute left-0 top-[9px] h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
+                  class:opacity-0={open}
+                />
+                <span
+                  class="absolute bottom-[2px] left-0 h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
+                  class:top-[9px]={open}
+                  class:-rotate-45={open}
+                />
+              </div>
             </button>
           {/snippet}
         </DropdownMenu.Trigger>
