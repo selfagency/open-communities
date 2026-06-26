@@ -38,7 +38,7 @@
     "posthog-js": "^1.393.5",
     "posthog-node": "^5.38.5",
     "stopwords-iso": "^1.1.0",
-    "super-sitemap": "^1.0.12"
+    "super-sitemap": "^2.0.3"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
@@ -67,7 +67,6 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "^5.4.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/cookie": "^1.0.0",
     "@types/d3-scale": "^4.0.9",
     "@types/d3-shape": "^3.1.8",
     "@types/eslint": "^9.6.1",
@@ -82,7 +81,7 @@
     "bits-ui": "2.18.1",
     "clsx": "^2.1.1",
     "concurrently": "^10.0.3",
-    "cookie": "0.7.0",
+    "cookie": "2.0.0",
     "fallow": "^2.102.0",
     "fast-string-truncated-width": "3.0.3",
     "formsnap": "2.0.1",

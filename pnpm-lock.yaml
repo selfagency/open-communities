@@ -27,8 +27,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0
       super-sitemap:
-        specifier: ^1.0.12
-        version: 1.0.12(svelte@5.56.4(@typescript-eslint/types@8.61.1))
+        specifier: ^2.0.3
+        version: 2.0.3
     devDependencies:
       '@biomejs/biome':
         specifier: 2.5.1
@@ -108,9 +108,6 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
-      '@types/cookie':
-        specifier: ^1.0.0
-        version: 1.0.0
       '@types/d3-scale':
         specifier: ^4.0.9
         version: 4.0.9
@@ -154,8 +151,8 @@ importers:
         specifier: ^10.0.3
         version: 10.0.3
       cookie:
-        specifier: 0.7.0
-        version: 0.7.0
+        specifier: 2.0.0
+        version: 2.0.0
       fallow:
         specifier: ^2.102.0
         version: 2.102.0
@@ -1604,10 +1601,6 @@ packages:
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
-  '@types/cookie@1.0.0':
-    resolution: {integrity: sha512-mGFXbkDQJ6kAXByHS7QAggRXgols0mAdP4MuXgloGY1tXokvzaFFM4SMqWvf7AH0oafI7zlFJwoGWzmhDqTZ9w==}
-    deprecated: This is a stub types definition. cookie provides its own type definitions, so you do not need this installed.
-
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
 
@@ -2135,10 +2128,6 @@ packages:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
 
-  cookie@0.7.0:
-    resolution: {integrity: sha512-qCf+V4dtlNhSRXGAZatc1TasyFO6GjohcOul807YOb5ik3+kQSnb4d7iajeCL8QHaJ4uZEjCgiCJerKXwdRVlQ==}
-    engines: {node: '>= 0.6'}
-
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
@@ -2146,6 +2135,10 @@ packages:
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
+
+  cookie@2.0.0:
+    resolution: {integrity: sha512-hRSFuKJ6SYHrFVNltQdagQFMk7e0Q/VrORTGqZGyUAmmhA3EwPeldHCTg0HqUaDodQOfQDe7qXuOtpf4lwCsaA==}
+    engines: {node: '>=22'}
 
   core-js@3.49.0:
     resolution: {integrity: sha512-es1U2+YTtzpwkxVLwAFdSpaIMyQaq0PBgm3YD1W3Qpsn1NAmO3KSgZfu+oGSWVu6NvLHoHCV/aYcsE5wiB7ALg==}
@@ -3656,10 +3649,8 @@ packages:
     resolution: {integrity: sha512-WZzIx3rC1CvbMDloLsVw0lkZVKJWbrkJ0k1ghKFmcnPrW1+jWbgTkTEWVtD9lMdmI4jZEz40+naBxl1dCUhXXw==}
     engines: {node: '>=14.16'}
 
-  super-sitemap@1.0.12:
-    resolution: {integrity: sha512-C3gfAS1RZxL5bbZGtgnIOitMhfqAt8RmhW8AWTia6c8n9RW3Zx7f/SxVeFWZD0I1nUAx2pkxuWazVtev0Nmb5w==}
-    peerDependencies:
-      svelte: '>=4.0.0 <6.0.0'
+  super-sitemap@2.0.3:
+    resolution: {integrity: sha512-LNWoZ/dU+jfOsz+D9TV7QS1NYz/4IjvEVlpRgkmIstBsgkmu0LcxXXqfDV+QVuoCBfpsah/Gf8/Jkg2Qojehvw==}
 
   superstruct@2.0.2:
     resolution: {integrity: sha512-uV+TFRZdXsqXTL2pRvujROjdZQ4RAlBUS5BTh9IGm+jTqQntYThciG/qu57Gs69yjnVUSqdxF9YLmSnpupBW9A==}
@@ -5601,10 +5592,6 @@ snapshots:
 
   '@types/cookie@0.6.0': {}
 
-  '@types/cookie@1.0.0':
-    dependencies:
-      cookie: 0.7.0
-
   '@types/d3-array@3.2.2': {}
 
   '@types/d3-contour@3.0.6':
@@ -6160,11 +6147,11 @@ snapshots:
 
   cookie@0.6.0: {}
 
-  cookie@0.7.0: {}
-
   cookie@0.7.2: {}
 
   cookie@1.1.1: {}
+
+  cookie@2.0.0: {}
 
   core-js@3.49.0: {}
 
@@ -7730,9 +7717,7 @@ snapshots:
       function-timeout: 0.1.1
       time-span: 5.1.0
 
-  super-sitemap@1.0.12(svelte@5.56.4(@typescript-eslint/types@8.61.1)):
-    dependencies:
-      svelte: 5.56.4(@typescript-eslint/types@8.61.1)
+  super-sitemap@2.0.3: {}
 
   superstruct@2.0.2:
     optional: true

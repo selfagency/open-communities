@@ -2,7 +2,7 @@
 import type { Cookies } from '@sveltejs/kit';
 
 import { error } from '@sveltejs/kit';
-import cookie from 'cookie';
+import { parseCookie } from 'cookie';
 import PocketBase from 'pocketbase';
 import { omit } from 'radashi';
 import { z } from 'zod/v4';
@@ -145,7 +145,7 @@ function loadUser(cookies: Cookies): null | (z.infer<typeof userCookieSchema> & 
     return null;
   }
   try {
-    const parsed = cookie.parse(auth);
+    const parsed = parseCookie(auth);
     if (!parsed.pb_auth) {
       return null;
     }

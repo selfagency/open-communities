@@ -1,6 +1,19 @@
-import { response as sitemapResponse } from 'super-sitemap';
+import { response } from 'super-sitemap/sveltekit';
 import { withRetry } from '$lib/server/api';
 import type { RequestHandler } from './$types';
+
+const EXCLUDE_ROUTES = [
+  /^\/admin/,
+  /^\/api/,
+  /^\/edit/,
+  /^\/add/,
+  /^\/contact/,
+  /^\/login/,
+  /^\/logout/,
+  /^\/account/,
+  /^\/user/,
+  /^\/sitemap/
+];
 
 export const GET: RequestHandler = async ({ locals, url }) => {
   const client = locals.api;
@@ -35,21 +48,10 @@ export const GET: RequestHandler = async ({ locals, url }) => {
     // Graceful degradation — sitemap without pages
   }
 
-  return await sitemapResponse({
+  return await response({
     origin,
 
-    excludeRoutePatterns: [
-      '^/admin.*',
-      '^/api.*',
-      '^/edit.*',
-      '^/add.*',
-      '^/contact.*',
-      '^/login.*',
-      '^/logout.*',
-      '^/account.*',
-      '^/user.*',
-      '^/sitemap.*'
-    ],
+    excludeRoutePatterns: EXCLUDE_ROUTES,
 
     paramValues: {
       // CMS pages via [slug] route
