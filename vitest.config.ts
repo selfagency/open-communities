@@ -6,8 +6,6 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   // Configure dependency optimization to prevent test instability
   optimizeDeps: {
-    // Disabled due to Rolldown runtime not resolving node:module in CI
-    disabled: true,
     include: [
       '@leeoniya/ufuzzy',
       '@sveltejs/kit',

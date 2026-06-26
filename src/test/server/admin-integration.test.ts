@@ -19,15 +19,8 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
   const { createApi } = await import('../../lib/server/api');
   const api = createApi();
 
-  // Inject admin auth into the client's auth store
-  (api.authStore as unknown as Record<string, unknown>).isValid = true;
-  (api.authStore as unknown as Record<string, unknown>).record = {
-    id: 'admin123',
-    email: 'admin@test.test',
-    admin: true,
-    verified: true
-  };
-  (api.authStore as unknown as Record<string, unknown>).token = 'mock-token';
+  // Inject admin auth into the client's auth store using save()
+  api.authStore.save('mock-token', { id: 'admin123', email: 'admin@test.test', admin: true, verified: true });
 
   const cookieOpts = { httpOnly: true, path: '/', sameSite: 'strict' as const, secure: false };
 
