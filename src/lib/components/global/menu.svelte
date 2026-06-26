@@ -7,6 +7,7 @@ import FilesIcon from '@tabler/icons-svelte/icons/files';
 import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
 import Menu2Icon from '@tabler/icons-svelte/icons/menu-2';
 import MoonIcon from '@tabler/icons-svelte/icons/moon';
+import XIcon from '@tabler/icons-svelte/icons/x';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SunIcon from '@tabler/icons-svelte/icons/sun';
 import UserCogIcon from '@tabler/icons-svelte/icons/user-cog';
@@ -37,6 +38,7 @@ let { mode: viewMode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props(
 const dispatch = createEventDispatcher();
 const user = $derived(page.data.user);
 let lang = $state(page.data.lang ?? 'en');
+let open = $state(false);
 let isMobile = $derived(appState.isMobile);
 /* endregion variables */
 </script>
@@ -159,16 +161,20 @@ let isMobile = $derived(appState.isMobile);
         </button>
       </div>
     {:else}
-      <!-- Full mode: user circle dropdown -->
-      <DropdownMenu.Root>
+      <!-- Full mode: user dropdown -->
+      <DropdownMenu.Root bind:open>
         <DropdownMenu.Trigger>
           {#snippet child({ props })}
             <button
               {...props}
               aria-label={m.userMenu()}
-              class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted"
+              class="flex size-8 items-center justify-center hover:bg-muted"
             >
-              <Menu2Icon class="size-6 text-foreground" />
+              {#if open}
+                <XIcon class="size-6 text-foreground" />
+              {:else}
+                <Menu2Icon class="size-6 text-foreground" />
+              {/if}
             </button>
           {/snippet}
         </DropdownMenu.Trigger>
