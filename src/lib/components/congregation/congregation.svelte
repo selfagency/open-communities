@@ -14,10 +14,8 @@ import { Badge } from '$lib/components/ui/badge';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Dialog from '$lib/components/ui/dialog';
 import { Separator } from '$lib/components/ui/separator';
-import UnderlineTabsRoot from '$lib/components/ui/underline-tabs/underline-tabs.svelte';
-import UnderlineTabsList from '$lib/components/ui/underline-tabs/underline-tabs-list.svelte';
-import UnderlineTabsTrigger from '$lib/components/ui/underline-tabs/underline-tabs-trigger.svelte';
-import UnderlineTabsContent from '$lib/components/ui/underline-tabs/underline-tabs-content.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Tabs from '$lib/components/ui/tabs';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Tooltip from '$lib/components/ui/tooltip';
 import { m as mBase } from '$lib/paraglide/messages';
@@ -222,13 +220,13 @@ $effect(() => {
       </Dialog.Description>
     </Dialog.Header>
 
-    <UnderlineUnderlineTabsRoot class="w-full" bind:value={tab}>
-      <UnderlineTabsList class="my-4 w-full">
-        <UnderlineTabsTrigger class="w-1/2 transition-colors" value="about">{m.about()}</UnderlineTabsTrigger>
-        <UnderlineTabsTrigger class="w-1/2 transition-colors" value="services">{m.services()}</UnderlineTabsTrigger>
-        <UnderlineTabsTrigger class="w-1/2 transition-colors" value="details">{m.details()}</UnderlineTabsTrigger>
-      </UnderlineTabsList>
-      <UnderlineTabsContent class="transition-opacity duration-300" value="about">
+    <Tabs.Root class="w-full" bind:value={tab}>
+      <Tabs.List class="my-4 w-full">
+        <Tabs.Trigger class="w-1/2 transition-colors" value="about">{m.about()}</Tabs.Trigger>
+        <Tabs.Trigger class="w-1/2 transition-colors" value="services">{m.services()}</Tabs.Trigger>
+        <Tabs.Trigger class="w-1/2 transition-colors" value="details">{m.details()}</Tabs.Trigger>
+      </Tabs.List>
+      <Tabs.Content class="transition-opacity duration-300" value="about">
         {#if tab === "about"}
           <div transition:fade>
             {#if congregation.flavor}
@@ -262,8 +260,8 @@ $effect(() => {
             </div>
           </div>
         {/if}
-      </UnderlineTabsContent>
-      <UnderlineTabsContent value="services">
+      </Tabs.Content>
+      <Tabs.Content value="services">
         {#if tab === "services"}
           <div transition:fade>
             <div class="grid grid-cols-12 gap-4 text-sm">
@@ -292,8 +290,8 @@ $effect(() => {
             </div>
           </div>
         {/if}
-      </UnderlineTabsContent>
-      <UnderlineTabsContent value="details">
+      </Tabs.Content>
+      <Tabs.Content value="details">
         {#if tab === "details"}
           <div transition:fade>
             <div class="grid grid-cols-12 gap-4 text-sm">
@@ -336,7 +334,7 @@ $effect(() => {
             </div>
           </div>
         {/if}
-      </UnderlineTabsContent>
-    </UnderlineTabsRoot>
+      </Tabs.Content>
+    </Tabs.Root>
   </Dialog.Content>
 </Dialog.Root>

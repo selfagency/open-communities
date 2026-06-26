@@ -17,9 +17,9 @@ import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { Button } from '$lib/components/ui/button';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
-import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as NativeSelect from '$lib/components/ui/native-select';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Sheet from '$lib/components/ui/sheet';
 import { Switch } from '$lib/components/ui/switch';
 import { m } from '$lib/paraglide/messages';
 import { setLocale } from '$lib/paraglide/runtime';
@@ -159,9 +159,9 @@ let isMobile = $derived(appState.isMobile);
         </button>
       </div>
     {:else}
-      <!-- Full mode: user dropdown -->
-      <DropdownMenu.Root bind:open>
-        <DropdownMenu.Trigger>
+      <!-- Sheet: slide-over nav menu (replaces old DropdownMenu) -->
+      <Sheet.Root bind:open>
+        <Sheet.Trigger>
           {#snippet child({ props })}
             <button
               {...props}
@@ -171,8 +171,8 @@ let isMobile = $derived(appState.isMobile);
               <div class="relative size-5">
                 <span
                   class="absolute left-0 top-[2px] h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
-                  class:top-[9px]={open}
                   class:rotate-45={open}
+                  class:top-[9px]={open}
                 ></span>
                 <span
                   class="absolute left-0 top-[9px] h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
@@ -180,82 +180,112 @@ let isMobile = $derived(appState.isMobile);
                 ></span>
                 <span
                   class="absolute bottom-[2px] left-0 h-[2.5px] w-full rounded-full bg-foreground transition-all duration-300"
-                  class:top-[9px]={open}
                   class:-rotate-45={open}
+                  class:top-[9px]={open}
                 ></span>
               </div>
             </button>
           {/snippet}
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content align="end" class="w-56 max-sm:w-72">
-          <div class="flex items-center justify-between px-2 py-1.5 max-sm:py-3">
-            <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
-            <NativeSelect.Root
-              onchange={async () => {
-              await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang, user: page.data.user?.id }) });
-              setLocale(lang as Parameters<typeof setLocale>[0], { reload: true });
-            }}
-              bind:value={lang}
-            >
-              <NativeSelect.Option value="en">English</NativeSelect.Option>
-              <NativeSelect.Option value="de">Deutsch</NativeSelect.Option>
-              <NativeSelect.Option value="es">Español</NativeSelect.Option>
-              <NativeSelect.Option value="fr">Français</NativeSelect.Option>
-              <NativeSelect.Option value="he">עברית</NativeSelect.Option>
-              <NativeSelect.Option value="hu">Magyar</NativeSelect.Option>
-              <NativeSelect.Option value="nl">Nederlands</NativeSelect.Option>
-              <NativeSelect.Option value="pl">Polski</NativeSelect.Option>
-              <NativeSelect.Option value="pt">Português</NativeSelect.Option>
-              <NativeSelect.Option value="ru">Русский</NativeSelect.Option>
-              <NativeSelect.Option value="uk">Українська</NativeSelect.Option>
-            </NativeSelect.Root>
-          </div>
-          <div class="flex items-center justify-between px-2 py-1.5 max-sm:py-3">
-            <span class="text-muted-foreground text-xs max-sm:text-sm">{m.darkMode()}</span>
-            <div class="flex items-center gap-2">
-              {#if mode.current === 'dark'}
-                <MoonIcon class="size-4 text-muted-foreground max-sm:size-5" />
-              {:else}
-                <SunIcon class="size-4 text-muted-foreground max-sm:size-5" />
-              {/if}
-              <Switch aria-label={m.toggleDarkMode()} checked={mode.current === 'dark'} onCheckedChange={toggleMode} />
+        </Sheet.Trigger>
+        <Sheet.Content class="w-72 max-sm:w-full">
+          <Sheet.Header>
+            <Sheet.Title>{m.menu()}</Sheet.Title>
+          </Sheet.Header>
+          <div class="flex flex-col gap-4 px-4 py-6">
+            <div class="flex items-center justify-between">
+              <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
+              <NativeSelect.Root
+                onchange={async () => {
+                await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang, user: page.data.user?.id }) });
+                setLocale(lang as Parameters<typeof setLocale>[0], { reload: true });
+              }}
+                bind:value={lang}
+              >
+                <NativeSelect.Option value="en">English</NativeSelect.Option>
+                <NativeSelect.Option value="de">Deutsch</NativeSelect.Option>
+                <NativeSelect.Option value="es">Español</NativeSelect.Option>
+                <NativeSelect.Option value="fr">Français</NativeSelect.Option>
+                <NativeSelect.Option value="he">עברית</NativeSelect.Option>
+                <NativeSelect.Option value="hu">Magyar</NativeSelect.Option>
+                <NativeSelect.Option value="nl">Nederlands</NativeSelect.Option>
+                <NativeSelect.Option value="pl">Polski</NativeSelect.Option>
+                <NativeSelect.Option value="pt">Português</NativeSelect.Option>
+                <NativeSelect.Option value="ru">Русский</NativeSelect.Option>
+                <NativeSelect.Option value="uk">Українська</NativeSelect.Option>
+              </NativeSelect.Root>
             </div>
+            <div class="flex items-center justify-between">
+              <span class="text-muted-foreground text-xs max-sm:text-sm">{m.darkMode()}</span>
+              <div class="flex items-center gap-2">
+                {#if mode.current === 'dark'}
+                  <MoonIcon class="size-4 text-muted-foreground max-sm:size-5" />
+                {:else}
+                  <SunIcon class="size-4 text-muted-foreground max-sm:size-5" />
+                {/if}
+                <Switch
+                  aria-label={m.toggleDarkMode()}
+                  checked={mode.current === 'dark'}
+                  onCheckedChange={toggleMode}
+                />
+              </div>
+            </div>
+            <hr class="border-border" />
+            {#if user?.admin}
+              <span class="text-muted-foreground text-xs font-semibold uppercase max-sm:text-sm">{m.admin()}</span>
+              <button
+                class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+                onclick={() => { open = false; goto('/admin'); }}
+              >
+                <DashboardIcon class="size-4 max-sm:size-5" />
+                {m.dashboard()}
+              </button>
+              <button
+                class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+                onclick={() => { open = false; goto('/admin/congregations'); }}
+              >
+                <BuildingIcon class="size-4 max-sm:size-5" />
+                {m.adminCongregations()}
+              </button>
+              <button
+                class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+                onclick={() => { open = false; goto('/admin/users'); }}
+              >
+                <UsersIcon class="size-4 max-sm:size-5" />
+                {m.adminUsers()}
+              </button>
+              <button
+                class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+                onclick={() => { open = false; goto('/admin/pages'); }}
+              >
+                <FilesIcon class="size-4 max-sm:size-5" />
+                {m.pages()}
+              </button>
+              <button
+                class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+                onclick={() => { open = false; goto('/admin/translations'); }}
+              >
+                <AbcIcon class="size-4 max-sm:size-5" />
+                Text
+              </button>
+              <hr class="border-border" />
+            {/if}
+            <button
+              class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+              onclick={() => { open = false; goto('/account'); }}
+            >
+              <UserCogIcon class="size-4 max-sm:size-5" />
+              {m.manageAccount()}
+            </button>
+            <button
+              class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
+              onclick={() => { open = false; goto('/logout'); }}
+            >
+              <LogoutIcon class="size-4 max-sm:size-5" />
+              {m.logout()}
+            </button>
           </div>
-          {#if user?.admin}
-            <DropdownMenu.Separator />
-            <DropdownMenu.Label class="text-muted-foreground text-xs max-sm:text-sm">{m.admin()}</DropdownMenu.Label>
-            <DropdownMenu.Item onclick={() => goto('/admin')} class="max-sm:py-3 max-sm:text-base">
-              <DashboardIcon class="mr-2 size-4 max-sm:size-5" />
-              {m.dashboard()}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/congregations')} class="max-sm:py-3 max-sm:text-base">
-              <BuildingIcon class="mr-2 size-4 max-sm:size-5" />
-              {m.adminCongregations()}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/users')} class="max-sm:py-3 max-sm:text-base">
-              <UsersIcon class="mr-2 size-4 max-sm:size-5" />
-              {m.adminUsers()}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/pages')} class="max-sm:py-3 max-sm:text-base">
-              <FilesIcon class="mr-2 size-4 max-sm:size-5" />
-              {m.pages()}
-            </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/translations')} class="max-sm:py-3 max-sm:text-base">
-              <AbcIcon class="mr-2 size-4 max-sm:size-5" />
-              Text
-            </DropdownMenu.Item>
-            <DropdownMenu.Separator />
-          {/if}
-          <DropdownMenu.Item onclick={() => goto('/account')} class="max-sm:py-3 max-sm:text-base">
-            <UserCogIcon class="mr-2 size-4 max-sm:size-5" />
-            {m.manageAccount()}
-          </DropdownMenu.Item>
-          <DropdownMenu.Item onclick={() => goto('/logout')} class="max-sm:py-3 max-sm:text-base">
-            <LogoutIcon class="mr-2 size-4 max-sm:size-5" />
-            {m.logout()}
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+        </Sheet.Content>
+      </Sheet.Root>
     {/if}
   {:else}
     <Button
