@@ -167,6 +167,15 @@ export default defineConfig({
           exclude: ['src/test/server/**'],
           include: ['src/**/*.test.{ts,tsx,js,jsx}'],
           name: 'browser',
+          server: {
+            deps: {
+              optimizer: {
+                web: {
+                  enabled: false
+                }
+              }
+            }
+          },
           setupFiles: ['vitest-browser-svelte', resolve(import.meta.dirname, 'src/test/setupTest.ts')]
         }
       },
