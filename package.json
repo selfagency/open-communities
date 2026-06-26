@@ -23,13 +23,13 @@
     "preview:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite preview",
     "start": "node build/index.js",
     "svelte-check": "svelte-kit sync && svelte-check --tsgo --incremental --tsconfig ./tsconfig.json",
-    "test": "vitest",
-    "test:browser": "pnpx dotenv-cli -e .env.test -- vitest run --project browser",
+    "test": "vitest --run",
+    "test:browser": "pnpx dotenv-cli -e .env.test -- vitest --run --project browser",
     "test:e2e": "pnpx dotenv-cli -e .env.test -e .env.e2e -- playwright test --config e2e/playwright.config.mjs",
     "test:e2e:dev": "PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpx dotenv-cli -c dynamic -- playwright test --config e2e/playwright.config.mjs",
-    "test:server": "pnpx dotenv-cli -e .env.test -- vitest run --project server",
+    "test:server": "pnpx dotenv-cli -e .env.test -- vitest --run --project server",
     "test:setup": "pnpx dotenv-cli -e .env.test -- node e2e/cap/setup-captcha.mjs",
-    "test:unit": "pnpx dotenv-cli -e .env.test -- vitest --coverage --coverage.enabled=true"
+    "test:unit": "pnpx dotenv-cli -e .env.test -- vitest --run --coverage --coverage.enabled=true"
   },
   "dependencies": {
     "@selfagency/stately": "^0.1.5",
@@ -125,6 +125,7 @@
     "vite-plugin-mcp": "^0.3.2",
     "vite-plugin-svelte-inline-component": "^0.0.8",
     "vitest": "^4.1.9",
+    "vitest-browser-svelte": "2.1.1",
     "wait-for-the-element": "^4.0.2",
     "zod": "4.4.3"
   },

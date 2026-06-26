@@ -64,13 +64,13 @@ describe('src/lib/api', () => {
     expect(out).not.toHaveProperty('updated');
     expect(out).not.toHaveProperty('created');
 
-    // boolean conversion (use toHaveProperty to avoid direct indexing/type issues)
-    expect(out).toHaveProperty('a', true);
-    expect(out).toHaveProperty('b', false);
-    expect(out).toHaveProperty('nested.flag', true);
-    // array primitives are not converted by convertBooleans in the current implementation
+    // boolean fields are no longer converted (convertBooleans removed — P-3 fix)
+    expect(out).toHaveProperty('a', 1);
+    expect(out).toHaveProperty('b', 0);
+    expect(out).toHaveProperty('nested.flag', 1);
+    // array primitives are not converted
     expect(out).toHaveProperty('nested.list.0', 0);
-    expect(out).toHaveProperty('nested.list.1.inner', true);
+    expect(out).toHaveProperty('nested.list.1.inner', 1);
   });
 
   it('cleanResponse keeps created when keepDate=true but still removes other meta fields', () => {
@@ -90,7 +90,8 @@ describe('src/lib/api', () => {
     expect(out).not.toHaveProperty('updated');
     // created should be present when keepDate = true
     expect(out).toHaveProperty('created', '2025-01-01');
-    expect(out).toHaveProperty('active', true);
+    // boolean fields are no longer converted (convertBooleans removed — P-3 fix)
+    expect(out).toHaveProperty('active', 1);
   });
 
   it('expand merges expanded fields onto the root and removes expand key', () => {

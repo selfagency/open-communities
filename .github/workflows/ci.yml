@@ -123,7 +123,7 @@ jobs:
         id: test
         continue-on-error: true
         run: |
-          pnpm vitest run --project server --coverage --coverage.enabled=true --reporter=junit --reporter=json
+          pnpm vitest run --coverage --coverage.enabled=true --reporter=junit --reporter=json
         env:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           CAP_API_KEY: ${{ secrets.CAP_API_KEY }}

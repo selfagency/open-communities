@@ -4,23 +4,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Hoist-safe mocks before importing the module under test
 vi.mock('pocketbase', () => {
-  // each instance gets its own spies
-  return {
-    default(_url: string) {
-      // @ts-expect-error - we're creating a test double
-      this.autoCancellation = vi.fn();
-      // authStore with spies and mutable isValid
-      // @ts-expect-error authstore mock
-      this.authStore = {
-        clear: vi.fn(),
-        isValid: false,
-        loadFromCookie: vi.fn()
-      };
-      // collection returns an object with authRefresh spy
-      // @ts-expect-error collection mock
-      this.collection = vi.fn((_name: string) => ({ authRefresh: vi.fn() }));
-    }
-  };
+  function MockPocketBase(this: Record<string, unknown>) {
+    // @ts-expect-error - we're creating a test double
+    this.autoCancellation = vi.fn();
+    // @ts-expect-error authstore mock
+    this.authStore = {
+      clear: vi.fn(),
+      isValid: false,
+      loadFromCookie: vi.fn()
+    };
+    // @ts-expect-error collection mock
+    this.collection = vi.fn((_name: string) => ({ authRefresh: vi.fn() }));
+  }
+  return { default: MockPocketBase };
 });
 
 vi.mock('./logger', () => ({ log: { error: vi.fn(), warn: vi.fn() } }));
@@ -258,15 +254,23 @@ describe('src/lib/server/api', () => {
     });
   });
 
-  describe('convertBooleans', () => {
-    it('converts 1 to true and 0 to false in objects', () => {
-      const result = cleanResponse({ visible: 1, active: 0, name: 'test' });
-      expect(result).toEqual({ visible: true, active: false, name: 'test' });
+  describe('cleanResponse', () => {
+    it('removes pocketbase meta fields and preserves numeric 0/1 values', () => {
+      const result = cleanResponse({
+        visible: 1,
+        active: 0,
+        name: 'test',
+        collectionId: 'abc',
+        collectionName: 'test',
+        created: '2025-01-01',
+        updated: '2025-01-02'
+      });
+      expect(result).toEqual({ visible: 1, active: 0, name: 'test' });
     });
 
     it('skips __proto__ and constructor keys', () => {
       const result = cleanResponse({ visible: 1, __proto__: 1, constructor: 0 });
-      expect(result).toEqual({ visible: true });
+      expect(result).toEqual({ visible: 1 });
     });
   });
 
