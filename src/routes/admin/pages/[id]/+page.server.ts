@@ -1,6 +1,17 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
+
+const variantSchema = z.object({
+  id: z.string().optional(),
+  language: z.string(),
+  title: z.string().optional().default(''),
+  description: z.string().optional().default(''),
+  content: z.string().optional().default(''),
+  imageAlt: z.string().optional().default(''),
+  imageCaption: z.string().optional().default('')
+});
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const client = locals.api;
@@ -78,7 +89,7 @@ export const actions = {
         imageAlt: string;
         imageCaption: string;
         id?: string;
-      }> = variantsJson ? JSON.parse(variantsJson) : [];
+      }> = variantsJson ? z.array(variantSchema).parse(JSON.parse(variantsJson)) : [];
 
       for (const v of variants) {
         const vBody: Record<string, unknown> = {

@@ -92,12 +92,12 @@ function handleDelete() {
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="verified">{m.verified()}</label>
-          <Switch aria-label={m.verified()} id="verified" name="verified" checked={user.verified} />
+          <Switch aria-label={m.verified()} checked={user.verified} id="verified" name="verified" />
           <input name="verified" type="hidden" value={String(user.verified)} />
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="admin">{m.admin()}</label>
-          <Switch aria-label={m.admin()} id="admin" name="admin" checked={user.admin} />
+          <Switch aria-label={m.admin()} checked={user.admin} id="admin" name="admin" />
           <input name="admin" type="hidden" value={String(user.admin)} />
         </div>
         <Button type="submit">{m.saveChanges()}</Button>

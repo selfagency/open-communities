@@ -5,9 +5,10 @@ import { error } from '@sveltejs/kit';
 import cookie from 'cookie';
 import PocketBase from 'pocketbase';
 import { omit } from 'radashi';
+import { z } from 'zod/v4';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
-import type { TypedPocketBase, UsersRecord } from '$lib/pocketbase.d';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 
 import { log } from './logger';
 /* endregion imports */
@@ -125,7 +126,19 @@ function isRetryable(err: unknown): boolean {
 }
 /* endregion retry */
 
-function loadUser(cookies: Cookies): null | (UsersRecord & { email: string; id: string }) {
+// Zod schema for auth cookie model validation (S-10 fix)
+const userCookieSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  admin: z.boolean().optional(),
+  verified: z.boolean().optional(),
+  lang: z.string().optional(),
+  congregation: z.string().optional(),
+  notifications: z.boolean().optional(),
+  name: z.string().optional()
+});
+
+function loadUser(cookies: Cookies): null | (z.infer<typeof userCookieSchema> & { email: string; id: string }) {
   const auth = cookies.get('auth');
   if (!auth) {
     return null;
@@ -137,14 +150,11 @@ function loadUser(cookies: Cookies): null | (UsersRecord & { email: string; id: 
     }
     const decoded = JSON.parse(parsed.pb_auth);
     const model = decoded?.model;
-    if (typeof model !== 'object' || model === null) {
+    const result = userCookieSchema.safeParse(model);
+    if (!result.success) {
       return null;
     }
-    // Basic shape validation — id and email must be strings
-    if (typeof model.id !== 'string' || typeof model.email !== 'string') {
-      return null;
-    }
-    return model as UsersRecord & { email: string; id: string };
+    return result.data as z.infer<typeof userCookieSchema> & { email: string; id: string };
   } catch {
     return null;
   }

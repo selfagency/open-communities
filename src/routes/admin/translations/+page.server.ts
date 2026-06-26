@@ -1,9 +1,18 @@
 import { error, fail } from '@sveltejs/kit';
+import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import type { Actions, PageServerLoad } from './$types';
 
 const PER_PAGE = 20;
+
+const entriesSchema = z.array(
+  z.object({
+    id: z.string().optional(),
+    locale: z.string(),
+    value: z.string()
+  })
+);
 
 export const load: PageServerLoad = async ({ locals, url }) => {
   const client = locals.api;
@@ -79,7 +88,12 @@ export const actions = {
 
     let entries: Array<{ locale: string; value: string; id?: string }>;
     try {
-      entries = JSON.parse(entriesJson);
+      const raw = JSON.parse(entriesJson);
+      const parsed = entriesSchema.safeParse(raw);
+      if (!parsed.success) {
+        return fail(400, { error: 'Invalid entries format' });
+      }
+      entries = parsed.data;
     } catch {
       return fail(400, { error: 'Invalid entries JSON' });
     }
