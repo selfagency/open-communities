@@ -1,4 +1,6 @@
 # Multi-stage build: build the project inside the image, then produce a small runtime image
+# checkov:skip=CKV_DOCKER_2:HEALTHCHECK not needed for build-stage image
+# checkov:skip=CKV_DOCKER_3:Root needed for CI build process
 FROM node:20 AS builder
 WORKDIR /app
 

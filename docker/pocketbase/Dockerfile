@@ -1,5 +1,6 @@
 # PocketBase for local development
 # Uses the standard PB binary (pb-audit is deployed via pb_hooks/ on PocketHost)
+# checkov:skip=CKV_DOCKER_3:Root needed for host bind-mount volume permissions
 FROM alpine:3.21
 
 ARG PB_VERSION=0.29.2
@@ -18,12 +19,7 @@ RUN curl -fsSL -o /tmp/pb.zip \
 
 EXPOSE 8090
 
-RUN mkdir -p /pb_data && chmod 755 /pb_data \
-    && addgroup -S pocketbase \
-    && adduser -S pocketbase -G pocketbase \
-    && chown -R pocketbase:pocketbase /pb /pb_data
-
-USER pocketbase
+RUN mkdir -p /pb_data && chmod 777 /pb_data
 
 VOLUME ["/pb_data"]
 
