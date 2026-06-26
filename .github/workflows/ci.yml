@@ -1,12 +1,10 @@
 name: CI
 
 on:
+  push:
+    branches: ['main']
   pull_request:
     branches: ['main']
-  workflow_run:
-    workflows: ['Build']
-    types:
-      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -15,7 +13,7 @@ concurrency:
 jobs:
   build:
     name: Build & typecheck & lint
-    if: ${{ github.event_name == 'pull_request' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -257,15 +255,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CONTAINER_TOKEN }}
 
-      - name: Pull pre-built app image (main — from Build workflow)
-        if: github.event_name == 'workflow_run'
-        run: |
-          docker pull ghcr.io/${{ github.repository }}:latest
-          docker tag ghcr.io/${{ github.repository }}:latest opencommunities-e2e
-
-      - name: Build app image (PR — no pre-built image available)
-        if: github.event_name != 'workflow_run'
+      - name: Build app image (PR — no pre-built image)
+        if: github.event_name == 'pull_request'
         run: docker build -f docker/Dockerfile.e2e -t opencommunities-e2e .
+
+      - name: Pull pre-built app image (main — built by build-image job)
+        if: github.event_name == 'push'
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} opencommunities-e2e
 
       - name: Run app container
         run: |
@@ -305,8 +303,8 @@ jobs:
         run: docker compose -f docker/docker-compose.yml down -v
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [e2e]
     runs-on: ubuntu-latest
     environment: Production
     steps:
@@ -314,6 +312,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_TOKEN }}
       - name: Deploy PB hooks to PocketHost
         env:
           PHIO_USERNAME: ${{ secrets.POCKETHOST_EMAIL }}
@@ -328,6 +332,11 @@ jobs:
         run: |
           curl --request GET "$COOLIFY_WEBHOOK" \
             --header "Authorization: Bearer $COOLIFY_TOKEN"
+      - name: Promote commit image to latest
+        run: |
+          docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker tag ghcr.io/${{ github.repository }}:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
