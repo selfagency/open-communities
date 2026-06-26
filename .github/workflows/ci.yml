@@ -237,7 +237,7 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps --only-shell
 
-      - name: Start Docker Compose (PB, Mailpit, Cap, Redis)
+      - name: Start Docker Compose (PB, Mailpit, Cap, Dragonfly)
         run: |
           docker compose -f docker/docker-compose.yml up -d
           timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
@@ -250,37 +250,32 @@ jobs:
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
 
-      - name: Download build output
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: build/
-
-      - name: Start preview server
+      - name: Build and run app container
         run: |
-          mkdir -p .e2e
-          nohup node build/index.js > .e2e/app.log 2>&1 &
-          timeout 30 bash -c 'until curl -f http://localhost:4173 >/dev/null 2>&1; do sleep 1; done'
-          echo "App is ready"
-        env:
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
-          NODE_ENV: test
-          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
-          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-          PORT: 4173
-          PUBLIC_API_ENDPOINT: http://localhost:8090
-          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
-          PUBLIC_HOSTNAME: http://localhost:4173
-          SMTP_HOST: localhost
-          SMTP_PORT: 1025
+          docker build -f docker/Dockerfile.e2e -t opencommunities-e2e .
+          docker run -d --name opencommunities-e2e \
+            --network docker_dev \
+            -e ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
+            -e CAP_API_KEY=${{ secrets.CAP_API_KEY }} \
+            -e NODE_ENV=test \
+            -e PB_TEST_ADMIN=${{ secrets.PB_TEST_ADMIN }} \
+            -e PB_TEST_PASSWORD=${{ secrets.PB_TEST_PASSWORD }} \
+            -e PORT=3000 \
+            -e PUBLIC_API_ENDPOINT=http://pocketbase:8090 \
+            -e PUBLIC_CAPTCHA_ENDPOINT=http://cap:3000 \
+            -e PUBLIC_HOSTNAME=http://localhost:3000 \
+            -e SMTP_HOST=mailpit \
+            -e SMTP_PORT=1025 \
+            opencommunities-e2e
+          timeout 30 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
+          echo "App container ready"
 
       - name: Run Playwright E2E
         env:
           SMTP_HOST: localhost
           SMTP_PORT: 1025
           MAILPIT_API: http://localhost:8025/api/v1
-          PB_TEST_BASEURL: http://localhost:4173
+          PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: pnpm exec playwright test --config e2e/playwright.config.cjs
