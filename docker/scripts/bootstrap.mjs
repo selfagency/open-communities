@@ -123,7 +123,8 @@ async function importSchema(token) {
     body: JSON.stringify({ collections: schema, deleteMissing: false }),
   });
   if (!res.ok) {
-    throw new Error(`Schema import failed: ${res.status}`);
+    const body = await res.text().catch(() => '');
+    throw new Error(`Schema import failed: ${res.status} — ${body.slice(0, 200)}`);
   }
   console.log('  ✅ Collections imported');
 }
