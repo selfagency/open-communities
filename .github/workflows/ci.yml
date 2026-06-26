@@ -127,6 +127,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate SvelteKit types (required for tsconfig resolution)
+        run: pnpm svelte-kit sync
+
       - name: Run tests (vitest) with coverage
         id: test
         continue-on-error: true

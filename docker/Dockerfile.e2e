@@ -11,7 +11,8 @@ RUN npm install -g pnpm@10
 # Copy the rest of the repo and build the production output
 COPY . .
 # Skip optional dependencies to avoid native optional binaries (like rollup native) failing on some platforms
-RUN pnpm install --no-optional && pnpm build
+# CI=true prevents ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY in non-TTY envs
+RUN CI=true pnpm install --omit=optional && CI=true pnpm build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app
