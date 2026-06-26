@@ -5,7 +5,7 @@ import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
 import FilesIcon from '@tabler/icons-svelte/icons/files';
 import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
-import Menu2Icon from '@tabler/icons-svelte/icons/menu-2';
+import MenuIcon from '@tabler/icons-svelte/icons/menu';
 import MoonIcon from '@tabler/icons-svelte/icons/moon';
 import XIcon from '@tabler/icons-svelte/icons/x';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
@@ -173,7 +173,7 @@ let isMobile = $derived(appState.isMobile);
               {#if open}
                 <XIcon class="size-6 text-foreground" />
               {:else}
-                <Menu2Icon class="size-6 text-foreground" />
+                <MenuIcon class="size-6 text-foreground" />
               {/if}
             </button>
           {/snippet}
