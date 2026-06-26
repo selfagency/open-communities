@@ -20,14 +20,14 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
   const api = createApi();
 
   // Inject admin auth into the client's auth store
-  (api.authStore as Record<string, unknown>).isValid = true;
-  (api.authStore as Record<string, unknown>).record = {
+  (api.authStore as unknown as Record<string, unknown>).isValid = true;
+  (api.authStore as unknown as Record<string, unknown>).record = {
     id: 'admin123',
     email: 'admin@test.test',
     admin: true,
     verified: true
   };
-  (api.authStore as Record<string, unknown>).token = 'mock-token';
+  (api.authStore as unknown as Record<string, unknown>).token = 'mock-token';
 
   const cookieOpts = { httpOnly: true, path: '/', sameSite: 'strict' as const, secure: false };
 

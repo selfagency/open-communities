@@ -46,7 +46,9 @@ describe('transactionalMail error handling', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(typeof result.error).toBe('string');
+    if (!result.ok) {
+      expect(result.error).toBeTypeOf('string');
+    }
   });
 
   it('returns the thrown error message', async () => {
@@ -58,6 +60,8 @@ describe('transactionalMail error handling', () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.error).toBe('SMTP connection refused');
+    if (!result.ok) {
+      expect(result.error).toBe('SMTP connection refused');
+    }
   });
 });
