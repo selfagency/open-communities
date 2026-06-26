@@ -124,7 +124,7 @@ async function importSchema(token) {
   });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
-    throw new Error(`Schema import failed: ${res.status} — ${body.slice(0, 200)}`);
+    throw new Error(`Schema import failed: ${res.status} — ${body.slice(0, 1000)}`);
   }
   console.log('  ✅ Collections imported');
 }

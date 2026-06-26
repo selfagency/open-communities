@@ -12,6 +12,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   );
 
   return {
+    // fallow-ignore-next-line: consumed by PageList component via {data} pass-through
     pages: (result.items as PagesRecord[]).map((p) => ({
       id: p.id,
       title: p.title,
@@ -19,6 +20,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       description: p.description ?? '',
       updated: p.updated
     })),
+    // fallow-ignore-next-line: consumed by PageList component via {data} pass-through
     totalPages: result.totalPages
   };
 };

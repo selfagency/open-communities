@@ -125,9 +125,7 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": [
-        "email"
-      ]
+      "identityFields": ["email"]
     },
     "mfa": {
       "enabled": false,
@@ -296,13 +294,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "en",
-          "es",
-          "fr",
-          "he",
-          "de"
-        ]
+        "values": ["en", "es", "fr", "he", "de"]
       },
       {
         "hidden": false,
@@ -350,9 +342,7 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": [
-        "email"
-      ]
+      "identityFields": ["email"]
     },
     "mfa": {
       "enabled": false,
@@ -1050,9 +1040,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
-    ],
+    "indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
     "system": false
   },
   {
@@ -1378,9 +1366,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
     "system": false
   },
   {
@@ -1466,11 +1452,7 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": [
-          "no",
-          "yes",
-          "yesBima"
-        ]
+        "values": ["no", "yes", "yesBima"]
       },
       {
         "cascadeDelete": false,
@@ -1506,9 +1488,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
     "system": false
   },
   {
@@ -1895,9 +1875,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
-    ],
+    "indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
     "system": false
   },
   {
@@ -2388,9 +2366,7 @@
         "type": "autodate"
       }
     ],
-    "indexes": [
-      "CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
-    ],
+    "indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
     "system": false
   },
   {
@@ -3061,19 +3037,10 @@
     "viewQuery": "SELECT \n    'us_states_total' as id,\n    COUNT(DISTINCT c.state) as total_us_states\nFROM \n    congregations c\nINNER JOIN states s ON c.state = s.id\nINNER JOIN countries co ON s.country = co.id\nWHERE \n    co.code = 'US'\n"
   },
   {
-    "id": "pbc_audit_logs",
+    "id": "9sm9xec58uye3zk",
     "name": "audit_logs",
     "type": "base",
     "system": false,
-    "indexes": [
-      "CREATE INDEX idx_audit_collection_name ON audit_logs (collection_name)",
-      "CREATE INDEX idx_audit_record_id ON audit_logs (record_id)",
-      "CREATE INDEX idx_audit_timestamp ON audit_logs (timestamp)",
-      "CREATE INDEX idx_audit_user ON audit_logs (user)",
-      "CREATE INDEX idx_audit_event_type ON audit_logs (event_type)",
-      "CREATE INDEX idx_audit_collection_timestamp ON audit_logs (collection_name, timestamp)",
-      "CREATE INDEX idx_audit_user_timestamp ON audit_logs (user, timestamp)"
-    ],
     "listRule": null,
     "viewRule": null,
     "createRule": null,
@@ -3081,161 +3048,162 @@
     "deleteRule": null,
     "fields": [
       {
-        "id": "select_event_type",
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "84igsfms",
+        "maxSelect": 1,
         "name": "event_type",
+        "presentable": false,
+        "required": true,
+        "system": false,
         "type": "select",
-        "system": false,
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": [
-            "create",
-            "update",
-            "delete",
-            "create_request",
-            "update_request",
-            "delete_request",
-            "auth"
-          ]
-        }
+        "values": [
+          "create",
+          "update",
+          "delete",
+          "create_request",
+          "update_request",
+          "delete_request",
+          "auth"
+        ]
       },
       {
-        "id": "text_collection_name",
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "mb0prsje",
+        "max": 0,
+        "min": 0,
         "name": "collection_name",
-        "type": "text",
-        "system": false,
-        "required": true,
+        "pattern": "",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
       },
       {
-        "id": "text_record_id",
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "bty0os6g",
+        "max": 0,
+        "min": 0,
         "name": "record_id",
-        "type": "text",
-        "system": false,
-        "required": false,
+        "pattern": "",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
-        "id": "relation_user",
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "hidden": false,
+        "id": "s63115dv",
+        "maxSelect": 1,
+        "minSelect": 0,
         "name": "user",
-        "type": "relation",
-        "system": false,
-        "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "collectionId": "_pb_users_auth_",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": []
-        }
+        "required": false,
+        "system": false,
+        "type": "relation"
       },
       {
-        "id": "text_request_ip",
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "eaedzols",
+        "max": 0,
+        "min": 0,
         "name": "request_ip",
-        "type": "text",
-        "system": false,
-        "required": false,
+        "pattern": "",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
-        "id": "text_request_url",
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "albsjqxe",
+        "max": 0,
+        "min": 0,
         "name": "request_url",
-        "type": "text",
-        "system": false,
-        "required": false,
+        "pattern": "",
         "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
-        "id": "date_timestamp",
+        "hidden": false,
+        "id": "jf6c2rrm",
         "name": "timestamp",
-        "type": "date",
-        "system": false,
+        "presentable": false,
         "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": "",
-          "max": ""
-        }
+        "system": false,
+        "type": "date"
       },
       {
-        "id": "json_before_changes",
+        "hidden": false,
+        "id": "ltytys4z",
+        "maxSize": 2000000,
         "name": "before_changes",
-        "type": "json",
-        "system": false,
-        "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 2000000
-        }
+        "required": false,
+        "system": false,
+        "type": "json"
       },
       {
-        "id": "json_after_changes",
+        "hidden": false,
+        "id": "h8vk8kkn",
+        "maxSize": 2000000,
         "name": "after_changes",
-        "type": "json",
-        "system": false,
-        "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "maxSize": 2000000
-        }
+        "required": false,
+        "system": false,
+        "type": "json"
       },
       {
+        "hidden": false,
         "id": "autodate2990389176",
         "name": "created",
-        "type": "autodate",
-        "system": false,
-        "required": false,
+        "onCreate": true,
+        "onUpdate": false,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "onCreate": true,
-          "onUpdate": false
-        }
+        "system": false,
+        "type": "autodate"
       },
       {
+        "hidden": false,
         "id": "autodate3332085495",
         "name": "updated",
-        "type": "autodate",
-        "system": false,
-        "required": false,
+        "onCreate": true,
+        "onUpdate": true,
         "presentable": false,
-        "unique": false,
-        "options": {
-          "onCreate": true,
-          "onUpdate": true
-        }
+        "system": false,
+        "type": "autodate"
       }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_audit_collection_name ON audit_logs (collection_name)",
+      "CREATE INDEX idx_audit_record_id ON audit_logs (record_id)",
+      "CREATE INDEX idx_audit_timestamp ON audit_logs (timestamp)",
+      "CREATE INDEX idx_audit_event_type ON audit_logs (event_type)"
     ]
   }
 ]
