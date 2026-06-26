@@ -25,5 +25,6 @@ const attrs = $derived({
 {#if child}
   {@render child({ props: attrs })}
 {:else}
+  <!-- biome-ignore lint/a11y/useValidAnchor: bits-ui BreadcrumbLink may not have href (current page indicator) -->
   <a bind:this={ref} {...attrs}> {@render children?.()} </a>
 {/if}

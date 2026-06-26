@@ -49,7 +49,21 @@ async function waitForPB() {
 }
 
 async function getToken() {
-  // Retry a few times — the startup log may not be flushed yet
+  // First try: authenticate as admin (works when PB already has data from previous run)
+  try {
+    const res = await fetch(`${PB}/api/admins/auth-with-password`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      console.log('  🔑 Authenticated as existing admin');
+      return data.token;
+    }
+  } catch { /* fall through */ }
+
+  // Second try: extract installation token from startup logs (fresh PB)
   for (let attempt = 0; attempt < 10; attempt++) {
     let logs;
     try {
