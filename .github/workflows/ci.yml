@@ -283,7 +283,7 @@ jobs:
           PB_TEST_BASEURL: http://localhost:4173
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: pnpm exec playwright test --config e2e/playwright.config.mjs
+        run: pnpm exec playwright test --config e2e/playwright.config.cjs
 
       - name: Docker Compose logs (on failure)
         if: failure()
