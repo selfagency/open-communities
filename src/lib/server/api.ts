@@ -130,7 +130,7 @@ function loadUser(cookies: Cookies): null | (z.infer<typeof userCookieSchema> & 
     return null;
   }
   try {
-    const parsed = cookie.parseCookie(auth);
+    const parsed = cookie.parse(auth);
     if (!parsed.pb_auth) {
       return null;
     }

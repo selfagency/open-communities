@@ -149,7 +149,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       // Re-set the auth cookie on every request — extract the raw JWT
       // instead of the full Set-Cookie string (exportToCookie returns a full header)
       const exported = requestApi.authStore.exportToCookie();
-      const parsed = cookie.parseCookie(exported);
+      const parsed = cookie.parse(exported);
       event.cookies.set('auth', parsed.pb_auth ?? '', event.locals.cookieOpts);
     }
   } catch (error) {

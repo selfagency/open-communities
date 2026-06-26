@@ -105,21 +105,9 @@ vi.mock('$app/navigation', () => ({
 
 // Provide a tiny cookie helper used by server modules (node `cookie` package)
 vi.mock('cookie', () => ({
-  default: {
-    parseCookie: (s: string) => {
-      try {
-        return Object.fromEntries(
-          s.split(';').map((p) => {
-            const [k, ...r] = p.split('=');
-            return [k.trim(), decodeURIComponent(r.join('='))];
-          })
-        );
-      } catch {
-        return {};
-      }
-    }
-  },
-  parseCookie: (s: string) => {
+  // parse should accept a cookie string and return an object; tests pass
+  // a simple 'pb_auth=...' string so a minimal parse implementation is fine.
+  parse: (s: string) => {
     try {
       return Object.fromEntries(
         s.split(';').map((p) => {
@@ -130,7 +118,8 @@ vi.mock('cookie', () => ({
     } catch {
       return {};
     }
-  }
+  },
+  serialize: (name: string, value: string) => `${name}=${value}`
 }));
 
 // Nodemailer is Node-only and pulls in streams/os APIs; provide a minimal

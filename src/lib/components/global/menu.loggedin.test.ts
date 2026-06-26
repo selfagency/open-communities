@@ -4,7 +4,6 @@ import { vi } from 'vitest';
 
 // Skipped: @testing-library/svelte has a known incompatibility with Svelte 5
 // (The $ name is reserved compile error). See AGENTS.md.
-// biome-ignore lint/suspicious/noSkippedTests: @testing-library/svelte × Svelte 5 incompatibility — see AGENTS.md
 describe.skip('Menu component (logged in)', () => {
   it('shows edit and logout when user has congregation and email', async () => {
     const fakeSearchParams = { get: () => null, has: () => false };
