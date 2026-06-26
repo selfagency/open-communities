@@ -187,8 +187,8 @@ let isMobile = $derived(appState.isMobile);
             </button>
           {/snippet}
         </Sheet.Trigger>
-        <Sheet.Content class="w-72 max-sm:w-full" side="left" showCloseButton={false}>
-          <div class="flex flex-col gap-4 px-4 py-6 pt-16">
+        <Sheet.Content class="top-[72px] w-72 max-sm:w-full" showCloseButton={false} side="top">
+          <div class="flex flex-col gap-4 px-4 py-6">
             <div class="flex items-center justify-between">
               <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
               <NativeSelect.Root
@@ -308,3 +308,10 @@ let isMobile = $derived(appState.isMobile);
     </div>
   {/if}
 </div>
+
+<style>
+:global([data-slot="sheet-overlay"]) {
+  pointer-events: none;
+  opacity: 0 !important;
+}
+</style>
