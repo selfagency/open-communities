@@ -20,10 +20,11 @@ import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
 
-// Reactive state for verified/admin toggles — capture initial value from load
-// (intentional: the Switch binding mutates this state, triggering re-render)
+// svelte-ignore state_referenced_locally
 let verifiedToggle = $state(data.user?.verified ?? false);
+// svelte-ignore state_referenced_locally
 let adminToggle = $state(data.user?.admin ?? false);
+// svelte-ignore state_referenced_locally
 const user = data.targetUser;
 let formError = $state('');
 let formSuccess = $state('');
