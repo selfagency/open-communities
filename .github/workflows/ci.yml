@@ -293,6 +293,31 @@ jobs:
         if: always()
         run: docker compose -f docker/docker-compose.yml down -v
 
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [ci]
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Deploy PB hooks to PocketHost
+        env:
+          PHIO_USERNAME: ${{ secrets.POCKETHOST_EMAIL }}
+          PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
+        run: |
+          npm install -g phio
+          phio deploy -v
+      - name: Deploy to Coolify
+        env:
+          COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+        run: |
+          curl --request GET "$COOLIFY_WEBHOOK" \
+            --header "Authorization: Bearer $COOLIFY_TOKEN"
+
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
         if: always() && hashFiles('e2e/test-results/**') != ''
