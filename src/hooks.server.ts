@@ -2,7 +2,6 @@
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
-import cookie from 'cookie';
 
 import { publicIp } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
@@ -146,11 +145,9 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
         ]);
         authRefreshTimestamps.set(sessionKey, now);
       }
-      // Re-set the auth cookie on every request — extract the raw JWT
-      // instead of the full Set-Cookie string (exportToCookie returns a full header)
-      const exported = requestApi.authStore.exportToCookie();
-      const parsed = cookie.parse(exported);
-      event.cookies.set('auth', parsed.pb_auth ?? '', event.locals.cookieOpts);
+      // Re-set the auth cookie on every request — keep the full exportToCookie
+      // value so loadFromCookie can parse it (expects pb_auth=<json> prefix).
+      event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
     }
   } catch (error) {
     // Only clear auth store if refresh actually failed, not for other errors

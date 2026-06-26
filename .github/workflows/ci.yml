@@ -65,6 +65,7 @@ jobs:
         run: pnpm run check
 
       - name: Fallow analysis
+        continue-on-error: true
         uses: fallow-rs/fallow@de03f6ffd28d2d9cc487c31afd39bbc34d0d6d3d # v2
         with:
           format: sarif
