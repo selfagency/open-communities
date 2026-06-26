@@ -105,7 +105,6 @@ function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
         return obj;
       }
     }
-    return;
   };
 
   return new Proxy(Object.create(null), {

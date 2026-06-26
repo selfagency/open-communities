@@ -5,6 +5,7 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe.skip('Security segment (behavior)', () => {
+  // NOSONAR — @testing-library/svelte × Svelte 5 incompatibility
   it('toggles a security checkbox and updates formData', async () => {
     const { default: Host } = await import('$test/components/SecurityHost.svelte');
 

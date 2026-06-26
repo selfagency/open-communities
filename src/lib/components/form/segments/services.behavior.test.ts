@@ -7,6 +7,7 @@ import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
 vi.mock('sveltekit-superforms', () => mockSveltekitSuperforms);
 
 describe.skip('Services segment (behavior)', () => {
+  // NOSONAR — @testing-library/svelte × Svelte 5 incompatibility
   it('toggles inPerson checkbox and updates formData store', async () => {
     const { default: ServicesHost } = await import('$test/components/ServicesHost.svelte');
 

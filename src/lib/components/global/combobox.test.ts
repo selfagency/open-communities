@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 import Combobox from './combobox.svelte';
 
 describe.skip('Combobox', () => {
+  // NOSONAR — @testing-library/svelte × Svelte 5 incompatibility
   const items = [
     { id: 'one', label: 'Option One', value: 'one' },
     { id: 'two', label: 'Option Two', value: 'two' }

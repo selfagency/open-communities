@@ -246,7 +246,7 @@ async function main() {
     console.log(`\n✅ Done in ${((Date.now()-start)/1000).toFixed(1)}s`);
     console.log(`   Panel: ${PB}/_/`);
     console.log(`   Auth:  ${ADMIN_EMAIL}`);
-  } catch (e) {
+  } catch {
     console.error('\n❌ Bootstrap failed');
     process.exit(1);
   }

@@ -99,8 +99,6 @@ class FileDropZoneState {
     if (!isAcceptable) {
       return 'File type not allowed';
     }
-
-    return;
   }
 
   upload = async (uploadFiles: File[]) => {
