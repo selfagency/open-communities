@@ -14,7 +14,8 @@
     // ]
   },
   "rules": {
-    "unused-dependencies": "warn"
+    "unused-dependencies": "warn",
+    "ignoreDependencies": ["vitest-browser-svelte"]
   },
   "ignoreExports": [
     {

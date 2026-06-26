@@ -2,7 +2,10 @@
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
-import { parseCookie } from 'cookie';
+import pkg from 'cookie';
+
+const { parseCookie } = pkg;
+
 import { publicIp } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
 import type { SuperValidated } from 'sveltekit-superforms';

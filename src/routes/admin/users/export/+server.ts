@@ -1,5 +1,7 @@
 import { error } from '@sveltejs/kit';
+import type { UsersResponse } from '$lib/pocketbase.d';
 import { withRetry } from '$lib/server/api';
+import { rateLimitByUser } from '$lib/server/rate-limit';
 import type { RequestHandler } from './$types';
 
 const CSV_LEADING_FORMULA_RE = /^[=+\-@\t\r]/;
@@ -28,6 +30,7 @@ export const GET: RequestHandler = async ({ locals }) => {
   if (!client?.authStore?.record?.admin) {
     throw error(401, 'Unauthorized');
   }
+  rateLimitByUser(client.authStore.record?.id ?? 'unknown', 5, 60_000);
 
   const users = await withRetry(() =>
     client.collection('users').getFullList({
@@ -36,17 +39,22 @@ export const GET: RequestHandler = async ({ locals }) => {
       requestKey: 'admin-export-users'
     })
   );
+  if (!users?.length) {
+    return new Response(
+      'name,email,email_opted_out,congregation,congregation_city,congregation_state,congregation_country\n',
+      {
+        headers: { 'content-type': 'text/csv', 'content-disposition': 'attachment; filename=users.csv' }
+      }
+    );
+  }
   const header = 'name,email,email_opted_out,congregation,congregation_city,congregation_state,congregation_country';
-  const rows = users
+  const rows = (users as UsersResponse[])
     .map((u) => {
-      const expand = u.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
-      const congData = expand?.congregation as unknown as Record<string, unknown> | undefined;
-      const congExpand = congData?.expand as unknown as Record<string, unknown> | undefined;
-      const cityData = congExpand?.city as Record<string, string> | undefined;
-      const stateData = congExpand?.state as Record<string, string> | undefined;
-      const countryData = congExpand?.country as Record<string, string> | undefined;
+      const expand = u.expand as Record<string, unknown> | undefined;
+      const congData = expand?.congregation as Record<string, unknown> | undefined;
+      const cityData = congData?.expand as Record<string, unknown> | undefined;
       const optedOut = u.notifications === false ? 'true' : 'false';
-      return `${csvEscape(u.name)},${csvEscape(u.email)},${csvEscape(optedOut)},${csvEscape(congData?.name ?? '')},${csvEscape(cityData?.name ?? '')},${csvEscape(stateData?.name ?? '')},${csvEscape(countryData?.name ?? '')}`;
+      return `${csvEscape(u.name)},${csvEscape(u.email)},${csvEscape(optedOut)},${csvEscape(congData?.name ?? '')},${csvEscape((cityData?.city as Record<string, string>)?.name ?? '')},${csvEscape((cityData?.state as Record<string, string>)?.name ?? '')},${csvEscape((cityData?.country as Record<string, string>)?.name ?? '')}`;
     })
     .join('\n');
   const csv = `${header}\n${rows}`;

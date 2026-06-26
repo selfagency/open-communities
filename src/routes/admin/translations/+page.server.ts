@@ -2,6 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
+import { rateLimitByUser } from '$lib/server/rate-limit';
 import type { Actions, PageServerLoad } from './$types';
 
 const PER_PAGE = 20;
@@ -186,6 +187,7 @@ export const actions = {
     if (!client?.authStore?.record?.admin) {
       throw error(401, 'Unauthorized');
     }
+    rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
     const coolifyUrl = process.env.COOLIFY_URL;
     const coolifyToken = process.env.COOLIFY_TOKEN;
     const coolifyAppUuid = process.env.COOLIFY_APP_UUID;

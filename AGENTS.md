@@ -59,6 +59,15 @@ src/
 │   ├── login/            # Login/signup/verify
 │   ├── logout/           # Logout
 │   └── user/             # User settings (lang endpoint)
+├── admin/               # Admin dashboard, users, congregations, pages, translations
+│   ├── +page.svelte     # Dashboard with analytics (F-1: uses PocketBase views)
+│   ├── congregations/   # Congregation management
+│   ├── users/           # User management
+│   │   └── [id]/        # Edit user (admin/verified toggles)
+│   ├── pages/           # CMS page management
+│   │   ├── new/         # Create page
+│   │   └── [id]/        # Edit page
+│   └── translations/    # i18n string management
 └── test/                 # Test infrastructure
     ├── setupTest.ts      # Vitest setup (mocks SvelteKit $app, $env modules)
     ├── mocks/            # Mock implementations for $app, $env, superforms, logger
@@ -93,15 +102,21 @@ pnpm preview
 - **`.env.test`** — test environment (loaded by `pnpm test:unit`, `pnpm test:e2e`)
 - **`.env.e2e`** — E2E overrides (loaded alongside `.env.test` for E2E)
 
+`COOLIFY_URL` and `COOLIFY_TOKEN` for Coolify deployment webhook, `POSTHOG_CLI_API_KEY`/`POSTHOG_CLI_HOST_URL` for PostHog sourcemap injection
+
 Required variables in all env files:
 
 ```
 ADMIN_EMAIL=""
 CAP_API_KEY=""              # Cap captcha API key
 CAPTCHA_SITE_SECRET=""      # Cap site secret
+COOLIFY_URL=""              # Production: Coolify webhook URL
+COOLIFY_TOKEN=""            # Production: Coolify webhook token
 NODE_ENV="development"      # or "test"
 PB_TEST_ADMIN="admin@test.com"
 PB_TEST_PASSWORD="i3_NL-dfzzFt5TX"
+POSTHOG_CLI_API_KEY=""      # Production: PostHog sourcemap upload
+POSTHOG_CLI_HOST_URL=""     # Production: PostHog sourcemap upload
 PUBLIC_API_ENDPOINT="http://localhost:8090"
 PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
 PUBLIC_HOSTNAME="http://localhost:5173"  # 4173 for preview
@@ -299,8 +314,8 @@ cmds = [
 ## Security Considerations
 
 - **CSP** configured via `sveltekit-helmet` in `src/lib/server/security.ts` — staged rollout (report-only in dev, enforced in production)
-- **Auth cookies** are `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev` (note: `httpOnly: false` known issue in current code)
-- **SMTP** uses `rejectUnauthorized: false` (known issue — needed for local Mailpit; production should use `true` with Port 465/587)
+- **Auth cookies** are `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev`
+- **SMTP** uses `rejectUnauthorized: true` with proper Port 465/587 negotiation (note: `rejectUnauthorized: false` may be needed for local development with Mailpit)
 - **Captcha validation** — `validateCaptcha()` returns a boolean; always check `if (!captchaValid) return fail(400, { form })`
 - **IDOR** — always verify `client.congregation === data.id` for non-admin mutations
 - **PocketBase filter injection** — use `pb.filter(expr, params)` instead of string interpolation for all queries

@@ -39,6 +39,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
   try {
     const pages = await withRetry(() =>
       client.collection('pages').getFullList({
+        filter: 'published=true',
         fields: 'slug',
         requestKey: 'sitemap-pages'
       })

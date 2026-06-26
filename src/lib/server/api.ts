@@ -2,7 +2,10 @@
 import type { Cookies } from '@sveltejs/kit';
 
 import { error } from '@sveltejs/kit';
-import { parseCookie } from 'cookie';
+import pkg from 'cookie';
+
+const { parseCookie } = pkg;
+
 import PocketBase from 'pocketbase';
 import { omit } from 'radashi';
 import { z } from 'zod/v4';
@@ -24,26 +27,10 @@ export function createApi(): TypedPocketBase {
   return instance;
 }
 
-// Base singleton — kept for backward-compatible test imports and the authenticate
+// Base singleton
 // helper (test-only). Production code should use createApi() per request.
 const api = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
 api.autoCancellation(false);
-
-async function authenticate(auth: string) {
-  try {
-    if (auth) {
-      api.authStore.loadFromCookie(auth);
-    }
-    if (api.authStore.isValid) {
-      await api.collection('users').authRefresh();
-    }
-  } catch {
-    log.warn('authRefresh failed, clearing auth store');
-    api.authStore.clear();
-  }
-
-  return api;
-}
 
 function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate = false): Partial<T> {
   const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
@@ -182,4 +169,4 @@ function throwAsHttpError(err: unknown): { message: string; status: number } {
   return error(status, clientMessage);
 }
 
-export { api, authenticate, cleanResponse, expand, loadUser, throwAsHttpError, withRetry };
+export { cleanResponse, expand, loadUser, throwAsHttpError, withRetry };

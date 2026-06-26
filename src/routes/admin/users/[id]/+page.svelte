@@ -19,6 +19,11 @@ import { Switch } from '$lib/components/ui/switch';
 import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
+
+// Reactive state for verified/admin toggles — bind the Switch to this,
+// and the hidden input to String(checked), so the form posts the toggled value.
+let verifiedToggle = $state(data.user?.verified ?? false);
+let adminToggle = $state(data.user?.admin ?? false);
 // svelte-ignore state_referenced_locally
 const user = data.targetUser;
 // svelte-ignore state_referenced_locally
@@ -92,13 +97,13 @@ function handleDelete() {
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="verified">{m.verified()}</label>
-          <Switch aria-label={m.verified()} checked={user.verified} id="verified" name="verified" />
-          <input name="verified" type="hidden" value={String(user.verified)} />
+          <Switch aria-label={m.verified()} id="verified" name="verified" bind:checked={verifiedToggle} />
+          <input name="verified" type="hidden" value={String(verifiedToggle)} />
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="admin">{m.admin()}</label>
-          <Switch aria-label={m.admin()} checked={user.admin} id="admin" name="admin" />
-          <input name="admin" type="hidden" value={String(user.admin)} />
+          <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={adminToggle} />
+          <input name="admin" type="hidden" value={String(adminToggle)} />
         </div>
         <Button type="submit">{m.saveChanges()}</Button>
       </CardContent>

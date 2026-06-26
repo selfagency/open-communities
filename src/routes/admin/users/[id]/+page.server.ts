@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       congregation: (user.congregation as string) ?? '',
       congregationName: congData?.name ?? ''
     },
-    availableCongregations: (available as unknown as Record<string, unknown>[]).map((c) => ({
+    availableCongregations: available.map((c) => ({
       id: c.id as string,
       name: c.name as string
     }))
