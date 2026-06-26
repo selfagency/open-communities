@@ -295,7 +295,7 @@ jobs:
 
   deploy:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    needs: [ci]
+    needs: [build]
     runs-on: ubuntu-latest
     environment: Production
     steps:
