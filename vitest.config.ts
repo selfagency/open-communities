@@ -4,41 +4,14 @@ import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // Disable Rolldown optimizer — it can't resolve node:module in CI.
-  // Falls back to Vite's esbuild-based pre-bundling.
-  optimizeDeps: {
-    disabled: true,
-    include: [
-      '@leeoniya/ufuzzy',
-      '@sveltejs/kit',
-      '@testing-library/jest-dom/vitest',
-      '@testing-library/svelte',
-      'bits-ui',
-      'cookie',
-      'fast-string-truncated-width',
-      'nodemailer',
-      'pocketbase',
-      'radashi',
-      'svelte-copy',
-      'svelte-sonner',
-      'sveltekit-superforms',
-      'sveltekit-superforms/adapters',
-      'tailwind-merge',
-      'tailwind-variants',
-      'tslog',
-      'zod'
-    ]
-  },
-  // Enable compatibility for Svelte component API v4 when running tests so
-  // older-style instantiation (new Component(...)) works in the test runner.
+  // Vitest 4 manages dep optimization internally via deps.optimizer.ssr|client.enabled
+  // (defaults: false). Do NOT set optimizeDeps.disabled here — Vitest strips it.
+  // prebundleSvelteLibraries: false keeps the svelte plugin from re-enabling Rolldown.
   plugins: [
     svelte({
       compilerOptions: {
         compatibility: { componentApi: 4 }
       },
-      // Disable prebundling — conflicts with optimizeDeps.disabled below.
-      // Without this, Vitest forces optimizeDeps.disabled to "build" which
-      // re-enables Rolldown and breaks on node:module resolution in CI.
       prebundleSvelteLibraries: false
     })
   ],
@@ -160,7 +133,7 @@ export default defineConfig({
     },
     projects: [
       // Browser project skipped in CI — Rolldown can't resolve node:module
-      // without a tsconfig when loading Playwright browser provider.
+      // without a tsconfig when loading the browser provider.
       ...(process.env.CI
         ? []
         : [
