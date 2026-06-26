@@ -71,6 +71,12 @@ export default defineConfig({
   test: {
     // Root-level: coverage, reporters, and output are shared across projects.
     // Test-specific config (environment, browser, setup) lives in each project below.
+    server: {
+      deps: {
+        // Fix rolldown runtime resolving node:module in CI
+        fallbackCJS: true
+      }
+    },
     coverage: {
       exclude: [
         '.svelte-kit',
@@ -130,13 +136,6 @@ export default defineConfig({
         'src/routes/logout/+page.server.ts',
         'src/routes/logout/+page.svelte',
         'src/routes/+error.svelte',
-        'src/routes/admin/**',
-        'src/routes/api/admin/**',
-        'src/lib/components/admin/**',
-        'src/lib/components/pages/**',
-        'src/lib/components/users/**',
-        'src/lib/server/posthog-api.ts',
-        'src/lib/server/cache.ts',
         'static'
       ],
       include: ['src/**/*.{ts,svelte}'],
@@ -152,6 +151,7 @@ export default defineConfig({
       }
     },
     globals: true,
+
     outputFile: {
       json: './test-results/results.json',
       junit: './test-results/junit.xml'
