@@ -3,7 +3,7 @@
 import Tent from '$lib/assets/tent.svg?component';
 import { m } from '$lib/paraglide/messages';
 
-import Nav from './nav.svelte';
+import Menu from './menu.svelte';
 /*  endregion imports */
 </script>
 
@@ -19,6 +19,6 @@ import Nav from './nav.svelte';
     </a>
   </div>
   <div>
-    <Nav />
+    <Menu />
   </div>
 </nav>
