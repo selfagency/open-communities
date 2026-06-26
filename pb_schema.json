@@ -125,7 +125,9 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": ["email"]
+      "identityFields": [
+        "email"
+      ]
     },
     "mfa": {
       "enabled": false,
@@ -294,7 +296,13 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["en", "es", "fr", "he", "de"]
+        "values": [
+          "en",
+          "es",
+          "fr",
+          "he",
+          "de"
+        ]
       },
       {
         "hidden": false,
@@ -342,7 +350,9 @@
     },
     "passwordAuth": {
       "enabled": true,
-      "identityFields": ["email"]
+      "identityFields": [
+        "email"
+      ]
     },
     "mfa": {
       "enabled": false,
@@ -1040,7 +1050,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"],
+    "indexes": [
+      "CREATE INDEX `idx_z1BTytj` ON `cities` (`state`)"
+    ],
     "system": false
   },
   {
@@ -1366,7 +1378,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_XNKlXbt` ON `countries` (`code`)"
+    ],
     "system": false
   },
   {
@@ -1452,7 +1466,11 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["no", "yes", "yesBima"]
+        "values": [
+          "no",
+          "yes",
+          "yesBima"
+        ]
       },
       {
         "cascadeDelete": false,
@@ -1488,7 +1506,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_8e8KStT` ON `fit` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1875,7 +1895,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_kNlaqq5` ON `pages` (`slug`)"
+    ],
     "system": false
   },
   {
@@ -2366,7 +2388,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"],
+    "indexes": [
+      "CREATE INDEX `idx_wXPRGJj` ON `states` (`country`)"
+    ],
     "system": false
   },
   {
@@ -3042,20 +3066,6 @@
     "type": "base",
     "system": false,
     "schema": [
-      {
-        "id": "text3208210256",
-        "name": "id",
-        "type": "text",
-        "system": true,
-        "required": true,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
       {
         "id": "select_event_type",
         "name": "event_type",
