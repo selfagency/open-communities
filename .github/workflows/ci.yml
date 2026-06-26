@@ -250,9 +250,25 @@ jobs:
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
 
-      - name: Build and run app container
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_TOKEN }}
+
+      - name: Pull pre-built app image (main — from Build workflow)
+        if: github.event_name == 'workflow_run'
         run: |
-          docker build -f docker/Dockerfile.e2e -t opencommunities-e2e .
+          docker pull ghcr.io/${{ github.repository }}:latest
+          docker tag ghcr.io/${{ github.repository }}:latest opencommunities-e2e
+
+      - name: Build app image (PR — no pre-built image available)
+        if: github.event_name != 'workflow_run'
+        run: docker build -f docker/Dockerfile.e2e -t opencommunities-e2e .
+
+      - name: Run app container
+        run: |
           docker run -d --name opencommunities-e2e \
             --network docker_dev \
             -e ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
