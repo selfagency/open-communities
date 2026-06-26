@@ -247,7 +247,7 @@ async function main() {
     console.log(`   Panel: ${PB}/_/`);
     console.log(`   Auth:  ${ADMIN_EMAIL}`);
   } catch (e) {
-    console.error('\n❌', e.message);
+    console.error('\n❌ Bootstrap failed');
     process.exit(1);
   }
 }

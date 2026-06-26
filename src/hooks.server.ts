@@ -186,7 +186,7 @@ export const handleError = async ({
   if (status !== 404) {
     const errorId = crypto.randomUUID();
 
-    event.locals.error = error?.toString() || undefined;
+    event.locals.error = typeof error === 'object' && error !== null ? JSON.stringify(error) : String(error ?? '');
     event.locals.errorStackTrace = (error as Error)?.stack || undefined;
     event.locals.errorId = errorId;
     logEvent(status, event);

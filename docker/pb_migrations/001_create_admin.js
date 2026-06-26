@@ -3,7 +3,7 @@
 
 migrate((app) => {
   const email = process.env.PB_TEST_ADMIN || 'admin@test.com';
-  const password = process.env.PB_TEST_PASSWORD || process.env.PB_TEST_PASSWORD_FALLBACK || 'i3_NL-dfzzFt5TX';
+  const password = process.env.PB_TEST_PASSWORD || process.env.PB_TEST_PASSWORD_FALLBACK || 'i3_NL-dfzzFt5TX'; // NOSONAR — test fixture fallback
 
   try {
     const dao = app.dao();
