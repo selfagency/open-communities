@@ -5,10 +5,10 @@ import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
 import FilesIcon from '@tabler/icons-svelte/icons/files';
 import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
+import Menu2Icon from '@tabler/icons-svelte/icons/menu-2';
 import MoonIcon from '@tabler/icons-svelte/icons/moon';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SunIcon from '@tabler/icons-svelte/icons/sun';
-import UserCircleIcon from '@tabler/icons-svelte/icons/user-circle';
 import UserCogIcon from '@tabler/icons-svelte/icons/user-cog';
 import UsersIcon from '@tabler/icons-svelte/icons/users';
 import { mode, toggleMode } from 'mode-watcher';
@@ -168,13 +168,13 @@ let isMobile = $derived(appState.isMobile);
               aria-label={m.userMenu()}
               class="flex size-8 items-center justify-center rounded-full bg-background hover:bg-muted"
             >
-              <UserCircleIcon class="size-8 text-foreground" style="stroke-width: 1.25" />
+              <Menu2Icon class="size-6 text-foreground" />
             </button>
           {/snippet}
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content align="end" class="w-56">
-          <div class="flex items-center justify-between px-2 py-1.5">
-            <span class="text-muted-foreground text-xs">Language</span>
+        <DropdownMenu.Content align="end" class="w-56 max-sm:w-72">
+          <div class="flex items-center justify-between px-2 py-1.5 max-sm:py-3">
+            <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
             <NativeSelect.Root
               onchange={async () => {
               await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang, user: page.data.user?.id }) });
@@ -195,48 +195,48 @@ let isMobile = $derived(appState.isMobile);
               <NativeSelect.Option value="uk">Українська</NativeSelect.Option>
             </NativeSelect.Root>
           </div>
-          <div class="flex items-center justify-between px-2 py-1.5">
-            <span class="text-muted-foreground text-xs">{m.darkMode()}</span>
+          <div class="flex items-center justify-between px-2 py-1.5 max-sm:py-3">
+            <span class="text-muted-foreground text-xs max-sm:text-sm">{m.darkMode()}</span>
             <div class="flex items-center gap-2">
               {#if mode.current === 'dark'}
-                <MoonIcon class="size-4 text-muted-foreground" />
+                <MoonIcon class="size-4 text-muted-foreground max-sm:size-5" />
               {:else}
-                <SunIcon class="size-4 text-muted-foreground" />
+                <SunIcon class="size-4 text-muted-foreground max-sm:size-5" />
               {/if}
               <Switch aria-label={m.toggleDarkMode()} checked={mode.current === 'dark'} onCheckedChange={toggleMode} />
             </div>
           </div>
           {#if user?.admin}
             <DropdownMenu.Separator />
-            <DropdownMenu.Label class="text-muted-foreground text-xs">{m.admin()}</DropdownMenu.Label>
-            <DropdownMenu.Item onclick={() => goto('/admin')}>
-              <DashboardIcon class="mr-2 size-4" />
+            <DropdownMenu.Label class="text-muted-foreground text-xs max-sm:text-sm">{m.admin()}</DropdownMenu.Label>
+            <DropdownMenu.Item onclick={() => goto('/admin')} class="max-sm:py-3 max-sm:text-base">
+              <DashboardIcon class="mr-2 size-4 max-sm:size-5" />
               {m.dashboard()}
             </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/congregations')}>
-              <BuildingIcon class="mr-2 size-4" />
+            <DropdownMenu.Item onclick={() => goto('/admin/congregations')} class="max-sm:py-3 max-sm:text-base">
+              <BuildingIcon class="mr-2 size-4 max-sm:size-5" />
               {m.adminCongregations()}
             </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/users')}>
-              <UsersIcon class="mr-2 size-4" />
+            <DropdownMenu.Item onclick={() => goto('/admin/users')} class="max-sm:py-3 max-sm:text-base">
+              <UsersIcon class="mr-2 size-4 max-sm:size-5" />
               {m.adminUsers()}
             </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/pages')}>
-              <FilesIcon class="mr-2 size-4" />
+            <DropdownMenu.Item onclick={() => goto('/admin/pages')} class="max-sm:py-3 max-sm:text-base">
+              <FilesIcon class="mr-2 size-4 max-sm:size-5" />
               {m.pages()}
             </DropdownMenu.Item>
-            <DropdownMenu.Item onclick={() => goto('/admin/translations')}>
-              <AbcIcon class="mr-2 size-4" />
+            <DropdownMenu.Item onclick={() => goto('/admin/translations')} class="max-sm:py-3 max-sm:text-base">
+              <AbcIcon class="mr-2 size-4 max-sm:size-5" />
               Text
             </DropdownMenu.Item>
             <DropdownMenu.Separator />
           {/if}
-          <DropdownMenu.Item onclick={() => goto('/account')}>
-            <UserCogIcon class="mr-2 size-4" />
+          <DropdownMenu.Item onclick={() => goto('/account')} class="max-sm:py-3 max-sm:text-base">
+            <UserCogIcon class="mr-2 size-4 max-sm:size-5" />
             {m.manageAccount()}
           </DropdownMenu.Item>
-          <DropdownMenu.Item onclick={() => goto('/logout')}>
-            <LogoutIcon class="mr-2 size-4" />
+          <DropdownMenu.Item onclick={() => goto('/logout')} class="max-sm:py-3 max-sm:text-base">
+            <LogoutIcon class="mr-2 size-4 max-sm:size-5" />
             {m.logout()}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
