@@ -3065,7 +3065,21 @@
     "name": "audit_logs",
     "type": "base",
     "system": false,
-    "schema": [
+    "indexes": [
+      "CREATE INDEX idx_audit_collection_name ON audit_logs (collection_name)",
+      "CREATE INDEX idx_audit_record_id ON audit_logs (record_id)",
+      "CREATE INDEX idx_audit_timestamp ON audit_logs (timestamp)",
+      "CREATE INDEX idx_audit_user ON audit_logs (user)",
+      "CREATE INDEX idx_audit_event_type ON audit_logs (event_type)",
+      "CREATE INDEX idx_audit_collection_timestamp ON audit_logs (collection_name, timestamp)",
+      "CREATE INDEX idx_audit_user_timestamp ON audit_logs (user, timestamp)"
+    ],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "fields": [
       {
         "id": "select_event_type",
         "name": "event_type",
@@ -3222,20 +3236,6 @@
           "onUpdate": true
         }
       }
-    ],
-    "indexes": [
-      "CREATE INDEX idx_audit_collection_name ON audit_logs (collection_name)",
-      "CREATE INDEX idx_audit_record_id ON audit_logs (record_id)",
-      "CREATE INDEX idx_audit_timestamp ON audit_logs (timestamp)",
-      "CREATE INDEX idx_audit_user ON audit_logs (user)",
-      "CREATE INDEX idx_audit_event_type ON audit_logs (event_type)",
-      "CREATE INDEX idx_audit_collection_timestamp ON audit_logs (collection_name, timestamp)",
-      "CREATE INDEX idx_audit_user_timestamp ON audit_logs (user, timestamp)"
-    ],
-    "listRule": null,
-    "viewRule": null,
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null
+    ]
   }
 ]
