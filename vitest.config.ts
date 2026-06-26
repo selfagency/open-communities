@@ -114,6 +114,7 @@ export default defineConfig({
         'src/mocks/**',
         'src/test?(-*).?(c|m)[jt]s?(x)',
         'src/test?(s)/**',
+        'src/routes/**',
         'src/routes/[slug]/+page.svelte',
         'src/routes/+layout.svelte',
         'src/routes/+layout.server.ts',
