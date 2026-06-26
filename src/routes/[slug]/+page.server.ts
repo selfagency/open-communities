@@ -1,6 +1,7 @@
 /* region imports */
 import { error } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
+import type { PagesRecord, PageVariantsRecord } from '$lib/pocketbase.d';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import type { PageServerLoad } from './$types';
@@ -39,8 +40,8 @@ export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) =
     }
 
     return {
-      page: page as unknown as Record<string, unknown>,
-      variant: variant as unknown as Record<string, unknown> | null
+      page: page as PagesRecord,
+      variant: variant as PageVariantsRecord | null
     };
   } catch (err) {
     if (isFunction(captureException)) {
