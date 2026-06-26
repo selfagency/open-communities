@@ -4,8 +4,10 @@ import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  // Configure dependency optimization to prevent test instability
+  // Disable Rolldown optimizer — it can't resolve node:module in CI.
+  // Falls back to Vite's esbuild-based pre-bundling.
   optimizeDeps: {
+    disabled: true,
     include: [
       '@leeoniya/ufuzzy',
       '@sveltejs/kit',
