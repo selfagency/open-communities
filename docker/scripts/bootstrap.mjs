@@ -87,7 +87,7 @@ async function getToken() {
       const fs = await import('node:fs');
       logs = fs.readFileSync('.docker/pb.log', 'utf8');
     }
-    const m = logs.match(/pbinstal\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)/);
+    const m = logs.match(/pbinstal\/(\S+)/);
     if (m) {
       console.log('  🔑 Installation token acquired');
       return m[1];
