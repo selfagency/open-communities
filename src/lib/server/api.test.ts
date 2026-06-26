@@ -5,15 +5,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Hoist-safe mocks before importing the module under test
 vi.mock('pocketbase', () => {
   function MockPocketBase(this: Record<string, unknown>) {
-    // @ts-expect-error - we're creating a test double
     this.autoCancellation = vi.fn();
-    // @ts-expect-error authstore mock
     this.authStore = {
       clear: vi.fn(),
       isValid: false,
       loadFromCookie: vi.fn()
     };
-    // @ts-expect-error collection mock
     this.collection = vi.fn((_name: string) => ({ authRefresh: vi.fn() }));
   }
   return { default: MockPocketBase };
