@@ -16,8 +16,8 @@ import { m } from '$lib/paraglide/messages';
 interface Page {
   description: string;
   id: string;
-  imageAlt: string;
-  imageCaption: string;
+  imageAlt?: string;
+  imageCaption?: string;
   slug: string;
   title: string;
   updated: string;

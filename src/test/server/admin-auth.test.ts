@@ -107,12 +107,12 @@ describe('admin cache clear auth guard', () => {
   it('POST errors without auth', async () => {
     const mod = await import('../../routes/api/admin/cache/clear/+server');
     const event = createMockRequestEvent();
-    const res = await mod.POST(event as never);
-    interface ErrorResponse {
-      body: Record<string, string>;
-      status: number;
+    try {
+      await mod.POST(event as never);
+      expect.unreachable('Should have thrown');
+    } catch (e) {
+      expect((e as Record<string, unknown>).status).toBe(401);
     }
-    expect((res as unknown as ErrorResponse).status).toBe(401);
   });
 });
 

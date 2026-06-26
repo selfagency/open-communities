@@ -20,7 +20,14 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
   const api = createApi();
 
   // Inject admin auth into the client's auth store using save()
-  api.authStore.save('mock-token', { id: 'admin123', email: 'admin@test.test', admin: true, verified: true });
+  api.authStore.save('mock-token', {
+    id: 'admin123',
+    email: 'admin@test.test',
+    admin: true,
+    verified: true,
+    collectionId: 'test',
+    collectionName: 'users'
+  });
 
   const cookieOpts = { httpOnly: true, path: '/', sameSite: 'strict' as const, secure: false };
 
@@ -145,7 +152,8 @@ describe('S-9: last admin demotion guard', () => {
 
     const event = await createAdminEvent({ params: { id: 'user123' }, request });
     const result = await mod.actions.update(event as never);
-    expect(result).toHaveProperty('error');
+    expect(result).toHaveProperty('data');
+    expect((result as { data: Record<string, unknown> }).data).toHaveProperty('error');
   });
 });
 

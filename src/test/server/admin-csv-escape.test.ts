@@ -40,7 +40,7 @@ describe('csvEscape OWASP injection mitigation', () => {
   });
 
   it('prefixes leading - with single quote', () => {
-    expect(csvEscape('-1+2')).toBe('\'-1+2"');
+    expect(csvEscape('-1+2')).toBe('"\'-1+2"');
   });
 
   it('prefixes leading @ with single quote', () => {

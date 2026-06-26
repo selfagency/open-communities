@@ -14,10 +14,12 @@ vi.mock('$app/environment', () => ({
 
 // Mock nodemailer to always throw for error-path testing
 vi.mock('nodemailer', () => ({
-  createTransport: () => ({
-    sendMail: () => Promise.reject(new Error('SMTP connection refused')),
-    verify: () => Promise.reject(new Error('Verification failed'))
-  })
+  default: {
+    createTransport: () => ({
+      sendMail: () => Promise.reject(new Error('SMTP connection refused')),
+      verify: () => Promise.reject(new Error('Verification failed'))
+    })
+  }
 }));
 
 // Mock SMTP env vars
