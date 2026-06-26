@@ -20,13 +20,11 @@ import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
 
-// Reactive state for verified/admin toggles — bind the Switch to this,
-// and the hidden input to String(checked), so the form posts the toggled value.
+// Reactive state for verified/admin toggles — capture initial value from load
+// (intentional: the Switch binding mutates this state, triggering re-render)
 let verifiedToggle = $state(data.user?.verified ?? false);
 let adminToggle = $state(data.user?.admin ?? false);
-// svelte-ignore state_referenced_locally
 const user = data.targetUser;
-// svelte-ignore state_referenced_locally
 let formError = $state('');
 let formSuccess = $state('');
 let selectedCong = $state('');
