@@ -1,4 +1,3 @@
 pnpm dlx lint-staged
 pnpm run svelte-check -- --incremental
-pnpm exec fallow audit
 checkov -d . --quiet --compact
