@@ -108,7 +108,10 @@ describe('admin cache clear auth guard', () => {
     const mod = await import('../../routes/api/admin/cache/clear/+server');
     const event = createMockRequestEvent();
     const res = await mod.POST(event as never);
-    type ErrorResponse = { status: number; body: Record<string, string> };
+    interface ErrorResponse {
+      body: Record<string, string>;
+      status: number;
+    }
     expect((res as unknown as ErrorResponse).status).toBe(401);
   });
 });

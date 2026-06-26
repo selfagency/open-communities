@@ -14,7 +14,7 @@ export const DELETE: RequestHandler = async ({ locals, params }) => {
 
   // Send rejection email before deleting
   let emailSent = false;
-  const owner = (cong as unknown as Record<string, unknown>).expand as
+  const owner = (cong as unknown as { expand?: Record<string, unknown> }).expand as
     | Record<string, { email?: string; name?: string }>
     | undefined;
   if (owner?.owner?.email) {

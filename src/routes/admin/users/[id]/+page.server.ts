@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, 'User not found');
   }
 
-  const expand = user.expand as unknown as Record<string, unknown> | undefined;
+  const expand = user.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
   const congData = (expand?.congregation as Record<string, string> | undefined) || null;
 
   const available = await client

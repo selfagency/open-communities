@@ -7,7 +7,7 @@
 **Key technologies:**
 
 - SvelteKit 5 (adapter-node, standalone mode) + Svelte 5 runes
-- PocketBase 0.29.x (typed via `pocketbase-typegen`)
+- PocketBase 0.27.x SDK / 0.29.x server (typed via `pocketbase-typegen`, regenerate with `pnpm build:types`)
 - Tailwind CSS v4 (CSS-first, `@import "tailwindcss"`)
 - shadcn-svelte + Bits UI component library
 - TypeScript (strict mode, fully enabled)

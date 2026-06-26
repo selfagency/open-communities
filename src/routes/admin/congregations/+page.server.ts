@@ -1,7 +1,15 @@
 import { withRetry } from '$lib/server/api';
 import type { PageServerLoad } from './$types';
 
-function mapCong(c: Record<string, unknown>) {
+interface CongView {
+  created: string;
+  denomination: string;
+  expand?: Record<string, unknown>;
+  id: string;
+  name: string;
+  visible: boolean;
+}
+function mapCong(c: CongView) {
   const expand = c.expand as unknown as Record<string, unknown> | undefined;
   const cityData = expand?.city as Record<string, string> | undefined;
   const stateData = expand?.state as Record<string, string> | undefined;
@@ -47,9 +55,9 @@ export const load: PageServerLoad = async ({ locals }) => {
   // fallow-ignore-next-line unused-load-data-keys
   return {
     congregations: [
-      ...active.map((c) => mapCong(c as unknown as Record<string, unknown>)),
-      ...pending.map((c) => mapCong(c as unknown as Record<string, unknown>))
+      ...active.map((c) => mapCong(c as unknown as CongView)),
+      ...pending.map((c) => mapCong(c as unknown as CongView))
     ],
-    pending: pending.map((c) => mapCong(c as unknown as Record<string, unknown>))
+    pending: pending.map((c) => mapCong(c as unknown as CongView))
   };
 };

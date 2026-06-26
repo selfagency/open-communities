@@ -1,20 +1,26 @@
+import type { PagesRecord } from '$lib/pocketbase.d';
 import { withRetry } from '$lib/server/api';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals, url }) => {
   const client = locals.api;
-  const pages = await withRetry(() =>
-    client.collection('pages').getFullList({ sort: '-updated', requestKey: 'admin-pages' })
+  const page = Number(url.searchParams.get('page')) || 1;
+  const perPage = 50;
+
+  const result = await withRetry(() =>
+    client.collection('pages').getList(page, perPage, { sort: '-updated', requestKey: 'admin-pages' })
   );
+
   return {
-    pages: pages.map((p: unknown) => ({
-      id: (p as Record<string, unknown>).id as string,
-      title: (p as Record<string, unknown>).title as string,
-      slug: (p as Record<string, unknown>).slug as string,
-      description: ((p as Record<string, unknown>).description as string) ?? '',
-      imageAlt: ((p as Record<string, unknown>).imageAlt as string) ?? '',
-      imageCaption: ((p as Record<string, unknown>).imageCaption as string) ?? '',
-      updated: (p as Record<string, unknown>).updated as string
-    }))
+    pages: (result.items as PagesRecord[]).map((p) => ({
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      description: p.description ?? '',
+      imageAlt: p.imageAlt ?? '',
+      imageCaption: p.imageCaption ?? '',
+      updated: p.updated
+    })),
+    totalPages: result.totalPages
   };
 };
