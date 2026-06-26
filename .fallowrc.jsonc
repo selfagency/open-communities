@@ -13,9 +13,9 @@
     //   "**/generated/**"     // OpenAPI, Protobuf codegen
     // ]
   },
+  "ignoreDependencies": ["vitest-browser-svelte"],
   "rules": {
-    "unused-dependencies": "warn",
-    "ignoreDependencies": ["vitest-browser-svelte"]
+    "unused-dependencies": "warn"
   },
   "ignoreExports": [
     {
