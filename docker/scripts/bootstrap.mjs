@@ -49,7 +49,7 @@ async function waitForPB() {
 }
 
 async function getToken() {
-  // First try: authenticate as admin (works when PB already has data from previous run)
+  // First try: authenticate as existing admin (works when PB already has a superuser)
   try {
     const res = await fetch(`${PB}/api/admins/auth-with-password`, {
       method: 'POST',
@@ -63,7 +63,22 @@ async function getToken() {
     }
   } catch { /* fall through */ }
 
-  // Second try: extract installation token from startup logs (fresh PB)
+  // Second try: create superuser via docker exec (works when PB has data but no superuser yet)
+  try {
+    execSync(`docker exec ${CONTAINER} /pb/pocketbase superuser upsert "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" --dir=/pb_data 2>/dev/null`, { encoding: 'utf8', timeout: 15000 });
+    const res = await fetch(`${PB}/api/admins/auth-with-password`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      console.log('  🔑 Created superuser and authenticated');
+      return data.token;
+    }
+  } catch { /* fall through */ }
+
+  // Third try: extract installation token from startup logs (fresh PB)
   for (let attempt = 0; attempt < 10; attempt++) {
     let logs;
     try {

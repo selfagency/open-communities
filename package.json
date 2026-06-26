@@ -13,7 +13,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "deps:bootstrap": "node docker/scripts/bootstrap.mjs",
     "deps:down": "docker-compose -f docker/docker-compose.yml down",
-    "deps:reset": "docker-compose -f docker/docker-compose.yml down -v && docker-compose -f docker/docker-compose.yml up -d --build && sleep 5 && node docker/scripts/bootstrap.mjs",
+    "deps:reset": "docker-compose -f docker/docker-compose.yml down -v && rm -rf docker/pocketbase/pb_data && mkdir -p docker/pocketbase/pb_data && docker-compose -f docker/docker-compose.yml up -d --build && sleep 5 && node docker/scripts/bootstrap.mjs",
     "deps:up": "docker-compose -f docker/docker-compose.yml up -d --build",
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
     "fix": "ultracite fix",
