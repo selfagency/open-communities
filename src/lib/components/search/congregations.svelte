@@ -25,8 +25,8 @@ import { state as appState } from '$lib/stores';
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 import Filters from './filters.svelte';
-import Location from './location.svelte';
 import LazyMap from './lazy-map.svelte';
+import Location from './location.svelte';
 
 /* endregion imports */
 
