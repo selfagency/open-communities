@@ -164,9 +164,17 @@ async function seedData(token) {
   const adminFilter = 'email="' + ADMIN_EMAIL + '"';
   const adminExists = await api('GET', `/collections/users/records?filter=${encodeURIComponent(adminFilter)}`, null, token);
 
-  // Always ensure admin user exists (may have been created by a different bootstrap version)
+  // Always ensure admin user exists with admin: true
   if (!adminExists?.items?.length) {
     await create('users', { email: ADMIN_EMAIL, password: ADMIN_PASSWORD, passwordConfirm: ADMIN_PASSWORD, name: 'Admin User', verified: true, admin: true, lang: 'en', emailVisibility: true });
+  } else {
+    // Patch existing admin user to ensure admin: true — earlier bootstrap versions
+    // may have created the user before the schema had the admin field.
+    const existingAdmin = adminExists.items[0];
+    if (!existingAdmin.admin) {
+      await api('PATCH', `/collections/users/records/${existingAdmin.id}`, { admin: true }, token);
+      console.log(`  ✅ Admin user ${existingAdmin.id} patched: admin=true`);
+    }
   }
 
   if (existing?.items?.length > 0) {
