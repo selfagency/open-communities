@@ -30,6 +30,11 @@ afterAll(() => server.close());
 
 // Nodemailer is Node-only; provide a minimal mock for server modules
 vi.mock('nodemailer', () => ({
+  default: {
+    createTransport: () => ({
+      sendMail: async () => ({ messageId: 'mock' })
+    })
+  },
   createTransport: () => ({
     sendMail: async () => ({ messageId: 'mock' })
   })
