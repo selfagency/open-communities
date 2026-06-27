@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
@@ -13,6 +14,10 @@ export default defineConfig({
         compatibility: { componentApi: 4 }
       },
       prebundleSvelteLibraries: false
+    }),
+    paraglideVitePlugin({
+      outdir: './src/lib/paraglide',
+      project: './project.inlang'
     })
   ],
   resolve: {
