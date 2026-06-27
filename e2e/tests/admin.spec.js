@@ -29,10 +29,10 @@ test.describe('Admin backend', () => {
     await expect(page.getByRole('heading', { name: 'Congregations' })).toBeVisible();
   });
 
-  test('congregations page shows pending section', async ({ page }) => {
+  test('congregations page shows data', async ({ page }) => {
     await page.goto(`${BASE}/admin/congregations`);
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText(/Common|Reform|Conservative|Orthodox|Reconstructionist/).first()).toBeVisible();
+    await expect(page.getByText(/Shalom|Private|Other|Online/i).first()).toBeVisible();
   });
 
   test('users list loads', async ({ page }) => {

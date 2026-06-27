@@ -39,8 +39,10 @@ test.describe('Congregation CRUD', () => {
     await page.goto(`${BASE}/add`);
     await page.waitForLoadState('networkidle');
 
-    // Use the input ID rendered by shadcn-svelte Form.Field (inside accordion)
-    // Force to true since the input is inside a collapsed accordion
+    // Open the Congregation accordion section to expose the name input
+    await page.getByText(/congregation/i).first().click();
+    await page.waitForTimeout(500);
+
     const nameInput = page.locator('#name');
     await nameInput.waitFor({ state: 'visible', timeout: 10000 });
     await nameInput.fill(congregationName);
