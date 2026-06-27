@@ -1,6 +1,6 @@
 /* region imports */
 
-import { fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
 
@@ -115,12 +115,15 @@ export const actions = {
         await capture((user as UsersRecord & { id: string }).id, 'login');
       }
 
-      return {
-        form,
-        user
-      };
+      // Redirect to home after successful login. The 303 tells SuperForm to
+      // navigate client-side, avoiding the fragile goto('/') in onUpdate.
+      throw redirect(303, '/');
     } catch (error) {
       const err = error as ClientResponseError;
+      // Re-throw SvelteKit redirects so the runtime handles them normally
+      if ((error as { status?: number }).status === 303) {
+        throw error;
+      }
       if (isFunction(captureException)) {
         await captureException(error, client?.id);
       }

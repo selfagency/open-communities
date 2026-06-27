@@ -42,7 +42,10 @@ describe('login +page.server — actions', () => {
     const mod = await import('../../../src/routes/login/+page.server');
 
     const api = {
-      authStore: { record: null },
+      authStore: {
+        exportToCookie: () => 'pb_auth=mock',
+        record: null
+      },
       collection: () => ({
         authWithPassword: async () => ({ record: { id: 'u1', email: 'test@example.com' }, token: 'tok' })
       }),
@@ -76,8 +79,7 @@ describe('login +page.server — actions', () => {
       url: new URL('http://localhost/login?/login')
     });
 
-    const result = await mod.actions.login(mockEvent as any);
-    expect(result).toBeDefined();
+    await expect(mod.actions.login(mockEvent as any)).rejects.toMatchObject({ status: 303 });
   });
 
   it('login returns fail with invalid credentials', async () => {
