@@ -197,6 +197,7 @@ export const handleError = async ({
 
     if (isFunction(event.locals.captureException)) {
       await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
+      await closePhClient();
     }
 
     return {
