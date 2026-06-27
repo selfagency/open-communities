@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { defaultSchema, deleteSchema, transferSchema } from '../../lib/schemas/record';
+import { defaultSchema, deleteSchema } from '../../lib/schemas/record';
 
 describe('deleteSchema', () => {
   it('accepts valid id', () => {
@@ -15,38 +15,6 @@ describe('deleteSchema', () => {
 
   it('rejects missing id', () => {
     const result = deleteSchema.safeParse({});
-    expect(result.success).toBe(false);
-  });
-});
-
-describe('transferSchema', () => {
-  it('accepts valid transfer', () => {
-    const result = transferSchema.safeParse({ email: 'new@owner.com', id: 'abc123' });
-    expect(result.success).toBe(true);
-  });
-
-  it('accepts transfer with owner', () => {
-    const result = transferSchema.safeParse({ email: 'new@owner.com', id: 'abc123', owner: 'user456' });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects missing email', () => {
-    const result = transferSchema.safeParse({ id: 'abc123' });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects empty email', () => {
-    const result = transferSchema.safeParse({ email: '', id: 'abc123' });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects missing id', () => {
-    const result = transferSchema.safeParse({ email: 'new@owner.com' });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects empty id', () => {
-    const result = transferSchema.safeParse({ email: 'new@owner.com', id: '' });
     expect(result.success).toBe(false);
   });
 });

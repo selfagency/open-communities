@@ -12,5 +12,3 @@ export const contactSchema = z.object({
   // Validate as UUID to prevent arbitrary URL injection in admin email links
   record: z.preprocess((val) => (val === '' ? undefined : val), z.string().uuid().optional())
 });
-
-export type ContactSchema = z.infer<typeof contactSchema>;

@@ -52,12 +52,12 @@ export const load: PageServerLoad = async ({ locals }) => {
     )
   ]);
 
-  // fallow-ignore-next-line unused-load-data-keys
   return {
     congregations: [
       ...active.map((c) => mapCong(c as unknown as CongView)),
       ...pending.map((c) => mapCong(c as unknown as CongView))
     ],
+    // fallow-ignore-next-line unused-load-data-key -- consumed by CongregationList component
     pending: pending.map((c) => mapCong(c as unknown as CongView))
   };
 };

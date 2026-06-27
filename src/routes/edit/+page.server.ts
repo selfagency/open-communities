@@ -81,6 +81,7 @@ export const load = async ({ fetch, locals, url }) => {
 };
 
 export const actions = {
+  // fallow-ignore-next-line health -- refactor target: high complexity (32 cyclomatic, 253 CRAP)
   delete: async (event) => {
     const { fetch, locals } = event;
     const { api, capture, captureException, validate } = locals;
@@ -159,6 +160,7 @@ export const actions = {
       return fail(err.status ?? 400, { form });
     }
   },
+  // fallow-ignore-next-line health -- refactor target: high complexity (42 cyclomatic, 423 CRAP)
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   submit: async (event) => {
     const { fetch, locals } = event;

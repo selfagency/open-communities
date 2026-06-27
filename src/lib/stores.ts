@@ -5,7 +5,7 @@ import { browser } from '$app/environment';
 import type { AppState, AppStore } from '$lib/stately/app';
 import { useAppStore } from '$lib/stately/app';
 
-export type { AppState as State, AppStore };
+export type { AppStore };
 
 /* ------------------------------------------------------------------ */
 /*  Manager singleton                                                  */

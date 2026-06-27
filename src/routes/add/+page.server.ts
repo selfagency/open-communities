@@ -43,6 +43,7 @@ export const load = async (event) => {
 };
 
 export const actions = {
+  // fallow-ignore-next-line health -- refactor target: high complexity (28 cyclomatic, 197 CRAP)
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   submit: async (event) => {
     const { fetch, locals } = event;

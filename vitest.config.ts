@@ -94,7 +94,6 @@ export default defineConfig({
         'src/lib/posthog.ts',
         'src/lib/server/mail.ts',
         'src/lib/server/security.ts',
-        'src/lib/stately/index.ts',
         'src/mocks/**',
         'src/test?(-*).?(c|m)[jt]s?(x)',
         'src/test?(s)/**',

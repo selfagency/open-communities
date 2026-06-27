@@ -1,3 +1,4 @@
+// fallow-ignore-file unused-file -- auto-loaded by SvelteKit at startup
 /**
  * Server-side instrumentation for OpenTelemetry tracing and logging.
  *

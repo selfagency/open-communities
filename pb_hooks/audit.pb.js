@@ -1,5 +1,5 @@
+// fallow-ignore-file unused-file -- auto-loaded by PocketBase at startup
 // PocketBase JS Hook — Audit Logging
-// Place in pb_hooks/ directory. Creates an audit trail for all record operations.
 // Requires an "audit_logs" collection (see README for schema).
 
 const AUDIT_COLLECTION = 'audit_logs';

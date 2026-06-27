@@ -156,6 +156,7 @@ function beforeSubmit() {
   variantsInput.value = JSON.stringify(vars);
 }
 </script>
+<!-- fallow-ignore-next-line health -- refactor target: high template complexity (22 cyclomatic, 506 CRAP) -->
 {#if errMsg}
   <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{errMsg}</div>
 {/if}

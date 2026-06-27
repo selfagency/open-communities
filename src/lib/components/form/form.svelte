@@ -115,6 +115,7 @@ let formSuccess = $derived(appState.form?.success);
 let formHasErrors = $derived(appState.form?.hasErrors);
 </script>
 
+<!-- fallow-ignore-next-line health -- refactor target: high template complexity (24 cyclomatic, 148 CRAP) -->
 <section class="m-auto w-full" style="max-width: 480px;">
   <Card.Root>
     <div>

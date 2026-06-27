@@ -30,9 +30,7 @@ vi.mock('@sveltejs/kit', () => ({
   error: (status: number, message: string) => ({ message, status })
 }));
 
-import type { Cookies } from '@sveltejs/kit';
-
-import { cleanResponse, expand, loadUser, throwAsHttpError, withRetry } from './api';
+import { cleanResponse, throwAsHttpError, withRetry } from './api';
 import { log } from './logger';
 
 describe('src/lib/server/api', () => {
@@ -76,71 +74,6 @@ describe('src/lib/server/api', () => {
         status: 500
       });
       expect(log.error).toHaveBeenCalledWith('load', err);
-    });
-  });
-
-  describe('loadUser', () => {
-    it('returns null when cookie missing', () => {
-      const cookies = {
-        delete: () => undefined,
-        get: () => undefined,
-        getAll: () => [],
-        serialize: () => '',
-        set: () => undefined
-      } as unknown as Cookies;
-      const u = loadUser(cookies);
-      expect(u).toBeNull();
-    });
-
-    it('returns null when pb_auth missing', () => {
-      const cookies = {
-        delete: () => undefined,
-        get: () => 'foo=bar',
-        getAll: () => [],
-        serialize: () => '',
-        set: () => undefined
-      } as unknown as Cookies;
-      const u = loadUser(cookies);
-      expect(u).toBeNull();
-    });
-
-    it('returns null on malformed JSON', () => {
-      const cookies = {
-        delete: () => undefined,
-        get: () => 'pb_auth=not-json',
-        getAll: () => [],
-        serialize: () => '',
-        set: () => undefined
-      } as unknown as Cookies;
-      const u = loadUser(cookies);
-      expect(u).toBeNull();
-    });
-
-    it('returns null when model lacks required fields', () => {
-      const pb = JSON.stringify({ model: { foo: 'bar' } });
-      const cookies = {
-        delete: () => undefined,
-        get: () => `pb_auth=${pb}`,
-        getAll: () => [],
-        serialize: () => '',
-        set: () => undefined
-      } as unknown as Cookies;
-      const u = loadUser(cookies);
-      expect(u).toBeNull();
-    });
-
-    it('parses pb_auth and returns the model', () => {
-      const model = { email: 'me@example.com', id: 'u1', name: 'hi' };
-      const pb = JSON.stringify({ model });
-      const cookies = {
-        delete: () => undefined,
-        get: () => `pb_auth=${pb}`,
-        getAll: () => [],
-        serialize: () => '',
-        set: () => undefined
-      } as unknown as Cookies;
-      const u = loadUser(cookies);
-      expect(u).toEqual(model);
     });
   });
 
@@ -208,11 +141,6 @@ describe('src/lib/server/api', () => {
     });
   });
 
-  it('re-exports cleanResponse and expand', () => {
-    expect(typeof cleanResponse).toBe('function');
-    expect(typeof expand).toBe('function');
-  });
-
   describe('cleanResponse', () => {
     it('removes collectionId, collectionName, updated', () => {
       const result = cleanResponse({
@@ -268,18 +196,6 @@ describe('src/lib/server/api', () => {
     it('skips __proto__ and constructor keys', () => {
       const result = cleanResponse({ visible: 1, __proto__: 1, constructor: 0 });
       expect(result).toEqual({ visible: 1 });
-    });
-  });
-
-  describe('expand', () => {
-    it('merges expand fields into the root object', () => {
-      const result = expand({ id: '123', name: 'test', expand: { owner: { id: 'u1' } } });
-      expect(result).toEqual({ id: '123', name: 'test', owner: { id: 'u1' } });
-    });
-
-    it('works without expand field', () => {
-      const result = expand({ id: '123', name: 'test' });
-      expect(result).toEqual({ id: '123', name: 'test' });
     });
   });
 

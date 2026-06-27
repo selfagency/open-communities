@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-  "entry": ["src/index.{ts,tsx,js,jsx}", "src/main.{ts,tsx,js,jsx}"],
+  "entry": ["src/app.html"],
   "duplicates": {
     // Hide pair-only clones; focus on widespread copy-paste
     // worth refactoring. Lower to 2 to report every duplicate pair.
@@ -31,7 +31,17 @@
       "src/hooks.server.ts",
       // Complexity in standalone Docker/script helpers (excluded by ignorePatterns)
       "docker/helpers/mailpit.js",
-      "scripts/migrate-translations.mjs"
+      "scripts/migrate-translations.mjs",
+      // Phase 0.3 — high-CRAP (≥100) functions accepted as refactor targets
+      "src/routes/edit/+page.server.ts",
+      "src/routes/add/+page.server.ts",
+      "src/routes/admin/pages/[id]/+page.server.ts",
+      "src/lib/components/form/segments/congregation.svelte",
+      "src/lib/components/congregation/tile.svelte",
+      "src/lib/components/form/form.svelte",
+      "src/lib/components/admin/page-editor.svelte",
+      "src/lib/components/congregation/health.svelte",
+      "src/lib/components/congregation/accessibility.svelte"
     ]
   },
   "ignorePatterns": [

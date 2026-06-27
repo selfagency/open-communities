@@ -31,18 +31,6 @@ export const deleteSchema = z.object({
   })
 });
 
-export const transferSchema = z.object({
-  email: z.email().refine((value) => !!value, {
-    message: Lazy(() => m.thingRequired({ thing: m.email() }))
-  }),
-  id: z.string().refine((value) => !!value, {
-    message: Lazy(() => m.thingRequired({ thing: '`id`' }))
-  }),
-  owner: z.string().optional()
-});
-
-export type TransferSchema = z.infer<typeof transferSchema>;
-
 export const defaultSchema = z.object({
   accessibility,
   captcha: z.string().nullable().optional(),
@@ -92,4 +80,5 @@ export const defaultSchema = z.object({
   visible: z.boolean()
 });
 
+// fallow-ignore-next-line unused-type -- used via app.d.ts
 export type DefaultSchema = z.infer<typeof defaultSchema>;

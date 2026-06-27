@@ -22,8 +22,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     })
   );
 
-  // fallow-ignore-next-line unused-load-data-keys
   return {
+    // fallow-ignore-next-line unused-load-data-key -- consumed by UserList component via {data} pass-through
     users: list.items.map((u) => {
       const expand = u.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
       const congData = expand?.congregation as Record<string, string> | undefined;
@@ -37,9 +37,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
         congregationName: congData?.name ?? ''
       };
     }),
+    // fallow-ignore-next-line unused-load-data-key -- unused by page, returned for pagination state
     total: list.totalItems,
+    // fallow-ignore-next-line unused-load-data-key -- consumed by pagination component
     page,
+    // fallow-ignore-next-line unused-load-data-key -- consumed by pagination component
     perPage,
+    // fallow-ignore-next-line unused-load-data-key -- consumed by search filter
     search
   };
 };

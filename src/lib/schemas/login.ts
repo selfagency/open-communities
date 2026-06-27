@@ -31,6 +31,7 @@ export const loginSchema = z.object({
   })
 });
 
+// fallow-ignore-next-line unused-type -- used via app.d.ts
 export type LoginSchema = z.infer<typeof loginSchema>;
 
 export const tokenSchema = z
@@ -57,4 +58,5 @@ export const tokenSchema = z
     }
   });
 
+// fallow-ignore-next-line unused-type -- used via app.d.ts
 export type TokenSchema = z.infer<typeof tokenSchema>;

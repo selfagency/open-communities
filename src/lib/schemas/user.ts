@@ -52,4 +52,5 @@ export const userSchema = z
     }
   });
 
+// fallow-ignore-next-line unused-type -- used via app.d.ts
 export type UserSchema = z.infer<typeof userSchema>;

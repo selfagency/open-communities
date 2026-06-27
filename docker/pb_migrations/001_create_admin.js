@@ -1,3 +1,4 @@
+// fallow-ignore-file unused-file -- auto-loaded by PocketBase at startup
 // Migration: Create default admin user for local development
 // Runs automatically on fresh PB database startup.
 

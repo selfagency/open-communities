@@ -28,6 +28,7 @@ const noAccessibilityFeatures = $derived(!(ada || cc) && !eva && !other);
 /* endregion variables */
 </script>
 
+<!-- fallow-ignore-next-line health -- refactor target: high template complexity (20 cyclomatic, 106 CRAP) -->
 {#if mode === "mini"}
   <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
     {#if ada}

@@ -1,18 +1,11 @@
-/* region imports */
-import type { Cookies } from '@sveltejs/kit';
-
 import { error } from '@sveltejs/kit';
-import cookie from 'cookie';
-
 import PocketBase from 'pocketbase';
 import { omit } from 'radashi';
-import { z } from 'zod/v4';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 
 import { log } from './logger';
-/* endregion imports */
 
 /**
  * Create a fresh PocketBase instance for a single request.
@@ -37,11 +30,6 @@ function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate 
   }
   // Strip prototype pollution keys (moved from removed convertBooleans)
   return omit(response, [...fields, '__proto__' as keyof T, 'constructor' as keyof T]) as Partial<T>;
-}
-
-function expand<T extends Record<string, unknown>>(item: T): Omit<T, 'expand'> {
-  const { expand: _expand, ...rest } = item;
-  return { ...rest, ...(_expand ?? {}) } as Omit<T, 'expand'>; // NOSONAR — TypeScript requires fallback for spread
 }
 
 // Type guard for PocketBase-like errors without depending on the runtime class
@@ -112,40 +100,6 @@ function isRetryable(err: unknown): boolean {
 }
 /* endregion retry */
 
-// Zod schema for auth cookie model validation (S-10 fix)
-const userCookieSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  admin: z.boolean().optional(),
-  verified: z.boolean().optional(),
-  lang: z.string().optional(),
-  congregation: z.string().optional(),
-  notifications: z.boolean().optional(),
-  name: z.string().optional()
-});
-
-function loadUser(cookies: Cookies): null | (z.infer<typeof userCookieSchema> & { email: string; id: string }) {
-  const auth = cookies.get('auth');
-  if (!auth) {
-    return null;
-  }
-  try {
-    const parsed = cookie.parse(auth);
-    if (!parsed.pb_auth) {
-      return null;
-    }
-    const decoded = JSON.parse(parsed.pb_auth);
-    const model = decoded?.model;
-    const result = userCookieSchema.safeParse(model);
-    if (!result.success) {
-      return null;
-    }
-    return result.data as z.infer<typeof userCookieSchema> & { email: string; id: string };
-  } catch {
-    return null;
-  }
-}
-
 /**
  * Convert an unknown error into a standardized HTTP error and throw it.
  * In production, calls SvelteKit's `error()` which always throws (never returns).
@@ -167,4 +121,4 @@ function throwAsHttpError(err: unknown): { message: string; status: number } {
   return error(status, clientMessage);
 }
 
-export { cleanResponse, expand, loadUser, throwAsHttpError, withRetry };
+export { cleanResponse, throwAsHttpError, withRetry };
