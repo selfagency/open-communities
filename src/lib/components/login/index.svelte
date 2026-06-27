@@ -60,7 +60,11 @@ const form = superForm(data, {
     setState({ loadingSecondary: false });
     if (result.type === 'success') {
       if (browser && result.data?.user?.id) {
-        posthog.identify(result.data.user.id);
+        try {
+          posthog.identify(result.data.user.id);
+        } catch {
+          // PostHog may not be initialized (missing key); non-blocking
+        }
       }
       toast.success(m.loginSuccess());
       await goto('/');
