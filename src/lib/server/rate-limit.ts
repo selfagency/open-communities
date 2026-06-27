@@ -1,3 +1,4 @@
+// fallow-ignore-next-line unused-import — imported but used only by the thrown call, fallow flags it as unused
 import { error } from '@sveltejs/kit';
 
 interface Bucket {
