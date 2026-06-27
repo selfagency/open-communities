@@ -32,7 +32,7 @@ test.describe('Congregation CRUD', () => {
     // Login uses client-side goto('/') via superforms — click submit, wait for redirect
     await page.locator('form[action*="login"] button[type="submit"]').click();
     await page.waitForTimeout(2000);
-    await expect(page.locator('text=Logout')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/add congregation|edit congregation/i).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('add a congregation', async ({ page }) => {
