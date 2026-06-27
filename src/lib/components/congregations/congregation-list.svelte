@@ -1,5 +1,6 @@
 <script lang="ts">
 import Fuzzy from '@leeoniya/ufuzzy';
+import BuildingIcon from '@tabler/icons-svelte/icons/building';
 import CheckIcon from '@tabler/icons-svelte/icons/check';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
@@ -167,7 +168,10 @@ const pendingTable = $derived(
 <div class="space-y-6">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h2 class="text-2xl font-semibold">{m.adminCongregations()}</h2>
+      <h2 class="flex items-center gap-2 text-2xl font-semibold">
+        <BuildingIcon class="size-6" />
+        {m.adminCongregations()}
+      </h2>
     </div>
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">

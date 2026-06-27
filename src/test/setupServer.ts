@@ -10,9 +10,16 @@
  * Those are handled by setupTest.ts in the "browser" project.
  */
 
+import process from 'node:process';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
 import { server } from '../mocks/node';
+
+// MSW registers process-level beforeExit/SIGTERM/SIGINT listeners for every
+// test file via setupServer(). With 22+ server test files, each adding 3
+// listeners, accumulations far exceed Node's default MaxListeners (10).
+// Bump high to accommodate all test files across pooled workers.
+process.setMaxListeners(100);
 
 // ── MSW server ──────────────────────────────────────────────────────────
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

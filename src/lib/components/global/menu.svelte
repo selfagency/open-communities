@@ -1,9 +1,9 @@
 <script lang="ts">
-import AbcIcon from '@tabler/icons-svelte/icons/abc';
 import BuildingIcon from '@tabler/icons-svelte/icons/building';
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import DashboardIcon from '@tabler/icons-svelte/icons/dashboard';
 import FilesIcon from '@tabler/icons-svelte/icons/files';
+import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LogoutIcon from '@tabler/icons-svelte/icons/logout-2';
 import MoonIcon from '@tabler/icons-svelte/icons/moon';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
@@ -161,7 +161,7 @@ let isMobile = $derived(appState.isMobile);
     {:else}
       <!-- Sheet: slide-over nav menu (replaces old DropdownMenu) -->
       <Sheet.Root bind:open>
-        <Sheet.Trigger>
+        <Sheet.Trigger onclick={(e) => { e.preventDefault(); open = !open; }}>
           {#snippet child({ props })}
             <button
               {...props}
@@ -187,7 +187,7 @@ let isMobile = $derived(appState.isMobile);
             </button>
           {/snippet}
         </Sheet.Trigger>
-        <Sheet.Content class="z-40 w-72 pt-18 max-sm:w-full" showCloseButton={false} side="right">
+        <Sheet.Content class="w-72 pt-18 max-sm:w-full" preventScroll={false} showCloseButton={false} side="right">
           <div class="flex flex-col gap-4 px-4 py-6">
             <div class="flex items-center justify-between">
               <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
@@ -231,38 +231,38 @@ let isMobile = $derived(appState.isMobile);
               <span class="text-muted-foreground text-xs font-semibold uppercase max-sm:text-sm">{m.admin()}</span>
               <button
                 class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
-                onclick={() => { open = false; goto('/admin'); }}
+                onclick={async () => { open = false; await goto('/admin'); }}
               >
                 <DashboardIcon class="size-4 max-sm:size-5" />
                 {m.dashboard()}
               </button>
               <button
                 class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
-                onclick={() => { open = false; goto('/admin/congregations'); }}
+                onclick={async () => { open = false; await goto('/admin/congregations'); }}
               >
                 <BuildingIcon class="size-4 max-sm:size-5" />
                 {m.adminCongregations()}
               </button>
               <button
                 class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
-                onclick={() => { open = false; goto('/admin/users'); }}
+                onclick={async () => { open = false; await goto('/admin/users'); }}
               >
                 <UsersIcon class="size-4 max-sm:size-5" />
                 {m.adminUsers()}
               </button>
               <button
                 class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
-                onclick={() => { open = false; goto('/admin/pages'); }}
+                onclick={async () => { open = false; await goto('/admin/pages'); }}
               >
                 <FilesIcon class="size-4 max-sm:size-5" />
                 {m.pages()}
               </button>
               <button
                 class="text-foreground flex items-center gap-2 text-sm underline-offset-4 hover:underline max-sm:py-2"
-                onclick={() => { open = false; goto('/admin/translations'); }}
+                onclick={async () => { open = false; await goto('/admin/translations'); }}
               >
-                <AbcIcon class="size-4 max-sm:size-5" />
-                Text
+                <LanguageIcon class="size-4 max-sm:size-5" />
+                {m.translations()}
               </button>
               <hr class="border-border" />
             {/if}
@@ -308,9 +308,3 @@ let isMobile = $derived(appState.isMobile);
     </div>
   {/if}
 </div>
-
-<style>
-:global([data-slot="sheet-overlay"]) {
-  z-index: 30 !important;
-}
-</style>

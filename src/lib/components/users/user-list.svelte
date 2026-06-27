@@ -1,6 +1,7 @@
 <script lang="ts">
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
+import UsersIcon from '@tabler/icons-svelte/icons/users';
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 
@@ -76,7 +77,7 @@ const columns: ColumnDef<User>[] = [
     header: m.email(),
     cell: ({ row }) =>
       renderSnippet(
-        createRawSnippet<[{ v: string }]>((get) => ({ render: () => escapeHtml(get().v) })),
+        createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span>${escapeHtml(get().v)}</span>` })),
         { v: row.original.email }
       )
   },
@@ -149,7 +150,10 @@ const table = $derived(
 <div class="space-y-6">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h2 class="text-2xl font-semibold">{m.adminUsers()}</h2>
+      <h2 class="flex items-center gap-2 text-2xl font-semibold">
+        <UsersIcon class="size-6" />
+        {m.adminUsers()}
+      </h2>
     </div>
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">

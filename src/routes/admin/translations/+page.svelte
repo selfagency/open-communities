@@ -1,5 +1,6 @@
 <script lang="ts">
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
+import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { browser } from '$app/environment';
@@ -238,7 +239,10 @@ const statusLabels: Record<string, string> = {
     <!-- Search -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 class="text-2xl font-semibold">{m.translations()}</h2>
+        <h2 class="flex items-center gap-2 text-2xl font-semibold">
+          <LanguageIcon class="size-6" />
+          {m.translations()}
+        </h2>
       </div>
       <div class="flex items-center gap-2">
         <div class="relative shadow-xs">

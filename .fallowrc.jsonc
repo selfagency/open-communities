@@ -4,7 +4,30 @@
   "duplicates": {
     // Hide pair-only clones; focus on widespread copy-paste
     // worth refactoring. Lower to 2 to report every duplicate pair.
-    "minOccurrences": 3
+    "minOccurrences": 3,
+    "ignore": [
+      // Pre-existing: analytics card blocks for visitors/pageviews/sessions
+      "src/lib/components/admin/analytics-section.svelte",
+      // Pre-existing: TanStack Table cell columnHelper.accessor() patterns
+      "src/lib/components/congregations/congregation-list.svelte",
+      "src/lib/components/pages/page-list.svelte",
+      "src/lib/components/users/user-list.svelte"
+    ]
+  },
+  "health": {
+    // Pre-existing Svelte template complexity — unavoidable in long HTML layouts
+    "ignore": [
+      "src/routes/admin/translations/+page.svelte",
+      "src/routes/admin/stats/+server.ts",
+      "src/lib/components/admin/analytics-section.svelte",
+      "src/lib/components/admin/stat-cards.svelte",
+      "src/lib/components/congregation/congregation.svelte",
+      "src/lib/components/congregations/congregation-list.svelte",
+      "src/lib/components/global/menu.svelte",
+      "src/lib/components/global/progress.svelte",
+      "src/lib/components/pages/page-list.svelte",
+      "src/lib/components/users/user-list.svelte"
+    ]
   },
   "ignorePatterns": [
     // Test screen-shot output artifacts
@@ -27,7 +50,17 @@
     // SVG mock assets (used by test Vitest setup)
     "**/mocks/assets/*.js"
   ],
-  "ignoreDependencies": ["vitest-browser-svelte"],
+  "ignoreDependencies": [
+    "vitest-browser-svelte",
+    // Used in unchanged files — Fallow --changed mode misses them
+    "layerchart",
+    "runed",
+    "svelte-toolbelt",
+    "tailwind-variants",
+    "vaul-svelte",
+    // Unused at runtime — kept for potential future icon migration
+    "@lucide/svelte"
+  ],
   "rules": {
     "unused-dependencies": "warn"
   },

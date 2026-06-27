@@ -1,4 +1,6 @@
 <script lang="ts">
+import ExternalLinkIcon from '@tabler/icons-svelte/icons/external-link';
+import FilesIcon from '@tabler/icons-svelte/icons/files';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
@@ -115,7 +117,10 @@ const table = $derived(
 <div class="space-y-6">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h2 class="text-2xl font-semibold">{m.pages()}</h2>
+      <h2 class="flex items-center gap-2 text-2xl font-semibold">
+        <FilesIcon class="size-6" />
+        {m.pages()}
+      </h2>
     </div>
     <div class="flex items-center gap-2">
       <div class="relative shadow-xs">
@@ -142,6 +147,7 @@ const table = $derived(
                 </TableHead>
               {/each}
               <TableHead class="w-10"></TableHead>
+              <TableHead class="w-10"></TableHead>
             </TableRow>
           {/each}
         </TableHeader>
@@ -158,10 +164,17 @@ const table = $derived(
                   <PencilIcon class="size-4" />
                 </Button>
               </TableCell>
+              <TableCell>
+                <a href={'/' + row.original.slug} rel="noopener" target="_blank">
+                  <Button size="icon" variant="ghost">
+                    <ExternalLinkIcon class="size-4" />
+                  </Button>
+                </a>
+              </TableCell>
             </TableRow>
           {:else}
             <TableRow>
-              <TableCell class="h-24 text-center" colspan={columns.length + 1}>{m.noResults()}</TableCell>
+              <TableCell class="h-24 text-center" colspan={columns.length + 2}>{m.noResults()}</TableCell>
             </TableRow>
           {/each}
         </TableBody>

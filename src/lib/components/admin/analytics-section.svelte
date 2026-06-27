@@ -2,29 +2,10 @@
 import { invalidate } from '$app/navigation';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import { Skeleton } from '$lib/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
 import { m } from '$lib/paraglide/messages';
-
-interface PhChange {
-  direction: string;
-  long_text: string;
-  percent: number;
-}
-interface PhMetric {
-  change: PhChange;
-  current: number;
-}
-interface Digest {
-  avg_session_duration: PhMetric & { current: string; previous: string };
-  bounce_rate: PhMetric & { current: number; previous: number };
-  dashboard_url: string;
-  goals: Array<{ name: string; conversions: number; change: PhChange }>;
-  pageviews: PhMetric;
-  sessions: PhMetric;
-  top_pages: Array<{ path: string; visitors: number; change: PhChange | null }>;
-  top_sources: Array<{ name: string; visitors: number; change: PhChange | null }>;
-  visitors: PhMetric;
-}
+import type { Digest } from '$lib/schemas/analytics';
 
 let {
   realtimeDigest,
@@ -53,7 +34,7 @@ $effect(() => {
 });
 </script>
 
-{#if digest}
+<div>
   <div class="flex items-center justify-between">
     <h3 class="font-serif text-2xl font-bold tracking-wider">{m.adminWebAnalytics()}</h3>
     <div class="flex gap-1 rounded-lg bg-muted p-1">
@@ -87,9 +68,13 @@ $effect(() => {
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminVisitors()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
-        {#if digest.visitors.change && viewMode === 'week'}
-          <p class="text-muted-foreground mt-1 text-xs">{digest.visitors.change.long_text}</p>
+        {#if digest}
+          <p class="text-3xl font-bold">{fmt(digest.visitors.current)}</p>
+          {#if digest.visitors.change && viewMode === 'week'}
+            <p class="text-muted-foreground mt-1 text-xs">{digest.visitors.change.long_text}</p>
+          {/if}
+        {:else}
+          <Skeleton class="h-10 w-20" />
         {/if}
       </CardContent>
     </Card>
@@ -98,9 +83,13 @@ $effect(() => {
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminPageViews()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
-        {#if digest.pageviews.change && viewMode === 'week'}
-          <p class="text-muted-foreground mt-1 text-xs">{digest.pageviews.change.long_text}</p>
+        {#if digest}
+          <p class="text-3xl font-bold">{fmt(digest.pageviews.current)}</p>
+          {#if digest.pageviews.change && viewMode === 'week'}
+            <p class="text-muted-foreground mt-1 text-xs">{digest.pageviews.change.long_text}</p>
+          {/if}
+        {:else}
+          <Skeleton class="h-10 w-20" />
         {/if}
       </CardContent>
     </Card>
@@ -109,9 +98,13 @@ $effect(() => {
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminSessions()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
-        {#if digest.sessions.change && viewMode === 'week'}
-          <p class="text-muted-foreground mt-1 text-xs">{digest.sessions.change.long_text}</p>
+        {#if digest}
+          <p class="text-3xl font-bold">{fmt(digest.sessions.current)}</p>
+          {#if digest.sessions.change && viewMode === 'week'}
+            <p class="text-muted-foreground mt-1 text-xs">{digest.sessions.change.long_text}</p>
+          {/if}
+        {:else}
+          <Skeleton class="h-10 w-20" />
         {/if}
       </CardContent>
     </Card>
@@ -120,7 +113,11 @@ $effect(() => {
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminAvgSession()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p class="text-3xl font-bold">{digest.avg_session_duration.current || '—'}</p>
+        {#if digest}
+          <p class="text-3xl font-bold">{digest.avg_session_duration.current || '—'}</p>
+        {:else}
+          <Skeleton class="h-10 w-20" />
+        {/if}
       </CardContent>
     </Card>
     <Card>
@@ -128,35 +125,43 @@ $effect(() => {
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminBounceRate()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
+        {#if digest}
+          <p class="text-3xl font-bold">{digest.bounce_rate.current.toFixed(1)}%</p>
+        {:else}
+          <Skeleton class="h-10 w-20" />
+        {/if}
       </CardContent>
     </Card>
   </div>
 
-  <div class="grid gap-4 md:grid-cols-2">
+  <div class="mt-4 grid gap-4 md:grid-cols-2">
     <Card>
       <CardHeader>
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminTopPages()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead class="font-bold">{m.adminPage()}</TableHead>
-              <TableHead class="text-right font-bold">{m.adminVisitors()}</TableHead>
-              <TableHead class="text-right font-bold">{m.adminChange()}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {#each digest.top_pages.slice(0, 10) as page}
+        {#if digest}
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell class="font-medium">{page.path || '/'}</TableCell>
-                <TableCell class="text-right">{page.visitors}</TableCell>
-                <TableCell class="text-right">{page.change?.percent ?? 0}%</TableCell>
+                <TableHead class="font-bold">{m.adminPage()}</TableHead>
+                <TableHead class="text-right font-bold">{m.adminVisitors()}</TableHead>
+                <TableHead class="text-right font-bold">{m.adminChange()}</TableHead>
               </TableRow>
-            {/each}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {#each digest.top_pages.slice(0, 10) as page}
+                <TableRow>
+                  <TableCell class="font-medium">{page.path || '/'}</TableCell>
+                  <TableCell class="text-right">{page.visitors}</TableCell>
+                  <TableCell class="text-right">{page.change?.percent ?? 0}%</TableCell>
+                </TableRow>
+              {/each}
+            </TableBody>
+          </Table>
+        {:else}
+          <Skeleton class="h-64 w-full" />
+        {/if}
       </CardContent>
     </Card>
     <Card>
@@ -164,25 +169,29 @@ $effect(() => {
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminTopSources()}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead class="font-bold">{m.adminSource()}</TableHead>
-              <TableHead class="text-right font-bold">{m.adminVisitors()}</TableHead>
-              <TableHead class="text-right font-bold">{m.adminChange()}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {#each digest.top_sources.slice(0, 10) as source}
+        {#if digest}
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell class="font-medium">{source.name}</TableCell>
-                <TableCell class="text-right">{source.visitors}</TableCell>
-                <TableCell class="text-right">{source.change?.percent ?? 0}%</TableCell>
+                <TableHead class="font-bold">{m.adminSource()}</TableHead>
+                <TableHead class="text-right font-bold">{m.adminVisitors()}</TableHead>
+                <TableHead class="text-right font-bold">{m.adminChange()}</TableHead>
               </TableRow>
-            {/each}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {#each digest.top_sources.slice(0, 10) as source}
+                <TableRow>
+                  <TableCell class="font-medium">{source.name}</TableCell>
+                  <TableCell class="text-right">{source.visitors}</TableCell>
+                  <TableCell class="text-right">{source.change?.percent ?? 0}%</TableCell>
+                </TableRow>
+              {/each}
+            </TableBody>
+          </Table>
+        {:else}
+          <Skeleton class="h-64 w-full" />
+        {/if}
       </CardContent>
     </Card>
   </div>
-{/if}
+</div>

@@ -222,13 +222,19 @@ $effect(() => {
 
     <Tabs.Root class="w-full" bind:value={tab}>
       <Tabs.List class="my-4 w-full h-11">
-        <Tabs.Trigger class="w-1/2 py-2 data-active:border-b-2 data-active:border-foreground" value="about"
+        <Tabs.Trigger
+          class="w-1/3 rounded-lg py-2 text-sm font-medium transition-colors data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-xs"
+          value="about"
           >{m.about()}</Tabs.Trigger
         >
-        <Tabs.Trigger class="w-1/2 py-2 data-active:border-b-2 data-active:border-foreground" value="services"
+        <Tabs.Trigger
+          class="w-1/3 rounded-lg py-2 text-sm font-medium transition-colors data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-xs"
+          value="services"
           >{m.services()}</Tabs.Trigger
         >
-        <Tabs.Trigger class="w-1/2 py-2 data-active:border-b-2 data-active:border-foreground" value="details"
+        <Tabs.Trigger
+          class="w-1/3 rounded-lg py-2 text-sm font-medium transition-colors data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-xs"
+          value="details"
           >{m.details()}</Tabs.Trigger
         >
       </Tabs.List>

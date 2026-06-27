@@ -5,6 +5,21 @@
       "type": "remote",
       "enabled": true,
       "url": "https://mcp.posthog.com/mcp"
+    },
+    "pocketbase": {
+      "type": "local",
+      "enabled": true,
+      "command": ["npx", "-y", "gaspechak-pocketbase-mcp"],
+      "environment": {
+        "PB_URL": "http://localhost:8090",
+        "PB_EMAIL": "admin@test.com",
+        "PB_PASSWORD": "i3_NL-dfzzFt5TX"
+      }
+    },
+    "vite": {
+      "type": "remote",
+      "url": "http://localhost:5173/__mcp/sse",
+      "enabled": true
     }
   }
 }
