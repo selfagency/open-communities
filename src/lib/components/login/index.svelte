@@ -59,14 +59,20 @@ const form = superForm(data, {
   async onUpdate({ result }) {
     setState({ loadingSecondary: false });
     if (result.type === 'success') {
-      if (browser && result.data?.user?.id) {
-        try {
-          posthog.identify(result.data.user.id);
-        } catch {
-          // PostHog may not be initialized (missing key); non-blocking
+      // Wrap entire success handler so goto('/') always runs even if
+      // toast or posthog throws (prevents user from being stuck on login).
+      try {
+        if (browser && result.data?.user?.id) {
+          try {
+            posthog.identify(result.data.user.id);
+          } catch {
+            // PostHog may not be initialized (missing key); non-blocking
+          }
         }
+        toast.success(m.loginSuccess());
+      } catch {
+        // Non-blocking — auth cookie is already set; goto navigates anyway.
       }
-      toast.success(m.loginSuccess());
       await goto('/');
     } else {
       const errorMessage =
