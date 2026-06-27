@@ -1,6 +1,6 @@
 /* region imports */
 
-import { error, fail, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
 
