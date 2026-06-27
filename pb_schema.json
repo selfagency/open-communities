@@ -2472,8 +2472,8 @@
   },
   {
     "id": "pbc_2065122259",
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -2790,8 +2790,8 @@
   },
   {
     "id": "pbc_2331436009",
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -2873,8 +2873,8 @@
   },
   {
     "id": "pbc_106475140",
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -2956,8 +2956,8 @@
   },
   {
     "id": "pbc_4060801132",
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -2997,8 +2997,8 @@
   },
   {
     "id": "pbc_2253637087",
-    "listRule": null,
-    "viewRule": null,
+    "listRule": "",
+    "viewRule": "",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
@@ -3024,7 +3024,7 @@
         "id": "number2544318433",
         "max": null,
         "min": null,
-        "name": "total_us_states",
+        "name": "total_states",
         "onlyInt": false,
         "presentable": false,
         "required": false,
@@ -3034,7 +3034,48 @@
     ],
     "indexes": [],
     "system": false,
-    "viewQuery": "SELECT \n    'us_states_total' as id,\n    COUNT(DISTINCT c.state) as total_us_states\nFROM \n    congregations c\nINNER JOIN states s ON c.state = s.id\nINNER JOIN countries co ON s.country = co.id\nWHERE \n    co.code = 'US'\n"
+    "viewQuery": "SELECT \n    'states_total' as id,\n    COUNT(DISTINCT c.state) as total_states\nFROM \n    congregations c\nWHERE \n    c.state IS NOT NULL\n"
+  },
+  {
+    "id": "pbc_1858864121",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "totalCities",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number290034301",
+        "max": null,
+        "min": null,
+        "name": "total_cities",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    'cities_total' as id,\n    COUNT(DISTINCT c.city) as total_cities\nFROM \n    congregations c\nWHERE \n    c.city IS NOT NULL\n"
   },
   {
     "id": "9sm9xec58uye3zk",
