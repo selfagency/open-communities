@@ -29,7 +29,7 @@
     "test:e2e:dev": "PLAYWRIGHT_BASE_URL=http://localhost:5173 pnpx dotenv-cli -c dynamic -- playwright test --config e2e/playwright.config.mjs",
     "test:server": "pnpx dotenv-cli -e .env.test -- vitest --run --project server",
     "test:setup": "pnpx dotenv-cli -e .env.test -- node e2e/cap/setup-captcha.mjs",
-    "test:unit": "pnpx dotenv-cli -e .env.test -- vitest run --project server --coverage --coverage.enabled=true"
+    "test:unit": "pnpx dotenv-cli -e .env.test -- vitest --run --project server --coverage --coverage.enabled=true"
   },
   "dependencies": {
     "@math.gl/types": "^4.1.0",
