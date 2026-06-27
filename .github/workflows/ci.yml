@@ -325,7 +325,7 @@ jobs:
             -e PB_TEST_PASSWORD="${PB_TEST_PASSWORD}" \
             -e PORT=3000 \
             -e PUBLIC_API_ENDPOINT=http://pocketbase:8090 \
-            -e PUBLIC_CAPTCHA_ENDPOINT=http://cap:3000 \
+            -e PUBLIC_CAPTCHA_ENDPOINT=http://localhost:3001 \
             -e PUBLIC_CAPTCHA_SITE_KEY="de02608805" \
             -e PUBLIC_HOSTNAME=http://localhost:3000 \
             -e PUBLIC_POSTHOG_KEY="phc_dummy" \
