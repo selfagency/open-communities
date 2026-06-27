@@ -265,6 +265,7 @@ jobs:
         run: |
           docker run -d --name opencommunities-e2e \
             --network docker_dev \
+            -p 3000:3000 \
             -e ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
             -e CAP_API_KEY=${{ secrets.CAP_API_KEY }} \
             -e NODE_ENV=test \
@@ -292,7 +293,10 @@ jobs:
 
       - name: Docker Compose logs (on failure)
         if: failure()
-        run: docker compose -f docker/docker-compose.yml logs --tail=50
+        run: |
+          docker compose -f docker/docker-compose.yml logs --tail=50
+          echo "--- App container logs ---"
+          docker logs opencommunities-e2e 2>&1 || echo "No app logs available"
 
       - name: Tear down Docker Compose
         if: always()
