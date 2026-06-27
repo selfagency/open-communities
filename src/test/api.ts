@@ -1,3 +1,4 @@
+// fallow-ignore-file unused-file
 // Re-export typed helpers and fake factories where present
 export * as bitsUi from './stubs/bits-ui.js';
 export * as sheet from './stubs/components/ui/sheet.js';

@@ -18,7 +18,7 @@ import Required from '../required.svelte';
 
 /* region variables */
 // props
-let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+let { errors, form, formData, view = $bindable() } = $props();
 
 // constants
 const hasHealth: boolean = $derived(valueSet($formData.health));

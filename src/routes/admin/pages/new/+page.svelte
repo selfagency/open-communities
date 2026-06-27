@@ -2,6 +2,7 @@
 import PageEditor from '$lib/components/admin/page-editor.svelte';
 import { m } from '$lib/paraglide/messages';
 
+// fallow-ignore-next-line unused-component-props
 let { data } = $props();
 </script>
 

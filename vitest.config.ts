@@ -33,6 +33,8 @@ export default defineConfig({
       '$app/state/index': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
       '$app/stores': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
       '$app/stores.js': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
+      '$app/forms': resolve(import.meta.dirname, 'src/test/mocks/$app/forms.js'),
+      '$app/forms.js': resolve(import.meta.dirname, 'src/test/mocks/$app/forms.js'),
       // eslint-disable-next-line perfectionist/sort-objects
       $app: resolve(import.meta.dirname, 'src/test/mocks/$app'),
       '$env/dynamic/private': resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/private.js'),

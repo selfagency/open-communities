@@ -34,7 +34,6 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions = {
-  // fallow-ignore-next-line health -- refactor target: high complexity (25 cyclomatic, 160 CRAP)
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   save: async ({ locals, params, request }) => {
     const client = locals.api;

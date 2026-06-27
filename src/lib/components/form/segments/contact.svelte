@@ -11,6 +11,7 @@ import { m } from '$lib/paraglide/messages';
 
 /* region variables */
 // props
+// fallow-ignore-next-line unused-component-props -- shared by all form segments
 let { errors, form, formData, view = $bindable() } = $props();
 </script>
 

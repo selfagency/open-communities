@@ -47,7 +47,6 @@ const flag = $derived((congregation?.fit as FitRecord)?.flag);
 /* endregion variables */
 </script>
 
-<!-- fallow-ignore-next-line health -- refactor target: high template complexity (25 cyclomatic, 160 CRAP) -->
 <Card.Root
   class="flex h-full min-h-max flex-col justify-between transition-transform hover:scale-105 ltr:text-left rtl:text-right"
 >

@@ -15,7 +15,6 @@ const { health, mode = $bindable('full') }: { health?: HealthRecord; mode?: 'ful
 /* endregion variables */
 </script>
 
-<!-- fallow-ignore-next-line health -- refactor target: high template complexity (22 cyclomatic, 126 CRAP) -->
 {#if mode === "mini"}
   {#if health?.protocol === "maskingRecommended" || health?.protocol === "maskingRequired" || (health?.protocol === "other" && health?.otherText !== "N/A")}
     <Tooltip.Provider>

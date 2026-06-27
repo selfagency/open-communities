@@ -139,7 +139,6 @@ $effect(() => {
 });
 </script>
 
-<!-- fallow-ignore-next-line health -- refactor target: high template complexity (27 cyclomatic, 184 CRAP) -->
 <Accordion.Item value="congregation">
   <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
     <div
