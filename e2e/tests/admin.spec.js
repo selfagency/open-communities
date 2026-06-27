@@ -13,6 +13,11 @@ test.describe('Admin backend', () => {
     await loginForm.locator('input[type="password"]').first().fill(process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX');
     await loginForm.locator('button[type="submit"]').click();
     await page.waitForTimeout(2000);
+    // Check whether login redirected us to the home page (success) or stayed on login (failure)
+    const currentUrl = page.url();
+    if (currentUrl.includes('/login')) {
+      console.log(`[e2e] Login may have failed: still at ${currentUrl}`);
+    }
   });
 
   test('admin dashboard loads with stats', async ({ page }) => {
