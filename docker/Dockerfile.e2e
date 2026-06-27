@@ -4,6 +4,12 @@
 FROM node:22 AS builder
 WORKDIR /app
 
+# Build-time secrets for translation fetch
+ARG PB_API_TOKEN
+ARG PB_URL
+ENV PB_API_TOKEN=${PB_API_TOKEN}
+ENV PB_URL=${PB_URL}
+
 # Install pnpm and copy lockfiles first for better cache use
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm@10

@@ -15,16 +15,26 @@ async function getToken() {
   if (!PB_ADMIN || !PB_PASSWORD) {
     throw new Error('PB_TEST_ADMIN and PB_TEST_PASSWORD env vars required');
   }
-  const res = await fetch(`${PB_API}/admins/auth-with-password`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ identity: PB_ADMIN, password: PB_PASSWORD }),
-  });
-  if (!res.ok) throw new Error(`PB auth failed: ${res.status}`);
-  const data = await res.json();
-  _token = data.token;
-  _tokenExpiry = Date.now() + 3_600_000; // 1 hour
-  return _token;
+  // PB v0.22+ moved superuser auth to /api/collections/_superusers/auth-with-password
+  // Fall back to the legacy /api/admins/auth-with-password for older versions.
+  const endpoints = [
+    `${PB_API}/collections/_superusers/auth-with-password`,
+    `${PB_API}/admins/auth-with-password`
+  ];
+  for (const url of endpoints) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ identity: PB_ADMIN, password: PB_PASSWORD }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      _token = data.token;
+      _tokenExpiry = Date.now() + 3_600_000; // 1 hour
+      return _token;
+    }
+  }
+  throw new Error(`PB auth failed — tried ${endpoints.length} endpoints`);
 }
 
 /**

@@ -139,6 +139,9 @@ async function configureSMTP(token) {
         authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
+        meta: {
+          appName: 'Open Communities'
+        },
         smtp: {
           enabled: true,
           host: 'mailpit',
@@ -152,6 +155,7 @@ async function configureSMTP(token) {
       throw new Error(`SMTP config failed: ${res.status}`);
     }
     console.log('  ✅ SMTP configured (Mailpit)');
+    console.log('  ✅ App name set to Open Communities');
   } catch (err) {
     console.log(`  ⚠  SMTP config skipped: ${err.message}`);
   }
