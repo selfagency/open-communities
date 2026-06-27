@@ -26,7 +26,7 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 import Filters from './filters.svelte';
 import Location from './location.svelte';
-import Map from './map.svelte';
+import LazyMap from './lazy-map.svelte';
 
 /* endregion imports */
 
@@ -225,7 +225,7 @@ let isMobile = $derived(appState.isMobile);
     {/if}
 
     <div class="py-4">
-      <Map {location} {locations} {search} />
+      <LazyMap {location} {locations} {search} />
     </div>
 
     {#if $results?.length === 0}
