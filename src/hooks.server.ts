@@ -91,7 +91,9 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
     eventName: string,
     properties?: Record<string, unknown>
   ): Promise<void> => {
-    if (user) capture(user, eventName, properties);
+    if (user) {
+      capture(user, eventName, properties);
+    }
     return Promise.resolve();
   };
   event.locals.captureException = (error: unknown, user?: string, other?: Record<string, number | string>) =>

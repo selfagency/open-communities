@@ -326,12 +326,12 @@ jobs:
             -e PB_TEST_ADMIN="${PB_TEST_ADMIN}" \
             -e PB_TEST_PASSWORD="${PB_TEST_PASSWORD}" \
             -e PORT=3000 \
-            -e PUBLIC_API_ENDPOINT=http://pocketbase:8090 \
+            -e PUBLIC_API_ENDPOINT=http://docker-pocketbase-1:8090 \
             -e PUBLIC_CAPTCHA_ENDPOINT=http://localhost:3001 \
             -e PUBLIC_CAPTCHA_SITE_KEY="de02608805" \
             -e PUBLIC_HOSTNAME=http://localhost:3000 \
             -e PUBLIC_POSTHOG_KEY="${PUBLIC_POSTHOG_KEY}" \
-            -e PUBLIC_POSTHOG_HOST="https://us.i.posthog.com" \
+            -e PUBLIC_POSTHOG_HOST="${PUBLIC_POSTHOG_HOST}" \
             -e SMTP_HOST=mailpit \
             -e SMTP_PORT=1025 \
             opencommunities-e2e
