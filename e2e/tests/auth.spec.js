@@ -4,7 +4,7 @@ import { sleep, uid } from 'radashi';
 import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
-const base = 'http://localhost:4173';
+const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
 
 test.describe('auth flows', () => {
@@ -25,7 +25,7 @@ test.describe('auth flows', () => {
   });
 
   test('signup -> sends verification email and verifies account', async ({ page }) => {
-    await page.goto(`${base}/login?signUp`, { waitUntil: 'commit', timeout: 15000 });
+    await page.goto(`${BASE}/login?signUp`, { waitUntil: 'commit', timeout: 15000 });
 
     // Form is SSR-rendered but hidden by bits-ui tabs. Use $eval for all interactions.
     await page.waitForSelector('form[action*="signup"]', { timeout: 15000, state: 'attached' });
@@ -111,11 +111,11 @@ test.describe('auth flows', () => {
       }
     }
 
-    await page.goto(`${base}/login?verifyEmail=${verifyToken}`);
+    await page.goto(`${BASE}/login?verifyEmail=${verifyToken}`);
   });
 
   test('request reset -> receives reset email and sets new password', async ({ page }) => {
-    await page.goto(`${base}/login`);
+    await page.goto(`${BASE}/login`);
     await page.fill('input[autocomplete="email"]', email);
     await page.click('text=Send reset email');
 
@@ -143,7 +143,7 @@ test.describe('auth flows', () => {
     resetToken = resetMatch ? resetMatch[1] : undefined;
     expect(resetToken).toBeTruthy();
 
-    await page.goto(`${base}/login?resetPassword=${resetToken}`);
+    await page.goto(`${BASE}/login?resetPassword=${resetToken}`);
     const newPass = `${password}1`;
     await page.waitForSelector('input[type="password"]', { timeout: 10000 });
     const resetPwLocators = page.locator('input[type="password"]');
@@ -159,7 +159,7 @@ test.describe('auth flows', () => {
 
   test('login with new password', async ({ page }) => {
     const newPass = `${password}1`;
-    await page.goto(`${base}/login`);
+    await page.goto(`${BASE}/login`);
     await page.waitForSelector('input[autocomplete="email"], input[type="password"]', { timeout: 10000 });
     await page.fill('input[autocomplete="email"]', email);
     const loginPwLoc = page.locator('input[type="password"]');

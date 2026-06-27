@@ -24,7 +24,9 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 COPY package.json pnpm-lock.yaml ./
 # If a lockfile is present in the build context pnpm will use it; if not, fall back to a normal install.
 # --ignore-scripts avoids the husky prepare hook (devDependency) failing in prod install
-RUN npm install -g pnpm@10 && (pnpm install --prod --frozen-lockfile --ignore-scripts || pnpm install --prod --ignore-scripts)
+RUN npm install -g pnpm@10 \
+    && (pnpm install --prod --frozen-lockfile --ignore-scripts \
+        || pnpm install --prod --ignore-scripts)
 
 # Copy only the build output from the builder stage
 COPY --from=builder /app/build ./build

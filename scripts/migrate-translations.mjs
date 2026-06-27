@@ -113,6 +113,27 @@ async function flushBatch(batch, sent) {
   return sent;
 }
 
+async function processLocaleEntry(key, locale, messages, existingMap, batch) {
+  const localeMessages = messages.get(locale);
+  const value = localeMessages ? localeMessages[key] : undefined;
+  if (value === undefined || value === null) {
+    return 'skipped';
+  }
+
+  const existingEntry = existingMap.get(`${key}|${locale}`);
+  const entry = buildBatchEntry(key, locale, value, existingEntry);
+  if (!entry) {
+    return 'skipped';
+  }
+
+  batch.push(entry);
+  if (batch.length >= BATCH_SIZE) {
+    await flushBatch(batch);
+  }
+
+  return existingEntry ? 'updated' : 'created';
+}
+
 async function buildBatchOps(messages, locales, allKeys, existingMap) {
   const batch = [];
   let created = 0;
@@ -122,27 +143,13 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
   const sortedKeys = [...allKeys].sort((a, b) => a.localeCompare(b));
   for (const key of sortedKeys) {
     for (const locale of locales) {
-      const localeMessages = messages.get(locale);
-      const value = localeMessages ? localeMessages[key] : undefined;
-      if (value === undefined || value === null) {
-        continue;
-      }
-
-      const existingEntry = existingMap.get(`${key}|${locale}`);
-      const entry = buildBatchEntry(key, locale, value, existingEntry);
-      if (!entry) {
-        skipped++;
-        continue;
-      }
-      if (existingEntry) {
-        updated++;
-      } else {
+      const result = await processLocaleEntry(key, locale, messages, existingMap, batch);
+      if (result === 'created') {
         created++;
-      }
-      batch.push(entry);
-
-      if (batch.length >= BATCH_SIZE) {
-        await flushBatch(batch);
+      } else if (result === 'updated') {
+        updated++;
+      } else if (result === 'skipped') {
+        skipped++;
       }
     }
   }

@@ -11,7 +11,7 @@ export async function clearMailpit() {
  * Find a Mailpit message by subject (case-insensitive). Optionally filter by `to` address.
  * Returns the first matching message or undefined when timeout is reached.
  */
-export async function findMessageBySubject(subject, timeout = 8000, to) {
+export async function findMessageBySubject(subject, to, timeout = 8000) {
   const deadline = Date.now() + timeout;
   let lastPayload = null;
   const needle = (subject || '').toLowerCase();

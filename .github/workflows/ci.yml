@@ -286,7 +286,7 @@ jobs:
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         if: github.event_name == 'push'
         with:
           registry: ghcr.io
@@ -303,15 +303,20 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
 
       - name: Run app container
+        env:
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: |
           docker run -d --name opencommunities-e2e \
             --network docker_dev \
             -p 3000:3000 \
-            -e ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
-            -e CAP_API_KEY=${{ secrets.CAP_API_KEY }} \
+            -e ADMIN_EMAIL="${ADMIN_EMAIL}" \
+            -e CAP_API_KEY="${CAP_API_KEY}" \
             -e NODE_ENV=test \
-            -e PB_TEST_ADMIN=${{ secrets.PB_TEST_ADMIN }} \
-            -e PB_TEST_PASSWORD=${{ secrets.PB_TEST_PASSWORD }} \
+            -e PB_TEST_ADMIN="${PB_TEST_ADMIN}" \
+            -e PB_TEST_PASSWORD="${PB_TEST_PASSWORD}" \
             -e PORT=3000 \
             -e PUBLIC_API_ENDPOINT=http://pocketbase:8090 \
             -e PUBLIC_CAPTCHA_ENDPOINT=http://cap:3000 \
@@ -378,7 +383,7 @@ jobs:
           cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Find or create pa11y PR comment
-        if: always()
+        if: steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

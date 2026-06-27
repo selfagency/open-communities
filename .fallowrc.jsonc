@@ -26,7 +26,12 @@
       "src/lib/components/global/menu.svelte",
       "src/lib/components/global/progress.svelte",
       "src/lib/components/pages/page-list.svelte",
-      "src/lib/components/users/user-list.svelte"
+      "src/lib/components/users/user-list.svelte",
+      // Pre-existing complexity in hooks
+      "src/hooks.server.ts",
+      // Complexity in standalone Docker/script helpers (excluded by ignorePatterns)
+      "docker/helpers/mailpit.js",
+      "scripts/migrate-translations.mjs"
     ]
   },
   "ignorePatterns": [
@@ -40,6 +45,9 @@
     "e2e/**",
     // Docker testing files
     "docker/Dockerfile.e2e",
+    "docker/helpers/**",
+    // One-off migration scripts (not application entry points)
+    "scripts/**",
     // Test mock/stub files
     "src/test/mocks/**",
     "src/test/stubs/**",
@@ -59,7 +67,10 @@
     "tailwind-variants",
     "vaul-svelte",
     // Unused at runtime — kept for potential future icon migration
-    "@lucide/svelte"
+    "@lucide/svelte",
+    // Hoisted transitive dep — @loaders.gl/schema-utils imports @math.gl/types
+    // at build time but doesn't declare it. Explicit dep ensures Rolldown resolution.
+    "@math.gl/types"
   ],
   "rules": {
     "unused-dependencies": "warn"

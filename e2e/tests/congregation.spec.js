@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { sleep, uid as uniqueId } from 'radashi';
 
-const base = 'http://localhost:4173';
+const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 const email = 'regular@example.test';
 const password = 'TestPass123!';
 
@@ -12,14 +12,14 @@ test.describe('Congregation CRUD', () => {
   const congregationContact = `contact-${uniqueId(4)}@example.test`;
 
   test('homepage shows congregation directory', async ({ page }) => {
-    await page.goto(base);
+    await page.goto(BASE);
     await page.waitForLoadState('networkidle');
     await expect(page.locator('input[id="search"]')).toBeVisible();
     await expect(page.locator('div.col-span-1').first()).toBeVisible({ timeout: 15000 });
   });
 
   test('login as existing user', async ({ page }) => {
-    await page.goto(`${base}/login?login`);
+    await page.goto(`${BASE}/login?login`);
     await page.waitForLoadState('networkidle');
 
     // Scope to the login form — signup form also has email/password fields
@@ -36,7 +36,7 @@ test.describe('Congregation CRUD', () => {
   });
 
   test('add a congregation', async ({ page }) => {
-    await page.goto(`${base}/add`);
+    await page.goto(`${BASE}/add`);
     await page.waitForLoadState('networkidle');
 
     // Use the input ID rendered by shadcn-svelte Form.Field (inside accordion)
@@ -69,11 +69,11 @@ test.describe('Congregation CRUD', () => {
     }
 
     const currentUrl = page.url();
-    expect(currentUrl).toContain(base);
+    expect(currentUrl).toContain(BASE);
   });
 
   test('congregation appears in search results', async ({ page }) => {
-    await page.goto(base);
+    await page.goto(BASE);
     await page.waitForLoadState('networkidle');
 
     const searchInput = page.locator('input[id="search"]');

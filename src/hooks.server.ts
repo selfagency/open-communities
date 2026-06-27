@@ -102,12 +102,17 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
     return (await superValidate(request as unknown as RequestEvent, adapter)) as unknown as SuperValidated<output<S>>;
   }) as App.Locals['validate'];
 
+  // secure: true only when the browser actually uses HTTPS.
+  // x-forwarded-proto covers production behind a TLS-terminating proxy (Cloudflare),
+  // event.url.protocol covers direct HTTPS connections.
+  // This avoids setting Secure cookies over HTTP, which breaks CI/E2E tests.
+  const isSecure = event.request.headers.get('x-forwarded-proto') === 'https' || event.url.protocol === 'https:';
   event.locals.cookieOpts = {
     httpOnly: true,
     maxAge: 60 * 60 * 24 * 1, // 1 day
     path: '/',
     sameSite: 'strict',
-    secure: !dev
+    secure: isSecure
   } as SerializeOptions & { path: string };
 
   // auth — load cookie into the per-request instance
@@ -184,7 +189,8 @@ export const handleError = async ({
   if (status !== 404) {
     const errorId = crypto.randomUUID();
 
-    event.locals.error = typeof error === 'object' && error !== null ? JSON.stringify(error) : String(error ?? '');
+    event.locals.error =
+      typeof error === 'object' && error !== null ? JSON.stringify(error) : error == null ? '' : String(error);
     event.locals.errorStackTrace = (error as Error)?.stack || undefined;
     event.locals.errorId = errorId;
     logEvent(status, event);

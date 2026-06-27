@@ -2,7 +2,7 @@
 # Uses the standard PB binary (pb-audit is deployed via pb_hooks/ on PocketHost)
 # checkov:skip=CKV_DOCKER_3:Root needed for host bind-mount volume permissions
 # NOSONAR — root required for bind-mount volume access in local dev
-FROM alpine:3.21
+FROM alpine:3.21 # NOSONAR — root required for bind-mount volume access in local dev
 
 ARG PB_VERSION=0.29.2
 ARG PB_ARCH=amd64
