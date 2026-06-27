@@ -313,6 +313,8 @@ jobs:
           CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
         run: |
           docker run -d --name opencommunities-e2e \
             --network docker_dev \
@@ -328,8 +330,8 @@ jobs:
             -e PUBLIC_CAPTCHA_ENDPOINT=http://localhost:3001 \
             -e PUBLIC_CAPTCHA_SITE_KEY="de02608805" \
             -e PUBLIC_HOSTNAME=http://localhost:3000 \
-            -e PUBLIC_POSTHOG_KEY="phc_dummy" \
-            -e PUBLIC_POSTHOG_HOST="http://localhost:3001" \
+            -e PUBLIC_POSTHOG_KEY="${PUBLIC_POSTHOG_KEY}" \
+            -e PUBLIC_POSTHOG_HOST="${PUBLIC_POSTHOG_HOST}" \
             -e SMTP_HOST=mailpit \
             -e SMTP_PORT=1025 \
             opencommunities-e2e

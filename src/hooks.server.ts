@@ -86,8 +86,14 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   event.locals.log = log;
 
   // Create origin-aware PostHog functions
-  event.locals.capture = (user: string | undefined, eventName: string) =>
-    user ? capture(user, eventName) : Promise.resolve();
+  event.locals.capture = (
+    user: string | undefined,
+    eventName: string,
+    properties?: Record<string, unknown>
+  ): Promise<void> => {
+    if (user) capture(user, eventName, properties);
+    return Promise.resolve();
+  };
   event.locals.captureException = (error: unknown, user?: string, other?: Record<string, number | string>) =>
     captureException(error, user ?? '', other);
 

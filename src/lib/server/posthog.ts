@@ -28,15 +28,21 @@ process.once('beforeExit', closePhClient);
 process.once('SIGTERM', closePhClient);
 process.once('SIGINT', closePhClient);
 
-// biome-ignore lint/suspicious/useAwait: SvelteKit async signature
-export async function capture(user: string | undefined, event: string) {
+export function capture(user: string | undefined, event: string, properties?: Record<string, unknown>) {
   const phClient = getPhClient();
   if (!phClient) {
     return;
   }
 
   try {
-    phClient.capture({ distinctId: user ?? 'anonymous', event });
+    phClient.capture({
+      distinctId: user ?? 'anonymous',
+      event,
+      properties: {
+        env: process.env.NODE_ENV ?? 'production',
+        ...properties
+      }
+    });
   } catch (error) {
     log.error('PostHog capture failed:', error);
   }

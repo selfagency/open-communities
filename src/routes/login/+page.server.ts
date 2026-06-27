@@ -121,6 +121,13 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      if (isFunction(capture)) {
+        await capture(client?.id, 'login_failure', {
+          error_status: err.status,
+          error_message: (err.message ?? '').slice(0, 120),
+          error_url: event.url.pathname
+        });
+      }
       if (isFunction(captureException)) {
         await captureException(error, client?.id);
       }
