@@ -38,9 +38,11 @@ test.describe('Congregation CRUD', () => {
   test('add a congregation', async ({ page }) => {
     await page.goto(`${BASE}/add`);
     await page.waitForLoadState('networkidle');
-
-    // Open the Congregation accordion section to expose the name input
-    await page.getByText(/congregation/i).first().click();
+    // Wait for the form to finish loading (accordion root appears)
+    await page.locator('form').waitFor({ state: 'visible', timeout: 10000 });
+    // Open the Congregation accordion section to expose the name input.
+    // bits-ui renders Accordion.Trigger as a <button> element.
+    await page.getByRole('button', { name: /congregation/i }).click();
     await page.waitForTimeout(500);
 
     const nameInput = page.locator('#name');
