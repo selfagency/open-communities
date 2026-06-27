@@ -1,9 +1,6 @@
 const path = require('node:path');
-const { fileURLToPath } = require('node:url');
 const { defineConfig, devices } = require('@playwright/test');
-
-const __filename = fileURLToPath(__filename);
-const __dirname = path.dirname(__filename);
+// __filename and __dirname are CJS globals — no fileURLToPath needed
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 module.exports = defineConfig({
