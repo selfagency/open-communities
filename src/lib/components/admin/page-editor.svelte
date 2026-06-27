@@ -1,18 +1,14 @@
 <script lang="ts">
 import { isEmpty } from 'radashi';
-import stopwordsAll from 'stopwords-iso';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
 import { Button } from '$lib/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-// biome-ignore lint/performance/noNamespaceImport: shadcn namespace pattern
-import * as FileDropZone from '$lib/components/ui/file-drop-zone';
-import { Input } from '$lib/components/ui/input';
-import { Switch } from '$lib/components/ui/switch';
-import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
-import PellEditor from './pell-editor.svelte';
+
+import PageEditorBase from './page-editor-base.svelte';
+import PageEditorImage from './page-editor-image.svelte';
+import PageEditorVariant from './page-editor-variant.svelte';
 
 const languages = [
   { code: 'en', label: 'English' },
@@ -50,7 +46,6 @@ let {
   onSuccess?: () => void;
 } = $props();
 
-// Snapshot page prop for initial values (intentionally non-reactive)
 // svelte-ignore state_referenced_locally
 const initialPage = page;
 let title = $state((initialPage?.title as string) ?? '');
@@ -62,7 +57,6 @@ let imageCaption = $state((initialPage?.imageCaption as string) ?? '');
 let manualSlug = $state(!!initialPage);
 let errMsg = $state('');
 
-// Variant fields for non-English languages
 let variants = $state<Variant[]>(
   languages
     .filter((l) => l.code !== 'en')
@@ -85,47 +79,6 @@ let saveDisabled = $derived(!(title && slug) || saving);
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
-}
-
-function generateSlug(val: string): string {
-  if (manualSlug) {
-    return slug;
-  }
-  const words = (stopwordsAll as Record<string, string[]>).en ?? [];
-  return (
-    val
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      // biome-ignore lint/performance/useTopLevelRegex: inline regex in test
-      .split(/\s+/)
-      .filter((w) => w && w.length > 1 && !words.includes(w))
-      .join('-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '') ||
-    val
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, '')
-      .replace(/-+/g, '-')
-  );
-}
-
-function handleTitleChange() {
-  if (!manualSlug) {
-    slug = generateSlug(title);
-  }
-}
-
-function handleImageSelect(files: File[]) {
-  const file = files[0];
-  if (!file) {
-    return;
-  }
-  imageFile = file;
-  const reader = new FileReader();
-  reader.onload = () => {
-    imagePreview = reader.result as string;
-  };
-  reader.readAsDataURL(file);
 }
 
 function handleEnhance() {
@@ -156,7 +109,7 @@ function beforeSubmit() {
   variantsInput.value = JSON.stringify(vars);
 }
 </script>
-<!-- fallow-ignore-next-line health -- refactor target: high template complexity (22 cyclomatic, 506 CRAP) -->
+
 {#if errMsg}
   <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{errMsg}</div>
 {/if}
@@ -182,144 +135,12 @@ function beforeSubmit() {
     {/if}
 
     {#if selectedLang === 'en'}
-      <!-- English: base page fields -->
-      <Card>
-        <CardHeader>
-          <CardTitle class="text-lg font-bold">{page?.id ? m.pageEditorTitleEdit() : m.pageEditorTitleNew()}</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-4">
-          <div class="space-y-2">
-            <label class="text-sm font-bold block mb-2" for="title">
-              <span>{m.pageEditorTitleLabel()}</span>
-              <Required set={!isEmpty(title)} />
-            </label>
-            <Input
-              id="title"
-              name="title"
-              oninput={handleTitleChange}
-              placeholder={m.pageEditorTitlePlaceholder()}
-              required
-              bind:value={title}
-            />
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex items-center gap-3">
-              <label class="text-sm font-bold block" for="slug">
-                <span>{m.pageEditorSlugLabel()}</span>
-                <Required set={!isEmpty(slug)} />
-              </label>
-              <label class="flex items-center gap-1.5 text-xs text-muted-foreground ml-auto">
-                <Switch aria-label={m.pageEditorSlugManual()} class="scale-75" bind:checked={manualSlug} />
-                {m.pageEditorSlugManual()}
-              </label>
-            </div>
-            <Input
-              class="font-mono text-sm"
-              id="slug"
-              name="slug"
-              placeholder={m.pageEditorSlugPlaceholder()}
-              required
-              bind:value={slug}
-            />
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-sm font-bold block mb-2" for="description">{m.pageEditorDescriptionLabel()}</label>
-            <Textarea
-              id="description"
-              name="description"
-              placeholder={m.pageEditorDescriptionPlaceholder()}
-              bind:value={description}
-            />
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-sm font-bold block mb-2" for="content">{m.pageEditorContentLabel()}</label>
-            <input name="content" type="hidden" value={content} />
-            <PellEditor id="page-content" bind:value={content} />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle class="text-lg font-bold">{m.pageEditorImage()}</CardTitle>
-        </CardHeader>
-        <CardContent class="space-y-4">
-          <FileDropZone.Root accept={FileDropZone.ACCEPT_IMAGE} onUpload={handleImageSelect}>
-            {#snippet children()}
-              <FileDropZone.Trigger />
-            {/snippet}
-          </FileDropZone.Root>
-          {#if imagePreview}
-            <input name="image" type="hidden" value={imagePreview} />
-          {/if}
-          <div class="space-y-4 pt-4">
-            <div class="space-y-2">
-              <label class="text-sm font-bold block mb-2" for="imageAlt">{m.pageEditorImageAltLabel()}</label>
-              <Input
-                id="imageAlt"
-                name="imageAlt"
-                placeholder={m.pageEditorImageAltPlaceholder()}
-                bind:value={imageAlt}
-              />
-            </div>
-            <div class="space-y-2">
-              <label class="text-sm font-bold block mb-2" for="imageCaption">{m.pageEditorImageCaptionLabel()}</label>
-              <Input
-                id="imageCaption"
-                name="imageCaption"
-                placeholder={m.pageEditorImageCaptionPlaceholder()}
-                bind:value={imageCaption}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <PageEditorBase bind:content bind:description bind:manualSlug bind:slug bind:title />
+      <PageEditorImage bind:imageAlt bind:imageCaption bind:imageFile bind:imagePreview />
     {:else}
       {@const v = getVariant(selectedLang)}
       {#if v}
-        <Card>
-          <CardHeader>
-            <CardTitle class="text-lg font-bold"
-              >{m.pageEditorVariantTitle({ lang: languages.find((l) => l.code === selectedLang)?.label ?? selectedLang })}</CardTitle
-            >
-          </CardHeader>
-          <CardContent class="space-y-4">
-            <p class="text-muted-foreground text-xs italic">{m.pageEditorVariantFallback()}</p>
-
-            <div class="space-y-2">
-              <label class="text-sm font-bold block mb-2" for="var-title">{m.pageEditorVariantTitleLabel()}</label>
-              <Input dir={selectedLang === 'he' ? 'rtl' : undefined} id="var-title" bind:value={v.title} />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-bold block mb-2" for="var-desc">{m.pageEditorDescriptionLabel()}</label>
-              <Textarea dir={selectedLang === 'he' ? 'rtl' : undefined} id="var-desc" bind:value={v.description} />
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-sm font-bold block mb-2" for="var-content">{m.pageEditorContentLabel()}</label>
-              <PellEditor dir={selectedLang === 'he' ? 'rtl' : undefined} id="var-content" bind:value={v.content} />
-            </div>
-
-            <div class="grid gap-4 md:grid-cols-2">
-              <div class="space-y-2">
-                <label class="text-sm font-bold block mb-2" for="var-imgalt"
-                  >{m.pageEditorVariantImageAltLabel()}</label
-                >
-                <Input dir={selectedLang === 'he' ? 'rtl' : undefined} id="var-imgalt" bind:value={v.imageAlt} />
-              </div>
-              <div class="space-y-2">
-                <label class="text-sm font-bold block mb-2" for="var-imgcap"
-                  >{m.pageEditorVariantImageCaptionLabel()}</label
-                >
-                <Input dir={selectedLang === 'he' ? 'rtl' : undefined} id="var-imgcap" bind:value={v.imageCaption} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <PageEditorVariant language={languages.find((l) => l.code === selectedLang) ?? languages[0]} variant={v} />
       {/if}
     {/if}
   </div>

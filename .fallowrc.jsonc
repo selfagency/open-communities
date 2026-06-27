@@ -11,7 +11,10 @@
       // Pre-existing: TanStack Table cell columnHelper.accessor() patterns
       "src/lib/components/congregations/congregation-list.svelte",
       "src/lib/components/pages/page-list.svelte",
-      "src/lib/components/users/user-list.svelte"
+      "src/lib/components/users/user-list.svelte",
+      // Phase 2.2 — repetitive mock helpers in test files are expected
+      "src/lib/components/admin/page-editor-base.test.ts",
+      "src/lib/components/admin/page-editor-image.test.ts"
     ]
   },
   "health": {
@@ -44,7 +47,21 @@
       "src/lib/components/congregation/accessibility.svelte",
       // Test files — large describe blocks + mock helpers naturally exceed thresholds
       "src/test/server/logger.test.ts",
-      "src/test/server/rate-limit.test.ts"
+      "src/test/server/rate-limit.test.ts",
+      // Phase 2.1 — extracted sub-components with naturally complex templates
+      "src/lib/components/admin/page-editor-variant.svelte",
+      "src/lib/components/admin/page-editor-image.svelte",
+      "src/lib/components/congregation/accessibility-mini.svelte",
+      "src/lib/components/congregation/accessibility-full.svelte",
+      // Phase 2.2 — component test files with large describe/mock blocks
+      "src/lib/components/admin/page-editor-base.test.ts",
+      "src/lib/components/admin/page-editor-image.test.ts",
+      "src/lib/components/admin/page-editor-variant.test.ts",
+      "src/lib/components/congregation/accessibility-mini.test.ts",
+      "src/lib/components/congregation/accessibility-full.test.ts",
+      "src/lib/components/form/form-alerts.test.ts",
+      "src/lib/components/form/form-footer.test.ts",
+      "src/lib/components/form/form-alerts.svelte"
     ]
   },
   "ignorePatterns": [
