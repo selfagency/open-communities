@@ -9,6 +9,7 @@ import type { UsersRecord } from '$lib/pocketbase.d';
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
 import { userSchema } from '$lib/schemas/user';
 import { cleanResponse } from '$lib/server/api';
+import { closePhClient } from '$lib/server/posthog';
 import { validateCaptcha } from '$lib/server/utils';
 
 import type { PageServerLoad } from './$types';
@@ -71,6 +72,7 @@ export const actions = {
       if (isFunction(captureException)) {
         await captureException(error, client?.id);
       }
+      closePhClient();
 
       return fail(err.status ?? 400, {
         form: {
@@ -114,6 +116,7 @@ export const actions = {
       if (isFunction(capture)) {
         await capture((user as UsersRecord & { id: string }).id, 'login');
       }
+      closePhClient();
 
       return {
         form,
@@ -131,6 +134,7 @@ export const actions = {
       if (isFunction(captureException)) {
         await captureException(error, client?.id);
       }
+      closePhClient();
 
       return fail(err.status ?? 401, { form });
     }
