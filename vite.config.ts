@@ -30,11 +30,12 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     ViteMcp(),
     mode === 'test' && inlineSveltePlugin(),
-    biomePlugin({
-      mode: 'lint',
-      files: 'src',
-      failOnError: false
-    }),
+    mode === 'development' &&
+      biomePlugin({
+        mode: 'lint',
+        files: 'src',
+        failOnError: false
+      }),
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
