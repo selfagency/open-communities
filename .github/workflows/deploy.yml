@@ -29,7 +29,7 @@ jobs:
           PHIO_USERNAME: ${{ secrets.POCKETHOST_EMAIL }}
           PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
         run: |
-          npm install -g phio
+          npm install -g phio tsx
           phio deploy -v
 
       - name: Deploy to Coolify
