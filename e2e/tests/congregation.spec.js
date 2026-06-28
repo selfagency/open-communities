@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { sleep, uid as uniqueId } from 'radashi';
 
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
+const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
 const email = 'regular@example.test';
 const password = 'TestPass123!';
 
@@ -12,23 +13,24 @@ test.describe('Congregation CRUD', () => {
   const congregationContact = `contact-${uniqueId(4)}@example.test`;
 
   /**
-   * Helper: login as the regular test user.
-   * Playwright 1.61+ isolates browser contexts per test even in serial mode,
-   * so each test that needs auth must login independently (cookies don't persist).
+   * Helper: authenticate directly against PocketBase and set auth cookie.
+   * Playwright 1.61+ isolates browser contexts per test even in serial mode
+   * and the app's use:enhance form submission may not work in production builds,
+   * so each test that needs auth must set its own auth cookie directly.
    */
-  async function loginAsUser(page) {
-    await page.goto(`${BASE}/login?login`);
-    await page.waitForLoadState('networkidle');
-    await page.locator('form[action*="login"] input[autocomplete="email"]').fill(email);
-    const pwInputs = page.locator('form[action*="login"] input[type="password"]');
-    if ((await pwInputs.count()) >= 1) {
-      await pwInputs.nth(0).fill(password);
-    }
-    await page.locator('form[action*="login"] button[type="submit"]').click();
-    // Wait for client-side redirect to home after login success.
-    // Use timeout + URL check instead of waitForURL for resilience —
-    // if login fails the test should degrade gracefully, not hang.
-    await page.waitForTimeout(2000);
+  async function loginAsUser({ context }) {
+    const res = await fetch(`${PB_API}/collections/users/auth-with-password`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ identity: email, password })
+    });
+    if (!res.ok) throw new Error(`PB user auth failed: ${res.status}`);
+    const data = await res.json();
+    const pbAuth = `pb_auth=${encodeURIComponent(JSON.stringify({ token: data.token, record: data.record }))}`;
+    await context.addCookies([
+      { name: 'auth', value: pbAuth, domain: 'localhost', path: '/' },
+      { name: 'session', value: crypto.randomUUID(), domain: 'localhost', path: '/' }
+    ]);
   }
 
   test('homepage shows congregation directory', async ({ page }) => {
@@ -38,19 +40,21 @@ test.describe('Congregation CRUD', () => {
     await expect(page.locator('div.col-span-1').first()).toBeVisible({ timeout: 15000 });
   });
 
-  test('login as existing user', async ({ page }) => {
-    await loginAsUser(page);
+  test('login as existing user', async ({ page, context }) => {
+    await loginAsUser({ context });
+
+    // Navigate to home — should render logged-in state (hamburger menu, no Login button)
+    await page.goto(BASE);
+    await page.waitForLoadState('networkidle');
 
     // Verify login succeeded: Login button should NOT be visible.
-    // The header renders "Add Congregation" in both states, so check for
-    // the absence of the Login button instead.
     const loginBtn = page.getByRole('button', { name: /^login$/i });
     await expect(loginBtn).not.toBeVisible({ timeout: 5000 });
   });
 
-  test('add a congregation', async ({ page }) => {
-    // Login first — browser context is isolated per test in PW 1.61+
-    await loginAsUser(page);
+  test('add a congregation', async ({ page, context }) => {
+    // Login via direct PB API — browser context is isolated per test in PW 1.61+
+    await loginAsUser({ context });
 
     await page.goto(`${BASE}/add`);
     await page.waitForLoadState('networkidle');

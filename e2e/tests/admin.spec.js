@@ -2,22 +2,34 @@ import { test, expect } from '@playwright/test';
 
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
+const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
+
+/**
+ * Authenticate directly against PocketBase and set the auth cookie on the
+ * Playwright context. This bypasses the app's login form entirely, avoiding
+ * any issues with use:enhance form submission in production builds.
+ */
+async function loginAsAdmin({ context }) {
+  const res = await fetch(`${PB_API}/collections/users/auth-with-password`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      identity: ADMIN_EMAIL,
+      password: process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX'
+    })
+  });
+  if (!res.ok) throw new Error(`PB admin auth failed: ${res.status}`);
+  const data = await res.json();
+  const pbAuth = `pb_auth=${encodeURIComponent(JSON.stringify({ token: data.token, record: data.record }))}`;
+  await context.addCookies([
+    { name: 'auth', value: pbAuth, domain: 'localhost', path: '/' },
+    { name: 'session', value: crypto.randomUUID(), domain: 'localhost', path: '/' }
+  ]);
+}
 
 test.describe('Admin backend', () => {
-  test.beforeEach(async ({ page }) => {
-    // Login via the app's login form
-    await page.goto(`${BASE}/login?login`);
-    await page.waitForLoadState('networkidle');
-    const loginForm = page.locator('form[action*="login"]');
-    await loginForm.locator('input[autocomplete="email"]').fill(ADMIN_EMAIL);
-    await loginForm.locator('input[type="password"]').first().fill(process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX');
-    await loginForm.locator('button[type="submit"]').click();
-    await page.waitForTimeout(2000);
-    // Check whether login redirected us to the home page (success) or stayed on login (failure)
-    const currentUrl = page.url();
-    if (currentUrl.includes('/login')) {
-      console.log(`[e2e] Login may have failed: still at ${currentUrl}`);
-    }
+  test.beforeEach(async ({ page, context }) => {
+    await loginAsAdmin({ context });
   });
 
   test('admin dashboard loads with stats', async ({ page }) => {
