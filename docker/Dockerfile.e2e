@@ -4,11 +4,9 @@
 FROM node:22 AS builder
 WORKDIR /app
 
-# Build-time secrets for translation fetch
+# Build-time secrets for translation fetch (not persisted via ENV)
 ARG PB_API_TOKEN
 ARG PB_URL
-ENV PB_API_TOKEN=${PB_API_TOKEN}
-ENV PB_URL=${PB_URL}
 
 # Install pnpm and copy lockfiles first for better cache use
 COPY package.json pnpm-lock.yaml ./
@@ -18,7 +16,8 @@ RUN npm install -g pnpm@10
 COPY . .
 # CI=true prevents ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY in non-TTY envs
 # Note: do NOT use --no-optional — Rolldown (Vite 8) needs its native binding installed
-RUN CI=true pnpm install && CI=true pnpm build
+# PB_API_TOKEN/PB_URL passed inline (not via ENV) to avoid persisting in image
+RUN CI=true PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} pnpm install && CI=true PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} pnpm build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app

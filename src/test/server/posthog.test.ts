@@ -118,6 +118,7 @@ describe('server/posthog', () => {
     });
     // Should not throw — error is caught internally
     capture('user-1', 'test-event');
+    expect(ph().capture).toHaveBeenCalledTimes(1);
   });
 
   it('captureException handles PostHog client error gracefully', async () => {

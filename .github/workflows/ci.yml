@@ -294,10 +294,13 @@ jobs:
           password: ${{ secrets.CONTAINER_TOKEN }}
 
       - name: Build app image
+        env:
+          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
+          PB_URL: https://api.opencommunities.info
         run: |
           docker build \
-            --build-arg PB_API_TOKEN=${{ secrets.PB_API_TOKEN }} \
-            --build-arg PB_URL=https://api.opencommunities.info \
+            --build-arg PB_API_TOKEN="${PB_API_TOKEN}" \
+            --build-arg PB_URL="${PB_URL}" \
             -f docker/Dockerfile.e2e \
             -t opencommunities-e2e .
 
