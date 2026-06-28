@@ -4,6 +4,7 @@ import { fail } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
 
+import { env } from '$env/dynamic/private';
 import type { UsersRecord } from '$lib/pocketbase.d';
 
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
@@ -121,6 +122,12 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      // CI debug: log the exact failure to Docker container stdout
+      log.error('login action failed', {
+        status: err.status,
+        message: err.message,
+        url: env.PUBLIC_API_ENDPOINT
+      });
       if (isFunction(capture)) {
         await capture(client?.id, 'login_failure', {
           error_status: err.status,

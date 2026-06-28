@@ -104,6 +104,8 @@ describe('login +page.server — actions', () => {
       capture: () => {},
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+      log: { debug: () => {}, error: () => {}, warn: () => {} },
       validate: async () => ({
         data: { email: 'wrong@example.com', password: 'wrongpass' },
         valid: true
