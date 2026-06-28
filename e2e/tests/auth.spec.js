@@ -130,11 +130,10 @@ test.describe('auth flows', () => {
   test('request reset -> receives reset email and sets new password', async ({ page }) => {
     const PB_API = process.env.PB_API ?? 'http://127.0.0.1:8090/api';
 
-    // Request password reset via PB API directly (app's use:enhance doesn't work)
-    const token = await getSuperuserToken(PB_API, PB_ADMIN, PB_PASSWORD);
+    // Request password reset via PB API directly (public endpoint, no auth needed)
     const resetReqRes = await fetch(`${PB_API}/collections/users/request-password-reset`, {
       body: JSON.stringify({ email }),
-      headers: { 'content-type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'content-type': 'application/json' },
       method: 'POST'
     });
     if (!resetReqRes.ok) throw new Error(`Password reset request failed: ${resetReqRes.status}`);
@@ -144,19 +143,13 @@ test.describe('auth flows', () => {
     expect(resetMsg).toBeTruthy();
 
     const messageId = resetMsg.ID || resetMsg.id;
-    const rawResetRes = await fetch(`${MAILPIT_API}/message/${messageId}/raw`, {
+    // Use the JSON endpoint (decoded HTML) instead of raw to avoid QP encoding issues
+    const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`, {
       headers: { accept: 'application/json' }
     });
-    let rawReset = rawResetRes.ok ? await rawResetRes.text() : '';
-    if (!rawReset) {
-      const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`, {
-        headers: { accept: 'application/json' }
-      });
-      if (detailRes.ok) {
-        const detail = await detailRes.json();
-        rawReset = detail.HTML || detail.Text || JSON.stringify(detail);
-      }
-    }
+    if (!detailRes.ok) throw new Error(`Reset detail fetch failed: ${detailRes.status}`);
+    const detail = await detailRes.json();
+    const rawReset = detail.HTML || detail.Text || JSON.stringify(detail);
 
     const resetMatch =
       rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) ||
