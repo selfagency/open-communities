@@ -191,9 +191,9 @@ test.describe('auth flows', () => {
       { name: 'session', value: crypto.randomUUID(), domain: 'localhost', path: '/' }
     ]);
 
-    // Navigate to home — should show logged-in state
+    // Navigate to home — should show logged-in state (no Login button in nav)
     await page.goto(BASE);
     await page.waitForLoadState('networkidle');
-    await expect(page.locator('text=Logout')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('nav').getByRole('button', { name: /^login$/i })).not.toBeVisible({ timeout: 10000 });
   });
 });
