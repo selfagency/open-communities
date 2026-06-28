@@ -58,13 +58,16 @@ describe('server route modules smoke tests', () => {
   it('logout action clears cookies', async () => {
     const mod = await import('../../routes/logout/+page.server');
     const cookies = {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       delete: () => {},
       get: () => '',
       getAll: () => [{}] as { name: string; value: string }[],
       serialize: () => '',
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       set: () => {}
     };
     const locals = {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       api: { authStore: { clear: () => {} } },
       cookieOpts: {}
     } as App.Locals;

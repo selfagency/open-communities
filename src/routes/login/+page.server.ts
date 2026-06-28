@@ -4,6 +4,7 @@ import { fail } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
 
+import { env } from '$env/dynamic/private';
 import type { UsersRecord } from '$lib/pocketbase.d';
 
 import { loginSchema, tokenSchema } from '$lib/schemas/login';
@@ -43,6 +44,7 @@ export const actions = {
         });
       }
 
+      // biome-ignore lint/style/useDefaultSwitchClause: all cases handled explicitly
       switch (form.data.type) {
         case 'requestReset':
           await api.collection('users').requestPasswordReset(form.data.email as string, { fetch });
@@ -103,8 +105,8 @@ export const actions = {
           await api
             .collection('users')
             .authWithPassword(form.data.email as string, form.data.password as string, { fetch })
-        ).record
-      ) as UsersRecord;
+        ).record as unknown as Record<string, unknown>
+      ) as unknown as UsersRecord;
 
       // Use the same cookieOpts from locals to ensure consistency
       cookies.set('auth', api.authStore.exportToCookie(), cookieOpts);
@@ -120,6 +122,19 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
+      // CI debug: log the exact failure to Docker container stdout
+      log.error('login action failed', {
+        status: err.status,
+        message: err.message,
+        url: env.PUBLIC_API_ENDPOINT
+      });
+      if (isFunction(capture)) {
+        await capture(client?.id, 'login_failure', {
+          error_status: err.status,
+          error_message: (err.message ?? '').slice(0, 120),
+          error_url: event.url.pathname
+        });
+      }
       if (isFunction(captureException)) {
         await captureException(error, client?.id);
       }
@@ -127,6 +142,7 @@ export const actions = {
       return fail(err.status ?? 401, { form });
     }
   },
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   logout: async (event) => {
     const { cookies, locals } = event;
 

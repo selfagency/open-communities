@@ -1,0 +1,74 @@
+<script lang="ts">
+import { toast } from 'svelte-sonner';
+import { superForm } from 'sveltekit-superforms';
+import CongregationCard from '$lib/components/account/congregation-card.svelte';
+import DangerZone from '$lib/components/account/danger-zone.svelte';
+import PasswordCard from '$lib/components/account/password-card.svelte';
+import ProfileForm from '$lib/components/account/profile-form.svelte';
+import { m } from '$lib/paraglide/messages';
+
+let { data } = $props();
+
+let saved = $state(false);
+let unlinked = $state(false);
+
+// svelte-ignore state_referenced_locally
+const form = superForm(data.form as any, {
+  onUpdated({ form: f }) {
+    saved = true;
+    if (f.valid) {
+      toast.success('Profile updated');
+    }
+  }
+});
+const { enhance, form: formData, errors, capture, restore } = form;
+
+export const snapshot = { capture, restore };
+
+function handleUnlink() {
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
+  return async ({ result }: { result: { type: string } }) => {
+    if (result.type === 'success') {
+      unlinked = true;
+    }
+  };
+}
+
+function handleDelete() {
+  // biome-ignore lint/suspicious/noAlert: intentional debug utility
+  if (!confirm('Are you sure? This cannot be undone.')) {
+    return;
+  }
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
+  return async ({ result }: { result: { type: string } }) => {
+    if (result.type === 'success') {
+      window.location.href = '/';
+    }
+  };
+}
+</script>
+
+<svelte:head>
+  <title>Account &middot; {m.title()}</title>
+</svelte:head>
+
+<div class="mx-auto max-w-2xl space-y-8 py-8">
+  <div>
+    <h1 class="text-2xl font-semibold">{m.account()}</h1>
+    <p class="text-muted-foreground text-sm">{m.accountDescription()}</p>
+  </div>
+
+  {#if unlinked}
+    <div class="bg-primary/10 text-primary rounded-lg border p-4 text-sm">{m.unlinkedNotice()}</div>
+  {/if}
+
+  <form action="?/update" method="POST" use:enhance>
+    <ProfileForm {form} {saved} />
+    <div class="mt-6">
+      <PasswordCard {form} />
+    </div>
+  </form>
+
+  <CongregationCard congregation={data.user?.congregation ?? ''} onUnlink={handleUnlink} />
+  <DangerZone />
+</div>

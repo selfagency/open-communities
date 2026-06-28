@@ -1,23 +1,20 @@
 <script lang="ts">
-  import Loading from "@lucide/svelte/icons/loader-circle";
-  import { m } from "$lib/paraglide/messages";
+import Loading from '@tabler/icons-svelte/icons/loader';
+import { m } from '$lib/paraglide/messages';
 
-  const {
-    class: className = "",
-    variant = "default",
-  }: { class?: string; variant?: "default" | "full" } = $props();
+const { class: className = '', variant = 'default' }: { class?: string; variant?: 'default' | 'full' } = $props();
 
-  import { fade } from "svelte/transition";
+import { fade } from 'svelte/transition';
 </script>
 
 <div
-  class:min-h-[50vh]={variant === "full"}
+  aria-label={m.loading()}
   class={`my-4 flex h-full w-full flex-col items-center justify-center ${className}`}
   role="status"
-  aria-label={m.loading()}
+  class:min-h-[50vh]={variant === "full"}
   in:fade={{ duration: 300 }}
   out:fade={{ duration: 300 }}
 >
-  <Loading class="animate-spin" aria-hidden="true" />
+  <Loading aria-hidden="true" class="animate-spin" />
   <span class="sr-only">{m.loading()}</span>
 </div>

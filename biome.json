@@ -1,10 +1,13 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "ignoreUnknown": false,
     "includes": [
-      "**",
       "!**/pnpm-lock.yaml",
       "!**/package-lock.json",
       "!**/yarn.lock",
@@ -19,7 +22,9 @@
       "!.github/codepilot-instructions.md",
       "!src/lib/assets/**",
       "!src/app.css",
-      "!static/**"
+      "!static/**",
+      "!**/flex-render.svelte",
+      "!docker"
     ]
   },
   "formatter": {
@@ -48,7 +53,11 @@
         "useConst": "error",
         "useExponentiationOperator": "error",
         "useLiteralEnumMembers": "error",
-        "noNonNullAssertion": "warn"
+        "noNonNullAssertion": "warn",
+        "noExportedImports": "off",
+        "noParameterProperties": "off",
+        "useFilenamingConvention": "off",
+        "noNestedTernary": "off"
       },
       "complexity": {
         "noForEach": "warn",
@@ -77,10 +86,17 @@
         "noShadowRestrictedNames": "warn",
         "noUnsafeDeclarationMerging": "warn",
         "useBiomeIgnoreFolder": "off",
-        "useIterableCallbackReturn": "warn"
+        "useIterableCallbackReturn": "warn",
+        "noSkippedTests": "off"
       },
       "security": {
         "noGlobalEval": "warn"
+      },
+      "performance": {
+        "noBarrelFile": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "off"
       }
     }
   },
@@ -149,7 +165,21 @@
       }
     },
     {
-      "includes": ["src/lib/components/**", "src/test/stubs/**", "src/routes/**/*.svelte"],
+      "includes": ["**/pb_hooks/*.js", "docker/**", "e2e/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/lib/components/**",
+        "src/test/stubs/**",
+        "src/routes/**/*.svelte"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -160,18 +190,23 @@
             "noExplicitAny": "off",
             "noGlobalAssign": "off",
             "noShadowRestrictedNames": "off",
-            "noDoubleEquals": "off"
+            "noDoubleEquals": "off",
+            "noAssignInExpressions": "warn",
+            "noDocumentCookie": "warn"
           },
           "style": {
             "noNonNullAssertion": "off",
-            "useTemplate": "off"
+            "useTemplate": "off",
+            "noNestedTernary": "off"
           },
           "a11y": {
             "useButtonType": "off",
             "noLabelWithoutControl": "off",
             "useValidAriaValues": "off",
             "useSemanticElements": "off",
-            "noSvgWithoutTitle": "off"
+            "noSvgWithoutTitle": "off",
+            "useValidAnchor": "warn",
+            "noStaticElementInteractions": "warn"
           }
         }
       }
@@ -179,6 +214,15 @@
   ],
   "assist": {
     "enabled": true,
-    "actions": { "source": { "organizeImports": "on" } }
-  }
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/svelte",
+    "ultracite/biome/vitest"
+  ]
 }

@@ -36,6 +36,7 @@ describe('routes/add +page.server', () => {
 
     const locals = {
       api,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
       validate: async () => ({})
     };

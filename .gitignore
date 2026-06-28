@@ -118,6 +118,7 @@ package
 package/
 e2e/pocketbase/pb_data/auxiliary.*
 e2e/pocketbase/pb_data/data.db-*
+docker/pocketbase/pb_data/
 pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 src/lib/paraglide
@@ -142,3 +143,6 @@ yarn-error.log*
 skills-lock.json
 posthog-setup-report.md
 e2e/pocketbase/pb_data/data.db
+.fallow/
+
+# Docker infrastructure

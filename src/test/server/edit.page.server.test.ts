@@ -25,8 +25,11 @@ function makeApiStub(overrides: Record<string, unknown> = {}) {
     }),
     createBatch: () => ({
       collection: () => ({
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         create: () => {},
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         delete: () => {},
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         update: () => {}
       }),
       send: async () => ({})
@@ -40,7 +43,9 @@ const server = setupServer(
   http.get(`${PB}/api/collections/congregationMeta/records/:id`, ({ params }) => {
     const id = params.id as string;
     const record = [congregationVisible, congregationHidden, congregationOtherOwner].find((c) => c.id === id);
-    if (!record) return HttpResponse.json(null, { status: 404 });
+    if (!record) {
+      return HttpResponse.json(null, { status: 404 });
+    }
     return HttpResponse.json(record);
   })
 );
@@ -66,6 +71,7 @@ describe('edit +page.server — load', () => {
     // API stub that throws a PB-like error for nonexistent IDs
     const api = makeApiStub({
       collection: () => ({
+        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
         getFirstListItem: async () => {
           const err = new Error('Not found') as any;
           err.status = 404;
@@ -86,8 +92,11 @@ describe('edit +page.server — delete action', () => {
     const api = makeApiStub({ authStore: { record: { admin: false, congregation: 'c1', id: 'u1' } } });
     const locals = {
       api,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       log: { error: () => {} },
       validate: async () => ({ data: { id: 'c1' }, valid: true })
     } as any;
@@ -116,8 +125,11 @@ describe('edit +page.server — submit action', () => {
     const api = makeApiStub({ authStore: { record: { admin: false, congregation: 'other_cong', id: 'u1' } } });
     const locals = {
       api,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       log: { error: () => {} },
       validate: async () => ({
         data: { id: 'cong_002', name: 'Test' },

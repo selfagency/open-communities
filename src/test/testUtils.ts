@@ -4,12 +4,15 @@
 export function createMockRequestEvent(overrides: Partial<Record<string, unknown>> = {}) {
   return {
     cookies: {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       delete: () => {},
       get: () => '',
       getAll: () => [],
       serialize: () => '',
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       set: () => {}
     },
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     depends: () => {},
     fetch,
     getClientAddress: () => '127.0.0.1',
@@ -22,6 +25,7 @@ export function createMockRequestEvent(overrides: Partial<Record<string, unknown
     platform: {},
     request: new Request('http://localhost/'),
     route: { id: '/' },
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setHeaders: () => {},
     tracing: { enabled: false, root: {} as any, current: {} as any },
     untrack: <T>(fn: () => T) => fn(),
@@ -50,7 +54,9 @@ export function getUserStore() {
     const store = {
       set(next: unknown) {
         _value = next;
-        for (const s of subs) s(_value);
+        for (const s of subs) {
+          s(_value);
+        }
       },
       subscribe(fn: (v: unknown) => void) {
         subs.add(fn);
@@ -59,7 +65,9 @@ export function getUserStore() {
       },
       update(updater: (v: unknown) => unknown) {
         _value = updater(_value);
-        for (const s of subs) s(_value);
+        for (const s of subs) {
+          s(_value);
+        }
       }
     };
     (globalThis as Record<string, unknown>).__TEST_USER_STORE__ = store;
@@ -87,21 +95,28 @@ export const mockSveltekitSuperforms = {
 
     return {
       allErrors: () => [],
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
       constraints: {},
       delayed,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       enhance: () => {},
       errors: errorsStore,
       form: formStore,
       isTainted: () => false,
       message,
       posted,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       reset: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       restore: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       submit: () => {},
       submitting,
       timeout,
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       validate: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       validateField: () => {}
     };
   },
@@ -119,7 +134,7 @@ export function makeMockFormProps(formData = {}, errors = {}) {
 
   const base = mockSveltekitSuperforms.superForm(formData);
   // shallow clone and set helpful properties
-  const f = Object.assign({}, base);
+  const f = { ...base };
   (f as any).formId = 'test';
   (f as any).options = {};
   (f as any).tainted = false;

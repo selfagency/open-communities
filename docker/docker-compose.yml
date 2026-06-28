@@ -1,0 +1,51 @@
+services:
+  pocketbase:
+    build:
+      context: ./pocketbase
+      dockerfile: Dockerfile
+      args:
+        PB_VERSION: '0.29.2'
+        PB_ARCH: 'amd64'
+    image: opencommunities-pocketbase:local
+    ports:
+      - '8090:8090'
+    volumes:
+      - ./pocketbase/pb_data:/pb_data
+      - ./pb_migrations:/pb_data/pb_migrations
+    depends_on:
+      - mailpit
+    networks:
+      - dev
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    networks:
+      - dev
+
+  cap:
+    image: tiago2/cap:latest
+    environment:
+      - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
+      - REDIS_URL=redis://dragonfly:6379
+    ports:
+      - '3001:3000'
+    depends_on:
+      - dragonfly
+    volumes:
+      - ./cap/data:/usr/src/app/.data
+    networks:
+      - dev
+
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.26.2
+    ports:
+      - '6379:6379'
+    networks:
+      - dev
+
+networks:
+  dev:
+    driver: bridge

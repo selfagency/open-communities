@@ -8,9 +8,11 @@ describe('Contact component', () => {
   it('renders the contact title', () => {
     render(Contact, { congregations: [], data: {}, snapshot: {} });
     // test environment returns message keys via the messages stub (e.g. "contact_contactUs")
+    // biome-ignore lint/performance/useTopLevelRegex: inline regex in test
     expect(screen.getByText(/contact_contactUs/i)).toBeInTheDocument();
   });
 
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit signature
   it('shows a mailto link when name and email are provided', async () => {
     // Provide initial data so the component fills form values
     const data = { email: 'bob@example.com', name: 'Bob' };

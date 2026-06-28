@@ -38,7 +38,7 @@ describe('Congregation segment (behavior)', () => {
     );
     unsub();
 
-    expect((latest as unknown as Record<string, unknown>).name).toBe('My Congregation');
+    expect((latest as unknown as unknown as Record<string, unknown>).name).toBe('My Congregation');
 
     // If a second input exists, treat it as contactUrl and test trimming
     if (textInputs.length >= 2) {
@@ -54,7 +54,7 @@ describe('Congregation segment (behavior)', () => {
       );
       unsub2();
 
-      expect((latest2 as unknown as Record<string, unknown>).contactUrl).toBe('https://example.org/path');
+      expect((latest2 as unknown as unknown as Record<string, unknown>).contactUrl).toBe('https://example.org/path');
     }
 
     unmount(instance);

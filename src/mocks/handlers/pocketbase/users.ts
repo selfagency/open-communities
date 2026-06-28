@@ -23,6 +23,7 @@ export const userHandlers = [
   }),
 
   // POST /api/collections/users/auth-refresh
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   http.post(`${PB}/api/collections/users/auth-refresh`, async ({ request }) => {
     const auth = request.headers.get('Authorization') ?? '';
     // Extract user from the auth context — in production PB reads the JWT.
@@ -100,6 +101,7 @@ export const userHandlers = [
     let items = allUsers;
 
     // Handle PB filter syntax: email={:email}
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const emailRe = /email\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
     const emailMatch = emailRe.exec(filter);
     if (emailMatch) {

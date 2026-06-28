@@ -9,17 +9,17 @@ import Title from './card-title.svelte';
 export {
   Action,
   Action as CardAction,
-  Content as CardContent,
   Content,
-  Description as CardDescription,
+  Content as CardContent,
   Description,
-  Footer as CardFooter,
+  Description as CardDescription,
   Footer,
-  Header as CardHeader,
+  Footer as CardFooter,
   Header,
+  Header as CardHeader,
+  Root,
   //
   Root as Card,
-  Root,
-  Title as CardTitle,
-  Title
+  Title,
+  Title as CardTitle
 };

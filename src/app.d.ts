@@ -12,6 +12,7 @@ import type { DefaultSchema, LoginSchema, TokenSchema, UserSchema } from '$lib/s
 /* endregion imports */
 
 declare global {
+  // biome-ignore lint/style/noNamespace: required by SvelteKit
   namespace App {
     interface Error {
       code?: string;
@@ -23,7 +24,7 @@ declare global {
 
     interface Locals {
       api: TypedPocketBase;
-      capture: (user: string | undefined, event: string) => Promise<void>;
+      capture: (user: string | undefined, event: string, properties?: Record<string, unknown>) => Promise<void>;
       captureException: (error: unknown, user?: string, other?: Record<string, number | string>) => Promise<void>;
       cookieOpts: SerializeOptions & { path: string };
       error?: string;

@@ -1,12 +1,14 @@
 <script lang="ts">
-  import * as FormPrimitive from 'formsnap';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as FormPrimitive from 'formsnap';
 
-  import { cn, type WithoutChild } from '$lib/utils.js';
+import { cn, type WithoutChild } from '$lib/utils.js';
 
-  let { class: className, ref = $bindable(null), ...restProps }: WithoutChild<FormPrimitive.LegendProps> = $props();
+let { class: className, ref = $bindable(null), ...restProps }: WithoutChild<FormPrimitive.LegendProps> = $props();
 </script>
 
 <FormPrimitive.Legend
-  bind:ref
   class={cn('data-[fs-error]:text-destructive text-sm leading-none font-medium', className)}
-  {...restProps} />
+  bind:ref
+  {...restProps}
+/>

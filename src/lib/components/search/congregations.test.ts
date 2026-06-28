@@ -8,45 +8,49 @@ import { FakeSearch, setSearchTermsSpy, toggleLocationSpy } from '$test/stubs/fa
 vi.mock('$lib/api', () => ({ api: {} }));
 
 // make radashi.sleep immediate while keeping other utilities
-vi.mock('radashi', () => {
-  return {
-    alphabetical: vi.fn((arr, fn) =>
-      [...arr].sort((a, b) => {
-        const aVal = fn ? fn(a) : a;
-        const bVal = fn ? fn(b) : b;
-        return String(aVal).localeCompare(String(bVal));
-      })
-    ),
-    assign: vi.fn((target, ...sources) => Object.assign({}, target, ...sources)),
-    isArray: vi.fn((val) => Array.isArray(val)),
-    isEmpty: vi.fn((val) => {
-      if (val == null) return true;
-      if (Array.isArray(val)) return val.length === 0;
-      if (typeof val === 'object') return Object.keys(val).length === 0;
-      return false;
-    }),
-    omit: vi.fn((obj, keys) => {
-      const result = { ...obj };
-      for (const key of keys as string[]) {
-        if (Object.hasOwn(result, key)) {
-          delete result[key];
-        }
+vi.mock('radashi', () => ({
+  alphabetical: vi.fn((arr, fn) =>
+    [...arr].sort((a, b) => {
+      const aVal = fn ? fn(a) : a;
+      const bVal = fn ? fn(b) : b;
+      return String(aVal).localeCompare(String(bVal));
+    })
+  ),
+  assign: vi.fn((target, ...sources) => Object.assign({}, target, ...sources)),
+  isArray: vi.fn((val) => Array.isArray(val)),
+  isEmpty: vi.fn((val) => {
+    if (val == null) {
+      return true;
+    }
+    if (Array.isArray(val)) {
+      return val.length === 0;
+    }
+    if (typeof val === 'object') {
+      return Object.keys(val).length === 0;
+    }
+    return false;
+  }),
+  omit: vi.fn((obj, keys) => {
+    const result = { ...obj };
+    for (const key of keys as string[]) {
+      if (Object.hasOwn(result, key)) {
+        delete result[key];
       }
-      return result;
-    }),
-    shake: vi.fn((obj) => {
-      const result: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(obj)) {
-        if (value != null && value !== '' && value !== false) {
-          result[key] = value;
-        }
+    }
+    return result;
+  }),
+  shake: vi.fn((obj) => {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value != null && value !== '' && value !== false) {
+        result[key] = value;
       }
-      return result;
-    }),
-    sleep: vi.fn(() => Promise.resolve()),
-    unique: vi.fn((arr) => [...new Set(arr)])
-  };
-});
+    }
+    return result;
+  }),
+  sleep: vi.fn(() => Promise.resolve()),
+  unique: vi.fn((arr) => [...new Set(arr)])
+}));
 
 // We will mock $lib/search to return instances of our FakeSearch
 vi.mock('$lib/search', () => ({ Search: FakeSearch }));
@@ -87,7 +91,9 @@ function wireFakeSearch() {
       fn(currentResults);
       return () => {
         const i = subscribers.indexOf(fn);
-        if (i !== -1) subscribers.splice(i, 1);
+        if (i !== -1) {
+          subscribers.splice(i, 1);
+        }
       };
     },
     value: currentResults as CongregationMetaRecord[]
@@ -102,7 +108,7 @@ function wireFakeSearch() {
 
 beforeEach(() => {
   // signal components to skip artificial delays during tests
-  (globalThis as Record<string, unknown>).__TEST__ = true;
+  (globalThis as unknown as Record<string, unknown>).__TEST__ = true;
   currentResults = [];
   setSearchTermsSpy.mockClear();
   toggleLocationSpy.mockClear();

@@ -1,18 +1,47 @@
 /* region imports */
 import { error } from '@sveltejs/kit';
 import { isFunction } from 'radashi';
+import type { PagesRecord } from '$lib/pocketbase.d';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
+import type { PageServerLoad } from './$types';
 /* endregion imports */
 
-export async function load({ fetch, locals, params }) {
+export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) => {
   const { api, captureException } = locals;
+  const lang = cookies.get('lang') || 'en';
 
   try {
+    const page = await withRetry(() =>
+      api.collection('pages').getFirstListItem(api.filter('slug={:slug}', { slug: params.slug }), { fetch })
+    );
+
+    // Fetch the matching page variant for the current language
+    let variant: Record<string, unknown> | null = null;
+    try {
+      variant = await withRetry(() =>
+        api
+          .collection('pageVariants')
+          .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { pageId: page.id, lang }), { fetch })
+      );
+    } catch {
+      // No variant for this language — try English fallback
+      try {
+        variant = await withRetry(() =>
+          api
+            .collection('pageVariants')
+            .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { pageId: page.id, lang: 'en' }), {
+              fetch
+            })
+        );
+      } catch {
+        // No variant at all — render page without localized content
+      }
+    }
+
     return {
-      content: await withRetry(() =>
-        api.collection('pages').getFirstListItem(api.filter('slug={:slug}', { slug: params.slug }), { fetch })
-      )
+      page: page as PagesRecord,
+      variant: variant as Record<string, unknown> | null
     };
   } catch (err) {
     if (isFunction(captureException)) {
@@ -34,6 +63,6 @@ export async function load({ fetch, locals, params }) {
 
     // PB unreachable after retries — graceful degradation
     log.warn('PocketBase unavailable for slug page', err);
-    return { content: undefined };
+    return { page: undefined, variant: null };
   }
-}
+};

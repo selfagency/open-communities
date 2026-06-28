@@ -1,8 +1,9 @@
 <script lang="ts">
-  import Services from '$lib/components/form/segments/services.svelte';
-  import * as Accordion from '$lib/components/ui/accordion';
-  export let props: any = {};
-  const childProps: any = props;
+import Services from '$lib/components/form/segments/services.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+export let props: any = {};
+const childProps: any = props;
 </script>
 
 <Accordion.Root type="single">

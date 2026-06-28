@@ -1,4 +1,5 @@
 export const actions = {
+  // biome-ignore lint/suspicious/useAwait: SvelteKit async signature
   logout: async (event) => {
     const { cookies, locals } = event;
 

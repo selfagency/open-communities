@@ -1,20 +1,25 @@
 <script lang="ts">
-  /* region imports */
-  import * as Accordion from '$lib/components/ui/accordion';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
+/* region imports */
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, view = $bindable() } = $props();
+/* region variables */
+// props
+// fallow-ignore-next-line unused-component-props -- shared by all form segments
+let { errors, form, formData, view = $bindable() } = $props();
 </script>
 
 <Accordion.Item value="contact">
   <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-    <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+    <div
+      class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+    >
       <span>{m.contact()}</span>
       {#if $errors.contactName || $errors.contactEmail}
         <span class="text-destructive">*</span>

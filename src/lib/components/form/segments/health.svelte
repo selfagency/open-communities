@@ -1,31 +1,32 @@
 <script lang="ts">
-  /* region imports */
+/* region imports */
 
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import * as RadioGroup from '$lib/components/ui/radio-group';
-  import { m } from '$lib/paraglide/messages';
-  import { valueSet } from '$lib/utils';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as RadioGroup from '$lib/components/ui/radio-group';
+import { m } from '$lib/paraglide/messages';
+import { valueSet } from '$lib/utils';
 
-  import Required from '../required.svelte';
+import Required from '../required.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+/* region variables */
+// props
+let { errors, form, formData, view = $bindable() } = $props();
 
-  // constants
-  const hasHealth: boolean = $derived(valueSet($formData.health));
-  /* endregion variables */
+// constants
+const hasHealth: boolean = $derived(valueSet($formData.health));
+/* endregion variables */
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
-  /* endregion methods */
+/* region methods */
+const fixType = (input: any) => input as unknown as Record<string, unknown> & { _errors?: string[] | undefined };
+/* endregion methods */
 </script>
 
 <!-- health -->
@@ -33,7 +34,9 @@
   {@const healthErrors = fixType($errors.health)}
   <Accordion.Item value="health">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.health()}</span>
         {#if !hasHealth || healthErrors}
           <span class="text-destructive">*</span>
@@ -48,21 +51,21 @@
               {m.health_extended()}
               <Required set={hasHealth} />
             </div>
-            <RadioGroup.Root {...props} bind:value={$formData.health.protocol} required>
+            <RadioGroup.Root {...props} required bind:value={$formData.health.protocol}>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="maskingRequired" id="maskingRequired" />
+                <RadioGroup.Item id="maskingRequired" value="maskingRequired" />
                 <Form.Label for="maskingRequired">{m.health_maskingRequired()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="maskingRecommended" id="maskingRecommended" />
+                <RadioGroup.Item id="maskingRecommended" value="maskingRecommended" />
                 <Form.Label for="maskingRecommended">{m.health_maskingRecommended()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="noGuidelines" id="noGuidelines" />
+                <RadioGroup.Item id="noGuidelines" value="noGuidelines" />
                 <Form.Label for="noGuidelines">{m.health_noGuidelines()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="other" id="other" />
+                <RadioGroup.Item id="other" value="other" />
                 <Form.Label for="other">{m.other()}</Form.Label>
               </div>
             </RadioGroup.Root>
@@ -84,8 +87,12 @@
         <span class="mt-4 block text-xs text-destructive">{m.requiredResponse()}</span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'security')}>
-          {m.next()} →
+        <Button
+          onclick={() => { view = 'security'; document.querySelector('[data-value="security"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
+        >
+          {m.next()}
+          →
         </Button>
       </div>
     </Accordion.Content>

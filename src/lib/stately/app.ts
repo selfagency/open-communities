@@ -1,7 +1,7 @@
 import { createLocalStorageAdapter, createMemoryStorageAdapter, defineStore } from '@selfagency/stately';
 import { browser } from '$app/environment';
 
-export type AppState = {
+export interface AppState {
   form?: { hasErrors: boolean; success: boolean };
   isMobile: boolean;
   lang: string;
@@ -10,7 +10,7 @@ export type AppState = {
   offsetHeight: number;
   offsetWidth: number;
   showIntro: boolean;
-};
+}
 
 /**
  * Global application state store.
@@ -70,9 +70,11 @@ export const useAppStore = defineStore('app', {
      */
     setState(partial: Partial<AppState>) {
       for (const [key, value] of Object.entries(partial)) {
-        if (key === '__proto__' || key === 'constructor') continue;
+        if (key === '__proto__' || key === 'constructor') {
+          continue;
+        }
         if (this[key as keyof AppState] !== value) {
-          (this as unknown as Record<string, unknown>)[key] = value;
+          (this as unknown as unknown as Record<string, unknown>)[key] = value;
         }
       }
     }

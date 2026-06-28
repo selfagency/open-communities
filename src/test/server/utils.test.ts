@@ -21,6 +21,7 @@ vi.mock('$lib/paraglide/messages', () => ({
 }));
 
 vi.mock('$lib/server/logger', () => ({
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
   log: { debug: () => {}, error: () => {} }
 }));
 
@@ -47,10 +48,7 @@ describe('validateCaptcha', () => {
   it('returns false when captcha verification API fails', async () => {
     // Mock fetch to return unsuccessful response
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = async () =>
-      new Response(JSON.stringify({ success: false }), {
-        headers: { 'content-type': 'application/json' }
-      });
+    globalThis.fetch = async () => Response.json({ success: false });
 
     const form = { data: { captcha: 'some-token' }, valid: true } as any;
     const result = await validateCaptcha(form);
@@ -61,15 +59,37 @@ describe('validateCaptcha', () => {
 
   it('returns true when captcha verification succeeds', async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = async () =>
-      new Response(JSON.stringify({ success: true }), {
-        headers: { 'content-type': 'application/json' }
-      });
+    globalThis.fetch = async () => Response.json({ success: true });
 
     const form = { data: { captcha: 'valid-token' }, valid: true } as any;
     const result = await validateCaptcha(form);
     expect(result).toBe(true);
 
     globalThis.fetch = originalFetch;
+  });
+
+  it('returns true in test mode (NODE_ENV=test) without captcha token', async () => {
+    // Set NODE_ENV to test
+    const privateMod = await import('$env/dynamic/private');
+    const originalEnv = privateMod.env.NODE_ENV;
+    privateMod.env.NODE_ENV = 'test';
+
+    const form = { data: {}, valid: true } as any;
+    const result = await validateCaptcha(form);
+    expect(result).toBe(true);
+
+    privateMod.env.NODE_ENV = originalEnv;
+  });
+
+  it('returns true in test mode with captcha token', async () => {
+    const privateMod = await import('$env/dynamic/private');
+    const originalEnv = privateMod.env.NODE_ENV;
+    privateMod.env.NODE_ENV = 'test';
+
+    const form = { data: { captcha: 'any-token' }, valid: true } as any;
+    const result = await validateCaptcha(form);
+    expect(result).toBe(true);
+
+    privateMod.env.NODE_ENV = originalEnv;
   });
 });

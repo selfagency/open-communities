@@ -22,7 +22,9 @@ export function superForm(initialData = {}) {
     /** @param {any} next */
     set(next) {
       value = next;
-      for (const s of subscribers) s(value);
+      for (const s of subscribers) {
+        s(value);
+      }
     },
     /** @param {(v: any) => void} fn */
     subscribe(fn) {
@@ -33,28 +35,37 @@ export function superForm(initialData = {}) {
     /** @param {(v: any) => any} updater */
     update(updater) {
       value = updater(value);
-      for (const s of subscribers) s(value);
+      for (const s of subscribers) {
+        s(value);
+      }
     }
   };
 
   return {
     capture: () => ({}),
     constraints: {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     enhance: () => {},
     errors: {},
     form: store,
     formId: 'test-form',
     message: '',
     restore: () => ({}),
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setConstraints: () => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setErrors: () => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setMessage: () => {},
     /** @param {any} el */
     submit: (el) => {
-      // If a test installs a spy on globalThis, call it so tests can assert.
-      // @ts-expect-error
-      if (globalThis.__TEST_SUPERFORM_SUBMIT__) globalThis.__TEST_SUPERFORM_SUBMIT__(el);
+      // @ts-expect-error: globalThis custom test property
+      if (globalThis.__TEST_SUPERFORM_SUBMIT__) {
+        // @ts-expect-error: globalThis custom test property
+        globalThis.__TEST_SUPERFORM_SUBMIT__(el);
+      }
       // increment an observable counter too
+      // @ts-expect-error: globalThis custom test property
       globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
     }
   };

@@ -1,4 +1,5 @@
 /* region imports */
+// biome-ignore lint/performance/noNamespaceImport: Zod namespace convention
 import * as z from 'zod';
 
 import { m } from '$lib/paraglide/messages';
@@ -11,33 +12,30 @@ import {
   securitySchema as security,
   servicesSchema as services
 } from './children';
+
 /* endregion imports */
+
+// Lazy message helper — defers m.xxx() evaluation to avoid
+// SvelteKit post-build analysis crashes when paraglide isn't initialized
+function Lazy(fn: () => string): string {
+  try {
+    return fn();
+  } catch {
+    return '';
+  }
+}
 
 export const deleteSchema = z.object({
   id: z.string().refine((value) => !!value, {
-    message: m.thingRequired({ thing: '`id`' })
+    message: Lazy(() => m.thingRequired({ thing: '`id`' }))
   })
 });
-
-export type DeleteSchema = z.infer<typeof deleteSchema>;
-
-export const transferSchema = z.object({
-  email: z.email().refine((value) => !!value, {
-    message: m.thingRequired({ thing: m.email() })
-  }),
-  id: z.string().refine((value) => !!value, {
-    message: m.thingRequired({ thing: '`id`' })
-  }),
-  owner: z.string().optional()
-});
-
-export type TransferSchema = z.infer<typeof transferSchema>;
 
 export const defaultSchema = z.object({
   accessibility,
   captcha: z.string().nullable().optional(),
   clergy: z.string().refine((value) => !!value, {
-    message: m.thingRequired({ thing: m.clergy_clergy() })
+    message: Lazy(() => m.thingRequired({ thing: m.clergy_clergy() }))
   }),
   contactEmail: z.preprocess((val) => (val === '' ? undefined : val), z.email().optional()),
   contactName: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
@@ -62,7 +60,7 @@ export const defaultSchema = z.object({
   ),
   fit,
   flavor: z.string().refine((value) => !!value, {
-    message: m.thingRequired({ thing: m.flavor() })
+    message: Lazy(() => m.thingRequired({ thing: m.flavor() }))
   }),
   health,
   id: z.string().optional(),
@@ -72,7 +70,7 @@ export const defaultSchema = z.object({
     state: z.string().optional()
   }),
   name: z.string().refine((value) => !!value, {
-    message: m.thingRequired({ thing: m.name() })
+    message: Lazy(() => m.thingRequired({ thing: m.name() }))
   }),
   notes: z.string().optional(),
   owner: z.preprocess((val) => (val === '' ? undefined : val), z.string().optional()),
@@ -82,5 +80,5 @@ export const defaultSchema = z.object({
   visible: z.boolean()
 });
 
+// fallow-ignore-next-line unused-type -- used via app.d.ts
 export type DefaultSchema = z.infer<typeof defaultSchema>;
-export type FormData = z.infer<typeof defaultSchema>;

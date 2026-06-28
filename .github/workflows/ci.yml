@@ -1,21 +1,130 @@
 name: CI
 
 on:
+  push:
+    branches: ['main']
   pull_request:
     branches: ['main']
-  workflow_run:
-    workflows: ['Build']
-    types:
-      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  NODE_VERSION: '22.x'
+
 jobs:
-  test:
+  lint-and-typecheck:
+    name: Build & typecheck & lint
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-build-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-build-
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-build-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-build-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+        env:
+          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
+          PB_URL: https://api.opencommunities.info
+
+      - name: Type check
+        run: pnpm svelte-kit sync && pnpm svelte-check
+
+      - name: Lint
+        run: pnpm check
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: build/
+          if-no-files-found: error
+
+  fallow:
+    name: Fallow analysis
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-fallow-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-fallow-
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-fallow-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-fallow-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Fallow analysis
+        continue-on-error: true
+        uses: fallow-rs/fallow@de03f6ffd28d2d9cc487c31afd39bbc34d0d6d3d # v2
+        with:
+          format: sarif
+          comment: true
+          review-comments: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  unit-tests:
     name: Unit tests
-    if: ${{ github.event_name == 'pull_request' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     services:
       mailpit:
@@ -29,13 +138,12 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Enable pnpm (via Corepack)
         run: |
@@ -46,47 +154,29 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-unit-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-store-unit-
 
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-node-modules-unit-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
+            ${{ runner.os }}-node-modules-unit-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright
-        run: pnpm exec playwright install chromium --with-deps --only-shell
-
-      - name: Build application
-        run: pnpm build
-
-      - name: Upload build output
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: build/
-          if-no-files-found: error
+      - name: Generate SvelteKit types (required for tsconfig resolution)
+        run: pnpm svelte-kit sync
 
       - name: Run tests (vitest) with coverage
         id: test
         continue-on-error: true
         run: |
-          pnpm vitest run --coverage --coverage.enabled=true --reporter=junit --reporter=json --outputFile=test-results/junit.xml
+          pnpm vitest run --project server --coverage --coverage.enabled=true --reporter=junit --reporter=json
         env:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
@@ -135,30 +225,17 @@ jobs:
 
   e2e:
     name: E2E tests
-    needs: test
-    if: ${{ !cancelled() && needs.test.result != 'failure' }}
     runs-on: ubuntu-latest
-    services:
-      mailpit:
-        image: axllent/mailpit:latest
-        ports:
-          - 1025:1025
-          - 8025:8025
-      cap:
-        image: tiago2/cap:latest
-        ports:
-          - 3001:3000
     permissions:
       contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Enable pnpm (via Corepack)
         run: |
@@ -169,25 +246,25 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-store-e2e-
 
       - name: Cache node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-node-modules-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-node-modules-
+            ${{ runner.os }}-node-modules-e2e-
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-playwright-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-playwright-
+            ${{ runner.os }}-playwright-e2e-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -195,58 +272,96 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps --only-shell
 
-      - name: Download build output
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: build/
-
-      - name: Download PocketBase binary
+      - name: Start Docker Compose (PB, Mailpit, Cap, Dragonfly)
         run: |
-          PB_VERSION=0.29.2
-          mkdir -p .e2e
-          curl -fsSL -o .e2e/pb.zip "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip"
-          unzip -o .e2e/pb.zip -d .e2e
-          chmod +x .e2e/pocketbase
-
-      - name: Start PocketBase
-        run: |
-          nohup ./.e2e/pocketbase serve --http 127.0.0.1:8090 --dir e2e/pb_data > .e2e/pb.log 2>&1 &
-          timeout 30 bash -c 'until curl -f http://127.0.0.1:8090/api/health >/dev/null 2>&1; do sleep 1; done'
-          echo "PocketBase is ready"
+          docker compose -f docker/docker-compose.yml up -d
+          timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
+          echo "All services ready"
 
       - name: Bootstrap PocketBase
-        run: node e2e/scripts/bootstrap.mjs
+        run: node docker/scripts/bootstrap.mjs
         env:
           PUBLIC_API_ENDPOINT: http://localhost:8090
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
 
-      - name: Start preview server
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        if: github.event_name == 'push'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_TOKEN }}
+
+      - name: Build app image
+        env:
+          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
+          PB_URL: https://api.opencommunities.info
         run: |
-          nohup node build/index.js > .e2e/app.log 2>&1 &
-          timeout 30 bash -c 'until curl -f http://localhost:4173 >/dev/null 2>&1; do sleep 1; done'
-          echo "App is ready"
+          docker build \
+            --build-arg PB_API_TOKEN="${PB_API_TOKEN}" \
+            --build-arg PB_URL="${PB_URL}" \
+            -f docker/Dockerfile.e2e \
+            -t opencommunities-e2e .
+
+      - name: Push app image to GHCR (main only)
+        if: github.event_name == 'push'
+        run: |
+          docker tag opencommunities-e2e ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: Run app container
         env:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
-          NODE_ENV: test
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-          PORT: 4173
-          PUBLIC_API_ENDPOINT: http://localhost:8090
-          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
-          PUBLIC_HOSTNAME: http://localhost:4173
-          SMTP_HOST: localhost
-          SMTP_PORT: 1025
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
+        run: |
+          docker run -d --name opencommunities-e2e \
+            --network docker_dev \
+            -p 3000:3000 \
+            -e ADMIN_EMAIL="${ADMIN_EMAIL}" \
+            -e CAP_API_KEY="${CAP_API_KEY}" \
+            -e CAPTCHA_SITE_SECRET="OI1CeaaFu9cUe7yqDFqVqlG4NcPOFsPBX0iAqoH5ogQvuoKoov8w" \
+            -e NODE_ENV=test \
+            -e PB_TEST_ADMIN="${PB_TEST_ADMIN}" \
+            -e PB_TEST_PASSWORD="${PB_TEST_PASSWORD}" \
+            -e PORT=3000 \
+            -e PUBLIC_API_ENDPOINT=http://docker-pocketbase-1:8090 \
+            -e PUBLIC_CAPTCHA_ENDPOINT=http://localhost:3001 \
+            -e PUBLIC_CAPTCHA_SITE_KEY="de02608805" \
+            -e PUBLIC_HOSTNAME=http://localhost:3000 \
+            -e PUBLIC_POSTHOG_KEY="${PUBLIC_POSTHOG_KEY}" \
+            -e PUBLIC_POSTHOG_HOST="${PUBLIC_POSTHOG_HOST}" \
+            -e SMTP_HOST=mailpit \
+            -e SMTP_PORT=1025 \
+            opencommunities-e2e
+          timeout 30 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
+          echo "App container ready"
 
       - name: Run Playwright E2E
         env:
-          SMTP_HOST: 127.0.0.1
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+          SMTP_HOST: localhost
           SMTP_PORT: 1025
-          MAILPIT_API: http://127.0.0.1:8025/api/v1
-          PB_TEST_BASEURL: http://127.0.0.1:4173
-        run: pnpm exec playwright test --config e2e/playwright.config.mjs
+          MAILPIT_API: http://localhost:8025/api/v1
+          PB_TEST_BASEURL: http://localhost:3000
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+        run: pnpm exec playwright test --config e2e/playwright.config.cjs
+
+      - name: Docker Compose logs (on failure)
+        if: failure()
+        run: |
+          docker compose -f docker/docker-compose.yml logs --tail=50
+          echo "--- App container logs ---"
+          docker logs opencommunities-e2e 2>&1 || echo "No app logs available"
+
+      - name: Tear down Docker Compose
+        if: always()
+        run: docker compose -f docker/docker-compose.yml down -v
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
@@ -261,3 +376,43 @@ jobs:
         with:
           name: e2e-playwright-report
           path: e2e/playwright-report
+
+      - name: Run accessibility checks (pa11y-ci)
+        continue-on-error: true
+        id: pa11y
+        run: |
+          npx --yes pa11y-ci@latest --json > .e2e/pa11y-report.json 2>&1 || true
+          # Build summary
+          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
+          echo '| URL | Result |' >> .e2e/pa11y-summary.md
+          echo '|-----|--------|' >> .e2e/pa11y-summary.md
+          node -e "
+            const r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8'));
+            const results = r.results || r;
+            for (const [url, data] of Object.entries(results)) {
+              const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
+              const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
+              process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+            }
+          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
+          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Find or create pa11y PR comment
+        if: steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENT_ID=$(gh api "/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" --jq '.[] | select(.body | startswith("## ♿ Accessibility Report")) | .id' | head -1)
+          BODY=$(cat .e2e/pa11y-summary.md)
+          if [ -n "$COMMENT_ID" ]; then
+            gh api "/repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -X PATCH -f body="$BODY" > /dev/null
+          else
+            gh api "/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -X POST -f body="$BODY" > /dev/null
+          fi
+
+      - name: Upload pa11y report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa11y-report
+          path: .e2e/pa11y-report.json

@@ -8,13 +8,13 @@ import Index from './index.svelte';
 
 describe('Login index component', () => {
   // minimal shape matching the parts of SuperValidated used by the component/tests
-  type SuperStub = {
+  interface SuperStub {
     data: Record<string, unknown>;
     errors: Record<string, string[]>; // match ValidationErrors<any> type
     id: string;
     posted: boolean;
     valid: boolean;
-  };
+  }
   it('renders the login title by default', () => {
     const valid: SuperStub = { data: {}, errors: {}, id: 'test', posted: false, valid: true };
     render(Index, { data: valid, reset: valid });
@@ -35,6 +35,7 @@ describe('Login index component', () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
   });
 
+  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   it('shows loading when loadingSecondary is true', async () => {
     // set loading secondary to true
     setState({ loadingSecondary: true });

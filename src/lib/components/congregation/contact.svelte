@@ -1,21 +1,21 @@
 <script lang="ts">
-  /* region imports */
-  import EmailIcon from "@lucide/svelte/icons/mail";
+/* region imports */
+import EmailIcon from '@tabler/icons-svelte/icons/mail';
 
-  import { m } from "$lib/paraglide/messages";
+import { m } from '$lib/paraglide/messages';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    contactEmail,
-    contactName,
-  }: {
-    contactEmail?: string;
-    contactName?: string;
-  } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const {
+  contactEmail,
+  contactName
+}: {
+  contactEmail?: string;
+  contactName?: string;
+} = $props();
+/* endregion variables */
 </script>
 
 <div class="col-span-3 flex flex-row items-center justify-start">
@@ -24,8 +24,8 @@
 <div class="col-span-9 flex flex-row items-center justify-start">
   {#if contactEmail}
     <a
-      href="mailto:{contactEmail}"
       class="flex flex-row items-center justify-center space-x-1 hover:text-muted-foreground"
+      href="mailto:{contactEmail}"
     >
       <span><EmailIcon size="18" /></span>
       <span>

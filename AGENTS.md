@@ -7,10 +7,10 @@
 **Key technologies:**
 
 - SvelteKit 5 (adapter-node, standalone mode) + Svelte 5 runes
-- PocketBase 0.29.x (typed via `pocketbase-typegen`)
+- PocketBase 0.27.x SDK / 0.29.x server (typed via `pocketbase-typegen`, regenerate with `pnpm build:types`)
 - Tailwind CSS v4 (CSS-first, `@import "tailwindcss"`)
 - shadcn-svelte + Bits UI component library
-- TypeScript (strict mode, `noImplicitAny: false` — fix before adding new code)
+- TypeScript (strict mode, fully enabled)
 - Vitest (browser mode via Playwright) + Playwright E2E
 - Paraglide/Inlang for i18n
 - Zod 4 + Superforms + Formsnap for form validation
@@ -59,6 +59,15 @@ src/
 │   ├── login/            # Login/signup/verify
 │   ├── logout/           # Logout
 │   └── user/             # User settings (lang endpoint)
+├── admin/               # Admin dashboard, users, congregations, pages, translations
+│   ├── +page.svelte     # Dashboard with analytics (F-1: uses PocketBase views)
+│   ├── congregations/   # Congregation management
+│   ├── users/           # User management
+│   │   └── [id]/        # Edit user (admin/verified toggles)
+│   ├── pages/           # CMS page management
+│   │   ├── new/         # Create page
+│   │   └── [id]/        # Edit page
+│   └── translations/    # i18n string management
 └── test/                 # Test infrastructure
     ├── setupTest.ts      # Vitest setup (mocks SvelteKit $app, $env modules)
     ├── mocks/            # Mock implementations for $app, $env, superforms, logger
@@ -93,15 +102,21 @@ pnpm preview
 - **`.env.test`** — test environment (loaded by `pnpm test:unit`, `pnpm test:e2e`)
 - **`.env.e2e`** — E2E overrides (loaded alongside `.env.test` for E2E)
 
+`COOLIFY_URL` and `COOLIFY_TOKEN` for Coolify deployment webhook, `POSTHOG_CLI_API_KEY`/`POSTHOG_CLI_HOST_URL` for PostHog sourcemap injection
+
 Required variables in all env files:
 
 ```
 ADMIN_EMAIL=""
 CAP_API_KEY=""              # Cap captcha API key
 CAPTCHA_SITE_SECRET=""      # Cap site secret
+COOLIFY_URL=""              # Production: Coolify webhook URL
+COOLIFY_TOKEN=""            # Production: Coolify webhook token
 NODE_ENV="development"      # or "test"
 PB_TEST_ADMIN="admin@test.com"
 PB_TEST_PASSWORD="i3_NL-dfzzFt5TX"
+POSTHOG_CLI_API_KEY=""      # Production: PostHog sourcemap upload
+POSTHOG_CLI_HOST_URL=""     # Production: PostHog sourcemap upload
 PUBLIC_API_ENDPOINT="http://localhost:8090"
 PUBLIC_CAPTCHA_ENDPOINT="http://localhost:3001"
 PUBLIC_HOSTNAME="http://localhost:5173"  # 4173 for preview
@@ -121,7 +136,7 @@ pnpm deps:bootstrap    # Create superuser, import schema, seed data
 pnpm deps:reset        # Full wipe: down -v → up → bootstrap
 ```
 
-The bootstrap script (e2e/scripts/bootstrap.mjs):
+The bootstrap script (docker/scripts/bootstrap.mjs):
 - Extracts PB's installation token from startup logs
 - Imports all collections from `pb_schema.json` via `PUT /api/collections/import`
 - Seeds locations (countries/states/cities), test users, congregations (with child records), and static pages
@@ -300,14 +315,10 @@ cmds = [
 
 - **CSP** configured via `sveltekit-helmet` in `src/lib/server/security.ts` — staged rollout (report-only in dev, enforced in production)
 - **Auth cookies** are `httpOnly: true`, `sameSite: 'strict'`, `secure: !dev`
-- **SMTP** uses `rejectUnauthorized: true` with proper Port 465/587 negotiation
+- **SMTP** uses `rejectUnauthorized: true` with proper Port 465/587 negotiation (note: `rejectUnauthorized: false` may be needed for local development with Mailpit)
 - **Captcha validation** — `validateCaptcha()` returns a boolean; always check `if (!captchaValid) return fail(400, { form })`
 - **IDOR** — always verify `client.congregation === data.id` for non-admin mutations
-- **Auth cookies** are `httpOnly: false` and `secure` is commented out (known issue)
-- **SMTP** has `rejectUnauthorized: false` (known issue — needed for local Mailpit)
 - **PocketBase filter injection** — use `pb.filter(expr, params)` instead of string interpolation for all queries
-- **Captcha validation** — `validateCaptcha()` returns a boolean; always check `if (!captchaValid) return fail(400, { form })`
-- **IDOR** — always verify `client.congregation === data.id` for non-admin mutations
 - **Secrets** — never hardcode in workflow files; use GitHub Actions secrets
 - **`{@html}`** — sanitize with DOMPurify before rendering user-controlled content
 - **Email headers** — sanitize `\r\n` from user-controlled `name`/`email` before building SMTP headers
@@ -373,7 +384,7 @@ cmds = [
 | `tailwind-variants`                   | ^3.2.2   | Component variants             |
 | `tailwind-merge`                      | ^3.6.0   | Class merging                  |
 | `clsx`                                | ^2.1.1   | Class utilities                |
-| `@lucide/svelte`                      | ^1.0.1   | Icons                          |
+| `@tabler/icons-svelte`                    | ^3.44.0  | Icons                          |
 | `public-ip`                           | ^8.0.0   | Public IP detection            |
 | `fast-string-truncated-width`         | ^3.0.3   | String truncation              |
 | `@leeoniya/ufuzzy`                    | ^1.0.19  | Fuzzy search                   |
@@ -438,3 +449,128 @@ cmds = [
   - CSP allows `'unsafe-inline'` on style-src (required for Tailwind v4 runtime style injection)
   - `noImplicitAny: false` in tsconfig has been removed — strict mode is now fully enabled
   - Playwright 1.61 has a `Fatal Error: exe.match is not a function` on Node.js 22/pnpm — E2E tests may need `npx playwright install chromium`
+
+
+# Ultracite Code Standards
+
+This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
+
+## Quick Reference
+
+- **Format code**: `pnpm dlx ultracite fix`
+- **Check for issues**: `pnpm dlx ultracite check`
+- **Diagnose setup**: `pnpm dlx ultracite doctor`
+
+Biome (the underlying engine) provides robust linting and formatting. Most issues are automatically fixable.
+
+---
+
+## Core Principles
+
+Write code that is **accessible, performant, type-safe, and maintainable**. Focus on clarity and explicit intent over brevity.
+
+### Type Safety & Explicitness
+
+- Use explicit types for function parameters and return values when they enhance clarity
+- Prefer `unknown` over `any` when the type is genuinely unknown
+- Use const assertions (`as const`) for immutable values and literal types
+- Leverage TypeScript's type narrowing instead of type assertions
+- Use meaningful variable names instead of magic numbers - extract constants with descriptive names
+
+### Modern JavaScript/TypeScript
+
+- Use arrow functions for callbacks and short functions
+- Prefer `for...of` loops over `.forEach()` and indexed `for` loops
+- Use optional chaining (`?.`) and nullish coalescing (`??`) for safer property access
+- Prefer template literals over string concatenation
+- Use destructuring for object and array assignments
+- Use `const` by default, `let` only when reassignment is needed, never `var`
+
+### Async & Promises
+
+- Always `await` promises in async functions - don't forget to use the return value
+- Use `async/await` syntax instead of promise chains for better readability
+- Handle errors appropriately in async code with try-catch blocks
+- Don't use async functions as Promise executors
+
+### React & JSX
+
+- Use function components over class components
+- Call hooks at the top level only, never conditionally
+- Specify all dependencies in hook dependency arrays correctly
+- Use the `key` prop for elements in iterables (prefer unique IDs over array indices)
+- Nest children between opening and closing tags instead of passing as props
+- Don't define components inside other components
+- Use semantic HTML and ARIA attributes for accessibility:
+  - Provide meaningful alt text for images
+  - Use proper heading hierarchy
+  - Add labels for form inputs
+  - Include keyboard event handlers alongside mouse events
+  - Use semantic elements (`<button>`, `<nav>`, etc.) instead of divs with roles
+
+### Error Handling & Debugging
+
+- Remove `console.log`, `debugger`, and `alert` statements from production code
+- Throw `Error` objects with descriptive messages, not strings or other values
+- Use `try-catch` blocks meaningfully - don't catch errors just to rethrow them
+- Prefer early returns over nested conditionals for error cases
+
+### Code Organization
+
+- Keep functions focused and under reasonable cognitive complexity limits
+- Extract complex conditions into well-named boolean variables
+- Use early returns to reduce nesting
+- Prefer simple conditionals over nested ternary operators
+- Group related code together and separate concerns
+
+### Security
+
+- Add `rel="noopener"` when using `target="_blank"` on links
+- Avoid `dangerouslySetInnerHTML` unless absolutely necessary
+- Don't use `eval()` or assign directly to `document.cookie`
+- Validate and sanitize user input
+
+### Performance
+
+- Avoid spread syntax in accumulators within loops
+- Use top-level regex literals instead of creating them in loops
+- Prefer specific imports over namespace imports
+- Avoid barrel files (index files that re-export everything)
+- Use proper image components (e.g., Next.js `<Image>`) over `<img>` tags
+
+### Framework-Specific Guidance
+
+**Next.js:**
+- Use Next.js `<Image>` component for images
+- Use `next/head` or App Router metadata API for head elements
+- Use Server Components for async data fetching instead of async Client Components
+
+**React 19+:**
+- Use ref as a prop instead of `React.forwardRef`
+
+**Solid/Svelte/Vue/Qwik:**
+- Use `class` and `for` attributes (not `className` or `htmlFor`)
+
+---
+
+## Testing
+
+- Write assertions inside `it()` or `test()` blocks
+- Avoid done callbacks in async tests - use async/await instead
+- Don't use `.only` or `.skip` in committed code
+- Keep test suites reasonably flat - avoid excessive `describe` nesting
+
+## When Biome Can't Help
+
+Biome's linter will catch most issues automatically. Focus your attention on:
+
+1. **Business logic correctness** - Biome can't validate your algorithms
+2. **Meaningful naming** - Use descriptive names for functions, variables, and types
+3. **Architecture decisions** - Component structure, data flow, and API design
+4. **Edge cases** - Handle boundary conditions and error states
+5. **User experience** - Accessibility, performance, and usability considerations
+6. **Documentation** - Add comments for complex logic, but prefer self-documenting code
+
+---
+
+Most formatting and common issues are automatically fixed by Biome. Run `pnpm dlx ultracite fix` before committing to ensure compliance.

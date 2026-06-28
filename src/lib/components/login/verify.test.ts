@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   // clean up global
-  delete (globalThis as any).__TEST_SUPERFORM_SUBMIT__;
+  (globalThis as any).__TEST_SUPERFORM_SUBMIT__ = undefined;
   submitSpy.mockClear();
 });
 
@@ -67,6 +67,6 @@ describe('login/verify', () => {
     expect(form).toBeInstanceOf(HTMLFormElement);
 
     // wait for onMount logic to run and call submit (guard using observable counter)
-    await waitFor(() => expect(globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__).toBeGreaterThanOrEqual(1));
+    await waitFor(() => expect((globalThis as any).__TEST_SUPERFORM_SUBMIT_CALLS__).toBeGreaterThanOrEqual(1));
   });
 });

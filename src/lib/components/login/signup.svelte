@@ -1,51 +1,61 @@
 <script lang="ts">
+import { onMount } from 'svelte';
+import { fade } from 'svelte/transition';
+/* region imports */
+import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
+import { dev } from '$app/environment';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import Captcha from '$lib/components/global/captcha.svelte';
+import Verify from '$lib/components/login/verify.svelte';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Card from '$lib/components/ui/card';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
+import { state as appState, setState } from '$lib/stores';
 
-  import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  /* region imports */
-  import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
+// import { log } from '$lib/utils';
+/* endregion imports */
 
-  import { dev } from '$app/environment';
-  import { page } from '$app/state';
-  import Captcha from '$lib/components/global/captcha.svelte';
-  import Verify from '$lib/components/login/verify.svelte';
-  import * as Card from '$lib/components/ui/card';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
-  import { state as appState, setState } from '$lib/stores';
+/* region variables */
+// props
+let { form, verify }: { form: SuperForm<any>; verify: SuperValidated<any> } = $props();
 
-  // import { log } from '$lib/utils';
-  /* endregion imports */
+// locals
+let verified: boolean = $state(false);
+// let captchaLoaded: boolean = false;
 
-  /* region variables */
-  // props
-  let { form, verify }: { form: SuperForm<any>; verify: SuperValidated<any> } = $props();
+// constants
+const verifying = $derived(page.url.searchParams.has('verifyEmail'));
 
-  // locals
-  let verified: boolean = $state(false);
-  // let captchaLoaded: boolean = false;
+// Svelte 5: derive store values in script to avoid $ prefix in template
+let formSuccess = $derived(appState.form?.success);
+let redirectUrl = $derived(page.url.searchParams.get('redirect'));
 
-  // constants
-  const verifying = $derived(page.url.searchParams.has('verifyEmail'));
+// After successful signup, redirect if a redirect URL was provided
+$effect(() => {
+  if (formSuccess && redirectUrl) {
+    goto(redirectUrl);
+  }
+});
+/* endregion variables */
 
-  // Svelte 5: derive store values in script to avoid $ prefix in template
-  let formSuccess = $derived(appState.form?.success);
-  /* endregion variables */
+/* region form */
+// svelte-ignore state_referenced_locally
+// Intentional: form is initialized once from server data (not reactive to prop changes)
+const { enhance, form: formData } = form;
+/* endregion form */
 
-  /* region form */
-  // svelte-ignore state_referenced_locally
-  // Intentional: form is initialized once from server data (not reactive to prop changes)
-  const { enhance, form: formData } = form;
-  /* endregion form */
-
-  /* region lifecycle */
-  onMount(async () => {
-    setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
-    $formData.emailVisibility = true;
-    $formData.lang = 'en';
-  });
-  /* endregion lifecycle */
+/* region lifecycle */
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
+onMount(async () => {
+  setState({ form: { hasErrors: false, success: false }, loadingSecondary: false });
+  $formData.emailVisibility = true;
+  $formData.lang = 'en';
+});
+/* endregion lifecycle */
 </script>
 
 <Card.Root>
@@ -57,7 +67,7 @@
   </Card.Header>
   <Card.Content>
     {#if verifying && !verified}
-      <Verify data={verify} bind:verified token={page.url.searchParams.get('verifyEmail')} />
+      <Verify data={verify} token={page.url.searchParams.get('verifyEmail')} bind:verified />
     {:else if verified}
       <span in:fade={{ delay: 200, duration: 100 }} out:fade={{ delay: 0, duration: 100 }}>
         {m.verified_extended()}
@@ -70,17 +80,18 @@
       <div class="mb-4">{m.signUpInfo()}</div>
 
       <form
-        method="POST"
         action="?/signup"
-        use:enhance
         class="space-y-2"
+        method="POST"
+        use:enhance
         in:fade={{ delay: 200, duration: 100 }}
-        out:fade={{ delay: 0, duration: 100 }}>
+        out:fade={{ delay: 0, duration: 100 }}
+      >
         <Form.Field {form} name="name">
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input {...props} bind:value={$formData.name} autocomplete="name" />
+              <Input {...props} autocomplete="name" bind:value={$formData.name} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -90,7 +101,7 @@
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} bind:value={$formData.email} autocomplete="email" />
+              <Input {...props} autocomplete="email" bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -100,7 +111,7 @@
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.password()}</Form.Label>
-              <Input {...props} bind:value={$formData.password} type="password" autocomplete="new-password" />
+              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.password} />
             {/snippet}
           </Form.Control>
           <Form.Description>
@@ -113,7 +124,7 @@
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.confirmPassword()}</Form.Label>
-              <Input {...props} bind:value={$formData.passwordConfirm} type="password" autocomplete="new-password" />
+              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.passwordConfirm} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -121,7 +132,12 @@
 
         <Captcha {form} />
 
-        <div class="mt-4"><Form.Button>{m.signUp()}</Form.Button></div>
+        <div class="mt-4 flex items-center justify-between">
+          <Form.Button>{m.signUp()}</Form.Button>
+          <a class="text-primary text-sm font-semibold underline-offset-4 hover:underline" href="/login?login"
+            >{m.alreadyHaveAccount()}</a
+          >
+        </div>
       </form>
 
       {#if dev}

@@ -6,6 +6,7 @@ import { initState, setState } from '$lib/stores';
 
 let _initialized = false;
 
+// biome-ignore lint/suspicious/useAwait: SvelteKit load function signature
 export const load = async ({ data }) => {
   if (browser) {
     if (!_initialized) {

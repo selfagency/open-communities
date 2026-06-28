@@ -672,7 +672,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"],
+    "indexes": [
+      "CREATE INDEX `idx_mfas_collectionRef_recordRef` ON `_mfas` (collectionRef,recordRef)"
+    ],
     "system": true
   },
   {
@@ -775,7 +777,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"],
+    "indexes": [
+      "CREATE INDEX `idx_otps_collectionRef_recordRef` ON `_otps` (collectionRef, recordRef)"
+    ],
     "system": true
   },
   {
@@ -922,7 +926,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_CgYTNd6` ON `accessibility` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1244,7 +1250,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_tWZWjtd` ON `congregations` (\n  `name`,\n  `city`\n)"
+    ],
     "system": false
   },
   {
@@ -1516,7 +1524,12 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["maskingRequired", "maskingRecommended", "noGuidelines", "other"]
+        "values": [
+          "maskingRequired",
+          "maskingRecommended",
+          "noGuidelines",
+          "other"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -1566,7 +1579,160 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_f2FfndJ` ON `health` (`congregation`)"
+    ],
+    "system": false
+  },
+  {
+    "id": "pbc_2472443737",
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "@request.auth.admin = true ",
+    "updateRule": "@request.auth.admin = true",
+    "deleteRule": "@request.auth.admin = true",
+    "name": "pageVariants",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text724990059",
+        "max": 0,
+        "min": 0,
+        "name": "title",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "convertURLs": false,
+        "hidden": false,
+        "id": "editor4274335913",
+        "maxSize": 0,
+        "name": "content",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "editor"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1843675174",
+        "max": 0,
+        "min": 0,
+        "name": "description",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1272794934",
+        "max": 0,
+        "min": 0,
+        "name": "imageAlt",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1877985714",
+        "max": 0,
+        "min": 0,
+        "name": "imageCaption",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select3571151285",
+        "maxSelect": 1,
+        "name": "language",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "select",
+        "values": [
+          "en",
+          "de",
+          "es",
+          "fr",
+          "he",
+          "hu",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "uk"
+        ]
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "qdpun4yrifka7lx",
+        "hidden": false,
+        "id": "relation336246304",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "page",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [],
     "system": false
   },
   {
@@ -1648,27 +1814,45 @@
       },
       {
         "hidden": false,
-        "id": "0vxu5mkf",
+        "id": "file3309110367",
         "maxSelect": 1,
-        "name": "lang",
+        "maxSize": 0,
+        "mimeTypes": [],
+        "name": "image",
         "presentable": false,
-        "required": true,
-        "system": false,
-        "type": "select",
-        "values": ["en", "de", "es", "fr", "he"]
-      },
-      {
-        "cascadeDelete": false,
-        "collectionId": "qdpun4yrifka7lx",
-        "hidden": false,
-        "id": "ado6jnjl",
-        "maxSelect": 2147483647,
-        "minSelect": 0,
-        "name": "sisters",
-        "presentable": false,
+        "protected": false,
         "required": false,
         "system": false,
-        "type": "relation"
+        "thumbs": [],
+        "type": "file"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1272794934",
+        "max": 0,
+        "min": 0,
+        "name": "imageAlt",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text1877985714",
+        "max": 0,
+        "min": 0,
+        "name": "imageCaption",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
       },
       {
         "hidden": false,
@@ -1749,7 +1933,13 @@
         "required": false,
         "system": false,
         "type": "select",
-        "values": ["free", "fixedPrice", "slidingScale", "suggestedDonation", "other"]
+        "values": [
+          "free",
+          "fixedPrice",
+          "slidingScale",
+          "suggestedDonation",
+          "other"
+        ]
       },
       {
         "autogeneratePattern": "",
@@ -1799,7 +1989,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_JDxbAHO` ON `registration` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -1937,7 +2129,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_0tsHPYJ` ON `security` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2057,7 +2251,9 @@
         "type": "autodate"
       }
     ],
-    "indexes": ["CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_AXw1vhQ` ON `services` (`congregation`)"
+    ],
     "system": false
   },
   {
@@ -2174,6 +2370,190 @@
     "system": false
   },
   {
+    "id": "zazkgi402rwfnc2",
+    "listRule": "@request.auth.admin = true",
+    "viewRule": "@request.auth.admin = true",
+    "createRule": "@request.auth.admin = true",
+    "updateRule": "@request.auth.admin = true",
+    "deleteRule": "@request.auth.admin = true",
+    "name": "translations",
+    "type": "base",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_translations_key",
+        "max": 128,
+        "min": 1,
+        "name": "key",
+        "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select_translations_locale",
+        "maxSelect": 1,
+        "name": "locale",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "select",
+        "values": [
+          "en",
+          "de",
+          "es",
+          "fr",
+          "he",
+          "hu",
+          "nl",
+          "pl",
+          "pt",
+          "ru",
+          "uk"
+        ]
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_translations_value",
+        "max": 0,
+        "min": 0,
+        "name": "value",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_translations_key_locale` ON `translations` (`key`, `locale`)"
+    ],
+    "system": false
+  },
+  {
+    "id": "pbc_2065122259",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "citiesByQty",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_eJKJ",
+        "max": 0,
+        "min": 0,
+        "name": "city_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_rpt2",
+        "max": 0,
+        "min": 0,
+        "name": "state_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_yPoB",
+        "max": 0,
+        "min": 0,
+        "name": "state_code",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2843984708",
+        "max": null,
+        "min": null,
+        "name": "congregation_count",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    ci.id as id,\n    ci.name as city_name,\n    s.name as state_name,\n    s.code as state_code,\n    COUNT(c.id) as congregation_count\nFROM \n    cities ci\nLEFT JOIN congregations c ON c.city = ci.id\nLEFT JOIN states s ON ci.state = s.id\nGROUP BY \n    ci.id, ci.name, s.name, s.code\nHAVING \n    COUNT(c.id) > 0\nORDER BY \n    congregation_count DESC, ci.name\n"
+  },
+  {
     "id": "o7pypf0j70kmhet",
     "listRule": "",
     "viewRule": "",
@@ -2200,7 +2580,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_rR8n",
+        "id": "_clone_5gDO",
         "max": 0,
         "min": 0,
         "name": "name",
@@ -2214,7 +2594,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_sfaK",
+        "id": "_clone_64CO",
         "max": 0,
         "min": 0,
         "name": "notes",
@@ -2227,7 +2607,7 @@
       },
       {
         "hidden": false,
-        "id": "_clone_whPG",
+        "id": "_clone_Fxku",
         "maxSelect": 1,
         "name": "denomination",
         "presentable": false,
@@ -2250,7 +2630,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_ZFhp",
+        "id": "_clone_9TZl",
         "max": 0,
         "min": 0,
         "name": "clergy",
@@ -2264,7 +2644,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_NP1U",
+        "id": "_clone_HHoV",
         "max": 0,
         "min": 0,
         "name": "flavor",
@@ -2278,7 +2658,7 @@
       {
         "autogeneratePattern": "",
         "hidden": false,
-        "id": "_clone_LcSC",
+        "id": "_clone_xmJ7",
         "max": 0,
         "min": 0,
         "name": "contactName",
@@ -2292,7 +2672,7 @@
       {
         "exceptDomains": null,
         "hidden": false,
-        "id": "_clone_oB3Q",
+        "id": "_clone_KdHW",
         "name": "contactEmail",
         "onlyDomains": null,
         "presentable": false,
@@ -2303,7 +2683,7 @@
       {
         "exceptDomains": null,
         "hidden": false,
-        "id": "_clone_Z1ns",
+        "id": "_clone_zkWt",
         "name": "contactUrl",
         "onlyDomains": null,
         "presentable": false,
@@ -2313,7 +2693,7 @@
       },
       {
         "hidden": false,
-        "id": "_clone_N3Ly",
+        "id": "_clone_XUOH",
         "name": "visible",
         "presentable": false,
         "required": false,
@@ -2407,5 +2787,464 @@
     "indexes": [],
     "system": false,
     "viewQuery": "SELECT \n    c.id,\n    c.name,\n    c.notes,\n    c.denomination,\n    c.clergy,\n    c.flavor,\n    c.contactName,\n    c.contactEmail,\n    c.contactUrl,\n    c.visible,\n    u.id as owner,\n      json_object(\n        'city', json_object('id', city.id, 'name', city.name, 'longitude', city.longitude, 'latitude', city.latitude),\n        'state', json_object('id', state.id, 'name', state.name, 'code', state.code, 'longitude', state.longitude, 'latitude', state.latitude),\n        'country', json_object('id', country.id, 'name', country.name, 'code', country.code, 'longitude', country.longitude, 'latitude', country.latitude)\n    ) AS location,\n    json_object(\n        'id', a.id,\n        'online_liveCaptions', a.online_liveCaptions,\n        'online_automatedCaptions', a.online_automatedCaptions,\n        'online_asl', a.online_asl,\n        'inPerson_eva', a.inPerson_eva,\n        'inPerson_asl', a.inPerson_asl,\n        'inPerson_adaAll', a.inPerson_adaAll,\n        'inPerson_adaSome', a.inPerson_adaSome,\n        'other', a.other,\n        'otherText', a.otherText\n    ) AS accessibility,\n    json_object(\n        'id', f.id,\n        'publicStatement', f.publicStatement,\n        'clergyMember', f.clergyMember,\n        'multipleClergyMembers', f.multipleClergyMembers,\n        'other', f.other,\n        'otherText', f.otherText,\n        'flag', f.flag\n    ) AS fit,\n    json_object(\n        'id', r.id,\n        'email', r.email,\n        'url', r.url,\n        'registrationType', r.registrationType,\n        'otherText', r.otherText\n    ) AS registration,\n    json_object(\n        'id', h.id,\n        'protocol', h.protocol,\n        'otherText', h.otherText\n    ) AS health,\n    json_object(\n      'id', sc.id,\n      'localPolice', sc.localPolice,\n      'privateSecurityArmed', sc.privateSecurityArmed,\n      'privateSecurityUnarmed', sc.privateSecurityUnarmed,\n      'clergyArmed', sc.clergyArmed,\n      'congregantsArmed', sc.congregantsArmed,\n      'noFirearms', sc.noFirearms\n    ) as security,\n    json_object(\n        'id', sv.id,\n        'inPerson', sv.inPerson,\n        'hybrid', sv.hybrid,\n        'onlineOnly', sv.onlineOnly,\n        'offsite', sv.offsite,\n        'other', sv.other,\n        'otherText', sv.otherText\n    ) AS services\nFROM \n    congregations c\nLEFT JOIN countries country ON c.country = country.id\nLEFT JOIN states state ON c.state = state.id\nLEFT JOIN cities city ON c.city = city.id\nLEFT JOIN accessibility a ON c.id = a.congregation\nLEFT JOIN fit f ON c.id = f.congregation\nLEFT JOIN registration r ON c.id = r.congregation\nLEFT JOIN health h ON c.id = h.congregation\nLEFT JOIN services sv ON c.id = sv.congregation\nLEFT JOIN security sc ON c.id = sc.congregation\nLEFT JOIN users u ON u.congregation = c.id;"
+  },
+  {
+    "id": "pbc_2331436009",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "countriesByQty",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_fqm6",
+        "max": 0,
+        "min": 0,
+        "name": "country_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_6Ft0",
+        "max": 0,
+        "min": 0,
+        "name": "country_code",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_7q3n",
+        "max": 0,
+        "min": 0,
+        "name": "country_flag",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2843984708",
+        "max": null,
+        "min": null,
+        "name": "congregation_count",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    co.id as id,\n    co.name as country_name,\n    co.code as country_code,\n    co.flag as country_flag,\n    COUNT(c.id) as congregation_count\nFROM \n    countries co\nLEFT JOIN congregations c ON c.country = co.id\nGROUP BY \n    co.id, co.name, co.code, co.flag\nHAVING \n    COUNT(c.id) > 0\nORDER BY \n    congregation_count DESC, co.name\n"
+  },
+  {
+    "id": "pbc_106475140",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "statesByQty",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_Nwzd",
+        "max": 0,
+        "min": 0,
+        "name": "state_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_p1B2",
+        "max": 0,
+        "min": 0,
+        "name": "state_code",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "_clone_nmqK",
+        "max": 0,
+        "min": 0,
+        "name": "country_name",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2843984708",
+        "max": null,
+        "min": null,
+        "name": "congregation_count",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    s.id as id,\n    s.name as state_name,\n    s.code as state_code,\n    co.name as country_name,\n    COUNT(c.id) as congregation_count\nFROM \n    states s\nLEFT JOIN congregations c ON c.state = s.id\nLEFT JOIN countries co ON s.country = co.id\nGROUP BY \n    s.id, s.name, s.code, co.name\nHAVING \n    COUNT(c.id) > 0\nORDER BY \n    congregation_count DESC, s.name\n"
+  },
+  {
+    "id": "pbc_4060801132",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "totalCountries",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number3787364283",
+        "max": null,
+        "min": null,
+        "name": "total_countries",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    'countries_total' as id,\n    COUNT(DISTINCT c.country) as total_countries\nFROM \n    congregations c\nWHERE \n    c.country IS NOT NULL\n"
+  },
+  {
+    "id": "pbc_2253637087",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "totalStates",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number2544318433",
+        "max": null,
+        "min": null,
+        "name": "total_states",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    'states_total' as id,\n    COUNT(DISTINCT c.state) as total_states\nFROM \n    congregations c\nWHERE \n    c.state IS NOT NULL\n"
+  },
+  {
+    "id": "pbc_1858864121",
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "name": "totalCities",
+    "type": "view",
+    "fields": [
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 0,
+        "min": 0,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number290034301",
+        "max": null,
+        "min": null,
+        "name": "total_cities",
+        "onlyInt": false,
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "number"
+      }
+    ],
+    "indexes": [],
+    "system": false,
+    "viewQuery": "SELECT \n    'cities_total' as id,\n    COUNT(DISTINCT c.city) as total_cities\nFROM \n    congregations c\nWHERE \n    c.city IS NOT NULL\n"
+  },
+  {
+    "id": "9sm9xec58uye3zk",
+    "name": "audit_logs",
+    "type": "base",
+    "system": false,
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "84igsfms",
+        "maxSelect": 1,
+        "name": "event_type",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "select",
+        "values": [
+          "create",
+          "update",
+          "delete",
+          "create_request",
+          "update_request",
+          "delete_request",
+          "auth"
+        ]
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "mb0prsje",
+        "max": 0,
+        "min": 0,
+        "name": "collection_name",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "bty0os6g",
+        "max": 0,
+        "min": 0,
+        "name": "record_id",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "cascadeDelete": false,
+        "collectionId": "_pb_users_auth_",
+        "hidden": false,
+        "id": "s63115dv",
+        "maxSelect": 1,
+        "minSelect": 0,
+        "name": "user",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "relation"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "eaedzols",
+        "max": 0,
+        "min": 0,
+        "name": "request_ip",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "albsjqxe",
+        "max": 0,
+        "min": 0,
+        "name": "request_url",
+        "pattern": "",
+        "presentable": false,
+        "primaryKey": false,
+        "required": false,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "jf6c2rrm",
+        "name": "timestamp",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "date"
+      },
+      {
+        "hidden": false,
+        "id": "ltytys4z",
+        "maxSize": 2000000,
+        "name": "before_changes",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "hidden": false,
+        "id": "h8vk8kkn",
+        "maxSize": 2000000,
+        "name": "after_changes",
+        "presentable": false,
+        "required": false,
+        "system": false,
+        "type": "json"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": false,
+        "type": "autodate"
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_audit_collection_name ON audit_logs (collection_name)",
+      "CREATE INDEX idx_audit_record_id ON audit_logs (record_id)",
+      "CREATE INDEX idx_audit_timestamp ON audit_logs (timestamp)",
+      "CREATE INDEX idx_audit_event_type ON audit_logs (event_type)"
+    ]
   }
 ]

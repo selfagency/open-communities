@@ -1,15 +1,14 @@
 <script lang="ts">
+import { m } from '$lib/paraglide/messages';
+/* region imports */
+import type { FitRecord } from '$lib/pocketbase.d';
 
-  import { m } from '$lib/paraglide/messages';
-  /* region imports */
-  import type { FitRecord } from '$lib/pocketbase.d';
+/* endregion imports */
 
-  /* endregion imports */
-
-  /* region variables */
-  // props
-  const { fit }: { fit: FitRecord } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const { fit }: { fit: FitRecord } = $props();
+/* endregion variables */
 </script>
 
 <div class="col-span-3">

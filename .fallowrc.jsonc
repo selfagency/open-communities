@@ -1,0 +1,238 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": ["src/app.html"],
+  "duplicates": {
+    // Hide pair-only clones; focus on widespread copy-paste
+    // worth refactoring. Lower to 2 to report every duplicate pair.
+    "minOccurrences": 3,
+    "ignore": [
+      // Pre-existing: analytics card blocks for visitors/pageviews/sessions
+      "src/lib/components/admin/analytics-section.svelte",
+      // Pre-existing: TanStack Table cell columnHelper.accessor() patterns
+      "src/lib/components/congregations/congregation-list.svelte",
+      "src/lib/components/pages/page-list.svelte",
+      "src/lib/components/users/user-list.svelte",
+      // Phase 2.2 — repetitive mock helpers in test files are expected
+      "src/lib/components/admin/page-editor-base.test.ts",
+      "src/lib/components/admin/page-editor-image.test.ts"
+    ]
+  },
+  "health": {
+    // Pre-existing Svelte template complexity — unavoidable in long HTML layouts
+    "ignore": [
+      "src/routes/admin/translations/+page.svelte",
+      "src/routes/admin/stats/+server.ts",
+      "src/lib/components/admin/analytics-section.svelte",
+      "src/lib/components/admin/stat-cards.svelte",
+      "src/lib/components/congregation/congregation.svelte",
+      "src/lib/components/congregations/congregation-list.svelte",
+      "src/lib/components/global/menu.svelte",
+      "src/lib/components/global/progress.svelte",
+      "src/lib/components/pages/page-list.svelte",
+      "src/lib/components/users/user-list.svelte",
+      // Pre-existing complexity in hooks
+      "src/hooks.server.ts",
+      // Complexity in standalone Docker/script helpers (excluded by ignorePatterns)
+      "docker/helpers/mailpit.js",
+      "scripts/migrate-translations.mjs",
+      // Phase 0.3 — high-CRAP (≥100) functions accepted as refactor targets
+      "src/routes/edit/+page.server.ts",
+      "src/routes/add/+page.server.ts",
+      "src/routes/admin/pages/[id]/+page.server.ts",
+      "src/lib/components/form/segments/congregation.svelte",
+      "src/lib/components/congregation/tile.svelte",
+      "src/lib/components/form/form.svelte",
+      "src/lib/components/admin/page-editor.svelte",
+      "src/lib/components/congregation/health.svelte",
+      "src/lib/components/congregation/accessibility.svelte",
+      // Test files — large describe blocks + mock helpers naturally exceed thresholds
+      "src/test/server/logger.test.ts",
+      "src/test/server/rate-limit.test.ts",
+      // Phase 2.1 — extracted sub-components with naturally complex templates
+      "src/lib/components/admin/page-editor-variant.svelte",
+      "src/lib/components/admin/page-editor-image.svelte",
+      "src/lib/components/congregation/accessibility-mini.svelte",
+      "src/lib/components/congregation/accessibility-full.svelte",
+      // Phase 2.2 — component test files with large describe/mock blocks
+      "src/lib/components/admin/page-editor-base.test.ts",
+      "src/lib/components/admin/page-editor-image.test.ts",
+      "src/lib/components/admin/page-editor-variant.test.ts",
+      "src/lib/components/congregation/accessibility-mini.test.ts",
+      "src/lib/components/congregation/accessibility-full.test.ts",
+      "src/lib/components/form/form-alerts.test.ts",
+      "src/lib/components/form/form-footer.test.ts",
+      "src/lib/components/form/form-alerts.svelte"
+    ]
+  },
+  "ignorePatterns": [
+    // Test screen-shot output artifacts
+    "**/__screenshots__/**",
+    // shadcn-svelte generated UI components
+    "src/lib/components/ui/**",
+    // Paraglide i18n runtime (auto-generated, do not edit)
+    "src/lib/paraglide/**",
+    // E2E test files
+    "e2e/**",
+    // Docker testing files
+    "docker/Dockerfile.e2e",
+    "docker/helpers/**",
+    // One-off migration scripts (not application entry points)
+    "scripts/**",
+    // Test mock/stub files
+    "src/test/mocks/**",
+    "src/test/stubs/**",
+    // Test utility files referenced only by test config
+    "src/test/setupTest.ts",
+    "src/test/setupServer.ts",
+    "src/test/testUtils.ts",
+    // SVG mock assets (used by test Vitest setup)
+    "**/mocks/assets/*.js"
+  ],
+  "ignoreDependencies": [
+    "vitest-browser-svelte",
+    // Used in unchanged files — Fallow --changed mode misses them
+    "layerchart",
+    "runed",
+    "svelte-toolbelt",
+    "tailwind-variants",
+    "vaul-svelte",
+    // Unused at runtime — kept for potential future icon migration
+    "@lucide/svelte",
+    // Hoisted transitive dep — @loaders.gl/schema-utils imports @math.gl/types
+    // at build time but doesn't declare it. Explicit dep ensures Rolldown resolution.
+    "@math.gl/types"
+  ],
+  "rules": {
+    "unused-dependencies": "warn"
+  },
+  "ignoreExports": [
+    {
+      "file": "src/lib/components/ui/alert-dialog/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/card/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/button/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/form/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/accordion/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/collapsible/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/dialog/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/pagination/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/popover/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/select/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/tabs/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/tooltip/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/alert/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/table/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/radio-group/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/checkbox/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/command/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/dropdown-menu/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/file-drop-zone/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/input/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/label/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/native-select/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/separator/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/skeleton/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/switch/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/ui/textarea/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/find.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/inclusive.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/rabbis4ceasefire.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/test/mocks/assets/tent.svelte",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/server/logger.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/utils.ts",
+      "exports": ["*"]
+    }
+  ]
+}

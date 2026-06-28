@@ -1,6 +1,6 @@
 import { HttpResponse, http } from 'msw';
 
-import { allPages } from '../../data/pages';
+import { allPages, pageVariants } from '../../data/pages';
 
 // MSW mock handlers run locally — http is required
 const PB = 'http://*:8090'; // NOSONAR
@@ -14,6 +14,7 @@ export const pageHandlers = [
     let items = allPages;
 
     // Handle PB filter: slug={:slug}
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
     const slugRe = /slug\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
     const slugMatch = slugRe.exec(filter);
     if (slugMatch) {
@@ -36,5 +37,35 @@ export const pageHandlers = [
       return HttpResponse.json({ code: 404, data: {}, message: "The resource wasn't found." }, { status: 404 });
     }
     return HttpResponse.json(page);
+  }),
+
+  // GET /api/collections/pageVariants/records — list with filter
+  http.get(`${PB}/api/collections/pageVariants/records`, ({ request }) => {
+    const url = new URL(request.url);
+    const filter = url.searchParams.get('filter') ?? '';
+
+    let items = [...pageVariants];
+
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
+    const pageRe = /page\s*=\s*['"]?(\S+?)['"]?\s/;
+    const pageMatch = pageRe.exec(filter);
+    if (pageMatch) {
+      items = items.filter((v) => v.page === pageMatch[1]);
+    }
+
+    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
+    const langRe = /language\s*=\s*['"]?(\S+?)['"]?\s*(?:$|&|\b)/;
+    const langMatch = langRe.exec(filter);
+    if (langMatch) {
+      items = items.filter((v) => v.language === langMatch[1]);
+    }
+
+    return HttpResponse.json({
+      items,
+      page: 1,
+      perPage: 50,
+      totalItems: items.length,
+      totalPages: 1
+    });
   })
 ];

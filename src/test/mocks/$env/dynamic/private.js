@@ -10,6 +10,9 @@ const CAPTCHA_SITE_SECRET = process.env.CAPTCHA_SITE_SECRET;
 export const env = {
   ADMIN_EMAIL,
   CAPTCHA_SITE_SECRET,
+  POSTHOG_CLI_API_KEY: 'phx_test_key',
+  POSTHOG_CLI_PROJECT_ID: '212770',
+  POSTHOG_CLI_HOST: 'http://localhost:3001',
   SMTP_HOST,
   SMTP_PASS,
   SMTP_PORT,

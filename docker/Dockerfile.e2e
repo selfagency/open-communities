@@ -1,0 +1,49 @@
+# Multi-stage build: build the project inside the image, then produce a small runtime image
+# checkov:skip=CKV_DOCKER_2:HEALTHCHECK not needed for build-stage image
+# checkov:skip=CKV_DOCKER_3:Root needed for CI build process
+FROM node:22 AS builder
+WORKDIR /app
+
+# Build-time secrets for translation fetch (not persisted — multi-stage build discards this layer)
+# checked by SonarCloud S6608: ARG for secrets is acceptable here because the builder stage
+# is not pushed as a final image; only the runtime stage (no secrets) is used.
+ARG PB_API_TOKEN
+ARG PB_URL
+
+# Install pnpm and copy lockfiles first for better cache use
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm@10
+
+# Copy the rest of the repo and build the production output
+COPY . .
+# CI=true prevents ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY in non-TTY envs
+# Note: do NOT use --no-optional — Rolldown (Vite 8) needs its native binding installed
+# PB_API_TOKEN/PB_URL passed inline (not via ENV) to avoid persisting in image
+RUN CI=true PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} \
+  pnpm install \
+  && CI=true PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} \
+  pnpm build
+
+FROM node:22-alpine AS runtime
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Install runtime package manager and production deps
+COPY package.json pnpm-lock.yaml ./
+# If a lockfile is present in the build context pnpm will use it; if not, fall back to a normal install.
+# --ignore-scripts avoids the husky prepare hook (devDependency) failing in prod install
+RUN npm install -g pnpm@10 \
+    && (pnpm install --prod --frozen-lockfile --ignore-scripts \
+        || pnpm install --prod --ignore-scripts)
+
+# Copy only the build output from the builder stage
+COPY --from=builder /app/build ./build
+
+ENV NODE_ENV=production
+USER appuser
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD wget -qO- http://localhost:3000/ || exit 1
+CMD ["node", "build/index.js"]

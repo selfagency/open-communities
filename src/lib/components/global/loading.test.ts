@@ -6,7 +6,7 @@ import Loading from './loading.svelte';
 describe('Loading component', () => {
   it('renders the spinner by default', () => {
     render(Loading);
-    // lucide icon renders as an svg with role img or accessible name depending on stub; query for svg
+    // icon renders as an svg with role img or accessible name depending on stub; query for svg
     const svg = document.querySelector('svg');
     expect(svg).toBeInTheDocument();
     expect(svg).toHaveClass('animate-spin');

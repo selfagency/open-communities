@@ -13,10 +13,13 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig(({ mode }) => ({
   build: {
     sourcemap: true,
+    cssMinify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks(id: string) {
-          if (id.includes('svelte-maplibre')) return 'svelte-maplibre';
+          if (id.includes('svelte-maplibre')) {
+            return 'svelte-maplibre';
+          }
         }
       }
     }
@@ -27,11 +30,12 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     ViteMcp(),
     mode === 'test' && inlineSveltePlugin(),
-    biomePlugin({
-      mode: 'lint',
-      files: 'src',
-      failOnError: false
-    }),
+    mode === 'development' &&
+      biomePlugin({
+        mode: 'lint',
+        files: 'src',
+        failOnError: false
+      }),
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
@@ -61,10 +65,10 @@ export default defineConfig(({ mode }) => ({
   // Ensure $test/* path mapping from tsconfig/svelte.config is also available to Vite/Vitest.
   resolve: {
     alias: [
-      { find: '$test', replacement: path.resolve(__dirname, 'src/test') },
+      { find: '$test', replacement: path.resolve(import.meta.dirname, 'src/test') },
       {
         find: '$test/',
-        replacement: `${path.resolve(__dirname, 'src/test')}/`
+        replacement: `${path.resolve(import.meta.dirname, 'src/test')}/`
       }
     ],
     ...(process.env.VITEST ? { conditions: ['browser'] } : {})

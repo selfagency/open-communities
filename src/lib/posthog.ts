@@ -7,6 +7,10 @@ import type { UsersResponse } from '$lib/pocketbase.d';
 
 let _initialized = false;
 
+function isPostHogConfigured(): boolean {
+  return browser && !!env.PUBLIC_POSTHOG_KEY;
+}
+
 /**
  * Initialize PostHog analytics. Safe to call multiple times — `posthog.init()`
  * is idempotent. Called once on first boot from `hooks.client.ts` init().
@@ -16,10 +20,12 @@ let _initialized = false;
  * features work correctly.
  */
 export function initPosthog(user?: UsersResponse) {
-  if (!browser || !env.PUBLIC_POSTHOG_KEY) return;
+  if (!isPostHogConfigured()) {
+    return;
+  }
 
   try {
-    posthog.init(env.PUBLIC_POSTHOG_KEY, {
+    posthog.init(env.PUBLIC_POSTHOG_KEY as string, {
       api_host: env.PUBLIC_POSTHOG_HOST,
       ui_host: 'https://us.posthog.com',
       defaults: '2026-01-30',
@@ -58,7 +64,12 @@ export function captureException(
   event?: { url?: { pathname?: string } },
   additionalProperties?: Properties
 ): void {
-  if (!browser || !_initialized) return;
+  // Use key presence as the gate, not _initialized — posthog-js internally queues
+  // calls made before init completes, so errors during the init window are not lost.
+  // _initialized is only used internally by initPosthog to avoid redundant identify().
+  if (!isPostHogConfigured()) {
+    return;
+  }
   try {
     let message: string;
     if (typeof error === 'string') {

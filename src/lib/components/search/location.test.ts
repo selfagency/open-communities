@@ -10,7 +10,11 @@ import LocationComponent from './location.svelte';
 
 it('renders when location options present and reset calls reset', async () => {
   const fakeLocation = createFakeLocation(
-    { city: undefined, country: { id: 'c1' }, state: undefined },
+    {
+      city: undefined, // @ts-expect-error: partial test fixture
+      country: { id: 'c1' },
+      state: undefined
+    },
     { countryOptions: [{ id: 'c1', label: 'C1', value: 'C1' }] }
   ) as unknown as Location;
 
@@ -29,8 +33,13 @@ it('renders when location options present and reset calls reset', async () => {
   expect(fakeLocation.reset).toHaveBeenCalled();
 });
 
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 it('calls search.setSearchLocation when country is selected', async () => {
-  const record = { city: undefined, country: { id: 'c1' }, state: undefined };
+  const record: any = {
+    city: undefined,
+    country: { id: 'c1' },
+    state: undefined
+  };
   const fakeLocation = createFakeLocation(record, {
     countryOptions: [{ id: 'c1', label: 'C1', value: 'C1' }]
   }) as unknown as Location;

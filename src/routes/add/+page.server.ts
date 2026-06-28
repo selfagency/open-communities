@@ -43,6 +43,7 @@ export const load = async (event) => {
 };
 
 export const actions = {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   submit: async (event) => {
     const { fetch, locals } = event;
     const { api, capture, captureException, log, validate } = locals;
@@ -82,12 +83,24 @@ export const actions = {
 
       const congregation = record.id;
       const batch = api.createBatch();
-      if (!isEmpty(accessibility)) batch.collection('accessibility').create({ ...accessibility, congregation });
-      if (!isEmpty(fit)) batch.collection('fit').create({ ...fit, congregation });
-      if (!isEmpty(registration)) batch.collection('registration').create({ ...registration, congregation });
-      if (!isEmpty(health)) batch.collection('health').create({ ...health, congregation });
-      if (!isEmpty(security)) batch.collection('security').create({ ...security, congregation });
-      if (!isEmpty(services)) batch.collection('services').create({ ...services, congregation });
+      if (!isEmpty(accessibility)) {
+        batch.collection('accessibility').create({ ...accessibility, congregation });
+      }
+      if (!isEmpty(fit)) {
+        batch.collection('fit').create({ ...fit, congregation });
+      }
+      if (!isEmpty(registration)) {
+        batch.collection('registration').create({ ...registration, congregation });
+      }
+      if (!isEmpty(health)) {
+        batch.collection('health').create({ ...health, congregation });
+      }
+      if (!isEmpty(security)) {
+        batch.collection('security').create({ ...security, congregation });
+      }
+      if (!isEmpty(services)) {
+        batch.collection('services').create({ ...services, congregation });
+      }
       await batch.send({ fetch });
 
       if (!client?.admin) {
@@ -110,7 +123,7 @@ export const actions = {
           email: client.email,
           message: `A new congregation, ${record.name}, has been submitted and requires approval:\nhttps://opencommunities.info/edit?id=${record.id}`,
           name: client.name ?? '',
-          subject: `New congregation submitted`
+          subject: 'New congregation submitted'
         },
         api
       );

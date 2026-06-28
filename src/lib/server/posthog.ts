@@ -10,8 +10,12 @@ import { log } from '$lib/server/logger';
 let _phClient: null | PostHog = null;
 
 function getPhClient(): null | PostHog {
-  if (!env.PUBLIC_POSTHOG_KEY) return null;
-  if (_phClient) return _phClient;
+  if (!env.PUBLIC_POSTHOG_KEY) {
+    return null;
+  }
+  if (_phClient) {
+    return _phClient;
+  }
   _phClient = new PostHog(env.PUBLIC_POSTHOG_KEY, {
     host: env.PUBLIC_POSTHOG_HOST
   });
@@ -24,20 +28,32 @@ process.once('beforeExit', closePhClient);
 process.once('SIGTERM', closePhClient);
 process.once('SIGINT', closePhClient);
 
-export async function capture(user: string | undefined, event: string) {
+export function capture(user: string | undefined, event: string, properties?: Record<string, unknown>) {
   const phClient = getPhClient();
-  if (!phClient) return;
+  if (!phClient) {
+    return;
+  }
 
   try {
-    phClient.capture({ distinctId: user ?? 'anonymous', event });
+    phClient.capture({
+      distinctId: user ?? 'anonymous',
+      event,
+      properties: {
+        env: process.env.NODE_ENV ?? 'production',
+        ...properties
+      }
+    });
   } catch (error) {
     log.error('PostHog capture failed:', error);
   }
 }
 
+// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
 export async function captureException(error: unknown, user?: string, other?: Record<string, number | string>) {
   const phClient = getPhClient();
-  if (!phClient) return;
+  if (!phClient) {
+    return;
+  }
 
   try {
     let fallbackMessage: string;

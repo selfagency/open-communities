@@ -3,7 +3,6 @@
 import Fuzzy from '@leeoniya/ufuzzy';
 import { alphabetical, isEmpty, isEqual, shake } from 'radashi';
 
-import type { CongregationMetaRecord } from '$lib/pocketbase.d';
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 /* endregion imports */
@@ -14,7 +13,9 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 type Subscriber<T> = (v: T) => void;
 type Unsubscriber = () => void;
-type Readable<T> = { subscribe: (run: Subscriber<T>) => Unsubscriber };
+interface Readable<T> {
+  subscribe: (run: Subscriber<T>) => Unsubscriber;
+}
 
 function writableDeep<T extends Record<string, unknown>>(
   initial: T
@@ -22,7 +23,9 @@ function writableDeep<T extends Record<string, unknown>>(
   let value = { ...initial };
   const subs = new Set<Subscriber<T>>();
   function notify() {
-    for (const fn of subs) fn(value);
+    for (const fn of subs) {
+      fn(value);
+    }
   }
   return {
     subscribe(run: Subscriber<T>) {
@@ -34,8 +37,12 @@ function writableDeep<T extends Record<string, unknown>>(
       return value;
     },
     setKey<K extends keyof T>(k: K, v: T[K]) {
-      if (k === '__proto__' || k === 'constructor') return;
-      if (value[k] === v) return; // skip notification on no-op
+      if (k === '__proto__' || k === 'constructor') {
+        return;
+      }
+      if (value[k] === v) {
+        return; // skip notification on no-op
+      }
       value = { ...value, [k]: v };
       notify();
     }
@@ -54,13 +61,17 @@ function derived<T, D>(source: Readable<T>, fn: (v: T) => D): Readable<D> {
     // computed result is semantically identical.
     if (!isEqual(next, current)) {
       current = next;
-      for (const fn of subs) fn(current);
+      for (const fn of subs) {
+        fn(current);
+      }
     }
   });
 
   return {
     subscribe(run: Subscriber<D>) {
-      if (current !== undefined) run(current);
+      if (current !== undefined) {
+        run(current);
+      }
       subs.add(run);
       return () => subs.delete(run);
     }
@@ -76,7 +87,7 @@ export class Search {
   debug: boolean;
   fuzzy: Fuzzy;
   ids: string[];
-  results: Readable<CongregationMetaRecord[]>;
+  results: Readable<SearchData[]>;
   state: ReturnType<typeof writableDeep<SearchState>>;
 
   // Pre-built indexes for fast filtering
@@ -164,7 +175,9 @@ export class Search {
 
   adminFilter(filters: Record<string, boolean>, currentIds: string[]) {
     const activeFilters = shake(filters, (f) => !f);
-    if (isEmpty(activeFilters)) return currentIds;
+    if (isEmpty(activeFilters)) {
+      return currentIds;
+    }
 
     let ids: string[] = [];
 
@@ -174,7 +187,7 @@ export class Search {
 
     if (activeFilters.unclaimed) {
       const unclaimedIds = this.data.filter((record) => !record.owner).map((i) => i.id);
-      ids = !isEmpty(ids) ? ids.filter((id) => unclaimedIds.includes(id)) : unclaimedIds;
+      ids = isEmpty(ids) ? unclaimedIds : ids.filter((id) => unclaimedIds.includes(id));
     }
 
     return currentIds.filter((i) => ids.includes(i));
@@ -182,7 +195,9 @@ export class Search {
 
   applyAllFilters(state: SearchState, currentIds: string[]) {
     const hasFilter = (filters: Record<string, boolean>): boolean => {
-      if (!filters || isEmpty(filters)) return false;
+      if (!filters || isEmpty(filters)) {
+        return false;
+      }
       return Object.values(filters).some((f) => f === true);
     };
 
@@ -220,16 +235,22 @@ export class Search {
 
   boolFilter(filter: string, filters: object, currentIds: string[]) {
     const activeFilters = shake(filters, (f) => !f);
-    if (isEmpty(activeFilters)) return currentIds;
+    if (isEmpty(activeFilters)) {
+      return currentIds;
+    }
 
     const keyMap = this.boolIndex.get(filter);
-    if (!keyMap) return currentIds;
+    if (!keyMap) {
+      return currentIds;
+    }
 
     const matchedIdx = new Set<number>();
     for (const key of Object.keys(activeFilters)) {
       const idxSet = keyMap.get(key);
       if (idxSet) {
-        for (const idx of idxSet) matchedIdx.add(idx);
+        for (const idx of idxSet) {
+          matchedIdx.add(idx);
+        }
       }
     }
 
@@ -271,19 +292,27 @@ export class Search {
 
   stringFilter(filter: string, targetKey: string, filters: object, currentIds: string[]) {
     const activeFilters = shake(filters, (f) => !f);
-    if (isEmpty(activeFilters)) return currentIds;
+    if (isEmpty(activeFilters)) {
+      return currentIds;
+    }
 
     const map = this.stringIndex.get(filter);
-    if (!map) return currentIds;
+    if (!map) {
+      return currentIds;
+    }
 
     const valMap = map.get(targetKey);
-    if (!valMap) return currentIds;
+    if (!valMap) {
+      return currentIds;
+    }
 
     const matchedIdx = new Set<number>();
     for (const key of Object.keys(activeFilters)) {
       const idxSet = valMap.get(key);
       if (idxSet) {
-        for (const idx of idxSet) matchedIdx.add(idx);
+        for (const idx of idxSet) {
+          matchedIdx.add(idx);
+        }
       }
     }
 
@@ -310,10 +339,14 @@ export class Search {
 
   /** Index a bool-typed child table record (services, security, accessibility). */
   private _indexBoolRecord(key: string, record: Record<string, unknown>, idx: number): void {
-    const sub = record[key] as Record<string, unknown> | undefined;
-    if (!sub) return;
+    const sub = record[key] as unknown as Record<string, unknown> | undefined;
+    if (!sub) {
+      return;
+    }
     for (const subKey of Object.keys(sub)) {
-      if (subKey === '__proto__' || subKey === 'constructor') continue;
+      if (subKey === '__proto__' || subKey === 'constructor') {
+        continue;
+      }
       if (sub[subKey]) {
         const inner = this._ensureInner(this.boolIndex, key, () => new Map());
         const set = this._ensureInner(inner, subKey, () => new Set<number>());
@@ -334,7 +367,7 @@ export class Search {
   private _buildIndexes(): void {
     this.data.forEach((record, idx) => {
       for (const key of ['services', 'security', 'accessibility'] as const) {
-        this._indexBoolRecord(key, record, idx);
+        this._indexBoolRecord(key, record as unknown as Record<string, unknown>, idx);
       }
 
       const denom = record.denomination;
@@ -344,7 +377,9 @@ export class Search {
 
       for (const filter of ['health', 'registration'] as const) {
         const sub = record[filter];
-        if (!sub) continue;
+        if (!sub) {
+          continue;
+        }
         const targetKey = filter === 'health' ? 'protocol' : 'registrationType';
         const val = sub[targetKey as keyof typeof sub];
         if (val && typeof val === 'string') {

@@ -30,6 +30,7 @@ describe('routes +page.server quick smoke', () => {
     const { createApi } = await import('../../lib/server/api');
     const api = createApi();
 
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     const locals = { api, captureException: () => {} };
     const mockEvent = createMockServerLoadEvent({
       locals,

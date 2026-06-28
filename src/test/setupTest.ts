@@ -12,6 +12,20 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/svelte';
 import { vi } from 'vitest';
 
+// Mock PocketBase constructor so server API module can be imported in tests
+vi.mock('pocketbase', () => {
+  const MockPB = vi.fn(() => ({
+    autoCancellation: vi.fn().mockReturnThis(),
+    collection: vi.fn().mockReturnThis(),
+    filter: vi.fn(),
+    getFullList: vi.fn().mockResolvedValue([]),
+    getFirstListItem: vi.fn().mockResolvedValue(null),
+    authWithPassword: vi.fn().mockResolvedValue({ record: { id: 'test' } }),
+    authRefresh: vi.fn()
+  }));
+  return { default: MockPB };
+});
+
 // Polyfill Element.animate for jsdom (used by svelte transitions and some UI
 // primitives). jsdom doesn't implement the Web Animations API, so make a
 // minimal no-op implementation that provides a finished promise and lifecycle
@@ -20,9 +34,12 @@ const { prototype } = Element;
 
 if (typeof window !== 'undefined' && !prototype.animate) {
   prototype.animate = (() => ({
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     cancel: () => {},
     finished: Promise.resolve(),
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     play: () => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     pause: () => {}
   })) as unknown as typeof prototype.animate;
 }
@@ -67,8 +84,10 @@ if (typeof globalThis.document === 'undefined') {
   // Minimal document/body mock with the shape used by bits-ui body-scroll-lock
   (globalThis as Record<string, unknown>).document = {
     body: {
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       setAttribute: () => {},
       style: {
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         removeProperty: () => {}
       }
     }
@@ -99,13 +118,19 @@ vi.mock('cookie', () => ({
     } catch {
       return {};
     }
-  }
+  },
+  serialize: (name: string, value: string) => `${name}=${value}`
 }));
 
 // Nodemailer is Node-only and pulls in streams/os APIs; provide a minimal
 // mock used by server tests that import it so transforms won't execute
 // node-only code in the browser runner.
 vi.mock('nodemailer', () => ({
+  default: {
+    createTransport: () => ({
+      sendMail: async () => ({ messageId: 'mock' })
+    })
+  },
   createTransport: () => ({
     sendMail: async () => ({ messageId: 'mock' })
   })
@@ -128,7 +153,9 @@ vi.mock('$app/state', () => {
   const userStore = {
     set(next: unknown) {
       _userValue = next;
-      for (const s of _userSubscribers) s(_userValue);
+      for (const s of _userSubscribers) {
+        s(_userValue);
+      }
     },
     subscribe: (fn: (v: unknown) => void) => {
       _userSubscribers.add(fn);
@@ -137,7 +164,9 @@ vi.mock('$app/state', () => {
     },
     update(updater: (v: unknown) => unknown) {
       _userValue = updater(_userValue);
-      for (const s of _userSubscribers) s(_userValue);
+      for (const s of _userSubscribers) {
+        s(_userValue);
+      }
     }
   };
 
@@ -163,6 +192,7 @@ vi.mock('$app/state', () => {
         data: { user: userStore },
         url: { searchParams: fakeSearchParams }
       });
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       return () => {};
     },
     // provide a minimal url with searchParams used in components
@@ -190,6 +220,7 @@ vi.mock('svelte-sonner', () => ({
 // so those stubs are used directly.
 
 // Use internal test API to centralize test stubs
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as testApi from '$test/api';
 
 // Provide a test stub for formsnap primitives used by the form UI wrappers
@@ -223,14 +254,6 @@ vi.mock('$lib/assets/find.svg?component', async () => {
   const mod = await import('$test/mocks/assets/find.svelte');
   return mod;
 });
-vi.mock('$lib/assets/mask.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/mask.svelte');
-  return mod;
-});
-vi.mock('$lib/assets/asl.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/asl.svelte');
-  return mod;
-});
 vi.mock('$lib/assets/tent.svg?component', async () => {
   const mod = await import('$test/mocks/assets/tent.svelte');
   return mod;
@@ -241,14 +264,6 @@ vi.mock('$lib/assets/inclusive.svg?component', async () => {
 });
 vi.mock('$lib/assets/rabbis4ceasefire.svg?component', async () => {
   const mod = await import('$test/mocks/assets/rabbis4ceasefire.svelte');
-  return mod;
-});
-vi.mock('$lib/assets/menorah.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/menorah.svelte');
-  return mod;
-});
-vi.mock('$lib/assets/siddur.svg?component', async () => {
-  const mod = await import('$test/mocks/assets/siddur.svelte');
   return mod;
 });
 

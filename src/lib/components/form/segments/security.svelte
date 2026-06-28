@@ -1,23 +1,23 @@
 <script lang="ts">
-  /* region imports */
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import { Checkbox } from '$lib/components/ui/checkbox';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
+/* region imports */
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+import { Checkbox } from '$lib/components/ui/checkbox';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, view = $bindable() } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+let { errors, form, formData, view = $bindable() } = $props();
+/* endregion variables */
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
+/* region methods */
+const fixType = (input: any) => input as unknown as Record<string, unknown> & { _errors?: string[] | undefined };
 </script>
 
 <!-- security -->
@@ -25,7 +25,9 @@
   {@const securityErrors = fixType($errors.security)?._errors}
   <Accordion.Item value="security">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.security()}</span>
         {#if securityErrors}
           <span class="text-destructive">*</span>
@@ -48,7 +50,8 @@
                     checked={$formData.security.localPolice}
                     onCheckedChange={(checked) => {
                       $formData.security.localPolice = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="localPolice">{m.security_localPolice()}</Form.Label>
@@ -69,7 +72,8 @@
                     checked={$formData.security.privateSecurityArmed}
                     onCheckedChange={(checked) => {
                       $formData.security.privateSecurityArmed = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="privateSecurityArmed">{m.security_privateSecurityArmed()}</Form.Label>
@@ -90,7 +94,8 @@
                     checked={$formData.security.privateSecurityUnarmed}
                     onCheckedChange={(checked) => {
                       $formData.security.privateSecurityUnarmed = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="privateSecurityUnarmed">{m.security_privateSecurityUnarmed()}</Form.Label>
@@ -111,7 +116,8 @@
                     checked={$formData.security.clergyArmed}
                     onCheckedChange={(checked) => {
                       $formData.security.clergyArmed = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="clergyArmed">{m.security_clergyArmed()}</Form.Label>
@@ -132,7 +138,8 @@
                     checked={$formData.security.congregantsArmed}
                     onCheckedChange={(checked) => {
                       $formData.security.congregantsArmed = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="congregantsArmed">{m.security_congregantsArmed()}</Form.Label>
@@ -153,7 +160,8 @@
                     checked={$formData.security.noFirearms}
                     onCheckedChange={(checked) => {
                       $formData.security.noFirearms = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="noFirearms">{m.security_noFirearms()}</Form.Label>
@@ -174,7 +182,8 @@
                     checked={$formData.security.other}
                     onCheckedChange={(checked) => {
                       $formData.security.other = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="security_other">{m.other()}</Form.Label>
@@ -199,8 +208,12 @@
         {/if}
       </div>
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'registration')}>
-          {m.next()} →
+        <Button
+          onclick={() => { view = 'registration'; document.querySelector('[data-value="registration"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
+        >
+          {m.next()}
+          →
         </Button>
       </div>
     </Accordion.Content>

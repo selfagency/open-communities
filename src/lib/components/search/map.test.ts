@@ -16,7 +16,7 @@ import { FakeSearch } from '$test/stubs/fake-search';
 import Map from './map.svelte';
 
 it('renders markers and clicking opens location', async () => {
-  const locations = [
+  const locations: any[] = [
     {
       city: { id: 'c1', latitude: 10, longitude: 20, name: 'City1' },
       country: { id: 'co1', name: 'Country1' },
@@ -27,7 +27,11 @@ it('renders markers and clicking opens location', async () => {
   const search = new FakeSearch() as unknown as Search;
   const loadSpy = vi.fn();
   const fakeLocation = createFakeLocation(
-    { city: undefined, country: { id: 'co1' }, state: undefined },
+    {
+      city: undefined,
+      country: { id: 'co1' },
+      state: undefined
+    } as any,
     { countryOptions: [{ id: 'co1', label: 'Country1', value: 'Country1' }] }
   );
 
@@ -48,7 +52,9 @@ it('renders markers and clicking opens location', async () => {
 
   // click the first button in the rendered container
   const firstButton = container.querySelector('button');
-  if (firstButton) await fireEvent.click(firstButton);
+  if (firstButton) {
+    await fireEvent.click(firstButton);
+  }
   // location.load should have been called with the location keys
   expect(loadSpy).toHaveBeenCalledWith({
     city: 'c1',

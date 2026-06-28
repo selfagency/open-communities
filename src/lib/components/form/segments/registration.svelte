@@ -1,32 +1,33 @@
 <script lang="ts">
-  /* region imports */
-  import { isEmpty } from 'radashi';
+/* region imports */
+import { isEmpty } from 'radashi';
 
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import * as RadioGroup from '$lib/components/ui/radio-group';
-  import { m } from '$lib/paraglide/messages';
-  import { valueSet } from '$lib/utils';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as RadioGroup from '$lib/components/ui/radio-group';
+import { m } from '$lib/paraglide/messages';
+import { valueSet } from '$lib/utils';
 
-  import Required from '../required.svelte';
+import Required from '../required.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+/* region variables */
+// props
+let { errors, form, formData, view = $bindable() } = $props();
 
-  // constants
-  const hasRegistration: boolean = $derived(valueSet($formData.registration));
-  /* endregion variables */
+// constants
+const hasRegistration: boolean = $derived(valueSet($formData.registration));
+/* endregion variables */
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
-  /* endregion methods */
+/* region methods */
+const fixType = (input: any) => input as unknown as Record<string, unknown> & { _errors?: string[] | undefined };
+/* endregion methods */
 </script>
 
 <!-- registration -->
@@ -38,7 +39,9 @@
     fixType($errors.registration)?._errors}
   <Accordion.Item value="registration">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.registration()}</span>
         {#if !hasRegistration || registrationErrors}
           <span class="text-destructive">*</span>
@@ -53,29 +56,29 @@
       <Form.Field {form} name="protocol">
         <Form.Control
           >{#snippet children(props)}
-            <RadioGroup.Root {...props} bind:value={$formData.registration.registrationType} required>
+            <RadioGroup.Root {...props} required bind:value={$formData.registration.registrationType}>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="free" id="free" />
+                <RadioGroup.Item id="free" value="free" />
                 <Form.Label for="free">{m.registration_free()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="fixedPrice" id="fixedPrice" />
+                <RadioGroup.Item id="fixedPrice" value="fixedPrice" />
                 <Form.Label for="fixedPrice">{m.registration_fixedPrice()}</Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="slidingScale" id="slidingScale" />
+                <RadioGroup.Item id="slidingScale" value="slidingScale" />
                 <Form.Label for="slidingScale">
                   {m.registration_slidingScale()}
                 </Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="suggestedDonation" id="suggestedDonation" />
+                <RadioGroup.Item id="suggestedDonation" value="suggestedDonation" />
                 <Form.Label for="suggestedDonation">
                   {m.registration_suggestedDonation()}
                 </Form.Label>
               </div>
               <div class="flex items-center space-x-2">
-                <RadioGroup.Item value="other" id="other" />
+                <RadioGroup.Item id="other" value="other" />
                 <Form.Label for="other">{m.other()}</Form.Label>
               </div>
             </RadioGroup.Root>
@@ -98,7 +101,7 @@
       {/if}
       <div class="question my-4" class:error={registrationInvalid}>
         {m.registration_contact()}
-        <Required set={!isEmpty($formData.registration.email) || !isEmpty($formData.registration.url)} />
+        <Required set={!(isEmpty($formData.registration.email) && isEmpty($formData.registration.url))} />
       </div>
       <Form.Field {form} name="registration_email">
         <Form.Control
@@ -107,10 +110,11 @@
             <Input
               id="registration_email"
               {...props}
-              bind:value={$formData.registration.email}
               onchange={() => {
                 $formData.registration.email = $formData.registration.email.trim();
-              }} />
+              }}
+              bind:value={$formData.registration.email}
+            />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -123,10 +127,11 @@
             <Input
               id="registration_url"
               {...props}
-              bind:value={$formData.registration.url}
               onchange={() => {
                 $formData.registration.url = $formData.registration.url.trim();
-              }} />
+              }}
+              bind:value={$formData.registration.url}
+            />
           {/snippet}
         </Form.Control>
         <Form.FieldErrors />
@@ -138,7 +143,12 @@
         </span>
       {/if}
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'contact')}>{m.next()} →</Button>
+        <Button
+          onclick={() => { view = 'contact'; document.querySelector('[data-value="contact"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
+          >{m.next()}
+          →</Button
+        >
       </div>
     </Accordion.Content>
   </Accordion.Item>

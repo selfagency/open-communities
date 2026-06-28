@@ -1,29 +1,29 @@
 <script lang="ts">
-  /* region imports */
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import { Checkbox } from '$lib/components/ui/checkbox';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
-  import { valueSet } from '$lib/utils';
+/* region imports */
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+import { Checkbox } from '$lib/components/ui/checkbox';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
+import { valueSet } from '$lib/utils';
 
-  import Required from '../required.svelte';
+import Required from '../required.svelte';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  let { errors, form, formData, loading = $bindable(), view = $bindable() } = $props();
+/* region variables */
+// props
+let { errors, form, formData, view = $bindable() } = $props();
 
-  // constants
-  const hasServices: boolean = $derived(valueSet($formData.services));
+// constants
+const hasServices: boolean = $derived(valueSet($formData.services));
 
-  /* region methods */
-  const fixType = (input: any) => {
-    return input as Record<string, unknown> & { _errors?: string[] | undefined };
-  };
-  /* endregion methods */
+/* region methods */
+const fixType = (input: any) => input as unknown as Record<string, unknown> & { _errors?: string[] | undefined };
+/* endregion methods */
 </script>
 
 <!-- services -->
@@ -31,7 +31,9 @@
   {@const servicesErrors = fixType($errors.services)?._errors}
   <Accordion.Item value="services">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.services()}</span>
         {#if !hasServices || servicesErrors}
           <span class="text-destructive">*</span>
@@ -55,7 +57,8 @@
                     checked={$formData.services.inPerson}
                     onCheckedChange={(checked) => {
                       $formData.services.inPerson = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="inPerson">{m.services_inPerson()}</Form.Label>
@@ -76,7 +79,8 @@
                     checked={$formData.services.hybrid}
                     onCheckedChange={(checked) => {
                       $formData.services.hybrid = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="hybrid">{m.services_hybrid()}</Form.Label>
@@ -105,7 +109,8 @@
                         $formData.security.other = true;
                         $formData.security.otherText = 'N/A';
                       }
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="onlineOnly">{m.services_onlineOnly()}</Form.Label>
@@ -126,7 +131,8 @@
                     checked={$formData.services.offsite}
                     onCheckedChange={(checked) => {
                       $formData.services.offsite = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="offsite">{m.services_offsite()}</Form.Label>
@@ -147,7 +153,8 @@
                     checked={$formData.services.other}
                     onCheckedChange={(checked) => {
                       $formData.services.other = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="services_other">{m.other()}</Form.Label>
@@ -172,8 +179,12 @@
         {/if}
       </div>
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'accessibility')}>
-          {m.next()} →
+        <Button
+          onclick={() => { view = 'accessibility'; document.querySelector('[data-value="accessibility"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
+        >
+          {m.next()}
+          →
         </Button>
       </div>
     </Accordion.Content>

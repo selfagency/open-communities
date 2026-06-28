@@ -13,9 +13,11 @@ import { logger } from '$lib/utils';
 // OpenTelemetry log bridge — emits log records via the OTel logger
 // configured in src/instrumentation.server.ts, if available.
 function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
-  const otelLogger: undefined | { emit: (record: unknown) => void } = (globalThis as Record<string, unknown>)
+  const otelLogger: undefined | { emit: (record: unknown) => void } = (globalThis as unknown as Record<string, unknown>)
     .__OTEL_LOGGER__ as undefined | { emit: (record: unknown) => void };
-  if (!otelLogger) return;
+  if (!otelLogger) {
+    return;
+  }
 
   try {
     const severityMap: Record<string, string> = {
@@ -29,7 +31,7 @@ function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
     };
     otelLogger.emit({
       severityText: severityMap[logObject._meta?.logLevelId as unknown as keyof typeof severityMap] || 'info',
-      body: typeof logObject === 'object' ? shake(logObject as Record<string, unknown>) : logObject,
+      body: typeof logObject === 'object' ? shake(logObject as unknown as Record<string, unknown>) : logObject,
       attributes: {
         'service.name': 'open-communities',
         'service.version': '1.0.0',
@@ -49,7 +51,7 @@ const log = logger.getSubLogger({
 });
 /* endregion variables */
 
-async function logEvent(statusCode: number, event: RequestEvent) {
+function logEvent(statusCode: number, event: RequestEvent) {
   const requestId = crypto.randomUUID();
 
   try {
@@ -96,9 +98,9 @@ async function logEvent(statusCode: number, event: RequestEvent) {
 
     const sensitiveHeaders = new Set(['auth', 'authorization', 'cookie']);
     const logData: object = {
-      error: error,
-      errorId: errorId,
-      errorStackTrace: errorStackTrace,
+      error,
+      errorId,
+      errorStackTrace,
       headers: dev
         ? Object.fromEntries(
             Array.from(event.request.headers.entries()).filter(([k]) => !sensitiveHeaders.has(k.toLowerCase()))
@@ -107,7 +109,7 @@ async function logEvent(statusCode: number, event: RequestEvent) {
       ip: event.request.headers.get('x-forwarded-for') || event.request.headers.get('remote-addr'),
       method: event.request.method,
       pathname: event.url.pathname,
-      referer: referer,
+      referer,
       status: statusCode,
       timeInMs: Date.now() - (event?.locals?.startTimer as number),
       url: event.url.toString(),

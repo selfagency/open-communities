@@ -8,7 +8,7 @@
 
 /* region countries */
 const _countriesCache = new Map<string, { data: unknown[]; timestamp: number }>();
-const COUNTRIES_CACHE_TTL_MS = 5 * 60 * 1_000; // 5 minutes — countries change rarely
+const COUNTRIES_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes — countries change rarely
 
 export async function getCachedCountries<T>(
   api: { collection: (name: string) => { getFullList: (opts?: object) => Promise<T[]> } },
@@ -23,7 +23,9 @@ export async function getCachedCountries<T>(
   _countriesCache.set(cacheKey, { data, timestamp: Date.now() });
   // Prune stale entries
   for (const [k, v] of _countriesCache) {
-    if (Date.now() - v.timestamp > COUNTRIES_CACHE_TTL_MS * 2) _countriesCache.delete(k);
+    if (Date.now() - v.timestamp > COUNTRIES_CACHE_TTL_MS * 2) {
+      _countriesCache.delete(k);
+    }
   }
   return data;
 }
@@ -50,7 +52,9 @@ export async function getCachedCongregations<T>(
   _congregationCache.set(cacheKey, { data, timestamp: Date.now() });
   // Prune stale entries
   for (const [k, v] of _congregationCache) {
-    if (Date.now() - v.timestamp > CONGREGATION_CACHE_TTL_MS * 2) _congregationCache.delete(k);
+    if (Date.now() - v.timestamp > CONGREGATION_CACHE_TTL_MS * 2) {
+      _congregationCache.delete(k);
+    }
   }
   return data;
 }

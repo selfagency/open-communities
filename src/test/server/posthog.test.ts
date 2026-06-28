@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$lib/server/logger', () => ({
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
   log: { error: () => {}, debug: () => {}, warn: () => {} }
 }));
 
@@ -42,13 +43,21 @@ describe('server/posthog', () => {
   it('capture sends event through PostHog client', async () => {
     const { capture } = await import('../../lib/server/posthog');
     await capture('user-1', 'test-event');
-    expect(ph().capture).toHaveBeenCalledWith({ distinctId: 'user-1', event: 'test-event' });
+    expect(ph().capture).toHaveBeenCalledWith({
+      distinctId: 'user-1',
+      event: 'test-event',
+      properties: { env: 'test' }
+    });
   });
 
   it('capture uses anonymous distinct id when user is undefined', async () => {
     const { capture } = await import('../../lib/server/posthog');
     await capture(undefined, 'pageview');
-    expect(ph().capture).toHaveBeenCalledWith({ distinctId: 'anonymous', event: 'pageview' });
+    expect(ph().capture).toHaveBeenCalledWith({
+      distinctId: 'anonymous',
+      event: 'pageview',
+      properties: { env: 'test' }
+    });
   });
 
   it('captureException sends error through PostHog client', async () => {
@@ -79,5 +88,44 @@ describe('server/posthog', () => {
     const { captureException } = await import('../../lib/server/posthog');
     await captureException(new Error('test'));
     expect(ph().captureException).not.toHaveBeenCalled();
+  });
+
+  it('captureException handles non-Error, non-string objects', async () => {
+    const { captureException } = await import('../../lib/server/posthog');
+    const obj = { code: 500, detail: 'server error' };
+    await captureException(obj, 'user-1');
+    expect(ph().captureException).toHaveBeenCalled();
+    const call = ph().captureException.mock.calls[0];
+    expect(call[0]).toBeInstanceOf(Error);
+    expect(call[0].message).toContain('server error');
+  });
+
+  it('captureException handles objects that fail JSON.stringify', async () => {
+    const { captureException } = await import('../../lib/server/posthog');
+    const circular: Record<string, unknown> = { name: 'test' };
+    circular.self = circular;
+    await captureException(circular, 'user-1');
+    expect(ph().captureException).toHaveBeenCalled();
+    const call = ph().captureException.mock.calls[0];
+    expect(call[0]).toBeInstanceOf(Error);
+  });
+
+  it('capture handles PostHog client error gracefully', async () => {
+    const { capture } = await import('../../lib/server/posthog');
+    // Make the mock capture throw
+    ph().capture.mockImplementationOnce(() => {
+      throw new Error('ph error');
+    });
+    // Should not throw — error is caught internally
+    capture('user-1', 'test-event');
+    expect(ph().capture).toHaveBeenCalledTimes(1);
+  });
+
+  it('captureException handles PostHog client error gracefully', async () => {
+    const { captureException } = await import('../../lib/server/posthog');
+    ph().captureException.mockImplementationOnce(() => {
+      throw new Error('ph error');
+    });
+    await expect(captureException(new Error('test'), 'user-1')).resolves.toBeUndefined();
   });
 });

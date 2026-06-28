@@ -12,5 +12,6 @@
     "moduleResolution": "bundler",
     "lib": ["DOM", "ESNext"],
     "types": ["node", "nodemailer", "web"]
-  }
+  },
+  "exclude": ["node_modules"]
 }

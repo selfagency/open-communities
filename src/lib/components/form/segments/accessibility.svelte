@@ -1,22 +1,26 @@
 <script lang="ts">
-  /* region imports */
-  import * as Accordion from '$lib/components/ui/accordion';
-  import { Button } from '$lib/components/ui/button';
-  import { Checkbox } from '$lib/components/ui/checkbox';
-  import * as Form from '$lib/components/ui/form';
-  import { Input } from '$lib/components/ui/input';
-  import { m } from '$lib/paraglide/messages';
+/* region imports */
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Accordion from '$lib/components/ui/accordion';
+import { Button } from '$lib/components/ui/button';
+import { Checkbox } from '$lib/components/ui/checkbox';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Form from '$lib/components/ui/form';
+import { Input } from '$lib/components/ui/input';
+import { m } from '$lib/paraglide/messages';
 
-  /* endregion imports */
+/* endregion imports */
 
-  let { errors, form, formData, view = $bindable() } = $props();
+let { errors, form, formData, view = $bindable() } = $props();
 </script>
 
 <!-- accessibility -->
 {#if $formData.accessibility}
   <Accordion.Item value="accessibility">
     <Accordion.Trigger class="flex w-full flex-row items-center justify-between">
-      <div class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal">
+      <div
+        class="font-display flex translate-y-0.5 flex-row items-center justify-start text-lg font-normal tracking-wider"
+      >
         <span>{m.accessibility()}</span>
         {#if $errors.accessibility}
           <span class="text-destructive">*</span>
@@ -40,7 +44,8 @@
                     checked={$formData.accessibility.online_asl}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.online_asl = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="online_asl">{m.accessibility_online_asl()}</Form.Label>
@@ -61,7 +66,8 @@
                     checked={$formData.accessibility.online_liveCaptions}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.online_liveCaptions = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="online_liveCaptions">{m.accessibility_online_liveCaptions()}</Form.Label>
@@ -82,7 +88,8 @@
                     checked={$formData.accessibility.online_automatedCaptions}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.online_automatedCaptions = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="online_automatedCaptions">
@@ -105,7 +112,8 @@
                     checked={$formData.accessibility.inPerson_adaAll}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.inPerson_adaAll = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="inPerson_adaAll">{m.accessibility_inPerson_adaAll()}</Form.Label>
@@ -126,7 +134,8 @@
                     checked={$formData.accessibility.inPerson_adaSome}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.inPerson_adaSome = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="inPerson_adaSome">{m.accessibility_inPerson_adaSome()}</Form.Label>
@@ -147,7 +156,8 @@
                     checked={$formData.accessibility.inPerson_asl}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.inPerson_asl = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="inPerson_asl">{m.accessibility_inPerson_asl()}</Form.Label>
@@ -168,7 +178,8 @@
                     checked={$formData.accessibility.inPerson_eva}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.inPerson_eva = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="inPerson_eva">{m.accessibility_inPerson_eva()}</Form.Label>
@@ -189,7 +200,8 @@
                     checked={$formData.accessibility.other}
                     onCheckedChange={(checked) => {
                       $formData.accessibility.other = checked ?? false;
-                    }} />
+                    }}
+                  />
                 </span>
                 <span class="-mt-0.5">
                   <Form.Label for="accoms_other">{m.other()}</Form.Label>
@@ -212,7 +224,12 @@
       </div>
 
       <div class="mt-4 flex flex-row items-center justify-end">
-        <Button variant="secondary" onclick={() => (view = 'health')}>{m.next()} →</Button>
+        <Button
+          onclick={() => { view = 'health'; document.querySelector('[data-value="health"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+          variant="secondary"
+          >{m.next()}
+          →</Button
+        >
       </div>
     </Accordion.Content>
   </Accordion.Item>

@@ -2,6 +2,7 @@
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
+
 import { publicIp } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
 import type { SuperValidated } from 'sveltekit-superforms';
@@ -36,7 +37,9 @@ const AUTH_REFRESH_COOLDOWN_MS = 300_000; // 5 minutes
 function pruneAuthRefreshTimestamps() {
   const cutoff = Date.now() - AUTH_REFRESH_COOLDOWN_MS * 2;
   for (const [key, ts] of authRefreshTimestamps) {
-    if (ts < cutoff) authRefreshTimestamps.delete(key);
+    if (ts < cutoff) {
+      authRefreshTimestamps.delete(key);
+    }
   }
 }
 
@@ -83,8 +86,16 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   event.locals.log = log;
 
   // Create origin-aware PostHog functions
-  event.locals.capture = (user: string | undefined, eventName: string) =>
-    user ? capture(user, eventName) : Promise.resolve();
+  event.locals.capture = (
+    user: string | undefined,
+    eventName: string,
+    properties?: Record<string, unknown>
+  ): Promise<void> => {
+    if (user) {
+      capture(user, eventName, properties);
+    }
+    return Promise.resolve();
+  };
   event.locals.captureException = (error: unknown, user?: string, other?: Record<string, number | string>) =>
     captureException(error, user ?? '', other);
 
@@ -99,12 +110,17 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
     return (await superValidate(request as unknown as RequestEvent, adapter)) as unknown as SuperValidated<output<S>>;
   }) as App.Locals['validate'];
 
+  // secure: true only when the browser actually uses HTTPS.
+  // x-forwarded-proto covers production behind a TLS-terminating proxy (Cloudflare),
+  // event.url.protocol covers direct HTTPS connections.
+  // This avoids setting Secure cookies over HTTP, which breaks CI/E2E tests.
+  const isSecure = event.request.headers.get('x-forwarded-proto') === 'https' || event.url.protocol === 'https:';
   event.locals.cookieOpts = {
     httpOnly: true,
     maxAge: 60 * 60 * 24 * 1, // 1 day
     path: '/',
     sameSite: 'strict',
-    secure: !dev
+    secure: isSecure
   } as SerializeOptions & { path: string };
 
   // auth — load cookie into the per-request instance
@@ -121,8 +137,8 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   // auth
   try {
     if (event.url.pathname === '/logout') {
-      event.cookies.set('auth', '', event.locals.cookieOpts);
-      event.cookies.set('session', '', event.locals.cookieOpts);
+      event.cookies.set('auth', '', { ...event.locals.cookieOpts, maxAge: 0 });
+      event.cookies.set('session', '', { ...event.locals.cookieOpts, maxAge: 0 });
       requestApi.authStore.clear();
     } else if (requestApi?.authStore?.isValid) {
       pruneAuthRefreshTimestamps();
@@ -142,7 +158,8 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
         ]);
         authRefreshTimestamps.set(sessionKey, now);
       }
-      // Re-set the auth cookie on every request to extend its TTL
+      // Re-set the auth cookie on every request — keep the full exportToCookie
+      // value so loadFromCookie can parse it (expects pb_auth=<json> prefix).
       event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
     }
   } catch (error) {
@@ -168,17 +185,27 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   return response;
 }
 
-export const handleError = async ({ error, event, status }) => {
+export const handleError = async ({
+  error,
+  event,
+  status
+}: {
+  error: unknown;
+  event: RequestEvent;
+  status: number;
+}): Promise<{ errorId: string; message: string } | undefined> => {
   if (status !== 404) {
     const errorId = crypto.randomUUID();
 
-    event.locals.error = error?.toString() || undefined;
+    event.locals.error =
+      typeof error === 'object' && error !== null ? JSON.stringify(error) : error == null ? '' : String(error);
     event.locals.errorStackTrace = (error as Error)?.stack || undefined;
     event.locals.errorId = errorId;
     logEvent(status, event);
 
     if (isFunction(event.locals.captureException)) {
       await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
+      await closePhClient();
     }
 
     return {

@@ -2,14 +2,9 @@
 
 import { spawn } from 'node:child_process';
 import { sleep, uid } from 'radashi';
-import { afterEach, beforeEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type {
-  Collections,
-  CongregationMetaResponse,
-  MetaDenominationOptions,
-  TypedPocketBase
-} from '$lib/pocketbase.d';
+import type { Collections, CongregationMetaResponse, TypedPocketBase } from '$lib/pocketbase.d';
 
 // mock the raw email template asset so mail.ts can call .replace() on it
 vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
@@ -48,30 +43,36 @@ async function ensureMailpitRunning() {
   };
 
   // if Mailpit is already reachable, we're done
-  if (await check()) return;
+  if (await check()) {
+    return;
+  }
 
   // In CI we expect the runner to provide Mailpit as a service. Do not attempt to spawn
   // the binary in CI; instead poll briefly and fail early so CI setup issues are visible.
   if (process.env.CI) {
-    const deadline = Date.now() + 10000;
+    const deadline = Date.now() + 10_000;
     while (Date.now() < deadline) {
-      if (await check()) return;
+      if (await check()) {
+        return;
+      }
       await sleep(250);
     }
     throw new Error('Mailpit not reachable at http://localhost:8025 in CI');
-  } else {
-    // Local developer run: try to spawn a local mailpit binary if available, then poll.
-    try {
-      const child = spawn('mailpit', [], { detached: true, stdio: 'ignore' });
-      child.unref();
-    } catch (e) {
-      // ignore spawn errors for local runs; we'll still poll for a running service
-      void e;
-      const deadline = Date.now() + 10000;
-      while (Date.now() < deadline) {
-        if (await check()) return;
-        await sleep(250);
+  }
+  // Local developer run: try to spawn a local mailpit binary if available, then poll.
+  try {
+    const child = spawn('mailpit', [], { detached: true, stdio: 'ignore' });
+    child.unref();
+  } catch (e) {
+    // ignore spawn errors for local runs; we'll still poll for a running service
+    // biome-ignore lint/complexity/noVoid: intentional catch discard
+    void e;
+    const deadline = Date.now() + 10_000;
+    while (Date.now() < deadline) {
+      if (await check()) {
+        return;
       }
+      await sleep(250);
     }
   }
 }
@@ -122,18 +123,25 @@ async function findMessageBySubject(subject: string) {
         accept: 'application/json'
       }
     });
-    if (!res.ok) throw new Error('Mailpit API not reachable');
+    if (!res.ok) {
+      throw new Error('Mailpit API not reachable');
+    }
     const dataRaw = await res.json();
     // normalize possible response shapes: array, { messages: [] }, { items: [] }, or keyed object
     let list: Record<string, unknown>[] = [];
-    if (Array.isArray(dataRaw)) list = dataRaw as { id?: string; subject?: string }[];
-    else if (dataRaw && typeof dataRaw === 'object') {
+    if (Array.isArray(dataRaw)) {
+      list = dataRaw as { id?: string; subject?: string }[];
+    } else if (dataRaw && typeof dataRaw === 'object') {
       const asObj = dataRaw as Record<string, unknown>;
-      if (Array.isArray(asObj.messages)) list = asObj.messages as { id?: string; subject?: string }[];
-      else if (Array.isArray(asObj.items)) list = asObj.items as { id?: string; subject?: string }[];
-      else {
+      if (Array.isArray(asObj.messages)) {
+        list = asObj.messages as { id?: string; subject?: string }[];
+      } else if (Array.isArray(asObj.items)) {
+        list = asObj.items as { id?: string; subject?: string }[];
+      } else {
         for (const v of Object.values(asObj)) {
-          if (Array.isArray(v)) list = list.concat(v as { id?: string; subject?: string }[]);
+          if (Array.isArray(v)) {
+            list = list.concat(v as { id?: string; subject?: string }[]);
+          }
         }
       }
     }
@@ -153,7 +161,9 @@ async function findMessageBySubject(subject: string) {
     });
 
     const found = normalized.find((m) => typeof m.subject === 'string' && m.subject.includes(subject));
-    if (found) return found as { id?: string; subject?: string };
+    if (found) {
+      return found as { id?: string; subject?: string };
+    }
 
     // wait a bit before retrying
 
@@ -175,7 +185,7 @@ async function findMessageBySubject(subject: string) {
     console.debug('Mailpit API fetch failed at final debug:', e);
   }
 
-  return undefined;
+  return;
 }
 
 describe('src/lib/server/mail', () => {
@@ -198,7 +208,7 @@ describe('src/lib/server/mail', () => {
 
     const found = await findMessageBySubject(txSubject);
     expect(found).toBeTruthy();
-  }, 20000);
+  }, 20_000);
 
   it('sends admin email with listing appended when record present', async () => {
     await ensureMailpitRunning();
@@ -207,9 +217,10 @@ describe('src/lib/server/mail', () => {
       collection: (name: string) => {
         if (name === 'congregationMeta') {
           return {
+            // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
             getOne: async (id: string) => {
               const now = new Date().toISOString();
-              const resp: CongregationMetaResponse = {
+              const resp = {
                 accessibility: null,
                 clergy: '',
                 collectionId: 'cong_meta_col',
@@ -219,7 +230,6 @@ describe('src/lib/server/mail', () => {
                 contactName: '',
                 contactUrl: '',
                 created: now,
-                denomination: 'other' as MetaDenominationOptions,
                 expand: undefined,
                 fit: null,
                 flavor: '',
@@ -234,7 +244,7 @@ describe('src/lib/server/mail', () => {
                 services: null,
                 updated: now,
                 visible: true
-              } as CongregationMetaResponse;
+              } as unknown as CongregationMetaResponse;
               return resp;
             }
           };
@@ -281,7 +291,9 @@ describe('src/lib/server/mail', () => {
     }
 
     // if raw not available, fetch message details and search there
-    if (!raw) {
+    if (raw) {
+      expect(raw).toContain('Listing: Congregation Name');
+    } else {
       const detailRes = await fetch(`http://localhost:8025/api/v1/message/${found?.id}`, {
         headers: {
           accept: 'application/json'
@@ -331,8 +343,6 @@ describe('src/lib/server/mail', () => {
           `Could not verify email content. Raw fetch failed, detail fetch failed, and snippet not found. Detail status: ${detailRes.status}`
         );
       }
-    } else {
-      expect(raw).toContain('Listing: Congregation Name');
     }
-  }, 20000);
+  }, 20_000);
 });

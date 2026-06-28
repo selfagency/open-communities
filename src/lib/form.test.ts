@@ -1,15 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-type FormErrors = { set: (...args: unknown[]) => unknown };
+interface FormErrors {
+  set: (...args: unknown[]) => unknown;
+}
 
-type FormOptions = {
-  [k: string]: unknown;
+interface FormOptions {
   onError?: (args: unknown) => unknown;
   onResult?: () => unknown;
   onSubmit?: () => unknown;
   onUpdate?: (args: unknown) => Promise<unknown> | unknown;
-};
-type FormReturn = { data: unknown; errors: FormErrors; options: unknown };
+  [k: string]: unknown;
+}
+interface FormReturn {
+  data: unknown;
+  errors: FormErrors;
+  options: unknown;
+}
 type SuperFormMockShape = ((data: unknown, opts: unknown) => FormReturn) & {
   lastOptions?: FormOptions;
   mock: { results: Array<{ value: FormReturn }> };
@@ -60,9 +66,7 @@ vi.mock('./utils', () => {
 
 // Make isEmpty return false for non-empty and true for empty-ish values
 vi.mock('radashi', () => ({
-  isEmpty: (v: unknown) => {
-    return v == null || (typeof v === 'object' && Object.keys(v as object).length === 0);
-  }
+  isEmpty: (v: unknown) => v == null || (typeof v === 'object' && Object.keys(v as object).length === 0)
 }));
 
 // Grab mocked exports so tests can assert on them

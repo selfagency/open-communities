@@ -1,17 +1,17 @@
 <script lang="ts">
-  /* region imports */
-  import WebIcon from "@lucide/svelte/icons/globe";
-  import EmailIcon from "@lucide/svelte/icons/mail";
-  import { Button } from "$lib/components/ui/button";
-  import { m } from "$lib/paraglide/messages";
-  import type { RegistrationRecord } from "$lib/pocketbase.d";
+import EmailIcon from '@tabler/icons-svelte/icons/mail';
+/* region imports */
+import WebIcon from '@tabler/icons-svelte/icons/world';
+import { Button } from '$lib/components/ui/button';
+import { m } from '$lib/paraglide/messages';
+import type { RegistrationRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const { registration }: { registration?: RegistrationRecord } = $props();
-  /* endregion variables */
+/* region variables */
+// props
+const { registration }: { registration?: RegistrationRecord } = $props();
+/* endregion variables */
 </script>
 
 <div class="col-span-3">
@@ -40,9 +40,9 @@
   <div class="flex flex-row items-center justify-start space-x-4">
     {#if registration?.email}
       <Button
-        variant="outline"
-        href="mailto:{registration.email}"
         class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
+        href="mailto:{registration.email}"
+        variant="outline"
       >
         <span><EmailIcon size="16" /></span>
         <span>{m.email()}</span>
@@ -50,10 +50,10 @@
     {/if}
     {#if registration?.url}
       <Button
-        variant="outline"
+        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
         href={registration.url}
         target="_blank"
-        class="flex flex-row items-center justify-start space-x-1 text-nowrap hover:text-muted-foreground"
+        variant="outline"
       >
         <span><WebIcon size="16" /></span>
         <span>{m.website()}</span>

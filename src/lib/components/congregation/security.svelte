@@ -1,33 +1,29 @@
 <script lang="ts">
-  /* region imports */
-  import SecurityIcon from "@lucide/svelte/icons/shield";
-  import UnarmedIcon from "@lucide/svelte/icons/shield-ban";
-  import * as Tooltip from "$lib/components/ui/tooltip";
-  import { m } from "$lib/paraglide/messages";
-  import type { SecurityRecord } from "$lib/pocketbase.d";
+/* region imports */
+import SecurityIcon from '@tabler/icons-svelte/icons/shield';
+import UnarmedIcon from '@tabler/icons-svelte/icons/shield-off';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as Tooltip from '$lib/components/ui/tooltip';
+import { m } from '$lib/paraglide/messages';
+import type { SecurityRecord } from '$lib/pocketbase.d';
 
-  /* endregion imports */
+/* endregion imports */
 
-  /* region variables */
-  // props
-  const {
-    mode = $bindable("mini"),
-    security,
-  }: { mode?: "full" | "mini"; security: SecurityRecord } = $props();
+/* region variables */
+// props
+const { mode = $bindable('mini'), security }: { mode?: 'full' | 'mini'; security: SecurityRecord } = $props();
 
-  // constants
-  /* endregion variables */
+// constants
+/* endregion variables */
 </script>
 
 {#if mode === "mini"}
-  <div
-    class="flex w-full flex-row items-center justify-end space-x-1 antialiased"
-  >
+  <div class="flex w-full flex-row items-center justify-end space-x-1 antialiased">
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}
       <Tooltip.Provider>
         <Tooltip.Root>
-          <Tooltip.Trigger>
-            <SecurityIcon size="18" />
+          <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
+            <SecurityIcon size="16" />
             <span class="sr-only">{m.security_armedSecurity()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -38,8 +34,8 @@
     {:else if security.privateSecurityUnarmed}
       <Tooltip.Provider>
         <Tooltip.Root>
-          <Tooltip.Trigger>
-            <UnarmedIcon size="18" />
+          <Tooltip.Trigger class="flex h-7 w-7 items-center justify-center">
+            <UnarmedIcon size="16" />
             <span class="sr-only">{m.security_unarmedSecurity()}</span>
           </Tooltip.Trigger>
           <Tooltip.Content>
@@ -53,7 +49,7 @@
 
 {#if mode === "full"}
   <div class="col-span-3">
-    <h2 class="label">{m.security()}</h2>
+    <h3 class="label">{m.security()}</h3>
   </div>
   <ul class="col-span-9 space-y-2">
     {#if security.localPolice || security.privateSecurityArmed || security.clergyArmed || security.congregantsArmed}

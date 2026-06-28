@@ -80,7 +80,7 @@ export function closeTransporter() {
   }
 }
 
-export async function mailTransport({
+async function mailTransport({
   headerFrom,
   bodyText,
   subject,
@@ -91,7 +91,7 @@ export async function mailTransport({
   subject: string;
   headerTo: string;
 }) {
-  if (!SMTP_USER || !SMTP_PASS || !SMTP_HOST || !SMTP_PORT) {
+  if (!(SMTP_USER && SMTP_PASS && SMTP_HOST && SMTP_PORT)) {
     log.warn('SMTP credentials are not set');
   }
 
@@ -127,7 +127,12 @@ export async function mailTransport({
   await transporter.sendMail(mail);
 }
 
-export async function transactionalMail({ email, message, name, subject }: TransactionalMailInput) {
+export async function transactionalMail({
+  email,
+  message,
+  name,
+  subject
+}: TransactionalMailInput): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
     await mailTransport({
       headerFrom: 'Open Communities <no-reply@m.opencommunities.info>',
@@ -135,13 +140,18 @@ export async function transactionalMail({ email, message, name, subject }: Trans
       subject,
       headerTo: `${sanitizeHeader(name)} <${sanitizeHeader(email)}>`
     });
+    return { ok: true };
   } catch (e) {
+    const error = (e as { message?: string }).message ?? 'Unknown email error';
     log.error('Error sending transactional email', e);
+    return { ok: false, error };
   }
 }
 
 function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo> {
-  if (_transporter) return _transporter;
+  if (_transporter) {
+    return _transporter;
+  }
 
   const smtpPort = Number.parseInt(SMTP_PORT as string, 10);
   const transportOpts: SMTPTransport.Options = {

@@ -15,8 +15,11 @@ describe('login +page.server — load', () => {
         getFirstListItem: async () => ({}),
         authWithPassword: async () => ({ record: { id: 'u1' }, token: 'tok' }),
         create: async () => ({ id: 'u1' }),
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         requestVerification: async () => {},
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         requestPasswordReset: async () => {},
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         confirmPasswordReset: async () => {}
       }),
       filter: (expr: string) => expr
@@ -39,7 +42,10 @@ describe('login +page.server — actions', () => {
     const mod = await import('../../../src/routes/login/+page.server');
 
     const api = {
-      authStore: { record: null },
+      authStore: {
+        exportToCookie: () => 'pb_auth=mock',
+        record: null
+      },
       collection: () => ({
         authWithPassword: async () => ({ record: { id: 'u1', email: 'test@example.com' }, token: 'tok' })
       }),
@@ -49,7 +55,9 @@ describe('login +page.server — actions', () => {
     const locals = {
       api,
       cookieOpts: { httpOnly: true, path: '/', sameSite: 'strict', secure: false },
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
       validate: async () => ({
         data: { email: 'test@example.com', password: 'validpass' },
@@ -63,6 +71,7 @@ describe('login +page.server — actions', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       cookies: { get: () => '', set: () => {}, serialize: () => '' },
       locals,
       request,
@@ -80,6 +89,7 @@ describe('login +page.server — actions', () => {
     const api = {
       authStore: { record: null },
       collection: () => ({
+        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
         authWithPassword: async () => {
           throw new Error('Failed to authenticate.');
         }
@@ -90,8 +100,12 @@ describe('login +page.server — actions', () => {
     const locals = {
       api,
       cookieOpts: { httpOnly: true, path: '/', sameSite: 'strict', secure: false },
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+      log: { debug: () => {}, error: () => {}, warn: () => {} },
       validate: async () => ({
         data: { email: 'wrong@example.com', password: 'wrongpass' },
         valid: true
@@ -104,6 +118,7 @@ describe('login +page.server — actions', () => {
     });
 
     const mockEvent = createMockRequestEvent({
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       cookies: { get: () => '', set: () => {}, serialize: () => '' },
       locals,
       request,

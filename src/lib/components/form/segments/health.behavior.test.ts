@@ -33,7 +33,9 @@ describe('Health segment (behavior)', () => {
     );
     unsub();
 
-    const health = (latest as unknown as Record<string, unknown>).health as Record<string, unknown> | undefined;
+    const health = (latest as unknown as unknown as Record<string, unknown>).health as unknown as
+      | Record<string, unknown>
+      | undefined;
     expect(health?.protocol).toBeTruthy();
   });
 });

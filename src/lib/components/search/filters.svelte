@@ -1,165 +1,163 @@
 <script lang="ts">
-  /* region imports */
-  import AccessibilityIcon from "@lucide/svelte/icons/accessibility";
-  import OpenIcon from "@lucide/svelte/icons/chevrons-up-down";
-  import CircleIcon from "@lucide/svelte/icons/circle";
-  import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
-  import CircleMinusIcon from "@lucide/svelte/icons/circle-minus";
-  import CloseIcon from "@lucide/svelte/icons/circle-x";
-  import RegistrationIcon from "@lucide/svelte/icons/clipboard-pen";
-  import FilterIcon from "@lucide/svelte/icons/filter";
-  import AdminIcon from "@lucide/svelte/icons/settings";
-  import SecurityIcon from "@lucide/svelte/icons/shield";
-  import { isEmpty } from "radashi";
-  import { untrack } from "svelte";
+import SiddurIcon from '@tabler/icons-svelte/icons/book-2';
+import CircleIcon from '@tabler/icons-svelte/icons/circle';
+import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
+import CircleMinusIcon from '@tabler/icons-svelte/icons/circle-minus';
+import CloseIcon from '@tabler/icons-svelte/icons/circle-x';
+import RegistrationIcon from '@tabler/icons-svelte/icons/clipboard-plus';
+/* region imports */
+import AccessibilityIcon from '@tabler/icons-svelte/icons/disabled';
+import MaskIcon from '@tabler/icons-svelte/icons/face-mask';
+import FilterIcon from '@tabler/icons-svelte/icons/filter';
+import DenominationIcon from '@tabler/icons-svelte/icons/menorah';
+import OpenIcon from '@tabler/icons-svelte/icons/selector';
+import SecurityIcon from '@tabler/icons-svelte/icons/shield';
+import { isEmpty } from 'radashi';
+import { untrack } from 'svelte';
+import { page } from '$app/state';
+import { Button, buttonVariants } from '$lib/components/ui/button';
+import { Checkbox } from '$lib/components/ui/checkbox';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace pattern
+import * as Collapsible from '$lib/components/ui/collapsible';
+import { Label } from '$lib/components/ui/label';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace pattern
+import * as Popover from '$lib/components/ui/popover';
+import { m as mBase } from '$lib/paraglide/messages';
+import { cn } from '$lib/utils';
 
-  import { page } from "$app/state";
-  import MaskIcon from "$lib/assets/mask.svg?component";
-  import DenominationIcon from "$lib/assets/menorah.svg?component";
-  import SiddurIcon from "$lib/assets/siddur.svg?component";
-  import { Button } from "$lib/components/ui/button";
-  import { Checkbox } from "$lib/components/ui/checkbox";
-  import * as Collapsible from "$lib/components/ui/collapsible";
-  import { Label } from "$lib/components/ui/label";
-  import * as Popover from "$lib/components/ui/popover";
-  import { m as mBase } from "$lib/paraglide/messages";
+const m = mBase as Record<string, (...args: unknown[]) => string>;
 
-  const m = mBase as Record<string, (...args: unknown[]) => string>;
+import type { Search } from '$lib/search';
 
-  import type { Search } from "$lib/search";
+// import { log } from '$lib/utils';
+/* endregion imports */
 
-  // import { log } from '$lib/utils';
-  /* endregion imports */
+/* region variables */
+// props
+const { search }: { search: Search } = $props();
 
-  /* region variables */
-  // props
-  const { search }: { search: Search } = $props();
+// constants
+const initFilters = {
+  accessibility: {
+    inPerson_adaAll: false,
+    inPerson_adaSome: false,
+    inPerson_eva: false,
+    online_automatedCaptions: false,
+    online_liveCaptions: false,
+    other: false
+  },
+  status: {
+    unapproved: false,
+    unclaimed: false
+  },
+  denomination: {
+    conservative: false,
+    humanist: false,
+    multiDenominational: false,
+    orthodox: false,
+    other: false,
+    postDenominational: false,
+    reconstructionist: false,
+    reform: false,
+    renewal: false,
+    unaffiliated: false
+  },
+  health: {
+    maskingRecommended: false,
+    maskingRequired: false,
+    noGuidelines: false,
+    other: false
+  },
+  registration: {
+    fixedPrice: false,
+    free: false,
+    other: false,
+    slidingScale: false,
+    suggestedDonation: false
+  },
+  security: {
+    clergyArmed: false,
+    congregantsArmed: false,
+    localPolice: false,
+    noFirearms: false,
+    privateSecurityArmed: false,
+    privateSecurityUnarmed: false,
+    other: false
+  },
+  services: {
+    hybrid: false,
+    inPerson: false,
+    offsite: false,
+    onlineOnly: false,
+    other: false
+  }
+};
 
-  // constants
-  const initFilters = {
-    accessibility: {
-      inPerson_adaAll: false,
-      inPerson_adaSome: false,
-      inPerson_eva: false,
-      online_automatedCaptions: false,
-      online_liveCaptions: false,
-      other: false,
-    },
-    admin: {
-      unapproved: false,
-      unclaimed: false,
-    },
-    denomination: {
-      conservative: false,
-      humanist: false,
-      multiDenominational: false,
-      orthodox: false,
-      other: false,
-      postDenominational: false,
-      reconstructionist: false,
-      reform: false,
-      renewal: false,
-      unaffiliated: false,
-    },
-    health: {
-      maskingRecommended: false,
-      maskingRequired: false,
-      noGuidelines: false,
-      other: false,
-    },
-    registration: {
-      fixedPrice: false,
-      free: false,
-      other: false,
-      slidingScale: false,
-      suggestedDonation: false,
-    },
-    security: {
-      clergyArmed: false,
-      congregantsArmed: false,
-      localPolice: false,
-      noFirearms: false,
-      privateSecurityArmed: false,
-      privateSecurityUnarmed: false,
-      other: false,
-    },
-    services: {
-      hybrid: false,
-      inPerson: false,
-      offsite: false,
-      onlineOnly: false,
-      other: false,
-    },
+const icons: Record<string, any> = {
+  accessibility: AccessibilityIcon,
+  status: CircleCheckIcon,
+  circle: CircleIcon,
+  circleCheck: CircleCheckIcon,
+  circleMinus: CircleMinusIcon,
+  close: CloseIcon,
+  denomination: DenominationIcon,
+  filter: FilterIcon,
+  health: MaskIcon,
+  open: OpenIcon,
+  registration: RegistrationIcon,
+  security: SecurityIcon,
+  services: SiddurIcon
+};
+
+const user = $derived(page.data.user);
+
+// locals
+let filters: Record<string, Record<string, boolean>> = $state(initFilters);
+/* endregion variables */
+
+/* region methods */
+const some = (object: Record<string, boolean>) => Object.values(object).some((filter) => filter);
+
+const every = (object: Record<string, boolean>) => Object.values(object).every((filter) => filter);
+
+const updateFilter = (category: string, option: string, checked: boolean) => {
+  // Create a new filters object to ensure reactivity
+  filters = {
+    ...filters,
+    [category]: {
+      ...filters[category],
+      [option]: checked
+    }
   };
+};
 
-  const icons: Record<string, any> = {
-    accessibility: AccessibilityIcon,
-    admin: AdminIcon,
-    circle: CircleIcon,
-    circleCheck: CircleCheckIcon,
-    circleMinus: CircleMinusIcon,
-    close: CloseIcon,
-    denomination: DenominationIcon,
-    filter: FilterIcon,
-    health: MaskIcon,
-    open: OpenIcon,
-    registration: RegistrationIcon,
-    security: SecurityIcon,
-    services: SiddurIcon,
-  };
+const resetFilters = () => {
+  filters = structuredClone(initFilters);
+};
+/* endregion methods */
 
-  const user = $derived(page.data.user);
-
-  // locals
-  let filters: Record<string, Record<string, boolean>> = $state(initFilters);
-  /* endregion variables */
-
-  /* region methods */
-  const some = (object: Record<string, boolean>) =>
-    Object.values(object).some((filter) => filter);
-
-  const every = (object: Record<string, boolean>) =>
-    Object.values(object).every((filter) => filter);
-
-  const updateFilter = (category: string, option: string, checked: boolean) => {
-    // Create a new filters object to ensure reactivity
-    filters = {
-      ...filters,
-      [category]: {
-        ...filters[category],
-        [option]: checked,
-      },
-    };
-  };
-
-  const resetFilters = () => {
-    filters = structuredClone(initFilters);
-  };
-  /* endregion methods */
-
-  /* region reactivity */
-  $effect(() => {
-    // Update search filters whenever the filters object changes
-    // untrack prevents the search instance from becoming a reactive dependency
-    const currentFilters = filters;
-    untrack(() => search.setFilters(currentFilters));
-  });
-  /* endregion reactivity */
+/* region reactivity */
+$effect(() => {
+  // Update search filters whenever the filters object changes
+  // untrack prevents the search instance from becoming a reactive dependency
+  const currentFilters = filters;
+  untrack(() => search.setFilters(currentFilters));
+});
+/* endregion reactivity */
 </script>
 
 <Popover.Root>
-  <Popover.Trigger
-    class="button space-x-2 text-muted-foreground border-muted-foreground/25! hover:bg-muted-background outline rtl:mx-1"
-  >
-    <FilterIcon size="18" class="rtl:mx-1" />
+  <Popover.Trigger class={cn(buttonVariants({ variant: "outline" }), "group gap-2 rtl:mx-1")}>
+    <FilterIcon
+      class="transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:active:scale-90"
+      size="18"
+    />
     <span>{m.filter()}</span>
   </Popover.Trigger>
   <Popover.Content>
-    <div
-      class="flex flex-col items-start justify-start space-y-2 text-muted-foreground"
-    >
+    <div class="flex flex-col items-start justify-start space-y-2 text-muted-foreground">
       {#each Object.keys(filters) as category, i (i)}
-        {#if !isEmpty(filters?.[category]) && !(category === "admin" && !user?.admin)}
+        {#if !(isEmpty(filters?.[category]) || (category === "status" && !user?.admin))}
           {@const StatusIcon =
             icons[
               every(filters[category])
@@ -170,26 +168,21 @@
             ]}
           <Collapsible.Root>
             <Collapsible.Trigger>
-              <div class="filter-heading">
-                <span class="filter-icon">
-                  {#if category === "denomination" || category === "health" || category === "services"}
-                    {@const Icon = icons[category]}
-                    <span class="h-4 w-5 fill-muted-foreground">
-                      <Icon />
-                    </span>
-                  {:else}
-                    {@const Icon = icons[category]}
-                    <Icon size="17" />
-                  {/if}
-                </span>
+              <div class="group filter-heading">
+                {#if true}
+                  {@const Icon = icons[category]}
+                  <span class="filter-icon">
+                    <Icon size="16" />
+                  </span>
+                {/if}
                 <span class="filter-label">
                   <span>{m[category]()}</span>
                 </span>
                 <span class="filter-status">
-                  <StatusIcon class="h-4 w-4" />
+                  <StatusIcon class="motion-safe:group-hover:scale-110 transition-transform duration-200" size="16" />
                 </span>
                 <span class="filter-icon">
-                  <OpenIcon size="16" />
+                  <OpenIcon class="transition-transform duration-200 motion-safe:group-hover:scale-110" size="16" />
                 </span>
               </div>
             </Collapsible.Trigger>
@@ -198,9 +191,9 @@
                 {#each Object.keys(filters[category]) as option, i (i)}
                   <span class="filter-item">
                     <Checkbox
-                      id={`${category}_${option}`}
-                      class="scale-75"
                       checked={filters[category][option]}
+                      class="scale-75"
+                      id={`${category}_${option}`}
                       onCheckedChange={(checked) =>
                         updateFilter(category, option, checked ?? false)}
                     />
@@ -218,11 +211,7 @@
           </Collapsible.Root>
         {/if}
       {/each}
-      <Button
-        class="filter-heading h-auto p-0 text-muted-foreground"
-        variant="link"
-        onclick={resetFilters}
-      >
+      <Button class="filter-heading h-auto p-0 text-muted-foreground" onclick={resetFilters} variant="link">
         <span class="filter-icon"><CloseIcon size="16" /></span>
         <span class="filter-label"><span>{m.reset()}</span></span>
       </Button>
