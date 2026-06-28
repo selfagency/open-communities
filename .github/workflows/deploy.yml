@@ -30,7 +30,7 @@ jobs:
           PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
         run: |
           npm install -g phio tsx
-          phio deploy -v
+          phio deploy -v -e pb_schema.json
 
       - name: Deploy to Coolify
         env:
