@@ -152,8 +152,8 @@ test.describe('auth flows', () => {
     const rawReset = detail.HTML || detail.Text || JSON.stringify(detail);
 
     const resetMatch =
-      rawReset.match(/resetPassword=([A-Za-z0-9-_]+)/) ||
-      rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9-_]+)/);
+      rawReset.match(/resetPassword=([A-Za-z0-9\-_.]+)/) ||
+      rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9\-_.]+)/);
     resetToken = resetMatch ? resetMatch[1] : undefined;
     expect(resetToken).toBeTruthy();
 
