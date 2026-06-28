@@ -164,7 +164,7 @@ test.describe('auth flows', () => {
     resetToken = resetMatch ? resetMatch[1] : undefined;
     expect(resetToken).toBeTruthy();
 
-    // Confirm password reset via PB API directly (bypasses the app's use:enhance)
+    // Confirm password reset via PB API directly (no auth required — public endpoint)
     const newPass = `${password}1`;
     const confirmRes = await fetch(`${PB_API}/collections/users/confirm-password-reset`, {
       body: JSON.stringify({
@@ -172,7 +172,7 @@ test.describe('auth flows', () => {
         password: newPass,
         passwordConfirm: newPass
       }),
-      headers: { 'content-type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'content-type': 'application/json' },
       method: 'POST'
     });
     if (!confirmRes.ok) throw new Error(`Password reset confirm failed: ${confirmRes.status}`);
