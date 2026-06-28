@@ -140,7 +140,8 @@ async function configureSMTP(token) {
       },
       body: JSON.stringify({
         meta: {
-          appName: 'Open Communities'
+          appName: 'Open Communities',
+          appURL: `http://localhost:${process.env.PORT || 3000}`
         },
         smtp: {
           enabled: true,
