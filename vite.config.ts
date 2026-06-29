@@ -4,6 +4,7 @@ import svg from '@poppanator/sveltekit-svg';
 import posthog from '@posthog/rollup-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 import biomePlugin from 'vite-plugin-biome';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { ViteMcp } from 'vite-plugin-mcp';
@@ -12,8 +13,12 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
   build: {
-    sourcemap: true,
-    cssMinify: 'esbuild',
+    // 'hidden' generates sourcemaps for error tracking without embedding
+    // references in output files — faster than 'true' and sufficient for
+    // PostHog sourcemap upload
+    sourcemap: 'hidden',
+    // Skip gzip size reporting — saves ~10s on each build
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks(id: string) {
@@ -22,6 +27,17 @@ export default defineConfig(({ mode }) => ({
           }
         }
       }
+    }
+  },
+  server: {
+    // Pre-transform frequently-used files on dev startup to avoid request waterfall
+    warmup: {
+      clientFiles: [
+        './src/routes/+layout.svelte',
+        './src/lib/components/global/header.svelte',
+        './src/lib/components/global/footer.svelte',
+        './src/app.css'
+      ]
     }
   },
   ssr: {
@@ -44,6 +60,14 @@ export default defineConfig(({ mode }) => ({
       project: './project.inlang'
     }),
     svg(),
+    // Bundle visualization — run with ANALYZE=true pnpm build
+    process.env.ANALYZE &&
+      visualizer({
+        open: !process.env.CI,
+        filename: 'build/stats.html',
+        gzipSize: true,
+        brotliSize: true
+      }),
     // PostHog sourcemap upload — only during production builds with credentials
     mode === 'production' &&
       process.env.POSTHOG_CLI_PROJECT_ID &&
