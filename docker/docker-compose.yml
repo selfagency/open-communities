@@ -20,6 +20,12 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    volumes:
+      - dragonfly_data:/data
+    command:
+      - '--save=60 1'
+      - '--maxmemory-policy=noeviction'
+      - '--dir=/data'
     restart: unless-stopped
 
   cap:
@@ -82,5 +88,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  dragonfly_data:
   cap_data:
   libretranslate_data:
