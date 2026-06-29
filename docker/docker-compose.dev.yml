@@ -54,6 +54,8 @@ services:
       - dev
 
   app:
+    ports:
+      - '3000:3000'
     networks:
       - dev
 
