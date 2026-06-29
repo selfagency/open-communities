@@ -15,7 +15,11 @@ export default defineConfig(({ mode }) => ({
     sourcemap: true,
     cssMinify: 'esbuild',
     rollupOptions: {
+      external: ['maplibre-gl'],
       output: {
+        globals: {
+          'maplibre-gl': 'maplibregl'
+        },
         manualChunks(id: string) {
           if (id.includes('svelte-maplibre')) {
             return 'svelte-maplibre';
