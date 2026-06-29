@@ -22,7 +22,7 @@ services:
       retries: 5
     volumes:
       - dragonfly_data:/data
-    command: '--save 60 1 --maxmemory-policy noeviction'
+    command: '--maxmemory_policy noeviction --snapshot_cron "*/10 * * * *"'
     restart: unless-stopped
 
   cap:
