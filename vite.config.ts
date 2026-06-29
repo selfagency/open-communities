@@ -12,35 +12,16 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
   build: {
-    // 'hidden' generates sourcemaps for error tracking without embedding
-    // references in output files — faster than 'true' and sufficient for
-    // PostHog sourcemap upload
-    sourcemap: 'hidden',
-    // Skip gzip size reporting — saves ~10s on each build
-    reportCompressedSize: false,
-    rolldownOptions: {
-      external: ['maplibre-gl'],
+    sourcemap: true,
+    cssMinify: 'esbuild',
+    rollupOptions: {
       output: {
-        globals: {
-          'maplibre-gl': 'maplibregl'
-        },
         manualChunks(id: string) {
           if (id.includes('svelte-maplibre')) {
             return 'svelte-maplibre';
           }
         }
       }
-    }
-  },
-  server: {
-    // Pre-transform frequently-used files on dev startup to avoid request waterfall
-    warmup: {
-      clientFiles: [
-        './src/routes/+layout.svelte',
-        './src/lib/components/global/header.svelte',
-        './src/lib/components/global/footer.svelte',
-        './src/app.css'
-      ]
     }
   },
   ssr: {
