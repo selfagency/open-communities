@@ -280,13 +280,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CONTAINER_TOKEN }}
 
-      - name: Bootstrap PocketBase
-        run: node docker/scripts/bootstrap.mjs
-        env:
-          PUBLIC_API_ENDPOINT: http://localhost:8090
-          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
-          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-
       - name: Build and start full stack
         env:
           PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
@@ -306,8 +299,20 @@ jobs:
         run: |
           docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build \
             app pocketbase dragonfly cap libretranslate mailpit
+          timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
+          echo "PB ready"
+
+      - name: Bootstrap PocketBase
+        run: node docker/scripts/bootstrap.mjs
+        env:
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+
+      - name: Wait for app
+        run: |
           timeout 60 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
-          echo "All services ready"
+          echo "App ready"
 
       - name: Push app image to GHCR (main only)
         if: github.event_name == 'push'
@@ -352,19 +357,26 @@ jobs:
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
         id: pa11y
+        timeout-minutes: 5
         run: |
-          npx --yes pa11y-ci@latest --json > .e2e/pa11y-report.json 2>&1 || true
+          echo "Running pa11y-ci accessibility checks..."
+          npx --yes pa11y-ci@latest --json 2>&1 | tee /tmp/pa11y-output.json || true
+          cp /tmp/pa11y-output.json .e2e/pa11y-report.json 2>/dev/null || true
           # Build summary
           echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
           echo '| URL | Result |' >> .e2e/pa11y-summary.md
           echo '|-----|--------|' >> .e2e/pa11y-summary.md
           node -e "
-            const r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8'));
-            const results = r.results || r;
-            for (const [url, data] of Object.entries(results)) {
-              const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
-              const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
-              process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+            let r;
+            try { r = JSON.parse(require('fs').readFileSync('/tmp/pa11y-output.json','utf8')); } catch {}
+            if (!r) try { r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8')); } catch {}
+            if (r) {
+              const results = r.results || r;
+              for (const [url, data] of Object.entries(results)) {
+                const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
+                const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
+                process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+              }
             }
           " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
           cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY

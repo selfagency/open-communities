@@ -14,10 +14,10 @@
     }
   },
   "urls": [
-    "http://localhost:4173/",
-    "http://localhost:4173/admin",
-    "http://localhost:4173/admin/congregations",
-    "http://localhost:4173/admin/users",
-    "http://localhost:4173/admin/pages"
+    "http://localhost:3000/",
+    "http://localhost:3000/admin",
+    "http://localhost:3000/admin/congregations",
+    "http://localhost:3000/admin/users",
+    "http://localhost:3000/admin/pages"
   ]
 }
