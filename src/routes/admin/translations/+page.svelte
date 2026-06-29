@@ -3,9 +3,10 @@ import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
 import { enhance } from '$app/forms';
-import { goto } from '$app/navigation';
+import { goto, invalidateAll } from '$app/navigation';
 import { page } from '$app/stores';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
 import {
@@ -157,7 +158,7 @@ function pollStatus() {
 
 function handleEnhance() {
   // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-  return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
+  return async ({ result }: { result: EnhanceResult }) => {
     if (result.type === 'success') {
       const d = result.data;
       if (d?.deploymentUuid) {
@@ -183,6 +184,78 @@ function cancelDeploy() {
   deploymentUuid = null;
   deploymentStatus = null;
   deployError = null;
+}
+
+interface EnhanceResult {
+  data?: Record<string, unknown>;
+  type: string;
+}
+
+function handleAdd() {
+  return (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success' && result.data?.key) {
+      showAddDialog = false;
+      toast.success('Key created');
+      const newKey = result.data.key as string;
+      const params = new URLSearchParams();
+      params.set('page', '1');
+      goto(`/admin/translations?${params}`, { replaceState: true });
+      setTimeout(() => {
+        openKey = newKey;
+      }, 500);
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to create key');
+    } else {
+      toast.error('An error occurred while creating key');
+    }
+  };
+}
+
+function handleSave(key: string) {
+  return async (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success') {
+      resetEditState(key);
+      toast.success('Translations saved');
+      await invalidateAll();
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to save translations');
+    } else {
+      toast.error('An error occurred while saving');
+    }
+  };
+}
+
+function handleDelete(key: string) {
+  return (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success') {
+      goto('/admin/translations', { replaceState: true });
+      toast.success('Key deleted');
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to delete key');
+    } else {
+      toast.error('An error occurred while deleting');
+    }
+  };
+}
+
+function handleBulkDelete() {
+  return (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success') {
+      showDeleteDialog = false;
+      goto('/admin/translations', { replaceState: true });
+      toast.success('Key deleted');
+    } else if (result.type === 'failure') {
+      showDeleteDialog = false;
+      toast.error((result.data?.error as string) ?? 'Failed to delete key');
+    } else {
+      showDeleteDialog = false;
+      toast.error('An error occurred while deleting');
+    }
+  };
 }
 
 const statusLabels: Record<string, string> = {
@@ -300,25 +373,7 @@ const statusLabels: Record<string, string> = {
 
     <!-- Add Key Dialog -->
     <Dialog bind:open={showAddDialog}>
-      <form
-        action="?/add"
-        method="POST"
-        use:enhance={() => {
-      // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-      return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
-        if (result.type === 'success' && result.data?.key) {
-          showAddDialog = false;
-          const newKey = result.data.key as string;
-          // Navigate to first page and open the new key
-          const params = new URLSearchParams();
-          params.set('page', '1');
-          goto(`/admin/translations?${params}`, { replaceState: true });
-          // Set the key to open after navigation
-          setTimeout(() => { openKey = newKey; }, 500);
-        }
-      };
-    }}
-      >
+      <form action="?/add" method="POST" use:enhance={handleAdd}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Translation Key</DialogTitle>
@@ -365,19 +420,7 @@ const statusLabels: Record<string, string> = {
             </span>
           </AccordionTrigger>
           <AccordionContent>
-            <form
-              action="?/save"
-              class="space-y-3"
-              method="POST"
-              use:enhance={() => {
-              // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-              return async ({ result }: { result: { type: string } }) => {
-                if (result.type === 'success') {
-                  resetEditState(key);
-                }
-              };
-            }}
-            >
+            <form action="?/save" class="space-y-3" method="POST" use:enhance={() => handleSave(key)}>
               <input name="key" type="hidden" value={key} />
               <input name="entries" type="hidden" value={JSON.stringify(buildEntries(key, entries))} />
 
@@ -418,18 +461,7 @@ const statusLabels: Record<string, string> = {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <form
-                        action="?/delete"
-                        method="POST"
-                        use:enhance={() => {
-                      // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-                      return async ({ result }: { result: { type: string } }) => {
-                        if (result.type === 'success') {
-                          goto('/admin/translations', { replaceState: true });
-                        }
-                      };
-                    }}
-                      >
+                      <form action="?/delete" method="POST" use:enhance={() => handleDelete(key)}>
                         <input name="key" type="hidden" value={key} />
                         <AlertDialogAction
                           class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -500,19 +532,7 @@ const statusLabels: Record<string, string> = {
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <form
-          action="?/delete"
-          method="POST"
-          use:enhance={() => {
-        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-        return async ({ result }: { result: { type: string } }) => {
-          if (result.type === 'success') {
-            showDeleteDialog = false;
-            goto('/admin/translations', { replaceState: true });
-          }
-        };
-      }}
-        >
+        <form action="?/delete" method="POST" use:enhance={handleBulkDelete}>
           <input name="key" type="hidden" value={deleteKey} />
           <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" type="submit"
             >Delete</AlertDialogAction

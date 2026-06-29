@@ -73,12 +73,17 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   };
 };
 
+function getAdminClient(locals: App.Locals) {
+  const client = locals.api;
+  if (!client?.authStore?.record?.admin) {
+    throw error(401, 'Unauthorized');
+  }
+  return client;
+}
+
 export const actions = {
   save: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     const form = await request.formData();
     const key = form.get('key') as string;
     const entriesJson = form.get('entries') as string;
@@ -127,14 +132,21 @@ export const actions = {
       return fail(500, { error: 'Save failed — rolled back', created: created.length, updated, errors: errors.length });
     }
 
+    // Return failure when existing entries fail to save (no creates to roll back)
+    if (errors.length > 0) {
+      return fail(500, {
+        error: `${errors.length} entr${errors.length === 1 ? 'y' : 'ies'} failed to save`,
+        created: created.length,
+        updated,
+        errors: errors.length
+      });
+    }
+
     return { success: true, created: created.length, updated, errors: errors.length };
   },
 
   delete: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     const form = await request.formData();
     const key = form.get('key') as string;
 
@@ -161,10 +173,7 @@ export const actions = {
   },
 
   add: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     const form = await request.formData();
     const key = form.get('key') as string;
     const value = form.get('value') as string;
@@ -183,10 +192,7 @@ export const actions = {
   },
 
   redeploy: async ({ locals }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
     const coolifyUrl = process.env.COOLIFY_URL;
     const coolifyToken = process.env.COOLIFY_TOKEN;
@@ -223,10 +229,7 @@ export const actions = {
   },
 
   status: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const _client = getAdminClient(locals);
     const form = await request.formData();
     const deploymentUuid = form.get('uuid') as string;
 
