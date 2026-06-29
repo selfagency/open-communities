@@ -32,8 +32,7 @@ jobs:
         run: |
           npm install -g phio tsx
           # Write the static deploy key so every CI run uses the same key
-          # (avoids fingerprint mismatch from per-runner key generation)
-          PHIO_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/phio"
+          PHIO_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/phio-nodejs"
           mkdir -p "$PHIO_DIR"
           echo "$PHIO_SSH_KEY" > "$PHIO_DIR/phio_deploy_ed25519"
           chmod 600 "$PHIO_DIR/phio_deploy_ed25519"
