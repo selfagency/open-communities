@@ -346,6 +346,34 @@ jobs:
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: pnpm exec playwright test --config e2e/playwright.config.cjs
 
+      - name: Run accessibility checks (pa11y-ci)
+        continue-on-error: true
+        id: pa11y
+        timeout-minutes: 5
+        run: |
+          mkdir -p .e2e
+          echo "Running pa11y-ci accessibility checks..."
+          npx --yes pa11y-ci@latest --json 2>&1 | tee /tmp/pa11y-output.json || true
+          cp /tmp/pa11y-output.json .e2e/pa11y-report.json 2>/dev/null || true
+          # Build summary
+          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
+          echo '| URL | Result |' >> .e2e/pa11y-summary.md
+          echo '|-----|--------|' >> .e2e/pa11y-summary.md
+          node -e "
+            let r;
+            try { r = JSON.parse(require('fs').readFileSync('/tmp/pa11y-output.json','utf8')); } catch {}
+            if (!r) try { r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8')); } catch {}
+            if (r) {
+              const results = r.results || r;
+              for (const [url, data] of Object.entries(results)) {
+                const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
+                const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
+                process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+              }
+            }
+          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
+          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
+
       - name: Docker Compose logs (on failure)
         if: failure()
         run: |
@@ -368,33 +396,6 @@ jobs:
         with:
           name: e2e-playwright-report
           path: e2e/playwright-report
-
-      - name: Run accessibility checks (pa11y-ci)
-        continue-on-error: true
-        id: pa11y
-        timeout-minutes: 5
-        run: |
-          echo "Running pa11y-ci accessibility checks..."
-          npx --yes pa11y-ci@latest --json 2>&1 | tee /tmp/pa11y-output.json || true
-          cp /tmp/pa11y-output.json .e2e/pa11y-report.json 2>/dev/null || true
-          # Build summary
-          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
-          echo '| URL | Result |' >> .e2e/pa11y-summary.md
-          echo '|-----|--------|' >> .e2e/pa11y-summary.md
-          node -e "
-            let r;
-            try { r = JSON.parse(require('fs').readFileSync('/tmp/pa11y-output.json','utf8')); } catch {}
-            if (!r) try { r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8')); } catch {}
-            if (r) {
-              const results = r.results || r;
-              for (const [url, data] of Object.entries(results)) {
-                const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
-                const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
-                process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
-              }
-            }
-          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
-          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Find or create pa11y PR comment
         if: steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
