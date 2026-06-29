@@ -1,0 +1,58 @@
+# Local Development Override
+#
+# Adds port mappings, pocketbase, mailpit, and an explicit `dev` network
+# for local development and CI/E2E test environments.
+#
+# Usage:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d
+#
+# Local dev (no app — SvelteKit runs via `pnpm dev`):
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build \
+#     pocketbase dragonfly cap libretranslate mailpit
+
+services:
+  dragonfly:
+    ports:
+      - '6379:6379'
+    networks:
+      - dev
+
+  cap:
+    ports:
+      - '3001:3000'
+    networks:
+      - dev
+
+  libretranslate:
+    ports:
+      - '5000:5000'
+    networks:
+      - dev
+
+  pocketbase:
+    build:
+      context: ./pocketbase
+      dockerfile: Dockerfile
+      args:
+        PB_VERSION: '0.29.2'
+        PB_ARCH: 'amd64'
+    image: opencommunities-pocketbase:local
+    ports:
+      - '8090:8090'
+    volumes:
+      - ./pocketbase/pb_data:/pb_data
+      - ./pb_migrations:/pb_data/pb_migrations
+    networks:
+      - dev
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    networks:
+      - dev
+
+networks:
+  dev:
+    driver: bridge

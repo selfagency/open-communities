@@ -272,9 +272,10 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps --only-shell
 
-      - name: Start Docker Compose (PB, Mailpit, Cap, Dragonfly)
+      - name: Start Docker Compose (PB, Mailpit, Dragonfly, Cap, LibreTranslate)
         run: |
-          docker compose -f docker/docker-compose.yml up -d
+          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d \
+            pocketbase dragonfly cap libretranslate mailpit
           timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
           echo "All services ready"
 
@@ -297,11 +298,13 @@ jobs:
         env:
           PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
           PB_URL: https://api.opencommunities.info
+          GIT_SHA: ${{ github.sha }}
         run: |
           docker build \
             --build-arg PB_API_TOKEN="${PB_API_TOKEN}" \
             --build-arg PB_URL="${PB_URL}" \
-            -f docker/Dockerfile.e2e \
+            --build-arg COMMIT_SHA="${GIT_SHA}" \
+            -f docker/Dockerfile \
             -t opencommunities-e2e .
 
       - name: Push app image to GHCR (main only)
@@ -355,13 +358,13 @@ jobs:
       - name: Docker Compose logs (on failure)
         if: failure()
         run: |
-          docker compose -f docker/docker-compose.yml logs --tail=50
+          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml logs --tail=50
           echo "--- App container logs ---"
           docker logs opencommunities-e2e 2>&1 || echo "No app logs available"
 
       - name: Tear down Docker Compose
         if: always()
-        run: docker compose -f docker/docker-compose.yml down -v
+        run: docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4

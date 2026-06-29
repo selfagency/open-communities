@@ -81,6 +81,55 @@ function getAdminClient(locals: App.Locals) {
   return client;
 }
 
+interface TranslateResult {
+  locale: string;
+  translatedText: string;
+}
+
+async function translateLocale(text: string, locale: string, apiUrl: string, ltKey?: string): Promise<TranslateResult> {
+  const res = await fetch(`${apiUrl}/translate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      q: text,
+      source: 'en',
+      target: locale,
+      format: 'text',
+      ...(ltKey ? { api_key: ltKey } : {})
+    })
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`
+    );
+  }
+
+  const data = (await res.json()) as { translatedText: string };
+  return { locale, translatedText: data.translatedText };
+}
+
+function processTranslationResults(rawResults: PromiseSettledResult<TranslateResult>[]): {
+  translations: TranslateResult[];
+  errors: string[];
+} {
+  const translations: TranslateResult[] = [];
+  const errors: string[] = [];
+
+  for (const result of rawResults) {
+    if (result.status === 'fulfilled') {
+      translations.push(result.value);
+    } else {
+      const msg = result.reason?.message ?? 'Unknown error';
+      errors.push(msg);
+      log.error('Translation failed', { error: msg });
+    }
+  }
+
+  return { translations, errors };
+}
+
 export const actions = {
   save: async ({ locals, request }) => {
     const client = getAdminClient(locals);
@@ -226,6 +275,41 @@ export const actions = {
       log.error('Coolify redeploy error', err);
       return fail(502, { error: 'Rebuild failed' });
     }
+  },
+
+  translate: async ({ locals, request }) => {
+    getAdminClient(locals);
+    const form = await request.formData();
+    const text = form.get('text') as string;
+    const localesStr = form.get('locales') as string;
+
+    if (!(text && localesStr)) {
+      return fail(400, { error: 'Missing text or locales' });
+    }
+
+    let locales: string[];
+    try {
+      locales = JSON.parse(localesStr) as string[];
+    } catch {
+      return fail(400, { error: 'Invalid locales JSON' });
+    }
+
+    const ltUrl = process.env.LT_API_URL;
+    const ltKey = process.env.LT_API_KEY;
+    if (!ltUrl) {
+      return fail(500, { error: 'LibreTranslate is not configured' });
+    }
+
+    const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
+
+    const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
+
+    const { translations, errors } = processTranslationResults(rawResults);
+    if (translations.length === 0) {
+      return fail(502, { error: errors[0] ?? 'All translations failed' });
+    }
+
+    return { success: true, translations, ...(errors.length > 0 ? { errors } : {}) };
   },
 
   status: async ({ locals, request }) => {

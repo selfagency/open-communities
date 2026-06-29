@@ -1,6 +1,0 @@
-[phases.build]
-aptPkgs = ["wget"]
-cmds = ['SOURCE_VERSION=$(git rev-parse HEAD) pnpm run build']
-
-[phases.setup]
-nixPkgs = ["nodejs_22"]
