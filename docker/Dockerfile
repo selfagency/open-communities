@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm-store \
 COPY . .
 RUN CI=true SOURCE_VERSION=${SOURCE_VERSION} \
   PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} \
-  pnpm run build
+  pnpm run build:prod
 
 # ─── Runtime image ───────────────────────────────────────────────────────
 FROM node:22-alpine AS runtime

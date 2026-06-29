@@ -54,8 +54,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Build (production — includes i18n fetch)
+        run: pnpm build:prod
         env:
           PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
           PB_URL: https://api.opencommunities.info
