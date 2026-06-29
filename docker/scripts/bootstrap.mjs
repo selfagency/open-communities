@@ -240,9 +240,12 @@ async function seedData(token) {
 }
 
 async function createCapKeys() {
-  const envPath = resolve(ROOT, '.env.dynamic');
+  // Check if keys already exist in any env file
+  const readFiles = [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')];
   let existing = '';
-  try { existing = readFileSync(envPath, 'utf-8'); } catch {}
+  for (const f of readFiles) {
+    try { existing += readFileSync(f, 'utf-8'); } catch {}
+  }
   if (existing.includes('PUBLIC_CAPTCHA_SITE_KEY=') && existing.includes('CAPTCHA_SITE_SECRET=')) {
     console.log('🧢 Captcha keys already configured');
     return;
@@ -261,10 +264,13 @@ async function createCapKeys() {
       });
       if (res.ok) {
         const data = await res.json();
-        // Write to .env.dynamic if it exists (local dev), otherwise just print
-        try { appendFileSync(envPath, `\n# Created by bootstrap\nPUBLIC_CAPTCHA_SITE_KEY="${data.siteKey}"\nCAPTCHA_SITE_SECRET="${data.secret}"\n`); } catch {}; // NOSONAR — file may not exist in CI
+        // Write to .env.test (CI) or .env.dynamic (local dev), whichever exists
+        const envFiles = [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')];
+        for (const f of envFiles) {
+          try { appendFileSync(f, `\n# Created by bootstrap\nPUBLIC_CAPTCHA_SITE_KEY="${data.siteKey}"\nCAPTCHA_SITE_SECRET="${data.secret}"\n`); } catch {}
+        }
         console.log(` ✅\n  🔑 Site key: ${data.siteKey}\n  🔒 Secret: ${data.secret.substring(0, 8)}...`);
-        console.log('  📝 Appended to .env.dynamic');
+        console.log('  📝 Appended to .env.e2e / .env.dynamic');
         return;
       }
     } catch {}
