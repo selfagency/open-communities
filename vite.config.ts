@@ -19,8 +19,12 @@ export default defineConfig(({ mode }) => ({
     sourcemap: 'hidden',
     // Skip gzip size reporting — saves ~10s on each build
     reportCompressedSize: false,
-    rollupOptions: {
+    rolldownOptions: {
+      external: ['maplibre-gl'],
       output: {
+        globals: {
+          'maplibre-gl': 'maplibregl'
+        },
         manualChunks(id: string) {
           if (id.includes('svelte-maplibre')) {
             return 'svelte-maplibre';
