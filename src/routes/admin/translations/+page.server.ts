@@ -313,7 +313,7 @@ export const actions = {
   },
 
   status: async ({ locals, request }) => {
-    const _client = getAdminClient(locals);
+    getAdminClient(locals);
     const form = await request.formData();
     const deploymentUuid = form.get('uuid') as string;
 
