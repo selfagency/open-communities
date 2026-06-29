@@ -66,9 +66,9 @@ services:
         condition: service_started
     environment:
       CAPTCHA_INTERNAL_ENDPOINT: http://cap:3000
-      LT_API_URL: ${LT_API_URL:-http://libretranslate:5000}
+      PUBLIC_CAPTCHA_ENDPOINT: http://cap:3000
+      LT_API_URL: http://libretranslate:5000
       PUBLIC_API_ENDPOINT: ${PUBLIC_API_ENDPOINT}
-      PUBLIC_CAPTCHA_ENDPOINT: ${PUBLIC_CAPTCHA_ENDPOINT:-http://cap:3000}
       PUBLIC_CAPTCHA_SITE_KEY: ${PUBLIC_CAPTCHA_SITE_KEY}
       CAPTCHA_SITE_SECRET: ${CAPTCHA_SITE_SECRET}
       NODE_ENV: ${NODE_ENV:-production}
@@ -77,7 +77,6 @@ services:
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
-      LT_API_KEY: ${LT_API_KEY}
       PUBLIC_POSTHOG_KEY: ${PUBLIC_POSTHOG_KEY}
       PUBLIC_POSTHOG_HOST: ${PUBLIC_POSTHOG_HOST}
     restart: unless-stopped
