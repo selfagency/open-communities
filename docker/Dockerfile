@@ -23,7 +23,10 @@ RUN npm install -g pnpm@10
 # Copy dependency manifests first for Docker layer caching
 COPY package.json pnpm-lock.yaml ./
 # CI=true prevents ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY in non-TTY CI envs
-RUN CI=true pnpm install
+# --mount=type=cache caches the pnpm store across builds (Docker BuildKit)
+RUN --mount=type=cache,target=/root/.local/share/pnpm-store \
+    CI=true pnpm fetch \
+    && CI=true pnpm install --offline
 
 # Copy the rest of the source and build the production output
 # PB_API_TOKEN/PB_URL passed inline to avoid persisting as ENV in intermediate layers
@@ -46,7 +49,8 @@ COPY package.json pnpm-lock.yaml ./
 # --ignore-scripts avoids the husky prepare hook failing in prod install
 # --frozen-lockfile ensures deterministic install; fall back if lockfile is absent
 RUN npm install -g pnpm@10 \
-    && (pnpm install --prod --frozen-lockfile --ignore-scripts \
+    && (pnpm fetch --prod 2>/dev/null || true) \
+    && (pnpm install --prod --frozen-lockfile --ignore-scripts --offline \
         || pnpm install --prod --ignore-scripts)
 
 # Copy build output from the builder stage
