@@ -12,8 +12,9 @@ RUN \
     echo "WARNING: No known package manager — health checks may fail"; \
   fi
 
-# Switch back to the default non-root user
-USER node
+# Create and switch to a non-root user for security
+RUN useradd -m -s /bin/bash capuser
+USER capuser
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:3000/ || exit 1
