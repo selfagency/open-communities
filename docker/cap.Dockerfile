@@ -1,6 +1,7 @@
 # Add curl to the tiago2/cap image for health checks
 FROM tiago2/cap:3.1.5
 
+USER root
 RUN \
   if command -v apk >/dev/null 2>&1; then \
     apk add --no-cache curl; \
@@ -11,6 +12,7 @@ RUN \
     echo "WARNING: No known package manager — health checks may fail"; \
   fi
 
+# Switch back to the default non-root user
 USER node
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
