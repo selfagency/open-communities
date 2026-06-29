@@ -15,14 +15,10 @@
 services:
   dragonfly:
     image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.26.2
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+    ulimits:
+      memlock: -1
     volumes:
       - dragonfly_data:/data
-    command: '--maxmemory_policy noeviction --snapshot_cron "*/10 * * * *"'
     restart: unless-stopped
 
   cap:
@@ -31,7 +27,7 @@ services:
       dockerfile: cap.Dockerfile
     depends_on:
       dragonfly:
-        condition: service_healthy
+        condition: service_started
     environment:
       - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
       - REDIS_URL=redis://dragonfly:6379
