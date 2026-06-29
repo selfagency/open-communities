@@ -12,7 +12,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { appendFileSync, readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -239,6 +239,38 @@ async function seedData(token) {
   await create('pages', { title: 'FAQ', slug: 'frequently-asked-questions', lang: 'en', content: '# FAQ\n\nClick "Add Congregation".', published: true });
 }
 
+async function createCapKeys() {
+  const envPath = resolve(ROOT, '.env.dynamic');
+  const existing = readFileSync(envPath, 'utf-8');
+  if (existing.includes('PUBLIC_CAPTCHA_SITE_KEY=') && existing.includes('CAPTCHA_SITE_SECRET=')) {
+    console.log('🧢 Captcha keys already configured');
+    return;
+  }
+
+  const capUrl = process.env.CAPTCHA_INTERNAL_ENDPOINT || 'http://localhost:3001';
+  const capAdminKey = process.env.CAP_ADMIN_KEY || 'b622695b-1e2c-42f7-87b2-b442049c679a';
+
+  process.stdout.write('🧢 Creating captcha site key...');
+  for (let i = 0; i < 30; i++) {
+    try {
+      const res = await fetch(`${capUrl}/server/keys`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bot ${capAdminKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'open-communities' })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        appendFileSync(envPath, `\n# Created by bootstrap\nPUBLIC_CAPTCHA_SITE_KEY="${data.siteKey}"\nCAPTCHA_SITE_SECRET="${data.secret}"\n`);
+        console.log(` ✅\n  🔑 Site key: ${data.siteKey}\n  🔒 Secret: ${data.secret.substring(0, 8)}...`);
+        console.log('  📝 Appended to .env.dynamic');
+        return;
+      }
+    } catch {}
+    await sleep(2000);
+  }
+  console.log(' ⏭  Cap not reachable — add keys manually');
+}
+
 async function main() {
   console.log('═══════════════════════════════════════\n  PocketBase Bootstrap\n═══════════════════════════════════════\n');
   const start = Date.now();
@@ -256,6 +288,7 @@ async function main() {
     } catch {
       console.log('  ⏭  Superuser creation skipped (CI or container name mismatch)');
     }
+    await createCapKeys();
     console.log(`\n✅ Done in ${((Date.now()-start)/1000).toFixed(1)}s`);
     console.log(`   Panel: ${PB}/_/`);
     console.log(`   Auth:  ${ADMIN_EMAIL}`);
