@@ -254,8 +254,8 @@ async function createCapKeys() {
   const capUrl = process.env.CAPTCHA_INTERNAL_ENDPOINT || 'http://localhost:3001';
   const capAdminKey = process.env.CAP_ADMIN_KEY || 'b622695b-1e2c-42f7-87b2-b442049c679a';
 
-  process.stdout.write('🧢 Creating captcha site key...');
-  for (let i = 0; i < 30; i++) {
+  process.stdout.write(`🧢 Creating captcha site key (${capUrl})...`);
+  for (let i = 0; i < 60; i++) {
     try {
       const res = await fetch(`${capUrl}/server/keys`, {
         method: 'POST',
