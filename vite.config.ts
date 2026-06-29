@@ -4,7 +4,6 @@ import svg from '@poppanator/sveltekit-svg';
 import posthog from '@posthog/rollup-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
-import { visualizer } from 'rollup-plugin-visualizer';
 import biomePlugin from 'vite-plugin-biome';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { ViteMcp } from 'vite-plugin-mcp';
@@ -64,14 +63,6 @@ export default defineConfig(({ mode }) => ({
       project: './project.inlang'
     }),
     svg(),
-    // Bundle visualization — run with ANALYZE=true pnpm build
-    process.env.ANALYZE &&
-      visualizer({
-        open: !process.env.CI,
-        filename: 'build/stats.html',
-        gzipSize: true,
-        brotliSize: true
-      }),
     // PostHog sourcemap upload — only during production builds with credentials
     mode === 'production' &&
       process.env.POSTHOG_CLI_PROJECT_ID &&

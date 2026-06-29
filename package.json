@@ -7,7 +7,6 @@
   "scripts": {
     "build": "vite build",
     "build:prod": "node scripts/fetch-translations.mjs && vite build",
-    "build:analyze": "ANALYZE=true node scripts/fetch-translations.mjs && ANALYZE=true vite build",
     "build:maps": "pnpm run build:prod && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap inject --directory ./build && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap upload --directory ./build --delete-after",
     "build:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite build",
     "build:types": "pocketbase-typegen --db ./docker/pocketbase/pb_data/data.db --out ./src/lib/pocketbase.d.ts",
@@ -104,7 +103,6 @@
     "pocketbase-typegen": "^1.5.0",
     "public-ip": "^8.0.0",
     "radashi": "12.9.1",
-    "rollup-plugin-visualizer": "^7.0.1",
     "runed": "^0.37.1",
     "svelte": "5.56.4",
     "svelte-check": "^4.7.1",
