@@ -273,7 +273,10 @@ async function createCapKeys() {
         console.log('  📝 Appended to .env.e2e / .env.dynamic');
         return;
       }
-    } catch {}
+      if (i === 0) process.stdout.write(`\n    ⏳ waiting (status ${res.status})`);
+    } catch (e) {
+      if (i === 0) process.stdout.write(`\n    ⏳ waiting (${e?.cause?.code || e?.message || 'error'})`);
+    }
     await sleep(2000);
   }
   console.log(' ⏭  Cap not reachable — add keys manually');
