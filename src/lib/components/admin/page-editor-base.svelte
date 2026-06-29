@@ -44,11 +44,17 @@ function generateSlug(val: string): string {
   );
 }
 
-function handleTitleChange() {
+// Auto-generate slug from title reactively. Using $effect (rather than an
+// oninput handler that reads `title`) avoids a stale-read race where the
+// handler fires before the bound `title` state has propagated — which left
+// the slug empty and the submit button disabled in production builds.
+$effect(() => {
+  // Track title explicitly so the effect re-runs on every change.
+  const currentTitle = title;
   if (!manualSlug) {
-    slug = generateSlug(title);
+    slug = generateSlug(currentTitle);
   }
-}
+});
 </script>
 
 <Card>
@@ -64,7 +70,6 @@ function handleTitleChange() {
       <Input
         id="title"
         name="title"
-        oninput={handleTitleChange}
         placeholder={m.pageEditorTitlePlaceholder()}
         required
         bind:value={title}

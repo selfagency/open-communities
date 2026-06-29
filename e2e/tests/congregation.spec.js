@@ -35,8 +35,9 @@ test.describe('Congregation CRUD', () => {
 
   test('homepage shows congregation directory', async ({ page }) => {
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
-    await expect(page.locator('input[id="search"]')).toBeVisible();
+    // Wait for search input to be visible instead of networkidle
+    // networkidle is unreliable when CDN resources are loaded post-hydration
+    await expect(page.locator('input[id="search"]')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('div.col-span-1').first()).toBeVisible({ timeout: 15000 });
   });
 
