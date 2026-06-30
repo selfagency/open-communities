@@ -67,13 +67,7 @@ $effect(() => {
         <span>{m.pageEditorTitleLabel()}</span>
         <Required set={title !== ''} />
       </label>
-      <Input
-        id="title"
-        name="title"
-        placeholder={m.pageEditorTitlePlaceholder()}
-        required
-        bind:value={title}
-      />
+      <Input id="title" name="title" placeholder={m.pageEditorTitlePlaceholder()} required bind:value={title} />
     </div>
 
     <div class="space-y-2">
