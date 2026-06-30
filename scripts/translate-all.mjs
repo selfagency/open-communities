@@ -14,9 +14,17 @@
  *   LT_API_URL    — LibreTranslate API URL (required, e.g. http://localhost:5000)
  *   LT_API_KEY    — LibreTranslate API key (required)
  *   BATCH_SIZE    — PB batch write size (default: 50)
+ *   CHECKPOINT    — resume state file path (default: scripts/.translate-checkpoint.json)
+ *
+ * The script saves progress to a checkpoint file after every batch write.
+ * If interrupted, re-run with the same env vars to resume from where it left off.
  */
 
 const LOCALES = ['de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
+
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 let PB_URL = process.env.PB_URL || 'http://localhost:8090';
 if (PB_URL.endsWith('/')) {
@@ -29,6 +37,8 @@ if (LT_URL?.endsWith('/')) {
 }
 const LT_KEY = process.env.LT_API_KEY;
 const BATCH_SIZE = Number(process.env.BATCH_SIZE) || 50;
+const CHECKPOINT_FILE =
+  process.env.CHECKPOINT || resolve(dirname(fileURLToPath(import.meta.url)), '.translate-checkpoint.json');
 
 if (!TOKEN) {
   console.error('❌ PB_API_TOKEN is required');
@@ -41,6 +51,28 @@ if (!LT_URL) {
 if (!LT_KEY) {
   console.error('❌ LT_API_KEY is required');
   process.exit(1);
+}
+
+/* ── Checkpoint helpers ── */
+
+function loadCheckpoint() {
+  try {
+    if (existsSync(CHECKPOINT_FILE)) {
+      const raw = JSON.parse(readFileSync(CHECKPOINT_FILE, 'utf-8'));
+      return new Set(raw.completed || []);
+    }
+  } catch {
+    /* corrupted file — start fresh */
+  }
+  return new Set();
+}
+
+function saveCheckpoint(completed) {
+  try {
+    writeFileSync(CHECKPOINT_FILE, `${JSON.stringify({ completed: [...completed] }, null, 2)}\n`);
+  } catch {
+    // best-effort — resume still works from PB state
+  }
 }
 
 /* ── Helpers ── */
@@ -162,6 +194,11 @@ async function main() {
   console.log(`🔤 Translating all keys via ${LT_URL} → ${PB_URL}`);
   console.log(`   Locales: ${LOCALES.join(', ')}\n`);
 
+  const checkpoint = loadCheckpoint();
+  if (checkpoint.size > 0) {
+    console.log(`📌 Checkpoint found — ${checkpoint.size} entries already completed, will resume\n`);
+  }
+
   const existingMap = await fetchAllRecords();
   console.log(`   ${existingMap.size} total translation records found\n`);
 
@@ -180,7 +217,12 @@ async function main() {
     process.stdout.write(`\r  [${ki + 1}/${sortedKeys.length}] ${key}`);
 
     for (const locale of LOCALES) {
-      const existing = existingMap.get(`${key}|${locale}`);
+      const entryKey = `${key}|${locale}`;
+      if (checkpoint.has(entryKey)) {
+        continue;
+      }
+
+      const existing = existingMap.get(entryKey);
 
       try {
         const translatedText = await translateText(enValue, locale);
@@ -189,7 +231,11 @@ async function main() {
 
         if (batch.length >= BATCH_SIZE) {
           await batchSend(batch);
+          for (const b of batch) {
+            checkpoint.add(`${b.body.key}|${b.body.locale}`);
+          }
           batch.length = 0;
+          saveCheckpoint(checkpoint);
           process.stdout.write('.');
           await new Promise((r) => setTimeout(r, 100));
         }
@@ -202,6 +248,10 @@ async function main() {
 
   if (batch.length > 0) {
     await batchSend(batch);
+    for (const b of batch) {
+      checkpoint.add(`${b.body.key}|${b.body.locale}`);
+    }
+    saveCheckpoint(checkpoint);
     process.stdout.write('.');
   }
 
