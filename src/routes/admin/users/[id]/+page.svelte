@@ -117,6 +117,11 @@ function handleDelete() {
       </CardHeader>
       <CardContent class="space-y-4">
         <p class="text-muted-foreground text-sm">{m.linkedDescription()}</p>
+        <p class="mb-3">
+          <a class="font-medium text-primary underline-offset-4 hover:underline" href="/{user.congregationSlug}">
+            {user.congregationName || user.congregation}
+          </a>
+        </p>
         <div class="flex gap-2">
           <Button onclick={() => goto('/edit?id=' + user.congregation)} variant="outline"
             >{m.editCongregation()}</Button
