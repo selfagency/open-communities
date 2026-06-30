@@ -4,6 +4,12 @@ describe('POST /api/admin/cache/clear', () => {
   it('throws 401 without auth', async () => {
     const mod = await import('../../../routes/api/admin/cache/clear/+server');
     const event = { locals: { api: { authStore: { record: null } } } };
+    try {
+      await mod.POST(event as never);
+      expect.fail('Expected error to be thrown');
+    } catch (e) {
+      expect((e as { status: number }).status).toBe(401);
+    }
   });
 
   it('clears cache and returns success', async () => {

@@ -192,7 +192,7 @@ function serializeError(error: unknown): string {
   if (error == null) {
     return '';
   }
-  return String(error);
+  return String(error); // NOSONAR — only reaches here for primitives (objects handled above)
 }
 
 export const handleError = async ({

@@ -59,7 +59,7 @@ jobs:
 
       - name: Generate i18n messages + type check
         run: |
-          pnpm paraglide-js compile --project ./project.inlang
+          pnpm paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide
           pnpm svelte-kit sync
           pnpm svelte-check
 
@@ -206,12 +206,13 @@ jobs:
 
       - name: Install Playwright
         run: |
-          mkdir -p .playwright
-          cd .playwright
+          mkdir -p /tmp/.playwright
+          cd /tmp/.playwright
           npm init -y > /dev/null 2>&1
           npm install --legacy-peer-deps @playwright/test
-          cd ..
+          cd /tmp/.playwright
           npx playwright install chromium --with-deps --only-shell
+          echo "PLAYWRIGHT_DIR=/tmp/.playwright" >> $GITHUB_ENV
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -280,7 +281,7 @@ jobs:
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: |
-          cd .playwright
+          cd $PLAYWRIGHT_DIR
           npx playwright test --config ${{ github.workspace }}/e2e/playwright.config.cjs
 
       - name: Run accessibility checks (pa11y-ci)
