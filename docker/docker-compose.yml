@@ -16,7 +16,7 @@ services:
   dragonfly:
     image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.26.2
     command:
-      - '--maxmemory=256mb'
+      - '--maxmemory=1gb'
     ulimits:
       memlock: -1
     volumes:
