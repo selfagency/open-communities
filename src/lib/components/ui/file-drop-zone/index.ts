@@ -1,6 +1,8 @@
-// @ts-expect-error: Svelte 5 component default export not recognized by TS in CI
-export { default as Root } from './file-drop-zone.svelte';
-export { default as Trigger } from './file-drop-zone-trigger.svelte';
+// @ts-expect-error: Svelte 5 component default export not recognized by TS
+import _Root from './file-drop-zone.svelte';
+import _Trigger from './file-drop-zone-trigger.svelte';
+export const Root = _Root;
+export const Trigger = _Trigger;
 
 export function displaySize(bytes: number): string {
   if (bytes < KILOBYTE) {
@@ -18,13 +20,11 @@ export function displaySize(bytes: number): string {
   return `${(bytes / GIGABYTE).toFixed(0)} GB`;
 }
 
-// Utilities for working with file sizes
 const BYTE = 1;
 const KILOBYTE = 1000;
 const MEGABYTE = 1000 * KILOBYTE;
 const GIGABYTE = 1000 * MEGABYTE;
 
-// utilities for limiting accepted files
 export const ACCEPT_IMAGE = 'image/*';
 const ACCEPT_VIDEO = 'video/*';
 const ACCEPT_AUDIO = 'audio/*';

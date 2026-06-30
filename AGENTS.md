@@ -22,6 +22,14 @@
 - svelte-sonner for toasts
 - sveltekit-helmet for security headers
 
+## CRITICALLY IMPORTANT INSTRUCTIONS
+
+<DO_NOT_SKIP>
+- Do not use `--no-verify` when committing. All checks must pass regardless of whether you think the errors are unrelated to your work.
+- NEVER EVER engage in destructive actions like resetting a git branch or deleting a folder without user confirmation.
+- Prefer internal agentic and MCP tooling like AFT and git-mcp over the command-line to reduce likelihood of errors with structured data IO.
+</DO_NOT_SKIP>
+
 ## Architecture
 
 ```

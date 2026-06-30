@@ -57,24 +57,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build (production — includes i18n fetch)
-        run: pnpm build:prod
-        env:
-          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
-          PB_URL: https://api.opencommunities.info
+      - name: Generate i18n messages (no build needed)
+        run: npx @inlang/paraglide-js compile --project project.inlang
 
       - name: Type check
         run: pnpm svelte-kit sync && pnpm svelte-check
 
       - name: Lint
         run: pnpm check
-
-      - name: Upload build output
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: build-output
-          path: build/
-          if-no-files-found: error
 
   unit-tests:
     name: Unit tests
@@ -215,7 +205,9 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Playwright
-        run: npx playwright@latest install chromium --with-deps --only-shell
+        run: |
+          npm install @playwright/test
+          npx playwright install chromium --with-deps --only-shell
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -283,9 +275,7 @@ jobs:
           PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: |
-          npm install -g @playwright/test
-          playwright test --config e2e/playwright.config.cjs
+        run: npx playwright test --config e2e/playwright.config.cjs
 
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
