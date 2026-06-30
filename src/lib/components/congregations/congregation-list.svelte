@@ -134,13 +134,21 @@ const activeCols: ColumnDef<Cong>[] = [
         { v: locationStr(row.original) }
       )
   },
-  { accessorKey: 'owner', header: m.owner(), cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName) }
+  {
+    accessorKey: 'owner',
+    header: m.owner(),
+    cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName)
+  }
 ];
 
 const pendingCols: ColumnDef<Cong>[] = [
   { accessorKey: 'name', header: m.name(), cell: ({ row }) => nameCell(row.original.name) },
   { accessorKey: 'denomination', header: m.denomination(), cell: ({ row }) => denomCell(row.original.denomination) },
-  { accessorKey: 'owner', header: m.submittedBy(), cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName) },
+  {
+    accessorKey: 'owner',
+    header: m.submittedBy(),
+    cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName)
+  },
   { accessorKey: 'created', header: m.date(), cell: ({ row }) => mutedCell((row.original.created || '').slice(0, 10)) }
 ];
 
