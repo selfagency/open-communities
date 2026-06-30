@@ -2,6 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
+import { parsePageForm, pbErrorToFail } from '../_shared';
 
 const variantSchema = z.object({
   id: z.string().optional(),
@@ -31,33 +32,17 @@ export const actions = {
     }
 
     const form = await request.formData();
-    const title = form.get('title') as string;
-    const slug = form.get('slug') as string;
-    const description = form.get('description') as string;
-    const content = form.get('content') as string;
-    const imageAlt = form.get('imageAlt') as string;
-    const imageCaption = form.get('imageCaption') as string;
+    const parsed = parsePageForm(form);
+    if (!parsed.ok) {
+      return fail(400, { error: parsed.error, field: parsed.field });
+    }
+
     const variantsJson = form.get('variants') as string;
     const imageRaw = form.get('image');
     const imageFile = imageRaw instanceof File ? imageRaw : null;
 
-    if (!(title && slug)) {
-      return fail(400, { error: 'Title and slug are required' });
-    }
-    // biome-ignore lint/performance/useTopLevelRegex: intentional inline regex
-    if (!/^[a-z0-9-]+$/.test(slug)) {
-      return fail(400, { error: 'Slug must contain only lowercase letters, numbers, and hyphens' });
-    }
-
     try {
-      const body: Record<string, unknown> = {
-        title,
-        slug,
-        description: description || '',
-        content: content || '',
-        imageAlt: imageAlt || '',
-        imageCaption: imageCaption || ''
-      };
+      const body: Record<string, unknown> = { ...parsed.data };
 
       if (imageFile?.size && imageFile.size > 0) {
         body.image = imageFile;
@@ -98,7 +83,7 @@ export const actions = {
       if ((err as { status?: number }).status === 303) {
         throw err;
       }
-      return fail(400, { error: 'Save failed' });
+      return pbErrorToFail(err);
     }
   }
 } satisfies Actions;

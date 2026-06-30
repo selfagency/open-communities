@@ -61,7 +61,12 @@
       "src/lib/components/congregation/accessibility-full.test.ts",
       "src/lib/components/form/form-alerts.test.ts",
       "src/lib/components/form/form-footer.test.ts",
-      "src/lib/components/form/form-alerts.svelte"
+      "src/lib/components/form/form-alerts.svelte",
+      // Config files — not application code
+      "vite.config.ts",
+      "vitest.config.ts",
+      "svelte.config.js",
+      "**/*.config.{ts,js,mjs,cjs}"
     ]
   },
   "ignorePatterns": [
