@@ -91,7 +91,9 @@
     "src/test/setupServer.ts",
     "src/test/testUtils.ts",
     // SVG mock assets (used by test Vitest setup)
-    "**/mocks/assets/*.js"
+    "**/mocks/assets/*.js",
+    // Test files in scripts/lib (not picked up by production analysis)
+    "docker/scripts/lib/*.test.mjs"
   ],
   "ignoreDependencies": [
     "vitest-browser-svelte",
@@ -234,6 +236,10 @@
     {
       "file": "src/lib/server/logger.ts",
       "exports": ["*"]
+    },
+    {
+      "file": "docker/scripts/lib/captcha.mjs",
+      "exports": ["buildBearerAuth"]
     },
     {
       "file": "src/lib/utils.ts",
