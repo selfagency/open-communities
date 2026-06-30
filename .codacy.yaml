@@ -1,0 +1,30 @@
+---
+# Codacy configuration — suppress noise, scope rules
+# https://docs.codacy.com/repositories-configure/codacy-configuration-file/
+
+exclude_paths:
+  - "pnpm-lock.yaml"
+  - "src/lib/paraglide/**"
+  - "build/**"
+  - "node_modules/**"
+  - ".svelte-kit/**"
+  - "static/images/icons/**"
+  - "**/*.min.js"
+  - "coverage/**"
+  - "test-results/**"
+
+engines:
+  markdownlint:
+    enabled: true
+    exclude_paths:
+      - "COVERAGE_AND_HEALTH_PLAN.md"
+      - "CODE-REMEDIATIONS.md"
+      - "FALLOW-REMEDIATIONS.md"
+      - "PLAN_SUMMARY.md"
+      - "analytics-plan.md"
+  eslint:
+    enabled: true
+  shellcheck:
+    enabled: true
+  hadolint:
+    enabled: true

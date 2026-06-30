@@ -16,6 +16,7 @@ import { appendFileSync, readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { keysAlreadyConfigured, buildEnvEntry, createCaptchaKeys, withRetry } from './lib/captcha.mjs';
 
 const DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(DIR, '../..');
@@ -240,13 +241,13 @@ async function seedData(token) {
 }
 
 async function createCapKeys() {
-  // Check if keys already exist in any env file
+  // Guard: check if already configured
   const readFiles = [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')];
   let existing = '';
   for (const f of readFiles) {
     try { existing += readFileSync(f, 'utf-8'); } catch {}
   }
-  if (existing.includes('PUBLIC_CAPTCHA_SITE_KEY=') && existing.includes('CAPTCHA_SITE_SECRET=')) {
+  if (keysAlreadyConfigured(existing)) {
     console.log('🧢 Captcha keys already configured');
     return;
   }
@@ -256,62 +257,29 @@ async function createCapKeys() {
 
   process.stdout.write(`🧢 Creating captcha keys (${capUrl})...`);
 
-  async function capPost(path, body, auth) {
+  const capPost = async (path, body, auth) => {
     const headers = { 'content-type': 'application/json' };
     if (auth) headers['authorization'] = auth;
     const res = await fetch(`${capUrl}${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
     const data = res.ok ? await res.json().catch(() => null) : null;
     return { ok: res.ok, status: res.status, data };
+  };
+
+  const result = await withRetry(async () => {
+    return await createCaptchaKeys(capUrl, capAdminKey, capPost);
+  });
+
+  if (!result.ok) {
+    console.log(` ⏭  Cap not reachable: ${result.message}`);
+    return;
   }
 
-  for (let i = 0; i < 60; i++) {
-    try {
-      // 1. Login with admin key to get session token
-      const login = await capPost('/auth/login', { admin_key: capAdminKey });
-      if (!login.ok) {
-        if (i === 0) {
-          process.stdout.write(`\n    ⏳ login (${login.status})`);
-        }
-        await sleep(2000);
-        continue;
-      }
-
-      const { session_token: token, hashed_token: hash } = login.data;
-      const bearer = Buffer.from(JSON.stringify({ token, hash })).toString('base64');
-
-      // 2. Create an API (Bot) key using Bearer session auth
-      const ak = await capPost('/server/settings/apikeys', { name: 'ci-bot' }, `Bearer ${bearer}`);
-      if (!ak.ok) {
-        if (i === 0) {
-          process.stdout.write(`\n    ⏳ apikey (${ak.status})`);
-        }
-        await sleep(2000);
-        continue;
-      }
-
-      // 3. Create a site key using Bot API key auth
-      const sk = await capPost('/server/keys', { name: 'open-communities' }, `Bot ${ak.data.apiKey}`);
-      if (!sk.ok) {
-        if (i === 0) {
-          process.stdout.write(`\n    ⏳ sitekey (${sk.status})`);
-        }
-        await sleep(2000);
-        continue;
-      }
-
-      const { siteKey, secretKey } = sk.data;
-      const entry = `\n# Created by bootstrap\nPUBLIC_CAPTCHA_SITE_KEY="${siteKey}"\nCAPTCHA_SITE_SECRET="${secretKey}"\n`;
-      for (const f of [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')]) {
-        try { appendFileSync(f, entry); } catch {}
-      }
-      console.log(' ✅\n  🔑 Captcha keys created and written to .env files');
-      return;
-    } catch (e) {
-      if (i === 0) process.stdout.write(`\n    ⏳ waiting (${e?.cause?.code || e?.message || 'error'})`);
-    }
-    await sleep(2000);
+  // Write keys to env files
+  const entry = buildEnvEntry(result.siteKey, result.secretKey);
+  for (const f of [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')]) {
+    try { appendFileSync(f, entry); } catch {}
   }
-  console.log(' ⏭  Cap not reachable — add keys manually');
+  console.log(' ✅\n  🔑 Captcha keys created and written to .env files');
 }
 
 async function main() {
