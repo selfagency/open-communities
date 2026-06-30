@@ -283,7 +283,9 @@ jobs:
           PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: npx --yes -p playwright -p @playwright/test playwright test --config e2e/playwright.config.cjs
+        run: |
+          npm install -g @playwright/test
+          playwright test --config e2e/playwright.config.cjs
 
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
