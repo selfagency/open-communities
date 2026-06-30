@@ -149,14 +149,32 @@ async function handleTranslate() {
         const descBody = await descRes.json();
         const descData = descBody?.data ?? descBody;
 
+        const altForm = new FormData();
+        altForm.set('text', imageAlt);
+        altForm.set('locales', JSON.stringify([locale]));
+        const altRes = await fetch('?/translate', { method: 'POST', body: altForm });
+        const altBody = await altRes.json();
+        const altData = altBody?.data ?? altBody;
+
+        const captionForm = new FormData();
+        captionForm.set('text', imageCaption);
+        captionForm.set('locales', JSON.stringify([locale]));
+        const captionRes = await fetch('?/translate', { method: 'POST', body: captionForm });
+        const captionBody = await captionRes.json();
+        const captionData = captionBody?.data ?? captionBody;
+
         const variant = variants.find((v) => v.language === locale);
         if (variant) {
           const contentT = actionData.translations.find((t: { locale: string }) => t.locale === locale);
           const titleT = titleData?.translations?.[0];
           const descT = descData?.translations?.[0];
+          const altT = altData?.translations?.[0];
+          const captionT = captionData?.translations?.[0];
           if (contentT) variant.content = contentT.translatedText;
           if (titleT) variant.title = titleT.translatedText;
           if (descT) variant.description = descT.translatedText;
+          if (altT) variant.imageAlt = altT.translatedText;
+          if (captionT) variant.imageCaption = captionT.translatedText;
         }
       }
     }
