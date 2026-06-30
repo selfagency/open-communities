@@ -65,6 +65,7 @@ export function superForm(initialData = {}) {
         globalThis.__TEST_SUPERFORM_SUBMIT__(el);
       }
       // increment an observable counter too
+      // @ts-ignore: globalThis has no index signature in CI TS version
       globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
     }
   };

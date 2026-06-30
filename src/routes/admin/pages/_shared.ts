@@ -2,6 +2,17 @@ import { fail } from '@sveltejs/kit';
 
 const SLUG_RE = /^[a-z0-9-]+$/;
 
+/**
+ * Safely extract a text value from FormData.
+ * FormData.get() can return File | string | null, but we only expect strings
+ * for text inputs. Returns empty string for non-string values to avoid
+ * accidental [object Object] serialization.
+ */
+function getTextValue(fd: FormData, name: string): string {
+  const v = fd.get(name);
+  return typeof v === 'string' ? v : '';
+}
+
 export interface ParsedPage {
   content: string;
   description: string;
@@ -19,8 +30,8 @@ export interface ParsedPage {
 export function parsePageForm(
   fd: FormData
 ): { ok: true; data: ParsedPage } | { ok: false; error: string; field?: string } {
-  const title = (fd.get('title') ?? '').toString().trim();
-  const slug = (fd.get('slug') ?? '').toString().trim();
+  const title = getTextValue(fd, 'title').trim();
+  const slug = getTextValue(fd, 'slug').trim();
   if (!(title && slug)) {
     return { ok: false, error: 'Title and slug are required' };
   }
@@ -34,10 +45,10 @@ export function parsePageForm(
     data: {
       title,
       slug,
-      content: (fd.get('content') ?? '').toString(),
-      description: (fd.get('description') ?? '').toString(),
-      imageAlt: (fd.get('imageAlt') ?? '').toString(),
-      imageCaption: (fd.get('imageCaption') ?? '').toString()
+      content: getTextValue(fd, 'content'),
+      description: getTextValue(fd, 'description'),
+      imageAlt: getTextValue(fd, 'imageAlt'),
+      imageCaption: getTextValue(fd, 'imageCaption')
     }
   };
 }

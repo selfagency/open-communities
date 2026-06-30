@@ -8,9 +8,9 @@ ARG PB_VERSION=0.29.2
 ARG PB_ARCH=amd64
 
 RUN apk add --no-cache \
-    unzip=6.0-r15 \
-    ca-certificates=20241121-r1 \
-    curl=8.12.1-r0
+    unzip \
+    ca-certificates \
+    curl
 
 # download and unzip PocketBase for the requested architecture
 RUN curl -fsSL -o /tmp/pb.zip \
