@@ -110,6 +110,57 @@ function beforeSubmit() {
   variantsInput.value = JSON.stringify(vars);
 }
 
+async function translateField(text: string, locale: string): Promise<string | null> {
+  if (!text) {
+    return null;
+  }
+  const form = new FormData();
+  form.set('text', text);
+  form.set('locales', JSON.stringify([locale]));
+  try {
+    const res = await fetch('?/translate', { method: 'POST', body: form });
+    const body = await res.json();
+    const data = body?.data ?? body;
+    return data?.translations?.[0]?.translatedText ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function translateLocaleFields(
+  locale: string,
+  contentTranslations: Array<{ locale: string; translatedText: string }>
+) {
+  const [titleT, descT, altT, captionT] = await Promise.all([
+    translateField(title, locale),
+    translateField(description, locale),
+    translateField(imageAlt, locale),
+    translateField(imageCaption, locale)
+  ]);
+
+  const variant = variants.find((v) => v.language === locale);
+  if (!variant) {
+    return;
+  }
+
+  const contentT = contentTranslations.find((t) => t.locale === locale);
+  if (contentT) {
+    variant.content = contentT.translatedText;
+  }
+  if (titleT) {
+    variant.title = titleT;
+  }
+  if (descT) {
+    variant.description = descT;
+  }
+  if (altT) {
+    variant.imageAlt = altT;
+  }
+  if (captionT) {
+    variant.imageCaption = captionT;
+  }
+}
+
 async function handleTranslate() {
   if (translating || !content) {
     return;
@@ -133,50 +184,7 @@ async function handleTranslate() {
     }
 
     if (actionData?.success && actionData?.translations) {
-      // Translate title and description separately for each locale
-      for (const locale of nonEnglishLocales) {
-        const titleForm = new FormData();
-        titleForm.set('text', title);
-        titleForm.set('locales', JSON.stringify([locale]));
-        const titleRes = await fetch('?/translate', { method: 'POST', body: titleForm });
-        const titleBody = await titleRes.json();
-        const titleData = titleBody?.data ?? titleBody;
-
-        const descForm = new FormData();
-        descForm.set('text', description);
-        descForm.set('locales', JSON.stringify([locale]));
-        const descRes = await fetch('?/translate', { method: 'POST', body: descForm });
-        const descBody = await descRes.json();
-        const descData = descBody?.data ?? descBody;
-
-        const altForm = new FormData();
-        altForm.set('text', imageAlt);
-        altForm.set('locales', JSON.stringify([locale]));
-        const altRes = await fetch('?/translate', { method: 'POST', body: altForm });
-        const altBody = await altRes.json();
-        const altData = altBody?.data ?? altBody;
-
-        const captionForm = new FormData();
-        captionForm.set('text', imageCaption);
-        captionForm.set('locales', JSON.stringify([locale]));
-        const captionRes = await fetch('?/translate', { method: 'POST', body: captionForm });
-        const captionBody = await captionRes.json();
-        const captionData = captionBody?.data ?? captionBody;
-
-        const variant = variants.find((v) => v.language === locale);
-        if (variant) {
-          const contentT = actionData.translations.find((t: { locale: string }) => t.locale === locale);
-          const titleT = titleData?.translations?.[0];
-          const descT = descData?.translations?.[0];
-          const altT = altData?.translations?.[0];
-          const captionT = captionData?.translations?.[0];
-          if (contentT) variant.content = contentT.translatedText;
-          if (titleT) variant.title = titleT.translatedText;
-          if (descT) variant.description = descT.translatedText;
-          if (altT) variant.imageAlt = altT.translatedText;
-          if (captionT) variant.imageCaption = captionT.translatedText;
-        }
-      }
+      await Promise.all(nonEnglishLocales.map((l) => translateLocaleFields(l, actionData.translations)));
     }
 
     if (actionData?.errors?.length) {
@@ -229,7 +237,7 @@ async function handleTranslate() {
     <Button disabled={saveDisabled} type="submit">
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
-    <Button onclick={handleTranslate} type="button" variant="secondary" disabled={translating || !content}>
+    <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="secondary">
       {translating ? 'Translating…' : 'Translate from English'}
     </Button>
     <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
