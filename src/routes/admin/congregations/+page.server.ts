@@ -7,6 +7,7 @@ interface CongView {
   expand?: Record<string, unknown>;
   id: string;
   name: string;
+  owner?: string;
   visible: boolean;
 }
 function mapCong(c: CongView) {
@@ -24,6 +25,8 @@ function mapCong(c: CongView) {
     countryCode: countryData?.code ?? '',
     owner: ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.email as string) ?? '',
     ownerId: ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.id as string) ?? '',
+    ownerName:
+      ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.name as string) ?? '',
     created: c.created as string
   };
 }

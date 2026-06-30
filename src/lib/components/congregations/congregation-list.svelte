@@ -29,6 +29,7 @@ interface Cong {
   name: string;
   owner: string;
   ownerId: string;
+  ownerName: string;
   state: string;
   visible: boolean;
 }
@@ -108,14 +109,14 @@ const mutedCell = (v: string) =>
     })),
     { v }
   );
-const ownerCell = (email: string, id: string) =>
+const ownerCell = (email: string, id: string, name: string) =>
   id
     ? renderSnippet(
-        createRawSnippet<[{ e: string; i: string }]>((get) => ({
+        createRawSnippet<[{ e: string; i: string; n: string }]>((get) => ({
           render: () =>
-            `<a href="/admin/users/${get().i}" class="text-muted-foreground text-xs underline-offset-4 hover:underline">${get().e}</a>`
+            `<a href="/admin/users/${get().i}" class="text-muted-foreground text-xs underline-offset-4 hover:underline">${get().n || get().e}</a>`
         })),
-        { e: email, i: id }
+        { e: email, i: id, n: name }
       )
     : mutedCell(email);
 
@@ -133,13 +134,13 @@ const activeCols: ColumnDef<Cong>[] = [
         { v: locationStr(row.original) }
       )
   },
-  { accessorKey: 'owner', header: m.owner(), cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId) }
+  { accessorKey: 'owner', header: m.owner(), cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName) }
 ];
 
 const pendingCols: ColumnDef<Cong>[] = [
   { accessorKey: 'name', header: m.name(), cell: ({ row }) => nameCell(row.original.name) },
   { accessorKey: 'denomination', header: m.denomination(), cell: ({ row }) => denomCell(row.original.denomination) },
-  { accessorKey: 'owner', header: m.submittedBy(), cell: ({ row }) => mutedCell(row.original.owner) },
+  { accessorKey: 'owner', header: m.submittedBy(), cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName) },
   { accessorKey: 'created', header: m.date(), cell: ({ row }) => mutedCell((row.original.created || '').slice(0, 10)) }
 ];
 

@@ -1,5 +1,5 @@
 # Add curl to the libretranslate/libretranslate image for health checks
-FROM libretranslate/libretranslate:latest
+FROM libretranslate/libretranslate:v1.9.6
 
 USER root
 RUN \

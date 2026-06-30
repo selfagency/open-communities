@@ -21,9 +21,9 @@ import { m } from '$lib/paraglide/messages';
 let { data } = $props();
 
 // svelte-ignore state_referenced_locally
-let verifiedToggle = $state(data.user?.verified ?? false);
+let verifiedToggle = $state(data.targetUser?.verified ?? false);
 // svelte-ignore state_referenced_locally
-let adminToggle = $state(data.user?.admin ?? false);
+let adminToggle = $state(data.targetUser?.admin ?? false);
 // svelte-ignore state_referenced_locally
 const user = data.targetUser;
 let formError = $state('');

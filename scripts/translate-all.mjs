@@ -170,28 +170,182 @@ function extractEnKeys(existingMap) {
   return enKeys;
 }
 
-function makeBatchEntry(existing, key, locale, value) {
-  const body = { key, locale, value };
+/* ── Main ── */
+
+async function translatePageLocale(p, locale, pageVariantsMap, batch, checkpoint) {
+  const ck = `page:${p.id}|${locale}`;
+  if (checkpoint.has(ck)) {
+    return 0;
+  }
+
+  try {
+    const [title, description, content] = await Promise.all([
+      translateText(p.title || '', locale),
+      translateText(p.description || '', locale),
+      translateText(p.content, locale)
+    ]);
+    batch.push(
+      makePageVariantEntry(pageVariantsMap.get(`${p.id}|${locale}`), p.id, locale, title, description, content)
+    );
+    return 1;
+  } catch (e) {
+    console.error(`\n  ❌ ${p.slug} → ${locale}: ${e.message}`);
+    return -1;
+  }
+}
+
+async function translatePages(pages, pageVariantsMap, checkpoint) {
+  let translated = 0;
+  let errors = 0;
+  const batch = [];
+
+  const enPages = pages.filter((p) => p.lang === 'en' && p.content);
+  for (let i = 0; i < enPages.length; i++) {
+    const p = enPages[i];
+
+    for (const locale of LOCALES) {
+      const result = await translatePageLocale(p, locale, pageVariantsMap, batch, checkpoint);
+      if (result === 1) {
+        translated++;
+      } else if (result === -1) {
+        errors++;
+      }
+      await flushBatch(batch, checkpoint);
+    }
+
+    process.stdout.write(`\r  [${i + 1}/${enPages.length}] page: ${p.slug}`);
+  }
+
+  await flushBatch(batch, checkpoint);
+  process.stdout.write('\n');
+  return { translated, errors };
+}
+
+async function fetchAllPages() {
+  const pages = [];
+  let page = 1;
+  while (true) {
+    const data = await api('GET', `/collections/pages/records?perPage=500&page=${page}`);
+    for (const p of data?.items ?? []) {
+      pages.push(p);
+    }
+    if (!data?.items?.length || data.items.length < 500) {
+      break;
+    }
+    page++;
+  }
+  return pages;
+}
+
+async function fetchAllPageVariants() {
+  const map = new Map(); // "pageId|language" → { id, title, description, content }
+  let page = 1;
+  while (true) {
+    const data = await api('GET', `/collections/pageVariants/records?perPage=500&page=${page}`);
+    for (const v of data?.items ?? []) {
+      map.set(`${v.page}|${v.language}`, { id: v.id, title: v.title, description: v.description, content: v.content });
+    }
+    if (!data?.items?.length || data.items.length < 500) {
+      break;
+    }
+    page++;
+  }
+  return map;
+}
+
+function makePageVariantEntry(existing, pageId, language, title, description, content) {
+  const body = { page: pageId, language, title, description, content };
   if (existing) {
     return {
       method: 'PATCH',
-      url: `/api/collections/translations/records/${existing.id}`,
+      url: `/api/collections/pageVariants/records/${existing.id}`,
       body,
       headers: { 'content-type': 'application/json' }
     };
   }
   return {
     method: 'POST',
-    url: '/api/collections/translations/records',
+    url: '/api/collections/pageVariants/records',
     body,
     headers: { 'content-type': 'application/json' }
   };
 }
 
-/* ── Main ── */
+async function processItemLocale(item, locale, enValue, existingMap, batch, checkpoint) {
+  const entryKey = `${item.key}|${locale}`;
+  if (checkpoint.has(entryKey)) {
+    return 0;
+  }
+
+  try {
+    const translatedText = await translateText(enValue, locale);
+    batch.push(
+      existingMap.get(entryKey)
+        ? {
+            method: 'PATCH',
+            url: `/api/collections/translations/records/${existingMap.get(entryKey).id}`,
+            body: { key: item.key, locale, value: translatedText },
+            headers: { 'content-type': 'application/json' }
+          }
+        : {
+            method: 'POST',
+            url: '/api/collections/translations/records',
+            body: { key: item.key, locale, value: translatedText },
+            headers: { 'content-type': 'application/json' }
+          }
+    );
+    return 1;
+  } catch (e) {
+    console.error(`\n  ❌ ${entryKey}: ${e.message}`);
+    return -1;
+  }
+}
+
+async function processItems(items, existingMap, checkpoint) {
+  let translated = 0;
+  let errors = 0;
+  const batch = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const enValue = item.value;
+
+    for (const locale of LOCALES) {
+      const result = await processItemLocale(item, locale, enValue, existingMap, batch, checkpoint);
+      if (result === 1) {
+        translated++;
+      } else if (result === -1) {
+        errors++;
+      }
+
+      if (batch.length >= BATCH_SIZE) {
+        await flushBatch(batch, checkpoint);
+      }
+    }
+
+    process.stdout.write(`\r  [${i + 1}/${items.length}] key: ${item.key}`);
+  }
+
+  await flushBatch(batch, checkpoint);
+  return { translated, errors };
+}
+
+async function flushBatch(batch, checkpoint) {
+  if (batch.length === 0) {
+    return;
+  }
+  await batchSend(batch);
+  for (const b of batch) {
+    checkpoint.add(`${b.body.key ? `${b.body.key}|${b.body.locale}` : `page:${b.body.page}|${b.body.language}`}`);
+  }
+  batch.length = 0;
+  saveCheckpoint(checkpoint);
+  process.stdout.write('.');
+  await new Promise((r) => setTimeout(r, 100));
+}
 
 async function main() {
-  console.log(`🔤 Translating all keys via ${LT_URL} → ${PB_URL}`);
+  console.log(`🔤 Translating all content via ${LT_URL} → ${PB_URL}`);
   console.log(`   Locales: ${LOCALES.join(', ')}\n`);
 
   const checkpoint = loadCheckpoint();
@@ -199,64 +353,31 @@ async function main() {
     console.log(`📌 Checkpoint found — ${checkpoint.size} entries already completed, will resume\n`);
   }
 
+  // Phase 1: Pages → pageVariants
+  console.log('📄 Translating pages...');
+  const pages = await fetchAllPages();
+  const pageVariantsMap = await fetchAllPageVariants();
+  console.log(`   ${pages.length} pages found, ${pageVariantsMap.size} existing variants\n`);
+
+  const pageResult = await translatePages(pages, pageVariantsMap, checkpoint);
+
+  // Phase 2: Translations collection
+  console.log('\n🔑 Translating message keys...');
   const existingMap = await fetchAllRecords();
   console.log(`   ${existingMap.size} total translation records found\n`);
 
   const enKeys = extractEnKeys(existingMap);
-  console.log(`🔑 ${enKeys.size} English keys with values`);
-
-  let translated = 0;
-  let errors = 0;
-  const batch = [];
+  console.log(`   ${enKeys.size} English keys with values\n`);
 
   const sortedKeys = [...enKeys.keys()];
-  for (let ki = 0; ki < sortedKeys.length; ki++) {
-    const key = sortedKeys[ki];
-    const enValue = enKeys.get(key);
+  const transResult = await processItems(
+    sortedKeys.map((k) => ({ key: k, value: enKeys.get(k) })),
+    existingMap,
+    checkpoint
+  );
 
-    process.stdout.write(`\r  [${ki + 1}/${sortedKeys.length}] ${key}`);
-
-    for (const locale of LOCALES) {
-      const entryKey = `${key}|${locale}`;
-      if (checkpoint.has(entryKey)) {
-        continue;
-      }
-
-      const existing = existingMap.get(entryKey);
-
-      try {
-        const translatedText = await translateText(enValue, locale);
-        batch.push(makeBatchEntry(existing, key, locale, translatedText));
-        translated++;
-
-        if (batch.length >= BATCH_SIZE) {
-          await batchSend(batch);
-          for (const b of batch) {
-            checkpoint.add(`${b.body.key}|${b.body.locale}`);
-          }
-          batch.length = 0;
-          saveCheckpoint(checkpoint);
-          process.stdout.write('.');
-          await new Promise((r) => setTimeout(r, 100));
-        }
-      } catch (e) {
-        errors++;
-        console.error(`\n  ❌ ${key} → ${locale}: ${e.message}`);
-      }
-    }
-  }
-
-  if (batch.length > 0) {
-    await batchSend(batch);
-    for (const b of batch) {
-      checkpoint.add(`${b.body.key}|${b.body.locale}`);
-    }
-    saveCheckpoint(checkpoint);
-    process.stdout.write('.');
-  }
-
-  console.log('\n');
-  console.log(`✅ Done — ${translated} translated, ${errors} errors`);
+  console.log(`\n✅ Pages: ${pageResult.translated} translated, ${pageResult.errors} errors`);
+  console.log(`✅ Keys: ${transResult.translated} translated, ${transResult.errors} errors`);
 }
 
 await main();

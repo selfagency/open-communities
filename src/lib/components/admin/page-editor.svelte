@@ -76,6 +76,7 @@ let variantsInput: HTMLInputElement;
 
 let selectedLang = $state('en');
 let saveDisabled = $derived(!(title && slug) || saving);
+let translating = $state(false);
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
@@ -107,6 +108,67 @@ function beforeSubmit() {
       imageCaption: v.imageCaption
     }));
   variantsInput.value = JSON.stringify(vars);
+}
+
+async function handleTranslate() {
+  if (translating || !content) {
+    return;
+  }
+
+  translating = true;
+  const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
+
+  const form = new FormData();
+  form.set('text', content);
+  form.set('locales', JSON.stringify(nonEnglishLocales));
+
+  try {
+    const res = await fetch('?/translate', { method: 'POST', body: form });
+    const body = await res.json();
+    const actionData = body?.data ?? body;
+
+    if (body?.type === 'failure' || !res.ok || actionData?.error) {
+      errMsg = actionData?.error ?? 'Translation failed';
+      return;
+    }
+
+    if (actionData?.success && actionData?.translations) {
+      // Translate title and description separately for each locale
+      for (const locale of nonEnglishLocales) {
+        const titleForm = new FormData();
+        titleForm.set('text', title);
+        titleForm.set('locales', JSON.stringify([locale]));
+        const titleRes = await fetch('?/translate', { method: 'POST', body: titleForm });
+        const titleBody = await titleRes.json();
+        const titleData = titleBody?.data ?? titleBody;
+
+        const descForm = new FormData();
+        descForm.set('text', description);
+        descForm.set('locales', JSON.stringify([locale]));
+        const descRes = await fetch('?/translate', { method: 'POST', body: descForm });
+        const descBody = await descRes.json();
+        const descData = descBody?.data ?? descBody;
+
+        const variant = variants.find((v) => v.language === locale);
+        if (variant) {
+          const contentT = actionData.translations.find((t: { locale: string }) => t.locale === locale);
+          const titleT = titleData?.translations?.[0];
+          const descT = descData?.translations?.[0];
+          if (contentT) variant.content = contentT.translatedText;
+          if (titleT) variant.title = titleT.translatedText;
+          if (descT) variant.description = descT.translatedText;
+        }
+      }
+    }
+
+    if (actionData?.errors?.length) {
+      errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+    }
+  } catch {
+    errMsg = 'Translation request failed';
+  } finally {
+    translating = false;
+  }
 }
 </script>
 
@@ -148,6 +210,9 @@ function beforeSubmit() {
   <div class="flex gap-2">
     <Button disabled={saveDisabled} type="submit">
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
+    </Button>
+    <Button onclick={handleTranslate} type="button" variant="secondary" disabled={translating || !content}>
+      {translating ? 'Translating…' : 'Translate from English'}
     </Button>
     <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
   </div>
