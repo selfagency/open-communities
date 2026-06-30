@@ -354,8 +354,9 @@ jobs:
         run: |
           mkdir -p .e2e
           echo "Running pa11y-ci accessibility checks..."
-          npx --yes pa11y-ci@latest --json 2>&1 | tee /tmp/pa11y-output.json || true
+          npx --yes pa11y-ci@latest --json > /tmp/pa11y-output.json 2>/dev/null || true
           cp /tmp/pa11y-output.json .e2e/pa11y-report.json 2>/dev/null || true
+          cat /tmp/pa11y-output.json
           # Build summary
           echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
           echo '| URL | Result |' >> .e2e/pa11y-summary.md
