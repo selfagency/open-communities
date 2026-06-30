@@ -13,7 +13,7 @@
       "args": ["--no-sandbox", "--disable-setuid-sandbox", "--headless=new"]
     }
   },
-  "sites": [
+  "urls": [
     { "url": "http://localhost:3000/" },
     { "url": "http://localhost:3000/add" },
     { "url": "http://localhost:3000/contact" },
