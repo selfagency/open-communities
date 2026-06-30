@@ -249,40 +249,8 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable pnpm (via Corepack)
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-e2e-
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-e2e-
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-e2e-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Install Playwright
-        run: pnpm exec playwright install chromium --with-deps --only-shell
+        run: npx playwright@latest install chromium --with-deps --only-shell
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -341,12 +309,6 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
           echo "App ready"
 
-      - name: Push app image to GHCR (main only)
-        if: github.event_name == 'push'
-        run: |
-          docker tag opencommunities-e2e ghcr.io/${{ github.repository }}:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
-
       - name: Run Playwright E2E
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
@@ -356,7 +318,7 @@ jobs:
           PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: pnpm exec playwright test --config e2e/playwright.config.cjs
+        run: npx playwright@latest test --config e2e/playwright.config.cjs
 
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
@@ -386,15 +348,6 @@ jobs:
             }
           " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
           cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
-
-      - name: Docker Compose logs (on failure)
-        if: failure()
-        run: |
-          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml logs --tail=50
-
-      - name: Tear down Docker Compose
-        if: always()
-        run: docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
@@ -429,3 +382,18 @@ jobs:
         with:
           name: pa11y-report
           path: .e2e/pa11y-report.json
+
+      - name: Docker Compose logs (on failure)
+        if: failure()
+        run: |
+          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml logs --tail=50
+
+      - name: Push app image to GHCR (main only)
+        if: always() && github.event_name == 'push'
+        run: |
+          docker tag opencommunities-e2e ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: Tear down Docker Compose
+        if: always()
+        run: docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v
