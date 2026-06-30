@@ -11,9 +11,10 @@
       "enabled": true,
       "command": ["npx", "-y", "gaspechak-pocketbase-mcp"],
       "environment": {
-        "PB_URL": "http://localhost:8090",
-        "PB_EMAIL": "admin@test.com", // NOSONAR — test credentials for local dev only
-        "PB_PASSWORD": "i3_NL-dfzzFt5TX" // NOSONAR — test credentials for local dev only
+        // Load credentials from environment (set in .env.local, never committed)
+        "PB_URL": "${PB_URL}",
+        "PB_EMAIL": "${PB_EMAIL}",
+        "PB_PASSWORD": "${PB_PASSWORD}"
       }
     },
     "vite": {

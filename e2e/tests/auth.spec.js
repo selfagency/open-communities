@@ -2,12 +2,13 @@ import { expect, test } from '@playwright/test';
 import { sleep, uid } from 'radashi';
 
 import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
+import { TEST_PASSWORD, TEST_EMAIL } from '../fixtures/credentials.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
-const PB_ADMIN = process.env.PB_TEST_ADMIN || 'admin@test.com';
-const PB_PASSWORD = process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX';
+const PB_ADMIN = process.env.PB_TEST_ADMIN || 'admin@test.com'; // nosemgrep
+const PB_PASSWORD = process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX'; // nosemgrep
 
 /**
  * Authenticate as PocketBase superuser. Tries PB v0.29+ endpoint first,
@@ -34,7 +35,7 @@ test.describe('auth flows', () => {
 
   const emailPrefix = `e2e-${uid(6)}`;
   const email = `${emailPrefix}@example.test`;
-  const password = 'TestPass123!';
+  const password = TEST_PASSWORD;
   let verifyToken;
   let resetToken;
 

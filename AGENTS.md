@@ -113,8 +113,8 @@ CAPTCHA_SITE_SECRET=""      # Cap site secret
 COOLIFY_URL=""              # Production: Coolify webhook URL
 COOLIFY_TOKEN=""            # Production: Coolify webhook token
 NODE_ENV="development"      # or "test"
-PB_TEST_ADMIN="admin@test.com"
-PB_TEST_PASSWORD="i3_NL-dfzzFt5TX"
+PB_TEST_ADMIN="$PB_TEST_ADMIN"        # set in .env.test (gitignored)
+PB_TEST_PASSWORD="$PB_TEST_PASSWORD"  # set in .env.test (gitignored)
 POSTHOG_CLI_API_KEY=""      # Production: PostHog sourcemap upload
 POSTHOG_CLI_HOST_URL=""     # Production: PostHog sourcemap upload
 PUBLIC_API_ENDPOINT="http://localhost:8090"
@@ -142,7 +142,7 @@ The bootstrap script (docker/scripts/bootstrap.mjs):
 - Seeds locations (countries/states/cities), test users, congregations (with child records), and static pages
 - Creates the superuser via `docker exec` for admin panel access
 
-For manual admin panel access: `http://localhost:8090/_/` with credentials from `.env.test` (`PB_TEST_ADMIN` / `PB_TEST_PASSWORD`).
+For manual admin panel access: `http://localhost:8090/_/` with the admin credentials from `.env.test`.
 
 ### Cap Captcha Setup
 

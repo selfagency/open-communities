@@ -4,7 +4,7 @@ import { sleep, uid as uniqueId } from 'radashi';
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
 const email = 'regular@example.test';
-const password = 'TestPass123!';
+const password = TEST_PASSWORD;
 
 test.describe('Congregation CRUD', () => {
   test.describe.configure({ mode: 'serial' });

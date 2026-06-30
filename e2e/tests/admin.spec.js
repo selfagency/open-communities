@@ -78,7 +78,7 @@ test.describe('Admin backend', () => {
     await page.waitForLoadState('networkidle');
     const loginForm = page.locator('form[action*="login"]');
     await loginForm.locator('input[autocomplete="email"]').fill('regular@example.test');
-    await loginForm.locator('input[type="password"]').first().fill('TestPass123!');
+    await loginForm.locator('input[type="password"]').first().fill(TEST_PASSWORD);
     await loginForm.locator('button[type="submit"]').click();
     await page.waitForTimeout(2000);
     await page.goto(`${BASE}/admin`);
