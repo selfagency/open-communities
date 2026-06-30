@@ -367,10 +367,11 @@ jobs:
             if (!r) try { r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8')); } catch {}
             if (r) {
               const results = r.results || r;
-              for (const [url, data] of Object.entries(results)) {
-                const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
-                const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
-                process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+              for (const [url, issues] of Object.entries(results)) {
+                const errors = Array.isArray(issues) ? issues.length : (issues.issues ? issues.issues.length : 0);
+                const a11yErrors = Array.isArray(issues) ? issues.filter(i => i.code && i.type === 'error').length : 0;
+                const icon = errors === 0 ? '✅' : '❌';
+                process.stdout.write('| ' + icon + ' ' + url + ' | ' + errors + ' (' + a11yErrors + ' a11y, ' + (errors - a11yErrors) + ' action) |\n');
               }
             }
           " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
