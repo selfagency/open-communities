@@ -58,7 +58,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate i18n messages (no build needed)
-        run: npx @inlang/paraglide-js compile --project project.inlang
+        run: pnpm paraglide-js compile --project ./project.inlang
 
       - name: Type check
         run: pnpm svelte-kit sync && pnpm svelte-check
@@ -206,7 +206,10 @@ jobs:
 
       - name: Install Playwright
         run: |
-          npm install @playwright/test
+          mkdir -p .playwright
+          cd .playwright
+          npm init -y > /dev/null 2>&1
+          npm install --ignore-scripts @playwright/test
           npx playwright install chromium --with-deps --only-shell
 
       - name: Log in to GitHub Container Registry
@@ -275,7 +278,9 @@ jobs:
           PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: npx playwright test --config e2e/playwright.config.cjs
+        run: |
+          cd .playwright
+          npx playwright test --config ${{ github.workspace }}/e2e/playwright.config.cjs
 
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
