@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { vi } from 'vitest';
 
 vi.mock('$lib/server/api', () => ({
   withRetry: (fn: () => unknown) => fn()
@@ -18,7 +18,16 @@ function makeEvent(userId?: string) {
     url: new URL('http://localhost/account'),
     params: {},
     request: new Request('http://localhost/account'),
-    cookies: { get: () => '', set: () => {/* mock /*}, delete: () => {/* mock /*}, serialize: () => '' },
+    cookies: {
+      get: () => '',
+      set: () => {
+        /* mock */
+      },
+      delete: () => {
+        /* mock */
+      },
+      serialize: () => ''
+    },
     getClientAddress: () => '127.0.0.1',
     isDataRequest: false,
     route: { id: '/account' }

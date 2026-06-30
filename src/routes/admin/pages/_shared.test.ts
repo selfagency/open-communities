@@ -1,9 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { parsePageForm, pbErrorToFail } from './_shared';
 
 function fd(o: Record<string, string>) {
   const f = new FormData();
-  for (const [k, v] of Object.entries(o)) f.set(k, v);
+  for (const [k, v] of Object.entries(o)) {
+    f.set(k, v);
+  }
   return f;
 }
 

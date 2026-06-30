@@ -154,7 +154,9 @@ export function formData(record: Record<string, string | string[]>): FormData {
   const fd = new FormData();
   for (const [k, v] of Object.entries(record)) {
     if (Array.isArray(v)) {
-      for (const item of v) fd.append(k, item);
+      for (const item of v) {
+        fd.append(k, item);
+      }
     } else {
       fd.set(k, v);
     }

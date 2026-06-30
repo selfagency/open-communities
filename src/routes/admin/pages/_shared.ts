@@ -1,5 +1,7 @@
 import { fail } from '@sveltejs/kit';
 
+const SLUG_RE = /^[a-z0-9-]+$/;
+
 export interface ParsedPage {
   content: string;
   description: string;
@@ -23,7 +25,7 @@ export function parsePageForm(
     return { ok: false, error: 'Title and slug are required' };
   }
 
-  if (!/^[a-z0-9-]+$/.test(slug)) {
+  if (!SLUG_RE.test(slug)) {
     return { ok: false, error: 'Slug must contain only lowercase letters, numbers, and hyphens', field: 'slug' };
   }
 
