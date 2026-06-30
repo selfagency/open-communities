@@ -16,6 +16,7 @@ import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { Input } from '$lib/components/ui/input';
 import { Switch } from '$lib/components/ui/switch';
+import UserRoleBadge from '$lib/components/ui/user-role-badge.svelte';
 import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
@@ -69,7 +70,7 @@ function handleDelete() {
     <h1 class="text-2xl font-semibold">{user.name || user.email}</h1>
     <p class="text-muted-foreground text-sm">
       {user.email}
-      &middot; {user.admin ? m.admin() : m.user()} &middot; {user.verified ? m.verified() : m.unverified()}
+      <UserRoleBadge admin={user.admin} verified={user.verified} />
     </p>
   </div>
 
