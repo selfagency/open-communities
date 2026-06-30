@@ -127,7 +127,7 @@ $effect(() => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input {...props} required bind:value={$formData.name} />
+              <Input {...props} id="contact-name" aria-label={m.name()} required bind:value={$formData.name} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -137,7 +137,7 @@ $effect(() => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} required bind:value={$formData.email} />
+              <Input {...props} id="contact-email" aria-label={m.email()} required bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -198,7 +198,7 @@ $effect(() => {
                   {m.contact_proof()}
                 {/if}
               </Form.Description>
-              <Textarea {...props} required rows={8} bind:value={$formData.message} />
+              <Textarea {...props} id="contact-message" aria-label={m.contact_message()} required rows={8} bind:value={$formData.message} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />

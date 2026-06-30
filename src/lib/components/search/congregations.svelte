@@ -177,6 +177,7 @@ let isMobile = $derived(appState.isMobile);
           <Input
             class="w-full h-11 placeholder:text-muted-foreground shadow-none pl-10 pr-10"
             id="search"
+            aria-label={m.search()}
             placeholder={m.search()}
             bind:value={searchTerms}
           />

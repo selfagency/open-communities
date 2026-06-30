@@ -91,7 +91,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input {...props} autocomplete="name" bind:value={$formData.name} />
+              <Input {...props} id="signup-name" aria-label={m.name()} autocomplete="name" bind:value={$formData.name} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -101,7 +101,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} autocomplete="email" bind:value={$formData.email} />
+              <Input {...props} id="signup-email" aria-label={m.email()} autocomplete="email" bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -111,7 +111,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.password()}</Form.Label>
-              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.password} />
+              <Input {...props} id="signup-password" aria-label={m.password()} autocomplete="new-password" type="password" bind:value={$formData.password} />
             {/snippet}
           </Form.Control>
           <Form.Description>
@@ -124,7 +124,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.confirmPassword()}</Form.Label>
-              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.passwordConfirm} />
+              <Input {...props} id="signup-password-confirm" aria-label={m.confirmPassword()} autocomplete="new-password" type="password" bind:value={$formData.passwordConfirm} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
