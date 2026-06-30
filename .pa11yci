@@ -17,7 +17,12 @@
     "http://localhost:3000/",
     "http://localhost:3000/admin",
     "http://localhost:3000/admin/congregations",
+    "http://localhost:3000/admin/pages",
+    "http://localhost:3000/admin/pages/new",
+    "http://localhost:3000/admin/translations",
     "http://localhost:3000/admin/users",
-    "http://localhost:3000/admin/pages"
+    "http://localhost:3000/add",
+    "http://localhost:3000/contact",
+    "http://localhost:3000/login"
   ]
 }
