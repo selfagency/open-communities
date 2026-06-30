@@ -1,51 +1,86 @@
-services:
-  pocketbase:
-    build:
-      context: ./pocketbase
-      dockerfile: Dockerfile
-      args:
-        PB_VERSION: '0.29.2'
-        PB_ARCH: 'amd64'
-    image: opencommunities-pocketbase:local
-    ports:
-      - '8090:8090'
-    volumes:
-      - ./pocketbase/pb_data:/pb_data
-      - ./pb_migrations:/pb_data/pb_migrations
-    depends_on:
-      - mailpit
-    networks:
-      - dev
+# Coolify Production Docker Compose
+#
+# Used directly by Coolify (Docker Compose build pack) for production
+# deployment of the full stack: app + dragonfly + cap + libretranslate.
+#
+# Override with docker-compose.dev.yml for local development:
+#   docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d
+#
+# NOTE:
+#   - No custom networks (Coolify creates its own bridge network)
+#   - No port mappings (Traefik handles routing)
+#   - No profiles (Coolify does not support Compose profiles)
+#   - PocketBase runs on a dedicated remote server, not in this stack
 
-  mailpit:
-    image: axllent/mailpit:latest
-    ports:
-      - '1025:1025'
-      - '8025:8025'
-    networks:
-      - dev
+services:
+  dragonfly:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.26.2
+    ulimits:
+      memlock: -1
+    volumes:
+      - dragonfly_data:/data
+    restart: unless-stopped
 
   cap:
-    image: tiago2/cap:latest
+    build:
+      context: .
+      dockerfile: cap.Dockerfile
+    depends_on:
+      dragonfly:
+        condition: service_started
     environment:
       - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
       - REDIS_URL=redis://dragonfly:6379
-    ports:
-      - '3001:3000'
-    depends_on:
-      - dragonfly
     volumes:
-      - ./cap/data:/usr/src/app/.data
-    networks:
-      - dev
+      - cap_data:/usr/src/app/.data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
-  dragonfly:
-    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.26.2
-    ports:
-      - '6379:6379'
-    networks:
-      - dev
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    environment:
+      LT_LOAD_ONLY: en,es,fr,de,he,pl,pt,hu,nl,ru,uk
+      LT_API_KEYS: 'true'
+      LT_API_KEYS_DB_PATH: /app/db/api_keys.db
+    volumes:
+      - libretranslate_data:/app/db
+    restart: unless-stopped
 
-networks:
-  dev:
-    driver: bridge
+  app:
+    image: opencommunities-e2e
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      dragonfly:
+        condition: service_started
+      cap:
+        condition: service_started
+      libretranslate:
+        condition: service_started
+    environment:
+      CAPTCHA_INTERNAL_ENDPOINT: http://cap:3000
+      PUBLIC_CAPTCHA_ENDPOINT: ${PUBLIC_CAPTCHA_ENDPOINT:-http://cap:3000}
+      LT_API_URL: http://libretranslate:5000
+      PUBLIC_API_ENDPOINT: ${PUBLIC_API_ENDPOINT}
+      PUBLIC_CAPTCHA_SITE_KEY: ${PUBLIC_CAPTCHA_SITE_KEY}
+      CAPTCHA_SITE_SECRET: ${CAPTCHA_SITE_SECRET}
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-3000}
+      PUBLIC_HOSTNAME: ${PUBLIC_HOSTNAME}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      PUBLIC_POSTHOG_KEY: ${PUBLIC_POSTHOG_KEY}
+      PUBLIC_POSTHOG_HOST: ${PUBLIC_POSTHOG_HOST}
+    restart: unless-stopped
+
+volumes:
+  dragonfly_data:
+  cap_data:
+  libretranslate_data:

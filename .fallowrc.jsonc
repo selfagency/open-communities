@@ -74,7 +74,7 @@
     // E2E test files
     "e2e/**",
     // Docker testing files
-    "docker/Dockerfile.e2e",
+    "docker/Dockerfile",
     "docker/helpers/**",
     // One-off migration scripts (not application entry points)
     "scripts/**",

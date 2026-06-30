@@ -1,11 +1,13 @@
 <script lang="ts">
+import AlertCircleIcon from '@tabler/icons-svelte/icons/alert-circle';
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
 import { enhance } from '$app/forms';
-import { goto } from '$app/navigation';
+import { goto, invalidateAll } from '$app/navigation';
 import { page } from '$app/stores';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
 import {
@@ -110,11 +112,92 @@ function resetEditState(key: string) {
 }
 
 function buildEntries(key: string, entries: Array<{ locale: string; value: string; id?: string }>) {
-  return entries.map((e) => ({
-    locale: e.locale,
-    value: editState[key]?.[e.locale] ?? e.value,
-    id: e.id
-  }));
+  const seen = new Set<string>();
+  const result = entries.map((e) => {
+    seen.add(e.locale);
+    return {
+      locale: e.locale,
+      value: editState[key]?.[e.locale] ?? e.value,
+      id: e.id
+    };
+  });
+
+  // Append locales added via editState (e.g. from auto-translate) that
+  // aren't in the original entries, so they get created on save
+  const edits = editState[key];
+  if (edits) {
+    for (const [locale, val] of Object.entries(edits)) {
+      if (!seen.has(locale) && val) {
+        result.push({ locale, value: val, id: undefined });
+      }
+    }
+  }
+
+  return result;
+}
+
+// Auto-translate state
+let translating = $state<Record<string, boolean>>({});
+
+function hasAlerts(key: string, entries: Array<{ locale: string; value: string }>): boolean {
+  const enValue = editState[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
+  if (!enValue) {
+    return false;
+  }
+  return entries.some((e) => {
+    if (e.locale === 'en') {
+      return false;
+    }
+    const val = editState[key]?.[e.locale] ?? e.value;
+    return !val || val === enValue;
+  });
+}
+
+async function handleAutoTranslate(key: string, text: string) {
+  if (translating[key] || !text) {
+    return;
+  }
+
+  translating[key] = true;
+  const nonEnglishLocales = locales.filter((l) => l !== 'en');
+
+  if (!nonEnglishLocales.length) {
+    translating[key] = false;
+    return;
+  }
+
+  const form = new FormData();
+  form.set('text', text);
+  form.set('locales', JSON.stringify(nonEnglishLocales));
+
+  try {
+    const res = await fetch('/admin/translations?/translate', { method: 'POST', body: form });
+    const body = await res.json();
+
+    // SvelteKit wraps action responses in { type, status, data }
+    const actionData = body?.data ?? body;
+
+    if (body?.type === 'failure' || !res.ok || actionData?.error) {
+      toast.error(actionData?.error ?? 'Translation failed');
+      return;
+    }
+
+    if (actionData?.success && actionData?.translations) {
+      for (const t of actionData.translations) {
+        setEditValue(key, t.locale, t.translatedText);
+      }
+      toast.success('Translations generated — review and save');
+    }
+
+    // Partial failures — some locales failed
+    if (actionData?.errors?.length) {
+      toast.error(`${actionData.errors.length} locale(s) failed to translate`);
+    }
+  } catch {
+    toast.error('Translation request failed');
+  } finally {
+    translating[key] = false;
+  }
 }
 
 // Redeploy state
@@ -157,7 +240,7 @@ function pollStatus() {
 
 function handleEnhance() {
   // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-  return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
+  return async ({ result }: { result: EnhanceResult }) => {
     if (result.type === 'success') {
       const d = result.data;
       if (d?.deploymentUuid) {
@@ -183,6 +266,78 @@ function cancelDeploy() {
   deploymentUuid = null;
   deploymentStatus = null;
   deployError = null;
+}
+
+interface EnhanceResult {
+  data?: Record<string, unknown>;
+  type: string;
+}
+
+function handleAdd() {
+  return (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success' && result.data?.key) {
+      showAddDialog = false;
+      toast.success('Key created');
+      const newKey = result.data.key as string;
+      const params = new URLSearchParams();
+      params.set('page', '1');
+      goto(`/admin/translations?${params}`, { replaceState: true });
+      setTimeout(() => {
+        openKey = newKey;
+      }, 500);
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to create key');
+    } else {
+      toast.error('An error occurred while creating key');
+    }
+  };
+}
+
+function handleSave(key: string) {
+  return async (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success') {
+      resetEditState(key);
+      toast.success('Translations saved');
+      await invalidateAll();
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to save translations');
+    } else {
+      toast.error('An error occurred while saving');
+    }
+  };
+}
+
+function handleDelete(key: string) {
+  return (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success') {
+      goto('/admin/translations', { replaceState: true });
+      toast.success('Key deleted');
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to delete key');
+    } else {
+      toast.error('An error occurred while deleting');
+    }
+  };
+}
+
+function handleBulkDelete() {
+  return (opts: { result: EnhanceResult }) => {
+    const result = opts.result;
+    if (result.type === 'success') {
+      showDeleteDialog = false;
+      goto('/admin/translations', { replaceState: true });
+      toast.success('Key deleted');
+    } else if (result.type === 'failure') {
+      showDeleteDialog = false;
+      toast.error((result.data?.error as string) ?? 'Failed to delete key');
+    } else {
+      showDeleteDialog = false;
+      toast.error('An error occurred while deleting');
+    }
+  };
 }
 
 const statusLabels: Record<string, string> = {
@@ -300,25 +455,7 @@ const statusLabels: Record<string, string> = {
 
     <!-- Add Key Dialog -->
     <Dialog bind:open={showAddDialog}>
-      <form
-        action="?/add"
-        method="POST"
-        use:enhance={() => {
-      // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-      return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
-        if (result.type === 'success' && result.data?.key) {
-          showAddDialog = false;
-          const newKey = result.data.key as string;
-          // Navigate to first page and open the new key
-          const params = new URLSearchParams();
-          params.set('page', '1');
-          goto(`/admin/translations?${params}`, { replaceState: true });
-          // Set the key to open after navigation
-          setTimeout(() => { openKey = newKey; }, 500);
-        }
-      };
-    }}
-      >
+      <form action="?/add" method="POST" use:enhance={handleAdd}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Translation Key</DialogTitle>
@@ -358,26 +495,19 @@ const statusLabels: Record<string, string> = {
         <AccordionItem value={key}>
           <AccordionTrigger>
             <span class="flex items-start gap-6 min-w-0 flex-1">
-              <span class="font-mono text-sm font-medium leading-6 shrink-0 w-48 truncate">{key}</span>
+              <span class="font-mono text-sm font-medium leading-6 shrink-0 w-48 truncate">
+                {key}
+                {#if hasAlerts(key, entries)}
+                  <AlertCircleIcon class="inline size-4 text-amber-500 align-middle -mt-0.5 ml-1" />
+                {/if}
+              </span>
               <span class="text-muted-foreground truncate text-sm leading-6 flex-1 min-w-0">
                 {enEntry?.value ?? ''}
               </span>
             </span>
           </AccordionTrigger>
           <AccordionContent>
-            <form
-              action="?/save"
-              class="space-y-3"
-              method="POST"
-              use:enhance={() => {
-              // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-              return async ({ result }: { result: { type: string } }) => {
-                if (result.type === 'success') {
-                  resetEditState(key);
-                }
-              };
-            }}
-            >
+            <form action="?/save" class="space-y-3" method="POST" use:enhance={() => handleSave(key)}>
               <input name="key" type="hidden" value={key} />
               <input name="entries" type="hidden" value={JSON.stringify(buildEntries(key, entries))} />
 
@@ -403,44 +533,62 @@ const statusLabels: Record<string, string> = {
                 </div>
               {/each}
 
-              <div class="flex items-center justify-end gap-2 pt-2">
-                <AlertDialog>
-                  <AlertDialogTrigger>
-                    <Button type="button" variant="destructive">Delete</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete &ldquo;{key}&rdquo;?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete this key and all its translations across every locale. This action
-                        cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <form
-                        action="?/delete"
-                        method="POST"
-                        use:enhance={() => {
-                      // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-                      return async ({ result }: { result: { type: string } }) => {
-                        if (result.type === 'success') {
-                          goto('/admin/translations', { replaceState: true });
-                        }
-                      };
-                    }}
-                      >
-                        <input name="key" type="hidden" value={key} />
-                        <AlertDialogAction
-                          class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          type="submit"
-                          >Delete</AlertDialogAction
-                        >
-                      </form>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <Button type="submit">Save</Button>
+              <div class="flex items-center justify-between gap-2 pt-2">
+                <Button
+                  disabled={translating[key] || !enEntry?.value}
+                  onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
+                  type="button"
+                  variant="outline"
+                >
+                  {#if translating[key]}
+                    <svg
+                      class="mr-1.5 size-4 animate-spin"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                    Translating
+                  {:else}
+                    <LanguageIcon class="mr-1.5 size-4" />
+                    Translate
+                  {/if}
+                </Button>
+                <div class="flex items-center gap-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <Button type="button" variant="destructive">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete &ldquo;{key}&rdquo;?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete this key and all its translations across every locale. This
+                          action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <form action="?/delete" method="POST" use:enhance={() => handleDelete(key)}>
+                          <input name="key" type="hidden" value={key} />
+                          <AlertDialogAction
+                            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            type="submit"
+                            >Delete</AlertDialogAction
+                          >
+                        </form>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <Button type="submit">Save</Button>
+                </div>
               </div>
             </form>
           </AccordionContent>
@@ -500,19 +648,7 @@ const statusLabels: Record<string, string> = {
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancel</AlertDialogCancel>
-        <form
-          action="?/delete"
-          method="POST"
-          use:enhance={() => {
-        // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-        return async ({ result }: { result: { type: string } }) => {
-          if (result.type === 'success') {
-            showDeleteDialog = false;
-            goto('/admin/translations', { replaceState: true });
-          }
-        };
-      }}
-        >
+        <form action="?/delete" method="POST" use:enhance={handleBulkDelete}>
           <input name="key" type="hidden" value={deleteKey} />
           <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" type="submit"
             >Delete</AlertDialogAction

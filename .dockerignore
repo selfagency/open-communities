@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+
+# Build output
+build/
+.svelte-kit
+
+# Test files
+e2e/test-results
+e2e/playwright-report
+test-results
+
+# IDE config
+.idea
+.vscode
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Docker build files (not needed at runtime)
+docker/pocketbase/pb_data
+docker/cap/data
+docker/helpers
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Temporary files
+.tmp
+.cache
+*.log
+
+# IDE
+.claude
+.zed

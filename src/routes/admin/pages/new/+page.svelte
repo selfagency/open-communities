@@ -17,5 +17,7 @@ let { data } = $props();
     >
   </div>
 
+  <h1 class="text-2xl font-semibold mb-6">{m.newPage()}</h1>
+
   <PageEditor action="?/save" />
 </div>

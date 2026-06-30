@@ -73,12 +73,127 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   };
 };
 
+function getAdminClient(locals: App.Locals) {
+  const client = locals.api;
+  if (!client?.authStore?.record?.admin) {
+    throw error(401, 'Unauthorized');
+  }
+  return client;
+}
+
+interface TranslateResult {
+  locale: string;
+  translatedText: string;
+}
+
+async function translateLocale(text: string, locale: string, apiUrl: string, ltKey?: string): Promise<TranslateResult> {
+  const res = await fetch(`${apiUrl}/translate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      q: text,
+      source: 'en',
+      target: locale,
+      format: 'text',
+      ...(ltKey ? { api_key: ltKey } : {})
+    })
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`
+    );
+  }
+
+  const data = (await res.json()) as { translatedText: string };
+  return { locale, translatedText: data.translatedText };
+}
+
+async function pollNewRunId(
+  owner: string,
+  repo: string,
+  token: string,
+  prevRunId: number,
+  timeoutMs: number
+): Promise<number | null> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/runs?branch=main&event=workflow_dispatch&per_page=1`,
+      { headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github.v3+json' } }
+    );
+    if (res.ok) {
+      const data = (await res.json()) as { workflow_runs: Array<{ id: number }> };
+      const latest = data.workflow_runs?.[0];
+      if (latest && latest.id > prevRunId) {
+        return latest.id;
+      }
+    }
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+  return null;
+}
+
+async function triggerDeploy(
+  ghToken: string,
+  owner: string,
+  repo: string
+): Promise<{ deploymentUuid: string } | { triggered: true; message: string }> {
+  // Get the latest run before triggering
+  const prevRunsRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/runs?branch=main&event=workflow_dispatch&per_page=1`,
+    { headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' } }
+  );
+
+  const prevRunId = prevRunsRes.ok
+    ? (((await prevRunsRes.json()) as { workflow_runs: Array<{ id: number }> }).workflow_runs?.[0]?.id ?? 0)
+    : 0;
+
+  const dispatchRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/dispatches`,
+    {
+      method: 'POST',
+      headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' },
+      body: JSON.stringify({ ref: 'main' })
+    }
+  );
+
+  if (!dispatchRes.ok) {
+    throw new Error(`Dispatch failed: ${dispatchRes.status}`);
+  }
+
+  const runId = await pollNewRunId(owner, repo, ghToken, prevRunId, 10_000);
+  if (!runId) {
+    return { triggered: true, message: 'Deploy triggered, but could not determine run ID' };
+  }
+
+  return { deploymentUuid: String(runId) };
+}
+
+function processTranslationResults(rawResults: PromiseSettledResult<TranslateResult>[]): {
+  translations: TranslateResult[];
+  errors: string[];
+} {
+  const translations: TranslateResult[] = [];
+  const errors: string[] = [];
+
+  for (const result of rawResults) {
+    if (result.status === 'fulfilled') {
+      translations.push(result.value);
+    } else {
+      const msg = result.reason?.message ?? 'Unknown error';
+      errors.push(msg);
+      log.error('Translation failed', { error: msg });
+    }
+  }
+
+  return { translations, errors };
+}
+
 export const actions = {
   save: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     const form = await request.formData();
     const key = form.get('key') as string;
     const entriesJson = form.get('entries') as string;
@@ -127,14 +242,21 @@ export const actions = {
       return fail(500, { error: 'Save failed — rolled back', created: created.length, updated, errors: errors.length });
     }
 
+    // Return failure when existing entries fail to save (no creates to roll back)
+    if (errors.length > 0) {
+      return fail(500, {
+        error: `${errors.length} entr${errors.length === 1 ? 'y' : 'ies'} failed to save`,
+        created: created.length,
+        updated,
+        errors: errors.length
+      });
+    }
+
     return { success: true, created: created.length, updated, errors: errors.length };
   },
 
   delete: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     const form = await request.formData();
     const key = form.get('key') as string;
 
@@ -161,10 +283,7 @@ export const actions = {
   },
 
   add: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     const form = await request.formData();
     const key = form.get('key') as string;
     const value = form.get('value') as string;
@@ -183,80 +302,103 @@ export const actions = {
   },
 
   redeploy: async ({ locals }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+    const client = getAdminClient(locals);
     rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
-    const coolifyUrl = process.env.COOLIFY_URL;
-    const coolifyToken = process.env.COOLIFY_TOKEN;
-    const coolifyAppUuid = process.env.COOLIFY_APP_UUID;
-
-    if (!(coolifyUrl && coolifyToken && coolifyAppUuid)) {
-      return fail(500, { error: 'Coolify is not configured' });
+    const ghToken = process.env.GH_DEPLOY_TOKEN;
+    if (!ghToken) {
+      return fail(500, { error: 'Deploy is not configured' });
     }
 
     try {
-      const baseUrl = coolifyUrl.endsWith('/') ? coolifyUrl.slice(0, -1) : coolifyUrl;
-      const url = `${baseUrl}/api/v1/deploy?uuid=${coolifyAppUuid}&force=true`;
-      const res = await fetch(url, {
-        headers: { authorization: `Bearer ${coolifyToken}` }
-      });
-
-      if (!res.ok) {
-        log.error('Coolify redeploy failed', { status: res.status });
-        return fail(502, { error: 'Rebuild failed' });
+      const result = await triggerDeploy(ghToken, 'selfagency', 'open-communities');
+      if ('triggered' in result) {
+        return result;
       }
-
-      const data = await res.json();
-      const deploymentUuid = data?.deployments?.[0]?.deployment_uuid;
-
-      if (!deploymentUuid) {
-        return fail(502, { error: 'Rebuild failed: no deployment UUID returned' });
-      }
-
-      return { deploymentUuid };
+      return { deploymentUuid: result.deploymentUuid };
     } catch (err: unknown) {
-      log.error('Coolify redeploy error', err);
+      log.error('GitHub Actions deploy error', err);
       return fail(502, { error: 'Rebuild failed' });
     }
   },
 
-  status: async ({ locals, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
+  translate: async ({ locals, request }) => {
+    getAdminClient(locals);
     const form = await request.formData();
-    const deploymentUuid = form.get('uuid') as string;
+    const text = form.get('text') as string;
+    const localesStr = form.get('locales') as string;
 
-    if (!deploymentUuid) {
-      return fail(400, { error: 'Missing deployment UUID' });
+    if (!(text && localesStr)) {
+      return fail(400, { error: 'Missing text or locales' });
     }
 
-    const coolifyUrl = process.env.COOLIFY_URL;
-    const coolifyToken = process.env.COOLIFY_TOKEN;
-
-    if (!(coolifyUrl && coolifyToken)) {
-      return fail(500, { error: 'Coolify is not configured' });
+    let locales: string[];
+    try {
+      locales = JSON.parse(localesStr) as string[];
+    } catch {
+      return fail(400, { error: 'Invalid locales JSON' });
     }
+
+    const ltUrl = process.env.LT_API_URL;
+    const ltKey = process.env.LT_API_KEY;
+    if (!ltUrl) {
+      return fail(500, { error: 'LibreTranslate is not configured' });
+    }
+
+    const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
+
+    const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
+
+    const { translations, errors } = processTranslationResults(rawResults);
+    if (translations.length === 0) {
+      return fail(502, { error: errors[0] ?? 'All translations failed' });
+    }
+
+    return { success: true, translations, ...(errors.length > 0 ? { errors } : {}) };
+  },
+
+  status: async ({ locals, request }) => {
+    getAdminClient(locals);
+    const form = await request.formData();
+    const runId = form.get('uuid') as string;
+
+    if (!runId) {
+      return fail(400, { error: 'Missing run ID' });
+    }
+
+    const ghToken = process.env.GH_DEPLOY_TOKEN;
+    if (!ghToken) {
+      return fail(500, { error: 'Deploy is not configured' });
+    }
+
+    const owner = 'selfagency';
+    const repo = 'open-communities';
 
     try {
-      const baseUrl = coolifyUrl.endsWith('/') ? coolifyUrl.slice(0, -1) : coolifyUrl;
-      const url = `${baseUrl}/api/v1/deployments/${deploymentUuid}`;
-      const res = await fetch(url, {
-        headers: { authorization: `Bearer ${coolifyToken}` }
+      const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/runs/${runId}`, {
+        headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' }
       });
 
       if (!res.ok) {
-        log.error('Coolify status check failed', { status: res.status });
+        log.error('GitHub run status check failed', { status: res.status });
         return fail(502, { error: 'Status check failed' });
       }
 
-      const data = await res.json();
-      return { status: data.status as string };
+      const data = (await res.json()) as { status: string; conclusion: string | null };
+
+      // Map GitHub Actions statuses to frontend-expected values
+      if (data.status === 'completed') {
+        if (data.conclusion === 'success') {
+          return { status: 'success' };
+        }
+        if (data.conclusion === 'cancelled') {
+          return { status: 'cancelled' };
+        }
+        return { status: 'failed' };
+      }
+
+      return { status: data.status === 'in_progress' ? 'in_progress' : 'queued' };
     } catch (err: unknown) {
-      log.error('Coolify status check error', err);
+      log.error('GitHub run status check error', err);
       return fail(502, { error: 'Status check failed' });
     }
   }

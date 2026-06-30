@@ -83,7 +83,7 @@ src/
 # Install dependencies (pnpm required)
 pnpm install
 
-# Start local dependencies (PocketBase + Mailpit + Cap captcha)
+# Start local dependencies (PocketBase + Mailpit + Cap captcha + Dragonfly + LibreTranslate)
 pnpm deps:up
 
 # Stop local dependencies
@@ -131,7 +131,7 @@ SMTP_PORT="1025"
 The bootstrap script handles all PB setup automatically:
 
 ```bash
-pnpm deps:up           # Start Docker containers (PB + Mailpit + Cap)
+pnpm deps:up           # Start Docker containers (PB, Mailpit, Cap, Dragonfly, LibreTranslate)
 pnpm deps:bootstrap    # Create superuser, import schema, seed data
 pnpm deps:reset        # Full wipe: down -v → up → bootstrap
 ```
@@ -285,17 +285,7 @@ pnpm build:types
 
 **Build output:** `build/` directory (adapter-node standalone mode).
 
-**Docker:** Built via Nixpacks (see `nixpacks.toml`). After build, PostHog sourcemap injection runs:
-
-```toml
-[phases.build]
-aptPkgs = ["wget"]
-cmds = [
-  'pnpm run build',
-  'pnpx @posthog/cli sourcemap inject --directory ./build',
-  'pnpx @posthog/cli sourcemap upload --directory ./build'
-]
-```
+**Docker:** Built via [`docker/Dockerfile`](docker/Dockerfile) (multi-stage, CI passes `COMMIT_SHA` build arg for PostHog sourcemaps).
 
 **Deployment:** Coolify webhook (triggered by GitHub Actions after Build succeeds).
 

@@ -54,8 +54,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Build (production — includes i18n fetch)
+        run: pnpm build:prod
         env:
           PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
           PB_URL: https://api.opencommunities.info
@@ -228,6 +228,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -272,19 +273,6 @@ jobs:
       - name: Install Playwright
         run: pnpm exec playwright install chromium --with-deps --only-shell
 
-      - name: Start Docker Compose (PB, Mailpit, Cap, Dragonfly)
-        run: |
-          docker compose -f docker/docker-compose.yml up -d
-          timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
-          echo "All services ready"
-
-      - name: Bootstrap PocketBase
-        run: node docker/scripts/bootstrap.mjs
-        env:
-          PUBLIC_API_ENDPOINT: http://localhost:8090
-          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
-          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         if: github.event_name == 'push'
@@ -293,53 +281,60 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CONTAINER_TOKEN }}
 
-      - name: Build app image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build app image with cache
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: opencommunities-e2e
+          load: true
+          build-args: |
+            PB_API_TOKEN=${{ secrets.PB_API_TOKEN }}
+            PB_URL=https://api.opencommunities.info
+            COMMIT_SHA=${{ github.sha }}
+
+      - name: Start infra and app
         env:
-          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
-          PB_URL: https://api.opencommunities.info
+          NODE_ENV: test
+          PUBLIC_API_ENDPOINT: http://pocketbase:8090
+          PUBLIC_CAPTCHA_ENDPOINT: http://localhost:3001
+          PUBLIC_CAPTCHA_SITE_KEY: de02608805
+          CAPTCHA_SITE_SECRET: OI1CeaaFu9cUe7yqDFqVqlG4NcPOFsPBX0iAqoH5ogQvuoKoov8w
+          PUBLIC_HOSTNAME: http://localhost:3000
+          SMTP_HOST: mailpit
+          SMTP_PORT: '1025'
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
         run: |
-          docker build \
-            --build-arg PB_API_TOKEN="${PB_API_TOKEN}" \
-            --build-arg PB_URL="${PB_URL}" \
-            -f docker/Dockerfile.e2e \
-            -t opencommunities-e2e .
+          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build \
+            pocketbase dragonfly cap libretranslate mailpit
+          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d app
+          timeout 30 bash -c 'until curl -f http://localhost:8090/api/health >/dev/null 2>&1; do sleep 1; done'
+          echo "PB ready"
+
+      - name: Bootstrap PocketBase
+        run: node docker/scripts/bootstrap.mjs
+        env:
+          PUBLIC_API_ENDPOINT: http://localhost:8090
+          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
+          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+
+      - name: Wait for app
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
+          echo "App ready"
 
       - name: Push app image to GHCR (main only)
         if: github.event_name == 'push'
         run: |
           docker tag opencommunities-e2e ghcr.io/${{ github.repository }}:${{ github.sha }}
           docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
-
-      - name: Run app container
-        env:
-          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          CAP_API_KEY: ${{ secrets.CAP_API_KEY }}
-          PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
-          PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
-          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
-        run: |
-          docker run -d --name opencommunities-e2e \
-            --network docker_dev \
-            -p 3000:3000 \
-            -e ADMIN_EMAIL="${ADMIN_EMAIL}" \
-            -e CAP_API_KEY="${CAP_API_KEY}" \
-            -e CAPTCHA_SITE_SECRET="OI1CeaaFu9cUe7yqDFqVqlG4NcPOFsPBX0iAqoH5ogQvuoKoov8w" \
-            -e NODE_ENV=test \
-            -e PB_TEST_ADMIN="${PB_TEST_ADMIN}" \
-            -e PB_TEST_PASSWORD="${PB_TEST_PASSWORD}" \
-            -e PORT=3000 \
-            -e PUBLIC_API_ENDPOINT=http://docker-pocketbase-1:8090 \
-            -e PUBLIC_CAPTCHA_ENDPOINT=http://localhost:3001 \
-            -e PUBLIC_CAPTCHA_SITE_KEY="de02608805" \
-            -e PUBLIC_HOSTNAME=http://localhost:3000 \
-            -e PUBLIC_POSTHOG_KEY="${PUBLIC_POSTHOG_KEY}" \
-            -e PUBLIC_POSTHOG_HOST="${PUBLIC_POSTHOG_HOST}" \
-            -e SMTP_HOST=mailpit \
-            -e SMTP_PORT=1025 \
-            opencommunities-e2e
-          timeout 30 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
-          echo "App container ready"
 
       - name: Run Playwright E2E
         env:
@@ -352,16 +347,42 @@ jobs:
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: pnpm exec playwright test --config e2e/playwright.config.cjs
 
+      - name: Run accessibility checks (pa11y-ci)
+        continue-on-error: true
+        id: pa11y
+        timeout-minutes: 5
+        run: |
+          mkdir -p .e2e
+          echo "Running pa11y-ci accessibility checks..."
+          npx --yes pa11y-ci@latest --json 2>&1 | tee /tmp/pa11y-output.json || true
+          cp /tmp/pa11y-output.json .e2e/pa11y-report.json 2>/dev/null || true
+          # Build summary
+          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
+          echo '| URL | Result |' >> .e2e/pa11y-summary.md
+          echo '|-----|--------|' >> .e2e/pa11y-summary.md
+          node -e "
+            let r;
+            try { r = JSON.parse(require('fs').readFileSync('/tmp/pa11y-output.json','utf8')); } catch {}
+            if (!r) try { r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8')); } catch {}
+            if (r) {
+              const results = r.results || r;
+              for (const [url, data] of Object.entries(results)) {
+                const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
+                const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
+                process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
+              }
+            }
+          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
+          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
+
       - name: Docker Compose logs (on failure)
         if: failure()
         run: |
-          docker compose -f docker/docker-compose.yml logs --tail=50
-          echo "--- App container logs ---"
-          docker logs opencommunities-e2e 2>&1 || echo "No app logs available"
+          docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml logs --tail=50
 
       - name: Tear down Docker Compose
         if: always()
-        run: docker compose -f docker/docker-compose.yml down -v
+        run: docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
@@ -377,28 +398,8 @@ jobs:
           name: e2e-playwright-report
           path: e2e/playwright-report
 
-      - name: Run accessibility checks (pa11y-ci)
-        continue-on-error: true
-        id: pa11y
-        run: |
-          npx --yes pa11y-ci@latest --json > .e2e/pa11y-report.json 2>&1 || true
-          # Build summary
-          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
-          echo '| URL | Result |' >> .e2e/pa11y-summary.md
-          echo '|-----|--------|' >> .e2e/pa11y-summary.md
-          node -e "
-            const r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8'));
-            const results = r.results || r;
-            for (const [url, data] of Object.entries(results)) {
-              const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
-              const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
-              process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
-            }
-          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
-          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
-
       - name: Find or create pa11y PR comment
-        if: steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
+        if: github.event_name == 'pull_request' && steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

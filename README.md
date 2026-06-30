@@ -32,6 +32,9 @@ PUBLIC_POSTHOG_KEY=""
 PUBLIC_POSTHOG_HOST=""
 SMTP_HOST="localhost"
 SMTP_PORT="1025"
+LT_API_URL=""
+LT_API_KEY=""
+CAPTCHA_INTERNAL_ENDPOINT=""
 ```
 
 And finally an `.env.test` file (overrides `.env.dynamic` values for testing):
@@ -63,7 +66,7 @@ pnpm run deps:down
 
 ## Production
 
-Deploy with [Coolify](https://coolify.io/) or any Docker host supporting [Nixpacks](https://nixpacks.com/). CI builds a Docker image and pushes to GHCR automatically. Point your Coolify project to the GitHub repo and set the environment variables from `.env.example`.
+Deploy with [Coolify](https://coolify.io/) or any Docker host. CI builds a Docker image and pushes to GHCR automatically using the [`docker/Dockerfile`](docker/Dockerfile). For local development and testing, use the unified [`docker/docker-compose.yml`](docker/docker-compose.yml).
 
 ## Credits
 
