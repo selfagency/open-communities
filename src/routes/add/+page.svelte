@@ -38,5 +38,5 @@ onMount(() => {
   deletion={undefined}
   {form}
   mode="add"
-  user={data.user as UsersRecord & { id: string }}
+  user={data.user as unknown as UsersRecord & { id: string }}
 />
