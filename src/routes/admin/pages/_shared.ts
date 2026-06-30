@@ -18,13 +18,9 @@ export function parsePageForm(
   fd: FormData
 ): { ok: true; data: ParsedPage } | { ok: false; error: string; field?: string } {
   const title = (fd.get('title') ?? '').toString().trim();
-  if (!title) {
-    return { ok: false, error: 'Title is required', field: 'title' };
-  }
-
   const slug = (fd.get('slug') ?? '').toString().trim();
-  if (!slug) {
-    return { ok: false, error: 'Slug is required', field: 'slug' };
+  if (!(title && slug)) {
+    return { ok: false, error: 'Title and slug are required' };
   }
 
   if (!/^[a-z0-9-]+$/.test(slug)) {

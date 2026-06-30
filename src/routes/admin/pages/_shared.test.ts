@@ -8,14 +8,14 @@ function fd(o: Record<string, string>) {
 }
 
 describe('parsePageForm', () => {
-  it('rejects empty title', () => {
-    const r = parsePageForm(fd({ slug: 'x' }));
-    expect(r).toMatchObject({ ok: false, field: 'title', error: 'Title is required' });
+  it('rejects empty title and slug', () => {
+    const r = parsePageForm(fd({ title: '', slug: '' }));
+    expect(r).toMatchObject({ ok: false, error: 'Title and slug are required' });
   });
 
-  it('rejects empty slug', () => {
-    const r = parsePageForm(fd({ title: 'T', slug: '' }));
-    expect(r).toMatchObject({ ok: false, field: 'slug', error: 'Slug is required' });
+  it('rejects missing slug', () => {
+    const r = parsePageForm(fd({ title: 'T' }));
+    expect(r).toMatchObject({ ok: false, error: 'Title and slug are required' });
   });
 
   it('rejects invalid slug (uppercase, spaces, special chars)', () => {

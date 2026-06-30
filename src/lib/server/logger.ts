@@ -57,15 +57,8 @@ function logEvent(statusCode: number, event: RequestEvent) {
   try {
     // Skip logging for internal requests
     const pathname = event.url.pathname;
-    if (
-      (!dev && event.url.host === 'localhost:3000') ||
-      pathname.startsWith('/_app/') ||
-      pathname.includes('__data.json') ||
-      pathname.endsWith('.js') ||
-      pathname.endsWith('.css') ||
-      pathname.endsWith('.map') ||
-      pathname.includes('favicon')
-    ) {
+    const internalPaths = ['.js', '.css', '.map', '__data.json', 'favicon', '/_app/'];
+    if ((!dev && event.url.host === 'localhost:3000') || internalPaths.some((p) => pathname.includes(p))) {
       return;
     }
 

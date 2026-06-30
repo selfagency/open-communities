@@ -1,9 +1,13 @@
-# SonarQube Cloud Remediations Plan
+# Code Remediations Plan (SonarQube Cloud + Codacy)
 
 **Date:** 2026-06-30  
 **Project:** OpenCommunities  
-**Baseline:** SonarQube Cloud analysis  
-**Reference:** [SonarSource Analysis Parameters](https://docs.sonarsource.com/sonarqube-cloud/analyzing-source-code/analysis-parameters/parameters-not-settable-in-ui)
+**Baselines:** SonarQube Cloud + Codacy analysis  
+**References:**
+- [SonarSource Analysis Parameters](https://docs.sonarsource.com/sonarqube-cloud/analyzing-source-code/analysis-parameters/parameters-not-settable-in-ui)
+- [Codacy Configuration File](https://docs.codacy.com/repositories-configure/codacy-configuration-file/)
+
+> **Part 1** (below) covers SonarQube findings. **Part 2** ([jump](#part-2--codacy-remediations)) covers Codacy findings. Many overlap (GitHub Actions SHAs, bootstrap.mjs complexity, credentials) — fix once, satisfies both.
 
 ---
 
