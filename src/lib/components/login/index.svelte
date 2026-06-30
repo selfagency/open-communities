@@ -135,7 +135,7 @@ let loadingSecondary = $derived(appState.loadingSecondary);
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} autocomplete="email" bind:value={$formData.email} />
+              <Input {...props} aria-label={m.email()} autocomplete="email" id="email" bind:value={$formData.email} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -145,7 +145,14 @@ let loadingSecondary = $derived(appState.loadingSecondary);
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.password()}</Form.Label>
-              <Input {...props} autocomplete="current-password" type="password" bind:value={$formData.password} />
+              <Input
+                {...props}
+                aria-label={m.password()}
+                autocomplete="current-password"
+                id="password"
+                type="password"
+                bind:value={$formData.password}
+              />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />

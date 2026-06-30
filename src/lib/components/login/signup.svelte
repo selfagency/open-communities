@@ -91,7 +91,13 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input {...props} autocomplete="name" bind:value={$formData.name} />
+              <Input
+                {...props}
+                aria-label={m.name()}
+                autocomplete="name"
+                id="signup-name"
+                bind:value={$formData.name}
+              />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -101,7 +107,13 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.email()}</Form.Label>
-              <Input {...props} autocomplete="email" bind:value={$formData.email} />
+              <Input
+                {...props}
+                aria-label={m.email()}
+                autocomplete="email"
+                id="signup-email"
+                bind:value={$formData.email}
+              />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
@@ -111,7 +123,14 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.password()}</Form.Label>
-              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.password} />
+              <Input
+                {...props}
+                aria-label={m.password()}
+                autocomplete="new-password"
+                id="signup-password"
+                type="password"
+                bind:value={$formData.password}
+              />
             {/snippet}
           </Form.Control>
           <Form.Description>
@@ -124,7 +143,14 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.confirmPassword()}</Form.Label>
-              <Input {...props} autocomplete="new-password" type="password" bind:value={$formData.passwordConfirm} />
+              <Input
+                {...props}
+                aria-label={m.confirmPassword()}
+                autocomplete="new-password"
+                id="signup-password-confirm"
+                type="password"
+                bind:value={$formData.passwordConfirm}
+              />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />
