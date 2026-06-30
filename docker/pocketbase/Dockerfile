@@ -18,15 +18,11 @@ RUN curl -fsSL -o /tmp/pb.zip \
   && unzip /tmp/pb.zip -d /pb/ \
   && rm -f /tmp/pb.zip
 
-# Create non-root user for security, keep /pb_data world-writable for bind-mount compat
-RUN addgroup -S pbgroup && adduser -S pbuser -G pbgroup \
-  && mkdir -p /pb_data && chmod 777 /pb_data && chown -R pbuser:pbgroup /pb_data /pb
+RUN mkdir -p /pb_data && chmod 777 /pb_data
 
 EXPOSE 8090
 
 VOLUME ["/pb_data"]
-
-USER pbuser
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD wget -qO- http://localhost:8090/api/health || exit 1
