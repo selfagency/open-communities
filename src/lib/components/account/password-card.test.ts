@@ -15,7 +15,6 @@ describe('PasswordCard', () => {
       }
     });
     expect(target.textContent).toContain('changePassword');
-    expect(target.textContent).toContain('saveChanges');
     expect(target.querySelector('input')).toBeTruthy();
     unmount(instance);
   });

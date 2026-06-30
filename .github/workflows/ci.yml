@@ -2,16 +2,16 @@ name: CI
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
   pull_request:
-    branches: ['main']
+    branches: ["main"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '22.x'
+  NODE_VERSION: "22.x"
 
 jobs:
   lint-and-typecheck:
@@ -198,16 +198,23 @@ jobs:
           name: test-results
           path: test-results
 
-      - name: Fail workflow if tests failed
-        if: steps.test.outcome == 'failure'
-        run: exit 1
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Report coverage (step summary + PR comment)
         if: always() && hashFiles('test-results/coverage/coverage-summary.json') != ''
         uses: davelosert/vitest-coverage-report-action@v2
         with:
-          json-summary-path: 'test-results/coverage/coverage-summary.json'
-          json-final-path: 'test-results/coverage/coverage-final.json'
+          json-summary-path: "test-results/coverage/coverage-summary.json"
+          json-final-path: "test-results/coverage/coverage-final.json"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-on: pr
 
@@ -215,13 +222,17 @@ jobs:
         if: always() && hashFiles('test-results/junit.xml') != ''
         uses: dorny/test-reporter@v2
         with:
-          path: 'test-results/junit.xml'
+          path: "test-results/junit.xml"
           reporter: java-junit
           name: Vitest Tests
-          use-actions-summary: 'true'
-          fail-on-empty: 'false'
+          use-actions-summary: "true"
+          fail-on-empty: "false"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail workflow if tests failed
+        if: steps.test.outcome == 'failure'
+        run: exit 1
 
   e2e:
     name: E2E tests
@@ -307,7 +318,7 @@ jobs:
           CAPTCHA_SITE_SECRET: OI1CeaaFu9cUe7yqDFqVqlG4NcPOFsPBX0iAqoH5ogQvuoKoov8w
           PUBLIC_HOSTNAME: http://localhost:3000
           SMTP_HOST: mailpit
-          SMTP_PORT: '1025'
+          SMTP_PORT: "1025"
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
           PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}

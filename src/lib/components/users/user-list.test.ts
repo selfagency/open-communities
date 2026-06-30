@@ -24,7 +24,8 @@ describe('UserList', () => {
     }
   ];
 
-  it('renders user table with data', async () => {
+  it('renders user table with data', { timeout: 30_000 }, async () => {
+    // First import triggers TanStack Proxy setup in browser runtime
     const { default: UserList } = await import('./user-list.svelte');
     const target = document.createElement('div');
     const instance = mount(UserList, {

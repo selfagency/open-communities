@@ -112,6 +112,7 @@ export default defineConfig({
                 },
                 environment: 'happy-dom',
                 exclude: ['src/test/server/**'],
+                fileParallelism: false,
                 include: ['src/**/*.test.{ts,tsx,js,jsx}'],
                 name: 'browser',
                 server: {
