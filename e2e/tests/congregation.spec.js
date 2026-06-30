@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { sleep, uid as uniqueId } from 'radashi';
 
+import { TEST_PASSWORD } from '../fixtures/credentials.js';
+
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
 const email = 'regular@example.test';

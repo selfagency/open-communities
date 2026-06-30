@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+import { TEST_PASSWORD } from '../fixtures/credentials.js';
+
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
 const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
 const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
