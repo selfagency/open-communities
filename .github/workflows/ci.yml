@@ -228,6 +228,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -398,7 +399,7 @@ jobs:
           path: e2e/playwright-report
 
       - name: Find or create pa11y PR comment
-        if: steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
+        if: github.event_name == 'pull_request' && steps.pa11y.outcome == 'success' && hashFiles('.e2e/pa11y-summary.md') != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
