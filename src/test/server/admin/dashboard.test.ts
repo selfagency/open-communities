@@ -57,7 +57,7 @@ describe('admin +page.server — load', () => {
 describe('admin/congregations +page.server — load', () => {
   beforeEach(() => {
     server.use(
-      http.get(`${PB}/api/collections/congregationMeta/records`, ({ request }) => {
+      http.get(`${PB}/api/collections/congregations/records`, ({ request }) => {
         const url = new URL(request.url);
         const filter = url.searchParams.get('filter') ?? '';
         if (filter.includes('true')) {
@@ -69,10 +69,10 @@ describe('admin/congregations +page.server — load', () => {
                 denomination: 'Reform',
                 visible: true,
                 created: '2024-01-01',
-                location: {
+                expand: {
                   city: { name: 'Los Angeles' },
                   state: { name: 'California' },
-                  country: { code: 'US' }
+                  'state.country': { code: 'US' }
                 }
               }
             ]
@@ -86,7 +86,7 @@ describe('admin/congregations +page.server — load', () => {
               denomination: 'Conservative',
               visible: false,
               created: '2024-06-01',
-              location: {}
+              expand: {}
             }
           ]
         });
