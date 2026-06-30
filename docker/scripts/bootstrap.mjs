@@ -268,26 +268,43 @@ async function createCapKeys() {
     try {
       // 1. Login with admin key to get session token
       const login = await capPost('/auth/login', { admin_key: capAdminKey });
-      if (!login.ok) { if (i === 0) process.stdout.write(`\n    ⏳ login (${login.status})`); await sleep(2000); continue; }
+      if (!login.ok) {
+        if (i === 0) {
+          process.stdout.write(`\n    ⏳ login (${login.status})`);
+        }
+        await sleep(2000);
+        continue;
+      }
 
       const { session_token: token, hashed_token: hash } = login.data;
       const bearer = Buffer.from(JSON.stringify({ token, hash })).toString('base64');
 
       // 2. Create an API (Bot) key using Bearer session auth
       const ak = await capPost('/server/settings/apikeys', { name: 'ci-bot' }, `Bearer ${bearer}`);
-      if (!ak.ok) { if (i === 0) process.stdout.write(`\n    ⏳ apikey (${ak.status})`); await sleep(2000); continue; }
+      if (!ak.ok) {
+        if (i === 0) {
+          process.stdout.write(`\n    ⏳ apikey (${ak.status})`);
+        }
+        await sleep(2000);
+        continue;
+      }
 
       // 3. Create a site key using Bot API key auth
       const sk = await capPost('/server/keys', { name: 'open-communities' }, `Bot ${ak.data.apiKey}`);
-      if (!sk.ok) { if (i === 0) process.stdout.write(`\n    ⏳ sitekey (${sk.status})`); await sleep(2000); continue; }
+      if (!sk.ok) {
+        if (i === 0) {
+          process.stdout.write(`\n    ⏳ sitekey (${sk.status})`);
+        }
+        await sleep(2000);
+        continue;
+      }
 
       const { siteKey, secretKey } = sk.data;
       const entry = `\n# Created by bootstrap\nPUBLIC_CAPTCHA_SITE_KEY="${siteKey}"\nCAPTCHA_SITE_SECRET="${secretKey}"\n`;
       for (const f of [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')]) {
         try { appendFileSync(f, entry); } catch {}
       }
-      console.log(` ✅\n  🔑 Site key: ${siteKey}\n  🔒 Secret: ${secretKey.substring(0, 8)}...`);
-      console.log('  📝 Appended to .env.e2e / .env.dynamic');
+      console.log(' ✅\n  🔑 Captcha keys created and written to .env files');
       return;
     } catch (e) {
       if (i === 0) process.stdout.write(`\n    ⏳ waiting (${e?.cause?.code || e?.message || 'error'})`);

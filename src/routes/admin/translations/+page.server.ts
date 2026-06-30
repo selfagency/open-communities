@@ -135,6 +135,42 @@ async function pollNewRunId(
   return null;
 }
 
+async function triggerDeploy(
+  ghToken: string,
+  owner: string,
+  repo: string
+): Promise<{ deploymentUuid: string } | { triggered: true; message: string }> {
+  // Get the latest run before triggering
+  const prevRunsRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/runs?branch=main&event=workflow_dispatch&per_page=1`,
+    { headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' } }
+  );
+
+  const prevRunId = prevRunsRes.ok
+    ? (((await prevRunsRes.json()) as { workflow_runs: Array<{ id: number }> }).workflow_runs?.[0]?.id ?? 0)
+    : 0;
+
+  const dispatchRes = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/dispatches`,
+    {
+      method: 'POST',
+      headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' },
+      body: JSON.stringify({ ref: 'main' })
+    }
+  );
+
+  if (!dispatchRes.ok) {
+    throw new Error(`Dispatch failed: ${dispatchRes.status}`);
+  }
+
+  const runId = await pollNewRunId(owner, repo, ghToken, prevRunId, 10_000);
+  if (!runId) {
+    return { triggered: true, message: 'Deploy triggered, but could not determine run ID' };
+  }
+
+  return { deploymentUuid: String(runId) };
+}
+
 function processTranslationResults(rawResults: PromiseSettledResult<TranslateResult>[]): {
   translations: TranslateResult[];
   errors: string[];
@@ -273,40 +309,12 @@ export const actions = {
       return fail(500, { error: 'Deploy is not configured' });
     }
 
-    const owner = 'selfagency';
-    const repo = 'open-communities';
-
     try {
-      // Get the latest run before triggering
-      const prevRunsRes = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/runs?branch=main&event=workflow_dispatch&per_page=1`,
-        { headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' } }
-      );
-      const prevRuns = prevRunsRes.ok ? ((await prevRunsRes.json()) as { workflow_runs: Array<{ id: number }> }) : null;
-      const prevRunId = prevRuns?.workflow_runs?.[0]?.id ?? 0;
-
-      // Trigger workflow_dispatch
-      const dispatchRes = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/dispatches`,
-        {
-          method: 'POST',
-          headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' },
-          body: JSON.stringify({ ref: 'main' })
-        }
-      );
-
-      if (!dispatchRes.ok) {
-        log.error('GitHub Actions dispatch failed', { status: dispatchRes.status });
-        return fail(502, { error: 'Rebuild failed' });
+      const result = await triggerDeploy(ghToken, 'selfagency', 'open-communities');
+      if ('triggered' in result) {
+        return result;
       }
-
-      // Poll for a new run to appear (dispatch returns 204 with no body)
-      const runId = await pollNewRunId(owner, repo, ghToken, prevRunId, 10_000);
-      if (!runId) {
-        return { triggered: true, message: 'Deploy triggered, but could not determine run ID' };
-      }
-
-      return { deploymentUuid: String(runId) };
+      return { deploymentUuid: result.deploymentUuid };
     } catch (err: unknown) {
       log.error('GitHub Actions deploy error', err);
       return fail(502, { error: 'Rebuild failed' });
