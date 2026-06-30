@@ -1,6 +1,6 @@
 # Open Communities
 
-[![Build](https://github.com/selfagency/open-communities/actions/workflows/build.yml/badge.svg)](https://github.com/selfagency/open-communities/actions/workflows/build.yml) [![CI](https://github.com/selfagency/open-communities/actions/workflows/ci.yml/badge.svg)](https://github.com/selfagency/open-communities/actions/workflows/ci.yml) [![E2E](https://github.com/selfagency/open-communities/actions/workflows/e2e.yml/badge.svg)](https://github.com/selfagency/open-communities/actions/workflows/e2e.yml)
+[![CI](https://github.com/selfagency/open-communities/actions/workflows/ci.yml/badge.svg)](https://github.com/selfagency/open-communities/actions/workflows/ci.yml) [![Deploy](https://github.com/selfagency/open-communities/actions/workflows/deploy.yml/badge.svg)](https://github.com/selfagency/open-communities/actions/workflows/deploy.yml) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5808338dfe5b4cffbc7f92505f5fbcf8)](https://app.codacy.com/gh/selfagency/open-communities/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) [![codecov](https://codecov.io/gh/selfagency/open-communities/graph/badge.svg?token=ZZK4C3X39P)](https://codecov.io/gh/selfagency/open-communities)
 
 Open Communities is a Sveltekit application that allows users to search for Jewish congregations that are welcoming of Jews opposed to Israel's war in Gaza. The app could feasibly be adapted to any kind of directory, but not without some considerable work.
 
