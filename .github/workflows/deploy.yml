@@ -65,10 +65,11 @@ jobs:
           docker tag ghcr.io/${{ github.repository }}:$COMMIT_SHA ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:latest
 
-      - name: Deploy to Coolify
+      - name: Restart Coolify service
         env:
-          COOLIFY_WEBHOOK: ${{ secrets.COOLIFY_WEBHOOK }}
+          COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
-          curl --request GET "$COOLIFY_WEBHOOK" \
-            --header "Authorization: Bearer $COOLIFY_TOKEN"
+          curl --request POST "https://app.coolify.io/api/v1/services/${COOLIFY_UUID}/restart" \
+            --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
+            --header "Content-Type: application/json"
