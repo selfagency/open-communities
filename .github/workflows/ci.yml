@@ -57,11 +57,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate i18n messages (no build needed)
-        run: pnpm paraglide-js compile --project ./project.inlang
-
-      - name: Type check
-        run: pnpm svelte-kit sync && pnpm svelte-check
+      - name: Generate i18n messages + type check
+        run: |
+          pnpm paraglide-js compile --project ./project.inlang
+          pnpm svelte-kit sync
+          pnpm svelte-check
 
       - name: Lint
         run: pnpm check
@@ -209,7 +209,8 @@ jobs:
           mkdir -p .playwright
           cd .playwright
           npm init -y > /dev/null 2>&1
-          npm install --ignore-scripts @playwright/test
+          npm install --legacy-peer-deps @playwright/test
+          cd ..
           npx playwright install chromium --with-deps --only-shell
 
       - name: Log in to GitHub Container Registry
