@@ -50,6 +50,14 @@ jobs:
           tags: ghcr.io/${{ github.repository }}-cap:latest
           push: true
 
+      - name: Build and push libretranslate image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/libretranslate.Dockerfile
+          tags: ghcr.io/${{ github.repository }}-libretranslate:latest
+          push: true
+
       - name: Promote commit image to latest
         run: |
           COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"

@@ -42,7 +42,9 @@ services:
     restart: unless-stopped
 
   libretranslate:
-    image: libretranslate/libretranslate:latest
+    build:
+      context: .
+      dockerfile: libretranslate.Dockerfile
     environment:
       LT_LOAD_ONLY: en,es,fr,de,he,pl,pt,hu,nl,ru,uk
       LT_API_KEYS: 'true'
