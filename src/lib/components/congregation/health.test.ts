@@ -5,6 +5,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
 import type { HealthRecord } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 
 import Health from './health.svelte';
 
@@ -53,5 +54,17 @@ describe('Health component', () => {
 
     // the component outputs the message directly (not wrapped in list item)
     expect(screen.getByText(m.health_notApplicable())).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations in mini mode', () => {
+    const health = { protocol: 'maskingRecommended' } as unknown as HealthRecord;
+    const { container } = render(Health, { health, mode: 'mini' });
+    assertAccessible(container);
+  });
+
+  it('has no accessibility violations in full mode', () => {
+    const health = { protocol: 'maskingRecommended' } as unknown as HealthRecord;
+    const { container } = render(Health, { health, mode: 'full' });
+    assertAccessible(container);
   });
 });

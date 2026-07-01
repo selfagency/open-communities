@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
+import { assertAccessible } from '$test/accesslint';
+
 import Locale from './locale.svelte';
 
 describe('Locale component', () => {
@@ -18,5 +20,10 @@ describe('Locale component', () => {
     expect(trigger).toBeTruthy();
     expect(trigger).toHaveAttribute('aria-haspopup', 'menu');
     expect(trigger).toHaveAttribute('data-slot', 'dropdown-menu-trigger');
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Locale);
+    assertAccessible(container);
   });
 });

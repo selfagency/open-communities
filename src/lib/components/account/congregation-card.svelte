@@ -24,7 +24,9 @@ let {
       <form action="?/unlink" method="POST" use:enhance={onUnlink}>
         <Button type="submit" variant="outline">{m.unlinkFromCongregation()}</Button>
       </form>
-      <Button onclick={() => goto('/edit?id=' + congregation)} variant="outline">{m.editCongregation()}</Button>
+      <Button onclick={() => goto(`/edit?id=${congregation}`)} variant="outline">
+        {m.editCongregation()}
+      </Button>
     </CardContent>
   </Card>
 {/if}

@@ -5,8 +5,11 @@ import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
 import type { CongregationMetaRecord } from '$lib/pocketbase';
+import { assertAccessible } from '$test/accesslint';
 
 import Tile from './tile.svelte';
+
+const testCityRegex = /TestCity/;
 
 describe('Tile component', () => {
   it('renders title, flavor, location and accessibility mini', () => {
@@ -31,7 +34,7 @@ describe('Tile component', () => {
 
     expect(screen.getByText('Test Tile')).toBeInTheDocument();
     expect(screen.getByText('A friendly tile')).toBeInTheDocument();
-    expect(screen.getByText('TestCity')).toBeInTheDocument();
+    expect(screen.getByText(testCityRegex)).toBeInTheDocument();
 
     // accessibility mini should render the sr-only label text
     expect(screen.getByText(m.accessibility_ada())).toBeInTheDocument();
@@ -52,5 +55,22 @@ describe('Tile component', () => {
 
     render(Tile, { congregation });
     expect(screen.getByText(m.pending())).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations', () => {
+    const congregation = {
+      accessibility: { inPerson_adaSome: true },
+      fit: { flag: 'yes' },
+      flavor: 'A friendly tile',
+      health: null,
+      id: 'abc123',
+      location: { city: { name: 'TestCity' }, country: { name: 'TestCountry' }, state: { name: 'TS' } },
+      name: 'Test Tile',
+      security: null,
+      services: { onlineOnly: false },
+      visible: true
+    } as CongregationMetaRecord & { id: string };
+    const { container } = render(Tile, { congregation });
+    assertAccessible(container);
   });
 });

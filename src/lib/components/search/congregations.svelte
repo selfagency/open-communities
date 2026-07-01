@@ -8,7 +8,6 @@ import { alphabetical, isEmpty, sleep, unique } from 'radashi';
 import { onMount, tick, untrack } from 'svelte';
 import { fade } from 'svelte/transition';
 import { dev } from '$app/environment';
-import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import CongregationCard from '$lib/components/congregation/congregation.svelte';
 import { Button } from '$lib/components/ui/button';
@@ -43,7 +42,7 @@ const location = new LocationService({
   countries: page.data.countries,
   search
 });
-const open: Record<string, boolean> = {};
+let open = $state<Record<string, boolean>>({});
 
 // locals
 let loading = $state(true);
@@ -111,14 +110,10 @@ onMount(async () => {
   if (id) {
     searchTerms = id;
     open[id] = true;
-    // Clean up the URL without navigating
+    // Clean up the URL without remounting the page, so the modal stays open.
     const url = new URL(page.url);
     url.searchParams.delete('id');
-    goto(url.pathname + url.search, {
-      replaceState: true,
-      noScroll: true,
-      keepFocus: true
-    });
+    window.history.replaceState({}, '', `${url.pathname}${url.search}`);
   }
   await sleep(200); // brief delay so the fade-in transition renders
   loading = false;

@@ -5,6 +5,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
 import type { FitRecord } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 
 import Fit from './fit.svelte';
 
@@ -34,5 +35,10 @@ describe('Fit component', () => {
     render(Fit, { fit });
     const list = screen.getByRole('list');
     expect(within(list).getByText('Extra fit details')).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Fit, { fit: {} as FitRecord });
+    assertAccessible(container);
   });
 });

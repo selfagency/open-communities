@@ -3,6 +3,7 @@
 import { render, screen } from '@testing-library/svelte';
 import { m } from '$lib/paraglide/messages';
 import type { RegistrationRecord } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 import '@testing-library/jest-dom/vitest';
 
 import Registration from './registration.svelte';
@@ -47,5 +48,10 @@ describe('Registration component', () => {
     expect(links.some((l) => (l as HTMLAnchorElement).href.includes('https://example.com'))).toBe(true);
     expect(screen.getByText(m.email())).toBeInTheDocument();
     expect(screen.getByText(m.website())).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Registration, {});
+    assertAccessible(container);
   });
 });

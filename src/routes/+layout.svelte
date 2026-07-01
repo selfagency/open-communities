@@ -66,7 +66,7 @@ $effect(() => {
   if (innerWidth > 0) {
     untrack(() =>
       setState({
-        isMobile: innerWidth < 640,
+        isMobile: innerWidth < 768,
         offsetWidth: innerWidth
       })
     );

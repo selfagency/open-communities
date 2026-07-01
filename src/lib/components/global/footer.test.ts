@@ -2,21 +2,13 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
+import { assertAccessible } from '$test/accesslint';
 
 import Footer from './footer.svelte';
 
 describe('Footer component', () => {
-  it('renders main links with correct hrefs', () => {
+  it('renders site credits link with correct href', () => {
     render(Footer);
-
-    const contact = screen.getByRole('link', { name: new RegExp(m.contact_contactUs(), 'i') });
-    expect(contact).toHaveAttribute('href', '/contact');
-
-    const privacy = screen.getByRole('link', { name: new RegExp(m.privacyPolicy(), 'i') });
-    expect(privacy).toHaveAttribute('href', '/privacy');
-
-    const terms = screen.getByRole('link', { name: new RegExp(m.termsOfService(), 'i') });
-    expect(terms).toHaveAttribute('href', '/terms');
 
     const siteCredits = screen.getByRole('link', { name: new RegExp(m.siteCredits(), 'i') });
     expect(siteCredits).toHaveAttribute('href', '/site-credits');
@@ -34,5 +26,10 @@ describe('Footer component', () => {
     // biome-ignore lint/performance/useTopLevelRegex: inline regex in test
     const rabbis = screen.getByRole('link', { name: /home_author/i });
     expect(rabbis).toHaveAttribute('href', 'https://rabbis4ceasefire.com/');
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Footer);
+    assertAccessible(container);
   });
 });

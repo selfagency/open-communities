@@ -5,6 +5,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
 import type { SecurityRecord } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 
 import Security from './security.svelte';
 
@@ -48,5 +49,17 @@ describe('Security component', () => {
     const list = screen.getByRole('list');
     expect(within(list).getByText(m.security_privateSecurityUnarmed())).toBeInTheDocument();
     expect(within(list).getByText(m.security_noFirearms())).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations in mini mode', () => {
+    const security = { localPolice: true } as unknown as SecurityRecord;
+    const { container } = render(Security, { mode: 'mini', security });
+    assertAccessible(container);
+  });
+
+  it('has no accessibility violations in full mode', () => {
+    const security = { localPolice: true, clergyArmed: true } as unknown as SecurityRecord;
+    const { container } = render(Security, { mode: 'full', security });
+    assertAccessible(container);
   });
 });

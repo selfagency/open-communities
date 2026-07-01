@@ -12,6 +12,8 @@ exclude_paths:
   - "**/*.min.js"
   - "coverage/**"
   - "test-results/**"
+  - "**/*.md"
+  - "**/*.mdx"
 
 engines:
   markdownlint:

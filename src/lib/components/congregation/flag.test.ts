@@ -5,6 +5,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
 import type { FitFlagOptions } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 
 import FlagComp from './flag.svelte';
 
@@ -31,5 +32,15 @@ describe('Flag component', () => {
     render(FlagComp, { flag: 'yesBima' as FitFlagOptions, mode: 'full' });
     const area = screen.getByText(m.flag_yesBima());
     expect(area).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations in mini mode', () => {
+    const { container } = render(FlagComp, { flag: 'yes' as FitFlagOptions, mode: 'mini' });
+    assertAccessible(container);
+  });
+
+  it('has no accessibility violations in full mode', () => {
+    const { container } = render(FlagComp, { flag: 'yes' as FitFlagOptions, mode: 'full' });
+    assertAccessible(container);
   });
 });

@@ -46,13 +46,13 @@ test.describe('Congregation CRUD', () => {
   test('login as existing user', async ({ page, context }) => {
     await loginAsUser({ context });
 
-    // Navigate to home — should render logged-in state (hamburger menu, no Login button)
+    // Navigate to home — should render logged-in state (Add Congregation button, no Login button)
     await page.goto(BASE);
     await page.waitForLoadState('networkidle');
 
-    // Verify login succeeded: Login button should NOT be visible.
-    const loginBtn = page.getByRole('button', { name: /^login$/i });
-    await expect(loginBtn).not.toBeVisible({ timeout: 5000 });
+    // Verify login succeeded: Add Congregation button should be visible.
+    const addBtn = page.getByRole('button', { name: /add congregation/i });
+    await expect(addBtn).toBeVisible({ timeout: 5000 });
   });
 
   test('add a congregation', async ({ page, context }) => {

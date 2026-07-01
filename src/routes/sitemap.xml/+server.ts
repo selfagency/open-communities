@@ -14,6 +14,7 @@ const EXCLUDE_ROUTES = [
   /^\/user/,
   /^\/sitemap/
 ];
+const SLUG_ROUTE_PATTERN = /^\/\[slug\]/;
 
 export const GET: RequestHandler = async ({ locals, url }) => {
   const client = locals.api;
@@ -49,15 +50,20 @@ export const GET: RequestHandler = async ({ locals, url }) => {
     // Graceful degradation — sitemap without pages
   }
 
+  // Build exclude patterns dynamically — exclude [slug] route when no pages exist
+  const excludeRoutePatterns = [...EXCLUDE_ROUTES, ...(pageSlugs.length === 0 ? [SLUG_ROUTE_PATTERN] : [])];
+
   return await response({
     origin,
 
-    excludeRoutePatterns: EXCLUDE_ROUTES,
+    excludeRoutePatterns,
 
-    paramValues: {
-      // CMS pages via [slug] route
-      '/[slug]': pageSlugs.map((slug) => [slug])
-    },
+    paramValues:
+      pageSlugs.length > 0
+        ? {
+            '/[slug]': pageSlugs
+          }
+        : undefined,
 
     additionalPaths: [
       '/',

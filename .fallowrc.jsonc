@@ -89,6 +89,8 @@
     // Test utility files referenced only by test config
     "src/test/setupTest.ts",
     "src/test/setupServer.ts",
+    "src/test/setupAccessLint.ts",
+    "src/test/types.d.ts",
     "src/test/testUtils.ts",
     // SVG mock assets (used by test Vitest setup)
     "**/mocks/assets/*.js",
@@ -107,7 +109,9 @@
     "@lucide/svelte",
     // Hoisted transitive dep — @loaders.gl/schema-utils imports @math.gl/types
     // at build time but doesn't declare it. Explicit dep ensures Rolldown resolution.
-    "@math.gl/types"
+    "@math.gl/types",
+    // Used indirectly via @accesslint/core in setupAccessLint.ts
+    "@accesslint/vitest"
   ],
   "rules": {
     "unused-dependencies": "warn"
