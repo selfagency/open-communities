@@ -69,6 +69,13 @@ const {
   country: Country;
   state: State;
 };
+
+const modalLocationText = $derived(
+  [city?.name, province?.name]
+    .filter(Boolean)
+    .concat(country?.name && country.name !== 'United States' ? country.name : [])
+    .join(', ')
+);
 const notes = $derived(congregation.notes) as string;
 const services = $derived(congregation.services) as ServicesRecord;
 const registration = $derived(congregation.registration) as RegistrationRecord;
@@ -142,20 +149,8 @@ $effect(() => {
         <span class="w-2/3" itemprop="location" itemscope itemtype="https://schema.org/Place">
           <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
             {#if city.name || province.name || country.name}
-              {#if city.name}
-                <span itemprop="addressLocality">{city.name}</span>
-                {#if province.name || country.name}
-                  ,
-                {/if}
-              {/if}
-              {#if province.name}
-                <span itemprop="addressRegion">{province.name}</span>
-                {#if country.name && country.name !== "United States"}
-                  ,
-                {/if}
-              {/if}
-              {#if country.name && country.name !== "United States"}
-                <span itemprop="addressCountry">{country.name}</span>
+              {#if city.name || province.name || country.name}
+                <span itemprop="addressLocality">{modalLocationText}</span>
               {/if}
             {:else if services.onlineOnly}
               {m.services_onlineOnly()}

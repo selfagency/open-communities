@@ -44,6 +44,12 @@ const location = $derived(congregation?.location) as {
   state: State;
 };
 const flag = $derived((congregation?.fit as FitRecord)?.flag);
+const locationText = $derived(
+  [location?.city?.name, location?.state?.name]
+    .filter(Boolean)
+    .concat(location?.country?.name && location.country.name !== 'United States' ? location.country.name : [])
+    .join(', ')
+);
 /* endregion variables */
 </script>
 
@@ -63,21 +69,7 @@ const flag = $derived((congregation?.fit as FitRecord)?.flag);
           <span>, {location.country.name}</span>
         {/if}
       {:else if location.city.name || location.state.name || location.country.name}
-        {#if location.city.name}
-          <span>{location.city.name}</span>
-          {#if location.state.name || location.country.name}
-            ,
-          {/if}
-        {/if}
-        {#if location.state.name}
-          <span>{location.state.name}</span>
-          {#if location.country.name && location.country.name !== "United States"}
-            ,
-          {/if}
-        {/if}
-        {#if location.country.name && location.country.name !== "United States"}
-          <span>{location.country.name}</span>
-        {/if}
+        <span>{locationText}</span>
       {/if}
     </Card.Description>
   </Card.Header>
