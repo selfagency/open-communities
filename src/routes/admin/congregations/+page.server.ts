@@ -52,7 +52,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         expand: 'owner',
         requestKey: 'admin-cong-active'
       })
-    ),
+    ).catch(() => [] as never[]),
     withRetry(() =>
       client.collection('congregationMeta').getFullList({
         filter: client.filter('visible={:v}', { v: false }),
@@ -60,7 +60,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         expand: 'owner',
         requestKey: 'admin-cong-pending'
       })
-    )
+    ).catch(() => [] as never[])
   ]);
 
   return {

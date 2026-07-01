@@ -56,10 +56,12 @@ describe('admin pages new auth guard', () => {
 });
 
 describe('admin congregations list page auth guard', () => {
-  it('load errors without auth', async () => {
+  it('returns empty congregations without auth', async () => {
     const mod = await import('../../routes/admin/congregations/+page.server');
     const event = createMockRequestEvent();
-    await expect(mod.load(event as never)).rejects.toThrow();
+    const result = (await mod.load(event as never)) as { congregations: unknown[]; pending: unknown[] };
+    expect(result.congregations).toEqual([]);
+    expect(result.pending).toEqual([]);
   });
 });
 
