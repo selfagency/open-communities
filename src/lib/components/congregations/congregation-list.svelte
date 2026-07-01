@@ -82,10 +82,10 @@ async function confirmAction() {
 }
 
 function locationStr(c: Cong) {
-  let s = c.city || '';
-  if (c.state) {
-    s += (s ? ', ' : '') + c.state;
-  }
+  const parts: string[] = [];
+  if (c.city) parts.push(c.city);
+  if (c.state) parts.push(c.state);
+  let s = parts.join(', ');
   if (c.countryCode && c.countryCode !== 'US') {
     s += ' (' + c.countryCode + ')';
   }

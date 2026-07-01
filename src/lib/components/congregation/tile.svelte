@@ -64,16 +64,10 @@ const flag = $derived((congregation?.fit as FitRecord)?.flag);
         {/if}
       {:else if location.city.name || location.state.name || location.country.name}
         {#if location.city.name}
-          <span>{location.city.name}</span>
-          {#if location.state.name || location.country.name}
-            ,
-          {/if}
+          <span>{location.city.name}</span>{#if location.state.name || location.country.name},{/if}
         {/if}
         {#if location.state.name}
-          <span>{location.state.name}</span>
-          {#if location.country.name && location.country.name !== "United States"}
-            ,
-          {/if}
+          <span>{location.state.name}</span>{#if location.country.name && location.country.name !== "United States"},{/if}
         {/if}
         {#if location.country.name && location.country.name !== "United States"}
           <span>{location.country.name}</span>
