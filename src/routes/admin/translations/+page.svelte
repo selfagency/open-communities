@@ -33,7 +33,9 @@ import { m } from '$lib/paraglide/messages';
 let { data } = $props();
 
 // svelte-ignore state_referenced_locally
-const locales = data.locales as string[];
+const locales = (data.locales.includes('en')
+  ? ['en', ...data.locales.filter((locale) => locale !== 'en')]
+  : data.locales) as string[];
 
 // Search
 // svelte-ignore state_referenced_locally
@@ -535,10 +537,11 @@ const statusLabels: Record<string, string> = {
 
               <div class="flex items-center justify-between gap-2 pt-2">
                 <Button
+                  class="h-11 gap-1.5 px-2.5"
                   disabled={translating[key] || !enEntry?.value}
                   onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
                   type="button"
-                  variant="outline"
+                  variant="default"
                 >
                   {#if translating[key]}
                     <svg
@@ -564,7 +567,9 @@ const statusLabels: Record<string, string> = {
                 <div class="flex items-center gap-2">
                   <AlertDialog>
                     <AlertDialogTrigger>
-                      <Button type="button" variant="destructive">Delete</Button>
+                      <Button class="h-11 gap-1.5 px-2.5 text-destructive hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20" type="button" variant="default">
+                        Delete
+                      </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
@@ -587,7 +592,7 @@ const statusLabels: Record<string, string> = {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Button type="submit">Save</Button>
+                  <Button class="h-11 gap-1.5 px-2.5" type="submit" variant="default">Save</Button>
                 </div>
               </div>
             </form>

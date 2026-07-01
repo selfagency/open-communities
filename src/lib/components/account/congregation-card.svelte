@@ -1,6 +1,7 @@
 <script lang="ts">
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { m } from '$lib/paraglide/messages';
@@ -24,7 +25,9 @@ let {
       <form action="?/unlink" method="POST" use:enhance={onUnlink}>
         <Button type="submit" variant="outline">{m.unlinkFromCongregation()}</Button>
       </form>
-      <Button onclick={() => goto('/edit?id=' + congregation)} variant="outline">{m.editCongregation()}</Button>
+      <Button onclick={() => goto(resolve(`/edit?id=${congregation}`))} variant="outline">
+        {m.editCongregation()}
+      </Button>
     </CardContent>
   </Card>
 {/if}
