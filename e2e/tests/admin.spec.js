@@ -111,6 +111,7 @@ test.describe('Admin backend', () => {
   test('create new page via page editor', async ({ page }) => {
     await page.goto(`${BASE}/admin/pages/new`);
     await page.waitForURL('**/admin/pages/new');
+    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('heading', { name: 'New Page' })).toBeVisible();
 
     // Fill in the form
