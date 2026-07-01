@@ -76,6 +76,6 @@ jobs:
           COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
-          curl --request POST "https://app.coolify.io/api/v1/services/${COOLIFY_UUID}/restart" \
+          curl --request POST "https://host.selfagency.dev/api/v1/services/${COOLIFY_UUID}/restart" \
             --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
             --header "Content-Type: application/json"
