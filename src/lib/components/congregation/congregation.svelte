@@ -143,10 +143,16 @@ $effect(() => {
           <span itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
             {#if city.name || province.name || country.name}
               {#if city.name}
-                <span itemprop="addressLocality">{city.name}</span>{#if province.name || country.name},{/if}
+                <span itemprop="addressLocality">{city.name}</span>
+                {#if province.name || country.name}
+                  ,
+                {/if}
               {/if}
               {#if province.name}
-                <span itemprop="addressRegion">{province.name}</span>{#if country.name && country.name !== "United States"},{/if}
+                <span itemprop="addressRegion">{province.name}</span>
+                {#if country.name && country.name !== "United States"}
+                  ,
+                {/if}
               {/if}
               {#if country.name && country.name !== "United States"}
                 <span itemprop="addressCountry">{country.name}</span>

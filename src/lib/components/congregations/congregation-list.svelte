@@ -83,8 +83,12 @@ async function confirmAction() {
 
 function locationStr(c: Cong) {
   const parts: string[] = [];
-  if (c.city) parts.push(c.city);
-  if (c.state) parts.push(c.state);
+  if (c.city) {
+    parts.push(c.city);
+  }
+  if (c.state) {
+    parts.push(c.state);
+  }
   let s = parts.join(', ');
   if (c.countryCode && c.countryCode !== 'US') {
     s += ' (' + c.countryCode + ')';
