@@ -185,6 +185,16 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   return response;
 }
 
+function serializeError(error: unknown): string {
+  if (typeof error === 'object' && error !== null) {
+    return JSON.stringify(error);
+  }
+  if (error == null) {
+    return '';
+  }
+  return String(error); // NOSONAR — only reaches here for primitives (objects handled above)
+}
+
 export const handleError = async ({
   error,
   event,
@@ -197,8 +207,7 @@ export const handleError = async ({
   if (status !== 404) {
     const errorId = crypto.randomUUID();
 
-    event.locals.error =
-      typeof error === 'object' && error !== null ? JSON.stringify(error) : error == null ? '' : String(error);
+    event.locals.error = serializeError(error);
     event.locals.errorStackTrace = (error as Error)?.stack || undefined;
     event.locals.errorId = errorId;
     logEvent(status, event);

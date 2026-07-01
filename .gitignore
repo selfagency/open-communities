@@ -144,5 +144,4 @@ skills-lock.json
 posthog-setup-report.md
 e2e/pocketbase/pb_data/data.db
 .fallow/
-
 # Docker infrastructure

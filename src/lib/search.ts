@@ -198,7 +198,7 @@ export class Search {
       if (!filters || isEmpty(filters)) {
         return false;
       }
-      return Object.values(filters).some((f) => f === true);
+      return Object.values(filters).includes(true);
     };
 
     if (!state.filters || isEmpty(state.filters)) {

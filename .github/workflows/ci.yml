@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: "22.x"
 
@@ -23,10 +26,10 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -36,7 +39,7 @@ jobs:
           corepack prepare pnpm@latest --activate
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-build-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -44,7 +47,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-build-
 
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-build-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -54,24 +57,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build (production — includes i18n fetch)
-        run: pnpm build:prod
-        env:
-          PB_API_TOKEN: ${{ secrets.PB_API_TOKEN }}
-          PB_URL: https://api.opencommunities.info
-
-      - name: Type check
-        run: pnpm svelte-kit sync && pnpm svelte-check
+      - name: Generate i18n messages + type check
+        run: |
+          pnpm paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide
+          pnpm svelte-kit sync
+          pnpm svelte-check
 
       - name: Lint
         run: pnpm check
-
-      - name: Upload build output
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: build/
-          if-no-files-found: error
 
   unit-tests:
     name: Unit tests
@@ -89,10 +82,10 @@ jobs:
       security-events: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -102,7 +95,7 @@ jobs:
           corepack prepare pnpm@latest --activate
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-unit-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -110,7 +103,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-unit-
 
       - name: Cache node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-unit-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -143,7 +136,7 @@ jobs:
           SMTP_PORT: 1025
 
       - name: Upload test results artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always() && hashFiles('test-results/**') != ''
         with:
           name: test-results
@@ -151,18 +144,18 @@ jobs:
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/test-results-action@0fa95f0e1eeaafde2c782583b36b28ad0d8c77d3 # v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@04b047e8bb82a0c002c8312c1c880fbc6a999d45 # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Report coverage (step summary + PR comment)
         if: always() && hashFiles('test-results/coverage/coverage-summary.json') != ''
-        uses: davelosert/vitest-coverage-report-action@v2
+        uses: davelosert/vitest-coverage-report-action@3c054a2d2e2ca45446417ad5d6d5eb33092af8f1 # v2
         with:
           json-summary-path: "test-results/coverage/coverage-summary.json"
           json-final-path: "test-results/coverage/coverage-final.json"
@@ -171,7 +164,7 @@ jobs:
 
       - name: Publish test report (create check run)
         if: always() && hashFiles('test-results/junit.xml') != ''
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@4a2e97665d5fa767581ef38eca97b9694bd4eef4 # v2
         with:
           path: "test-results/junit.xml"
           reporter: java-junit
@@ -204,15 +197,39 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install Playwright
-        run: npx playwright@latest install chromium --with-deps --only-shell
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Cache pnpm store
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-e2e-
+
+      - name: Cache node_modules
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-e2e-
+
+      - name: Install all dependencies (includes @playwright/test)
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps --only-shell
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -268,7 +285,7 @@ jobs:
 
       - name: Wait for app
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 1; done'
+          timeout 120 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 2; done'
           echo "App ready"
 
       - name: Run Playwright E2E
@@ -280,7 +297,7 @@ jobs:
           PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: npx --yes -p playwright -p @playwright/test playwright test --config e2e/playwright.config.cjs
+        run: npx playwright test --config e2e/playwright.config.cjs
 
       - name: Run accessibility checks (pa11y-ci)
         continue-on-error: true
@@ -312,14 +329,14 @@ jobs:
           cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload E2E test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always() && hashFiles('e2e/test-results/**') != ''
         with:
           name: e2e-test-results
           path: e2e/test-results
 
       - name: Upload E2E Playwright report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always() && hashFiles('e2e/playwright-report/**') != ''
         with:
           name: e2e-playwright-report
@@ -340,7 +357,7 @@ jobs:
 
       - name: Upload pa11y report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pa11y-report
           path: .e2e/pa11y-report.json

@@ -1,6 +1,6 @@
-// @ts-expect-error — test infrastructure, intentionally loose typing
 // Provide setError for tests that import it directly
 // increment an observable counter too
+// @ts-expect-error: globalThis custom test property
 globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ = (globalThis.__TEST_SUPERFORM_SUBMIT_CALLS__ || 0) + 1;
 // Minimal sveltekit-superforms stub for tests
 

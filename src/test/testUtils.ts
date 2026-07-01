@@ -145,3 +145,42 @@ export function makeMockFormProps(formData = {}, errors = {}) {
 
   return { errors: errorsStore, form: f as any, formData: formDataStore };
 }
+
+/**
+ * Build FormData from a plain object for test assertions.
+ * Supports string and string[] values.
+ */
+export function formData(record: Record<string, string | string[]>): FormData {
+  const fd = new FormData();
+  for (const [k, v] of Object.entries(record)) {
+    if (Array.isArray(v)) {
+      for (const item of v) {
+        fd.append(k, item);
+      }
+    } else {
+      fd.set(k, v);
+    }
+  }
+  return fd;
+}
+
+/**
+ * Mock PocketBase API client with optional auth context.
+ * Returns a minimal mock with common collection methods.
+ */
+export function mockPbApi(userId?: string) {
+  return {
+    authStore: {
+      model: userId ? { id: userId, email: 'test@test.local' } : null,
+      isValid: !!userId
+    },
+    collection: (_name: string) => ({
+      getFullList: async () => [],
+      getOne: async (id: string) => ({ id }),
+      getFirstListItem: async () => null,
+      create: async (data: Record<string, unknown>) => ({ id: 'new-id', ...data }),
+      update: async (id: string, data: Record<string, unknown>) => ({ id, ...data }),
+      delete: async (_id: string) => true
+    })
+  };
+}

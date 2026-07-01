@@ -7,7 +7,6 @@ interface CongView {
   expand?: Record<string, unknown>;
   id: string;
   name: string;
-  owner?: string;
   visible: boolean;
 }
 function mapCong(c: CongView) {

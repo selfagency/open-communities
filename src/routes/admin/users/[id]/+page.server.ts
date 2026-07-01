@@ -36,7 +36,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
       verified: (user.verified as boolean) ?? false,
       admin: (user.admin as boolean) ?? false,
       congregation: (user.congregation as string) ?? '',
-      congregationName: congData?.name ?? ''
+      congregationName: congData?.name ?? '',
+      congregationSlug: congData?.slug ?? ''
     },
     availableCongregations: available.map((c) => ({
       id: c.id as string,

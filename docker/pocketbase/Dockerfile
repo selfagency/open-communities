@@ -18,9 +18,9 @@ RUN curl -fsSL -o /tmp/pb.zip \
   && unzip /tmp/pb.zip -d /pb/ \
   && rm -f /tmp/pb.zip
 
-EXPOSE 8090
-
 RUN mkdir -p /pb_data && chmod 777 /pb_data
+
+EXPOSE 8090
 
 VOLUME ["/pb_data"]
 

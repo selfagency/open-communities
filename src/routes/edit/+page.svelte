@@ -47,4 +47,4 @@ export const snapshot = { capture: form.capture, restore: form.restore };
   </div>
 {/if}
 
-<EditForm deletion={data.form!.delete} {form} mode="edit" user={data.user as UsersRecord & { id: string }} />
+<EditForm deletion={data.form!.delete} {form} mode="edit" user={data.user as unknown as UsersRecord & { id: string }} />

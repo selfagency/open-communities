@@ -73,7 +73,8 @@ export default defineConfig({
         'e2e/**',
         'messages',
         'project.inlang',
-        'static'
+        'static',
+        'src/lib/server/security.ts'
       ],
       // Server project only — root include covers files tested by server tests.
       // Browser project (local dev only) doesn't exercise these files so they

@@ -22,9 +22,9 @@
       "url": "http://localhost:3000/admin",
       "actions": [
         "navigate to http://localhost:3000/login?login",
-        "wait for element input[autocomplete='email']",
-        "set field input[autocomplete='email'] to admin@test.com",
-        "set field input[autocomplete='current-password'] to i3_NL-dfzzFt5TX",
+        "wait for element #email",
+        "set field #email to admin@test.com",
+        "set field #password to i3_NL-dfzzFt5TX",
         "click element button[type='submit']",
         "wait for url to be http://localhost:3000/",
         "navigate to http://localhost:3000/admin"
@@ -34,9 +34,9 @@
       "url": "http://localhost:3000/admin/congregations",
       "actions": [
         "navigate to http://localhost:3000/login?login",
-        "wait for element input[autocomplete='email']",
-        "set field input[autocomplete='email'] to admin@test.com",
-        "set field input[autocomplete='current-password'] to i3_NL-dfzzFt5TX",
+        "wait for element #email",
+        "set field #email to admin@test.com",
+        "set field #password to i3_NL-dfzzFt5TX",
         "click element button[type='submit']",
         "wait for url to be http://localhost:3000/",
         "navigate to http://localhost:3000/admin/congregations"
@@ -46,9 +46,9 @@
       "url": "http://localhost:3000/admin/pages",
       "actions": [
         "navigate to http://localhost:3000/login?login",
-        "wait for element input[autocomplete='email']",
-        "set field input[autocomplete='email'] to admin@test.com",
-        "set field input[autocomplete='current-password'] to i3_NL-dfzzFt5TX",
+        "wait for element #email",
+        "set field #email to admin@test.com",
+        "set field #password to i3_NL-dfzzFt5TX",
         "click element button[type='submit']",
         "wait for url to be http://localhost:3000/",
         "navigate to http://localhost:3000/admin/pages"
@@ -58,9 +58,9 @@
       "url": "http://localhost:3000/admin/pages/new",
       "actions": [
         "navigate to http://localhost:3000/login?login",
-        "wait for element input[autocomplete='email']",
-        "set field input[autocomplete='email'] to admin@test.com",
-        "set field input[autocomplete='current-password'] to i3_NL-dfzzFt5TX",
+        "wait for element #email",
+        "set field #email to admin@test.com",
+        "set field #password to i3_NL-dfzzFt5TX",
         "click element button[type='submit']",
         "wait for url to be http://localhost:3000/",
         "navigate to http://localhost:3000/admin/pages/new"
@@ -70,9 +70,9 @@
       "url": "http://localhost:3000/admin/translations",
       "actions": [
         "navigate to http://localhost:3000/login?login",
-        "wait for element input[autocomplete='email']",
-        "set field input[autocomplete='email'] to admin@test.com",
-        "set field input[autocomplete='current-password'] to i3_NL-dfzzFt5TX",
+        "wait for element #email",
+        "set field #email to admin@test.com",
+        "set field #password to i3_NL-dfzzFt5TX",
         "click element button[type='submit']",
         "wait for url to be http://localhost:3000/",
         "navigate to http://localhost:3000/admin/translations"
@@ -82,9 +82,9 @@
       "url": "http://localhost:3000/admin/users",
       "actions": [
         "navigate to http://localhost:3000/login?login",
-        "wait for element input[autocomplete='email']",
-        "set field input[autocomplete='email'] to admin@test.com",
-        "set field input[autocomplete='current-password'] to i3_NL-dfzzFt5TX",
+        "wait for element #email",
+        "set field #email to admin@test.com",
+        "set field #password to i3_NL-dfzzFt5TX",
         "click element button[type='submit']",
         "wait for url to be http://localhost:3000/",
         "navigate to http://localhost:3000/admin/users"

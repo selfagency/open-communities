@@ -3,11 +3,11 @@ SRC="/Users/daniel/Downloads/Open Communities Backup Aug 21 2025/data.db"
 DST="../pb_data/data.db"
 BACKUP_DIR="../pb_data/backups"
 mkdir -p "$BACKUP_DIR"
-if [ ! -f "$SRC" ]; then
-  echo "ERROR: source DB not found: $SRC"
+if [[ ! -f "$SRC" ]]; then
+  echo "ERROR: source DB not found: $SRC" >&2
   exit 2
 fi
-if [ -f "$DST" ]; then
+if [[ -f "$DST" ]]; then
   ts=$(date +%Y%m%d%H%M%S)
   cp -v "$DST" "$BACKUP_DIR/data.db.bak.$ts"
   echo "Backup created: $BACKUP_DIR/data.db.bak.$ts"
@@ -17,7 +17,7 @@ else
 fi
 # Confirm sqlite3 exists
 if ! command -v sqlite3 >/dev/null 2>&1; then
-  echo "ERROR: sqlite3 CLI not found in PATH"
+  echo "ERROR: sqlite3 CLI not found in PATH" >&2
   exit 3
 fi
 max_retries=5
@@ -54,14 +54,14 @@ SQL
   )
   rc=$?
   set -e
-  if [ $rc -eq 0 ]; then
+  if [[ $rc -eq 0 ]]; then
     echo "Copy complete."
     break
   fi
   if echo "$output" | grep -qi "database .* is locked\|database is locked"; then
     echo "Database locked. Output:"
     echo "$output"
-    if [ "$attempt" -ge "$max_retries" ]; then
+    if [[ "$attempt" -ge "$max_retries" ]]; then
       echo "Exceeded $max_retries attempts; aborting."
       exit 4
     fi
