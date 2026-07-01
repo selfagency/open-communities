@@ -6,26 +6,37 @@ interface CongView {
   denomination: string;
   expand?: Record<string, unknown>;
   id: string;
+  location?: Record<string, Record<string, string> | undefined>;
   name: string;
   visible: boolean;
 }
+
+function parseLocation(loc: unknown): { city: string; state: string; countryCode: string } {
+  if (!loc || typeof loc !== 'object') {
+    return { city: '', state: '', countryCode: '' };
+  }
+  const data = loc as Record<string, Record<string, string> | undefined>;
+  return {
+    city: data?.city?.name ?? '',
+    state: data?.state?.name ?? '',
+    countryCode: data?.country?.code ?? ''
+  };
+}
+
 function mapCong(c: CongView) {
-  const expand = c.expand as unknown as Record<string, unknown> | undefined;
-  const cityData = expand?.city as Record<string, string> | undefined;
-  const stateData = expand?.state as Record<string, string> | undefined;
-  const countryData = stateData?.country as Record<string, string> | undefined;
+  const expand = c.expand as Record<string, Record<string, string> | undefined> | undefined;
+  const loc = parseLocation(c.location);
   return {
     id: c.id as string,
     name: c.name as string,
     denomination: c.denomination as string,
     visible: c.visible as boolean,
-    city: cityData?.name ?? '',
-    state: stateData?.name ?? '',
-    countryCode: countryData?.code ?? '',
-    owner: ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.email as string) ?? '',
-    ownerId: ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.id as string) ?? '',
-    ownerName:
-      ((c.expand as Record<string, Record<string, string> | undefined> | undefined)?.owner?.name as string) ?? '',
+    city: loc.city,
+    state: loc.state,
+    countryCode: loc.countryCode,
+    owner: (expand?.owner?.email as string) ?? '',
+    ownerId: (expand?.owner?.id as string) ?? '',
+    ownerName: (expand?.owner?.name as string) ?? '',
     created: c.created as string
   };
 }
@@ -33,22 +44,20 @@ function mapCong(c: CongView) {
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
 
-  const expandStr = 'owner,city,state,state.country';
-
   const [active, pending] = await Promise.all([
     withRetry(() =>
-      client.collection('congregations').getFullList({
+      client.collection('congregationMeta').getFullList({
         filter: client.filter('visible={:v}', { v: true }),
         sort: '-created',
-        expand: expandStr,
+        expand: 'owner',
         requestKey: 'admin-cong-active'
       })
     ),
     withRetry(() =>
-      client.collection('congregations').getFullList({
+      client.collection('congregationMeta').getFullList({
         filter: client.filter('visible={:v}', { v: false }),
         sort: '-created',
-        expand: expandStr,
+        expand: 'owner',
         requestKey: 'admin-cong-pending'
       })
     )

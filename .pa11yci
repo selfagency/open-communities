@@ -21,7 +21,8 @@
     {
       "url": "http://localhost:3000/admin",
       "actions": [
-        "navigate to http://localhost:3000/login?login",
+        "navigate to http://localhost:3000/login",
+        "click element a[href*='login']",
         "wait for element #email",
         "set field #email to admin@test.com",
         "set field #password to i3_NL-dfzzFt5TX",
@@ -33,7 +34,8 @@
     {
       "url": "http://localhost:3000/admin/congregations",
       "actions": [
-        "navigate to http://localhost:3000/login?login",
+        "navigate to http://localhost:3000/login",
+        "click element a[href*='login']",
         "wait for element #email",
         "set field #email to admin@test.com",
         "set field #password to i3_NL-dfzzFt5TX",
@@ -45,7 +47,8 @@
     {
       "url": "http://localhost:3000/admin/pages",
       "actions": [
-        "navigate to http://localhost:3000/login?login",
+        "navigate to http://localhost:3000/login",
+        "click element a[href*='login']",
         "wait for element #email",
         "set field #email to admin@test.com",
         "set field #password to i3_NL-dfzzFt5TX",
@@ -57,7 +60,8 @@
     {
       "url": "http://localhost:3000/admin/pages/new",
       "actions": [
-        "navigate to http://localhost:3000/login?login",
+        "navigate to http://localhost:3000/login",
+        "click element a[href*='login']",
         "wait for element #email",
         "set field #email to admin@test.com",
         "set field #password to i3_NL-dfzzFt5TX",
@@ -69,7 +73,8 @@
     {
       "url": "http://localhost:3000/admin/translations",
       "actions": [
-        "navigate to http://localhost:3000/login?login",
+        "navigate to http://localhost:3000/login",
+        "click element a[href*='login']",
         "wait for element #email",
         "set field #email to admin@test.com",
         "set field #password to i3_NL-dfzzFt5TX",
@@ -81,7 +86,8 @@
     {
       "url": "http://localhost:3000/admin/users",
       "actions": [
-        "navigate to http://localhost:3000/login?login",
+        "navigate to http://localhost:3000/login",
+        "click element a[href*='login']",
         "wait for element #email",
         "set field #email to admin@test.com",
         "set field #password to i3_NL-dfzzFt5TX",
