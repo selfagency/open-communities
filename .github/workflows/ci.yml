@@ -300,35 +300,6 @@ jobs:
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: npx playwright test --config e2e/playwright.config.cjs
 
-      - name: Run accessibility checks (pa11y-ci)
-        continue-on-error: true
-        id: pa11y
-        timeout-minutes: 5
-        run: |
-          mkdir -p .e2e
-          echo "Running pa11y-ci accessibility checks..."
-          npx --yes pa11y-ci@latest --json > /tmp/pa11y-output.json 2>/dev/null || true
-          cp /tmp/pa11y-output.json .e2e/pa11y-report.json 2>/dev/null || true
-          cat /tmp/pa11y-output.json
-          # Build summary
-          echo '## ♿ Accessibility Report' > .e2e/pa11y-summary.md
-          echo '| URL | Result |' >> .e2e/pa11y-summary.md
-          echo '|-----|--------|' >> .e2e/pa11y-summary.md
-          node -e "
-            let r;
-            try { r = JSON.parse(require('fs').readFileSync('/tmp/pa11y-output.json','utf8')); } catch {}
-            if (!r) try { r = JSON.parse(require('fs').readFileSync('.e2e/pa11y-report.json','utf8')); } catch {}
-            if (r) {
-              const results = r.results || r;
-              for (const [url, data] of Object.entries(results)) {
-                const count = data.issues ? data.issues.length : (data.passes ? 0 : 'error');
-                const icon = count === 0 ? '✅' : (count === 'error' ? '⚠️' : '❌');
-                process.stdout.write('| ' + icon + ' ' + url + ' | ' + count + ' issues |\n');
-              }
-            }
-          " >> .e2e/pa11y-summary.md 2>/dev/null || echo '| ⚠️ pa11y failed to parse results | |' >> .e2e/pa11y-summary.md
-          cat .e2e/pa11y-summary.md >> $GITHUB_STEP_SUMMARY
-
       - name: Upload E2E test results
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always() && hashFiles('e2e/test-results/**') != ''
@@ -355,13 +326,6 @@ jobs:
           else
             gh api "/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" -X POST -f body="$BODY" > /dev/null
           fi
-
-      - name: Upload pa11y report
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: pa11y-report
-          path: .e2e/pa11y-report.json
 
       - name: Docker Compose logs (on failure)
         if: failure()

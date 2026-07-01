@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 
 import { m } from '$lib/paraglide/messages';
 import type { ServicesRecord } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 
 import Services from './services.svelte';
 
@@ -40,5 +41,10 @@ describe('Services component', () => {
     expect(within(list).getByText(m.services_hybrid())).toBeInTheDocument();
     expect(within(list).getByText(m.services_offsite())).toBeInTheDocument();
     expect(within(list).getByText('Other services')).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Services, {});
+    assertAccessible(container);
   });
 });

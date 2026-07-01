@@ -22,7 +22,6 @@ import { Switch } from '$lib/components/ui/switch';
 import { m } from '$lib/paraglide/messages';
 import { setLocale } from '$lib/paraglide/runtime';
 import { state as appState } from '$lib/stores';
-import Locale from './locale.svelte';
 
 let { mode: viewMode = $bindable('full') }: { mode?: 'full' | 'mini' } = $props();
 

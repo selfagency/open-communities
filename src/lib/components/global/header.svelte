@@ -1,7 +1,6 @@
 <script lang="ts">
 import PlusIcon from '@tabler/icons-svelte/icons/plus';
 import { goto } from '$app/navigation';
-import { resolve } from '$app/paths';
 import { page } from '$app/state';
 import Tent from '$lib/assets/tent.svg?component';
 import { Button } from '$lib/components/ui/button';
@@ -33,8 +32,8 @@ const isMobile = $derived(appState.isMobile);
     <div class="flex items-center gap-3">
       <Button
         onclick={async () => {
-          if (user?.email) { await goto(resolve('/add')); }
-          else { await goto(resolve('/login?redirect=/add')); }
+          if (user?.email) { await goto('/add'); }
+          else { await goto('/login?redirect=/add'); }
         }}
         variant="default"
       >

@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
 import type { AccessibilityRecord } from '$lib/pocketbase.d';
+import { assertAccessible } from '$test/accesslint';
 
 import Accessibility from './accessibility.svelte';
 
@@ -88,5 +89,23 @@ describe('Accessibility component', () => {
       (s) => !s.classList.contains('sr-only') && s.textContent && s.textContent.trim().length > 0
     );
     expect(visible).toBeDefined();
+  });
+
+  it('has no accessibility violations in mini mode', () => {
+    const accessibility = { inPerson_adaSome: true } as AccessibilityRecord;
+    const { container } = render(Accessibility, { accessibility, mode: 'mini' });
+    assertAccessible(container);
+  });
+
+  it('has no accessibility violations in full mode', () => {
+    const accessibility = {
+      inPerson_adaAll: true,
+      inPerson_asl: true,
+      inPerson_eva: true,
+      online_automatedCaptions: true,
+      otherText: 'Notes'
+    } as AccessibilityRecord;
+    const { container } = render(Accessibility, { accessibility, mode: 'full' });
+    assertAccessible(container);
   });
 });

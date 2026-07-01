@@ -33,6 +33,12 @@ importers:
         specifier: ^2.0.3
         version: 2.0.3
     devDependencies:
+      '@accesslint/core':
+        specifier: ^0.13.0
+        version: 0.13.0
+      '@accesslint/vitest':
+        specifier: ^0.3.1
+        version: 0.3.1(vitest@4.1.9)
       '@biomejs/biome':
         specifier: 2.5.1
         version: 2.5.1
@@ -296,6 +302,17 @@ importers:
         version: 4.4.3
 
 packages:
+
+  '@accesslint/core@0.13.0':
+    resolution: {integrity: sha512-l1R6if3qsqevQjcTdZsilnu2IBO6G6ZXaYbpYmd1tL8vgwATQ57fDKaWltdrMeRQToh0yOdpjiTORMFObfCYbA==}
+
+  '@accesslint/core@0.9.0':
+    resolution: {integrity: sha512-BzrYboh0pA20AJzhMm0sV2ZXdxhGlC4wZcMFU4Pn03DKST7FEu575wRCZmyU8Y2tWsYjb155OAaYQXJ5WKijGQ==}
+
+  '@accesslint/vitest@0.3.1':
+    resolution: {integrity: sha512-Hmov4Rq7rW2ASlWaARinSk4O4ncq8GqS07VlzxxEHQdiOogBr08zUuSZXBo8iMAxKkwBVKS1Dxt3TRHwYy2lyQ==}
+    peerDependencies:
+      vitest: '>=2.0.0'
 
   '@adobe/css-tools@4.5.0':
     resolution: {integrity: sha512-6OzddxPio9UiWTCemp4N8cYLV2ZN1ncRnV1cVGtve7dhPOtRkleRyx32GQCYSwDYgaHU3USMm84tNsvKzRCa1Q==}
@@ -4215,6 +4232,15 @@ packages:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
 snapshots:
+
+  '@accesslint/core@0.13.0': {}
+
+  '@accesslint/core@0.9.0': {}
+
+  '@accesslint/vitest@0.3.1(vitest@4.1.9)':
+    dependencies:
+      '@accesslint/core': 0.9.0
+      vitest: 4.1.9(@opentelemetry/api@1.9.1)(@types/node@26.0.1)(@vitest/browser-playwright@4.1.9)(@vitest/coverage-istanbul@4.1.9)(happy-dom@20.10.6)(jsdom@29.1.1)(msw@2.14.6(@types/node@26.0.1)(typescript@6.0.3))(vite@8.0.16(@types/node@26.0.1)(jiti@2.7.0)(yaml@2.9.0))
 
   '@adobe/css-tools@4.5.0': {}
 

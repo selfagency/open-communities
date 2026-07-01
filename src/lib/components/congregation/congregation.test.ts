@@ -44,4 +44,10 @@ describe('Congregation component', () => {
     expect(copyText).toHaveBeenCalled();
     expect(toast.success).toHaveBeenCalled();
   });
+
+  // Accessibility test skipped: bits-ui Dialog uses svelte-toolbelt's
+  // onDestroyEffect which triggers effect_orphan in Svelte 5's test
+  // environment. This is a known @testing-library/svelte × Svelte 5
+  // incompatibility (see AGENTS.md).
+  // it('has no accessibility violations', () => { ... });
 });

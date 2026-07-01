@@ -25,7 +25,8 @@ export default defineConfig(({ mode }) => ({
     }
   },
   ssr: {
-    external: ['@opentelemetry', '@grpc', 'protobufjs']
+    external: ['@opentelemetry', '@grpc', 'protobufjs'],
+    noExternal: ['super-sitemap']
   },
   plugins: [
     ViteMcp(),

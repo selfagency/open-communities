@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
+import { assertAccessible } from '$test/accesslint';
 
 import Contact from './contact.svelte';
 
@@ -36,5 +37,10 @@ describe('Contact component', () => {
   it('renders name when only name is provided', () => {
     render(Contact, { contactName: 'Alice' });
     expect(screen.getByText('Alice')).toBeInTheDocument();
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Contact, {});
+    assertAccessible(container);
   });
 });

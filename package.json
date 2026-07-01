@@ -19,6 +19,7 @@
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
     "fix": "ultracite fix",
     "machine-translate": "inlang machine translate --project project.inlang",
+    "test:a11y": "vitest run --project browser src/lib/components/global/header.test.ts",
     "prepare": "husky",
     "preview": "pnpx dotenv-cli -c dynamic -- vite preview",
     "preview:test": "pnpx dotenv-cli -e .env.test -e .env.e2e -- vite preview",
@@ -43,6 +44,8 @@
     "super-sitemap": "^2.0.3"
   },
   "devDependencies": {
+    "@accesslint/core": "^0.13.0",
+    "@accesslint/vitest": "^0.3.1",
     "@biomejs/biome": "2.5.1",
     "@inlang/cli": "^3.1.14",
     "@inlang/paraglide-js": "^2.20.2",
@@ -144,6 +147,7 @@
       "esbuild",
       "msw",
       "protobufjs",
+      "puppeteer",
       "sqlite3"
     ]
   }

@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 // vitest helpers available from global test setup
 
+import { assertAccessible } from '$test/accesslint';
+
 import Contact from './contact.svelte';
 
 describe('Contact component', () => {
@@ -31,5 +33,10 @@ describe('Contact component', () => {
     // there should be a textbox for the name input
     const textboxes = screen.getAllByRole('textbox');
     expect(textboxes.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Contact, { congregations: [], data: {}, snapshot: {} });
+    assertAccessible(container);
   });
 });

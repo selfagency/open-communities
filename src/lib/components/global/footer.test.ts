@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/svelte';
 import '@testing-library/jest-dom/vitest';
 
 import { m } from '$lib/paraglide/messages';
+import { assertAccessible } from '$test/accesslint';
 
 import Footer from './footer.svelte';
 
@@ -25,5 +26,10 @@ describe('Footer component', () => {
     // biome-ignore lint/performance/useTopLevelRegex: inline regex in test
     const rabbis = screen.getByRole('link', { name: /home_author/i });
     expect(rabbis).toHaveAttribute('href', 'https://rabbis4ceasefire.com/');
+  });
+
+  it('has no accessibility violations', () => {
+    const { container } = render(Footer);
+    assertAccessible(container);
   });
 });
