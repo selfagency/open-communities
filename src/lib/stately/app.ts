@@ -54,7 +54,7 @@ export const useAppStore = defineStore('app', {
     /** Initialize from window dimensions and user preferences. Call ONCE on first browser boot. */
     init(userLang?: string) {
       this.form = { hasErrors: false, success: false };
-      this.isMobile = window.innerWidth < 640;
+      this.isMobile = window.innerWidth < 768;
       this.lang = userLang || this.lang || 'en'; // preserve persisted lang if no override
       this.loading = false;
       this.loadingSecondary = false;

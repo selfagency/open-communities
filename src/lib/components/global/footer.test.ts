@@ -6,17 +6,8 @@ import { m } from '$lib/paraglide/messages';
 import Footer from './footer.svelte';
 
 describe('Footer component', () => {
-  it('renders main links with correct hrefs', () => {
+  it('renders site credits link with correct href', () => {
     render(Footer);
-
-    const contact = screen.getByRole('link', { name: new RegExp(m.contact_contactUs(), 'i') });
-    expect(contact).toHaveAttribute('href', '/contact');
-
-    const privacy = screen.getByRole('link', { name: new RegExp(m.privacyPolicy(), 'i') });
-    expect(privacy).toHaveAttribute('href', '/privacy');
-
-    const terms = screen.getByRole('link', { name: new RegExp(m.termsOfService(), 'i') });
-    expect(terms).toHaveAttribute('href', '/terms');
 
     const siteCredits = screen.getByRole('link', { name: new RegExp(m.siteCredits(), 'i') });
     expect(siteCredits).toHaveAttribute('href', '/site-credits');

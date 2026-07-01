@@ -1,9 +1,9 @@
 <script lang="ts">
 import Fuzzy from '@leeoniya/ufuzzy';
-import BuildingIcon from '@tabler/icons-svelte/icons/building';
 import CheckIcon from '@tabler/icons-svelte/icons/check';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
+import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
 import XIcon from '@tabler/icons-svelte/icons/x';
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
@@ -182,7 +182,7 @@ const pendingTable = $derived(
   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div>
       <h2 class="flex items-center gap-2 text-2xl font-semibold">
-        <BuildingIcon class="size-6" />
+        <UsersGroupIcon class="size-6" />
         {m.adminCongregations()}
       </h2>
     </div>

@@ -24,20 +24,6 @@ import { m } from '$lib/paraglide/messages';
   </div>
   <div class="flex w-full flex-row items-center justify-center">
     <span class="flex flex-col items-center justify-center space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
-      <span class="flex flex-row items-center justify-center space-x-4">
-        <a class="text-xs text-muted-foreground hover:text-muted-foreground" href="/about">
-          <span>{m.about()}</span>
-        </a>
-        <a class="text-xs text-muted-foreground hover:text-muted-foreground" href="/contact">
-          <span>{m.contact_contactUs()}</span>
-        </a>
-        <a class="text-xs text-muted-foreground hover:text-muted-foreground" href="/privacy">
-          <span>{m.privacyPolicy()}</span>
-        </a>
-        <a class="text-xs text-muted-foreground hover:text-muted-foreground" href="/terms">
-          <span>{m.termsOfService()}</span>
-        </a>
-      </span>
       <a
         class="text-xs text-muted-foreground hover:text-muted-foreground"
         href="https://self.agency"

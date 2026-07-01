@@ -33,7 +33,7 @@ describe('stores', () => {
     state.$reset();
     initState('es');
     expect(state.loading).toBe(false);
-    expect(state.isMobile).toBe(true); // innerWidth 500 < 640
+    expect(state.isMobile).toBe(true); // innerWidth 500 < 768
     expect(state.lang).toBe('es'); // from arg
     expect(state.offsetHeight).toBe(800);
     expect(state.offsetWidth).toBe(500);

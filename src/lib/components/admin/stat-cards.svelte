@@ -1,9 +1,9 @@
 <script lang="ts">
 import BuildingBankIcon from '@tabler/icons-svelte/icons/building-bank';
 import BuildingsCommunityIcon from '@tabler/icons-svelte/icons/building-community';
-import BuildingsIcon from '@tabler/icons-svelte/icons/buildings';
 import ThumbsUpIcon from '@tabler/icons-svelte/icons/circle-check';
 import UsersIcon from '@tabler/icons-svelte/icons/users';
+import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
 import WorldIcon from '@tabler/icons-svelte/icons/world';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { Skeleton } from '$lib/components/ui/skeleton';
@@ -51,7 +51,7 @@ let {
     <Card>
       <CardHeader class="flex flex-row items-center justify-between pb-2">
         <CardTitle class="font-serif text-lg font-bold tracking-wider">{m.adminCongregations()}</CardTitle>
-        <BuildingsIcon class="text-muted-foreground size-4" />
+        <UsersGroupIcon class="text-muted-foreground size-4" />
       </CardHeader>
       <CardContent>
         <p class="text-3xl font-bold">{congregations}</p>
