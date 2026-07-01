@@ -68,10 +68,10 @@ function handleDelete() {
 
   <div>
     <h1 class="text-2xl font-semibold">{user.name || user.email}</h1>
-    <p class="text-muted-foreground text-sm">
+    <div class="text-muted-foreground text-sm">
       {user.email}
       <UserRoleBadge admin={user.admin} verified={user.verified} />
-    </p>
+    </div>
   </div>
 
   {#if formSuccess}
@@ -118,7 +118,7 @@ function handleDelete() {
       <CardContent class="space-y-4">
         <p class="text-muted-foreground text-sm">{m.linkedDescription()}</p>
         <p class="mb-3">
-          <a class="font-medium text-primary underline-offset-4 hover:underline" href="/{user.congregationSlug}">
+          <a class="font-medium text-primary underline-offset-4 hover:underline" href="/?id={user.congregation}">
             {user.congregationName || user.congregation}
           </a>
         </p>
