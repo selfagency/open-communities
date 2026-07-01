@@ -39,7 +39,7 @@ test.describe('Sidebar menu — desktop (1280px)', () => {
     await page.waitForTimeout(500);
 
     // Sheet should contain language selector
-    await expect(page.getByText(/language/i)).toBeVisible();
+    await expect(page.getByText('Language', { exact: true })).toBeVisible();
 
     // Sheet should contain dark mode toggle
     await expect(page.getByText(/dark mode/i)).toBeVisible();
@@ -120,7 +120,7 @@ test.describe('Sidebar menu — mobile (375px)', () => {
     await page.waitForTimeout(500);
 
     // Sheet should contain language + theme
-    await expect(page.getByText(/language/i)).toBeVisible();
+    await expect(page.getByText('Language', { exact: true })).toBeVisible();
     await expect(page.getByText(/dark mode/i)).toBeVisible();
 
     // Sheet should contain Add Congregation link

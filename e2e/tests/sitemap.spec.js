@@ -19,8 +19,8 @@ test.describe('Sitemap', () => {
     const response = await page.request.get(`${BASE}/sitemap.xml`);
     const body = await response.text();
 
-    // Home page should be present
-    expect(body).toContain(`<loc>${BASE}/</loc>`);
+    // Home page should be present (protocol may be http or https in CI)
+    expect(body).toMatch(/<loc>https?:\/\/localhost:3000\/<\/loc>/);
 
     // At least one congregation ?id= entry should exist
     expect(body).toContain('/?id=');
