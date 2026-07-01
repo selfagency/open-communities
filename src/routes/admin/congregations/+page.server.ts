@@ -6,34 +6,20 @@ interface CongView {
   denomination: string;
   expand?: Record<string, unknown>;
   id: string;
-  location?: Record<string, Record<string, string> | undefined>;
   name: string;
   visible: boolean;
 }
 
-function parseLocation(loc: unknown): { city: string; state: string; countryCode: string } {
-  if (!loc || typeof loc !== 'object') {
-    return { city: '', state: '', countryCode: '' };
-  }
-  const data = loc as Record<string, Record<string, string> | undefined>;
-  return {
-    city: data?.city?.name ?? '',
-    state: data?.state?.name ?? '',
-    countryCode: data?.country?.code ?? ''
-  };
-}
-
 function mapCong(c: CongView) {
   const expand = c.expand as Record<string, Record<string, string> | undefined> | undefined;
-  const loc = parseLocation(c.location);
   return {
     id: c.id as string,
     name: c.name as string,
     denomination: c.denomination as string,
     visible: c.visible as boolean,
-    city: loc.city,
-    state: loc.state,
-    countryCode: loc.countryCode,
+    city: (expand?.city as Record<string, string> | undefined)?.name ?? '',
+    state: (expand?.state as Record<string, string> | undefined)?.name ?? '',
+    countryCode: (expand?.['state.country'] as Record<string, string> | undefined)?.code ?? '',
     owner: (expand?.owner?.email as string) ?? '',
     ownerId: (expand?.owner?.id as string) ?? '',
     ownerName: (expand?.owner?.name as string) ?? '',
@@ -44,20 +30,22 @@ function mapCong(c: CongView) {
 export const load: PageServerLoad = async ({ locals }) => {
   const client = locals.api;
 
+  const expand = 'owner,city,state,state.country';
+
   const [active, pending] = await Promise.all([
     withRetry(() =>
-      client.collection('congregationMeta').getFullList({
+      client.collection('congregations').getFullList({
         filter: client.filter('visible={:v}', { v: true }),
         sort: '-created',
-        expand: 'owner',
+        expand,
         requestKey: 'admin-cong-active'
       })
     ).catch(() => [] as never[]),
     withRetry(() =>
-      client.collection('congregationMeta').getFullList({
+      client.collection('congregations').getFullList({
         filter: client.filter('visible={:v}', { v: false }),
         sort: '-created',
-        expand: 'owner',
+        expand,
         requestKey: 'admin-cong-pending'
       })
     ).catch(() => [] as never[])
