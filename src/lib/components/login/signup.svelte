@@ -94,7 +94,7 @@ onMount(async () => {
               <Input
                 {...props}
                 aria-label={m.name()}
-                 autocomplete="given-name"
+                autocomplete="given-name"
                 id="signup-name"
                 bind:value={$formData.name}
               />
