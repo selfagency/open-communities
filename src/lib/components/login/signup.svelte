@@ -91,12 +91,7 @@ onMount(async () => {
           <Form.Control>
             {#snippet children(props)}
               <Form.Label>{m.name()}</Form.Label>
-              <Input
-                {...props}
-                aria-label={m.name()}
-                id="signup-name"
-                bind:value={$formData.name}
-              />
+              <Input {...props} aria-label={m.name()} id="signup-name" bind:value={$formData.name} />
             {/snippet}
           </Form.Control>
           <Form.FieldErrors />

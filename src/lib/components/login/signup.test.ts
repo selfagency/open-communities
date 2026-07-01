@@ -99,7 +99,7 @@ describe('Signup component', () => {
     expect(matches.length).toBeGreaterThanOrEqual(1);
 
     // presence of inputs
-    expect(document.querySelector('input[autocomplete="name"]')).not.toBeNull();
+    expect(document.querySelector('input[id="signup-name"]')).not.toBeNull();
     expect(document.querySelector('input[autocomplete="email"]')).not.toBeNull();
     expect(document.querySelector('input[type="password"][autocomplete="new-password"]')).not.toBeNull();
   });
