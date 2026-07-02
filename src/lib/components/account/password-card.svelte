@@ -49,6 +49,6 @@ let {
       <Form.FieldErrors />
     </Form.Field>
 
-    <Button type="submit">{m.changePassword()}</Button>
+    <Button type="submit" variant="outline">{m.changePassword()}</Button>
   </CardContent>
 </Card>

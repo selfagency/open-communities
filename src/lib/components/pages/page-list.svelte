@@ -130,7 +130,7 @@ const table = $derived(
         />
         <Input class="h-11 w-64 sm:w-80 pl-10" placeholder={m.searchPages()} bind:value={search} />
       </div>
-      <Button onclick={() => goto('/admin/pages/new')} variant="default">{m.newPage()}</Button>
+      <Button onclick={() => goto('/admin/pages/new')} variant="outline">{m.newPage()}</Button>
     </div>
   </div>
   <Card>

@@ -308,7 +308,7 @@ $effect(() => {
     <div class="mt-4 flex flex-row items-center justify-end">
       <Button
         onclick={() => { view = 'fit'; document.querySelector('[data-value="fit"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-        variant="secondary"
+        variant="outline"
         >{m.next()}
         →</Button
       >

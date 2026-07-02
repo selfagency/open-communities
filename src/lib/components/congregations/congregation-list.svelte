@@ -325,7 +325,7 @@ const pendingTable = $derived(
                             class="size-8"
                             onclick={() => { pendingId = row.original.id; pendingAction = 'approve'; }}
                             size="icon"
-                            variant="default"
+                            variant="outline"
                           >
                             <CheckIcon class="size-4" />
                           </Button>
@@ -339,7 +339,7 @@ const pendingTable = $derived(
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
                             <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button onclick={confirmAction} variant="default">{m.approve()}</Button>
+                            <Button onclick={confirmAction} variant="outline">{m.approve()}</Button>
                           </AlertDialog.Footer>
                         </AlertDialog.Content>
                       </AlertDialog.Root>

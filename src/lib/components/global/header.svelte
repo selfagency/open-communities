@@ -35,7 +35,7 @@ const isMobile = $derived(appState.isMobile);
           if (user?.email) { await goto('/add'); }
           else { await goto('/login?redirect=/add'); }
         }}
-        variant="default"
+        variant="outline"
       >
         <PlusIcon class="size-4" />
         {m.addCongregation()}

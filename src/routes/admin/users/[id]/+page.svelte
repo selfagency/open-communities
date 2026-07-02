@@ -105,7 +105,7 @@ function handleDelete() {
           <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={adminToggle} />
           <input name="admin" type="hidden" value={String(adminToggle)} />
         </div>
-        <Button type="submit">{m.saveChanges()}</Button>
+        <Button type="submit" variant="outline">{m.saveChanges()}</Button>
       </CardContent>
     </Card>
   </form>
@@ -152,7 +152,7 @@ function handleDelete() {
                   <option value={cong.id}>{cong.name}</option>
                 {/each}
               </select>
-              <Button disabled={!selectedCong} type="submit" variant="default">{m.assign()}</Button>
+              <Button disabled={!selectedCong} type="submit" variant="outline">{m.assign()}</Button>
             </div>
           </form>
         {:else}

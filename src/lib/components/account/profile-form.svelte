@@ -105,6 +105,6 @@ function langName(lang: string): string {
       <p class="text-destructive text-xs">{String(($errors as any)._errors ?? "")}</p>
     {/if}
 
-    <Button type="submit">{m.saveChanges()}</Button>
+    <Button type="submit" variant="outline">{m.saveChanges()}</Button>
   </CardContent>
 </Card>

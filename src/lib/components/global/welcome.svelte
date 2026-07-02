@@ -24,5 +24,5 @@ import { m } from '$lib/paraglide/messages';
     {m.home_blurb()}
   </h1>
 
-  <Button onclick={async () => await goto('/about')}>{m.learnMore()}</Button>
+  <Button onclick={async () => await goto('/about')} variant="outline">{m.learnMore()}</Button>
 </div>
