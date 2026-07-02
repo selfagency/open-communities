@@ -1,7 +1,10 @@
 <script lang="ts">
 import AlertCircleIcon from '@tabler/icons-svelte/icons/alert-circle';
+import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
+import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
 import LanguageIcon from '@tabler/icons-svelte/icons/language';
+import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { toast } from 'svelte-sonner';
@@ -24,9 +27,12 @@ import {
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 import { Input } from '$lib/components/ui/input';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Pagination from '$lib/components/ui/pagination';
+import { Progress } from '$lib/components/ui/progress/index.js';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
 
@@ -207,16 +213,21 @@ async function handleAutoTranslate(key: string, text: string) {
 // Redeploy state
 let showWarning = $state(false);
 let deploying = $state(false);
+let deployStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 let deploymentUuid = $state<string | null>(null);
 let deploymentStatus = $state<string | null>(null);
 let deployError = $state<string | null>(null);
 let pollTimer: ReturnType<typeof setInterval> | null = null;
+let coolifyTimer: ReturnType<typeof setTimeout> | null = null;
+let coolifyPhase = $state(false);
 
 function startDeploy() {
   showWarning = false;
   deploying = true;
+  deployStatus = 'loading';
   deployError = null;
   deploymentStatus = 'queued';
+  coolifyPhase = false;
 }
 
 function pollStatus() {
@@ -235,7 +246,16 @@ function pollStatus() {
           clearInterval(pollTimer);
         }
         if (json.status === 'success') {
-          setTimeout(() => window.location.reload(), 2000);
+          coolifyPhase = true;
+          coolifyTimer = setTimeout(() => {
+            coolifyPhase = false;
+            deployStatus = 'success';
+            deploying = false;
+            window.location.reload();
+          }, 30_000);
+        } else {
+          deployStatus = 'error';
+          deploying = false;
         }
       }
     }
@@ -254,10 +274,12 @@ function handleEnhance() {
       if (d?.error) {
         deployError = d.error as string;
         deploying = false;
+        deployStatus = 'error';
       }
     } else {
       deployError = 'Deploy request failed';
       deploying = false;
+      deployStatus = 'error';
     }
   };
 }
@@ -266,10 +288,15 @@ function cancelDeploy() {
   if (pollTimer) {
     clearInterval(pollTimer);
   }
+  if (coolifyTimer) {
+    clearTimeout(coolifyTimer);
+  }
   deploying = false;
+  deployStatus = 'idle';
   deploymentUuid = null;
   deploymentStatus = null;
   deployError = null;
+  coolifyPhase = false;
 }
 
 interface EnhanceResult {
@@ -349,8 +376,21 @@ const statusLabels: Record<string, string> = {
   in_progress: 'Building...',
   success: 'Deployed!',
   failed: 'Failed',
-  cancelled: 'Cancelled'
+  cancelled: 'Cancelled',
+  restarting: 'Restarting...'
 };
+
+const deployProgress = $derived(
+  coolifyPhase
+    ? 100
+    : deploymentStatus === 'in_progress'
+      ? 60
+      : deploymentStatus === 'success'
+        ? 100
+        : deploymentStatus === 'failed'
+          ? 100
+          : 20
+);
 </script>
 
 <svelte:head>
@@ -425,10 +465,35 @@ const statusLabels: Record<string, string> = {
         </div>
         <AlertDialog bind:open={showWarning}>
           <AlertDialogTrigger>
-            <Button variant="outline">
-              <RefreshIcon class="mr-1.5 size-4" />
-              Rebuild
-            </Button>
+            <HoverCard.Root>
+              <HoverCard.Trigger>
+                <Button variant="outline">
+                  {#if deployStatus === 'loading'}
+                    <LoadingIcon class="mr-1.5 size-4 animate-spin" />
+                  {:else if deployStatus === 'success'}
+                    <CircleCheckIcon class="mr-1.5 size-4 text-green-600" />
+                  {:else if deployStatus === 'error'}
+                    <CircleXIcon class="mr-1.5 size-4 text-destructive" />
+                  {:else}
+                    <RefreshIcon class="mr-1.5 size-4" />
+                  {/if}
+                  Rebuild
+                </Button>
+              </HoverCard.Trigger>
+              {#if deploying || deployStatus !== 'idle'}
+                <HoverCard.Content class="w-64">
+                  <div class="space-y-2">
+                    <p class="text-sm font-medium">
+                      {statusLabels[deploymentStatus ?? 'queued'] ?? deploymentStatus}
+                    </p>
+                    <Progress value={deployProgress} />
+                    {#if deployStatus === 'error' && deployError}
+                      <p class="text-destructive text-xs">{deployError}</p>
+                    {/if}
+                  </div>
+                </HoverCard.Content>
+              {/if}
+            </HoverCard.Root>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -477,7 +542,7 @@ const statusLabels: Record<string, string> = {
           </div>
           <div class="flex justify-end gap-2">
             <Button onclick={() => (showAddDialog = false)} variant="outline">Cancel</Button>
-            <Button type="submit">Create</Button>
+            <Button type="submit" variant="outline">Create</Button>
           </div>
         </form>
       </DialogContent>
@@ -546,20 +611,7 @@ const statusLabels: Record<string, string> = {
                   variant="outline"
                 >
                   {#if translating[key]}
-                    <svg
-                      class="mr-1.5 size-4 animate-spin"
-                      fill="none"
-                      height="24"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                    </svg>
+                    <LoadingIcon class="mr-1.5 size-4 animate-spin" />
                     Translating
                   {:else}
                     <LanguageIcon class="mr-1.5 size-4" />
@@ -569,13 +621,7 @@ const statusLabels: Record<string, string> = {
                 <div class="flex items-center gap-2">
                   <AlertDialog>
                     <AlertDialogTrigger>
-                      <Button
-                        class="h-11 gap-1.5 px-2.5 text-destructive hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20"
-                        type="button"
-                        variant="default"
-                      >
-                        Delete
-                      </Button>
+                      <Button type="button" variant="destructive"> Delete </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
@@ -598,7 +644,7 @@ const statusLabels: Record<string, string> = {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Button class="h-11 gap-1.5 px-2.5" type="submit" variant="default">Save</Button>
+                  <Button type="submit" variant="outline">Save</Button>
                 </div>
               </div>
             </form>

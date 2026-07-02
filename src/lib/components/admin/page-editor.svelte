@@ -245,7 +245,7 @@ async function handleTranslate() {
   </div>
 
   <div class="flex flex-wrap items-center gap-2">
-    <Button disabled={saveDisabled} type="submit">
+    <Button disabled={saveDisabled} type="submit" variant="outline">
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
     <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
