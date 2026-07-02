@@ -151,7 +151,17 @@ const activeCols: ColumnDef<Cong>[] = [
 
 const pendingCols: ColumnDef<Cong>[] = [
   { accessorKey: 'name', header: m.name(), cell: ({ row }) => nameCell(row.original.name) },
-  { accessorKey: 'denomination', header: m.denomination(), cell: ({ row }) => denomCell(row.original.denomination) },
+  {
+    id: 'location',
+    header: m.location(),
+    cell: ({ row }) =>
+      renderSnippet(
+        createRawSnippet<[{ v: string }]>((get) => ({
+          render: () => `<span class="text-muted-foreground">${get().v}</span>`
+        })),
+        { v: locationStr(row.original) }
+      )
+  },
   {
     accessorKey: 'owner',
     header: m.submittedBy(),
