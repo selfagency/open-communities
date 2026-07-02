@@ -1,5 +1,6 @@
 <script lang="ts">
 import { stripHtml } from 'string-strip-html';
+import { browser } from '$app/environment';
 import { onMount } from 'svelte';
 
 const FONT_STYLE_KEYS = ['font-family', 'font-size', 'font-weight', 'font-style', 'color'];
@@ -37,22 +38,44 @@ let {
 let textareaEl: HTMLTextAreaElement;
 
 onMount(() => {
-  if (!textareaEl) {
+  if (!textareaEl || !browser) {
     return;
   }
 
-  Wysi({
-    el: textareaEl,
-    height: 300,
-    autoGrow: true,
-    onChange: (html: string) => {
-      value = sanitizeHtml(html);
-    }
-  });
-
-  if (value) {
-    textareaEl.value = sanitizeHtml(value);
+  // Load Wysi CSS and JS dynamically
+  if (!document.querySelector('link[href*="wysi.min.css"]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/wysi.min.css';
+    document.head.appendChild(link);
   }
+
+  async function initWysi() {
+    if (typeof globalThis.Wysi === 'undefined') {
+      await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/wysi.min.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load Wysi'));
+        document.head.appendChild(script);
+      });
+    }
+
+    globalThis.Wysi({
+      el: textareaEl,
+      height: 300,
+      autoGrow: true,
+      onChange: (html: string) => {
+        value = sanitizeHtml(html);
+      }
+    });
+
+    if (value) {
+      textareaEl.value = sanitizeHtml(value);
+    }
+  }
+
+  initWysi();
 });
 </script>
 
