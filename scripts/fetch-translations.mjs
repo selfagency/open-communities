@@ -48,14 +48,21 @@ if (!TOKEN) {
 }
 
 async function fetchRecords() {
-  const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=1000`, {
-    headers: { authorization: `Bearer ${TOKEN}` }
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch translations: ${res.status}`);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=1000`, {
+      headers: { authorization: `Bearer ${TOKEN}` },
+      signal: controller.signal
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch translations: ${res.status}`);
+    }
+    const data = await res.json();
+    return data?.items ?? [];
+  } finally {
+    clearTimeout(timeout);
   }
-  const data = await res.json();
-  return data?.items ?? [];
 }
 
 function groupByLocale(records) {
@@ -102,7 +109,14 @@ function writeMessageFiles(byLocale) {
 
 async function main() {
   console.log(`📦 Fetching translations from ${PB_URL}...`);
-  const records = await fetchRecords();
+  let records;
+  try {
+    records = await fetchRecords();
+  } catch (err) {
+    console.warn(`⚠  Fetch failed (${err?.cause?.code || err?.message || err}) — writing fallback files`);
+    writeFallbackFiles();
+    process.exit(0);
+  }
   if (records.length === 0) {
     console.log('  ⚠  No translations found — writing empty files');
   }

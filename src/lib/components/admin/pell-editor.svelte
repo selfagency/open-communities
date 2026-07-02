@@ -1,7 +1,18 @@
 <script lang="ts">
 import pell from 'pell';
+import { stripHtml } from 'string-strip-html';
+import { stripInlineStyles } from 'strip-inline-styles';
 import { onMount } from 'svelte';
 import 'pell/dist/pell.min.css';
+
+const FONT_STYLE_KEYS = ['font-family', 'font-size', 'font-weight', 'font-style', 'color'];
+
+function sanitizeHtml(html: string): string {
+  // 1. Strip <font> tags (unwrap content, remove the tags themselves)
+  const noFontTags = stripHtml(html, { onlyStripTags: ['font'] }).result;
+  // 2. Remove font-related inline CSS properties from any remaining elements
+  return stripInlineStyles(noFontTags, { removeSpecificStyles: FONT_STYLE_KEYS });
+}
 
 let {
   value = $bindable(''),
@@ -27,7 +38,7 @@ onMount(() => {
     defaultParagraphSeparator: 'p',
     styleWithCSS: false,
     onChange: (html: string) => {
-      value = html;
+      value = sanitizeHtml(html);
     },
     actions: [
       'bold',
@@ -47,7 +58,7 @@ onMount(() => {
   });
 
   if (value) {
-    editor.content.innerHTML = value;
+    editor.content.innerHTML = sanitizeHtml(value);
   }
 });
 </script>
