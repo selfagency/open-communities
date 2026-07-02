@@ -2,6 +2,7 @@
 import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import UserKeyIcon from '@tabler/icons-svelte/icons/user-key';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 
@@ -175,7 +176,7 @@ function handleDelete() {
     <CardContent>
       <form action="?/resetPassword" method="POST" use:enhance={handleUpdate}>
         <Button type="submit" variant="outline"
-          ><FileUploadIcon class="mr-1.5 size-4" />{m.resetPasswordEmail()}</Button
+          ><UserKeyIcon class="mr-1.5 size-4" />{m.resetPasswordEmail()}</Button
         >
       </form>
     </CardContent>
