@@ -188,8 +188,6 @@ async function handleAutoTranslate(key: string, text: string) {
   try {
     const res = await fetch('/admin/translations?/translate', { method: 'POST', body: form });
     const body = await res.json();
-
-    // SvelteKit wraps action responses in { type, status, data }
     const actionData = body?.data ?? body;
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
@@ -197,21 +195,21 @@ async function handleAutoTranslate(key: string, text: string) {
       return;
     }
 
-    if (actionData?.success && actionData?.translations) {
+    if (actionData?.success && Array.isArray(actionData?.translations)) {
       for (const t of actionData.translations) {
         setEditValue(key, t.locale, t.translatedText);
       }
       toast.success('Translations generated — review and save');
     }
 
-    // Partial failures — some locales failed
     if (actionData?.errors?.length) {
-      toast.error(`${actionData.errors.length} locale(s) failed to translate`);
+      toast.warning(`${actionData.errors.length} locale(s) failed to translate`);
     }
   } catch {
     toast.error('Translation request failed');
   } finally {
-    translating[key] = false;
+    delete translating[key];
+    translating = { ...translating };
   }
 }
 
