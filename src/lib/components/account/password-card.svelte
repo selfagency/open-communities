@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { SuperForm } from 'sveltekit-superforms';
+import UploadIcon from '@tabler/icons-svelte/icons/upload';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
@@ -49,6 +50,6 @@ let {
       <Form.FieldErrors />
     </Form.Field>
 
-    <Button type="submit" variant="outline">{m.changePassword()}</Button>
+    <Button type="submit" variant="outline"><UploadIcon class="mr-1.5 size-4" />{m.changePassword()}</Button>
   </CardContent>
 </Card>

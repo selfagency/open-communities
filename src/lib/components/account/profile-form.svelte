@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { SuperForm, superForm } from 'sveltekit-superforms';
+import UploadIcon from '@tabler/icons-svelte/icons/upload';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
@@ -105,6 +106,6 @@ function langName(lang: string): string {
       <p class="text-destructive text-xs">{String(($errors as any)._errors ?? "")}</p>
     {/if}
 
-    <Button type="submit" variant="outline">{m.saveChanges()}</Button>
+    <Button type="submit" variant="outline"><UploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
   </CardContent>
 </Card>

@@ -7,6 +7,8 @@ import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import XIcon from '@tabler/icons-svelte/icons/x';
+
 import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
 import { enhance } from '$app/forms';
@@ -541,7 +543,9 @@ const deployProgress = $derived(
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <Button onclick={() => (showAddDialog = false)} variant="outline">Cancel</Button>
+            <Button onclick={() => (showAddDialog = false)} variant="outline"
+              ><XIcon class="mr-1.5 size-4" />Cancel</Button
+            >
             <Button type="submit" variant="outline">Create</Button>
           </div>
         </form>
@@ -621,7 +625,7 @@ const deployProgress = $derived(
                 <div class="flex items-center gap-2">
                   <AlertDialog>
                     <AlertDialogTrigger>
-                      <Button type="button" variant="destructive"> Delete </Button>
+                      <Button type="button" variant="destructive"><TrashIcon class="mr-1.5 size-4" /> Delete</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>

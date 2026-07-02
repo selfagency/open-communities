@@ -17,7 +17,7 @@ let {
   bind:ref
   {...restProps}
 >
-  <div class={cn('pt-0 pb-4', className)}>
+  <div class={cn('pt-0 pb-4 px-4', className)}>
     {@render children?.()}
   </div>
 </AccordionPrimitive.Content>

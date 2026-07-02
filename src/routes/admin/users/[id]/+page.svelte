@@ -1,6 +1,8 @@
 <script lang="ts">
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import UploadIcon from '@tabler/icons-svelte/icons/upload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -105,7 +107,7 @@ function handleDelete() {
           <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={adminToggle} />
           <input name="admin" type="hidden" value={String(adminToggle)} />
         </div>
-        <Button type="submit" variant="outline">{m.saveChanges()}</Button>
+        <Button type="submit" variant="outline"><UploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
       </CardContent>
     </Card>
   </form>
@@ -181,7 +183,7 @@ function handleDelete() {
       <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
       <AlertDialog bind:open={showDeleteDialog}>
         <AlertDialogTrigger>
-          <Button type="button" variant="destructive">{m.deleteAccount()}</Button>
+          <Button type="button" variant="destructive"><TrashIcon class="mr-1.5 size-4" />{m.deleteAccount()}</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>

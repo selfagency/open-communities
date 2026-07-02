@@ -2,6 +2,8 @@
 import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
+import XIcon from '@tabler/icons-svelte/icons/x';
+
 import { isEmpty } from 'radashi';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
@@ -261,6 +263,8 @@ async function handleTranslate() {
     {#if translateStatus === 'error' && errMsg}
       <span class="text-destructive text-sm">{errMsg}</span>
     {/if}
-    <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
+    <Button onclick={() => goto('/admin/pages')} type="button" variant="outline"
+      ><XIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}</Button
+    >
   </div>
 </form>

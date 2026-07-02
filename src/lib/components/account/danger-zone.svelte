@@ -5,6 +5,7 @@ import { goto } from '$app/navigation';
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { m } from '$lib/paraglide/messages';
 
 let deleting = $state(false);
@@ -19,7 +20,7 @@ let open = $state(false);
     <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
     <AlertDialog.Root bind:open>
       <AlertDialog.Trigger>
-        <Button type="button" variant="destructive">{m.deleteAccount()}</Button>
+        <Button type="button" variant="destructive"><TrashIcon class="mr-1.5 size-4" />{m.deleteAccount()}</Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content>
         <form

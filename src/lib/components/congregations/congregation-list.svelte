@@ -3,8 +3,10 @@ import Fuzzy from '@leeoniya/ufuzzy';
 import CheckIcon from '@tabler/icons-svelte/icons/check';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
 import XIcon from '@tabler/icons-svelte/icons/x';
+
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 import { goto } from '$app/navigation';
@@ -363,7 +365,9 @@ const pendingTable = $derived(
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
                             <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button onclick={confirmAction} variant="destructive">{m.reject()}</Button>
+                            <Button onclick={confirmAction} variant="destructive"
+                              ><TrashIcon class="mr-1.5 size-4" />{m.reject()}</Button
+                            >
                           </AlertDialog.Footer>
                         </AlertDialog.Content>
                       </AlertDialog.Root>
