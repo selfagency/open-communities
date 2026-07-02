@@ -6,8 +6,8 @@ import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
-import XIcon from '@tabler/icons-svelte/icons/x';
 import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
+import XIcon from '@tabler/icons-svelte/icons/x';
 
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
@@ -327,34 +327,6 @@ const pendingTable = $derived(
                         <AlertDialog.Trigger>
                           <Button
                             class="size-8"
-                            onclick={() => { pendingId = row.original.id; pendingAction = 'approve'; }}
-                            size="icon"
-                            variant="outline"
-                          >
-                            <CheckIcon class="size-4" />
-                          </Button>
-                        </AlertDialog.Trigger>
-                        <AlertDialog.Content>
-                          <AlertDialog.Header>
-                            <AlertDialog.Title>{m.approveCongregation()}</AlertDialog.Title>
-                            <AlertDialog.Description
-                              >{m.approveConfirmation({ name: row.original.name })}</AlertDialog.Description
-                            >
-                          </AlertDialog.Header>
-                          <AlertDialog.Footer>
-                            <AlertDialog.Cancel type="button"
-                              ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
-                            >
-                            <Button onclick={confirmAction} variant="outline"
-                              ><FileUploadIcon class="mr-1.5 size-4" />{m.approve()}</Button
-                            >
-                          </AlertDialog.Footer>
-                        </AlertDialog.Content>
-                      </AlertDialog.Root>
-                      <AlertDialog.Root>
-                        <AlertDialog.Trigger>
-                          <Button
-                            class="size-8"
                             onclick={() => { pendingId = row.original.id; pendingAction = 'reject'; }}
                             size="icon"
                             variant="destructive"
@@ -379,6 +351,41 @@ const pendingTable = $derived(
                           </AlertDialog.Footer>
                         </AlertDialog.Content>
                       </AlertDialog.Root>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <AlertDialog.Root>
+                              <AlertDialog.Trigger>
+                                <Button
+                                  class="size-8"
+                                  onclick={() => { pendingId = row.original.id; pendingAction = 'approve'; }}
+                                  size="icon"
+                                  variant="outline"
+                                >
+                                  <CheckIcon class="size-4" />
+                                </Button>
+                              </AlertDialog.Trigger>
+                              <AlertDialog.Content>
+                                <AlertDialog.Header>
+                                  <AlertDialog.Title>{m.approveCongregation()}</AlertDialog.Title>
+                                  <AlertDialog.Description
+                                    >{m.approveConfirmation({ name: row.original.name })}</AlertDialog.Description
+                                  >
+                                </AlertDialog.Header>
+                                <AlertDialog.Footer>
+                                  <AlertDialog.Cancel type="button"
+                                    ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                                  >
+                                  <Button onclick={confirmAction} variant="outline"
+                                    ><FileUploadIcon class="mr-1.5 size-4" />{m.approve()}</Button
+                                  >
+                                </AlertDialog.Footer>
+                              </AlertDialog.Content>
+                            </AlertDialog.Root>
+                          </TooltipTrigger>
+                          <TooltipContent>{m.approveCongregation()}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 </TableRow>
