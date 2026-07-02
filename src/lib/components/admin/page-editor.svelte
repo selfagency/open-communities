@@ -1,7 +1,4 @@
 <script lang="ts">
-import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
-import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
-import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import { isEmpty } from 'radashi';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
@@ -80,7 +77,6 @@ let variantsInput: HTMLInputElement;
 let selectedLang = $state('en');
 let saveDisabled = $derived(!(title && slug) || saving);
 let translating = $state(false);
-let translateStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
@@ -171,8 +167,6 @@ async function handleTranslate() {
   }
 
   translating = true;
-  translateStatus = 'loading';
-  errMsg = '';
   const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
 
   const form = new FormData();
@@ -186,7 +180,6 @@ async function handleTranslate() {
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
       errMsg = actionData?.error ?? 'Translation failed';
-      translateStatus = 'error';
       return;
     }
 
@@ -196,20 +189,16 @@ async function handleTranslate() {
 
     if (actionData?.errors?.length) {
       errMsg = `${actionData.errors.length} locale(s) failed to translate`;
-      translateStatus = 'error';
-    } else {
-      translateStatus = 'success';
     }
   } catch {
     errMsg = 'Translation request failed';
-    translateStatus = 'error';
   } finally {
     translating = false;
   }
 }
 </script>
 
-{#if errMsg && translateStatus !== 'error'}
+{#if errMsg}
   <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{errMsg}</div>
 {/if}
 
@@ -244,23 +233,13 @@ async function handleTranslate() {
     {/if}
   </div>
 
-  <div class="flex flex-wrap items-center gap-2">
+  <div class="flex gap-2">
     <Button disabled={saveDisabled} type="submit">
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
     <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="secondary">
-      {#if translateStatus === 'loading'}
-        <LoadingIcon aria-hidden="true" class="mr-1.5 size-4 animate-spin" />
-      {:else if translateStatus === 'success'}
-        <CircleCheckIcon aria-hidden="true" class="mr-1.5 size-4 text-green-600" />
-      {:else if translateStatus === 'error'}
-        <CircleXIcon aria-hidden="true" class="mr-1.5 size-4 text-destructive" />
-      {/if}
-      Translate from English
+      {translating ? 'Translating…' : 'Translate from English'}
     </Button>
-    {#if translateStatus === 'error' && errMsg}
-      <span class="text-destructive text-sm">{errMsg}</span>
-    {/if}
     <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
   </div>
 </form>
