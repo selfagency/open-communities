@@ -457,8 +457,8 @@ const statusLabels: Record<string, string> = {
 
     <!-- Add Key Dialog -->
     <Dialog bind:open={showAddDialog}>
-      <form action="?/add" method="POST" use:enhance={handleAdd}>
-        <DialogContent>
+      <DialogContent>
+        <form action="?/add" method="POST" use:enhance={handleAdd}>
           <DialogHeader>
             <DialogTitle>Add Translation Key</DialogTitle>
             <DialogDescription>Create a new translation key with an English value.</DialogDescription>
@@ -477,8 +477,8 @@ const statusLabels: Record<string, string> = {
             <Button onclick={() => (showAddDialog = false)} variant="outline">Cancel</Button>
             <Button type="submit">Create</Button>
           </div>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
 
     <!-- Results count -->
