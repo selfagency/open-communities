@@ -8,13 +8,13 @@ export const load: PageServerLoad = async ({ locals, depends }) => {
   const [congCount, userCount, pendingCount] = await Promise.all([
     withRetry(() =>
       client
-        .collection('congregations')
+        .collection('congregationMeta')
         .getList(1, 1, { filter: client.filter('visible={:v}', { v: true }), requestKey: 'dash-cong' })
     ),
     withRetry(() => client.collection('users').getList(1, 1, { requestKey: 'dash-users' })),
     withRetry(() =>
       client
-        .collection('congregations')
+        .collection('congregationMeta')
         .getList(1, 1, { filter: client.filter('visible={:v}', { v: false }), requestKey: 'dash-pending' })
     )
   ]);
