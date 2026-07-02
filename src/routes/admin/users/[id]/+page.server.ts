@@ -19,26 +19,14 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   const expand = user.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
   const congData = (expand?.congregation as Record<string, string> | undefined) || null;
 
-  const assignedUsers = await client
-    .collection('users')
+  const available = await client
+    .collection('congregationMeta')
     .getFullList({
-      filter: client.filter('congregation != null'),
-      fields: 'congregation',
-      requestKey: 'admin-user-assigned-congs'
-    })
-    .catch(() => []);
-
-  const assignedIds = new Set(assignedUsers.map((u: Record<string, unknown>) => u.congregation as string));
-
-  const allCongs = await client
-    .collection('congregations')
-    .getFullList({
+      filter: client.filter('owner = null'),
       sort: 'name',
-      requestKey: 'admin-user-all-congs'
+      requestKey: 'admin-user-avail-congs'
     })
     .catch(() => []);
-
-  const available = allCongs.filter((c: Record<string, unknown>) => !assignedIds.has(c.id as string));
 
   return {
     targetUser: {
