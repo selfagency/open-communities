@@ -50,10 +50,11 @@ services:
       dockerfile: libretranslate.Dockerfile
     environment:
       LT_LOAD_ONLY: en,es,fr,de,he,pl,pt,hu,nl,ru,uk
-      LT_API_KEYS: 'true'
-      LT_API_KEYS_DB_PATH: /app/db/api_keys.db
+      LT_API_KEYS: 'false'
+      LT_UPDATE_MODELS: 'true'
     volumes:
       - libretranslate_data:/app/db
+      - libretranslate_models:/home/libretranslate/.local:rw
     restart: unless-stopped
 
   app:
@@ -89,3 +90,4 @@ volumes:
   dragonfly_data:
   cap_data:
   libretranslate_data:
+  libretranslate_models:

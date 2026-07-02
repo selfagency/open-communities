@@ -14,5 +14,5 @@ RUN \
 
 USER libretranslate
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-    CMD curl -f http://localhost:5000/ || exit 1
+HEALTHCHECK --interval=10s --timeout=4s --start-period=120s --retries=4 \
+    CMD ./venv/bin/python scripts/healthcheck.py || exit 1
