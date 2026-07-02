@@ -1,15 +1,15 @@
 <script lang="ts">
-  import PlusIcon from "@tabler/icons-svelte/icons/plus";
-  import { goto } from "$app/navigation";
-  import { page } from "$app/state";
-  import Tent from "$lib/assets/tent.svg?component";
-  import { Button } from "$lib/components/ui/button";
-  import { m } from "$lib/paraglide/messages";
-  import { state as appState } from "$lib/stores";
-  import Menu from "./menu.svelte";
+import PlusIcon from '@tabler/icons-svelte/icons/plus';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import Tent from '$lib/assets/tent.svg?component';
+import { Button } from '$lib/components/ui/button';
+import { m } from '$lib/paraglide/messages';
+import { state as appState } from '$lib/stores';
+import Menu from './menu.svelte';
 
-  const user = $derived(page.data.user);
-  const isMobile = $derived(appState.isMobile);
+const user = $derived(page.data.user);
+const isMobile = $derived(appState.isMobile);
 </script>
 
 <nav
