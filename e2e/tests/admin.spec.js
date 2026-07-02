@@ -109,9 +109,12 @@ test.describe('Admin backend', () => {
   });
 
   test('create new page via page editor', async ({ page }) => {
-    await page.goto(`${BASE}/admin/pages/new`);
-    await page.waitForURL('**/admin/pages/new');
+    // Navigate via pages list first (client-side routing) to avoid SSR hydration
+    // issues with direct navigation to the editor page.
+    await page.goto(`${BASE}/admin/pages`);
     await page.waitForLoadState('networkidle');
+    await page.getByText('New Page').click();
+    await page.waitForURL('**/admin/pages/new');
     await expect(page.getByRole('heading', { name: 'New Page' })).toBeVisible();
 
     // Fill in the form
