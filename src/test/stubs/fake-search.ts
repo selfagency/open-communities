@@ -9,6 +9,98 @@ export const setFiltersSpy = vi.fn();
 export const setSearchTermsSpy = vi.fn();
 export const toggleLocationSpy = vi.fn();
 
+type FakeStoreSubscriber = (v: SearchState) => void;
+
+/** Minimal Stately-like store for the fake Search class. */
+function createFakeStore(): {
+  showLocation: boolean;
+  searchTerms: string;
+  searchLocation: Partial<LocationMeta>;
+  filters: Record<string, Record<string, boolean>>;
+  subscribe: (fn: FakeStoreSubscriber) => () => void;
+  setSearchTerms: (t: string) => void;
+  setSearchLocation: (l: Partial<LocationMeta>) => void;
+  setFilters: (f: Record<string, Record<string, boolean>>) => void;
+  resetSearchTerms: () => void;
+  resetLocation: () => void;
+  resetFilters: () => void;
+  resetAll: () => void;
+  toggleLocation: () => void;
+} {
+  let _state: SearchState = {
+    showLocation: false,
+    searchTerms: '',
+    searchLocation: {},
+    filters: {}
+  };
+  const subs = new Set<FakeStoreSubscriber>();
+  function _notify() {
+    for (const fn of subs) {
+      fn(_state as SearchState);
+    }
+  }
+  return {
+    get showLocation() {
+      return _state.showLocation ?? false;
+    },
+    set showLocation(v: boolean) {
+      _state = { ..._state, showLocation: v };
+      _notify();
+    },
+    get searchTerms() {
+      return _state.searchTerms ?? '';
+    },
+    set searchTerms(v: string) {
+      _state = { ..._state, searchTerms: v };
+      _notify();
+    },
+    get searchLocation() {
+      return _state.searchLocation ?? {};
+    },
+    set searchLocation(v: Partial<LocationMeta>) {
+      _state = { ..._state, searchLocation: v };
+      _notify();
+    },
+    get filters() {
+      return _state.filters ?? {};
+    },
+    set filters(v: Record<string, Record<string, boolean>>) {
+      _state = { ..._state, filters: v };
+      _notify();
+    },
+    subscribe(fn: FakeStoreSubscriber) {
+      fn(_state as SearchState);
+      subs.add(fn);
+      return () => subs.delete(fn);
+    },
+    setSearchTerms(t: string) {
+      this.searchTerms = t;
+    },
+    setSearchLocation(l: Partial<LocationMeta>) {
+      this.searchLocation = l;
+    },
+    setFilters(f: Record<string, Record<string, boolean>>) {
+      this.filters = f;
+    },
+    resetSearchTerms() {
+      this.searchTerms = '';
+    },
+    resetLocation() {
+      this.searchLocation = {};
+    },
+    resetFilters() {
+      this.filters = {};
+    },
+    resetAll() {
+      _state = { showLocation: false, searchTerms: '', searchLocation: {}, filters: {} };
+      _notify();
+    },
+    toggleLocation() {
+      this.showLocation = !this.showLocation;
+    }
+  };
+}
+
 export class FakeSearch {
   applyAllFilters = vi.fn();
   boolFilter = vi.fn();
@@ -81,59 +173,12 @@ export class FakeSearch {
   setShowLocation = vi.fn();
   setVisible = vi.fn();
   showLocation = false;
-  state = {
-    // internal storage for test state
-    _subscribers: [] as Array<
-      (
-        v: Readonly<SearchState>,
-        oldV?: Readonly<SearchState> | undefined,
-        changedKey?: keyof SearchState | undefined
-      ) => void
-    >,
-    _value: {} as SearchState,
-
-    get: vi.fn(),
-
-    keys: vi.fn(),
-
-    lc: 0,
-    listen: vi.fn(),
-    notify: vi.fn(),
-    off: vi.fn(),
-    set: vi.fn(),
-    // minimal MapStore-like API used by components in tests
-    setKey(key: string, v: unknown) {
-      const old = this._value;
-      this._value = { ...(this._value || {}), [key]: v } as SearchState;
-      for (const s of this._subscribers) {
-        s(this._value, old as SearchState, key as keyof SearchState);
-      }
-    },
-    subscribe(
-      listener: (
-        v: Readonly<SearchState>,
-        oldV?: Readonly<SearchState> | undefined,
-        changedKey?: keyof SearchState | undefined
-      ) => void
-    ) {
-      const wrapped = (
-        v: Readonly<SearchState>,
-        oldV?: Readonly<SearchState> | undefined,
-        changedKey?: keyof SearchState | undefined
-      ) => listener(v, oldV, changedKey);
-      this._subscribers.push(wrapped);
-      // call immediately with current value and no old/changedKey
-      listener(this._value as Readonly<SearchState>, undefined, undefined);
-      return () => {
-        const i = this._subscribers.indexOf(wrapped);
-        if (i !== -1) {
-          this._subscribers.splice(i, 1);
-        }
-      };
-    },
-    value: {} as Record<string, unknown>,
-    values: vi.fn()
-  };
+  /** Stately store instance (aliased by `state` getter). */
+  store = createFakeStore();
+  /** Backward-compat accessor matching the real Search class. */
+  get state() {
+    return this.store;
+  }
   stringFilter = vi.fn();
   toggleLocation = toggleLocationSpy;
   updateFilters = vi.fn();

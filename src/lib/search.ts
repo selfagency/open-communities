@@ -1,6 +1,7 @@
 /* region imports */
 
 import Fuzzy from '@leeoniya/ufuzzy';
+import { createStateManager, defineStore } from '@selfagency/stately';
 import { alphabetical, isEmpty, isEqual, shake } from 'radashi';
 
 import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
@@ -8,75 +9,45 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 /* endregion imports */
 
 /* ------------------------------------------------------------------ */
-/*  Minimal Svelte store helpers — replaces nanostores deepMap/computed */
+/*  Stately store — replaces nanostores deepMap/computed               */
 /* ------------------------------------------------------------------ */
 
-type Subscriber<T> = (v: T) => void;
-type Unsubscriber = () => void;
-interface Readable<T> {
-  subscribe: (run: Subscriber<T>) => Unsubscriber;
-}
-
-function writableDeep<T extends Record<string, unknown>>(
-  initial: T
-): Readable<T> & { get(): T; setKey<K extends keyof T>(k: K, v: T[K]): void } {
-  let value = { ...initial };
-  const subs = new Set<Subscriber<T>>();
-  function notify() {
-    for (const fn of subs) {
-      fn(value);
+const useSearchStore = defineStore('search', {
+  state: (): SearchState => ({
+    showLocation: true,
+    searchTerms: '',
+    searchLocation: {} as LocationMeta,
+    filters: {} as Record<string, Record<string, boolean>>
+  }),
+  actions: {
+    setSearchTerms(terms: string) {
+      this.searchTerms = terms;
+    },
+    setSearchLocation(location: LocationMeta) {
+      this.searchLocation = location;
+    },
+    setFilters(filters: SearchState['filters']) {
+      this.filters = filters;
+    },
+    resetSearchTerms() {
+      this.searchTerms = '';
+    },
+    resetLocation() {
+      this.searchLocation = {} as LocationMeta;
+    },
+    resetFilters() {
+      this.filters = {};
+    },
+    resetAll() {
+      this.$reset();
+    },
+    toggleLocation() {
+      this.showLocation = !this.showLocation;
     }
   }
-  return {
-    subscribe(run: Subscriber<T>) {
-      run(value);
-      subs.add(run);
-      return () => subs.delete(run);
-    },
-    get() {
-      return value;
-    },
-    setKey<K extends keyof T>(k: K, v: T[K]) {
-      if (k === '__proto__' || k === 'constructor') {
-        return;
-      }
-      if (value[k] === v) {
-        return; // skip notification on no-op
-      }
-      value = { ...value, [k]: v };
-      notify();
-    }
-  };
-}
+});
 
-function derived<T, D>(source: Readable<T>, fn: (v: T) => D): Readable<D> {
-  let current: D = undefined as unknown as D;
-  const subs = new Set<Subscriber<D>>();
-
-  source.subscribe((v) => {
-    const next = fn(v);
-    // Skip notification when the value hasn't changed (deep equality).
-    // The fn creates a new array on every call — without deep comparison,
-    // every source change would cascade to all subscribers even if the
-    // computed result is semantically identical.
-    if (!isEqual(next, current)) {
-      current = next;
-      for (const fn of subs) {
-        fn(current);
-      }
-    }
-  });
-
-  return {
-    subscribe(run: Subscriber<D>) {
-      if (current !== undefined) {
-        run(current);
-      }
-      subs.add(run);
-      return () => subs.delete(run);
-    }
-  };
-}
+export type SearchStore = ReturnType<typeof useSearchStore>;
 
 /* ------------------------------------------------------------------ */
 /*  Search engine                                                      */
@@ -87,8 +58,10 @@ export class Search {
   debug: boolean;
   fuzzy: Fuzzy;
   ids: string[];
-  results: Readable<SearchData[]>;
-  state: ReturnType<typeof writableDeep<SearchState>>;
+  store: SearchStore;
+  results: {
+    subscribe(run: (v: SearchData[]) => void): () => void;
+  };
 
   // Pre-built indexes for fast filtering
   /** Map<filterKey, Map<valueKey, Set<rowIndex>>> */
@@ -100,13 +73,17 @@ export class Search {
   /** Pre-built fuzzy search strings — built once, reused on every search */
   private readonly searchStrings: string[] = [];
 
+  private readonly _resultsSubs = new Set<(v: SearchData[]) => void>();
+  private _currentResults: SearchData[] = [];
+
   constructor(data = [] as SearchData[], debug = false) {
     this.data = alphabetical(data, (i) => i.name);
     this.debug = debug;
 
-    this.state = writableDeep<SearchState>({
-      showLocation: true
-    });
+    // Create search store via Stately
+    const manager = createStateManager();
+    this.store = useSearchStore(manager);
+
     this.fuzzy = new Fuzzy();
     this.ids = this.data.map((i) => i.id);
 
@@ -123,45 +100,21 @@ export class Search {
 
     this._buildIndexes();
 
-    this.results = derived(this.state, (state) => {
-      let resultIds = [...this.ids];
-
-      // Filter by Location
-      if (state.searchLocation && !isEmpty(state.searchLocation)) {
-        const { city: filterCity, country: filterCountry, state: filterState } = state.searchLocation;
-        const locationIds = this.data
-          .filter((record) => {
-            const { city, country, state: recordState } = record.location as LocationMeta;
-            const cityMatch = !filterCity || (city && city.id === filterCity.id);
-            const countryMatch = !filterCountry || (country && country.id === filterCountry.id);
-            const stateMatch = !filterState || (recordState && recordState.id === filterState.id);
-
-            return cityMatch && countryMatch && stateMatch;
-          })
-          .map((i) => i.id);
-        const locationIdSet = new Set(locationIds);
-        resultIds = resultIds.filter((i) => locationIdSet.has(i));
+    // Results — subscribe to store changes, recompute, notify subscribers
+    this.results = {
+      subscribe: (run: (v: SearchData[]) => void) => {
+        run(this._currentResults);
+        this._resultsSubs.add(run);
+        return () => this._resultsSubs.delete(run);
       }
+    };
 
-      // Filter by Search Text — uses pre-built corpus, no per-call allocation
-      if (state.searchTerms && !isEmpty(state.searchTerms)) {
-        const searchIds =
-          this.fuzzy
-            ?.filter(this.searchStrings, (state.searchTerms as string)?.toLowerCase())
-            ?.map((i) => this.data[i].id) || [];
-        const searchIdSet = new Set(searchIds);
-        resultIds = resultIds.filter((i) => searchIdSet.has(i));
-      }
-
-      // Apply All Other Filters
-      resultIds = this.applyAllFilters(state, resultIds);
-
-      const resultIdSet = new Set(resultIds);
-      return alphabetical(
-        this.data.filter((record) => resultIdSet.has(record.id)),
-        (i) => i.name
-      );
+    this.store.subscribe(() => {
+      this._recompute();
     });
+
+    // Initial computation
+    this._recompute();
 
     this.setSearchTerms = this.setSearchTerms.bind(this);
     this.setSearchLocation = this.setSearchLocation.bind(this);
@@ -171,6 +124,60 @@ export class Search {
     this.resetLocation = this.resetLocation.bind(this);
     this.resetAll = this.resetAll.bind(this);
     this.toggleLocation = this.toggleLocation.bind(this);
+  }
+
+  /** Backward-compat accessor so `$searchState` Svelte store subscription works. */
+  get state(): SearchStore {
+    return this.store;
+  }
+
+  private _recompute(): void {
+    const state = this.store;
+    let resultIds = [...this.ids];
+
+    // Filter by Location
+    if (state.searchLocation && !isEmpty(state.searchLocation)) {
+      const { city: filterCity, country: filterCountry, state: filterState } = state.searchLocation as LocationMeta;
+      const locationIds = this.data
+        .filter((record) => {
+          const { city, country, state: recordState } = record.location as LocationMeta;
+          const cityMatch = !filterCity || (city && city.id === filterCity.id);
+          const countryMatch = !filterCountry || (country && country.id === filterCountry.id);
+          const stateMatch = !filterState || (recordState && recordState.id === filterState.id);
+
+          return cityMatch && countryMatch && stateMatch;
+        })
+        .map((i) => i.id);
+      const locationIdSet = new Set(locationIds);
+      resultIds = resultIds.filter((i) => locationIdSet.has(i));
+    }
+
+    // Filter by Search Text — uses pre-built corpus, no per-call allocation
+    if (state.searchTerms && !isEmpty(state.searchTerms)) {
+      const searchIds =
+        this.fuzzy
+          ?.filter(this.searchStrings, (state.searchTerms as string)?.toLowerCase())
+          ?.map((i) => this.data[i].id) || [];
+      const searchIdSet = new Set(searchIds);
+      resultIds = resultIds.filter((i) => searchIdSet.has(i));
+    }
+
+    // Apply All Other Filters
+    resultIds = this.applyAllFilters(state as unknown as SearchState, resultIds);
+
+    const resultIdSet = new Set(resultIds);
+    const newResults = alphabetical(
+      this.data.filter((record) => resultIdSet.has(record.id)),
+      (i) => i.name
+    );
+
+    // Only notify if results actually changed
+    if (!isEqual(newResults, this._currentResults)) {
+      this._currentResults = newResults;
+      for (const fn of this._resultsSubs) {
+        fn(this._currentResults);
+      }
+    }
   }
 
   adminFilter(filters: Record<string, boolean>, currentIds: string[]) {
@@ -261,33 +268,31 @@ export class Search {
   }
 
   resetAll() {
-    this.state.setKey('searchTerms', '');
-    this.state.setKey('searchLocation', {});
-    this.state.setKey('filters', {});
+    this.store.resetAll();
   }
 
   resetFilters() {
-    this.state.setKey('filters', {});
+    this.store.resetFilters();
   }
 
   resetLocation() {
-    this.state.setKey('searchLocation', {});
+    this.store.resetLocation();
   }
 
   resetSearchTerms() {
-    this.state.setKey('searchTerms', '');
+    this.store.resetSearchTerms();
   }
 
   setFilters(filters: SearchState['filters']) {
-    this.state.setKey('filters', filters);
+    this.store.setFilters(filters);
   }
 
   setSearchLocation(searchLocation: LocationMeta) {
-    this.state.setKey('searchLocation', searchLocation);
+    this.store.setSearchLocation(searchLocation);
   }
 
   setSearchTerms(searchTerms: string) {
-    this.state.setKey('searchTerms', searchTerms);
+    this.store.setSearchTerms(searchTerms);
   }
 
   stringFilter(filter: string, targetKey: string, filters: object, currentIds: string[]) {
@@ -323,8 +328,7 @@ export class Search {
   }
 
   toggleLocation() {
-    const state = this.state.get();
-    this.state.setKey('showLocation', !state.showLocation);
+    this.store.toggleLocation();
   }
 
   /** Get or create a nested inner Map. */

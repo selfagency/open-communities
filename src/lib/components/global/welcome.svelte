@@ -12,7 +12,7 @@ import { m } from '$lib/paraglide/messages';
   class="relative mt-4 mb-16 min-h-150 flex w-full flex-col items-center justify-end rounded-xl p-12 sm:mt-12 sm:mb-24 space-y-4"
 >
   <div class="absolute inset-0 rounded-xl bg-muted bg-cover bg-bottom" style="background-image: url({Crowd})"></div>
-  <Badge class="absolute top-2 right-2 z-20" variant="outline">{m.artist()} — Roan Boucher</Badge>
+  <Badge class="absolute bottom-2 right-2 z-20" variant="secondary">{m.artist()} — Roan Boucher</Badge>
   <h1
     class="pointer-events-none relative z-10 w-full text-center text-2xl sm:max-w-[80%] sm:text-3xl md:text-4xl lg:text-5xl text-white text-shadow-2xs"
   >

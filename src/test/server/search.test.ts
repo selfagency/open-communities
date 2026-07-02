@@ -29,7 +29,6 @@ describe('Search class', () => {
   it('has initial state with showLocation', async () => {
     const { Search } = await import('../../lib/search');
     const search = new Search([]);
-    const state = search.state.get();
-    expect(state.showLocation).toBe(true);
+    expect(search.store.showLocation).toBe(true);
   });
 });

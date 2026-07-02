@@ -66,7 +66,7 @@ const zoom = $derived.by(() => {
         <Button
           class="h-full min-h-max w-full"
           onclick={() => {
-            search.state.setKey('showLocation', true);
+            search.store.showLocation = true;
             location.load({ city: city?.id, country: country?.id, state: state?.id });
           }}
           variant="ghost"
@@ -95,7 +95,7 @@ const zoom = $derived.by(() => {
             <button
               class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
               onclick={async () => {
-              search.state.setKey('showLocation', true);
+              search.store.showLocation = true;
               await location.load({
                 city: city?.id,
                 country: country?.id,
