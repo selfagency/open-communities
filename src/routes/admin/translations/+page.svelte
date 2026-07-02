@@ -3,6 +3,7 @@ import AlertCircleIcon from '@tabler/icons-svelte/icons/alert-circle';
 import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
@@ -506,7 +507,7 @@ const deployProgress = $derived(
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
               <form action="?/redeploy" method="POST" onsubmit={startDeploy} use:enhance={handleEnhance}>
                 <AlertDialogAction
                   class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -546,7 +547,7 @@ const deployProgress = $derived(
             <Button onclick={() => (showAddDialog = false)} variant="outline"
               ><XIcon class="mr-1.5 size-4" />Cancel</Button
             >
-            <Button type="submit" variant="outline">Create</Button>
+            <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Create</Button>
           </div>
         </form>
       </DialogContent>
@@ -636,7 +637,7 @@ const deployProgress = $derived(
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
                         <form action="?/delete" method="POST" use:enhance={() => handleDelete(key)}>
                           <input name="key" type="hidden" value={key} />
                           <AlertDialogAction
@@ -648,7 +649,7 @@ const deployProgress = $derived(
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Button type="submit" variant="outline">Save</Button>
+                  <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Save</Button>
                 </div>
               </div>
             </form>
@@ -708,7 +709,7 @@ const deployProgress = $derived(
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
         <form action="?/delete" method="POST" use:enhance={handleBulkDelete}>
           <input name="key" type="hidden" value={deleteKey} />
           <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" type="submit"

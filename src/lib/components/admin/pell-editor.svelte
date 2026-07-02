@@ -1,17 +1,30 @@
 <script lang="ts">
 import pell from 'pell';
 import { stripHtml } from 'string-strip-html';
-import { stripInlineStyles } from 'strip-inline-styles';
 import { onMount } from 'svelte';
 import 'pell/dist/pell.min.css';
 
 const FONT_STYLE_KEYS = ['font-family', 'font-size', 'font-weight', 'font-style', 'color'];
 
+function stripFontStyles(html: string): string {
+  return html.replace(/style\s*=\s*"([^"]*)"/gi, (_match, attrs: string) => {
+    const filtered = attrs.split(';').filter((decl: string) => {
+      const trimmed = decl.trim();
+      if (!trimmed) {
+        return false;
+      }
+      const key = trimmed.split(':')[0]?.trim().toLowerCase();
+      return key && !FONT_STYLE_KEYS.includes(key);
+    });
+    return filtered.length > 0 ? `style="${filtered.join(';').trim()}"` : '';
+  });
+}
+
 function sanitizeHtml(html: string): string {
   // 1. Strip <font> tags (unwrap content, remove the tags themselves)
   const noFontTags = stripHtml(html, { onlyStripTags: ['font'] }).result;
   // 2. Remove font-related inline CSS properties from any remaining elements
-  return stripInlineStyles(noFontTags, { removeSpecificStyles: FONT_STYLE_KEYS });
+  return stripFontStyles(noFontTags);
 }
 
 let {

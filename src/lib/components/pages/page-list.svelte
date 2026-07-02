@@ -1,8 +1,10 @@
 <script lang="ts">
 import ExternalLinkIcon from '@tabler/icons-svelte/icons/external-link';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import FilesIcon from '@tabler/icons-svelte/icons/files';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
+
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 import { goto } from '$app/navigation';
@@ -130,7 +132,9 @@ const table = $derived(
         />
         <Input class="h-11 w-64 sm:w-80 pl-10" placeholder={m.searchPages()} bind:value={search} />
       </div>
-      <Button onclick={() => goto('/admin/pages/new')} variant="outline">{m.newPage()}</Button>
+      <Button onclick={() => goto('/admin/pages/new')} variant="outline"
+        ><FileUploadIcon class="mr-1.5 size-4" />{m.newPage()}</Button
+      >
     </div>
   </div>
   <Card>

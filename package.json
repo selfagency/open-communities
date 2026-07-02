@@ -42,7 +42,6 @@
     "posthog-node": "^5.38.5",
     "stopwords-iso": "^1.1.0",
     "string-strip-html": "^13.5.3",
-    "strip-inline-styles": "^1.0.0",
     "super-sitemap": "^2.0.3"
   },
   "devDependencies": {

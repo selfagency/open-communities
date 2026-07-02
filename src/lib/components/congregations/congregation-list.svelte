@@ -1,6 +1,7 @@
 <script lang="ts">
 import Fuzzy from '@leeoniya/ufuzzy';
 import CheckIcon from '@tabler/icons-svelte/icons/check';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
@@ -340,8 +341,12 @@ const pendingTable = $derived(
                             >
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
-                            <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button onclick={confirmAction} variant="outline">{m.approve()}</Button>
+                            <AlertDialog.Cancel type="button"
+                              ><XIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                            >
+                            <Button onclick={confirmAction} variant="outline"
+                              ><FileUploadIcon class="mr-1.5 size-4" />{m.approve()}</Button
+                            >
                           </AlertDialog.Footer>
                         </AlertDialog.Content>
                       </AlertDialog.Root>
@@ -364,7 +369,9 @@ const pendingTable = $derived(
                             >
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
-                            <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
+                            <AlertDialog.Cancel type="button"
+                              ><XIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                            >
                             <Button onclick={confirmAction} variant="destructive"
                               ><TrashIcon class="mr-1.5 size-4" />{m.reject()}</Button
                             >

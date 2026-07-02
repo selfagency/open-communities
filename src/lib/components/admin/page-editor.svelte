@@ -1,6 +1,8 @@
 <script lang="ts">
 import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
+import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import XIcon from '@tabler/icons-svelte/icons/x';
 
@@ -246,10 +248,7 @@ async function handleTranslate() {
     {/if}
   </div>
 
-  <div class="flex flex-wrap items-center gap-2">
-    <Button disabled={saveDisabled} type="submit" variant="outline">
-      {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
-    </Button>
+  <div class="flex flex-wrap items-center justify-between gap-2">
     <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
       {#if translateStatus === 'loading'}
         <LoadingIcon aria-hidden="true" class="mr-1.5 size-4 animate-spin" />
@@ -257,14 +256,22 @@ async function handleTranslate() {
         <CircleCheckIcon aria-hidden="true" class="mr-1.5 size-4 text-green-600" />
       {:else if translateStatus === 'error'}
         <CircleXIcon aria-hidden="true" class="mr-1.5 size-4 text-destructive" />
+      {:else if selectedLang !== 'en'}
+        <LanguageIcon class="mr-1.5 size-4" />
       {/if}
       Translate from English
     </Button>
     {#if translateStatus === 'error' && errMsg}
       <span class="text-destructive text-sm">{errMsg}</span>
     {/if}
-    <Button onclick={() => goto('/admin/pages')} type="button" variant="outline"
-      ><XIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}</Button
-    >
+    <div class="flex items-center gap-2">
+      <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">
+        <XIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}
+      </Button>
+      <Button disabled={saveDisabled} type="submit" variant="outline">
+        <FileUploadIcon class="mr-1.5 size-4" />
+        {saving ? m.pageEditorSaving() : 'Save'}
+      </Button>
+    </div>
   </div>
 </form>

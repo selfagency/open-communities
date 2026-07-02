@@ -1,8 +1,10 @@
 <script lang="ts">
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import XIcon from '@tabler/icons-svelte/icons/x';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
-import TrashIcon from '@tabler/icons-svelte/icons/trash';
-import UploadIcon from '@tabler/icons-svelte/icons/upload';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -107,7 +109,7 @@ function handleDelete() {
           <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={adminToggle} />
           <input name="admin" type="hidden" value={String(adminToggle)} />
         </div>
-        <Button type="submit" variant="outline"><UploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
+        <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
       </CardContent>
     </Card>
   </form>
@@ -129,7 +131,9 @@ function handleDelete() {
             >{m.editCongregation()}</Button
           >
           <form action="?/unlink" method="POST" use:enhance={handleUpdate}>
-            <Button type="submit" variant="outline">{m.unlinkFromCongregation()}</Button>
+            <Button type="submit" variant="outline"
+              ><FileUploadIcon class="mr-1.5 size-4" />{m.unlinkFromCongregation()}</Button
+            >
           </form>
         </div>
       </CardContent>
@@ -170,7 +174,9 @@ function handleDelete() {
     </CardHeader>
     <CardContent>
       <form action="?/resetPassword" method="POST" use:enhance={handleUpdate}>
-        <Button type="submit" variant="outline">{m.resetPasswordEmail()}</Button>
+        <Button type="submit" variant="outline"
+          ><FileUploadIcon class="mr-1.5 size-4" />{m.resetPasswordEmail()}</Button
+        >
       </form>
     </CardContent>
   </Card>
@@ -193,7 +199,7 @@ function handleDelete() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
             <form action="?/deleteAccount" method="POST" use:enhance={handleDelete}>
               <AlertDialogAction
                 class="bg-destructive text-destructive-foreground hover:bg-destructive/90"

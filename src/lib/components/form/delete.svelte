@@ -2,6 +2,7 @@
 /* region imports */
 import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import XIcon from '@tabler/icons-svelte/icons/x';
 
 import { isEmpty } from 'radashi';
 import { onMount } from 'svelte';
@@ -110,7 +111,7 @@ onMount(() => {
           </AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
+          <AlertDialog.Cancel type="button"><XIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel>
           <AlertDialog.Action
             onclick={(e) => {
               e.preventDefault();

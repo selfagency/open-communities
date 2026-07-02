@@ -32,9 +32,6 @@ importers:
       string-strip-html:
         specifier: ^13.5.3
         version: 13.5.3
-      strip-inline-styles:
-        specifier: ^1.0.0
-        version: 1.0.0
       super-sitemap:
         specifier: ^2.0.3
         version: 2.0.3
@@ -3714,10 +3711,6 @@ packages:
   strip-indent@3.0.0:
     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
     engines: {node: '>=8'}
-
-  strip-inline-styles@1.0.0:
-    resolution: {integrity: sha512-xlxp5O7TKg71kilxcY1AI/WAIgb1gEpHK8HSEqH8Viz4rfOpGra70Jo/HB7kUMhSO9KVcIOLzgrvoDljMLpGEw==}
-    engines: {node: '>=14.0.0'}
 
   strip-json-comments@2.0.1:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
@@ -7848,8 +7841,6 @@ snapshots:
   strip-indent@3.0.0:
     dependencies:
       min-indent: 1.0.1
-
-  strip-inline-styles@1.0.0: {}
 
   strip-json-comments@2.0.1: {}
 
