@@ -72,10 +72,9 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Restart Coolify service
-        env:
-          COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
-          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
-        run: |
-          curl --request POST "https://host.selfagency.dev/api/v1/services/${COOLIFY_UUID}/restart" \
-            --header "Authorization: Bearer ${COOLIFY_TOKEN}" \
-            --header "Content-Type: application/json"
+        uses: benbristow/coolify-deploy-action@v1
+        with:
+          token: ${{ secrets.COOLIFY_TOKEN }}
+          base_url: 'https://host.selfagency.dev'
+          application_uuid: ${{ secrets.COOLIFY_UUID }}
+          force: true

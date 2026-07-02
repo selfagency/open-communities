@@ -1,6 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
+    "coolify": {
+      "type": "remote",
+      "enabled": true,
+      "url": "https://host.selfagency.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:COOLIFY_HOST_TOKEN}"
+      }
+    },
     "posthog": {
       "type": "remote",
       "enabled": true,
