@@ -1,19 +1,19 @@
 <script lang="ts">
-import PlusIcon from '@tabler/icons-svelte/icons/plus';
-import { goto } from '$app/navigation';
-import { page } from '$app/state';
-import Tent from '$lib/assets/tent.svg?component';
-import { Button } from '$lib/components/ui/button';
-import { m } from '$lib/paraglide/messages';
-import { state as appState } from '$lib/stores';
-import Menu from './menu.svelte';
+  import PlusIcon from "@tabler/icons-svelte/icons/plus";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/state";
+  import Tent from "$lib/assets/tent.svg?component";
+  import { Button } from "$lib/components/ui/button";
+  import { m } from "$lib/paraglide/messages";
+  import { state as appState } from "$lib/stores";
+  import Menu from "./menu.svelte";
 
-const user = $derived(page.data.user);
-const isMobile = $derived(appState.isMobile);
+  const user = $derived(page.data.user);
+  const isMobile = $derived(appState.isMobile);
 </script>
 
 <nav
-  class="fixed top-0 left-0 z-60 flex h-18 w-screen min-w-max flex-row items-center justify-between space-x-2 bg-background p-4 shadow"
+  class="fixed top-0 left-0 z-60 flex h-18 w-screen min-w-max flex-row items-center justify-between space-x-2 bg-card p-4 shadow"
 >
   <div>
     <a class="flex flex-row items-center justify-start space-x-2" href="/">
@@ -32,8 +32,11 @@ const isMobile = $derived(appState.isMobile);
     <div class="flex items-center gap-3">
       <Button
         onclick={async () => {
-          if (user?.email) { await goto('/add'); }
-          else { await goto('/login?redirect=/add'); }
+          if (user?.email) {
+            await goto("/add");
+          } else {
+            await goto("/login?redirect=/add");
+          }
         }}
         variant="outline"
       >

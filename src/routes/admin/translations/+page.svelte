@@ -116,6 +116,8 @@ function setEditValue(key: string, locale: string, val: string) {
     editState[key] = {};
   }
   editState[key][locale] = val;
+  // Trigger reactivity — $state tracks top-level reassignment, not deep mutation
+  editState = { ...editState };
 }
 
 function resetEditState(key: string) {
