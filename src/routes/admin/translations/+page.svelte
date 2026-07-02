@@ -1,4 +1,5 @@
 <script lang="ts">
+import { createStateManager } from '@selfagency/stately';
 import AlertCircleIcon from '@tabler/icons-svelte/icons/alert-circle';
 import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
@@ -9,7 +10,6 @@ import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
-
 import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
 import { enhance } from '$app/forms';
@@ -38,6 +38,7 @@ import * as Pagination from '$lib/components/ui/pagination';
 import { Progress } from '$lib/components/ui/progress/index.js';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
+import { useEditStateStore } from '$lib/stately/translations';
 
 let { data } = $props();
 
@@ -105,25 +106,20 @@ let addKey = $state('');
 let addValue = $state('');
 
 // Per-key edit state: map of key -> { locale -> value }
-let editState = $state<Record<string, Record<string, string>>>({});
+// Uses Stately for reliable deep-mutation reactivity.
+const editStateManager = createStateManager();
+const editStateStore = useEditStateStore(editStateManager);
 
 function getEditValue(key: string, locale: string, original: string): string {
-  return editState[key]?.[locale] ?? original;
+  return editStateStore.getEditValue(key, locale, original);
 }
 
 function setEditValue(key: string, locale: string, val: string) {
-  if (!editState[key]) {
-    editState[key] = {};
-  }
-  editState[key][locale] = val;
-  // Trigger reactivity — $state tracks top-level reassignment, not deep mutation
-  editState = { ...editState };
+  editStateStore.setEditValue(key, locale, val);
 }
 
 function resetEditState(key: string) {
-  const next = { ...editState };
-  delete next[key];
-  editState = next;
+  editStateStore.resetEditState(key);
 }
 
 function buildEntries(key: string, entries: Array<{ locale: string; value: string; id?: string }>) {
@@ -132,14 +128,14 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
     seen.add(e.locale);
     return {
       locale: e.locale,
-      value: editState[key]?.[e.locale] ?? e.value,
+      value: editStateStore.entries[key]?.[e.locale] ?? e.value,
       id: e.id
     };
   });
 
-  // Append locales added via editState (e.g. from auto-translate) that
+  // Append locales added via editStateStore (e.g. from auto-translate) that
   // aren't in the original entries, so they get created on save
-  const edits = editState[key];
+  const edits = editStateStore.entries[key];
   if (edits) {
     for (const [locale, val] of Object.entries(edits)) {
       if (!seen.has(locale) && val) {
@@ -155,7 +151,7 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
 let translating = $state<Record<string, boolean>>({});
 
 function hasAlerts(key: string, entries: Array<{ locale: string; value: string }>): boolean {
-  const enValue = editState[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
+  const enValue = editStateStore.entries[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
   if (!enValue) {
     return false;
   }
@@ -163,7 +159,7 @@ function hasAlerts(key: string, entries: Array<{ locale: string; value: string }
     if (e.locale === 'en') {
       return false;
     }
-    const val = editState[key]?.[e.locale] ?? e.value;
+    const val = editStateStore.entries[key]?.[e.locale] ?? e.value;
     return !val || val === enValue;
   });
 }
