@@ -326,6 +326,16 @@ const pendingTable = $derived(
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
+                            <Button onclick={() => goto(editUrl(row.original.id))} size="icon" variant="ghost">
+                              <PencilIcon class="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>{m.editCongregation()}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
                             <AlertDialog.Root>
                               <AlertDialog.Trigger>
                                 <Button
