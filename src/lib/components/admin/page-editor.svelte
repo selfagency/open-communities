@@ -248,7 +248,7 @@ async function handleTranslate() {
     <Button disabled={saveDisabled} type="submit">
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
-    <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
+    <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="secondary">
       {#if translateStatus === 'loading'}
         <LoadingIcon aria-hidden="true" class="mr-1.5 size-4 animate-spin" />
       {:else if translateStatus === 'success'}
