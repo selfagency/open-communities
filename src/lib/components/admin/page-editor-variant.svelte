@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/car
 import { Input } from '$lib/components/ui/input';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
-import PellEditor from './pell-editor.svelte';
+import WysiEditor from './wysi-editor.svelte';
 
 interface Language {
   code: string;
@@ -50,7 +50,7 @@ let {
       <label class="text-sm font-bold block mb-2" for="var-content">
         {m.pageEditorContentLabel()}
       </label>
-      <PellEditor dir={language.code === 'he' ? 'rtl' : undefined} id="var-content" bind:value={variant.content} />
+      <WysiEditor dir={language.code === 'he' ? 'rtl' : undefined} id="var-content" bind:value={variant.content} />
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">

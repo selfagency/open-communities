@@ -1,5 +1,6 @@
 <script lang="ts">
 import AlertCircleIcon from '@tabler/icons-svelte/icons/alert-circle';
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
 import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
@@ -8,7 +9,6 @@ import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
-import XIcon from '@tabler/icons-svelte/icons/x';
 
 import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
@@ -507,7 +507,7 @@ const deployProgress = $derived(
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
+              <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
               <form action="?/redeploy" method="POST" onsubmit={startDeploy} use:enhance={handleEnhance}>
                 <AlertDialogAction
                   class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -545,7 +545,7 @@ const deployProgress = $derived(
           </div>
           <div class="flex justify-end gap-2">
             <Button onclick={() => (showAddDialog = false)} variant="outline"
-              ><XIcon class="mr-1.5 size-4" />Cancel</Button
+              ><CancelIcon class="mr-1.5 size-4" />Cancel</Button
             >
             <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Create</Button>
           </div>
@@ -637,7 +637,7 @@ const deployProgress = $derived(
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
+                        <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
                         <form action="?/delete" method="POST" use:enhance={() => handleDelete(key)}>
                           <input name="key" type="hidden" value={key} />
                           <AlertDialogAction
@@ -709,7 +709,7 @@ const deployProgress = $derived(
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
+        <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
         <form action="?/delete" method="POST" use:enhance={handleBulkDelete}>
           <input name="key" type="hidden" value={deleteKey} />
           <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" type="submit"

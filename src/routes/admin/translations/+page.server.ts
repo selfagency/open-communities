@@ -101,9 +101,10 @@ async function translateLocale(text: string, locale: string, apiUrl: string, ltK
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(
-      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`
-    );
+    const errMsg =
+      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`;
+    log.error('LibreTranslate request failed', { locale, status: res.status, error: errMsg });
+    throw new Error(errMsg);
   }
 
   const data = (await res.json()) as { translatedText: string };
@@ -341,16 +342,23 @@ export const actions = {
     const ltUrl = process.env.LT_API_URL;
     const ltKey = process.env.LT_API_KEY;
     if (!ltUrl) {
+      log.error('LibreTranslate not configured — LT_API_URL is missing');
       return fail(500, { error: 'LibreTranslate is not configured' });
     }
 
     const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
+    log.info('Translating', { textLength: text.length, locales, apiUrl, hasKey: !!ltKey });
 
     const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
 
     const { translations, errors } = processTranslationResults(rawResults);
     if (translations.length === 0) {
+      log.error('All translations failed', { errors });
       return fail(502, { error: errors[0] ?? 'All translations failed' });
+    }
+
+    if (errors.length > 0) {
+      log.warn('Partial translation failures', { errors });
     }
 
     return { success: true, translations, ...(errors.length > 0 ? { errors } : {}) };

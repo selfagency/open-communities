@@ -1,6 +1,6 @@
 <script lang="ts">
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
-import XIcon from '@tabler/icons-svelte/icons/x';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
@@ -42,7 +42,7 @@ let open = $state(false);
             </AlertDialog.Description>
           </AlertDialog.Header>
           <AlertDialog.Footer>
-            <AlertDialog.Cancel type="button"><XIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel>
+            <AlertDialog.Cancel type="button"><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel>
             <AlertDialog.Action
               class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleting}

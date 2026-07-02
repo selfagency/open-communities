@@ -6,7 +6,7 @@ import { Input } from '$lib/components/ui/input';
 import { Switch } from '$lib/components/ui/switch';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
-import PellEditor from './pell-editor.svelte';
+import WysiEditor from './wysi-editor.svelte';
 
 let {
   title = $bindable(''),
@@ -104,7 +104,7 @@ $effect(() => {
     <div class="space-y-2">
       <label class="text-sm font-bold block mb-2" for="content">{m.pageEditorContentLabel()}</label>
       <input name="content" type="hidden" value={content} />
-      <PellEditor id="page-content" bind:value={content} />
+      <WysiEditor id="page-content" bind:value={content} />
     </div>
   </CardContent>
 </Card>

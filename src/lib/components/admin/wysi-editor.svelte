@@ -1,8 +1,6 @@
 <script lang="ts">
-import pell from 'pell';
 import { stripHtml } from 'string-strip-html';
 import { onMount } from 'svelte';
-import 'pell/dist/pell.min.css';
 
 const FONT_STYLE_KEYS = ['font-family', 'font-size', 'font-weight', 'font-style', 'color'];
 
@@ -21,15 +19,13 @@ function stripFontStyles(html: string): string {
 }
 
 function sanitizeHtml(html: string): string {
-  // 1. Strip <font> tags (unwrap content, remove the tags themselves)
   const noFontTags = stripHtml(html, { onlyStripTags: ['font'] }).result;
-  // 2. Remove font-related inline CSS properties from any remaining elements
   return stripFontStyles(noFontTags);
 }
 
 let {
   value = $bindable(''),
-  id = 'pell-editor',
+  id = 'wysi-editor',
   dir
 }: {
   value: string;
@@ -38,82 +34,63 @@ let {
 } = $props();
 
 // biome-ignore lint/suspicious/noUnassignedVariables: assigned via Svelte bind:this
-let editorEl: HTMLDivElement;
-let editor: ReturnType<typeof pell.init>;
+let textareaEl: HTMLTextAreaElement;
 
 onMount(() => {
-  if (!editorEl) {
+  if (!textareaEl) {
     return;
   }
 
-  editor = pell.init({
-    element: editorEl,
-    defaultParagraphSeparator: 'p',
-    styleWithCSS: false,
+  Wysi({
+    el: textareaEl,
+    height: 300,
+    autoGrow: true,
     onChange: (html: string) => {
       value = sanitizeHtml(html);
-    },
-    actions: [
-      'bold',
-      'italic',
-      'underline',
-      'strikethrough',
-      'heading1',
-      'heading2',
-      'paragraph',
-      'quote',
-      'olist',
-      'ulist',
-      'code',
-      'line',
-      'link'
-    ]
+    }
   });
 
   if (value) {
-    editor.content.innerHTML = sanitizeHtml(value);
+    textareaEl.value = sanitizeHtml(value);
   }
 });
 </script>
 
-<div class="pell-wrapper" data-editor-id={id} class:rtl={dir === 'rtl'}>
-  <div bind:this={editorEl}></div>
+<div class="wysi-wrapper" data-editor-id={id} class:rtl={dir === 'rtl'}>
+  <textarea {id} bind:this={textareaEl}>{value}</textarea>
 </div>
 
 <style>
-.pell-wrapper {
+.wysi-wrapper {
   min-height: 300px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
 }
-.pell-wrapper :global(.pell-content) {
-  box-sizing: border-box;
+.wysi-wrapper :global(.wysi-toolbar) {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.wysi-wrapper :global(.wysi-editor) {
   min-height: 280px;
   padding: 1rem;
   outline: none;
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
 }
-.pell-wrapper.rtl :global(.pell-content) {
+.wysi-wrapper.rtl :global(.wysi-editor) {
   direction: rtl;
 }
-.pell-wrapper :global(.pell-content) {
-  height: auto;
-}
-.pell-wrapper :global(.pell-actionbar) {
-  background-color: var(--background);
-  border-bottom: 1px solid var(--border);
-}
-.pell-wrapper :global(.pell-button) {
+.wysi-wrapper :global(.wysi-btn) {
   padding: 0.5rem 0.6rem;
   color: var(--foreground);
   cursor: pointer;
   background-color: var(--background);
   border: none;
 }
-.pell-wrapper :global(.pell-button:hover) {
+.wysi-wrapper :global(.wysi-btn:hover) {
   background-color: var(--accent);
 }
-.pell-wrapper :global(.pell-button-selected) {
+.wysi-wrapper :global(.wysi-btn.active) {
   background-color: var(--accent);
 }
 </style>

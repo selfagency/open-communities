@@ -17,9 +17,6 @@ importers:
       isomorphic-dompurify:
         specifier: ^3.18.0
         version: 3.18.0
-      pell:
-        specifier: ^1.0.6
-        version: 1.0.6
       posthog-js:
         specifier: ^1.393.5
         version: 1.393.5
@@ -3274,9 +3271,6 @@ packages:
   pbf@5.1.0:
     resolution: {integrity: sha512-Wv0yo0+uZepnoNEKsquhar1F18LogB8oeEikIhUXG16udbiXG7JecHGySwoo6kuMgjmbQYzdrTZlO+/K9t8eZg==}
     hasBin: true
-
-  pell@1.0.6:
-    resolution: {integrity: sha512-wuackvgjFCHmVABy7ACSmY2u53w+TlYFrVL2hN6V3rGL/iWWwVXMw2uphpZSXNnqFQTI8nMpD3UNNX8+R4BAYw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -7322,8 +7316,6 @@ snapshots:
   pbf@5.1.0:
     dependencies:
       resolve-protobuf-schema: 2.1.0
-
-  pell@1.0.6: {}
 
   picocolors@1.1.1: {}
 

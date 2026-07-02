@@ -1,7 +1,7 @@
 <script lang="ts">
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
-import XIcon from '@tabler/icons-svelte/icons/x';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 
@@ -199,7 +199,7 @@ function handleDelete() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel><XIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
+            <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
             <form action="?/deleteAccount" method="POST" use:enhance={handleDelete}>
               <AlertDialogAction
                 class="bg-destructive text-destructive-foreground hover:bg-destructive/90"

@@ -37,7 +37,6 @@
     "@math.gl/types": "^4.1.0",
     "@selfagency/stately": "^0.1.5",
     "isomorphic-dompurify": "^3.18.0",
-    "pell": "^1.0.6",
     "posthog-js": "^1.393.5",
     "posthog-node": "^5.38.5",
     "stopwords-iso": "^1.1.0",

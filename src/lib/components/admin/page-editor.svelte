@@ -1,10 +1,10 @@
 <script lang="ts">
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import LanguageIcon from '@tabler/icons-svelte/icons/language';
 import LoadingIcon from '@tabler/icons-svelte/icons/loader';
-import XIcon from '@tabler/icons-svelte/icons/x';
 
 import { isEmpty } from 'radashi';
 import { enhance } from '$app/forms';
@@ -266,7 +266,7 @@ async function handleTranslate() {
     {/if}
     <div class="flex items-center gap-2">
       <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">
-        <XIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}
+        <CancelIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}
       </Button>
       <Button disabled={saveDisabled} type="submit" variant="outline">
         <FileUploadIcon class="mr-1.5 size-4" />

@@ -1,7 +1,7 @@
 <script lang="ts">
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
-import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { m } from '$lib/paraglide/messages';

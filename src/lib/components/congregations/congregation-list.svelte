@@ -1,12 +1,13 @@
 <script lang="ts">
 import Fuzzy from '@leeoniya/ufuzzy';
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import CheckIcon from '@tabler/icons-svelte/icons/check';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
-import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
 import XIcon from '@tabler/icons-svelte/icons/x';
+import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
 
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
@@ -342,7 +343,7 @@ const pendingTable = $derived(
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
                             <AlertDialog.Cancel type="button"
-                              ><XIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                              ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
                             >
                             <Button onclick={confirmAction} variant="outline"
                               ><FileUploadIcon class="mr-1.5 size-4" />{m.approve()}</Button
@@ -370,7 +371,7 @@ const pendingTable = $derived(
                           </AlertDialog.Header>
                           <AlertDialog.Footer>
                             <AlertDialog.Cancel type="button"
-                              ><XIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                              ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
                             >
                             <Button onclick={confirmAction} variant="destructive"
                               ><TrashIcon class="mr-1.5 size-4" />{m.reject()}</Button
