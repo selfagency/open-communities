@@ -32,10 +32,12 @@ import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
 
+const ALL_LOCALES = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
+
 // svelte-ignore state_referenced_locally
-const locales = (
-  data.locales.includes('en') ? ['en', ...data.locales.filter((locale) => locale !== 'en')] : data.locales
-) as string[];
+let locales = $derived(
+  (data.locales.length > 0 ? [...new Set([...ALL_LOCALES, ...data.locales])] : ALL_LOCALES) as string[]
+);
 
 // Search
 // svelte-ignore state_referenced_locally
@@ -541,7 +543,7 @@ const statusLabels: Record<string, string> = {
                   disabled={translating[key] || !enEntry?.value}
                   onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
                   type="button"
-                  variant="default"
+                  variant="outline"
                 >
                   {#if translating[key]}
                     <svg
