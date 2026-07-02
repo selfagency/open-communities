@@ -66,11 +66,29 @@ jobs:
           tags: ghcr.io/${{ github.repository }}-libretranslate:latest
           push: true
 
-      - name: Promote commit image to latest
+      - name: Resolve commit SHA
+        id: sha
         run: |
-          COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
-          docker pull ghcr.io/${{ github.repository }}:$COMMIT_SHA
-          docker tag ghcr.io/${{ github.repository }}:$COMMIT_SHA ghcr.io/${{ github.repository }}:latest
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build or pull app image
+        run: |
+          SHA="${{ steps.sha.outputs.sha }}"
+          IMAGE="ghcr.io/${{ github.repository }}:$SHA"
+          if docker pull "$IMAGE" 2>/dev/null; then
+            echo "Image exists: $IMAGE"
+          else
+            echo "Building image: $IMAGE"
+            docker build -f docker/Dockerfile \
+              --build-arg COMMIT_SHA="$SHA" \
+              -t "$IMAGE" .
+            docker push "$IMAGE"
+          fi
+          docker tag "$IMAGE" ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:latest
 
       - name: Restart Coolify service
