@@ -175,9 +175,7 @@ function handleDelete() {
     </CardHeader>
     <CardContent>
       <form action="?/resetPassword" method="POST" use:enhance={handleUpdate}>
-        <Button type="submit" variant="outline"
-          ><UserKeyIcon class="mr-1.5 size-4" />{m.resetPasswordEmail()}</Button
-        >
+        <Button type="submit" variant="outline"><UserKeyIcon class="mr-1.5 size-4" />{m.resetPasswordEmail()}</Button>
       </form>
     </CardContent>
   </Card>

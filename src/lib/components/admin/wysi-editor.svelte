@@ -1,7 +1,7 @@
 <script lang="ts">
 import { stripHtml } from 'string-strip-html';
-import { browser } from '$app/environment';
 import { onMount } from 'svelte';
+import { browser } from '$app/environment';
 
 const FONT_STYLE_KEYS = ['font-family', 'font-size', 'font-weight', 'font-style', 'color'];
 
@@ -38,7 +38,7 @@ let {
 let textareaEl: HTMLTextAreaElement;
 
 onMount(() => {
-  if (!textareaEl || !browser) {
+  if (!(textareaEl && browser)) {
     return;
   }
 

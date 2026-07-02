@@ -326,41 +326,38 @@ const pendingTable = $derived(
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
-                            <Button onclick={() => goto(editUrl(row.original.id))} size="icon" variant="ghost">
-                              <PencilIcon class="size-4" />
-                            </Button>
+                            <AlertDialog.Root>
+                              <AlertDialog.Trigger>
+                                <Button
+                                  class="size-8"
+                                  onclick={() => { pendingId = row.original.id; pendingAction = 'reject'; }}
+                                  size="icon"
+                                  variant="destructive"
+                                >
+                                  <XIcon class="size-4" />
+                                </Button>
+                              </AlertDialog.Trigger>
+                              <AlertDialog.Content>
+                                <AlertDialog.Header>
+                                  <AlertDialog.Title>{m.rejectCongregation()}</AlertDialog.Title>
+                                  <AlertDialog.Description
+                                    >{m.rejectConfirmation({ name: row.original.name })}</AlertDialog.Description
+                                  >
+                                </AlertDialog.Header>
+                                <AlertDialog.Footer>
+                                  <AlertDialog.Cancel type="button"
+                                    ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                                  >
+                                  <Button onclick={confirmAction} variant="destructive"
+                                    ><TrashIcon class="mr-1.5 size-4" />{m.reject()}</Button
+                                  >
+                                </AlertDialog.Footer>
+                              </AlertDialog.Content>
+                            </AlertDialog.Root>
                           </TooltipTrigger>
-                          <TooltipContent>{m.editCongregation()}</TooltipContent>
+                          <TooltipContent>{m.reject()}</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <AlertDialog.Root>
-                        <AlertDialog.Trigger>
-                          <Button
-                            class="size-8"
-                            onclick={() => { pendingId = row.original.id; pendingAction = 'reject'; }}
-                            size="icon"
-                            variant="destructive"
-                          >
-                            <XIcon class="size-4" />
-                          </Button>
-                        </AlertDialog.Trigger>
-                        <AlertDialog.Content>
-                          <AlertDialog.Header>
-                            <AlertDialog.Title>{m.rejectCongregation()}</AlertDialog.Title>
-                            <AlertDialog.Description
-                              >{m.rejectConfirmation({ name: row.original.name })}</AlertDialog.Description
-                            >
-                          </AlertDialog.Header>
-                          <AlertDialog.Footer>
-                            <AlertDialog.Cancel type="button"
-                              ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
-                            >
-                            <Button onclick={confirmAction} variant="destructive"
-                              ><TrashIcon class="mr-1.5 size-4" />{m.reject()}</Button
-                            >
-                          </AlertDialog.Footer>
-                        </AlertDialog.Content>
-                      </AlertDialog.Root>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
@@ -393,7 +390,7 @@ const pendingTable = $derived(
                               </AlertDialog.Content>
                             </AlertDialog.Root>
                           </TooltipTrigger>
-                          <TooltipContent>{m.approveCongregation()}</TooltipContent>
+                          <TooltipContent>{m.approve()}</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </div>
