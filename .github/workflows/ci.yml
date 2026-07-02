@@ -24,7 +24,7 @@ env:
 jobs:
   lint-and-typecheck:
     name: Build & typecheck & lint
-    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -184,7 +184,7 @@ jobs:
         run: exit 1
 
       - name: Fallow analysis with coverage
-        if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
         continue-on-error: true
         uses: fallow-rs/fallow@de03f6ffd28d2d9cc487c31afd39bbc34d0d6d3d # v2
         with:
