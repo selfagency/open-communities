@@ -49,7 +49,7 @@ if (!TOKEN) {
 
 async function fetchRecords() {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30_000);
+  const timeout = setTimeout(() => controller.abort(), 10_000);
   try {
     const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=1000`, {
       headers: { authorization: `Bearer ${TOKEN}` },
