@@ -249,20 +249,22 @@ async function handleTranslate() {
   </div>
 
   <div class="flex flex-wrap items-center justify-between gap-2">
-    <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
-      {#if translateStatus === 'loading'}
-        <LoadingIcon aria-hidden="true" class="mr-1.5 size-4 animate-spin" />
-      {:else if translateStatus === 'success'}
-        <CircleCheckIcon aria-hidden="true" class="mr-1.5 size-4 text-green-600" />
-      {:else if translateStatus === 'error'}
-        <CircleXIcon aria-hidden="true" class="mr-1.5 size-4 text-destructive" />
-      {:else if selectedLang !== 'en'}
-        <LanguageIcon class="mr-1.5 size-4" />
+    {#if page?.id}
+      <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
+        {#if translateStatus === 'loading'}
+          <LoadingIcon aria-hidden="true" class="mr-1.5 size-4 animate-spin" />
+        {:else if translateStatus === 'success'}
+          <CircleCheckIcon aria-hidden="true" class="mr-1.5 size-4 text-green-600" />
+        {:else if translateStatus === 'error'}
+          <CircleXIcon aria-hidden="true" class="mr-1.5 size-4 text-destructive" />
+        {:else if selectedLang !== 'en'}
+          <LanguageIcon class="mr-1.5 size-4" />
+        {/if}
+        Translate from English
+      </Button>
+      {#if translateStatus === 'error' && errMsg}
+        <span class="text-destructive text-sm">{errMsg}</span>
       {/if}
-      Translate from English
-    </Button>
-    {#if translateStatus === 'error' && errMsg}
-      <span class="text-destructive text-sm">{errMsg}</span>
     {/if}
     <div class="flex items-center gap-2">
       <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">
