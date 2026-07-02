@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   workflow_run:
-    workflows: ['CI']
+    workflows: ["CI"]
     types:
       - completed
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  build_cap:
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
@@ -21,10 +21,8 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: '24'
+      - name: Checkout repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -32,20 +30,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.CONTAINER_TOKEN }}
-
-      - name: Deploy PB hooks to PocketHost
-        env:
-          PHIO_USERNAME: ${{ secrets.POCKETHOST_EMAIL }}
-          PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
-          PHIO_SSH_KEY: ${{ secrets.PHIO_SSH_KEY }}
-        run: |
-          npm install -g phio tsx
-          PHIO_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/phio-nodejs"
-          mkdir -p "$PHIO_DIR"
-          echo "$PHIO_SSH_KEY" > "$PHIO_DIR/phio_deploy_ed25519"
-          chmod 600 "$PHIO_DIR/phio_deploy_ed25519"
-          ssh-keygen -y -f "$PHIO_DIR/phio_deploy_ed25519" > "$PHIO_DIR/phio_deploy_ed25519.pub"
-          phio deploy -v -e pb_schema.json
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
@@ -58,6 +42,29 @@ jobs:
           tags: ghcr.io/${{ github.repository }}-cap:latest
           push: true
 
+  build_lt:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    environment: Production
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
       - name: Build and push libretranslate image
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
@@ -65,6 +72,29 @@ jobs:
           file: docker/libretranslate.Dockerfile
           tags: ghcr.io/${{ github.repository }}-libretranslate:latest
           push: true
+
+  build_app:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    environment: Production
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Resolve commit SHA
         id: sha
@@ -91,10 +121,46 @@ jobs:
           docker tag "$IMAGE" ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:latest
 
+  pb_hooks:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Deploy PB hooks to PocketHost
+        env:
+          PHIO_USERNAME: ${{ secrets.POCKETHOST_EMAIL }}
+          PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
+          PHIO_SSH_KEY: ${{ secrets.PHIO_SSH_KEY }}
+        run: |
+          npm install -g phio tsx
+          PHIO_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/phio-nodejs"
+          mkdir -p "$PHIO_DIR"
+          echo "$PHIO_SSH_KEY" > "$PHIO_DIR/phio_deploy_ed25519"
+          chmod 600 "$PHIO_DIR/phio_deploy_ed25519"
+          ssh-keygen -y -f "$PHIO_DIR/phio_deploy_ed25519" > "$PHIO_DIR/phio_deploy_ed25519.pub"
+          phio deploy -v -e pb_schema.json
+
+  deploy:
+    needs:
+      - build_cap
+      - build_lt
+      - build_app
+      - pb_hooks
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    env:
+      UUID: ${{ secrets.COOLIFY_UUID }}
+      TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+    steps:
       - name: Restart Coolify service
-        uses: benbristow/coolify-deploy-action@v1
-        with:
-          token: ${{ secrets.COOLIFY_TOKEN }}
-          base_url: 'https://host.selfagency.dev'
-          application_uuid: ${{ secrets.COOLIFY_UUID }}
-          force: true
+        run: |
+          curl -X GET "https://host.selfagency.dev/api/v1/services/${{ env.UUID }}/restart" \
+            -H "Authorization: Bearer ${{ env.TOKEN }}"
