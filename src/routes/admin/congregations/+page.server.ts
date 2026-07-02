@@ -55,7 +55,9 @@ export const load: PageServerLoad = async ({ locals }) => {
   ]);
 
   // Batch-fetch owner details for all unique owner IDs
-  const ownerIds = [...new Set([...active, ...pending].map((c) => (c as CongView).owner).filter(Boolean))];
+  const ownerIds = [
+    ...new Set([...active, ...pending].map((c) => (c as Record<string, unknown>).owner as string).filter(Boolean))
+  ];
   const users = new Map<string, { email: string; id: string; name: string }>();
   if (ownerIds.length > 0) {
     const ownerFilter = ownerIds.map((id) => `id = '${id}'`).join(' || ');
@@ -73,10 +75,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   return {
     congregations: [
-      ...active.map((c) => mapCong(c as unknown as CongView, users)),
-      ...pending.map((c) => mapCong(c as unknown as CongView, users))
+      ...active.map((c) => mapCong(c as unknown as Record<string, unknown> as CongView, users)),
+      ...pending.map((c) => mapCong(c as unknown as Record<string, unknown> as CongView, users))
     ],
     // fallow-ignore-next-line unused-load-data-key -- consumed by CongregationList component
-    pending: pending.map((c) => mapCong(c as unknown as CongView, users))
+    pending: pending.map((c) => mapCong(c as unknown as Record<string, unknown> as CongView, users))
   };
 };
