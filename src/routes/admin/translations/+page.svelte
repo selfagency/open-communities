@@ -110,8 +110,13 @@ let addValue = $state('');
 const editStateManager = createStateManager();
 const editStateStore = useEditStateStore(editStateManager);
 
+// $derived wrapper so Svelte 5's compiler tracks the Stately store dependency.
+// Without this, function calls like getEditValue() are invisible to the compiler
+// and the template never re-evaluates when translations arrive.
+let editEntries = $derived($editStateStore.entries);
+
 function getEditValue(key: string, locale: string, original: string): string {
-  return editStateStore.getEditValue(key, locale, original);
+  return editEntries[key]?.[locale] ?? original;
 }
 
 function setEditValue(key: string, locale: string, val: string) {
@@ -128,14 +133,14 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
     seen.add(e.locale);
     return {
       locale: e.locale,
-      value: editStateStore.entries[key]?.[e.locale] ?? e.value,
+      value: editEntries[key]?.[e.locale] ?? e.value,
       id: e.id
     };
   });
 
-  // Append locales added via editStateStore (e.g. from auto-translate) that
+  // Append locales added via editEntries (e.g. from auto-translate) that
   // aren't in the original entries, so they get created on save
-  const edits = editStateStore.entries[key];
+  const edits = editEntries[key];
   if (edits) {
     for (const [locale, val] of Object.entries(edits)) {
       if (!seen.has(locale) && val) {
@@ -150,8 +155,12 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
 // Auto-translate state
 let translating = $state<Record<string, boolean>>({});
 
-function hasAlerts(key: string, entries: Array<{ locale: string; value: string }>): boolean {
-  const enValue = editStateStore.entries[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
+function hasAlerts(
+  key: string,
+  entries: Array<{ locale: string; value: string }>,
+  entriesMap: Record<string, Record<string, string>>
+): boolean {
+  const enValue = entriesMap[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
   if (!enValue) {
     return false;
   }
@@ -159,7 +168,7 @@ function hasAlerts(key: string, entries: Array<{ locale: string; value: string }
     if (e.locale === 'en') {
       return false;
     }
-    const val = editStateStore.entries[key]?.[e.locale] ?? e.value;
+    const val = entriesMap[key]?.[e.locale] ?? e.value;
     return !val || val === enValue;
   });
 }
@@ -567,7 +576,7 @@ const deployProgress = $derived(
             <span class="flex items-start gap-6 min-w-0 flex-1">
               <span class="font-mono text-sm font-medium leading-6 shrink-0 w-48 truncate">
                 {key}
-                {#if hasAlerts(key, entries)}
+                {#if hasAlerts(key, entries, editEntries)}
                   <AlertCircleIcon class="inline size-4 text-amber-500 align-middle -mt-0.5 ml-1" />
                 {/if}
               </span>
@@ -598,7 +607,7 @@ const deployProgress = $derived(
                     placeholder="—"
                     rows={1}
                     style={locale === 'he' ? 'direction: rtl' : undefined}
-                    value={getEditValue(key, locale, entry?.value ?? '')}
+                    value={editEntries[key]?.[locale] ?? entry?.value ?? ''}
                   />
                 </div>
               {/each}
