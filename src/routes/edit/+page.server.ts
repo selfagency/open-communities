@@ -39,44 +39,41 @@ export const load = async ({ fetch, locals, url }) => {
   const { api, captureException, validate } = locals;
   const client = api?.authStore?.record;
 
+  if (!client?.id) {
+    redirect(302, '/login');
+  }
+
   try {
-    if (client?.id) {
-      const id = client?.admin ? url.searchParams.get('id') : client.congregation;
+    const id = client?.admin ? url.searchParams.get('id') : client.congregation;
 
-      const congregation = cleanResponse(
-        await api.collection('congregationMeta').getFirstListItem(api.filter('id={:id}', { id }), { fetch })
-      ) as unknown as RecordWithId;
+    const congregation = cleanResponse(
+      await api.collection('congregationMeta').getFirstListItem(api.filter('id={:id}', { id }), { fetch })
+    ) as unknown as RecordWithId;
 
-      const location = congregation.location as LocationMeta;
+    const location = congregation.location as LocationMeta;
 
-      return {
-        congregation,
-        form: {
-          default: await validate(
-            cleanResponse({
-              ...congregation,
-              location: {
-                city: location.city?.id,
-                country: location.country?.id,
-                state: location.state?.id
-              }
-            }),
-            defaultSchema
-          ),
-          delete: await validate({ id }, deleteSchema)
-        }
-      };
-    }
-    throw new Error('403');
-  } catch (error) {
-    if ((error as Error).message === '403') {
-      redirect(302, '/login');
-    } else {
-      if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+    return {
+      congregation,
+      form: {
+        default: await validate(
+          cleanResponse({
+            ...congregation,
+            location: {
+              city: location.city?.id,
+              country: location.country?.id,
+              state: location.state?.id
+            }
+          }),
+          defaultSchema
+        ),
+        delete: await validate({ id }, deleteSchema)
       }
-      throwAsHttpError(error as { message?: string; status?: number });
+    };
+  } catch (error) {
+    if (isFunction(captureException)) {
+      await captureException(error, client?.id);
     }
+    throwAsHttpError(error as { message?: string; status?: number });
   }
 };
 
@@ -100,9 +97,7 @@ export const actions = {
 
     try {
       if (!client?.admin && client?.congregation !== data.id) {
-        const error = new Error('Forbidden') as ClientResponseError;
-        error.status = 403;
-        throw error;
+        return fail(403, { form, error: 'Forbidden' });
       }
 
       if (!form.valid) {
@@ -179,9 +174,7 @@ export const actions = {
 
     try {
       if (!client?.admin && client?.congregation !== data.id) {
-        const error = new Error('Forbidden') as ClientResponseError;
-        error.status = 403;
-        throw error;
+        return fail(403, { form, error: 'Forbidden' });
       }
 
       if (!form.valid) {

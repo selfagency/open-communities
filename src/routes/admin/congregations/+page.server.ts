@@ -11,26 +11,37 @@ interface CongView {
   visible: boolean;
 }
 
-function mapCong(c: CongView, users: Map<string, { email: string; id: string; name: string }>) {
-  let loc: { city?: { name: string }; state?: { name: string; code: string }; country?: { code: string } } = {};
+function parseLocation(location: string): {
+  city?: { name: string };
+  state?: { name: string; code: string };
+  country?: { code: string };
+} {
   try {
-    loc = JSON.parse(c.location) as typeof loc;
+    return JSON.parse(location) as {
+      city?: { name: string };
+      state?: { name: string; code: string };
+      country?: { code: string };
+    };
   } catch {
-    // ignore
+    return {};
   }
+}
+
+function mapCong(c: CongView, users: Map<string, { email: string; id: string; name: string }>) {
+  const loc = parseLocation(c.location);
   const ownerData = c.owner ? users.get(c.owner) : undefined;
   return {
-    id: c.id as string,
-    name: c.name as string,
-    denomination: c.denomination as string,
-    visible: c.visible as boolean,
+    id: c.id,
+    name: c.name,
+    denomination: c.denomination,
+    visible: c.visible,
     city: loc?.city?.name ?? '',
     state: loc?.state?.name ?? '',
     countryCode: loc?.country?.code ?? '',
     owner: ownerData?.email ?? '',
     ownerId: ownerData?.id ?? '',
     ownerName: ownerData?.name ?? '',
-    created: c.created as string
+    created: c.created
   };
 }
 
@@ -60,10 +71,15 @@ export const load: PageServerLoad = async ({ locals }) => {
   ];
   const users = new Map<string, { email: string; id: string; name: string }>();
   if (ownerIds.length > 0) {
-    const ownerFilter = ownerIds.map((id) => `id = '${id}'`).join(' || ');
+    const params: Record<string, string> = {};
+    const clauses = ownerIds.map((id, i) => {
+      const key = `id${i}`;
+      params[key] = id;
+      return `id = {:${key}}`;
+    });
     const ownerRecords = await withRetry(() =>
       client.collection('users').getFullList({
-        filter: ownerFilter,
+        filter: client.filter(clauses.join(' || '), params),
         fields: 'id,email,name',
         requestKey: 'admin-cong-owners'
       })
@@ -75,10 +91,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   return {
     congregations: [
-      ...active.map((c) => mapCong(c as unknown as Record<string, unknown> as CongView, users)),
-      ...pending.map((c) => mapCong(c as unknown as Record<string, unknown> as CongView, users))
+      ...active.map((c) => mapCong(c as unknown as CongView, users)),
+      ...pending.map((c) => mapCong(c as unknown as CongView, users))
     ],
     // fallow-ignore-next-line unused-load-data-key -- consumed by CongregationList component
-    pending: pending.map((c) => mapCong(c as unknown as Record<string, unknown> as CongView, users))
+    pending: pending.map((c) => mapCong(c as unknown as CongView, users))
   };
 };

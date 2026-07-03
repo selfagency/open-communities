@@ -1,8 +1,10 @@
 import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod/v4';
+import { env } from '$env/dynamic/private';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import { rateLimitByUser } from '$lib/server/rate-limit';
+import { processTranslationResults, translateLocale } from '$lib/server/translate';
 import type { Actions, PageServerLoad } from './$types';
 
 const PER_PAGE = 20;
@@ -81,36 +83,6 @@ function getAdminClient(locals: App.Locals) {
   return client;
 }
 
-interface TranslateResult {
-  locale: string;
-  translatedText: string;
-}
-
-async function translateLocale(text: string, locale: string, apiUrl: string, ltKey?: string): Promise<TranslateResult> {
-  const res = await fetch(`${apiUrl}/translate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      q: text,
-      source: 'en',
-      target: locale,
-      format: 'text',
-      ...(ltKey ? { api_key: ltKey } : {})
-    })
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const errMsg =
-      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`;
-    log.error('LibreTranslate request failed', { locale, status: res.status, error: errMsg });
-    throw new Error(errMsg);
-  }
-
-  const data = (await res.json()) as { translatedText: string };
-  return { locale, translatedText: data.translatedText };
-}
-
 async function pollNewRunId(
   owner: string,
   repo: string,
@@ -170,26 +142,6 @@ async function triggerDeploy(
   }
 
   return { deploymentUuid: String(runId) };
-}
-
-function processTranslationResults(rawResults: PromiseSettledResult<TranslateResult>[]): {
-  translations: TranslateResult[];
-  errors: string[];
-} {
-  const translations: TranslateResult[] = [];
-  const errors: string[] = [];
-
-  for (const result of rawResults) {
-    if (result.status === 'fulfilled') {
-      translations.push(result.value);
-    } else {
-      const msg = result.reason?.message ?? 'Unknown error';
-      errors.push(msg);
-      log.error('Translation failed', { error: msg });
-    }
-  }
-
-  return { translations, errors };
 }
 
 export const actions = {
@@ -305,7 +257,7 @@ export const actions = {
   redeploy: async ({ locals }) => {
     const client = getAdminClient(locals);
     rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
-    const ghToken = process.env.GH_DEPLOY_TOKEN;
+    const ghToken = env.GH_DEPLOY_TOKEN;
     if (!ghToken) {
       return fail(500, { error: 'Deploy is not configured' });
     }
@@ -339,8 +291,8 @@ export const actions = {
       return fail(400, { error: 'Invalid locales JSON' });
     }
 
-    const ltUrl = process.env.LT_API_URL;
-    const ltKey = process.env.LT_API_KEY;
+    const ltUrl = env.LT_API_URL;
+    const ltKey = env.LT_API_KEY;
     if (!ltUrl) {
       log.error('LibreTranslate not configured — LT_API_URL is missing');
       return fail(500, { error: 'LibreTranslate is not configured' });
@@ -373,7 +325,7 @@ export const actions = {
       return fail(400, { error: 'Missing run ID' });
     }
 
-    const ghToken = process.env.GH_DEPLOY_TOKEN;
+    const ghToken = env.GH_DEPLOY_TOKEN;
     if (!ghToken) {
       return fail(500, { error: 'Deploy is not configured' });
     }

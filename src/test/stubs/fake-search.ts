@@ -2,7 +2,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { vi } from 'vitest';
 
 import type { CongregationMetaRecord } from '$lib/pocketbase.d';
-import type { SearchData, SearchState } from '$lib/types.d';
+import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 
 // Shared spies that tests can inspect
 export const setFiltersSpy = vi.fn();

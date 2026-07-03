@@ -4,6 +4,12 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 
 import { createMockRequestEvent } from '$test/testUtils';
 
+vi.mock('$env/dynamic/private', () => ({
+  env: new Proxy<Record<string, string>>({} as Record<string, string>, {
+    get: (_, key) => process.env[key as string] ?? ''
+  })
+}));
+
 // Load function returns a PageServerLoad result shape
 interface LoadResult {
   locales: string[];

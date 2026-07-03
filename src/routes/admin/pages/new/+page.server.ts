@@ -1,21 +1,10 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
-import { parsePageForm, pbErrorToFail } from '../_shared';
+import { parsePageForm, pbErrorToFail, variantSchema } from '../_shared';
 import type { Actions, PageServerLoad } from './$types';
 
-const variantSchema = z.object({
-  id: z.string().optional(),
-  language: z.string(),
-  title: z.string().optional().default(''),
-  description: z.string().optional().default(''),
-  content: z.string().optional().default(''),
-  imageAlt: z.string().optional().default(''),
-  imageCaption: z.string().optional().default('')
-});
-
-// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = ({ locals }) => {
   const client = locals.api;
   if (!client?.authStore?.record?.admin) {
     throw redirect(303, '/');

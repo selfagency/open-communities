@@ -1,6 +1,17 @@
 import { fail } from '@sveltejs/kit';
+import { z } from 'zod/v4';
 
 const SLUG_RE = /^[a-z0-9-]+$/;
+
+export const variantSchema = z.object({
+  id: z.string().optional(),
+  language: z.string(),
+  title: z.string().optional().default(''),
+  description: z.string().optional().default(''),
+  content: z.string().optional().default(''),
+  imageAlt: z.string().optional().default(''),
+  imageCaption: z.string().optional().default('')
+});
 
 /**
  * Safely extract a text value from FormData.

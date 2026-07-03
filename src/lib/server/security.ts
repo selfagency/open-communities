@@ -31,8 +31,6 @@ const CSP_DIRECTIVES = {
     '*.posthog.com',
     'basemaps.cartocdn.com',
     'cdn.jsdelivr.net',
-    'localhost:3001',
-    'localhost:8090',
     'static.cloudflareinsights.com',
     "'self'"
   ],
@@ -133,10 +131,8 @@ const handle: Handle = helmet({
     includeSubDomains: true,
     preload: true
   },
-  ieNoOpen: true,
   noSniff: true,
-  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-  xssFilter: true
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 });
 
 export default handle;

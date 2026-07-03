@@ -106,7 +106,11 @@ export const actions = {
       if (!client?.admin) {
         try {
           await api.collection('users').update(client.id, { congregation });
+        } catch {
+          log.error('Failed to link congregation to user', client.id);
+        }
 
+        try {
           await transactionalMail({
             email: client.email,
             message: `${m.transactional_submitted({ locale: client.lang || 'en' })} ${m.transactional_confirmation({ locale: client.lang || 'en' })}`,
@@ -114,7 +118,7 @@ export const actions = {
             subject: `${m.transactional_subject({ locale: client.lang || 'en' })}`
           });
         } catch {
-          log.error('Failed to retrieve user profile', client.id);
+          log.error('Failed to send confirmation email', client.id);
         }
       }
 

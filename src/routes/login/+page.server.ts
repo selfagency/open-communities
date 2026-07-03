@@ -113,7 +113,7 @@ export const actions = {
       cookies.set('session', crypto.randomUUID(), cookieOpts);
 
       if (isFunction(capture)) {
-        await capture((user as UsersRecord & { id: string }).id, 'login');
+        await capture((user as UsersRecord).id, 'login');
       }
 
       return {
@@ -141,15 +141,6 @@ export const actions = {
 
       return fail(err.status ?? 401, { form });
     }
-  },
-  // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-  logout: async (event) => {
-    const { cookies, locals } = event;
-
-    cookies.set('auth', '', locals.cookieOpts);
-    cookies.set('session', '', locals.cookieOpts);
-
-    return {};
   },
   signup: async (event) => {
     const { locals } = event;
@@ -184,7 +175,7 @@ export const actions = {
 
       // S-13: capture after success using user ID, not email as PII distinctId
       if (isFunction(capture)) {
-        await capture((user as UsersRecord & { id: string }).id, 'signup');
+        await capture((user as UsersRecord).id, 'signup');
       }
 
       await api.collection('users').requestVerification(form.data.email as string, { fetch });

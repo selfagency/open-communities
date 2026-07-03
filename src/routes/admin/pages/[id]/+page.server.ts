@@ -1,68 +1,10 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod/v4';
+import { env } from '$env/dynamic/private';
 import { withRetry } from '$lib/server/api';
-import { log } from '$lib/server/logger';
-import { parsePageForm, pbErrorToFail } from '../_shared';
+import { processTranslationResults, translateLocale } from '$lib/server/translate';
+import { parsePageForm, pbErrorToFail, variantSchema } from '../_shared';
 import type { Actions, PageServerLoad } from './$types';
-
-const variantSchema = z.object({
-  id: z.string().optional(),
-  language: z.string(),
-  title: z.string().optional().default(''),
-  description: z.string().optional().default(''),
-  content: z.string().optional().default(''),
-  imageAlt: z.string().optional().default(''),
-  imageCaption: z.string().optional().default('')
-});
-
-interface TranslateResult {
-  locale: string;
-  translatedText: string;
-}
-
-async function translateLocale(text: string, locale: string, apiUrl: string, ltKey?: string): Promise<TranslateResult> {
-  const res = await fetch(`${apiUrl}/translate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      q: text,
-      source: 'en',
-      target: locale,
-      format: 'text',
-      ...(ltKey ? { api_key: ltKey } : {})
-    })
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(
-      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`
-    );
-  }
-
-  const data = (await res.json()) as { translatedText: string };
-  return { locale, translatedText: data.translatedText };
-}
-
-function processTranslationResults(rawResults: PromiseSettledResult<TranslateResult>[]): {
-  translations: TranslateResult[];
-  errors: string[];
-} {
-  const translations: TranslateResult[] = [];
-  const errors: string[] = [];
-
-  for (const result of rawResults) {
-    if (result.status === 'fulfilled') {
-      translations.push(result.value);
-    } else {
-      const msg = result.reason?.message ?? 'Unknown error';
-      errors.push(msg);
-      log.error('Translation failed', { error: msg });
-    }
-  }
-
-  return { translations, errors };
-}
 
 export const load: PageServerLoad = async ({ locals, params }) => {
   const client = locals.api;
@@ -171,8 +113,8 @@ export const actions = {
       return fail(400, { error: 'Invalid locales JSON' });
     }
 
-    const ltUrl = process.env.LT_API_URL;
-    const ltKey = process.env.LT_API_KEY;
+    const ltUrl = env.LT_API_URL;
+    const ltKey = env.LT_API_KEY;
     if (!ltUrl) {
       return fail(500, { error: 'LibreTranslate is not configured' });
     }

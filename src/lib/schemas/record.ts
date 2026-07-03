@@ -4,6 +4,7 @@ import * as z from 'zod';
 
 import { m } from '$lib/paraglide/messages';
 
+import { Lazy } from './_shared';
 import {
   accessibilitySchema as accessibility,
   fitSchema as fit,
@@ -14,16 +15,6 @@ import {
 } from './children';
 
 /* endregion imports */
-
-// Lazy message helper — defers m.xxx() evaluation to avoid
-// SvelteKit post-build analysis crashes when paraglide isn't initialized
-function Lazy(fn: () => string): string {
-  try {
-    return fn();
-  } catch {
-    return '';
-  }
-}
 
 export const deleteSchema = z.object({
   id: z.string().refine((value) => !!value, {
