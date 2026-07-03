@@ -84,7 +84,6 @@ let variantsInput: HTMLInputElement;
 let selectedLang = $state('en');
 let saveDisabled = $derived(!(title && slug) || saving);
 let translating = $state(false);
-let translateStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
@@ -175,8 +174,6 @@ async function handleTranslate() {
   }
 
   translating = true;
-  translateStatus = 'loading';
-  errMsg = '';
   const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
 
   const form = new FormData();
@@ -190,7 +187,6 @@ async function handleTranslate() {
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
       errMsg = actionData?.error ?? 'Translation failed';
-      translateStatus = 'error';
       return;
     }
 
@@ -200,20 +196,16 @@ async function handleTranslate() {
 
     if (actionData?.errors?.length) {
       errMsg = `${actionData.errors.length} locale(s) failed to translate`;
-      translateStatus = 'error';
-    } else {
-      translateStatus = 'success';
     }
   } catch {
     errMsg = 'Translation request failed';
-    translateStatus = 'error';
   } finally {
     translating = false;
   }
 }
 </script>
 
-{#if errMsg && translateStatus !== 'error'}
+{#if errMsg}
   <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{errMsg}</div>
 {/if}
 

@@ -42,12 +42,10 @@ import { useEditStateStore } from '$lib/stately/translations';
 
 let { data } = $props();
 
-const ALL_LOCALES = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
-
 // svelte-ignore state_referenced_locally
-let locales = $derived(
-  (data.locales.length > 0 ? [...new Set([...ALL_LOCALES, ...data.locales])] : ALL_LOCALES) as string[]
-);
+const locales = (
+  data.locales.includes('en') ? ['en', ...data.locales.filter((locale) => locale !== 'en')] : data.locales
+) as string[];
 
 // Search
 // svelte-ignore state_referenced_locally
@@ -532,8 +530,8 @@ const deployProgress = $derived(
 
     <!-- Add Key Dialog -->
     <Dialog bind:open={showAddDialog}>
-      <DialogContent>
-        <form action="?/add" method="POST" use:enhance={handleAdd}>
+      <form action="?/add" method="POST" use:enhance={handleAdd}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Translation Key</DialogTitle>
             <DialogDescription>Create a new translation key with an English value.</DialogDescription>
@@ -554,8 +552,8 @@ const deployProgress = $derived(
             >
             <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Create</Button>
           </div>
-        </form>
-      </DialogContent>
+        </DialogContent>
+      </form>
     </Dialog>
 
     <!-- Results count -->
@@ -618,7 +616,7 @@ const deployProgress = $derived(
                   disabled={translating[key] || !enEntry?.value}
                   onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
                   type="button"
-                  variant="outline"
+                  variant="default"
                 >
                   {#if translating[key]}
                     <LoadingIcon class="mr-1.5 size-4 animate-spin" />

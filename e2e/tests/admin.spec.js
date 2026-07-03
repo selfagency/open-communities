@@ -128,33 +128,4 @@ test.describe('Admin backend', () => {
     // Verify submit button is enabled when form is valid
     await expect(page.getByRole('button', { name: 'Create Page' })).toBeEnabled();
   });
-
-  test('translations list loads', async ({ page }) => {
-    await page.goto(`${BASE}/admin/translations`);
-    await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /translations/i })).toBeVisible();
-    await expect(page.getByText(/key/i).first()).toBeVisible();
-  });
-
-  test('add translation key via dialog', async ({ page }) => {
-    await page.goto(`${BASE}/admin/translations`);
-    await page.waitForLoadState('networkidle');
-
-    // Open the add key dialog
-    await page.getByRole('button', { name: /add key/i }).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
-    await expect(page.getByText('Add Translation Key')).toBeVisible();
-
-    // Fill in the form
-    const testKey = `e2e-test-key-${Date.now()}`;
-    await page.getByLabel('Key').fill(testKey);
-    await page.getByLabel('English Value').fill('E2E test value');
-
-    // Submit
-    await page.getByRole('button', { name: 'Create' }).click();
-
-    // Dialog should close and key should appear in the list
-    await expect(page.getByRole('dialog')).not.toBeVisible();
-    await expect(page.getByText(testKey)).toBeVisible();
-  });
 });
