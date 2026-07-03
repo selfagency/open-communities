@@ -84,6 +84,7 @@ let variantsInput: HTMLInputElement;
 let selectedLang = $state('en');
 let saveDisabled = $derived(!(title && slug) || saving);
 let translating = $state(false);
+let translateStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
@@ -174,6 +175,7 @@ async function handleTranslate() {
   }
 
   translating = true;
+  translateStatus = 'loading';
   const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
 
   const form = new FormData();
@@ -187,18 +189,22 @@ async function handleTranslate() {
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
       errMsg = actionData?.error ?? 'Translation failed';
+      translateStatus = 'error';
       return;
     }
 
     if (actionData?.success && actionData?.translations) {
       await Promise.all(nonEnglishLocales.map((l) => translateLocaleFields(l, actionData.translations)));
+      translateStatus = 'success';
     }
 
     if (actionData?.errors?.length) {
       errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+      translateStatus = 'error';
     }
   } catch {
     errMsg = 'Translation request failed';
+    translateStatus = 'error';
   } finally {
     translating = false;
   }

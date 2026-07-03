@@ -616,7 +616,7 @@ const deployProgress = $derived(
                   disabled={translating[key] || !enEntry?.value}
                   onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
                   type="button"
-                  variant="default"
+                  variant="outline"
                 >
                   {#if translating[key]}
                     <LoadingIcon class="mr-1.5 size-4 animate-spin" />
