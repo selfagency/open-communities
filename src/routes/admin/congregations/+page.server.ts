@@ -27,9 +27,17 @@ function parseLocation(location: string): {
   }
 }
 
+function getOwnerData(c: CongView, users: Map<string, { email: string; id: string; name: string }>) {
+  if (!c.owner) {
+    return { owner: '', ownerId: '', ownerName: '' };
+  }
+  const data = users.get(c.owner);
+  return { owner: data?.email ?? '', ownerId: data?.id ?? '', ownerName: data?.name ?? '' };
+}
+
 function mapCong(c: CongView, users: Map<string, { email: string; id: string; name: string }>) {
   const loc = parseLocation(c.location);
-  const ownerData = c.owner ? users.get(c.owner) : undefined;
+  const { owner, ownerId, ownerName } = getOwnerData(c, users);
   return {
     id: c.id,
     name: c.name,
@@ -38,9 +46,9 @@ function mapCong(c: CongView, users: Map<string, { email: string; id: string; na
     city: loc?.city?.name ?? '',
     state: loc?.state?.name ?? '',
     countryCode: loc?.country?.code ?? '',
-    owner: ownerData?.email ?? '',
-    ownerId: ownerData?.id ?? '',
-    ownerName: ownerData?.name ?? '',
+    owner,
+    ownerId,
+    ownerName,
     created: c.created
   };
 }
