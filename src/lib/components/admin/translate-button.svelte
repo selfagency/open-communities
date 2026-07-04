@@ -60,6 +60,6 @@ const iconClass = $derived.by(() => {
   size="sm"
   variant="ghost"
 >
-  <icon aria-hidden="true" class={iconClass} />
+  <icon aria-hidden="true" class={iconClass}></icon>
   Translate
 </Button>
