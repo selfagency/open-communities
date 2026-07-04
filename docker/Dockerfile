@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm-store \
 # Copy the rest of the source and build the production output
 # PB_API_TOKEN/PB_URL passed inline to avoid persisting as ENV in intermediate layers
 COPY . .
-RUN CI=true SOURCE_VERSION=${SOURCE_VERSION} \
+RUN CI=true SOURCE_VERSION=${SOURCE_VERSION} COMMIT_SHA=${COMMIT_SHA} \
   PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} \
   pnpm run build:prod
 
