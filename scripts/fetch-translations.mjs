@@ -87,18 +87,10 @@ function writeMessageFiles(byLocale) {
     for (const locale of locales) {
       const path = resolve(MESSAGES_DIR, `${locale}.json`);
       const pbEntries = byLocale.get(locale);
-      // Merge with existing file — PB adds/updates keys but doesn't remove local-only keys
-      let merged = pbEntries;
-      try {
-        if (existsSync(path)) {
-          const existing = JSON.parse(readFileSync(path, 'utf-8'));
-          merged = { ...existing, ...pbEntries };
-        }
-      } catch {
-        // If existing file is unparseable, use PB entries as-is
-      }
-      writeFileSync(path, `${JSON.stringify(merged, null, 2)}\n`);
-      console.log(`  ✅ ${locale}.json (${Object.keys(merged).length} keys)`);
+      // Clean overwrite from PB — no merge with existing file.
+      // The DB is the source of truth; stale local-only keys must not persist.
+      writeFileSync(path, `${JSON.stringify(pbEntries, null, 2)}\n`);
+      console.log(`  ✅ ${locale}.json (${Object.keys(pbEntries).length} keys)`);
     }
   } else {
     console.log('  ⚠  No translations found — writing empty message files');
