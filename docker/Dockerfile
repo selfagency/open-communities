@@ -14,6 +14,7 @@ ARG PB_URL
 
 # Build-time commit SHA for version tracking (e.g. PostHog sourcemaps)
 # CI passes COMMIT_SHA via --build-arg; local builds default to 'dev'
+# Also used as a cache buster — every commit gets a fresh fetch-translations run
 ARG COMMIT_SHA
 ENV SOURCE_VERSION=${COMMIT_SHA:-dev}
 
