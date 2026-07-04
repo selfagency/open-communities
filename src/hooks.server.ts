@@ -190,7 +190,7 @@ function serializeError(error: unknown): string {
     try {
       return JSON.stringify(error);
     } catch {
-      return JSON.stringify({ message: String(error) });
+      return JSON.stringify({ message: error instanceof Error ? error.message : 'Unknown error' });
     }
   }
   if (error == null) {

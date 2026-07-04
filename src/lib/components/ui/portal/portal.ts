@@ -3,8 +3,8 @@
 // isn't installed in some CI environments. Consumers should call `getPortal()`
 // and handle the undefined case during SSR.
 
-export function getPortal(): Promise<unknown | undefined> {
-  if (typeof globalThis.window === 'undefined') {
+export function getPortal(): Promise<unknown> {
+  if (globalThis.window === undefined) {
     return Promise.resolve(undefined);
   }
 
