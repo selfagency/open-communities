@@ -167,7 +167,13 @@ jobs:
       UUID: ${{ secrets.COOLIFY_UUID }}
       TOKEN: ${{ secrets.COOLIFY_TOKEN }}
     steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          authkey: ${{ secrets.TAILSCALE_KEY }}
+          tags: tag:ci
+
       - name: Restart Coolify service
         run: |
-          curl -X GET "https://host.selfagency.dev/api/v1/services/${{ env.UUID }}/restart" \
+          curl -X GET "http://host.munchkin-mamba.ts.net:8000/api/v1/services/${{ env.UUID }}/restart" \
             -H "Authorization: Bearer ${{ env.TOKEN }}"
