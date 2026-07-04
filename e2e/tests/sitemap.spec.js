@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
+const BASE = (() => {
+  if (!process.env.PLAYWRIGHT_BASE_URL) {
+    throw new Error('PLAYWRIGHT_BASE_URL must be set before running E2E tests');
+  }
+  return process.env.PLAYWRIGHT_BASE_URL;
+})();
 
 test.describe('Sitemap', () => {
   test('sitemap.xml returns valid XML with congregation URLs', async ({ page }) => {
@@ -20,7 +25,7 @@ test.describe('Sitemap', () => {
     const body = await response.text();
 
     // Home page should be present (protocol may be http or https in CI)
-    expect(body).toMatch(/<loc>https?:\/\/localhost:3000\/<\/loc>/);
+    expect(body).toMatch(new RegExp(`<loc>https?://${new URL(BASE).host}/</loc>`));
 
     // At least one congregation ?id= entry should exist
     expect(body).toContain('/?id=');

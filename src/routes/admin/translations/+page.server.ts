@@ -18,7 +18,8 @@ const entriesSchema = z.array(
 );
 
 export const load: PageServerLoad = async ({ locals, url }) => {
-  const client = locals.api;
+  // Require admin client so the admin translations page always sees all locale records
+  const client = getAdminClient(locals);
   const search = url.searchParams.get('q') ?? '';
   const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 
@@ -37,6 +38,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       requestKey: `admin-translations-${page}`
     })
     .catch(() => []);
+
+  log.info('admin translations load', { recordsCount: records.length });
 
   // Collect distinct locales from data
   const localeSet = new Set<string>();
@@ -71,6 +74,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   return {
     translations,
     locales,
+    // expose recordsCount for runtime debugging (number of PB records returned)
+    recordsCount: records.length,
     pagination: { page, totalPages, total, search, perPage: PER_PAGE }
   };
 };
@@ -81,6 +86,55 @@ function getAdminClient(locals: App.Locals) {
     throw error(401, 'Unauthorized');
   }
   return client;
+}
+
+// Parse locales from JSON string safely
+// Parse locales from JSON string safely.
+// Returns:
+// - string[] when a valid array of locales was provided
+// - null when the JSON was syntactically invalid
+// - [] when JSON parsed successfully but is not an array (treated as empty)
+function parseLocales(localesStr: string): string[] | null {
+  try {
+    const parsed = JSON.parse(localesStr);
+    if (Array.isArray(parsed)) {
+      return parsed as string[];
+    }
+    return [];
+  } catch {
+    return null;
+  }
+}
+
+// Build LibreTranslate config (api URL + key) with sanity checks
+function getLibreTranslateConfig() {
+  const ltUrl = env.LT_API_URL;
+  const ltKey = env.LT_API_KEY;
+  if (!ltUrl) {
+    return { apiUrl: '', ltKey: '', error: 'LT_API_URL missing' } as const;
+  }
+  const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
+  return { apiUrl, ltKey, error: null } as const;
+}
+
+// Validate translate action input. Returns a fail() response on error, or null if valid.
+function validateTranslateInput(text: string, localesStr: string): ReturnType<typeof fail> | null {
+  if (!(text && localesStr)) {
+    return fail(400, { error: 'Missing text or locales' });
+  }
+  const locales = parseLocales(localesStr);
+  if (locales === null) {
+    return fail(400, { error: 'Invalid locales JSON' });
+  }
+  if (locales.length === 0) {
+    return fail(400, { error: 'No locales provided' });
+  }
+  return null;
+}
+
+async function doTranslations(text: string, locales: string[], apiUrl: string, ltKey: string | undefined) {
+  const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
+  return processTranslationResults(rawResults);
 }
 
 async function pollNewRunId(
@@ -280,30 +334,22 @@ export const actions = {
     const text = form.get('text') as string;
     const localesStr = form.get('locales') as string;
 
-    if (!(text && localesStr)) {
-      return fail(400, { error: 'Missing text or locales' });
+    const validated = validateTranslateInput(text, localesStr);
+    if (validated) {
+      return validated;
     }
 
-    let locales: string[];
-    try {
-      locales = JSON.parse(localesStr) as string[];
-    } catch {
-      return fail(400, { error: 'Invalid locales JSON' });
-    }
-
-    const ltUrl = env.LT_API_URL;
-    const ltKey = env.LT_API_KEY;
-    if (!ltUrl) {
-      log.error('LibreTranslate not configured — LT_API_URL is missing');
+    const locales = parseLocales(localesStr)!;
+    const { apiUrl, ltKey, error: cfgErr } = getLibreTranslateConfig();
+    if (cfgErr) {
+      log.error('LibreTranslate not configured', { err: cfgErr });
       return fail(500, { error: 'LibreTranslate is not configured' });
     }
 
-    const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
     log.info('Translating', { textLength: text.length, locales, apiUrl, hasKey: !!ltKey });
 
-    const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
+    const { translations, errors } = await doTranslations(text, locales, apiUrl, ltKey);
 
-    const { translations, errors } = processTranslationResults(rawResults);
     if (translations.length === 0) {
       log.error('All translations failed', { errors });
       return fail(502, { error: errors[0] ?? 'All translations failed' });

@@ -34,6 +34,7 @@
     "test:unit": "pnpx dotenv-cli -e .env.test -- vitest --run --project server --coverage --coverage.enabled=true"
   },
   "dependencies": {
+    "@jsrob/svelte-portal": "^0.2.1",
     "@math.gl/types": "^4.1.0",
     "@selfagency/stately": "^0.1.5",
     "isomorphic-dompurify": "^3.18.0",

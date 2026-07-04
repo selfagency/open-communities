@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@jsrob/svelte-portal':
+        specifier: ^0.2.1
+        version: 0.2.1(svelte@5.56.4(@typescript-eslint/types@8.61.1))
       '@math.gl/types':
         specifier: ^4.1.0
         version: 4.1.0
@@ -725,6 +728,11 @@ packages:
 
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
+
+  '@jsrob/svelte-portal@0.2.1':
+    resolution: {integrity: sha512-ifnfqfy2Rfr0Sp2/SsLs+8JfnWrQ3RqUf+z2m2OR6W0h3GyWsSH9Vnzq5j7wuQIOFKEZ/bz4T14uTxhaxpzQjQ==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   '@layerstack/svelte-actions@1.0.1-next.18':
     resolution: {integrity: sha512-gxPzCnJ1c9LTfWtRqLUzefCx+k59ZpxDUQ2XB+LokveZQPe7IDSOwHaBOEMlaGoGrtwc3Ft8dSZq+2WT2o9u/g==}
@@ -4729,6 +4737,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@js-sdsl/ordered-map@4.4.2': {}
+
+  '@jsrob/svelte-portal@0.2.1(svelte@5.56.4(@typescript-eslint/types@8.61.1))':
+    dependencies:
+      svelte: 5.56.4(@typescript-eslint/types@8.61.1)
 
   '@layerstack/svelte-actions@1.0.1-next.18':
     dependencies:

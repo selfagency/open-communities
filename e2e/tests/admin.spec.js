@@ -3,7 +3,12 @@ import { test, expect } from '@playwright/test';
 import { TEST_PASSWORD } from '../fixtures/credentials.js';
 
 const ADMIN_EMAIL = process.env.PB_TEST_ADMIN || 'admin@test.com';
-const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
+const BASE = (() => {
+  if (!process.env.PLAYWRIGHT_BASE_URL) {
+    throw new Error('PLAYWRIGHT_BASE_URL must be set before running E2E tests');
+  }
+  return process.env.PLAYWRIGHT_BASE_URL;
+})();
 const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
 
 /**
@@ -94,9 +99,9 @@ test.describe('Admin backend', () => {
     await page.getByText('New Page').click();
     await page.waitForURL('**/admin/pages/new');
     await expect(page.getByRole('heading', { name: 'New Page' })).toBeVisible();
-    await expect(page.getByLabel('Title')).toBeVisible();
+    await expect(page.locator('#title')).toBeVisible();
     await expect(page.getByLabel('Slug')).toBeVisible();
-    await expect(page.getByLabel('Description')).toBeVisible();
+    await expect(page.locator('#description')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Cancel' })).toBeVisible();
   });
 
@@ -118,14 +123,14 @@ test.describe('Admin backend', () => {
     await expect(page.getByRole('heading', { name: 'New Page' })).toBeVisible();
 
     // Fill in the form
-    await page.getByLabel('Title').fill('E2E Test Page');
-    await page.getByLabel('Description').fill('Created during E2E test');
+    await page.locator('#title').fill('E2E Test Page');
+    await page.locator('#description').fill('Created during E2E test');
 
     // Verify slug is auto-generated from title (this was the main bug being fixed)
     const slugInput = page.getByLabel('Slug');
     await expect(slugInput).toHaveValue(/[a-z0-9-]+/);
 
     // Verify submit button is enabled when form is valid
-    await expect(page.getByRole('button', { name: 'Create Page' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
   });
 });
