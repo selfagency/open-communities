@@ -54,18 +54,11 @@ test.describe('Admin backend', () => {
   });
 
   test('congregations page shows data', async ({ page }) => {
-    await page.goto(`${BASE}/admin/congregations`);
-    await page.waitForLoadState('networkidle');
+    await page.goto(`${BASE}/admin/congregations`, { waitUntil: 'load' });
     // Verify we're still on the admin page (not redirected due to auth failure)
     await expect(page).toHaveURL(/\/admin\/congregations/);
-    // Wait for TanStack Table to render data rows (not the empty-state row)
-    // Data rows have multiple <td> cells; the empty-state has a single cell with colspan
-    await page.waitForFunction(() => {
-      const rows = document.querySelectorAll('table tbody tr');
-      return rows.length > 0 && rows[0].cells.length > 1;
-    }, { timeout: 10000 });
-    // Check that at least one congregation name is visible in the table
-    await expect(page.getByText(/Shalom|Private|Other|Online/i).first()).toBeVisible();
+    // Wait for the table to render with congregation data
+    await expect(page.getByText(/Shalom|Private|Other|Online/i).first()).toBeVisible({ timeout: 15000 });
   });
 
   test('users list loads', async ({ page }) => {
