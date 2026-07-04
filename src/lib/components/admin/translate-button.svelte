@@ -60,6 +60,6 @@ const iconClass = $derived.by(() => {
   size="sm"
   variant="ghost"
 >
-  <svelte:component aria-hidden="true" class={iconClass} this={icon} />
+  <icon aria-hidden="true" class={iconClass} />
   Translate
 </Button>
