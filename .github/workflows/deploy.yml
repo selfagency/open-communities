@@ -175,5 +175,5 @@ jobs:
 
       - name: Restart Coolify service
         run: |
-          curl -X GET "http://host.munchkin-mamba.ts.net:8000/api/v1/services/${{ env.UUID }}/restart" \
+          curl -X GET "http://host.munchkin-mamba.ts.net:8000/api/v1/services/${{ env.UUID }}/restart?latest=true" \
             -H "Authorization: Bearer ${{ env.TOKEN }}"
