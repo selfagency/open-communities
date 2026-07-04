@@ -89,7 +89,7 @@ const fixType = (input: any) => input as unknown as Record<string, unknown> & { 
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button
           onclick={() => { view = 'security'; document.querySelector('[data-value="security"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-          variant="secondary"
+          variant="outline"
         >
           {m.next()}
           →

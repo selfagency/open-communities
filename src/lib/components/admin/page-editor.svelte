@@ -1,13 +1,22 @@
 <script lang="ts">
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
+import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
+import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
+import LanguageIcon from '@tabler/icons-svelte/icons/language';
+import LoadingIcon from '@tabler/icons-svelte/icons/loader';
+
 import { isEmpty } from 'radashi';
-import { enhance } from '$app/forms';
+import { deserialize, enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
 import { Button } from '$lib/components/ui/button';
 import { m } from '$lib/paraglide/messages';
 
 import PageEditorBase from './page-editor-base.svelte';
 import PageEditorImage from './page-editor-image.svelte';
+import PageEditorTranslatePortal from './page-editor-translate-portal.svelte';
 import PageEditorVariant from './page-editor-variant.svelte';
 
 const languages = [
@@ -75,8 +84,10 @@ let imagePreview = $state((initialPage?.image as string) ?? '');
 let variantsInput: HTMLInputElement;
 
 let selectedLang = $state('en');
+let accordionOpening = $state('');
 let saveDisabled = $derived(!(title && slug) || saving);
 let translating = $state(false);
+let translateStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
@@ -118,10 +129,32 @@ async function translateField(text: string, locale: string): Promise<string | nu
   form.set('text', text);
   form.set('locales', JSON.stringify([locale]));
   try {
-    const res = await fetch('?/translate', { method: 'POST', body: form });
-    const body = await res.json();
-    const data = body?.data ?? body;
-    return data?.translations?.[0]?.translatedText ?? null;
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
+
+    let body: any;
+    try {
+      body = await res.json();
+    } catch {
+      const text = await res.text();
+      try {
+        body = deserialize(text);
+      } catch {
+        body = null;
+      }
+    }
+
+    const actionData = body?.data ?? body;
+    if (body?.type === 'failure' || !res.ok || actionData?.error) {
+      return null;
+    }
+    return actionData?.translations?.[0]?.translatedText ?? null;
   } catch {
     return null;
   }
@@ -162,36 +195,61 @@ async function translateLocaleFields(
 }
 
 async function handleTranslate() {
-  if (translating || !content) {
+  if (translating || !content || !selectedLang || selectedLang === 'en') {
     return;
   }
 
   translating = true;
-  const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
+  translateStatus = 'loading';
+  errMsg = '';
 
   const form = new FormData();
   form.set('text', content);
-  form.set('locales', JSON.stringify(nonEnglishLocales));
+  form.set('locales', JSON.stringify([selectedLang]));
 
   try {
-    const res = await fetch('?/translate', { method: 'POST', body: form });
-    const body = await res.json();
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
+
+    let body: any;
+    try {
+      body = await res.json();
+    } catch {
+      const text = await res.text();
+      try {
+        body = deserialize(text);
+      } catch {
+        body = null;
+      }
+    }
+
     const actionData = body?.data ?? body;
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
-      errMsg = actionData?.error ?? 'Translation failed';
+      const err = actionData?.error ?? 'Translation failed';
+      errMsg = typeof err === 'string' ? err : (err?.message ?? JSON.stringify(err));
+      translateStatus = 'error';
       return;
     }
 
     if (actionData?.success && actionData?.translations) {
-      await Promise.all(nonEnglishLocales.map((l) => translateLocaleFields(l, actionData.translations)));
+      await Promise.all([selectedLang].map((l) => translateLocaleFields(l, actionData.translations)));
+      translateStatus = 'success';
     }
 
     if (actionData?.errors?.length) {
       errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+      translateStatus = 'error';
     }
-  } catch {
-    errMsg = 'Translation request failed';
+  } catch (e) {
+    errMsg = (e && typeof e === 'object' && (e as any).message) || 'Translation request failed';
+    translateStatus = 'error';
   } finally {
     translating = false;
   }
@@ -209,37 +267,120 @@ async function handleTranslate() {
   {/if}
 
   <div class="relative space-y-6">
-    {#if page?.id}
-      <div class="absolute right-4 top-4 z-10">
-        <select
-          class="h-9 rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          bind:value={selectedLang}
-        >
-          {#each languages as lang (lang.code)}
-            <option value={lang.code}>{lang.label}</option>
-          {/each}
-        </select>
-      </div>
-    {/if}
+    <!-- Language selector: restore dropdown UX to switch between variants -->
+    <div class="flex items-center gap-2 mb-2">
+      <label class="text-sm text-muted-foreground" for="page-editor-lang">Language:</label>
+      <select
+        class="form-select rounded-md border px-2 py-1"
+        id="page-editor-lang"
+        onchange={(e) => {
+          const v = (e.target as HTMLSelectElement).value;
+          selectedLang = v;
+          if (typeof window !== 'undefined') {
+            const el = document.getElementById(`variant-${v}`);
+            if (el) {
+              const btn = el.querySelector('button');
+              if (btn instanceof HTMLButtonElement) {
+                try {
+                  btn.click();
+                  btn.focus();
+                } catch {
+                  // ignore
+                }
+              }
+              try {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              } catch {
+                // ignore
+              }
+            }
+          }
+        }}
+        value={selectedLang}
+      >
+        {#each languages as l}
+          <option selected={l.code === selectedLang} value={l.code}>{l.label}</option>
+        {/each}
+      </select>
+      <Button class="ml-2" onclick={() => handleTranslate()} type="button" variant="outline">
+        <LanguageIcon class="mr-1.5 size-4" />
+        Translate selected
+      </Button>
+    </div>
+    <Accordion type="multiple" value={languages.map((l) => l.code)}>
+      <AccordionItem class="border-b-0" value="en">
+        <AccordionTrigger class="hover:no-underline">
+          <span class="font-semibold text-lg">{languages.find((l) => l.code === 'en')?.label || 'English'}</span>
+        </AccordionTrigger>
+        <AccordionContent>
+          <div class="space-y-6 pt-4">
+            <PageEditorBase bind:content bind:description bind:manualSlug bind:slug bind:title />
+            <PageEditorImage bind:imageAlt bind:imageCaption bind:imageFile bind:imagePreview />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
 
-    {#if selectedLang === 'en'}
-      <PageEditorBase bind:content bind:description bind:manualSlug bind:slug bind:title />
-      <PageEditorImage bind:imageAlt bind:imageCaption bind:imageFile bind:imagePreview />
-    {:else}
-      {@const v = getVariant(selectedLang)}
-      {#if v}
-        <PageEditorVariant language={languages.find((l) => l.code === selectedLang) ?? languages[0]} variant={v} />
-      {/if}
-    {/if}
+      {#each languages.filter((l) => l.code !== 'en') as lang (lang.code)}
+        <AccordionItem id={`variant-${lang.code}`} value={lang.code}>
+          <div class="flex items-center justify-between">
+            <AccordionTrigger class="hover:no-underline">
+              <div class="flex items-center gap-3">
+                <span class="font-semibold text-lg">{lang.label}</span>
+              </div>
+            </AccordionTrigger>
+            {#if page?.id}
+              <div class="translate-button-root" data-lang={lang.code}>
+                <!-- Portal-mounted visual: keeps DOM valid while preserving layout -->
+                <PageEditorTranslatePortal
+                  {content}
+                  langCode={lang.code}
+                  onTranslate={(l) => {
+                    selectedLang = l;
+                    // open the requested variant accordion and run translate
+                    // (best-effort DOM interaction in browser only)
+                    if (typeof window !== 'undefined') {
+                      const el = document.getElementById(`variant-${l}`);
+                      if (el) {
+                        const btn = el.querySelector('button');
+                        if (btn instanceof HTMLButtonElement) {
+                          btn.click();
+                        }
+                      }
+                    }
+                    handleTranslate();
+                  }}
+                  {selectedLang}
+                  {translateStatus}
+                  {translating}
+                />
+              </div>
+            {/if}
+          </div>
+          <AccordionContent>
+            <div class="pt-4 relative">
+              {#if getVariant(lang.code)}
+                <PageEditorVariant language={lang} variant={getVariant(lang.code)!} />
+              {/if}
+              <!-- visual-only positioning target preserved via CSS for translate button -->
+              <div aria-hidden="true" class="absolute top-2 right-2 pointer-events-none">
+                <!-- placeholder to reserve space so layout matches previous look -->
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      {/each}
+    </Accordion>
   </div>
 
-  <div class="flex gap-2">
-    <Button disabled={saveDisabled} type="submit">
-      {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
-    </Button>
-    <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="secondary">
-      {translating ? 'Translating…' : 'Translate from English'}
-    </Button>
-    <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <div class="ml-auto flex items-center gap-2">
+      <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">
+        <CancelIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}
+      </Button>
+      <Button disabled={saveDisabled} type="submit" variant="outline">
+        <FileUploadIcon class="mr-1.5 size-4" />
+        {saving ? m.pageEditorSaving() : 'Save'}
+      </Button>
+    </div>
   </div>
 </form>

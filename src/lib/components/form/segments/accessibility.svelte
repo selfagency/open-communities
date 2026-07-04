@@ -226,7 +226,7 @@ let { errors, form, formData, view = $bindable() } = $props();
       <div class="mt-4 flex flex-row items-center justify-end">
         <Button
           onclick={() => { view = 'health'; document.querySelector('[data-value="health"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
-          variant="secondary"
+          variant="outline"
           >{m.next()}
           →</Button
         >

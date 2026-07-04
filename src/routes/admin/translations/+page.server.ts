@@ -1,8 +1,10 @@
 import { error, fail } from '@sveltejs/kit';
 import { z } from 'zod/v4';
+import { env } from '$env/dynamic/private';
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import { rateLimitByUser } from '$lib/server/rate-limit';
+import { processTranslationResults, translateLocale } from '$lib/server/translate';
 import type { Actions, PageServerLoad } from './$types';
 
 const PER_PAGE = 20;
@@ -16,7 +18,8 @@ const entriesSchema = z.array(
 );
 
 export const load: PageServerLoad = async ({ locals, url }) => {
-  const client = locals.api;
+  // Require admin client so the admin translations page always sees all locale records
+  const client = getAdminClient(locals);
   const search = url.searchParams.get('q') ?? '';
   const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 
@@ -35,6 +38,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       requestKey: `admin-translations-${page}`
     })
     .catch(() => []);
+
+  log.info('admin translations load', { recordsCount: records.length });
 
   // Collect distinct locales from data
   const localeSet = new Set<string>();
@@ -69,6 +74,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   return {
     translations,
     locales,
+    // expose recordsCount for runtime debugging (number of PB records returned)
+    recordsCount: records.length,
     pagination: { page, totalPages, total, search, perPage: PER_PAGE }
   };
 };
@@ -81,33 +88,50 @@ function getAdminClient(locals: App.Locals) {
   return client;
 }
 
-interface TranslateResult {
-  locale: string;
-  translatedText: string;
+// Parse locales from JSON string safely
+// Parse locales from JSON string safely.
+// Returns:
+// - string[] when a valid array of locales was provided
+// - null when the JSON was syntactically invalid
+// - [] when JSON parsed successfully but is not an array (treated as empty)
+function parseLocales(localesStr: string): string[] | null {
+  try {
+    const parsed = JSON.parse(localesStr);
+    if (Array.isArray(parsed)) {
+      return parsed as string[];
+    }
+    return [];
+  } catch {
+    return null;
+  }
 }
 
-async function translateLocale(text: string, locale: string, apiUrl: string, ltKey?: string): Promise<TranslateResult> {
-  const res = await fetch(`${apiUrl}/translate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      q: text,
-      source: 'en',
-      target: locale,
-      format: 'text',
-      ...(ltKey ? { api_key: ltKey } : {})
-    })
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(
-      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`
-    );
+// Build LibreTranslate config (api URL + key) with sanity checks
+function getLibreTranslateConfig() {
+  const ltUrl = env.LT_API_URL;
+  const ltKey = env.LT_API_KEY;
+  if (!ltUrl) {
+    return { apiUrl: '', ltKey: '', error: 'LT_API_URL missing' } as const;
   }
+  const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
+  return { apiUrl, ltKey, error: null } as const;
+}
 
-  const data = (await res.json()) as { translatedText: string };
-  return { locale, translatedText: data.translatedText };
+// Validate translate action input. Returns parsed locales on success, or null on any validation failure.
+function validateTranslateInput(text: string, localesStr: string): string[] | null {
+  if (!(text && localesStr)) {
+    return null;
+  }
+  const locales = parseLocales(localesStr);
+  if (locales === null || locales.length === 0) {
+    return null;
+  }
+  return locales;
+}
+
+async function doTranslations(text: string, locales: string[], apiUrl: string, ltKey: string | undefined) {
+  const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
+  return processTranslationResults(rawResults);
 }
 
 async function pollNewRunId(
@@ -169,26 +193,6 @@ async function triggerDeploy(
   }
 
   return { deploymentUuid: String(runId) };
-}
-
-function processTranslationResults(rawResults: PromiseSettledResult<TranslateResult>[]): {
-  translations: TranslateResult[];
-  errors: string[];
-} {
-  const translations: TranslateResult[] = [];
-  const errors: string[] = [];
-
-  for (const result of rawResults) {
-    if (result.status === 'fulfilled') {
-      translations.push(result.value);
-    } else {
-      const msg = result.reason?.message ?? 'Unknown error';
-      errors.push(msg);
-      log.error('Translation failed', { error: msg });
-    }
-  }
-
-  return { translations, errors };
 }
 
 export const actions = {
@@ -304,7 +308,7 @@ export const actions = {
   redeploy: async ({ locals }) => {
     const client = getAdminClient(locals);
     rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
-    const ghToken = process.env.GH_DEPLOY_TOKEN;
+    const ghToken = env.GH_DEPLOY_TOKEN;
     if (!ghToken) {
       return fail(500, { error: 'Deploy is not configured' });
     }
@@ -327,30 +331,27 @@ export const actions = {
     const text = form.get('text') as string;
     const localesStr = form.get('locales') as string;
 
-    if (!(text && localesStr)) {
+    const locales = validateTranslateInput(text, localesStr);
+    if (locales === null) {
       return fail(400, { error: 'Missing text or locales' });
     }
-
-    let locales: string[];
-    try {
-      locales = JSON.parse(localesStr) as string[];
-    } catch {
-      return fail(400, { error: 'Invalid locales JSON' });
-    }
-
-    const ltUrl = process.env.LT_API_URL;
-    const ltKey = process.env.LT_API_KEY;
-    if (!ltUrl) {
+    const { apiUrl, ltKey, error: cfgErr } = getLibreTranslateConfig();
+    if (cfgErr) {
+      log.error('LibreTranslate not configured', { err: cfgErr });
       return fail(500, { error: 'LibreTranslate is not configured' });
     }
 
-    const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
+    log.info('Translating', { textLength: text.length, locales, apiUrl, hasKey: !!ltKey });
 
-    const rawResults = await Promise.allSettled(locales.map((locale) => translateLocale(text, locale, apiUrl, ltKey)));
+    const { translations, errors } = await doTranslations(text, locales, apiUrl, ltKey);
 
-    const { translations, errors } = processTranslationResults(rawResults);
     if (translations.length === 0) {
+      log.error('All translations failed', { errors });
       return fail(502, { error: errors[0] ?? 'All translations failed' });
+    }
+
+    if (errors.length > 0) {
+      log.warn('Partial translation failures', { errors });
     }
 
     return { success: true, translations, ...(errors.length > 0 ? { errors } : {}) };
@@ -365,7 +366,7 @@ export const actions = {
       return fail(400, { error: 'Missing run ID' });
     }
 
-    const ghToken = process.env.GH_DEPLOY_TOKEN;
+    const ghToken = env.GH_DEPLOY_TOKEN;
     if (!ghToken) {
       return fail(500, { error: 'Deploy is not configured' });
     }

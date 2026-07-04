@@ -1,7 +1,9 @@
 <script lang="ts">
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
 import UsersIcon from '@tabler/icons-svelte/icons/users';
+
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 
@@ -168,7 +170,9 @@ const table = $derived(
           bind:value={search}
         />
       </div>
-      <Button onclick={() => goto('/admin/users/export')} variant="outline">{m.exportCsv()}</Button>
+      <Button onclick={() => goto('/admin/users/export')} variant="outline"
+        ><FileUploadIcon class="mr-1.5 size-4" />{m.exportCsv()}</Button
+      >
     </div>
   </div>
   <Card>

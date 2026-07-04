@@ -34,15 +34,14 @@
     "test:unit": "pnpx dotenv-cli -e .env.test -- vitest --run --project server --coverage --coverage.enabled=true"
   },
   "dependencies": {
+    "@jsrob/svelte-portal": "^0.2.1",
     "@math.gl/types": "^4.1.0",
     "@selfagency/stately": "^0.1.5",
     "isomorphic-dompurify": "^3.18.0",
-    "pell": "^1.0.6",
     "posthog-js": "^1.393.5",
     "posthog-node": "^5.38.5",
     "stopwords-iso": "^1.1.0",
     "string-strip-html": "^13.5.3",
-    "strip-inline-styles": "^1.0.0",
     "super-sitemap": "^2.0.3"
   },
   "devDependencies": {

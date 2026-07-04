@@ -11,7 +11,13 @@ module.exports = defineConfig({
   testDir: path.join(__dirname, 'tests'),
   timeout: 60_000,
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173',
+    // Require explicit PLAYWRIGHT_BASE_URL; fail fast if unset to avoid implicit defaults.
+    baseURL: (() => {
+      if (!process.env.PLAYWRIGHT_BASE_URL) {
+        throw new Error('PLAYWRIGHT_BASE_URL must be set in the environment before running E2E tests');
+      }
+      return process.env.PLAYWRIGHT_BASE_URL;
+    })(),
     headless: true,
     ignoreHTTPSErrors: true,
     viewport: { height: 800, width: 1280 }

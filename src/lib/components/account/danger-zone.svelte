@@ -1,10 +1,13 @@
 <script lang="ts">
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as AlertDialog from '$lib/components/ui/alert-dialog';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+
 import { m } from '$lib/paraglide/messages';
 
 let deleting = $state(false);
@@ -19,7 +22,7 @@ let open = $state(false);
     <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
     <AlertDialog.Root bind:open>
       <AlertDialog.Trigger>
-        <Button type="button" variant="destructive">{m.deleteAccount()}</Button>
+        <Button type="button" variant="destructive"><TrashIcon class="mr-1.5 size-4" />{m.deleteAccount()}</Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content>
         <form
@@ -39,7 +42,7 @@ let open = $state(false);
             </AlertDialog.Description>
           </AlertDialog.Header>
           <AlertDialog.Footer>
-            <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
+            <AlertDialog.Cancel type="button"><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel>
             <AlertDialog.Action
               class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleting}

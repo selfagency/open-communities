@@ -29,7 +29,7 @@ async function createAdminLocals() {
 describe('admin +page.server — load', () => {
   beforeEach(() => {
     server.use(
-      http.get(`${PB}/api/collections/congregations/records`, ({ request }) => {
+      http.get(`${PB}/api/collections/congregationMeta/records`, ({ request }) => {
         const url = new URL(request.url);
         const filter = url.searchParams.get('filter') ?? '';
         if (filter.includes('true')) {
@@ -57,7 +57,7 @@ describe('admin +page.server — load', () => {
 describe('admin/congregations +page.server — load', () => {
   beforeEach(() => {
     server.use(
-      http.get(`${PB}/api/collections/congregations/records`, ({ request }) => {
+      http.get(`${PB}/api/collections/congregationMeta/records`, ({ request }) => {
         const url = new URL(request.url);
         const filter = url.searchParams.get('filter') ?? '';
         if (filter.includes('true')) {
@@ -68,12 +68,12 @@ describe('admin/congregations +page.server — load', () => {
                 name: 'Test Cong',
                 denomination: 'Reform',
                 visible: true,
-                created: '2024-01-01',
-                expand: {
+                location: JSON.stringify({
                   city: { name: 'Los Angeles' },
                   state: { name: 'California' },
-                  'state.country': { code: 'US' }
-                }
+                  country: { code: 'US' }
+                }),
+                created: '2024-01-01'
               }
             ]
           });
@@ -85,8 +85,8 @@ describe('admin/congregations +page.server — load', () => {
               name: 'Pending Cong',
               denomination: 'Conservative',
               visible: false,
-              created: '2024-06-01',
-              expand: {}
+              location: '{}',
+              created: '2024-06-01'
             }
           ]
         });

@@ -3,7 +3,12 @@ import { sleep, uid as uniqueId } from 'radashi';
 
 import { TEST_PASSWORD } from '../fixtures/credentials.js';
 
-const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
+const BASE = (() => {
+  if (!process.env.PLAYWRIGHT_BASE_URL) {
+    throw new Error('PLAYWRIGHT_BASE_URL must be set before running E2E tests');
+  }
+  return process.env.PLAYWRIGHT_BASE_URL;
+})();
 const PB_API = process.env.PB_API || 'http://127.0.0.1:8090/api';
 const email = 'regular@example.test';
 const password = TEST_PASSWORD;

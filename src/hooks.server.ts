@@ -26,8 +26,8 @@ const log = logger.getSubLogger({ name: 'hooks' });
 /* endregion variables */
 
 /* Per-session auth-refresh cooldown map.
- * Keyed by the first 32 chars of the auth cookie (stable within a session,
- * non-sensitive prefix) so each user's token is refreshed independently.
+ * Keyed by the session cookie (stable UUID set on login, persists across
+ * auth refreshes) so each user's token is refreshed independently.
  * PocketBase auth tokens are JWT-like with a configurable TTL; refreshing once
  * every 5 minutes per session is plenty without hammering the server.
  * Stale entries are pruned on every request to prevent unbounded growth. */
@@ -187,12 +187,16 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
 
 function serializeError(error: unknown): string {
   if (typeof error === 'object' && error !== null) {
-    return JSON.stringify(error);
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return JSON.stringify({ message: error instanceof Error ? error.message : 'Unknown error' });
+    }
   }
   if (error == null) {
     return '';
   }
-  return String(error); // NOSONAR — only reaches here for primitives (objects handled above)
+  return JSON.stringify({ message: String(error) });
 }
 
 export const handleError = async ({
@@ -214,7 +218,6 @@ export const handleError = async ({
 
     if (isFunction(event.locals.captureException)) {
       await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
-      await closePhClient();
     }
 
     return {

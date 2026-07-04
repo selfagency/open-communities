@@ -1,4 +1,5 @@
 <script lang="ts">
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import type { SuperForm, superForm } from 'sveltekit-superforms';
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
@@ -105,6 +106,6 @@ function langName(lang: string): string {
       <p class="text-destructive text-xs">{String(($errors as any)._errors ?? "")}</p>
     {/if}
 
-    <Button type="submit">{m.saveChanges()}</Button>
+    <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
   </CardContent>
 </Card>

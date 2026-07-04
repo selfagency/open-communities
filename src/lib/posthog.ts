@@ -5,8 +5,6 @@ import { browser } from '$app/environment';
 import { env } from '$env/dynamic/public';
 import type { UsersResponse } from '$lib/pocketbase.d';
 
-let _initialized = false;
-
 function isPostHogConfigured(): boolean {
   return browser && !!env.PUBLIC_POSTHOG_KEY;
 }
@@ -34,8 +32,6 @@ export function initPosthog(user?: UsersResponse) {
       capture_pageview: false,
       persistence: 'localStorage'
     });
-
-    _initialized = true;
 
     if (user) {
       posthog.identify(user.id);

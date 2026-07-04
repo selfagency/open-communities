@@ -4,6 +4,12 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 
 import { createMockRequestEvent } from '$test/testUtils';
 
+vi.mock('$env/dynamic/private', () => ({
+  env: new Proxy<Record<string, string>>({} as Record<string, string>, {
+    get: (_, key) => process.env[key as string] ?? ''
+  })
+}));
+
 // Load function returns a PageServerLoad result shape
 interface LoadResult {
   locales: string[];
@@ -117,7 +123,7 @@ describe('admin/translations — translate action', () => {
 
     const result = await mod.actions.translate({ ...event, request } as never);
     expect((result as { status: number }).status).toBe(400);
-    expect((result as { data: { error: string } }).data.error).toBe('Invalid locales JSON');
+    expect((result as { data: { error: string } }).data.error).toBe('Missing text or locales');
   });
 
   it('returns 500 when LibreTranslate is not configured', async () => {

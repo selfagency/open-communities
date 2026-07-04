@@ -1,21 +1,14 @@
-import { isEmpty, listify } from 'radashi';
+import { isEmpty } from 'radashi';
 // biome-ignore lint/performance/noNamespaceImport: Zod namespace convention
 import * as z from 'zod';
 import { m } from '$lib/paraglide/messages';
 
+import { Lazy } from './_shared';
+
 /* endregion imports */
 
-function Lazy(fn: () => string): string {
-  try {
-    return fn();
-  } catch {
-    return '';
-  }
-}
-
 /* region methods */
-const valueSelected = (value: Record<string, unknown>): boolean =>
-  !listify(value, (_, value) => value).every((value) => !value);
+const valueSelected = (value: Record<string, unknown>): boolean => Object.values(value).some(Boolean);
 
 const hasContact = (value: { email?: null | string; url?: null | string }): boolean =>
   !(isEmpty(value?.email) && isEmpty(value?.url));

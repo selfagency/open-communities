@@ -18,11 +18,6 @@ export function createApi(): TypedPocketBase {
   return instance;
 }
 
-// Base singleton
-// helper (test-only). Production code should use createApi() per request.
-const api = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
-api.autoCancellation(false);
-
 function cleanResponse<T extends Record<string, unknown>>(response: T, keepDate = false): Partial<T> {
   const fields: (keyof T)[] = ['collectionId' as keyof T, 'collectionName' as keyof T, 'updated' as keyof T];
   if (!keepDate) {

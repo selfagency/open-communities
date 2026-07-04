@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@jsrob/svelte-portal':
+        specifier: ^0.2.1
+        version: 0.2.1(svelte@5.56.4(@typescript-eslint/types@8.61.1))
       '@math.gl/types':
         specifier: ^4.1.0
         version: 4.1.0
@@ -17,9 +20,6 @@ importers:
       isomorphic-dompurify:
         specifier: ^3.18.0
         version: 3.18.0
-      pell:
-        specifier: ^1.0.6
-        version: 1.0.6
       posthog-js:
         specifier: ^1.393.5
         version: 1.393.5
@@ -32,9 +32,6 @@ importers:
       string-strip-html:
         specifier: ^13.5.3
         version: 13.5.3
-      strip-inline-styles:
-        specifier: ^1.0.0
-        version: 1.0.0
       super-sitemap:
         specifier: ^2.0.3
         version: 2.0.3
@@ -731,6 +728,11 @@ packages:
 
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
+
+  '@jsrob/svelte-portal@0.2.1':
+    resolution: {integrity: sha512-ifnfqfy2Rfr0Sp2/SsLs+8JfnWrQ3RqUf+z2m2OR6W0h3GyWsSH9Vnzq5j7wuQIOFKEZ/bz4T14uTxhaxpzQjQ==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   '@layerstack/svelte-actions@1.0.1-next.18':
     resolution: {integrity: sha512-gxPzCnJ1c9LTfWtRqLUzefCx+k59ZpxDUQ2XB+LokveZQPe7IDSOwHaBOEMlaGoGrtwc3Ft8dSZq+2WT2o9u/g==}
@@ -3278,9 +3280,6 @@ packages:
     resolution: {integrity: sha512-Wv0yo0+uZepnoNEKsquhar1F18LogB8oeEikIhUXG16udbiXG7JecHGySwoo6kuMgjmbQYzdrTZlO+/K9t8eZg==}
     hasBin: true
 
-  pell@1.0.6:
-    resolution: {integrity: sha512-wuackvgjFCHmVABy7ACSmY2u53w+TlYFrVL2hN6V3rGL/iWWwVXMw2uphpZSXNnqFQTI8nMpD3UNNX8+R4BAYw==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -3714,10 +3713,6 @@ packages:
   strip-indent@3.0.0:
     resolution: {integrity: sha512-laJTa3Jb+VQpaC6DseHhF7dXVqHTfJPCRDaEbid/drOhgitgYku/letMUqOXFoWV0zIIUbjpdH2t+tYj4bQMRQ==}
     engines: {node: '>=8'}
-
-  strip-inline-styles@1.0.0:
-    resolution: {integrity: sha512-xlxp5O7TKg71kilxcY1AI/WAIgb1gEpHK8HSEqH8Viz4rfOpGra70Jo/HB7kUMhSO9KVcIOLzgrvoDljMLpGEw==}
-    engines: {node: '>=14.0.0'}
 
   strip-json-comments@2.0.1:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
@@ -4742,6 +4737,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@js-sdsl/ordered-map@4.4.2': {}
+
+  '@jsrob/svelte-portal@0.2.1(svelte@5.56.4(@typescript-eslint/types@8.61.1))':
+    dependencies:
+      svelte: 5.56.4(@typescript-eslint/types@8.61.1)
 
   '@layerstack/svelte-actions@1.0.1-next.18':
     dependencies:
@@ -7330,8 +7329,6 @@ snapshots:
     dependencies:
       resolve-protobuf-schema: 2.1.0
 
-  pell@1.0.6: {}
-
   picocolors@1.1.1: {}
 
   picomatch@4.0.4: {}
@@ -7848,8 +7845,6 @@ snapshots:
   strip-indent@3.0.0:
     dependencies:
       min-indent: 1.0.1
-
-  strip-inline-styles@1.0.0: {}
 
   strip-json-comments@2.0.1: {}
 

@@ -14,3 +14,11 @@ export {
   Trigger as AccordionTrigger,
   Trigger
 };
+
+// Backwards-compatible default export for CommonJS consumers
+export default {
+  Accordion: Root,
+  AccordionItem: Item,
+  AccordionContent: Content,
+  AccordionTrigger: Trigger
+};

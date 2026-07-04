@@ -1,10 +1,14 @@
 <script lang="ts">
 import Fuzzy from '@leeoniya/ufuzzy';
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import CheckIcon from '@tabler/icons-svelte/icons/check';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import PencilIcon from '@tabler/icons-svelte/icons/pencil';
 import SearchIcon from '@tabler/icons-svelte/icons/search';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import UsersGroupIcon from '@tabler/icons-svelte/icons/users-group';
 import XIcon from '@tabler/icons-svelte/icons/x';
+
 import { type ColumnDef, getCoreRowModel } from '@tanstack/table-core';
 import { createRawSnippet } from 'svelte';
 import { goto } from '$app/navigation';
@@ -147,7 +151,17 @@ const activeCols: ColumnDef<Cong>[] = [
 
 const pendingCols: ColumnDef<Cong>[] = [
   { accessorKey: 'name', header: m.name(), cell: ({ row }) => nameCell(row.original.name) },
-  { accessorKey: 'denomination', header: m.denomination(), cell: ({ row }) => denomCell(row.original.denomination) },
+  {
+    id: 'location',
+    header: m.location(),
+    cell: ({ row }) =>
+      renderSnippet(
+        createRawSnippet<[{ v: string }]>((get) => ({
+          render: () => `<span class="text-muted-foreground">${get().v}</span>`
+        })),
+        { v: locationStr(row.original) }
+      )
+  },
   {
     accessorKey: 'owner',
     header: m.submittedBy(),
@@ -319,54 +333,76 @@ const pendingTable = $derived(
                           <TooltipContent>{m.editCongregation()}</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <AlertDialog.Root>
-                        <AlertDialog.Trigger>
-                          <Button
-                            class="size-8"
-                            onclick={() => { pendingId = row.original.id; pendingAction = 'approve'; }}
-                            size="icon"
-                            variant="default"
-                          >
-                            <CheckIcon class="size-4" />
-                          </Button>
-                        </AlertDialog.Trigger>
-                        <AlertDialog.Content>
-                          <AlertDialog.Header>
-                            <AlertDialog.Title>{m.approveCongregation()}</AlertDialog.Title>
-                            <AlertDialog.Description
-                              >{m.approveConfirmation({ name: row.original.name })}</AlertDialog.Description
-                            >
-                          </AlertDialog.Header>
-                          <AlertDialog.Footer>
-                            <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button onclick={confirmAction} variant="default">{m.approve()}</Button>
-                          </AlertDialog.Footer>
-                        </AlertDialog.Content>
-                      </AlertDialog.Root>
-                      <AlertDialog.Root>
-                        <AlertDialog.Trigger>
-                          <Button
-                            class="size-8"
-                            onclick={() => { pendingId = row.original.id; pendingAction = 'reject'; }}
-                            size="icon"
-                            variant="destructive"
-                          >
-                            <XIcon class="size-4" />
-                          </Button>
-                        </AlertDialog.Trigger>
-                        <AlertDialog.Content>
-                          <AlertDialog.Header>
-                            <AlertDialog.Title>{m.rejectCongregation()}</AlertDialog.Title>
-                            <AlertDialog.Description
-                              >{m.rejectConfirmation({ name: row.original.name })}</AlertDialog.Description
-                            >
-                          </AlertDialog.Header>
-                          <AlertDialog.Footer>
-                            <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
-                            <Button onclick={confirmAction} variant="destructive">{m.reject()}</Button>
-                          </AlertDialog.Footer>
-                        </AlertDialog.Content>
-                      </AlertDialog.Root>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <AlertDialog.Root>
+                              <AlertDialog.Trigger>
+                                <Button
+                                  class="size-8"
+                                  onclick={() => { pendingId = row.original.id; pendingAction = 'reject'; }}
+                                  size="icon"
+                                  variant="destructive"
+                                >
+                                  <XIcon class="size-4" />
+                                </Button>
+                              </AlertDialog.Trigger>
+                              <AlertDialog.Content>
+                                <AlertDialog.Header>
+                                  <AlertDialog.Title>{m.rejectCongregation()}</AlertDialog.Title>
+                                  <AlertDialog.Description
+                                    >{m.rejectConfirmation({ name: row.original.name })}</AlertDialog.Description
+                                  >
+                                </AlertDialog.Header>
+                                <AlertDialog.Footer>
+                                  <AlertDialog.Cancel type="button"
+                                    ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                                  >
+                                  <Button onclick={confirmAction} variant="destructive"
+                                    ><TrashIcon class="mr-1.5 size-4" />{m.reject()}</Button
+                                  >
+                                </AlertDialog.Footer>
+                              </AlertDialog.Content>
+                            </AlertDialog.Root>
+                          </TooltipTrigger>
+                          <TooltipContent>{m.reject()}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <AlertDialog.Root>
+                              <AlertDialog.Trigger>
+                                <Button
+                                  class="size-8"
+                                  onclick={() => { pendingId = row.original.id; pendingAction = 'approve'; }}
+                                  size="icon"
+                                  variant="outline"
+                                >
+                                  <CheckIcon class="size-4" />
+                                </Button>
+                              </AlertDialog.Trigger>
+                              <AlertDialog.Content>
+                                <AlertDialog.Header>
+                                  <AlertDialog.Title>{m.approveCongregation()}</AlertDialog.Title>
+                                  <AlertDialog.Description
+                                    >{m.approveConfirmation({ name: row.original.name })}</AlertDialog.Description
+                                  >
+                                </AlertDialog.Header>
+                                <AlertDialog.Footer>
+                                  <AlertDialog.Cancel type="button"
+                                    ><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel
+                                  >
+                                  <Button onclick={confirmAction} variant="outline"
+                                    ><FileUploadIcon class="mr-1.5 size-4" />{m.approve()}</Button
+                                  >
+                                </AlertDialog.Footer>
+                              </AlertDialog.Content>
+                            </AlertDialog.Root>
+                          </TooltipTrigger>
+                          <TooltipContent>{m.approve()}</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 </TableRow>

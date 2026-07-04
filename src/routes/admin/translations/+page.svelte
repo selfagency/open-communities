@@ -1,12 +1,18 @@
 <script lang="ts">
+import { createStateManager } from '@selfagency/stately';
 import AlertCircleIcon from '@tabler/icons-svelte/icons/alert-circle';
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
+import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
 import CirclePlusIcon from '@tabler/icons-svelte/icons/circle-plus';
+import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import LanguageIcon from '@tabler/icons-svelte/icons/language';
+import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
-import { enhance } from '$app/forms';
+import { deserialize, enhance } from '$app/forms';
 import { goto, invalidateAll } from '$app/navigation';
 import { page } from '$app/stores';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
@@ -24,18 +30,31 @@ import {
 import { Button } from '$lib/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
+// biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
+import * as HoverCard from '$lib/components/ui/hover-card/index.js';
 import { Input } from '$lib/components/ui/input';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Pagination from '$lib/components/ui/pagination';
+import { Progress } from '$lib/components/ui/progress/index.js';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
+import { useEditStateStore } from '$lib/stately/translations';
 
 let { data } = $props();
 
 // svelte-ignore state_referenced_locally
-const locales = (
-  data.locales.includes('en') ? ['en', ...data.locales.filter((locale) => locale !== 'en')] : data.locales
-) as string[];
+// Build a stable list of locales to render:
+// - prefer server-provided locales when present
+// - ensure 'en' appears first
+// - include canonical supported locales so admins can create missing locales
+const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk'] as const;
+const serverLocales = (data.locales ?? []) as string[];
+// Build locales as a plain string[] to avoid mixing literal union types with
+// runtime strings (which causes TS errors when spreading typed tuples).
+const supportedAsStrings = SUPPORTED_LOCALES as readonly string[];
+const defaultLocales = supportedAsStrings.filter((l) => l !== 'en');
+const extraLocales = serverLocales.filter((l) => l !== 'en' && !supportedAsStrings.includes(l));
+const locales: string[] = Array.from(new Set(['en', ...defaultLocales, ...extraLocales]));
 
 // Search
 // svelte-ignore state_referenced_locally
@@ -79,6 +98,16 @@ $effect(() => {
   mounted = true;
 });
 
+// Debug helper: show server-returned locales & counts when ?debug=true is present
+let debugMode = $state(false);
+$effect(() => {
+  try {
+    debugMode = $page.url.searchParams.get('debug') === 'true';
+  } catch {
+    debugMode = false;
+  }
+});
+
 // Delete state
 let deleteKey = $state('');
 let showDeleteDialog = $state(false);
@@ -94,23 +123,50 @@ let addKey = $state('');
 let addValue = $state('');
 
 // Per-key edit state: map of key -> { locale -> value }
-let editState = $state<Record<string, Record<string, string>>>({});
+// Uses Stately for reliable deep-mutation reactivity. Create manager only in browser
+let editStateManager: ReturnType<typeof createStateManager> | null = null;
+let editStateStore: ReturnType<typeof useEditStateStore> | null = null;
+
+// Manual snapshot of Stately entries used by the template. Keep a shallow
+// copy so Svelte sees a new object reference when Stately mutates deep values.
+let editEntries = $state<Record<string, Record<string, string>>>({});
+
+if (browser) {
+  editStateManager = createStateManager();
+  editStateStore = useEditStateStore(editStateManager);
+  // initialize snapshot so SSR->browser mount shows current edits
+  try {
+    editEntries = { ...(editStateStore?.entries ?? {}) };
+  } catch {
+    /* ignore - best-effort */
+  }
+}
 
 function getEditValue(key: string, locale: string, original: string): string {
-  return editState[key]?.[locale] ?? original;
+  return editEntries[key]?.[locale] ?? original;
 }
 
 function setEditValue(key: string, locale: string, val: string) {
-  if (!editState[key]) {
-    editState[key] = {};
+  if (editStateStore) {
+    editStateStore.setEditValue(key, locale, val);
+    // refresh snapshot so Svelte templates update
+    try {
+      editEntries = { ...(editStateStore.entries ?? {}) };
+    } catch {
+      /* ignore - best-effort */
+    }
   }
-  editState[key][locale] = val;
 }
 
 function resetEditState(key: string) {
-  const next = { ...editState };
-  delete next[key];
-  editState = next;
+  if (editStateStore) {
+    editStateStore.resetEditState(key);
+    try {
+      editEntries = { ...(editStateStore.entries ?? {}) };
+    } catch {
+      /* ignore - best-effort */
+    }
+  }
 }
 
 function buildEntries(key: string, entries: Array<{ locale: string; value: string; id?: string }>) {
@@ -119,14 +175,14 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
     seen.add(e.locale);
     return {
       locale: e.locale,
-      value: editState[key]?.[e.locale] ?? e.value,
+      value: editEntries[key]?.[e.locale] ?? e.value,
       id: e.id
     };
   });
 
-  // Append locales added via editState (e.g. from auto-translate) that
+  // Append locales added via editEntries (e.g. from auto-translate) that
   // aren't in the original entries, so they get created on save
-  const edits = editState[key];
+  const edits = editEntries[key];
   if (edits) {
     for (const [locale, val] of Object.entries(edits)) {
       if (!seen.has(locale) && val) {
@@ -138,11 +194,182 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
   return result;
 }
 
+async function parseActionResponse(res: Response) {
+  let body: any;
+  try {
+    body = await res.json();
+  } catch {
+    const text = await res.text();
+    try {
+      body = deserialize(text);
+    } catch {
+      body = null;
+    }
+  }
+  let actionData: any = body?.data ?? body;
+  // If the actionData is a devalue-serialized string, attempt to deserialize it
+  if (typeof actionData === 'string') {
+    // Common server shapes:
+    // - devalue string (SvelteKit forms devalue) — try deserialize first
+    // - JSON string (JSON.stringify on the server) — fallback to JSON.parse
+    try {
+      actionData = deserialize(actionData);
+    } catch {
+      try {
+        actionData = JSON.parse(actionData);
+      } catch {
+        // leave as-is
+      }
+    }
+  }
+  // devtools: parseActionResponse result intentionally not persisted in prod
+  return { body, actionData };
+}
+
+function applyTranslationsToEditState(key: string, translations: Array<{ locale: string; translatedText: string }>) {
+  for (const t of translations) {
+    // Debug: surface what we are writing into the edit store so we can verify
+    // whether client-side application of translations actually occurs at runtime.
+    // debug logging removed in cleanup; apply silently
+    setEditValue(key, t.locale, t.translatedText);
+  }
+}
+
+function extractTranslationsFromActionData(actionData: any): Array<{ locale: string; translatedText: string }> {
+  const out: Array<{ locale: string; translatedText: string }> = [];
+  if (!actionData) {
+    return out;
+  }
+
+  // Resolve devalue-style numeric references inside arrays/objects to concrete values.
+  function deepResolveArray(arr: any[]) {
+    const cache = new Map<number, any>();
+    const resolve = (v: any): any => {
+      if (typeof v === 'number') {
+        if (cache.has(v)) {
+          return cache.get(v);
+        }
+        const ref = arr[v];
+        cache.set(v, ref);
+        const resolved = resolve(ref);
+        cache.set(v, resolved);
+        return resolved;
+      }
+      if (Array.isArray(v)) {
+        return v.map(resolve);
+      }
+      if (v && typeof v === 'object') {
+        const o: Record<string, any> = {};
+        for (const k of Object.keys(v)) {
+          o[k] = resolve(v[k]);
+        }
+        return o;
+      }
+      return v;
+    };
+    return arr.map(resolve);
+  }
+
+  function normalizeToArray(input: any): any[] | null {
+    if (Array.isArray(input)) {
+      return input as any[];
+    }
+    if (Array.isArray(input?.translations)) {
+      return input.translations as any[];
+    }
+    return null;
+  }
+
+  function extractPairsFromArray(arr: any[]): Array<{ locale: string; translatedText: string }> {
+    const supported = new Set(['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk']);
+    const results: Array<{ locale: string; translatedText: string }> = [];
+
+    const pushUnique = (locale: string, text: string) => {
+      if (!supported.has(locale)) {
+        return;
+      }
+      if (results.some((r) => r.locale === locale)) {
+        return;
+      }
+      results.push({ locale, translatedText: text });
+    };
+
+    const handleObjectEntry = (v: any): boolean => {
+      if (!(v && typeof v === 'object' && 'locale' in v && 'translatedText' in v)) {
+        return false;
+      }
+      const localeRaw = (v as any).locale;
+      const textRaw = (v as any).translatedText;
+      const resolvedLocale = typeof localeRaw === 'number' ? String(arr[localeRaw]) : String(localeRaw);
+      const resolvedText = typeof textRaw === 'number' ? String(arr[textRaw]) : String(textRaw);
+      pushUnique(resolvedLocale, resolvedText);
+      return true;
+    };
+
+    const handleSequenceEntry = (i: number): number => {
+      const v = arr[i];
+      if (typeof v === 'string' && supported.has(v) && i + 1 < arr.length && typeof arr[i + 1] === 'string') {
+        pushUnique(v, String(arr[i + 1]));
+        return 1; // consumed one additional index
+      }
+      return 0;
+    };
+
+    for (let i = 0; i < arr.length; i++) {
+      const v = arr[i];
+      if (handleObjectEntry(v)) {
+        continue;
+      }
+      const consumed = handleSequenceEntry(i);
+      if (consumed) {
+        i += consumed;
+      }
+    }
+
+    return results;
+  }
+
+  // Work on a local variable to avoid parameter mutation warnings
+  let data: any = actionData;
+
+  const normalizedArray = normalizeToArray(data);
+  if (normalizedArray) {
+    try {
+      data = deepResolveArray(normalizedArray);
+    } catch {
+      // best-effort: leave data unchanged on failure
+    }
+  }
+
+  if (Array.isArray(data?.translations)) {
+    data = data.translations;
+  }
+
+  if (Array.isArray(data)) {
+    return extractPairsFromArray(data);
+  }
+
+  if (typeof data === 'object') {
+    for (const k of Object.keys(data)) {
+      const val = data[k];
+      if (val && typeof val === 'string') {
+        out.push({ locale: k, translatedText: val });
+      }
+    }
+  }
+
+  return out;
+}
+
 // Auto-translate state
 let translating = $state<Record<string, boolean>>({});
 
-function hasAlerts(key: string, entries: Array<{ locale: string; value: string }>): boolean {
-  const enValue = editState[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
+function hasAlerts(
+  key: string,
+  entries: Array<{ locale: string; value: string }>,
+  entriesMap: Record<string, Record<string, string>>
+): boolean {
+  const enValue = entriesMap[key]?.en ?? entries.find((e) => e.locale === 'en')?.value ?? '';
   if (!enValue) {
     return false;
   }
@@ -150,7 +377,7 @@ function hasAlerts(key: string, entries: Array<{ locale: string; value: string }
     if (e.locale === 'en') {
       return false;
     }
-    const val = editState[key]?.[e.locale] ?? e.value;
+    const val = entriesMap[key]?.[e.locale] ?? e.value;
     return !val || val === enValue;
   });
 }
@@ -160,9 +387,12 @@ async function handleAutoTranslate(key: string, text: string) {
     return;
   }
 
+  if (debugMode) {
+    toast.info('Translate handler invoked');
+  }
+
   translating[key] = true;
   const nonEnglishLocales = locales.filter((l) => l !== 'en');
-
   if (!nonEnglishLocales.length) {
     translating[key] = false;
     return;
@@ -173,48 +403,61 @@ async function handleAutoTranslate(key: string, text: string) {
   form.set('locales', JSON.stringify(nonEnglishLocales));
 
   try {
-    const res = await fetch('/admin/translations?/translate', { method: 'POST', body: form });
-    const body = await res.json();
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
 
-    // SvelteKit wraps action responses in { type, status, data }
-    const actionData = body?.data ?? body;
+    const { body, actionData } = await parseActionResponse(res);
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
-      toast.error(actionData?.error ?? 'Translation failed');
+      const err = actionData?.error ?? 'Translation failed';
+      const msg = typeof err === 'string' ? err : (err?.message ?? JSON.stringify(err));
+      toast.error(msg);
       return;
     }
 
-    if (actionData?.success && actionData?.translations) {
-      for (const t of actionData.translations) {
-        setEditValue(key, t.locale, t.translatedText);
-      }
+    // Normalize a variety of translation payload shapes and apply
+    const extracted = extractTranslationsFromActionData(actionData);
+    if (extracted.length) {
+      applyTranslationsToEditState(key, extracted);
       toast.success('Translations generated — review and save');
     }
 
-    // Partial failures — some locales failed
     if (actionData?.errors?.length) {
-      toast.error(`${actionData.errors.length} locale(s) failed to translate`);
+      toast.warning(`${actionData.errors.length} locale(s) failed to translate`);
     }
-  } catch {
-    toast.error('Translation request failed');
+  } catch (e) {
+    const msg = e && typeof e === 'object' && (e as any).message ? (e as any).message : 'Translation request failed';
+    toast.error(msg);
   } finally {
-    translating[key] = false;
+    delete translating[key];
+    translating = { ...translating };
   }
 }
 
 // Redeploy state
 let showWarning = $state(false);
 let deploying = $state(false);
+let deployStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 let deploymentUuid = $state<string | null>(null);
 let deploymentStatus = $state<string | null>(null);
 let deployError = $state<string | null>(null);
 let pollTimer: ReturnType<typeof setInterval> | null = null;
+let coolifyTimer: ReturnType<typeof setTimeout> | null = null;
+let coolifyPhase = $state(false);
 
 function startDeploy() {
   showWarning = false;
   deploying = true;
+  deployStatus = 'loading';
   deployError = null;
   deploymentStatus = 'queued';
+  coolifyPhase = false;
 }
 
 function pollStatus() {
@@ -224,7 +467,7 @@ function pollStatus() {
   pollTimer = setInterval(async () => {
     const form = new FormData();
     form.set('uuid', deploymentUuid ?? '');
-    const res = await fetch('/admin/translations?/status', { method: 'POST', body: form });
+    const res = await fetch('?/status', { method: 'POST', body: form });
     const json = await res.json();
     if (json.status) {
       deploymentStatus = json.status;
@@ -233,7 +476,16 @@ function pollStatus() {
           clearInterval(pollTimer);
         }
         if (json.status === 'success') {
-          setTimeout(() => window.location.reload(), 2000);
+          coolifyPhase = true;
+          coolifyTimer = setTimeout(() => {
+            coolifyPhase = false;
+            deployStatus = 'success';
+            deploying = false;
+            window.location.reload();
+          }, 30_000);
+        } else {
+          deployStatus = 'error';
+          deploying = false;
         }
       }
     }
@@ -252,10 +504,12 @@ function handleEnhance() {
       if (d?.error) {
         deployError = d.error as string;
         deploying = false;
+        deployStatus = 'error';
       }
     } else {
       deployError = 'Deploy request failed';
       deploying = false;
+      deployStatus = 'error';
     }
   };
 }
@@ -264,10 +518,15 @@ function cancelDeploy() {
   if (pollTimer) {
     clearInterval(pollTimer);
   }
+  if (coolifyTimer) {
+    clearTimeout(coolifyTimer);
+  }
   deploying = false;
+  deployStatus = 'idle';
   deploymentUuid = null;
   deploymentStatus = null;
   deployError = null;
+  coolifyPhase = false;
 }
 
 interface EnhanceResult {
@@ -347,8 +606,21 @@ const statusLabels: Record<string, string> = {
   in_progress: 'Building...',
   success: 'Deployed!',
   failed: 'Failed',
-  cancelled: 'Cancelled'
+  cancelled: 'Cancelled',
+  restarting: 'Restarting...'
 };
+
+const deployProgress = $derived(
+  coolifyPhase
+    ? 100
+    : deploymentStatus === 'in_progress'
+      ? 60
+      : deploymentStatus === 'success'
+        ? 100
+        : deploymentStatus === 'failed'
+          ? 100
+          : 20
+);
 </script>
 
 <svelte:head>
@@ -423,10 +695,35 @@ const statusLabels: Record<string, string> = {
         </div>
         <AlertDialog bind:open={showWarning}>
           <AlertDialogTrigger>
-            <Button variant="outline">
-              <RefreshIcon class="mr-1.5 size-4" />
-              Rebuild
-            </Button>
+            <HoverCard.Root>
+              <HoverCard.Trigger>
+                <Button variant="outline">
+                  {#if deployStatus === 'loading'}
+                    <LoadingIcon class="mr-1.5 size-4 animate-spin" />
+                  {:else if deployStatus === 'success'}
+                    <CircleCheckIcon class="mr-1.5 size-4 text-green-600" />
+                  {:else if deployStatus === 'error'}
+                    <CircleXIcon class="mr-1.5 size-4 text-destructive" />
+                  {:else}
+                    <RefreshIcon class="mr-1.5 size-4" />
+                  {/if}
+                  Rebuild
+                </Button>
+              </HoverCard.Trigger>
+              {#if deploying || deployStatus !== 'idle'}
+                <HoverCard.Content class="w-64">
+                  <div class="space-y-2">
+                    <p class="text-sm font-medium">
+                      {statusLabels[deploymentStatus ?? 'queued'] ?? deploymentStatus}
+                    </p>
+                    <Progress value={deployProgress} />
+                    {#if deployStatus === 'error' && deployError}
+                      <p class="text-destructive text-xs">{deployError}</p>
+                    {/if}
+                  </div>
+                </HoverCard.Content>
+              {/if}
+            </HoverCard.Root>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -437,7 +734,7 @@ const statusLabels: Record<string, string> = {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
               <form action="?/redeploy" method="POST" onsubmit={startDeploy} use:enhance={handleEnhance}>
                 <AlertDialogAction
                   class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -474,8 +771,10 @@ const statusLabels: Record<string, string> = {
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <Button onclick={() => (showAddDialog = false)} variant="outline">Cancel</Button>
-            <Button type="submit">Create</Button>
+            <Button onclick={() => (showAddDialog = false)} variant="outline"
+              ><CancelIcon class="mr-1.5 size-4" />Cancel</Button
+            >
+            <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Create</Button>
           </div>
         </DialogContent>
       </form>
@@ -491,6 +790,14 @@ const statusLabels: Record<string, string> = {
     </p>
 
     <!-- Accordion -->
+    {#if debugMode}
+      <div class="rounded border p-2 mb-3 bg-muted/5 text-xs">
+        <div><strong>Debug</strong></div>
+        <div>Locales: {JSON.stringify(locales)}</div>
+        <div>Translations keys: {data.translations.length}</div>
+        <div>Records returned: {data.recordsCount ?? 'n/a'}</div>
+      </div>
+    {/if}
     <Accordion bind:value={openKey}>
       {#each data.translations as { key, entries } (key)}
         {@const enEntry = entries.find((e: { locale: string }) => e.locale === 'en')}
@@ -499,7 +806,7 @@ const statusLabels: Record<string, string> = {
             <span class="flex items-start gap-6 min-w-0 flex-1">
               <span class="font-mono text-sm font-medium leading-6 shrink-0 w-48 truncate">
                 {key}
-                {#if hasAlerts(key, entries)}
+                {#if hasAlerts(key, entries, editEntries)}
                   <AlertCircleIcon class="inline size-4 text-amber-500 align-middle -mt-0.5 ml-1" />
                 {/if}
               </span>
@@ -530,7 +837,7 @@ const statusLabels: Record<string, string> = {
                     placeholder="—"
                     rows={1}
                     style={locale === 'he' ? 'direction: rtl' : undefined}
-                    value={getEditValue(key, locale, entry?.value ?? '')}
+                    value={editEntries[key]?.[locale] ?? entry?.value ?? ''}
                   />
                 </div>
               {/each}
@@ -539,25 +846,16 @@ const statusLabels: Record<string, string> = {
                 <Button
                   class="h-11 gap-1.5 px-2.5"
                   disabled={translating[key] || !enEntry?.value}
-                  onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''));
+                  }}
+                  onpointerdown={(e) => e.stopPropagation()}
                   type="button"
-                  variant="default"
+                  variant="outline"
                 >
                   {#if translating[key]}
-                    <svg
-                      class="mr-1.5 size-4 animate-spin"
-                      fill="none"
-                      height="24"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
-                      width="24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                    </svg>
+                    <LoadingIcon class="mr-1.5 size-4 animate-spin" />
                     Translating
                   {:else}
                     <LanguageIcon class="mr-1.5 size-4" />
@@ -567,13 +865,7 @@ const statusLabels: Record<string, string> = {
                 <div class="flex items-center gap-2">
                   <AlertDialog>
                     <AlertDialogTrigger>
-                      <Button
-                        class="h-11 gap-1.5 px-2.5 text-destructive hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20"
-                        type="button"
-                        variant="default"
-                      >
-                        Delete
-                      </Button>
+                      <Button type="button" variant="destructive"><TrashIcon class="mr-1.5 size-4" /> Delete</Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
@@ -584,7 +876,7 @@ const statusLabels: Record<string, string> = {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
                         <form action="?/delete" method="POST" use:enhance={() => handleDelete(key)}>
                           <input name="key" type="hidden" value={key} />
                           <AlertDialogAction
@@ -596,7 +888,7 @@ const statusLabels: Record<string, string> = {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <Button class="h-11 gap-1.5 px-2.5" type="submit" variant="default">Save</Button>
+                  <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Save</Button>
                 </div>
               </div>
             </form>
@@ -656,7 +948,7 @@ const statusLabels: Record<string, string> = {
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>Cancel</AlertDialogCancel>
+        <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
         <form action="?/delete" method="POST" use:enhance={handleBulkDelete}>
           <input name="key" type="hidden" value={deleteKey} />
           <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" type="submit"

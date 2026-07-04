@@ -3,15 +3,9 @@ import * as z from 'zod';
 
 import { m } from '$lib/paraglide/messages';
 
-/* endregion imports */
+import { Lazy } from './_shared';
 
-function Lazy(fn: () => string): string {
-  try {
-    return fn();
-  } catch {
-    return '';
-  }
-}
+/* endregion imports */
 
 /* region variables */
 // constants
@@ -40,7 +34,7 @@ export const userSchema = z
     notifications: z.boolean().default(true),
     oldPassword: z.string().optional(),
     password,
-    passwordConfirm: z.string()
+    passwordConfirm: z.string().min(1, { message: Lazy(() => m.passwordRequirementsFailed()) })
   })
   .superRefine((data, ctx) => {
     if (data.passwordConfirm !== data.password) {

@@ -5,7 +5,12 @@ import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
 import { TEST_PASSWORD, TEST_EMAIL } from '../fixtures/credentials.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
-const BASE = process.env.PB_TEST_BASEURL || 'http://localhost:4173';
+const BASE = (() => {
+  if (!process.env.PLAYWRIGHT_BASE_URL) {
+    throw new Error('PLAYWRIGHT_BASE_URL must be set before running E2E tests');
+  }
+  return process.env.PLAYWRIGHT_BASE_URL;
+})();
 const MAILPIT_API = process.env.MAILPIT_API ?? 'http://127.0.0.1:8025/api/v1';
 const PB_ADMIN = process.env.PB_TEST_ADMIN || 'admin@test.com'; // nosemgrep
 const PB_PASSWORD = process.env.PB_TEST_PASSWORD || 'i3_NL-dfzzFt5TX'; // nosemgrep

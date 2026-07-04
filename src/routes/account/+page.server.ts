@@ -12,19 +12,18 @@ export const load: PageServerLoad = async ({ locals }) => {
   if (!user?.email) {
     throw error(401, 'Not authenticated');
   }
-  const form = await superValidate(zod4(userSchema), {
-    defaults: {
-      name: (user?.name as string) ?? '',
-      email: (user?.email as string) ?? '',
-      emailVisibility: true,
-      lang: (user?.lang as 'en' | 'es' | 'fr' | 'he' | 'de' | 'hu' | 'nl' | 'pl' | 'pt' | 'ru' | 'uk') ?? 'en',
-      notifications: (user?.notifications as boolean) ?? true,
-      congregation: (user?.congregation as string) ?? '',
-      password: '',
-      passwordConfirm: '',
-      oldPassword: ''
-    }
-  });
+  const defaults = {
+    name: (user?.name as string) ?? '',
+    email: (user?.email as string) ?? '',
+    emailVisibility: true,
+    lang: (user?.lang as 'en' | 'es' | 'fr' | 'he' | 'de' | 'hu' | 'nl' | 'pl' | 'pt' | 'ru' | 'uk') ?? 'en',
+    notifications: (user?.notifications as boolean) ?? true,
+    congregation: (user?.congregation as string) ?? '',
+    password: '',
+    passwordConfirm: '',
+    oldPassword: ''
+  };
+  const form = await superValidate(zod4(userSchema), { defaults });
   return { form, user };
 };
 
@@ -38,6 +37,11 @@ export const actions = {
       return fail(400, { form });
     }
 
+    const uid = client.authStore.record?.id;
+    if (!uid) {
+      return fail(401, { form });
+    }
+
     try {
       const body: Record<string, unknown> = {
         name: form.data.name,
@@ -49,9 +53,7 @@ export const actions = {
         body.password = form.data.password;
         body.passwordConfirm = form.data.passwordConfirm;
       }
-      const updated = await withRetry(() =>
-        client.collection('users').update(client.authStore.record?.id as string, body)
-      );
+      const updated = await withRetry(() => client.collection('users').update(uid, body));
       client.authStore.save(client.authStore.token, updated as unknown as RecordModel);
       return { form, success: true };
     } catch (err: unknown) {
@@ -67,7 +69,7 @@ export const actions = {
     if (!uid) {
       throw error(401, 'Not authenticated');
     }
-    await withRetry(() => client.collection('users').update(uid, { congregation: null }));
+    await withRetry(() => client.collection('users').update(uid, { congregation: '' }));
     return { unlinked: true };
   },
 

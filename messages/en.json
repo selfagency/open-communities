@@ -384,5 +384,6 @@
   "transactional_approvedBody": "Your congregation \"{name}\" has been approved and is now visible on the directory.",
   "transactional_rejectedSubject": "Your congregation submission",
   "transactional_rejectedBody": "Your congregation \"{name}\" was not approved.",
-  "translations": "Translations"
+  "translations": "Translations",
+  "artist": "Artist"
 }

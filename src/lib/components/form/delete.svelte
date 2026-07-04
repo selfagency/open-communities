@@ -1,6 +1,9 @@
 <script lang="ts">
 /* region imports */
 import WarningIcon from '@tabler/icons-svelte/icons/alert-circle';
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
+
 import { isEmpty } from 'radashi';
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
@@ -77,7 +80,7 @@ onMount(() => {
 
 <AlertDialog.Root>
   <AlertDialog.Trigger>
-    <Button variant="destructive">{m.delete()}</Button>
+    <Button variant="destructive"><TrashIcon class="mr-1.5 size-4" />{m.delete()}</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content>
     {#if loadingSecondary}
@@ -108,7 +111,7 @@ onMount(() => {
           </AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-          <AlertDialog.Cancel type="button">{m.cancel()}</AlertDialog.Cancel>
+          <AlertDialog.Cancel type="button"><CancelIcon class="mr-1.5 size-4" />{m.cancel()}</AlertDialog.Cancel>
           <AlertDialog.Action
             onclick={(e) => {
               e.preventDefault();

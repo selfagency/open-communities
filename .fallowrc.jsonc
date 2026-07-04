@@ -43,6 +43,8 @@
       "src/lib/components/congregation/tile.svelte",
       "src/lib/components/form/form.svelte",
       "src/lib/components/admin/page-editor.svelte",
+      // Extracted translate button — icon/iconClass $derived.by switch statements
+      "src/lib/components/admin/translate-button.svelte",
       "src/lib/components/congregation/health.svelte",
       "src/lib/components/congregation/accessibility.svelte",
       // Test files — large describe blocks + mock helpers naturally exceed thresholds
@@ -110,6 +112,8 @@
     // Hoisted transitive dep — @loaders.gl/schema-utils imports @math.gl/types
     // at build time but doesn't declare it. Explicit dep ensures Rolldown resolution.
     "@math.gl/types",
+    // Dynamic import in portal.ts — Fallow can't statically trace it
+    "@jsrob/svelte-portal",
     // Used indirectly via @accesslint/core in setupAccessLint.ts
     "@accesslint/vitest"
   ],
@@ -135,6 +139,10 @@
     },
     {
       "file": "src/lib/components/ui/accordion/index.ts",
+      "exports": ["*"]
+    },
+    {
+      "file": "src/lib/components/admin/page-editor-translate-portal.svelte",
       "exports": ["*"]
     },
     {

@@ -3,9 +3,9 @@
 import { fail } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isFunction } from 'radashi';
-import { dev } from '$app/environment';
+import type { SuperValidated } from 'sveltekit-superforms';
 import { m } from '$lib/paraglide/messages';
-import type { CongregationMetaRecord } from '$lib/pocketbase.d';
+import type { CongregationMetaRecord, TypedPocketBase } from '$lib/pocketbase.d';
 import { contactSchema } from '$lib/schemas/contact';
 import { withRetry } from '$lib/server/api';
 import { getCachedCongregations } from '$lib/server/cache';
@@ -55,6 +55,38 @@ export const load = async (event) => {
   }
 };
 
+async function sendContactMail(form: SuperValidated<Record<string, unknown>>, api: TypedPocketBase) {
+  const reasonKey = `contactOptions_${form.data.reason as string}` as keyof typeof m;
+  const reasonFn = m[reasonKey];
+  if (typeof reasonFn !== 'function') {
+    return fail(400, { form, error: 'Invalid reason' });
+  }
+
+  const record = form.data.record as string | undefined;
+  const reason = form.data.reason as string;
+  const email = form.data.email as string;
+  const transferParam = ['claim', 'transfer'].includes(reason) ? `&transfer=${encodeURIComponent(email)}` : '';
+  const editUrl = record ? `https://opencommunities.info/edit?id=${record}${transferParam}` : '';
+
+  await adminMail(
+    {
+      email: form.data.email as string,
+      message: `
+					${(reasonFn as (...args: unknown[]) => string)()}
+
+					${form.data.message as string}
+
+					${editUrl}
+					`,
+      name: form.data.name as string,
+      subject: `Contact form: ${form.data.reason as string}`
+    },
+    api
+  );
+
+  return { form };
+}
+
 export const actions = {
   default: async (event) => {
     const { api, capture, captureException, log } = event.locals;
@@ -67,9 +99,7 @@ export const actions = {
 
     try {
       if (!form.valid) {
-        return fail(400, {
-          form
-        });
+        return fail(400, { form });
       }
 
       const captchaValid = await validateCaptcha(form);
@@ -77,41 +107,7 @@ export const actions = {
         return fail(400, { form });
       }
 
-      try {
-        const reasonKey = `contactOptions_${form.data.reason}` as keyof typeof m;
-        const reasonFn = m[reasonKey];
-        if (typeof reasonFn !== 'function') {
-          return fail(400, { form, error: 'Invalid reason' });
-        }
-
-        await adminMail(
-          {
-            email: form.data.email,
-            message: `
-					${(reasonFn as (...args: unknown[]) => string)()}
-
-					${form.data.message}
-
-					https://opencommunities.info/edit?id=${form.data.record}${['claim', 'transfer'].includes(form.data.reason) ? `&transfer=${encodeURIComponent(form.data.email)}` : ''}
-					`,
-            name: form.data.name,
-            subject: `Contact form: ${form.data.reason}`
-          },
-          api
-        );
-      } catch (error) {
-        if (isFunction(captureException)) {
-          await captureException(error, client?.id);
-        }
-        return fail(400, {
-          error: dev ? error : 'An error occurred',
-          form
-        });
-      }
-
-      return {
-        form
-      };
+      return await sendContactMail(form, api);
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {

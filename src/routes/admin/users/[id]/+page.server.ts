@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   const congData = (expand?.congregation as Record<string, string> | undefined) || null;
 
   const available = await client
-    .collection('congregations')
+    .collection('congregationMeta')
     .getFullList({
       filter: client.filter('owner = null'),
       sort: 'name',
@@ -98,7 +98,7 @@ export const actions = {
     }
 
     try {
-      await withRetry(() => client.collection('users').update(params.id, { congregation: null }));
+      await withRetry(() => client.collection('users').update(params.id, { congregation: '' }));
       return { success: 'Congregation unlinked' };
     } catch {
       return fail(400, { error: 'Failed to unlink congregation' });
@@ -143,7 +143,7 @@ export const actions = {
     }
   },
 
-  resetPassword: async ({ locals, params }) => {
+  resetPassword: async ({ fetch, locals, params }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
       throw error(401, 'Unauthorized');

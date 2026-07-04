@@ -1,6 +1,11 @@
 <script lang="ts">
+import CancelIcon from '@tabler/icons-svelte/icons/cancel';
+import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
+import TrashIcon from '@tabler/icons-svelte/icons/trash';
+import UserKeyIcon from '@tabler/icons-svelte/icons/user-key';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -105,7 +110,7 @@ function handleDelete() {
           <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={adminToggle} />
           <input name="admin" type="hidden" value={String(adminToggle)} />
         </div>
-        <Button type="submit">{m.saveChanges()}</Button>
+        <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
       </CardContent>
     </Card>
   </form>
@@ -127,7 +132,9 @@ function handleDelete() {
             >{m.editCongregation()}</Button
           >
           <form action="?/unlink" method="POST" use:enhance={handleUpdate}>
-            <Button type="submit" variant="outline">{m.unlinkFromCongregation()}</Button>
+            <Button type="submit" variant="outline"
+              ><FileUploadIcon class="mr-1.5 size-4" />{m.unlinkFromCongregation()}</Button
+            >
           </form>
         </div>
       </CardContent>
@@ -152,7 +159,7 @@ function handleDelete() {
                   <option value={cong.id}>{cong.name}</option>
                 {/each}
               </select>
-              <Button disabled={!selectedCong} type="submit" variant="default">{m.assign()}</Button>
+              <Button disabled={!selectedCong} type="submit" variant="outline">{m.assign()}</Button>
             </div>
           </form>
         {:else}
@@ -168,7 +175,7 @@ function handleDelete() {
     </CardHeader>
     <CardContent>
       <form action="?/resetPassword" method="POST" use:enhance={handleUpdate}>
-        <Button type="submit" variant="outline">{m.resetPasswordEmail()}</Button>
+        <Button type="submit" variant="outline"><UserKeyIcon class="mr-1.5 size-4" />{m.resetPasswordEmail()}</Button>
       </form>
     </CardContent>
   </Card>
@@ -181,7 +188,7 @@ function handleDelete() {
       <p class="text-muted-foreground text-sm">{m.deleteAccountDescription()}</p>
       <AlertDialog bind:open={showDeleteDialog}>
         <AlertDialogTrigger>
-          <Button type="button" variant="destructive">{m.deleteAccount()}</Button>
+          <Button type="button" variant="destructive"><TrashIcon class="mr-1.5 size-4" />{m.deleteAccount()}</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -191,7 +198,7 @@ function handleDelete() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel><CancelIcon class="mr-1.5 size-4" />Cancel</AlertDialogCancel>
             <form action="?/deleteAccount" method="POST" use:enhance={handleDelete}>
               <AlertDialogAction
                 class="bg-destructive text-destructive-foreground hover:bg-destructive/90"

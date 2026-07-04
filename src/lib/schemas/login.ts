@@ -4,15 +4,9 @@ import * as z from 'zod';
 
 import { m } from '$lib/paraglide/messages';
 
-/* endregion imports */
+import { Lazy } from './_shared';
 
-function Lazy(fn: () => string): string {
-  try {
-    return fn();
-  } catch {
-    return '';
-  }
-}
+/* endregion imports */
 
 export const loginSchema = z.object({
   email: z.email().refine((value) => !!value, {
