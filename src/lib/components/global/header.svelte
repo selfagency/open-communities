@@ -33,15 +33,16 @@ const isMobile = $derived(appState.isMobile);
       <Button
         onclick={async () => {
           if (user?.email) {
-            await goto("/add");
+            await goto('/add');
           } else {
-            await goto("/login?redirect=/add");
+            await goto('/login?redirect=/add');
           }
         }}
         variant="outline"
       >
-        <PlusIcon class="size-4" />
-        {m.addCongregation()}
+        <PlusIcon class="size-4 mr-2" />
+        <span class="sr-only">{m.addCongregation()}</span>
+        <span class="hidden sm:inline">{m.addCongregation()}</span>
       </Button>
 
       <Menu mode="full" />

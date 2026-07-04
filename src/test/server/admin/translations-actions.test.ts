@@ -123,7 +123,7 @@ describe('admin/translations — translate action', () => {
 
     const result = await mod.actions.translate({ ...event, request } as never);
     expect((result as { status: number }).status).toBe(400);
-    expect((result as { data: { error: string } }).data.error).toBe('Invalid locales JSON');
+    expect((result as { data: { error: string } }).data.error).toBe('Missing text or locales');
   });
 
   it('returns 500 when LibreTranslate is not configured', async () => {

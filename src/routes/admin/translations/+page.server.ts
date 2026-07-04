@@ -117,19 +117,16 @@ function getLibreTranslateConfig() {
   return { apiUrl, ltKey, error: null } as const;
 }
 
-// Validate translate action input. Returns a fail() response on error, or null if valid.
-function validateTranslateInput(text: string, localesStr: string): ReturnType<typeof fail> | null {
+// Validate translate action input. Returns parsed locales on success, or null on any validation failure.
+function validateTranslateInput(text: string, localesStr: string): string[] | null {
   if (!(text && localesStr)) {
-    return fail(400, { error: 'Missing text or locales' });
+    return null;
   }
   const locales = parseLocales(localesStr);
-  if (locales === null) {
-    return fail(400, { error: 'Invalid locales JSON' });
+  if (locales === null || locales.length === 0) {
+    return null;
   }
-  if (locales.length === 0) {
-    return fail(400, { error: 'No locales provided' });
-  }
-  return null;
+  return locales;
 }
 
 async function doTranslations(text: string, locales: string[], apiUrl: string, ltKey: string | undefined) {
@@ -334,12 +331,10 @@ export const actions = {
     const text = form.get('text') as string;
     const localesStr = form.get('locales') as string;
 
-    const validated = validateTranslateInput(text, localesStr);
-    if (validated) {
-      return validated;
+    const locales = validateTranslateInput(text, localesStr);
+    if (locales === null) {
+      return fail(400, { error: 'Missing text or locales' });
     }
-
-    const locales = parseLocales(localesStr)!;
     const { apiUrl, ltKey, error: cfgErr } = getLibreTranslateConfig();
     if (cfgErr) {
       log.error('LibreTranslate not configured', { err: cfgErr });

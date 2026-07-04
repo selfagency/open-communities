@@ -12,7 +12,7 @@ import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { toast } from 'svelte-sonner';
 import { browser } from '$app/environment';
-import { enhance } from '$app/forms';
+import { deserialize, enhance } from '$app/forms';
 import { goto, invalidateAll } from '$app/navigation';
 import { page } from '$app/stores';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
@@ -43,9 +43,18 @@ import { useEditStateStore } from '$lib/stately/translations';
 let { data } = $props();
 
 // svelte-ignore state_referenced_locally
-const locales = (
-  data.locales.includes('en') ? ['en', ...data.locales.filter((locale) => locale !== 'en')] : data.locales
-) as string[];
+// Build a stable list of locales to render:
+// - prefer server-provided locales when present
+// - ensure 'en' appears first
+// - include canonical supported locales so admins can create missing locales
+const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk'] as const;
+const serverLocales = (data.locales ?? []) as string[];
+// Build locales as a plain string[] to avoid mixing literal union types with
+// runtime strings (which causes TS errors when spreading typed tuples).
+const supportedAsStrings = SUPPORTED_LOCALES as readonly string[];
+const defaultLocales = supportedAsStrings.filter((l) => l !== 'en');
+const extraLocales = serverLocales.filter((l) => l !== 'en' && !supportedAsStrings.includes(l));
+const locales: string[] = Array.from(new Set(['en', ...defaultLocales, ...extraLocales]));
 
 // Search
 // svelte-ignore state_referenced_locally
@@ -89,6 +98,16 @@ $effect(() => {
   mounted = true;
 });
 
+// Debug helper: show server-returned locales & counts when ?debug=true is present
+let debugMode = $state(false);
+$effect(() => {
+  try {
+    debugMode = $page.url.searchParams.get('debug') === 'true';
+  } catch {
+    debugMode = false;
+  }
+});
+
 // Delete state
 let deleteKey = $state('');
 let showDeleteDialog = $state(false);
@@ -104,25 +123,50 @@ let addKey = $state('');
 let addValue = $state('');
 
 // Per-key edit state: map of key -> { locale -> value }
-// Uses Stately for reliable deep-mutation reactivity.
-const editStateManager = createStateManager();
-const editStateStore = useEditStateStore(editStateManager);
+// Uses Stately for reliable deep-mutation reactivity. Create manager only in browser
+let editStateManager: ReturnType<typeof createStateManager> | null = null;
+let editStateStore: ReturnType<typeof useEditStateStore> | null = null;
 
-// $derived wrapper so Svelte 5's compiler tracks the Stately store dependency.
-// Without this, function calls like getEditValue() are invisible to the compiler
-// and the template never re-evaluates when translations arrive.
-let editEntries = $derived($editStateStore.entries);
+// Manual snapshot of Stately entries used by the template. Keep a shallow
+// copy so Svelte sees a new object reference when Stately mutates deep values.
+let editEntries = $state<Record<string, Record<string, string>>>({});
+
+if (browser) {
+  editStateManager = createStateManager();
+  editStateStore = useEditStateStore(editStateManager);
+  // initialize snapshot so SSR->browser mount shows current edits
+  try {
+    editEntries = { ...(editStateStore?.entries ?? {}) };
+  } catch {
+    /* ignore - best-effort */
+  }
+}
 
 function getEditValue(key: string, locale: string, original: string): string {
   return editEntries[key]?.[locale] ?? original;
 }
 
 function setEditValue(key: string, locale: string, val: string) {
-  editStateStore.setEditValue(key, locale, val);
+  if (editStateStore) {
+    editStateStore.setEditValue(key, locale, val);
+    // refresh snapshot so Svelte templates update
+    try {
+      editEntries = { ...(editStateStore.entries ?? {}) };
+    } catch {
+      /* ignore - best-effort */
+    }
+  }
 }
 
 function resetEditState(key: string) {
-  editStateStore.resetEditState(key);
+  if (editStateStore) {
+    editStateStore.resetEditState(key);
+    try {
+      editEntries = { ...(editStateStore.entries ?? {}) };
+    } catch {
+      /* ignore - best-effort */
+    }
+  }
 }
 
 function buildEntries(key: string, entries: Array<{ locale: string; value: string; id?: string }>) {
@@ -148,6 +192,173 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
   }
 
   return result;
+}
+
+async function parseActionResponse(res: Response) {
+  let body: any;
+  try {
+    body = await res.json();
+  } catch {
+    const text = await res.text();
+    try {
+      body = deserialize(text);
+    } catch {
+      body = null;
+    }
+  }
+  let actionData: any = body?.data ?? body;
+  // If the actionData is a devalue-serialized string, attempt to deserialize it
+  if (typeof actionData === 'string') {
+    // Common server shapes:
+    // - devalue string (SvelteKit forms devalue) — try deserialize first
+    // - JSON string (JSON.stringify on the server) — fallback to JSON.parse
+    try {
+      actionData = deserialize(actionData);
+    } catch {
+      try {
+        actionData = JSON.parse(actionData);
+      } catch {
+        // leave as-is
+      }
+    }
+  }
+  // devtools: parseActionResponse result intentionally not persisted in prod
+  return { body, actionData };
+}
+
+function applyTranslationsToEditState(key: string, translations: Array<{ locale: string; translatedText: string }>) {
+  for (const t of translations) {
+    // Debug: surface what we are writing into the edit store so we can verify
+    // whether client-side application of translations actually occurs at runtime.
+    // debug logging removed in cleanup; apply silently
+    setEditValue(key, t.locale, t.translatedText);
+  }
+}
+
+function extractTranslationsFromActionData(actionData: any): Array<{ locale: string; translatedText: string }> {
+  const out: Array<{ locale: string; translatedText: string }> = [];
+  if (!actionData) {
+    return out;
+  }
+
+  // Resolve devalue-style numeric references inside arrays/objects to concrete values.
+  function deepResolveArray(arr: any[]) {
+    const cache = new Map<number, any>();
+    const resolve = (v: any): any => {
+      if (typeof v === 'number') {
+        if (cache.has(v)) {
+          return cache.get(v);
+        }
+        const ref = arr[v];
+        cache.set(v, ref);
+        const resolved = resolve(ref);
+        cache.set(v, resolved);
+        return resolved;
+      }
+      if (Array.isArray(v)) {
+        return v.map(resolve);
+      }
+      if (v && typeof v === 'object') {
+        const o: Record<string, any> = {};
+        for (const k of Object.keys(v)) {
+          o[k] = resolve(v[k]);
+        }
+        return o;
+      }
+      return v;
+    };
+    return arr.map(resolve);
+  }
+
+  function normalizeToArray(input: any): any[] | null {
+    if (Array.isArray(input)) {
+      return input as any[];
+    }
+    if (Array.isArray(input?.translations)) {
+      return input.translations as any[];
+    }
+    return null;
+  }
+
+  function extractPairsFromArray(arr: any[]): Array<{ locale: string; translatedText: string }> {
+    const supported = new Set(['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk']);
+    const results: Array<{ locale: string; translatedText: string }> = [];
+
+    const pushUnique = (locale: string, text: string) => {
+      if (!supported.has(locale)) {
+        return;
+      }
+      if (results.some((r) => r.locale === locale)) {
+        return;
+      }
+      results.push({ locale, translatedText: text });
+    };
+
+    const handleObjectEntry = (v: any): boolean => {
+      if (!(v && typeof v === 'object' && 'locale' in v && 'translatedText' in v)) {
+        return false;
+      }
+      const localeRaw = (v as any).locale;
+      const textRaw = (v as any).translatedText;
+      const resolvedLocale = typeof localeRaw === 'number' ? String(arr[localeRaw]) : String(localeRaw);
+      const resolvedText = typeof textRaw === 'number' ? String(arr[textRaw]) : String(textRaw);
+      pushUnique(resolvedLocale, resolvedText);
+      return true;
+    };
+
+    const handleSequenceEntry = (i: number): number => {
+      const v = arr[i];
+      if (typeof v === 'string' && supported.has(v) && i + 1 < arr.length && typeof arr[i + 1] === 'string') {
+        pushUnique(v, String(arr[i + 1]));
+        return 1; // consumed one additional index
+      }
+      return 0;
+    };
+
+    for (let i = 0; i < arr.length; i++) {
+      const v = arr[i];
+      if (handleObjectEntry(v)) {
+        continue;
+      }
+      const consumed = handleSequenceEntry(i);
+      if (consumed) {
+        i += consumed;
+      }
+    }
+
+    return results;
+  }
+
+  // Work on a local variable to avoid parameter mutation warnings
+  let data: any = actionData;
+
+  const normalizedArray = normalizeToArray(data);
+  if (normalizedArray) {
+    try {
+      data = deepResolveArray(normalizedArray);
+    } catch {
+      // best-effort: leave data unchanged on failure
+    }
+  }
+
+  if (Array.isArray(data?.translations)) {
+    data = data.translations;
+  }
+
+  if (Array.isArray(data)) {
+    return extractPairsFromArray(data);
+  }
+
+  if (typeof data === 'object') {
+    for (const k of Object.keys(data)) {
+      const val = data[k];
+      if (val && typeof val === 'string') {
+        out.push({ locale: k, translatedText: val });
+      }
+    }
+  }
+
+  return out;
 }
 
 // Auto-translate state
@@ -176,9 +387,12 @@ async function handleAutoTranslate(key: string, text: string) {
     return;
   }
 
+  if (debugMode) {
+    toast.info('Translate handler invoked');
+  }
+
   translating[key] = true;
   const nonEnglishLocales = locales.filter((l) => l !== 'en');
-
   if (!nonEnglishLocales.length) {
     translating[key] = false;
     return;
@@ -189,27 +403,37 @@ async function handleAutoTranslate(key: string, text: string) {
   form.set('locales', JSON.stringify(nonEnglishLocales));
 
   try {
-    const res = await fetch('/admin/translations?/translate', { method: 'POST', body: form });
-    const body = await res.json();
-    const actionData = body?.data ?? body;
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
+
+    const { body, actionData } = await parseActionResponse(res);
 
     if (body?.type === 'failure' || !res.ok || actionData?.error) {
-      toast.error(actionData?.error ?? 'Translation failed');
+      const err = actionData?.error ?? 'Translation failed';
+      const msg = typeof err === 'string' ? err : (err?.message ?? JSON.stringify(err));
+      toast.error(msg);
       return;
     }
 
-    if (actionData?.success && Array.isArray(actionData?.translations)) {
-      for (const t of actionData.translations) {
-        setEditValue(key, t.locale, t.translatedText);
-      }
+    // Normalize a variety of translation payload shapes and apply
+    const extracted = extractTranslationsFromActionData(actionData);
+    if (extracted.length) {
+      applyTranslationsToEditState(key, extracted);
       toast.success('Translations generated — review and save');
     }
 
     if (actionData?.errors?.length) {
       toast.warning(`${actionData.errors.length} locale(s) failed to translate`);
     }
-  } catch {
-    toast.error('Translation request failed');
+  } catch (e) {
+    const msg = e && typeof e === 'object' && (e as any).message ? (e as any).message : 'Translation request failed';
+    toast.error(msg);
   } finally {
     delete translating[key];
     translating = { ...translating };
@@ -243,7 +467,7 @@ function pollStatus() {
   pollTimer = setInterval(async () => {
     const form = new FormData();
     form.set('uuid', deploymentUuid ?? '');
-    const res = await fetch('/admin/translations?/status', { method: 'POST', body: form });
+    const res = await fetch('?/status', { method: 'POST', body: form });
     const json = await res.json();
     if (json.status) {
       deploymentStatus = json.status;
@@ -566,6 +790,14 @@ const deployProgress = $derived(
     </p>
 
     <!-- Accordion -->
+    {#if debugMode}
+      <div class="rounded border p-2 mb-3 bg-muted/5 text-xs">
+        <div><strong>Debug</strong></div>
+        <div>Locales: {JSON.stringify(locales)}</div>
+        <div>Translations keys: {data.translations.length}</div>
+        <div>Records returned: {data.recordsCount ?? 'n/a'}</div>
+      </div>
+    {/if}
     <Accordion bind:value={openKey}>
       {#each data.translations as { key, entries } (key)}
         {@const enEntry = entries.find((e: { locale: string }) => e.locale === 'en')}
@@ -614,7 +846,11 @@ const deployProgress = $derived(
                 <Button
                   class="h-11 gap-1.5 px-2.5"
                   disabled={translating[key] || !enEntry?.value}
-                  onclick={() => handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''))}
+                  onclick={(e) => {
+                    e.stopPropagation();
+                    handleAutoTranslate(key, getEditValue(key, 'en', enEntry?.value ?? ''));
+                  }}
+                  onpointerdown={(e) => e.stopPropagation()}
                   type="button"
                   variant="outline"
                 >
