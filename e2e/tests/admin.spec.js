@@ -56,6 +56,8 @@ test.describe('Admin backend', () => {
   test('congregations page shows data', async ({ page }) => {
     await page.goto(`${BASE}/admin/congregations`);
     await page.waitForLoadState('networkidle');
+    // Wait for TanStack Table hydration to complete before checking cell content
+    await page.waitForSelector('table tbody tr');
     await expect(page.getByText(/Shalom|Private|Other|Online/i).first()).toBeVisible();
   });
 
