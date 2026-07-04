@@ -115,6 +115,8 @@ jobs:
             echo "Building image: $IMAGE"
             docker build -f docker/Dockerfile \
               --build-arg COMMIT_SHA="$SHA" \
+              --build-arg PB_API_TOKEN="${{ secrets.PB_API_TOKEN }}" \
+              --build-arg PB_URL="https://api.opencommunities.info" \
               -t "$IMAGE" .
             docker push "$IMAGE"
           fi
