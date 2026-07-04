@@ -62,9 +62,11 @@ async function sendContactMail(form: SuperValidated<Record<string, unknown>>, ap
     return fail(400, { form, error: 'Invalid reason' });
   }
 
-  const editUrl = form.data.record
-    ? `https://opencommunities.info/edit?id=${form.data.record as string}${['claim', 'transfer'].includes(form.data.reason as string) ? `&transfer=${encodeURIComponent(form.data.email as string)}` : ''}`
-    : '';
+  const record = form.data.record as string | undefined;
+  const reason = form.data.reason as string;
+  const email = form.data.email as string;
+  const transferParam = ['claim', 'transfer'].includes(reason) ? `&transfer=${encodeURIComponent(email)}` : '';
+  const editUrl = record ? `https://opencommunities.info/edit?id=${record}${transferParam}` : '';
 
   await adminMail(
     {

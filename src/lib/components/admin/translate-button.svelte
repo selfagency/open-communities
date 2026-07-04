@@ -54,8 +54,6 @@ const iconClass = $derived.by(() => {
 });
 </script>
 
-<svelte:options customElement={false} />
-
 <Button
   disabled={translating || !content}
   onclick={(e) => { e.stopPropagation(); onTranslate(langCode); }}

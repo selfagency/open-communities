@@ -190,13 +190,13 @@ function serializeError(error: unknown): string {
     try {
       return JSON.stringify(error);
     } catch {
-      return String(error);
+      return JSON.stringify({ message: String(error) });
     }
   }
   if (error == null) {
     return '';
   }
-  return String(error);
+  return JSON.stringify({ message: String(error) });
 }
 
 export const handleError = async ({

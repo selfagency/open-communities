@@ -1,15 +1,10 @@
-// Thin wrapper re-export for svelte-portal to centralize imports
-// If the host project does not have the dependency installed, this file
-// will raise a TS error during svelte-check. The dependency should be
-// added to package.json: `@jsrob/svelte-portal`.
 // SSR-safe dynamic wrapper for the Portal component.
 // Avoids top-level require that can break svelte-check when the package
 // isn't installed in some CI environments. Consumers should call `getPortal()`
 // and handle the undefined case during SSR.
-type PortalType = unknown;
 
-export function getPortal(): Promise<PortalType | undefined> {
-  if (typeof window === 'undefined') {
+export function getPortal(): Promise<unknown | undefined> {
+  if (typeof globalThis.window === 'undefined') {
     return Promise.resolve(undefined);
   }
 

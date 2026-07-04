@@ -9,7 +9,7 @@ interface CacheEntry {
 }
 const cache = new Map<string, CacheEntry>();
 
-function getCached(key: string, ttl: number): unknown | null {
+function getCached(key: string, ttl: number): unknown {
   const entry = cache.get(key);
   if (entry && Date.now() - entry.timestamp < ttl) {
     return entry.data;
