@@ -11,6 +11,7 @@
  *   PB_API_TOKEN  — PocketBase admin API token (required)
  *   PB_URL        — PocketBase server URL (default: http://localhost:8090)
  *   MESSAGES_DIR  — output directory (default: messages/)
+ *   CI             — if set, abort on fetch failure (don't silently fall back)
  */
 
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
@@ -26,6 +27,7 @@ if (PB_URL.endsWith('/')) {
 }
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
+const IS_CI = process.env.CI === 'true';
 
 function existingFilesHaveContent() {
   if (!existsSync(MESSAGES_DIR)) {
@@ -74,7 +76,7 @@ async function fetchRecords() {
       signal: controller.signal
     });
     if (!res.ok) {
-      throw new Error(`Failed to fetch translations: ${res.status}`);
+      throw new Error(`HTTP ${res.status}: ${await res.text()}`);
     }
     const data = await res.json();
     return data?.items ?? [];
@@ -129,22 +131,45 @@ async function main() {
   try {
     records = await fetchRecords();
   } catch (err) {
-    console.warn(`⚠  Fetch failed (${err?.cause?.code || err?.message || err})`);
-    // Preserve existing files if they have content; only write fallback if empty
+    const errorMsg = `Fetch failed (${err?.cause?.code || err?.message || err})`;
+    console.error(`❌ ${errorMsg}`);
+    
+    // In CI: fail loudly so the rebuild shows the error in GitHub Actions
+    if (IS_CI) {
+      console.error(`\n   Build type: CI (GitHub Actions rebuild)`);
+      console.error(`   Target: ${PB_URL}`);
+      console.error(`\n   Action: Aborting build. User can see error and retry.`);
+      process.exit(1);
+    }
+    
+    // In local dev: gracefully fall back to existing files if available
     if (existingFilesHaveContent()) {
-      console.warn('⚠  Preserving existing message files');
+      console.warn('⚠  Using existing message files (dev mode, may be stale)');
       process.exit(0);
     }
-    console.warn('⚠  Writing fallback empty message files');
+    console.warn('⚠  No existing files found, writing empty fallback (dev mode)');
     writeFallbackFiles();
     process.exit(0);
   }
+  
   if (records.length === 0) {
-    console.log('  ⚠  No translations found');
+    console.error('❌ No translations found in PB');
+    if (IS_CI) {
+      console.error('\n   Action: Aborting build. Seed translations in PB and retry.');
+      process.exit(1);
+    }
+    if (existingFilesHaveContent()) {
+      console.warn('⚠  Using existing message files (dev mode)');
+      process.exit(0);
+    }
+    console.warn('⚠  Writing empty fallback (dev mode)');
+    writeFallbackFiles();
+    process.exit(0);
   }
+  
   const byLocale = groupByLocale(records);
   const locales = writeMessageFiles(byLocale);
-  console.log(`\n✅ Done — ${locales.length || '11'} locales synced`);
+  console.log(`\n✅ Done — ${locales.length} locales synced from PB`);
 }
 
 await main();
