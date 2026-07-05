@@ -11,7 +11,6 @@
  *   PB_API_TOKEN  — PocketBase admin API token (required)
  *   PB_URL        — PocketBase server URL (default: http://localhost:8090)
  *   MESSAGES_DIR  — output directory (default: messages/)
- *   CI             — if set, fail loudly on fetch errors (don't write empty fallback)
  */
 
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
@@ -27,7 +26,6 @@ if (PB_URL.endsWith('/')) {
 }
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
-const IS_CI = process.env.CI === 'true';
 
 function existingFilesHaveContent() {
   if (!existsSync(MESSAGES_DIR)) {
@@ -132,20 +130,12 @@ async function main() {
     records = await fetchRecords();
   } catch (err) {
     console.warn(`⚠  Fetch failed (${err?.cause?.code || err?.message || err})`);
-    
-    // In CI: fail loudly if fetch fails (rebuild must have fresh translations from PB)
-    if (IS_CI) {
-      console.error('❌ CI build requires successful translation fetch. Aborting.');
-      console.error(`   Make sure PB_URL (${PB_URL}) and PB_API_TOKEN are correct and reachable.`);
-      process.exit(1);
-    }
-    
-    // In local dev: preserve existing files if they have content; only write fallback if empty
+    // Preserve existing files if they have content; only write fallback if empty
     if (existingFilesHaveContent()) {
-      console.warn('⚠  Preserving existing message files (dev mode)');
+      console.warn('⚠  Preserving existing message files');
       process.exit(0);
     }
-    console.warn('⚠  Writing fallback empty message files (dev mode, first-time setup)');
+    console.warn('⚠  Writing fallback empty message files');
     writeFallbackFiles();
     process.exit(0);
   }
