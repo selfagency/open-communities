@@ -30,7 +30,7 @@ const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 const IS_CI = process.env.CI === 'true';
 
 // Debug logging
-console.log(`[fetch-translations] DEBUG:`);
+console.log('[fetch-translations] DEBUG:');
 console.log(`  CI env: "${process.env.CI}"`);
 console.log(`  IS_CI detected: ${IS_CI}`);
 console.log(`  TOKEN: ${TOKEN ? '✓ SET' : '✗ UNSET'}`);
