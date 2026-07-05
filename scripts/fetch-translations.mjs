@@ -133,15 +133,15 @@ async function main() {
   } catch (err) {
     const errorMsg = `Fetch failed (${err?.cause?.code || err?.message || err})`;
     console.error(`❌ ${errorMsg}`);
-    
+
     // In CI: fail loudly so the rebuild shows the error in GitHub Actions
     if (IS_CI) {
-      console.error(`\n   Build type: CI (GitHub Actions rebuild)`);
+      console.error('\n   Build type: CI (GitHub Actions rebuild)');
       console.error(`   Target: ${PB_URL}`);
-      console.error(`\n   Action: Aborting build. User can see error and retry.`);
+      console.error('\n   Action: Aborting build. User can see error and retry.');
       process.exit(1);
     }
-    
+
     // In local dev: gracefully fall back to existing files if available
     if (existingFilesHaveContent()) {
       console.warn('⚠  Using existing message files (dev mode, may be stale)');
@@ -151,7 +151,7 @@ async function main() {
     writeFallbackFiles();
     process.exit(0);
   }
-  
+
   if (records.length === 0) {
     console.error('❌ No translations found in PB');
     if (IS_CI) {
@@ -166,7 +166,7 @@ async function main() {
     writeFallbackFiles();
     process.exit(0);
   }
-  
+
   const byLocale = groupByLocale(records);
   const locales = writeMessageFiles(byLocale);
   console.log(`\n✅ Done — ${locales.length} locales synced from PB`);
