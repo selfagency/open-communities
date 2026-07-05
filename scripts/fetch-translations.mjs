@@ -11,7 +11,7 @@
  *   PB_API_TOKEN  — PocketBase admin API token (required)
  *   PB_URL        — PocketBase server URL (default: http://localhost:8090)
  *   MESSAGES_DIR  — output directory (default: messages/)
- *   CI             — if set, abort on fetch failure (don't silently fall back)
+ *   CI             — if set to 'true', abort loudly on fetch failure
  */
 
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
@@ -29,18 +29,25 @@ const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
 const IS_CI = process.env.CI === 'true';
 
+// Debug logging
+console.log(`[fetch-translations] DEBUG:`);
+console.log(`  CI env: "${process.env.CI}"`);
+console.log(`  IS_CI detected: ${IS_CI}`);
+console.log(`  TOKEN: ${TOKEN ? '✓ SET' : '✗ UNSET'}`);
+console.log(`  PB_URL: ${PB_URL}`);
+console.log(`  MESSAGES_DIR: ${MESSAGES_DIR}`);
+
 function existingFilesHaveContent() {
   if (!existsSync(MESSAGES_DIR)) {
     return false;
   }
   const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
-  // Check if at least one locale file has substantial content (not just {})
   for (const locale of knownLocales) {
     const path = resolve(MESSAGES_DIR, `${locale}.json`);
     if (existsSync(path)) {
       const stat = statSync(path);
       if (stat.size > 5) {
-        return true; // {} is ~3 bytes + newline
+        return true;
       }
     }
   }
@@ -107,14 +114,11 @@ function writeMessageFiles(byLocale) {
     for (const locale of locales) {
       const path = resolve(MESSAGES_DIR, `${locale}.json`);
       const pbEntries = byLocale.get(locale);
-      // Clean overwrite from PB — no merge with existing file.
-      // The DB is the source of truth; stale local-only keys must not persist.
       writeFileSync(path, `${JSON.stringify(pbEntries, null, 2)}\n`);
       console.log(`  ✅ ${locale}.json (${Object.keys(pbEntries).length} keys)`);
     }
   } else {
     console.log('  ⚠  No translations found');
-    // Only write empty fallback if no existing files with content
     if (existingFilesHaveContent()) {
       console.log('  Preserving existing message files');
     } else {
@@ -134,7 +138,6 @@ async function main() {
     const errorMsg = `Fetch failed (${err?.cause?.code || err?.message || err})`;
     console.error(`❌ ${errorMsg}`);
 
-    // In CI: fail loudly so the rebuild shows the error in GitHub Actions
     if (IS_CI) {
       console.error('\n   Build type: CI (GitHub Actions rebuild)');
       console.error(`   Target: ${PB_URL}`);
@@ -142,12 +145,11 @@ async function main() {
       process.exit(1);
     }
 
-    // In local dev: gracefully fall back to existing files if available
     if (existingFilesHaveContent()) {
       console.warn('⚠  Using existing message files (dev mode, may be stale)');
       process.exit(0);
     }
-    console.warn('⚠  No existing files found, writing empty fallback (dev mode)');
+    console.warn('⚠  Writing fallback empty message files (dev mode)');
     writeFallbackFiles();
     process.exit(0);
   }
