@@ -13,7 +13,7 @@
  *   MESSAGES_DIR  — output directory (default: messages/)
  */
 
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -26,6 +26,20 @@ if (PB_URL.endsWith('/')) {
 }
 const TOKEN = process.env.PB_API_TOKEN;
 const MESSAGES_DIR = resolve(ROOT, process.env.MESSAGES_DIR || 'messages');
+
+function existingFilesHaveContent() {
+  if (!existsSync(MESSAGES_DIR)) return false;
+  const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
+  // Check if at least one locale file has substantial content (not just {})
+  for (const locale of knownLocales) {
+    const path = resolve(MESSAGES_DIR, `${locale}.json`);
+    if (existsSync(path)) {
+      const stat = statSync(path);
+      if (stat.size > 5) return true; // {} is ~3 bytes + newline
+    }
+  }
+  return false;
+}
 
 function writeFallbackFiles() {
   const knownLocales = ['en', 'de', 'es', 'fr', 'he', 'hu', 'nl', 'pl', 'pt', 'ru', 'uk'];
@@ -93,8 +107,14 @@ function writeMessageFiles(byLocale) {
       console.log(`  ✅ ${locale}.json (${Object.keys(pbEntries).length} keys)`);
     }
   } else {
-    console.log('  ⚠  No translations found — writing empty message files');
-    writeFallbackFiles();
+    console.log('  ⚠  No translations found');
+    // Only write empty fallback if no existing files with content
+    if (!existingFilesHaveContent()) {
+      console.log('  Writing empty message files (first-time setup)');
+      writeFallbackFiles();
+    } else {
+      console.log('  Preserving existing message files');
+    }
   }
   return locales;
 }
@@ -105,12 +125,18 @@ async function main() {
   try {
     records = await fetchRecords();
   } catch (err) {
-    console.warn(`⚠  Fetch failed (${err?.cause?.code || err?.message || err}) — writing fallback files`);
+    console.warn(`⚠  Fetch failed (${err?.cause?.code || err?.message || err})`);
+    // Preserve existing files if they have content; only write fallback if empty
+    if (existingFilesHaveContent()) {
+      console.warn('⚠  Preserving existing message files');
+      process.exit(0);
+    }
+    console.warn('⚠  Writing fallback empty message files');
     writeFallbackFiles();
     process.exit(0);
   }
   if (records.length === 0) {
-    console.log('  ⚠  No translations found — writing empty files');
+    console.log('  ⚠  No translations found');
   }
   const byLocale = groupByLocale(records);
   const locales = writeMessageFiles(byLocale);
