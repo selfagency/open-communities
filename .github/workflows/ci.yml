@@ -272,8 +272,8 @@ jobs:
           SMTP_HOST: mailpit
           SMTP_PORT: "1025"
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          PUBLIC_POSTHOG_KEY: ""
-          PUBLIC_POSTHOG_HOST: ""
+          PUBLIC_POSTHOG_KEY: ${{ secrets.PUBLIC_POSTHOG_KEY }}
+          PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
         run: |
           docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v
           docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build \
