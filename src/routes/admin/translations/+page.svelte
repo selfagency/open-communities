@@ -48,6 +48,7 @@ let { data } = $props();
 // - ensure 'en' appears first
 // - include canonical supported locales so admins can create missing locales
 const SUPPORTED_LOCALES = ['de', 'en', 'es', 'fr', 'he', 'hu', 'pt', 'ru', 'uk'] as const;
+// svelte-ignore state_referenced_locally
 const serverLocales = (data.locales ?? []) as string[];
 // Build locales as a plain string[] to avoid mixing literal union types with
 // runtime strings (which causes TS errors when spreading typed tuples).

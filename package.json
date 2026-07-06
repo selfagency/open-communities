@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "build:prod": "rm -rf src/lib/paraglide/messages && node scripts/sync-translations.mjs && node scripts/fetch-translations.mjs && vite build",
+    "build:prod": "rm -rf src/lib/paraglide/messages && node scripts/sync-translations.mjs && node scripts/fetch-translations.mjs && pnpm paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide && vite build",
     "build:maps": "pnpm run build:prod && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap inject --directory ./build && pnpx @posthog/cli --dotenv-file .env.dynamic sourcemap upload --directory ./build --delete-after",
     "build:test": "node scripts/fetch-translations.mjs && pnpx dotenv-cli -e .env.test -e .env.e2e -- vite build",
     "build:types": "pocketbase-typegen --db ./docker/pocketbase/pb_data/data.db --out ./src/lib/pocketbase.d.ts",
