@@ -15,6 +15,14 @@ export default defineConfig(({ mode }) => ({
     sourcemap: true,
     cssMinify: 'esbuild',
     rollupOptions: {
+      onwarn(warning, warn) {
+        // Rolldown can't statically resolve paraglide's export * re-exports from
+        // the generated _index.js, but the exports ARE present at runtime.
+        if (warning.code === 'IMPORT_IS_UNDEFINED') {
+          return;
+        }
+        warn(warning);
+      },
       output: {
         manualChunks(id: string) {
           if (id.includes('svelte-maplibre')) {
