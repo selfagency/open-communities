@@ -4,7 +4,6 @@ import svg from '@poppanator/sveltekit-svg';
 import posthog from '@posthog/rollup-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
-import type { Plugin } from 'vite';
 import biomePlugin from 'vite-plugin-biome';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { ViteMcp } from 'vite-plugin-mcp';
@@ -49,14 +48,6 @@ export default defineConfig(({ mode }) => ({
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
-    {
-      name: 'paraglide-module-side-effects',
-      resolveId(id) {
-        if (id.includes('/paraglide/messages') || id.includes('$lib/paraglide/messages')) {
-          return { id, moduleSideEffects: 'no-treeshake' };
-        }
-      }
-    } satisfies Plugin,
     paraglideVitePlugin({
       outdir: './src/lib/paraglide',
       project: './project.inlang',
@@ -84,6 +75,12 @@ export default defineConfig(({ mode }) => ({
   // Ensure $test/* path mapping from tsconfig/svelte.config is also available to Vite/Vitest.
   resolve: {
     alias: [
+      // Route $lib/paraglide/messages through a wrapper that avoids
+      // Rolldown's `export * as m` static-resolution gap.
+      {
+        find: '$lib/paraglide/messages',
+        replacement: path.resolve(import.meta.dirname, 'src/lib/paraglide-wrapper.js')
+      },
       { find: '$test', replacement: path.resolve(import.meta.dirname, 'src/test') },
       {
         find: '$test/',
