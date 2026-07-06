@@ -44,7 +44,7 @@ jobs:
           corepack prepare pnpm@latest --activate
 
       - name: Cache pnpm store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-build-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -52,7 +52,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-build-
 
       - name: Cache node_modules
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-build-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -100,7 +100,7 @@ jobs:
           corepack prepare pnpm@latest --activate
 
       - name: Cache pnpm store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-unit-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -108,7 +108,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-unit-
 
       - name: Cache node_modules
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-unit-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -215,7 +215,7 @@ jobs:
           corepack prepare pnpm@latest --activate
 
       - name: Cache pnpm store
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -223,7 +223,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-e2e-
 
       - name: Cache node_modules
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-e2e-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -245,7 +245,7 @@ jobs:
           password: ${{ secrets.CONTAINER_TOKEN }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
 
       - name: Build app image with cache
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
@@ -272,8 +272,8 @@ jobs:
           SMTP_HOST: mailpit
           SMTP_PORT: "1025"
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-          PUBLIC_POSTHOG_KEY: phc_dummy
-          PUBLIC_POSTHOG_HOST: http://localhost:3001
+          PUBLIC_POSTHOG_KEY: ""
+          PUBLIC_POSTHOG_HOST: ""
         run: |
           docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v
           docker compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build \

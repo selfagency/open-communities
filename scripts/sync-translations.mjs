@@ -73,6 +73,10 @@ const NAMESPACE_IMPORT_RE = /import\s*\*\s+as\s+([A-Za-z_$][\w$]*)\s*from\s*['"]
 // Matches `m` (or `m as name`) inside an import block specifier list.
 const PARAGLIDE_M_SPEC_RE = /\bm\b(?:\s+as\s+([A-Za-z_$][\w$]*))?/;
 
+// Inlang metadata key ($schema) is not a real paraglide message — filter it out.
+// PB's `key` field rejects non-alphanumeric characters like `$`.
+const VALID_KEY_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
 function escapeRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -288,11 +292,22 @@ function buildRequiredSet() {
   const { keys: codeKeys, scanned } = scanCodeKeys();
   const enValues = loadEnValues();
   const enKeys = new Set(Object.keys(enValues));
-  const required = new Set([...codeKeys, ...enKeys]);
+  let required = new Set([...codeKeys, ...enKeys]);
+
+  // Filter out keys that would fail PB's `key` field validation (e.g. Inlang
+  // metadata like `$schema` — the `$` prefix is not an allowed character).
+  // Real paraglide message keys are always alphanumeric with underscores.
+  const filtered = [...required].filter((k) => VALID_KEY_RE.test(k));
+  for (const k of required) {
+    if (!VALID_KEY_RE.test(k)) {
+      console.warn(`  ⚠  skipping invalid key '${k}' (not a valid PB field value)`);
+    }
+  }
+  required = new Set(filtered);
 
   console.log(`  📝 scanned ${scanned} files importing paraglide → ${codeKeys.size} distinct keys in code`);
   console.log(`  📦 messages/en.json → ${enKeys.size} keys`);
-  console.log(`  ✅ required set (union) → ${required.size} keys`);
+  console.log(`  ✅ required set (union, PB-valid) → ${required.size} keys`);
 
   for (const k of codeKeys) {
     if (!enKeys.has(k)) {
