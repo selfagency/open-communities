@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => ({
     sveltekit(),
     {
       name: 'fix-paraglide-messages',
-      transform(code, id) {
+      transform(code: string, id: string) {
         if (id.endsWith('/paraglide/messages.js')) {
           return {
             code: `/* eslint-disable */\nimport * as _m from './messages/_index.js';\nexport const m = _m;\nexport * from './messages/_index.js';\n`,
