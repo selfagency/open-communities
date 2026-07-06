@@ -48,6 +48,17 @@ export default defineConfig(({ mode }) => ({
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
+    {
+      name: 'fix-paraglide-messages',
+      transform(code, id) {
+        if (id.endsWith('/paraglide/messages.js')) {
+          return {
+            code: `/* eslint-disable */\nimport * as _m from './messages/_index.js';\nexport const m = _m;\nexport * from './messages/_index.js';\n`,
+            map: null
+          };
+        }
+      }
+    },
     paraglideVitePlugin({
       outdir: './src/lib/paraglide',
       project: './project.inlang',
@@ -75,12 +86,6 @@ export default defineConfig(({ mode }) => ({
   // Ensure $test/* path mapping from tsconfig/svelte.config is also available to Vite/Vitest.
   resolve: {
     alias: [
-      // Route $lib/paraglide/messages through a wrapper that avoids
-      // Rolldown's `export * as m` static-resolution gap.
-      {
-        find: '$lib/paraglide/messages',
-        replacement: path.resolve(import.meta.dirname, 'src/lib/paraglide-wrapper.js')
-      },
       { find: '$test', replacement: path.resolve(import.meta.dirname, 'src/test') },
       {
         find: '$test/',
