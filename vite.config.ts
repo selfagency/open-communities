@@ -42,7 +42,8 @@ export default defineConfig(({ mode }) => ({
     sveltekit(),
     paraglideVitePlugin({
       outdir: './src/lib/paraglide',
-      project: './project.inlang'
+      project: './project.inlang',
+      cleanOutdir: false
     }),
     svg(),
     // PostHog sourcemap upload — only during production builds with credentials
