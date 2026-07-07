@@ -72,11 +72,12 @@ export default defineConfig(({ mode }) => ({
         }
       }
     },
-    paraglideVitePlugin({
-      outdir: './src/lib/paraglide',
-      project: './project.inlang',
-      cleanOutdir: false
-    }),
+    mode === 'development' &&
+      paraglideVitePlugin({
+        outdir: './src/lib/paraglide',
+        project: './project.inlang',
+        cleanOutdir: false
+      }),
     svg(),
     // PostHog sourcemap upload — only during production builds with credentials
     mode === 'production' &&
