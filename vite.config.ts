@@ -1,3 +1,4 @@
+import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import svg from '@poppanator/sveltekit-svg';
@@ -50,12 +51,24 @@ export default defineConfig(({ mode }) => ({
     sveltekit(),
     {
       name: 'fix-paraglide-messages',
-      transform(code: string, id: string) {
-        if (id.endsWith('/paraglide/messages.js')) {
-          return {
-            code: `/* eslint-disable */\nimport * as _m from './messages/_index.js';\nexport const m = _m;\nexport * from './messages/_index.js';\n`,
-            map: null
-          };
+      enforce: 'post',
+      buildStart() {
+        // Overwrite the generated messages.js to replace `export * as m` with
+        // `import * + export const m`, which Rolldown can resolve correctly.
+        const msgPath = path.resolve(import.meta.dirname, 'src/lib/paraglide/messages.js');
+        try {
+          writeFileSync(
+            msgPath,
+            [
+              '/* eslint-disable */',
+              "import * as _m from './messages/_index.js';",
+              'export const m = _m;',
+              "export * from './messages/_index.js';",
+              ''
+            ].join('\n')
+          );
+        } catch {
+          // File may not exist yet if paraglide hasn't compiled — that's fine
         }
       }
     },
