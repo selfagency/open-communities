@@ -2,5 +2,5 @@
   "*.{js,jsx,ts,tsx,svelte,json,jsonc,css,scss,md,mdx}": [
     "pnpm dlx ultracite fix"
   ],
-  "*.{ts,js,svelte}": ["vitest run --run --changed --project server"]
+  "*.{ts,js,svelte}": ["vitest run --run --changed"]
 }
