@@ -15,6 +15,14 @@ import { log } from './logger';
 export function createApi(): TypedPocketBase {
   const instance = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
   instance.autoCancellation(false);
+  // Attach a unique request ID so PB hooks can correlate events with
+  // SvelteKit-side PostHog captures.
+  const requestId = crypto.randomUUID();
+  instance.beforeSend = (url: string, opts: Record<string, unknown>) => {
+    const headers = (opts.headers as Record<string, string>) || {};
+    headers['x-request-id'] = requestId;
+    return { url, options: { ...opts, headers } };
+  };
   return instance;
 }
 
