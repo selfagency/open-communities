@@ -75,18 +75,29 @@ if (!TOKEN) {
 }
 
 async function fetchRecords() {
+  const all = [];
+  let pageParam = 1;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10_000);
+  const timeout = setTimeout(() => controller.abort(), 15_000);
   try {
-    const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=1000`, {
-      headers: { authorization: `Bearer ${TOKEN}` },
-      signal: controller.signal
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+    for (let guard = 0; guard < 100; guard++) {
+      const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=500&page=${pageParam}`, {
+        headers: { authorization: `Bearer ${TOKEN}` },
+        signal: controller.signal
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+      }
+      const data = await res.json();
+      const items = data?.items ?? [];
+      all.push(...items);
+      const total = data?.totalItems ?? all.length;
+      if (items.length === 0 || all.length >= total) {
+        break;
+      }
+      pageParam++;
     }
-    const data = await res.json();
-    return data?.items ?? [];
+    return all;
   } finally {
     clearTimeout(timeout);
   }
