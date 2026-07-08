@@ -231,7 +231,7 @@ export const actions = {
     const existingByLocale = new Map(existingRecords.map((r: Record<string, unknown>) => [r.locale, r]));
 
     const results = await Promise.allSettled(
-      entries.map(async (entry) => {
+      entries.map((entry) => {
         const existing = existingByLocale.get(entry.locale);
         if (existing) {
           return withRetry(() =>
