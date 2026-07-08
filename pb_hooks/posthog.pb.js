@@ -1,26 +1,48 @@
-// fallow-ignore-file unused-file -- auto-loaded by PocketBase at startup
+// fallow-ignore-file complexity,unused-file -- auto-loaded by PocketBase at startup
 // PocketBase JS Hook — Export logs and traces to PostHog.
 //
 // Env vars (set in PocketHost dashboard):
 //   POSTHOG_PB_API_KEY  — PostHog project API key
 //   POSTHOG_PB_HOST     — PostHog API host (default: https://us.i.posthog.com)
 //
-// NOTE: PB's JSVM runs each handler in its own isolated context. Module-level
-// variables and functions are NOT accessible inside handler callbacks.
-// Config is loaded via require() from posthog-config.pb.js to work around this.
+// IMPORTANT: PB's JSVM isolates each handler invocation. ALL config and
+// logic is inside the handler body — no require(), no external modules,
+// no module-level state.
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: handler must be self-contained (PB isolation scope)
 onModelCreate((e) => {
+  // ── Config (inline, fresh each invocation, handler-local) ──────────
+  let key = '';
+  let host = 'https://us.i.posthog.com';
   try {
-    const cfg = require(`${__hooks}/posthog-config.pb.js`);
-    if (!cfg.key) {
-      e.next();
-      return;
+    if (typeof process !== 'undefined') {
+      if (process.env.POSTHOG_PB_API_KEY) {
+        key = process.env.POSTHOG_PB_API_KEY;
+      }
+      if (process.env.POSTHOG_PB_HOST) {
+        host = process.env.POSTHOG_PB_HOST;
+      }
     }
+  } catch {
+    /* silent */
+  }
 
-    const level = e.model.getInt('level');
+  if (!key) {
+    e.next();
+    return;
+  }
+
+  // Strip trailing slash from host
+  while (host.length > 0 && host.at(-1) === '/') {
+    host = host.slice(0, -1);
+  }
+
+  // ── Forward relevant log entries to PostHog ────────────────────────
+  try {
+    const level = e.model.getInt('level'); // -4=debug, 0=info, 4=warn, 8=error
     const raw = e.model.get('data');
 
-    // Skip debug/info that isn't a request log
+    // Skip debug/info unless it's a request log
     if (level < 4 && !(raw && raw.type === 'request')) {
       e.next();
       return;
@@ -28,19 +50,20 @@ onModelCreate((e) => {
 
     const rid = e.model.getString('id');
     const eventName = level >= 4 ? 'pb_log' : 'pb_request';
-    const distinctId = raw?.['x-request-id'] || rid;
+    const xrid = raw?.['x-request-id'] || '';
+    const distinctId = xrid || rid;
 
     $http.send({
-      url: `${cfg.host}/capture/`,
+      url: `${host}/capture/`,
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        api_key: cfg.key,
+        api_key: key,
         event: eventName,
         distinct_id: distinctId,
         properties: {
           $lib: 'pocketbase',
-          $event_id: raw?.['x-request-id'] ? raw['x-request-id'] : rid,
+          $event_id: xrid || rid,
           level,
           message: e.model.getString('message'),
           method: raw ? raw.method : undefined,
@@ -55,10 +78,8 @@ onModelCreate((e) => {
       timeout: 5
     });
   } catch {
-    /* PostHog must never break PB */
+    /* silent */
   }
 
   e.next();
 }, '_logs');
-
-console.log('PostHog log hook registered');
