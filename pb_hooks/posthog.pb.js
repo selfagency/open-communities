@@ -15,13 +15,15 @@ onModelCreate((e) => {
   let key = '';
   let host = 'https://us.i.posthog.com';
   try {
-    if (typeof process !== 'undefined') {
-      if (process.env.POSTHOG_PB_API_KEY) {
-        key = process.env.POSTHOG_PB_API_KEY;
-      }
-      if (process.env.POSTHOG_PB_HOST) {
-        host = process.env.POSTHOG_PB_HOST;
-      }
+    if (typeof process !== 'undefined' && process.env.POSTHOG_PB_API_KEY) {
+      key = process.env.POSTHOG_PB_API_KEY;
+    } else if (typeof $os !== 'undefined' && $os.getenv('POSTHOG_PB_API_KEY')) {
+      key = $os.getenv('POSTHOG_PB_API_KEY');
+    }
+    if (typeof process !== 'undefined' && process.env.POSTHOG_PB_HOST) {
+      host = process.env.POSTHOG_PB_HOST;
+    } else if (typeof $os !== 'undefined' && $os.getenv('POSTHOG_PB_HOST')) {
+      host = $os.getenv('POSTHOG_PB_HOST');
     }
   } catch {
     /* silent */
