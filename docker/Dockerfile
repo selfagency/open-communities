@@ -34,6 +34,7 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm-store \
 COPY . .
 # Force Paraglide to recompile fresh from updated translations (not cached src/lib/paraglide/)
 RUN rm -rf src/lib/paraglide/messages
+# bust-docker-cache 2026-07-08
 RUN CI=true SOURCE_VERSION=${SOURCE_VERSION} COMMIT_SHA=${COMMIT_SHA} \
   PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} \
   pnpm run build:prod
