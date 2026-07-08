@@ -12,200 +12,193 @@
 //   Log hook forwards PB error/warn log entries the same way.
 //   HTTP calls stay out of the request path entirely.
 
+// ── Config (module-level vars — try/catch protects env access) ────────
+let POSTHOG_KEY = '';
+let POSTHOG_HOST = 'https://us.i.posthog.com';
+
 try {
-  // ── Config ────────────────────────────────────────────────────────────
-  const POSTHOG_KEY =
-    (typeof process === 'undefined'
-      ? typeof $os === 'undefined'
-        ? ''
-        : $os.getenv('POSTHOG_PB_API_KEY')
-      : process.env.POSTHOG_PB_API_KEY) || '';
-  const POSTHOG_HOST = (
-    (typeof process === 'undefined'
-      ? typeof $os === 'undefined'
-        ? ''
-        : $os.getenv('POSTHOG_PB_HOST')
-      : process.env.POSTHOG_PB_HOST) || 'https://us.i.posthog.com'
-  ).replace(/\/+$/, '');
-
-  // ── Event queue (module scope, persists across hook invocations) ──────
-  const eventQueue = [];
-  const MAX_QUEUE = 500;
-
-  // ── Helpers ───────────────────────────────────────────────────────────
-
-  function getClientIp(e) {
-    try {
-      return (
-        e.http?.request?.headers?.get('cf-connecting-ip') ||
-        e.http?.request?.headers?.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-        e.http?.request?.headers?.get('x-real-ip') ||
-        ''
-      );
-    } catch {
-      return '';
+  if (typeof process !== 'undefined') {
+    if (process.env.POSTHOG_PB_API_KEY) {
+      POSTHOG_KEY = process.env.POSTHOG_PB_API_KEY;
+    }
+    if (process.env.POSTHOG_PB_HOST) {
+      POSTHOG_HOST = process.env.POSTHOG_PB_HOST.replace(/\/+$/, '');
     }
   }
+} catch {
+  /* silent — env access errors must never break PB */
+}
 
-  function getRequestId(e) {
-    try {
-      return e.http?.request?.headers?.get('x-request-id') || '';
-    } catch {
-      return '';
-    }
+// ── Event queue (module scope, persists across hook invocations) ──────
+const eventQueue = [];
+const MAX_QUEUE = 500;
+
+// ── Helpers (module-level — NOT inside try, avoid strict-mode scoping) ─
+
+function getClientIp(e) {
+  try {
+    return (
+      e.http?.request?.headers?.get('cf-connecting-ip') ||
+      e.http?.request?.headers?.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      e.http?.request?.headers?.get('x-real-ip') ||
+      ''
+    );
+  } catch {
+    return '';
   }
+}
 
-  function getAuthType(e) {
-    try {
-      const auth = e.http?.request?.auth;
-      if (!auth) {
-        return 'none';
-      }
-      return auth?.record?.collectionName === '_superusers' ? 'superuser' : 'user';
-    } catch {
-      return 'unknown';
-    }
+function getRequestId(e) {
+  try {
+    return e.http?.request?.headers?.get('x-request-id') || '';
+  } catch {
+    return '';
   }
+}
 
-  function enqueue(eventName, distinctId, properties) {
-    if (!POSTHOG_KEY) {
-      return;
+function getAuthType(e) {
+  try {
+    const a = e.http?.request?.auth;
+    if (!a) {
+      return 'none';
     }
-    if (eventQueue.length >= MAX_QUEUE) {
-      eventQueue.shift();
-    }
-    eventQueue.push({
-      api_key: POSTHOG_KEY,
-      event: eventName,
-      distinct_id: distinctId,
-      properties: { $lib: 'pocketbase', ...properties },
-      timestamp: new Date().toISOString()
-    });
+    return a?.record?.collectionName === '_superusers' ? 'superuser' : 'user';
+  } catch {
+    return 'unknown';
   }
+}
 
-  // ── Request hooks ─────────────────────────────────────────────────────
-
-  onRecordCreateRequest((e) => {
-    enqueue('pb_request', getRequestId(e) || 'pb-system', {
-      $event_id: getRequestId(e) || undefined,
-      action: 'create',
-      collection: e.collection?.name,
-      method: e.http?.request?.method,
-      path: e.http?.request?.url?.pathname,
-      ip: getClientIp(e),
-      auth: getAuthType(e)
-    });
-    e.next();
+function enqueue(eventName, distinctId, properties) {
+  if (!POSTHOG_KEY) {
+    return;
+  }
+  if (eventQueue.length >= MAX_QUEUE) {
+    eventQueue.shift();
+  }
+  eventQueue.push({
+    api_key: POSTHOG_KEY,
+    event: eventName,
+    distinct_id: distinctId,
+    properties: { $lib: 'pocketbase', ...properties },
+    timestamp: new Date().toISOString()
   });
+}
 
-  onRecordUpdateRequest((e) => {
-    enqueue('pb_request', getRequestId(e) || 'pb-system', {
-      $event_id: getRequestId(e) || undefined,
-      action: 'update',
-      collection: e.collection?.name,
-      method: e.http?.request?.method,
-      path: e.http?.request?.url?.pathname,
-      ip: getClientIp(e),
-      auth: getAuthType(e)
-    });
-    e.next();
+// ── Request hooks ─────────────────────────────────────────────────────
+
+onRecordCreateRequest((e) => {
+  enqueue('pb_request', getRequestId(e) || 'pb-system', {
+    $event_id: getRequestId(e) || undefined,
+    action: 'create',
+    collection: e.collection?.name,
+    method: e.http?.request?.method,
+    path: e.http?.request?.url?.pathname,
+    ip: getClientIp(e),
+    auth: getAuthType(e)
   });
-
-  onRecordDeleteRequest((e) => {
-    enqueue('pb_request', getRequestId(e) || 'pb-system', {
-      $event_id: getRequestId(e) || undefined,
-      action: 'delete',
-      collection: e.collection?.name,
-      method: e.http?.request?.method,
-      path: e.http?.request?.url?.pathname,
-      ip: getClientIp(e),
-      auth: getAuthType(e)
-    });
-    e.next();
+  e.next();
+});
+onRecordUpdateRequest((e) => {
+  enqueue('pb_request', getRequestId(e) || 'pb-system', {
+    $event_id: getRequestId(e) || undefined,
+    action: 'update',
+    collection: e.collection?.name,
+    method: e.http?.request?.method,
+    path: e.http?.request?.url?.pathname,
+    ip: getClientIp(e),
+    auth: getAuthType(e)
   });
-
-  onRecordsListRequest((e) => {
-    enqueue('pb_request', getRequestId(e) || 'pb-system', {
-      $event_id: getRequestId(e) || undefined,
-      action: 'list',
-      collection: e.collection?.name,
-      method: e.http?.request?.method,
-      path: e.http?.request?.url?.pathname,
-      ip: getClientIp(e),
-      auth: getAuthType(e)
-    });
-    e.next();
+  e.next();
+});
+onRecordDeleteRequest((e) => {
+  enqueue('pb_request', getRequestId(e) || 'pb-system', {
+    $event_id: getRequestId(e) || undefined,
+    action: 'delete',
+    collection: e.collection?.name,
+    method: e.http?.request?.method,
+    path: e.http?.request?.url?.pathname,
+    ip: getClientIp(e),
+    auth: getAuthType(e)
   });
-
-  onRecordViewRequest((e) => {
-    enqueue('pb_request', getRequestId(e) || 'pb-system', {
-      $event_id: getRequestId(e) || undefined,
-      action: 'view',
-      collection: e.collection?.name,
-      method: e.http?.request?.method,
-      path: e.http?.request?.url?.pathname,
-      ip: getClientIp(e),
-      auth: getAuthType(e)
-    });
-    e.next();
+  e.next();
+});
+onRecordsListRequest((e) => {
+  enqueue('pb_request', getRequestId(e) || 'pb-system', {
+    $event_id: getRequestId(e) || undefined,
+    action: 'list',
+    collection: e.collection?.name,
+    method: e.http?.request?.method,
+    path: e.http?.request?.url?.pathname,
+    ip: getClientIp(e),
+    auth: getAuthType(e)
   });
-
-  onRecordAuthRequest((e) => {
-    enqueue('pb_auth', e.record?.id || getRequestId(e) || 'pb-system', {
-      $event_id: getRequestId(e) || undefined,
-      collection: e.collection?.name,
-      authMethod: e.authMethod || '',
-      ip: getClientIp(e)
-    });
-    e.next();
+  e.next();
+});
+onRecordViewRequest((e) => {
+  enqueue('pb_request', getRequestId(e) || 'pb-system', {
+    $event_id: getRequestId(e) || undefined,
+    action: 'view',
+    collection: e.collection?.name,
+    method: e.http?.request?.method,
+    path: e.http?.request?.url?.pathname,
+    ip: getClientIp(e),
+    auth: getAuthType(e)
   });
+  e.next();
+});
+onRecordAuthRequest((e) => {
+  enqueue('pb_auth', e.record?.id || getRequestId(e) || 'pb-system', {
+    $event_id: getRequestId(e) || undefined,
+    collection: e.collection?.name,
+    authMethod: e.authMethod || '',
+    ip: getClientIp(e)
+  });
+  e.next();
+});
 
-  // ── Log hook ──────────────────────────────────────────────────────────
-  onModelCreate((e) => {
-    if (!POSTHOG_KEY) {
+// ── Log hook ──────────────────────────────────────────────────────────
+onModelCreate((e) => {
+  if (!POSTHOG_KEY) {
+    e.next();
+    return;
+  }
+  try {
+    const lvl = e.model.getInt('level');
+    if (lvl < 4) {
       e.next();
       return;
     }
+    enqueue('pb_log', 'pb-system', {
+      $event_id: e.model.id,
+      level: lvl,
+      message: e.model.getString('message'),
+      data: e.model.get('data')
+    });
+  } catch {
+    /* silent — env access errors must never break PB */
+  }
+  e.next();
+}, '_logs');
+
+// ── Cron job ──────────────────────────────────────────────────────────
+$cron.add('flush-posthog', '*/30 * * * * *', () => {
+  if (!POSTHOG_KEY || eventQueue.length === 0) {
+    return;
+  }
+  const batch = eventQueue.splice(0, Math.min(eventQueue.length, 100));
+  for (const ev of batch) {
     try {
-      const level = e.model.getInt('level');
-      if (level < 4) {
-        e.next();
-        return;
-      }
-      enqueue('pb_log', 'pb-system', {
-        $event_id: e.model.id,
-        level,
-        message: e.model.getString('message'),
-        data: e.model.get('data')
+      $http.send({
+        url: `${POSTHOG_HOST}/capture/`,
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(ev),
+        timeout: 3
       });
     } catch {
-      /* ignore */
+      /* silent — env access errors must never break PB */
     }
-    e.next();
-  }, '_logs');
+  }
+});
 
-  // ── Cron job ──────────────────────────────────────────────────────────
-  $cron.add('flush-posthog', '*/30 * * * * *', () => {
-    if (!POSTHOG_KEY || eventQueue.length === 0) {
-      return;
-    }
-    const batch = eventQueue.splice(0, Math.min(eventQueue.length, 100));
-    for (const event of batch) {
-      try {
-        $http.send({
-          url: `${POSTHOG_HOST}/capture/`,
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(event),
-          timeout: 3
-        });
-      } catch {
-        /* PostHog must never block PB */
-      }
-    }
-  });
-
-  console.log(`PostHog hooks registered (key: ${POSTHOG_KEY ? 'set' : 'NOT SET'})`);
-} catch (initErr) {
-  console.error('PostHog hooks FAILED:', initErr.message);
-}
+console.log(`PostHog hooks registered (key: ${POSTHOG_KEY ? 'set' : 'NOT SET'})`);
