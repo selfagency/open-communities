@@ -224,8 +224,7 @@ export const actions = {
     const existingRecords = await client
       .collection('translations')
       .getFullList({
-        filter: client.filter('key = {:key}', { key }),
-        requestKey: `upsert-lookup-${key}`
+        filter: client.filter('key = {:key}', { key })
       })
       .catch(() => []);
     const existingByLocale = new Map(existingRecords.map((r: Record<string, unknown>) => [r.locale, r]));
