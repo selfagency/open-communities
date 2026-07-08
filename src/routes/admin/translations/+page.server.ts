@@ -29,13 +29,13 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     filter = client.filter('key ~ {:search} || value ~ {:search}', { search });
   }
 
-  // Fetch matching records
+  // Fetch matching records (no requestKey — auto-cancellation conflicts with
+  // getFullList's pagination and would cancel its own page requests)
   const records = await client
     .collection('translations')
     .getFullList({
       filter: filter || undefined,
-      sort: 'key,locale',
-      requestKey: `admin-translations-${page}`
+      sort: 'key,locale'
     })
     .catch(() => []);
 
@@ -218,23 +218,42 @@ export const actions = {
       return fail(400, { error: 'Invalid entries JSON' });
     }
 
-    // Parallel save with rollback on partial failure
+    // Upsert: find existing record by (key, locale), update if found, create if not.
+    // Uses a single getFullList for all locales to minimize API calls, then batch
+    // executes the updates/creates via Promise.allSettled.
+    const existingRecords = await client
+      .collection('translations')
+      .getFullList({
+        filter: client.filter('key = {:key}', { key }),
+        requestKey: `upsert-lookup-${key}`
+      })
+      .catch(() => []);
+    const existingByLocale = new Map(existingRecords.map((r: Record<string, unknown>) => [r.locale, r]));
+
     const results = await Promise.allSettled(
-      entries.map((entry) =>
-        entry.id
-          ? withRetry(() => client.collection('translations').update(entry.id as string, { value: entry.value }))
-          : withRetry(() => client.collection('translations').create({ key, locale: entry.locale, value: entry.value }))
-      )
+      entries.map(async (entry) => {
+        const existing = existingByLocale.get(entry.locale);
+        if (existing) {
+          return withRetry(() =>
+            client.collection('translations').update(existing.id as string, { value: entry.value })
+          );
+        }
+        return withRetry(() =>
+          client.collection('translations').create({ key, locale: entry.locale, value: entry.value })
+        );
+      })
     );
 
     const created: string[] = [];
     let updated = 0;
     const errors: number[] = [];
     results.forEach((r, i) => {
-      if (r.status === 'fulfilled' && !entries[i].id) {
-        created.push(r.value.id);
-      } else if (r.status === 'fulfilled' && entries[i].id) {
-        updated++;
+      if (r.status === 'fulfilled') {
+        if (existingByLocale.has(entries[i].locale)) {
+          updated++;
+        } else {
+          created.push(r.value.id);
+        }
       } else {
         errors.push(i);
       }
