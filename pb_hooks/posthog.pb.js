@@ -82,7 +82,7 @@ onModelCreate((e) => {
   }
 
   function getEventMeta(model) {
-    const level = model.getInt('level');
+    const level = model.get('level');
     const raw = model.get('data');
     const rid = model.getString('id');
     const eventName = level >= 4 ? 'pb_log' : 'pb_request';
