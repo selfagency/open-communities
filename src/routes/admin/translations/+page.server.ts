@@ -31,15 +31,18 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // Fetch matching records (no requestKey — auto-cancellation conflicts with
   // getFullList's pagination and would cancel its own page requests)
-  const records = await client
-    .collection('translations')
-    .getFullList({
+  let records: Record<string, unknown>[] = [];
+  try {
+    records = await client.collection('translations').getFullList({
       filter: filter || undefined,
       sort: 'key,locale'
-    })
-    .catch(() => []);
-
-  log.info('admin translations load', { recordsCount: records.length });
+    });
+    log.info('admin translations load', { recordsCount: records.length });
+  } catch (err: unknown) {
+    log.error('admin translations load failed', err);
+    // Surface the error to the UI so admins can diagnose PB schema/auth problems
+    throw error(502, 'Failed to load translations — check PocketBase auth and collection rules');
+  }
 
   // Collect distinct locales from data
   const localeSet = new Set<string>();
@@ -206,57 +209,83 @@ export const actions = {
       return fail(400, { error: 'Key and entries are required' });
     }
 
-    let entries: Array<{ locale: string; value: string; id?: string }>;
-    try {
-      const raw = JSON.parse(entriesJson);
+    // Helper: parse entries JSON and validate against schema
+    function parseEntries(jsonStr: string) {
+      const raw = JSON.parse(jsonStr);
       const parsed = entriesSchema.safeParse(raw);
       if (!parsed.success) {
-        return fail(400, { error: 'Invalid entries format' });
+        throw new Error('Invalid entries format');
       }
-      entries = parsed.data;
+      return parsed.data as Array<{ locale: string; value: string; id?: string }>;
+    }
+
+    // Helper: load existing records for the key
+    async function loadExisting(keyVal: string) {
+      return await client.collection('translations').getFullList({
+        filter: client.filter('key = {:key}', { key: keyVal })
+      });
+    }
+
+    // Helper: upsert entries (returns created ids, updated count, and error indices)
+    async function upsertEntries(
+      keyVal: string,
+      entries: Array<{ locale: string; value: string; id?: string }>,
+      existingRecords: Record<string, unknown>[]
+    ) {
+      const existingByLocale = new Map(existingRecords.map((r: Record<string, unknown>) => [r.locale, r]));
+
+      const results = await Promise.allSettled(
+        entries.map((entry) => {
+          const existing = existingByLocale.get(entry.locale);
+          if (existing) {
+            return withRetry(() =>
+              client.collection('translations').update(existing.id as string, { value: entry.value })
+            );
+          }
+          return withRetry(() =>
+            client.collection('translations').create({ key: keyVal, locale: entry.locale, value: entry.value })
+          );
+        })
+      );
+
+      const created: string[] = [];
+      let updated = 0;
+      const errors: number[] = [];
+      results.forEach((r, i) => {
+        if (r.status === 'fulfilled') {
+          if (existingByLocale.has(entries[i].locale)) {
+            updated++;
+          } else {
+            const v = r as PromiseFulfilledResult<Record<string, unknown>>;
+            const id = v.value?.id as string | undefined;
+            if (id) {
+              created.push(id);
+            }
+          }
+        } else {
+          errors.push(i);
+        }
+      });
+
+      return { created, updated, errors, results } as const;
+    }
+
+    let entries: Array<{ locale: string; value: string; id?: string }>;
+    try {
+      entries = parseEntries(entriesJson);
     } catch {
       return fail(400, { error: 'Invalid entries JSON' });
     }
 
-    // Upsert: find existing record by (key, locale), update if found, create if not.
-    // Uses a single getFullList for all locales to minimize API calls, then batch
-    // executes the updates/creates via Promise.allSettled.
-    const existingRecords = await client
-      .collection('translations')
-      .getFullList({
-        filter: client.filter('key = {:key}', { key })
-      })
-      .catch(() => []);
-    const existingByLocale = new Map(existingRecords.map((r: Record<string, unknown>) => [r.locale, r]));
+    let existingRecords: Record<string, unknown>[] = [];
+    try {
+      existingRecords = await loadExisting(key);
+    } catch (err: unknown) {
+      log.error('translations save: getFullList failed', err);
+      return fail(502, { error: 'Could not load existing translations — check PB auth/rules' });
+    }
 
-    const results = await Promise.allSettled(
-      entries.map((entry) => {
-        const existing = existingByLocale.get(entry.locale);
-        if (existing) {
-          return withRetry(() =>
-            client.collection('translations').update(existing.id as string, { value: entry.value })
-          );
-        }
-        return withRetry(() =>
-          client.collection('translations').create({ key, locale: entry.locale, value: entry.value })
-        );
-      })
-    );
-
-    const created: string[] = [];
-    let updated = 0;
-    const errors: number[] = [];
-    results.forEach((r, i) => {
-      if (r.status === 'fulfilled') {
-        if (existingByLocale.has(entries[i].locale)) {
-          updated++;
-        } else {
-          created.push(r.value.id);
-        }
-      } else {
-        errors.push(i);
-      }
-    });
+    const { created, updated, errors } = await upsertEntries(key, entries, existingRecords);
 
     // Roll back creates if any entry failed
     if (errors.length > 0 && created.length > 0) {
@@ -264,7 +293,6 @@ export const actions = {
       return fail(500, { error: 'Save failed — rolled back', created: created.length, updated, errors: errors.length });
     }
 
-    // Return failure when existing entries fail to save (no creates to roll back)
     if (errors.length > 0) {
       return fail(500, {
         error: `${errors.length} entr${errors.length === 1 ? 'y' : 'ies'} failed to save`,

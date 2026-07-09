@@ -46,29 +46,34 @@ function pruneAuthRefreshTimestamps() {
 async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const startTimer = Date.now();
 
-  let clientIp =
-    event.request?.headers?.get('cf-connecting-ip') ?? event.request?.headers?.get('x-forwarded-for') ?? '';
-  if (!clientIp) {
-    try {
-      clientIp = event.getClientAddress();
-    } catch {
-      // getClientAddress can throw in dev when no proxy headers are set
+  const getClientIp = async () => {
+    let ip = event.request?.headers?.get('cf-connecting-ip') ?? event.request?.headers?.get('x-forwarded-for') ?? '';
+    if (!ip) {
+      try {
+        ip = event.getClientAddress();
+      } catch {
+        // getClientAddress can throw in dev when no proxy headers are set
+      }
     }
-  }
-  // Only attempt public IP resolution in production where the client is not
-  // loopback. In dev, 127.0.0.1/::1 is always the result of getClientAddress(),
-  // and publicIp() incurs a 500ms timeout penalty on every request.
-  const isLoopback = !clientIp || clientIp === '' || clientIp === '::1' || clientIp === '127.0.0.1';
-  if (isLoopback && !dev) {
-    try {
-      clientIp = await Promise.race([
-        publicIp(),
-        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 500))
-      ]);
-    } catch {
-      clientIp = '';
+
+    // Only attempt public IP resolution in production where the client is not
+    // loopback. In dev, 127.0.0.1/::1 is always the result of getClientAddress(),
+    // and publicIp() incurs a 500ms timeout penalty on every request.
+    const isLoopback = !ip || ip === '' || ip === '::1' || ip === '127.0.0.1';
+    if (isLoopback && !dev) {
+      try {
+        ip = await Promise.race([
+          publicIp(),
+          new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 500))
+        ]);
+      } catch {
+        ip = '';
+      }
     }
-  }
+    return ip;
+  };
+
+  const clientIp = await getClientIp();
 
   // Per-request PocketBase instance — avoids race conditions on beforeSend
   // and authStore that would occur with a shared singleton (see P-11).
@@ -162,13 +167,18 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
       // value so loadFromCookie can parse it (expects pb_auth=<json> prefix).
       event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
     }
-  } catch (error) {
-    // Only clear auth store if refresh actually failed, not for other errors
-    log.debug('Auth refresh failed:', error);
-    requestApi.authStore.clear();
-    // Clear both cookies when auth fails
-    event.cookies.set('auth', '', event.locals.cookieOpts);
-    event.cookies.set('session', '', event.locals.cookieOpts);
+  } catch (error: unknown) {
+    // Differentiate between auth rejection vs transient network errors
+    const status = (error as { status?: number })?.status;
+    if (status === 401 || status === 403) {
+      log.warn('Auth refresh rejected — clearing auth store', { status });
+      requestApi.authStore.clear();
+      event.cookies.set('auth', '', event.locals.cookieOpts);
+      event.cookies.set('session', '', event.locals.cookieOpts);
+    } else {
+      // Transient error: keep existing auth token and log a warning
+      log.warn('Auth refresh transient failure — keeping existing token', { error });
+    }
   }
 
   // Store start timer before resolving the response
