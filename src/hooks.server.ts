@@ -3,7 +3,7 @@ import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
 
-import { publicIp } from 'public-ip';
+import { publicIpv4 } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
 import type { SuperValidated } from 'sveltekit-superforms';
 import { superValidate } from 'sveltekit-superforms';
@@ -48,7 +48,7 @@ function pruneAuthRefreshTimestamps() {
  * Priority:
  * 1. x-forwarded-for (first entry)
  * 2. x-real-ip
- * 3. public-ip.v4() fallback (best-effort)
+ * 3. public-ip's IPv4 lookup fallback (best-effort)
  */
 async function getClientIp(event: RequestEvent): Promise<string | undefined> {
   try {
@@ -58,9 +58,19 @@ async function getClientIp(event: RequestEvent): Promise<string | undefined> {
       return hdr.split(',')[0].trim();
     }
 
-    // Best-effort fallback to the host's public IP (may fail in CI or private networks)
+    // Best-effort fallback to the host's public IP (may fail in CI or private networks).
+    // Explicitly IPv4-only: publicIp() tries IPv6 first, and this container's egress
+    // may have IPv6 available even though the app is only ever addressed over IPv4 —
+    // that would silently return an unusable IPv6 address for this purpose.
+    // Hard-capped well under the Docker HEALTHCHECK timeout (3s) — this path is hit by
+    // the container's own healthcheck request, which has no x-forwarded-for/x-real-ip
+    // header. An unbounded/slow lookup here previously hung every request and caused
+    // the healthcheck to fail, taking the container out of rotation (503s).
     try {
-      const ip = await publicIp();
+      const ip = await Promise.race([
+        publicIpv4({ timeout: 1000 }),
+        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIpv4 timed out')), 1000))
+      ]);
       return ip;
     } catch (err) {
       // Don't escalate — client IP is helpful for logging but not required
