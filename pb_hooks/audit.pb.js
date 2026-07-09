@@ -1,124 +1,207 @@
 // fallow-ignore-file unused-file -- auto-loaded by PocketBase at startup
 // PocketBase JS Hook — Audit Logging
 // Requires an "audit_logs" collection (see README for schema).
+//
+// IMPORTANT (PB 0.23+ JSVM):
+// - Hook handlers must be plain non-async functions that call e.next() —
+//   an async handler returns a Promise, which the JSVM rejects with
+//   "the handler must a non-async function and not return a Promise".
+// - The global app instance is $app, not app. There is no app.dao() /
+//   `new Record(collection, data)` / txDao API anymore — use
+//   $app.findCollectionByNameOrId(), `new Record(collection)`,
+//   record.set(...), and $app.save(record).
+// - Per "Handlers scope" in the PB JS docs, each handler runs in its own
+//   isolated context and cannot see helpers declared at file scope, so
+//   every helper used by a handler is declared inside that handler.
 
 const AUDIT_COLLECTION = 'audit_logs';
-const SKIP_COLLECTIONS = new Set(['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys']);
+const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
 
-function getClientIp(e) {
-  return (
-    e.http?.request?.headers?.get('cf-connecting-ip') ||
-    e.http?.request?.headers?.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    e.http?.request?.headers?.get('x-real-ip') ||
-    ''
-  );
-}
+// ---- Before-request events (have full request context: headers, IP, auth) ----
 
-function getRequestUrl(e) {
-  try {
-    return e.http?.request?.url?.pathname || '';
-  } catch {
-    return '';
-  }
-}
-
-function getUserId(e) {
-  try {
-    const auth = e.http?.request?.auth;
-    return auth?.record?.id || null;
-  } catch {
-    return null;
-  }
-}
-
-function now() {
-  return new Date().toISOString().replace('T', ' ').split('.')[0];
-}
-
-async function logEvent(app, e, eventType, beforeState, afterState) {
-  const collectionName = e.collection?.name || '';
-  if (SKIP_COLLECTIONS.has(collectionName)) {
-    return;
+onRecordCreateRequest((e) => {
+  function writeAuditLog() {
+    const collectionName = e.collection?.name || '';
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
+      return;
+    }
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'create_request');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('user', e.auth?.id || null);
+      logRecord.set('request_ip', e.realIP());
+      logRecord.set('request_url', e.request?.url?.path || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      logRecord.set('after_changes', e.record ? e.record.publicExport() : null);
+      $app.save(logRecord);
+    } catch (err) {
+      // Audit failures must never block the application
+      console.error('Audit log error:', err.message);
+    }
   }
 
-  try {
-    const recordId = e.record?.id || e.record?.getOriginal()?.id || '';
+  writeAuditLog();
+  e.next();
+});
 
-    await app.dao().runInTransaction(async (txDao) => {
-      const logRecord = new Record(app.dao().findCollectionByNameOrId(AUDIT_COLLECTION), {
-        event_type: eventType,
-        collection_name: collectionName,
-        record_id: recordId,
-        user: getUserId(e),
-        request_ip: getClientIp(e),
-        request_url: getRequestUrl(e),
-        timestamp: now(),
-        before_changes: beforeState || null,
-        after_changes: afterState || null
-      });
-      await txDao.saveRecord(logRecord);
-    });
-  } catch (err) {
-    // Audit failures must never block the application
-    console.error('Audit log error:', err.message);
+onRecordUpdateRequest((e) => {
+  function writeAuditLog() {
+    const collectionName = e.collection?.name || '';
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
+      return;
+    }
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'update_request');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('user', e.auth?.id || null);
+      logRecord.set('request_ip', e.realIP());
+      logRecord.set('request_url', e.request?.url?.path || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      logRecord.set('before_changes', e.record ? e.record.original().publicExport() : null);
+      logRecord.set('after_changes', e.record ? e.record.publicExport() : null);
+      $app.save(logRecord);
+    } catch (err) {
+      console.error('Audit log error:', err.message);
+    }
   }
-}
 
-// ---- Before events (capture intent + before-state) ----
-
-app.OnRecordBeforeCreateRequest().bind(async (e) => {
-  await logEvent(app, e, 'create_request', null, e.record?.toExpanded() || null);
+  writeAuditLog();
+  e.next();
 });
 
-app.OnRecordBeforeUpdateRequest().bind(async (e) => {
-  const before = e.record?.getOriginal()?.toExpanded() || null;
-  await logEvent(app, e, 'update_request', before, e.record?.toExpanded() || null);
+onRecordDeleteRequest((e) => {
+  function writeAuditLog() {
+    const collectionName = e.collection?.name || '';
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
+      return;
+    }
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'delete_request');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('user', e.auth?.id || null);
+      logRecord.set('request_ip', e.realIP());
+      logRecord.set('request_url', e.request?.url?.path || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      logRecord.set('before_changes', e.record ? e.record.publicExport() : null);
+      $app.save(logRecord);
+    } catch (err) {
+      console.error('Audit log error:', err.message);
+    }
+  }
+
+  writeAuditLog();
+  e.next();
 });
 
-app.OnRecordBeforeDeleteRequest().bind(async (e) => {
-  const before = e.record?.toExpanded() || null;
-  await logEvent(app, e, 'delete_request', before, null);
+// ---- After-success model events (persisted; no request context available) ----
+
+onRecordAfterCreateSuccess((e) => {
+  function writeAuditLog() {
+    const collectionName = e.record?.collection()?.name || '';
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
+      return;
+    }
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'create');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      logRecord.set('after_changes', e.record ? e.record.publicExport() : null);
+      $app.save(logRecord);
+    } catch (err) {
+      console.error('Audit log error:', err.message);
+    }
+  }
+
+  writeAuditLog();
+  e.next();
 });
 
-// ---- After events (confirm commit) ----
+onRecordAfterUpdateSuccess((e) => {
+  function writeAuditLog() {
+    const collectionName = e.record?.collection()?.name || '';
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
+      return;
+    }
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'update');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      logRecord.set('after_changes', e.record ? e.record.publicExport() : null);
+      $app.save(logRecord);
+    } catch (err) {
+      console.error('Audit log error:', err.message);
+    }
+  }
 
-app.OnRecordAfterCreateRequest().bind(async (e) => {
-  await logEvent(app, e, 'create', null, e.record?.toExpanded() || null);
+  writeAuditLog();
+  e.next();
 });
 
-app.OnRecordAfterUpdateRequest().bind(async (e) => {
-  await logEvent(app, e, 'update', null, e.record?.toExpanded() || null);
-});
+onRecordAfterDeleteSuccess((e) => {
+  function writeAuditLog() {
+    const collectionName = e.record?.collection()?.name || '';
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
+      return;
+    }
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'delete');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      $app.save(logRecord);
+    } catch (err) {
+      console.error('Audit log error:', err.message);
+    }
+  }
 
-app.OnRecordAfterDeleteRequest().bind(async (e) => {
-  await logEvent(app, e, 'delete', null, null);
+  writeAuditLog();
+  e.next();
 });
 
 // ---- Auth events ----
 
-app.OnRecordAuthWithOAuth2Request().bind(async (e) => {
-  try {
+onRecordAuthWithOAuth2Request((e) => {
+  function writeAuditLog() {
     const collectionName = e.collection?.name || '';
-    if (SKIP_COLLECTIONS.has(collectionName)) {
+    if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
     }
-
-    await app.dao().runInTransaction(async (txDao) => {
-      const logRecord = new Record(app.dao().findCollectionByNameOrId(AUDIT_COLLECTION), {
-        event_type: 'auth',
-        collection_name: collectionName,
-        record_id: e.record?.id || '',
-        user: e.record?.id || null,
-        request_ip: getClientIp(e),
-        request_url: getRequestUrl(e),
-        timestamp: now(),
-        after_changes: { provider: e.oAuth2Provider || '', method: 'oauth2' }
-      });
-      await txDao.saveRecord(logRecord);
-    });
-  } catch (err) {
-    console.error('Audit auth log error:', err.message);
+    try {
+      const collection = $app.findCollectionByNameOrId(AUDIT_COLLECTION);
+      const logRecord = new Record(collection);
+      logRecord.set('event_type', 'auth');
+      logRecord.set('collection_name', collectionName);
+      logRecord.set('record_id', e.record?.id || '');
+      logRecord.set('user', e.record?.id || null);
+      logRecord.set('request_ip', e.realIP());
+      logRecord.set('request_url', e.request?.url?.path || '');
+      logRecord.set('timestamp', new Date().toISOString().replace('T', ' ').split('.')[0]);
+      logRecord.set('after_changes', { provider: e.providerName || '', method: 'oauth2' });
+      $app.save(logRecord);
+    } catch (err) {
+      console.error('Audit auth log error:', err.message);
+    }
   }
+
+  writeAuditLog();
+  e.next();
 });
 
 console.log('Audit logging hooks registered');
