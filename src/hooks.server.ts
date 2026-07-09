@@ -43,37 +43,41 @@ function pruneAuthRefreshTimestamps() {
   }
 }
 
+/**
+ * Resolve the client IP for a request.
+ * Priority:
+ * 1. x-forwarded-for (first entry)
+ * 2. x-real-ip
+ * 3. public-ip.v4() fallback (best-effort)
+ */
+async function getClientIp(event: RequestEvent): Promise<string | undefined> {
+  try {
+    const hdr = event.request.headers.get('x-forwarded-for') || event.request.headers.get('x-real-ip');
+    if (hdr) {
+      // x-forwarded-for may contain a comma-separated list — take the left-most
+      return hdr.split(',')[0].trim();
+    }
+
+    // Best-effort fallback to the host's public IP (may fail in CI or private networks)
+    try {
+      const ip = await publicIp.v4();
+      return ip;
+    } catch (err) {
+      // Don't escalate — client IP is helpful for logging but not required
+      log.debug('getClientIp: public-ip lookup failed', { err });
+      return;
+    }
+  } catch (err) {
+    // Defensive: never throw from hook-level helpers
+    log.warn('getClientIp: unexpected error while resolving client ip', { err });
+    return;
+  }
+}
+
 async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const startTimer = Date.now();
 
-  const getClientIp = async () => {
-    let ip = event.request?.headers?.get('cf-connecting-ip') ?? event.request?.headers?.get('x-forwarded-for') ?? '';
-    if (!ip) {
-      try {
-        ip = event.getClientAddress();
-      } catch {
-        // getClientAddress can throw in dev when no proxy headers are set
-      }
-    }
-
-    // Only attempt public IP resolution in production where the client is not
-    // loopback. In dev, 127.0.0.1/::1 is always the result of getClientAddress(),
-    // and publicIp() incurs a 500ms timeout penalty on every request.
-    const isLoopback = !ip || ip === '' || ip === '::1' || ip === '127.0.0.1';
-    if (isLoopback && !dev) {
-      try {
-        ip = await Promise.race([
-          publicIp(),
-          new Promise<string>((_, reject) => setTimeout(() => reject(new Error('publicIp timed out')), 500))
-        ]);
-      } catch {
-        ip = '';
-      }
-    }
-    return ip;
-  };
-
-  const clientIp = await getClientIp();
+  const clientIp = await getClientIp(event);
 
   // Per-request PocketBase instance — avoids race conditions on beforeSend
   // and authStore that would occur with a shared singleton (see P-11).

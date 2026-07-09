@@ -19,16 +19,14 @@
       "enabled": true,
       "command": ["npx", "-y", "gaspechak-pocketbase-mcp"],
       "environment": {
-        // Load credentials from environment (set in .env.local, never committed)
-        "PB_URL": "${PB_URL}",
-        "PB_EMAIL": "${PB_EMAIL}",
-        "PB_PASSWORD": "${PB_PASSWORD}"
+        "PB_URL": "{env:OPENCOMMUNITIES_API_URL}",
+        "PB_TOKEN": "{env:OPENCOMMUNITIES_API_TOKEN}"
       }
     },
     "vite": {
       "type": "remote",
       "url": "http://localhost:5173/__mcp/sse",
-      "enabled": true
+      "enabled": false
     }
   }
 }
