@@ -51,7 +51,7 @@ onModelCreate((e) => {
         $lib: 'pocketbase',
         $event_id: (raw && (raw['x-request-id'] || raw['request-id'])) || rid,
         level,
-        message: model.getString('message'),
+        message: model.message,
         method: raw ? raw.method : undefined,
         path: raw ? raw.url : undefined,
         status: raw ? raw.status : undefined,
@@ -82,9 +82,9 @@ onModelCreate((e) => {
   }
 
   function getEventMeta(model) {
-    const level = model.get('level');
-    const raw = model.get('data');
-    const rid = model.getString('id');
+    const level = model.level;
+    const raw = model.data;
+    const rid = model.id;
     const eventName = level >= 4 ? 'pb_log' : 'pb_request';
     const xrid = raw?.['x-request-id'] || '';
     const distinctId = xrid || 'pocketbase';
