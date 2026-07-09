@@ -97,7 +97,9 @@
     // SVG mock assets (used by test Vitest setup)
     "**/mocks/assets/*.js",
     // Test files in scripts/lib (not picked up by production analysis)
-    "docker/scripts/lib/*.test.mjs"
+    "docker/scripts/lib/*.test.mjs",
+    // PocketBase JSVM hooks are environment-specific and intentionally exempt
+    "pb_hooks/**"
   ],
   "ignoreDependencies": [
     "vitest-browser-svelte",
