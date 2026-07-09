@@ -60,7 +60,7 @@ async function getClientIp(event: RequestEvent): Promise<string | undefined> {
 
     // Best-effort fallback to the host's public IP (may fail in CI or private networks)
     try {
-      const ip = await publicIp.v4();
+      const ip = await publicIp();
       return ip;
     } catch (err) {
       // Don't escalate — client IP is helpful for logging but not required
