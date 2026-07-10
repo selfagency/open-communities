@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
-import { sleep, uid } from 'radashi';
+import { uid } from 'radashi';
 
 import { clearMailpit, findMessageBySubject } from '../helpers/mailpit.js';
-import { TEST_PASSWORD, TEST_EMAIL } from '../fixtures/credentials.js';
+import { TEST_PASSWORD } from '../fixtures/credentials.js';
 import { deleteTestUsers } from '../helpers/pb-helper.js';
 
 const BASE = (() => {
@@ -35,14 +35,56 @@ async function getSuperuserToken(pbApi, admin, password) {
   throw new Error('Superuser auth failed: tried both endpoints');
 }
 
+/**
+ * Fetch the full message detail from Mailpit by message ID.
+ */
+async function getMailpitMessageDetail(messageId) {
+  const res = await fetch(`${MAILPIT_API}/message/${messageId}`, {
+    headers: { accept: 'application/json' }
+  });
+  if (!res.ok) throw new Error(`Mailpit detail fetch failed: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Extract a verification link from a Mailpit message detail.
+ * Returns the decoded link or null if not found.
+ */
+function extractVerificationLink(detail) {
+  const raw = detail.HTML || detail.Text || '';
+  const linkMatch =
+    raw.match(/https?:\/\/[^\s"'<>]+verifyEmail[^\s"'<>]*/g) ||
+    raw.match(/https?:\/\/[^\s"'<>]+\?[^\s"'<>]*verifyEmail[^\s"'<>]*/g);
+  if (!linkMatch || linkMatch.length === 0) return null;
+  return linkMatch[0].replace(/&amp;/g, '&').replace(/=3D/g, '=');
+}
+
+/**
+ * Extract a reset token from a Mailpit message detail.
+ * Returns the token string or null if not found.
+ */
+function extractResetToken(detail) {
+  const raw = detail.HTML || detail.Text || JSON.stringify(detail);
+  const match =
+    raw.match(/resetPassword=([A-Za-z0-9\-_.]+)/) ||
+    raw.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9\-_.]+)/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Extract a query parameter value from a URL string.
+ */
+function extractTokenFromLink(link, paramName) {
+  const url = new URL(link);
+  return url.searchParams.get(paramName);
+}
+
 test.describe('auth flows', () => {
   test.describe.configure({ mode: 'serial' });
 
   const emailPrefix = `e2e-${uid(6)}`;
   const email = `${emailPrefix}@example.test`;
   const password = TEST_PASSWORD;
-  let verifyToken;
-  let resetToken;
 
   test.beforeAll(async () => {
     await clearMailpit();
@@ -53,14 +95,12 @@ test.describe('auth flows', () => {
   });
 
   test('signup -> sends verification email and verifies account', async ({ page }) => {
-    // Bypass the signup form — use:enhance form submission doesn't work in the
-    // production Docker build. Create the user directly via PocketBase API.
     const PB_API = process.env.PB_API ?? 'http://127.0.0.1:8090/api';
 
-    // Auth as superuser (try PB v0.29+ endpoint first, fall back to legacy)
+    // Auth as superuser
     const token = await getSuperuserToken(PB_API, PB_ADMIN, PB_PASSWORD);
 
-    // Create the user via PB admin API (bypasses the broken use:enhance form)
+    // Create the user via PB admin API (bypasses broken use:enhance form)
     const createRes = await fetch(`${PB_API}/collections/users/records`, {
       body: JSON.stringify({
         email,
@@ -83,38 +123,21 @@ test.describe('auth flows', () => {
       method: 'POST'
     });
     if (!verifyReqRes.ok) throw new Error(`Verification request failed: ${verifyReqRes.status}`);
-    const subjectPart = 'Verify your Open Communities email';
-    const msg = await findMessageBySubject(subjectPart, 20000);
+
+    // Find verification email in Mailpit and extract the link
+    const msg = await findMessageBySubject('Verify your Open Communities email', 20000);
     expect(msg).toBeTruthy();
 
-    const messageId = msg.ID || msg.id;
-    const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`, {
-      headers: { accept: 'application/json' }
-    });
-    if (!detailRes.ok) throw new Error(`Detail fetch failed: ${detailRes.status}`);
-    const detail = await detailRes.json();
-    const raw = detail.HTML || detail.Text || '';
-    const linkMatch =
-      raw.match(/https?:\/\/[^\s"'<>]+verifyEmail[^\s"'<>]*/g) ||
-      raw.match(/https?:\/\/[^\s"'<>]+\?[^\s"'<>]*verifyEmail[^\s"'<>]*/g);
-    let verificationLink = null;
-    if (linkMatch && linkMatch.length > 0) {
-      verificationLink = linkMatch[0].replace(/&amp;/g, '&').replace(/=3D/g, '=');
-    }
+    const detail = await getMailpitMessageDetail(msg.ID || msg.id);
+    const verificationLink = extractVerificationLink(detail);
     expect(verificationLink).toBeTruthy();
 
-    // Extract the verification token from the link and confirm via PB API directly
-    // (the app's use:enhance form submission doesn't work in the production build).
-    const verifyUrl = new URL(verificationLink.replace(/&amp;/g, '&').replace(/=3D/g, '='));
-    const verifyToken = verifyUrl.searchParams.get('verifyEmail');
+    // Extract the verification token and confirm via PB API
+    const verifyToken = extractTokenFromLink(verificationLink, 'verifyEmail');
     expect(verifyToken).toBeTruthy();
 
     const confirmRes = await fetch(`${PB_API}/collections/users/confirm-verification`, {
-      body: JSON.stringify({
-        token: verifyToken,
-        password: password,
-        passwordConfirm: password
-      }),
+      body: JSON.stringify({ token: verifyToken, password, passwordConfirm: password }),
       headers: { 'content-type': 'application/json', Authorization: `Bearer ${token}` },
       method: 'POST'
     });
@@ -136,7 +159,7 @@ test.describe('auth flows', () => {
   test('request reset -> receives reset email and sets new password', async ({ page }) => {
     const PB_API = process.env.PB_API ?? 'http://127.0.0.1:8090/api';
 
-    // Request password reset via PB API directly (public endpoint, no auth needed)
+    // Request password reset via PB API (public endpoint, no auth needed)
     const resetReqRes = await fetch(`${PB_API}/collections/users/request-password-reset`, {
       body: JSON.stringify({ email }),
       headers: { 'content-type': 'application/json' },
@@ -144,33 +167,18 @@ test.describe('auth flows', () => {
     });
     if (!resetReqRes.ok) throw new Error(`Password reset request failed: ${resetReqRes.status}`);
 
-    // Find reset email in Mailpit
+    // Find reset email in Mailpit and extract the token
     const resetMsg = await findMessageBySubject('Reset', 20000);
     expect(resetMsg).toBeTruthy();
 
-    const messageId = resetMsg.ID || resetMsg.id;
-    // Use the JSON endpoint (decoded HTML) instead of raw to avoid QP encoding issues
-    const detailRes = await fetch(`${MAILPIT_API}/message/${messageId}`, {
-      headers: { accept: 'application/json' }
-    });
-    if (!detailRes.ok) throw new Error(`Reset detail fetch failed: ${detailRes.status}`);
-    const detail = await detailRes.json();
-    const rawReset = detail.HTML || detail.Text || JSON.stringify(detail);
-
-    const resetMatch =
-      rawReset.match(/resetPassword=([A-Za-z0-9\-_.]+)/) ||
-      rawReset.match(/resetPassword"\]\s*:\s*"([A-Za-z0-9\-_.]+)/);
-    resetToken = resetMatch ? resetMatch[1] : undefined;
+    const detail = await getMailpitMessageDetail(resetMsg.ID || resetMsg.id);
+    const resetToken = extractResetToken(detail);
     expect(resetToken).toBeTruthy();
 
-    // Confirm password reset via PB API directly (no auth required — public endpoint)
+    // Confirm password reset via PB API (public endpoint)
     const newPass = `${password}1`;
     const confirmRes = await fetch(`${PB_API}/collections/users/confirm-password-reset`, {
-      body: JSON.stringify({
-        token: resetToken,
-        password: newPass,
-        passwordConfirm: newPass
-      }),
+      body: JSON.stringify({ token: resetToken, password: newPass, passwordConfirm: newPass }),
       headers: { 'content-type': 'application/json' },
       method: 'POST'
     });
@@ -197,10 +205,9 @@ test.describe('auth flows', () => {
       { name: 'session', value: crypto.randomUUID(), domain: 'localhost', path: '/' }
     ]);
 
-    // Navigate to home — should show logged-in state (Add Congregation button in header, no Login button)
+    // Navigate to home — should show logged-in state
     await page.goto(BASE);
     await page.waitForLoadState('networkidle');
-    // The header now shows Add Congregation + Menu toggle for logged-in users
     await expect(page.locator('nav').getByRole('button', { name: /add congregation/i })).toBeVisible({ timeout: 10000 });
   });
 });

@@ -115,6 +115,45 @@ afterEach(async () => {
   }
 });
 
+/** Extract a flat message array from Mailpit API responses of any shape */
+function extractMessageList(dataRaw: unknown): Record<string, unknown>[] {
+  if (Array.isArray(dataRaw)) {
+    return dataRaw as Record<string, unknown>[];
+  }
+  if (!dataRaw || typeof dataRaw !== 'object') {
+    return [];
+  }
+  const asObj = dataRaw as Record<string, unknown>;
+  if (Array.isArray(asObj.messages)) {
+    return asObj.messages as Record<string, unknown>[];
+  }
+  if (Array.isArray(asObj.items)) {
+    return asObj.items as Record<string, unknown>[];
+  }
+  // fallback: collect any array-valued properties
+  const collected: Record<string, unknown>[] = [];
+  for (const v of Object.values(asObj)) {
+    if (Array.isArray(v)) {
+      collected.push(...(v as Record<string, unknown>[]));
+    }
+  }
+  return collected;
+}
+
+/** Normalize a single Mailpit message to a consistent { id, subject, raw } shape */
+function normalizeMessage(m: unknown): { id?: string; raw: Record<string, unknown>; subject?: string } {
+  const msg = m as Record<string, unknown>;
+  const id =
+    (msg.id as string) ??
+    (msg.ID as string) ??
+    (msg.Id as string) ??
+    (msg._id as string) ??
+    (msg.messageId as string) ??
+    undefined;
+  const subjectVal = (msg.subject as string) ?? (msg.Subject as string) ?? (msg.SubjectLine as string) ?? undefined;
+  return { id, raw: msg, subject: subjectVal };
+}
+
 async function findMessageBySubject(subject: string) {
   const deadline = Date.now() + 8000;
   while (Date.now() < deadline) {
@@ -127,38 +166,8 @@ async function findMessageBySubject(subject: string) {
       throw new Error('Mailpit API not reachable');
     }
     const dataRaw = await res.json();
-    // normalize possible response shapes: array, { messages: [] }, { items: [] }, or keyed object
-    let list: Record<string, unknown>[] = [];
-    if (Array.isArray(dataRaw)) {
-      list = dataRaw as { id?: string; subject?: string }[];
-    } else if (dataRaw && typeof dataRaw === 'object') {
-      const asObj = dataRaw as Record<string, unknown>;
-      if (Array.isArray(asObj.messages)) {
-        list = asObj.messages as { id?: string; subject?: string }[];
-      } else if (Array.isArray(asObj.items)) {
-        list = asObj.items as { id?: string; subject?: string }[];
-      } else {
-        for (const v of Object.values(asObj)) {
-          if (Array.isArray(v)) {
-            list = list.concat(v as { id?: string; subject?: string }[]);
-          }
-        }
-      }
-    }
-
-    // normalize each message to ensure we have an `id` and `subject` regardless of API shape
-    const normalized = list.map((m) => {
-      const msg = m as Record<string, unknown>;
-      const id =
-        (msg.id as string) ??
-        (msg.ID as string) ??
-        (msg.Id as string) ??
-        (msg._id as string) ??
-        (msg.messageId as string) ??
-        undefined;
-      const subjectVal = (msg.subject as string) ?? (msg.Subject as string) ?? (msg.SubjectLine as string) ?? undefined;
-      return { id, raw: msg, subject: subjectVal };
-    });
+    const list = extractMessageList(dataRaw);
+    const normalized = list.map(normalizeMessage);
 
     const found = normalized.find((m) => typeof m.subject === 'string' && m.subject.includes(subject));
     if (found) {

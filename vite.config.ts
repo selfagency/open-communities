@@ -90,7 +90,7 @@ export default defineConfig(({ mode }) => ({
         sourcemaps: {
           enabled: true,
           releaseName: 'open-communities',
-          releaseVersion: process.env.SOURCE_VERSION || process.env.COMMIT_REF || 'dev',
+          releaseVersion: (process.env.SOURCE_VERSION ?? process.env.COMMIT_REF) || 'dev',
           deleteAfterUpload: true
         }
       })

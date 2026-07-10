@@ -1,7 +1,7 @@
 # PocketBase for local development
 # Uses the standard PB binary (pb-audit is deployed via pb_hooks/ on PocketHost)
-# checkov:skip=CKV_DOCKER_3:Root needed for host bind-mount volume permissions
-# NOSONAR — root required for bind-mount volume access in local dev
+# checkov:skip=CKV_DOCKER_3:Root needed for host bind-mount volume permissions in local dev
+# NOSONAR — root required for bind-mount volume access in local dev; override with --user root
 FROM alpine:3.21
 
 ARG PB_VERSION=0.29.2
@@ -19,6 +19,11 @@ RUN curl -fsSL -o /tmp/pb.zip \
   && rm -f /tmp/pb.zip
 
 RUN mkdir -p /pb_data && chmod 777 /pb_data
+
+# Create non-root user for production use. Local dev with bind-mount volumes
+# may still need root (override with `docker run --user root`).
+RUN addgroup -S pb && adduser -S pb -G pb && chown -R pb:pb /pb /pb_data
+USER pb
 
 EXPOSE 8090
 

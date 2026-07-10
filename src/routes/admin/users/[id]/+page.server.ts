@@ -2,6 +2,58 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
 
+/* region helpers */
+
+// fallow-ignore-next-line complexity
+function mapUserData(user: Record<string, unknown>) {
+  const expand = user.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
+  const congData = (expand?.congregation as Record<string, string> | undefined) || null;
+  return {
+    id: user.id as string,
+    name: (user.name as string) ?? '',
+    email: (user.email as string) ?? '',
+    verified: !!(user.verified as boolean),
+    admin: !!(user.admin as boolean),
+    congregation: (user.congregation as string) ?? '',
+    congregationName: congData?.name ?? '',
+    congregationSlug: congData?.slug ?? ''
+  };
+}
+
+async function fetchAvailableCongregations(client: ReturnType<typeof import('$lib/server/api').createApi>) {
+  const available = await client
+    .collection('congregationMeta')
+    .getFullList({
+      filter: client.filter('owner = null'),
+      sort: 'name',
+      requestKey: 'admin-user-avail-congs'
+    })
+    .catch(() => []);
+  return available.map((c) => ({ id: c.id as string, name: c.name as string }));
+}
+
+async function resolveAdminToggle(
+  client: ReturnType<typeof import('$lib/server/api').createApi>,
+  userId: string,
+  formData: FormData
+): Promise<boolean | ReturnType<typeof fail>> {
+  const admin = formData.get('admin') === 'true';
+  if (userId === client.authStore.record?.id && !admin) {
+    return fail(400, { error: 'Cannot demote yourself' });
+  }
+  if (!admin) {
+    const adminCount = await withRetry(() =>
+      client.collection('users').getList(1, 1, { filter: client.filter('admin = {:admin}', { admin: true }) })
+    );
+    if (adminCount.totalItems <= 1) {
+      return fail(400, { error: 'Cannot demote the last admin' });
+    }
+  }
+  return admin;
+}
+
+/* endregion helpers */
+
 export const load: PageServerLoad = async ({ locals, params }) => {
   const client = locals.api;
   if (!client?.authStore?.record?.admin) {
@@ -16,33 +68,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     throw error(404, 'User not found');
   }
 
-  const expand = user.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
-  const congData = (expand?.congregation as Record<string, string> | undefined) || null;
-
-  const available = await client
-    .collection('congregationMeta')
-    .getFullList({
-      filter: client.filter('owner = null'),
-      sort: 'name',
-      requestKey: 'admin-user-avail-congs'
-    })
-    .catch(() => []);
-
   return {
-    targetUser: {
-      id: user.id as string,
-      name: (user.name as string) ?? '',
-      email: (user.email as string) ?? '',
-      verified: (user.verified as boolean) ?? false,
-      admin: (user.admin as boolean) ?? false,
-      congregation: (user.congregation as string) ?? '',
-      congregationName: congData?.name ?? '',
-      congregationSlug: congData?.slug ?? ''
-    },
-    availableCongregations: available.map((c) => ({
-      id: c.id as string,
-      name: c.name as string
-    }))
+    targetUser: mapUserData(user),
+    availableCongregations: await fetchAvailableCongregations(client)
   };
 };
 
@@ -66,21 +94,11 @@ export const actions = {
       body.verified = formData.get('verified') === 'true';
     }
     if (formData.has('admin')) {
-      const admin = formData.get('admin') === 'true';
-      // Refuse self-demotion
-      if (params.id === client.authStore.record?.id && !admin) {
-        return fail(400, { error: 'Cannot demote yourself' });
+      const adminResult = await resolveAdminToggle(client, params.id, formData);
+      if (typeof adminResult !== 'boolean') {
+        return adminResult;
       }
-      // Refuse demoting the last admin
-      if (!admin) {
-        const adminCount = await withRetry(() =>
-          client.collection('users').getList(1, 1, { filter: client.filter('admin = {:admin}', { admin: true }) })
-        );
-        if (adminCount.totalItems <= 1) {
-          return fail(400, { error: 'Cannot demote the last admin' });
-        }
-      }
-      body.admin = admin;
+      body.admin = adminResult;
     }
 
     try {

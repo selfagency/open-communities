@@ -10,13 +10,30 @@ const langSchema = z.object({
   user: z.string().optional()
 });
 
+/* region helpers */
+
+function checkCsrf(origin: string | null, urlOrigin: string): boolean {
+  return !origin || origin === urlOrigin;
+}
+
+function parseBody(body: unknown): { lang: string; user?: string } | null {
+  const parsed = langSchema.safeParse(body);
+  return parsed.success ? parsed.data : null;
+}
+
+function checkAuth(targetUserId: string | undefined, clientId: string | undefined, isAdmin: boolean): boolean {
+  return !targetUserId || targetUserId === clientId || isAdmin;
+}
+
+/* endregion helpers */
+
 export async function POST({ cookies, locals, request, url }) {
   const { api, captureException } = locals;
   const client = api?.authStore?.record;
 
   // CSRF protection: reject requests with a mismatched origin
   const origin = request.headers.get('origin');
-  if (origin && origin !== url.origin) {
+  if (!checkCsrf(origin, url.origin)) {
     return json({ error: 'Forbidden' }, { status: 403 });
   }
 
@@ -28,16 +45,16 @@ export async function POST({ cookies, locals, request, url }) {
     return json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const parsed = langSchema.safeParse(body);
-  if (!parsed.success) {
+  const parsed = parseBody(body);
+  if (!parsed) {
     return json({ error: `Invalid language. Must be one of: ${VALID_LANGS.join(', ')}` }, { status: 400 });
   }
 
-  const { lang, user: targetUserId } = parsed.data;
+  const { lang, user: targetUserId } = parsed;
   const isAdmin = client?.admin === true;
 
   // Authorization: self-update for normal users, cross-user only for admins
-  if (targetUserId && targetUserId !== client?.id && !isAdmin) {
+  if (!checkAuth(targetUserId, client?.id, isAdmin)) {
     return json({ error: 'Forbidden' }, { status: 403 });
   }
 

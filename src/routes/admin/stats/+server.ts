@@ -26,19 +26,39 @@ interface CitiesByQtyView {
   state_name: string;
 }
 
-interface TotalCountriesView {
-  id: string;
-  total_countries: number;
+/* region helpers */
+
+function fetchTopCountries(client: ReturnType<typeof import('$lib/server/api').createApi>) {
+  return withRetry(() =>
+    client.collection('countriesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-countries-qty' })
+  ).catch(() => []) as Promise<CountriesByQtyView[]>;
 }
 
-interface TotalCitiesView {
-  id: string;
-  total_cities: number;
+function fetchTopStates(client: ReturnType<typeof import('$lib/server/api').createApi>) {
+  return withRetry(() =>
+    client.collection('statesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-states-qty' })
+  ).catch(() => []) as Promise<StatesByQtyView[]>;
 }
-interface TotalStatesView {
-  id: string;
-  total_states: number;
+
+function fetchTopCities(client: ReturnType<typeof import('$lib/server/api').createApi>) {
+  return withRetry(() =>
+    client.collection('citiesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-cities-qty' })
+  ).catch(() => []) as Promise<CitiesByQtyView[]>;
 }
+
+function fetchTotalCount(
+  client: ReturnType<typeof import('$lib/server/api').createApi>,
+  collection: string,
+  key: string
+) {
+  return withRetry(() => client.collection(collection).getFullList({ requestKey: key })).catch(() => []);
+}
+
+function getFirstCount(data: Record<string, unknown>[], field: string): number {
+  return (data[0]?.[field] as number) ?? 0;
+}
+
+/* endregion helpers */
 
 export const GET: RequestHandler = async ({ locals }) => {
   const client = locals.api;
@@ -48,50 +68,28 @@ export const GET: RequestHandler = async ({ locals }) => {
   }
 
   const [countriesByQty, statesByQty, citiesByQty, totalCities, totalStates, totalCountries] = await Promise.all([
-    withRetry(() =>
-      client.collection('countriesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-countries-qty' })
-    ).catch(() => []),
-    withRetry(() =>
-      client.collection('statesByQty').getFullList({
-        sort: '-congregation_count',
-        requestKey: 'dash-states-qty'
-      })
-    ).catch(() => []),
-    withRetry(() =>
-      client.collection('citiesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-cities-qty' })
-    ).catch(() => []),
-    withRetry(() => client.collection('totalCities').getFullList({ requestKey: 'dash-total-cities' })).catch(() => []),
-    withRetry(() => client.collection('totalStates').getFullList({ requestKey: 'dash-total-states' })).catch(() => []),
-    withRetry(() => client.collection('totalCountries').getFullList({ requestKey: 'dash-total-countries' })).catch(
-      () => []
-    )
+    fetchTopCountries(client),
+    fetchTopStates(client),
+    fetchTopCities(client),
+    fetchTotalCount(client, 'totalCities', 'dash-total-cities'),
+    fetchTotalCount(client, 'totalStates', 'dash-total-states'),
+    fetchTotalCount(client, 'totalCountries', 'dash-total-countries')
   ]);
 
-  const topCountries = (countriesByQty as unknown as CountriesByQtyView[])
+  const topCountries = countriesByQty
     .slice(0, 5)
     .map((c) => ({ name: c.country_name || '', count: c.congregation_count ?? 0 }));
-
-  const topStates = (statesByQty as unknown as StatesByQtyView[])
+  const topStates = statesByQty
     .slice(0, 5)
     .map((s) => ({ name: s.state_name || '', count: s.congregation_count ?? 0 }));
-
-  const topCities = (citiesByQty as unknown as CitiesByQtyView[])
-    .slice(0, 5)
-    .map((c) => ({ name: c.city_name || '', count: c.congregation_count ?? 0 }));
-
-  const totalCitiesData = (totalCities as unknown as TotalCitiesView[])?.[0];
-  const totalCitiesCount = totalCitiesData?.total_cities ?? 0;
-  const totalStatesData = (totalStates as unknown as TotalStatesView[])?.[0];
-  const totalStatesCount = totalStatesData?.total_states ?? 0;
-  const totalCountriesData = (totalCountries as unknown as TotalCountriesView[])?.[0];
-  const totalCountriesCount = totalCountriesData?.total_countries ?? 0;
+  const topCities = citiesByQty.slice(0, 5).map((c) => ({ name: c.city_name || '', count: c.congregation_count ?? 0 }));
 
   return json({
     topCountries,
     topStates,
     topCities,
-    totalCities: totalCitiesCount,
-    totalStates: totalStatesCount,
-    totalCountries: totalCountriesCount
+    totalCities: getFirstCount(totalCities, 'total_cities'),
+    totalStates: getFirstCount(totalStates, 'total_states'),
+    totalCountries: getFirstCount(totalCountries, 'total_countries')
   });
 };

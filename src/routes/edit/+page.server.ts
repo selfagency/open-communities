@@ -35,6 +35,81 @@ type MetaRecord = RecordWithId & {
 type RecordWithId = CongregationMetaRecord & { id: string };
 /* endregion types */
 
+/* region helpers */
+
+function upsertChildRecord(
+  batch: {
+    collection: (name: string) => {
+      update: (id: string, data: Record<string, unknown>) => void;
+      create: (data: Record<string, unknown>) => void;
+    };
+  },
+  collection: string,
+  data: { id?: string },
+  congregationId: string | undefined
+) {
+  if (data.id) {
+    batch.collection(collection).update(data.id, omit(data, ['id']));
+  } else if (!isEmpty(data)) {
+    batch.collection(collection).create({ ...data, congregation: congregationId });
+  }
+}
+
+async function sendDeleteNotifications(client: Record<string, unknown>) {
+  if (!client?.admin) {
+    await transactionalMail({
+      email: client.email as string,
+      message: m.transactional_deleted({ locale: (client.lang as string) || 'en' }),
+      name: client.name as string,
+      subject: m.transactional_subject({ locale: (client.lang as string) || 'en' })
+    });
+  }
+}
+
+async function sendEditNotifications(
+  client: Record<string, unknown>,
+  data: { id?: string; name?: string; owner?: string; visible?: boolean },
+  api: import('$lib/pocketbase.d').TypedPocketBase,
+  priorToChange: { visible?: boolean }
+) {
+  if (!client?.admin) {
+    const c = client as { email: string; name: string; lang?: string };
+    await adminMail(
+      {
+        email: c.email,
+        message: `
+          ${data.name} has been edited. Changes require administrator approval:\n
+          https://opencommunities.info/edit?id=${data.id}
+        `,
+        name: c.name,
+        subject: `${data.name} edited`
+      },
+      api
+    );
+
+    await transactionalMail({
+      email: c.email,
+      message: `${m.transactional_updated({ locale: c.lang || 'en' })} ${m.transactional_confirmation({
+        locale: c.lang || 'en'
+      })}`,
+      name: c.name,
+      subject: m.transactional_subject({ locale: c.lang || 'en' })
+    });
+  } else if (client?.admin && data.owner && data.visible && !priorToChange.visible) {
+    const owner = await api.collection('users').getOne(data.owner, { fetch: undefined });
+    await transactionalMail({
+      email: owner.email,
+      message: m.transactional_updateApproved({
+        locale: owner.lang || 'en'
+      }),
+      name: owner.name,
+      subject: m.transactional_subject({ locale: owner.lang || 'en' })
+    });
+  }
+}
+
+/* endregion helpers */
+
 export const load = async ({ fetch, locals, url }) => {
   const { api, captureException, validate } = locals;
   const client = api?.authStore?.record;
@@ -91,7 +166,6 @@ export const actions = {
         await capture(client?.id, 'deleteCongregation');
       }
     } catch (captureError) {
-      // Log capture error but don't fail the action
       log.error('PostHog capture failed:', captureError);
     }
 
@@ -112,37 +186,24 @@ export const actions = {
       if (owner) {
         batch.collection('users').update(owner, { congregation: '' });
       }
-      if (accessibility?.id) {
-        batch.collection('accessibility').delete(accessibility.id);
-      }
-      if (fit?.id) {
-        batch.collection('fit').delete(fit.id);
-      }
-      if (registration?.id) {
-        batch.collection('registration').delete(registration.id);
-      }
-      if (health?.id) {
-        batch.collection('health').delete(health.id);
-      }
-      if (security?.id) {
-        batch.collection('security').delete(security.id);
-      }
-      if (services?.id) {
-        batch.collection('services').delete(services.id);
+      const childCollections = [
+        { id: accessibility?.id, name: 'accessibility' },
+        { id: fit?.id, name: 'fit' },
+        { id: registration?.id, name: 'registration' },
+        { id: health?.id, name: 'health' },
+        { id: security?.id, name: 'security' },
+        { id: services?.id, name: 'services' }
+      ] as const;
+      for (const child of childCollections) {
+        if (child.id) {
+          batch.collection(child.name).delete(child.id);
+        }
       }
       batch.collection('congregations').delete(data.id);
       await batch.send({ fetch });
 
       clearCongregationCache();
-
-      if (!client?.admin) {
-        await transactionalMail({
-          email: client.email,
-          message: m.transactional_deleted({ locale: client.lang || 'en' }),
-          name: client.name,
-          subject: m.transactional_subject({ locale: client.lang || 'en' })
-        });
-      }
+      await sendDeleteNotifications(client);
 
       redirect(302, '/');
     } catch (error) {
@@ -154,21 +215,19 @@ export const actions = {
       return fail(err.status ?? 400, { form });
     }
   },
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: complex component logic
   submit: async (event) => {
     const { fetch, locals } = event;
     const { api, capture, captureException, validate } = locals;
     const client = api?.authStore?.record;
 
     const form = await validate(event, defaultSchema);
-    const data = form.data; // typed as output<typeof defaultSchema> via superforms
+    const data = form.data;
 
     try {
       if (isFunction(capture)) {
         await capture(client?.id, 'editCongregation');
       }
     } catch (captureError) {
-      // Log capture error but don't fail the action
       log.error('PostHog capture failed:', captureError);
     }
 
@@ -202,79 +261,19 @@ export const actions = {
           ...location
         });
       }
-      if (accessibility.id) {
-        batch.collection('accessibility').update(accessibility.id, omit(accessibility, ['id']));
-      } else if (!isEmpty(accessibility)) {
-        batch.collection('accessibility').create({ ...accessibility, congregation: data.id });
-      }
-      if (fit.id) {
-        batch.collection('fit').update(fit.id, omit(fit, ['id']));
-      } else if (!isEmpty(fit)) {
-        batch.collection('fit').create({ ...fit, congregation: data.id });
-      }
-      if (registration.id) {
-        batch.collection('registration').update(registration.id, omit(registration, ['id']));
-      } else if (!isEmpty(registration)) {
-        batch.collection('registration').create({ ...registration, congregation: data.id });
-      }
-      if (health.id) {
-        batch.collection('health').update(health.id, omit(health, ['id']));
-      } else if (!isEmpty(health)) {
-        batch.collection('health').create({ ...health, congregation: data.id });
-      }
-      if (security.id) {
-        batch.collection('security').update(security.id, omit(security, ['id']));
-      } else if (!isEmpty(security)) {
-        batch.collection('security').create({ ...security, congregation: data.id });
-      }
-      if (services.id) {
-        batch.collection('services').update(services.id, omit(services, ['id']));
-      } else if (!isEmpty(services)) {
-        batch.collection('services').create({ ...services, congregation: data.id });
-      }
+      upsertChildRecord(batch, 'accessibility', accessibility, data.id);
+      upsertChildRecord(batch, 'fit', fit, data.id);
+      upsertChildRecord(batch, 'registration', registration, data.id);
+      upsertChildRecord(batch, 'health', health, data.id);
+      upsertChildRecord(batch, 'security', security, data.id);
+      upsertChildRecord(batch, 'services', services, data.id);
       await batch.send({ fetch });
 
       clearCongregationCache();
+      // biome-ignore lint/suspicious/noExplicitAny: AuthRecord not assignable to Record<string, unknown>
+      await sendEditNotifications(client as any, data, api, priorToChange);
 
-      if (!client?.admin) {
-        // biome-ignore lint/style/noNonNullAssertion: guarded by if (!client?.admin) above
-        const c = client!;
-        await adminMail(
-          {
-            email: c.email,
-            message: `
-						${data.name} has been edited. Changes require administrator approval:\n
-						https://opencommunities.info/edit?id=${data.id}
-					`,
-            name: c.name,
-            subject: `${data.name} edited`
-          },
-          api
-        );
-
-        await transactionalMail({
-          email: c.email,
-          message: `${m.transactional_updated({ locale: c.lang || 'en' })} ${m.transactional_confirmation({
-            locale: c.lang || 'en'
-          })}`,
-          name: c.name,
-          subject: m.transactional_subject({ locale: c.lang || 'en' })
-        });
-      } else if (client?.admin && data.owner && form.data.visible && !priorToChange.visible) {
-        const owner = await api.collection('users').getOne(data.owner, { fetch });
-        await transactionalMail({
-          email: owner.email,
-          message: m.transactional_updateApproved({
-            locale: owner.lang || 'en'
-          }),
-          name: owner.name,
-          subject: m.transactional_subject({ locale: owner.lang || 'en' })
-        });
-      }
-
-      return {
-        form
-      };
+      return { form };
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {

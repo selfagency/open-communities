@@ -39,6 +39,7 @@
       "src/routes/edit/+page.server.ts",
       "src/routes/add/+page.server.ts",
       "src/routes/admin/pages/[id]/+page.server.ts",
+      "src/routes/admin/users/[id]/+page.server.ts",
       "src/lib/components/form/segments/congregation.svelte",
       "src/lib/components/congregation/tile.svelte",
       "src/lib/components/form/form.svelte",
@@ -50,6 +51,7 @@
       // Test files — large describe blocks + mock helpers naturally exceed thresholds
       "src/test/server/logger.test.ts",
       "src/test/server/rate-limit.test.ts",
+      "src/test/server/mail.test.ts",
       // Phase 2.1 — extracted sub-components with naturally complex templates
       "src/lib/components/admin/page-editor-variant.svelte",
       "src/lib/components/admin/page-editor-image.svelte",
