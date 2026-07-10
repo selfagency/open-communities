@@ -4,9 +4,9 @@ FROM tiago2/cap:3.1.5
 USER root
 RUN \
   if command -v apk >/dev/null 2>&1; then \
-    apk add --no-cache curl=8.12.1-r0; \
+    apk add --no-cache curl; \
   elif command -v apt-get >/dev/null 2>&1; then \
-    apt-get update && apt-get install -y --no-install-recommends curl=8.12.1-3 \
+    apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*; \
   else \
     echo "WARNING: No known package manager — health checks may fail"; \
