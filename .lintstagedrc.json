@@ -1,6 +1,7 @@
 {
-  "*.{js,jsx,ts,tsx,svelte,json,jsonc,css,scss,md,mdx}": [
-    "pnpm dlx ultracite fix"
+  "*.{js,jsx,ts,tsx,svelte}": [
+    "pnpm dlx ultracite fix",
+    "vitest run --run --changed"
   ],
-  "*.{ts,js,svelte}": ["vitest run --run --changed"]
+  "*.{json,jsonc,css,scss,md,mdx}": ["pnpm dlx ultracite fix"]
 }

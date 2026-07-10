@@ -86,7 +86,7 @@ describe('server/posthog', () => {
     const { captureException } = await import('../../lib/server/posthog');
     const error = new Error('test error');
     await captureException(error, 'user-1');
-    expect(ph().captureException).toHaveBeenCalledWith(error, 'user-1', undefined);
+    expect(ph().captureException).toHaveBeenCalledWith(error, 'user-1', {});
   });
 
   it('captureException wraps non-Error in Error', async () => {

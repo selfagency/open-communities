@@ -37,6 +37,7 @@ declare global {
       log: Logger<{ main: boolean; sub: boolean }>;
       message?: unknown;
       startTimer?: number;
+      traceId: string;
       track?: unknown;
       validate: <S extends $ZodType<Record<string, unknown>>>(
         request: Record<string, unknown> | RequestEvent,

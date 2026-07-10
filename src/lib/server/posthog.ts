@@ -28,7 +28,12 @@ process.once('beforeExit', closePhClient);
 process.once('SIGTERM', closePhClient);
 process.once('SIGINT', closePhClient);
 
-export function capture(user: string | undefined, event: string, properties?: Record<string, unknown>) {
+export function capture(
+  user: string | undefined,
+  event: string,
+  properties?: Record<string, unknown>,
+  traceId?: string
+) {
   const phClient = getPhClient();
   if (!phClient) {
     return;
@@ -40,6 +45,7 @@ export function capture(user: string | undefined, event: string, properties?: Re
       event,
       properties: {
         env: process.env.NODE_ENV ?? 'production',
+        ...(traceId ? { trace_id: traceId } : {}),
         ...properties
       }
     });
@@ -49,7 +55,12 @@ export function capture(user: string | undefined, event: string, properties?: Re
 }
 
 // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-export async function captureException(error: unknown, user?: string, other?: Record<string, number | string>) {
+export async function captureException(
+  error: unknown,
+  user?: string,
+  other?: Record<string, number | string>,
+  traceId?: string
+) {
   const phClient = getPhClient();
   if (!phClient) {
     return;
@@ -69,7 +80,8 @@ export async function captureException(error: unknown, user?: string, other?: Re
       }
     }
     const errMsg = error instanceof Error ? error : new Error(fallbackMessage);
-    phClient.captureException(errMsg, user ?? 'anonymous', other);
+    const props = { ...other, ...(traceId ? { trace_id: traceId } : {}) };
+    phClient.captureException(errMsg, user ?? 'anonymous', props);
   } catch (phError) {
     log.error('PostHog captureException failed:', phError);
   }

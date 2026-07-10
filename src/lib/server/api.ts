@@ -12,12 +12,13 @@ import { log } from './logger';
  * Each request gets its own instance to prevent race conditions on
  * `beforeSend` and `authStore` mutations (see P-11 in CODE_REVIEW.md).
  */
-export function createApi(): TypedPocketBase {
+export function createApi(traceId?: string): TypedPocketBase {
   const instance = new PocketBase(env.PUBLIC_API_ENDPOINT) as TypedPocketBase;
   instance.autoCancellation(false);
-  // Attach a unique request ID so PB hooks can correlate events with
-  // SvelteKit-side PostHog captures.
-  const requestId = crypto.randomUUID();
+  // Attach the request's trace ID so PB hooks can correlate events with
+  // SvelteKit-side PostHog captures. Falls back to a unique ID when no
+  // trace is provided (e.g. during server startup / background tasks).
+  const requestId = traceId ?? crypto.randomUUID();
   instance.beforeSend = (url: string, opts: Record<string, unknown>) => {
     const headers = (opts.headers as Record<string, string>) || {};
     headers['x-request-id'] = requestId;

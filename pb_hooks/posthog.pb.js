@@ -20,7 +20,7 @@ onModelCreate((e) => {
     let key = '';
     let host = 'https://us.i.posthog.com';
     try {
-      if (typeof process !== 'undefined') {
+      if (typeof process !== 'undefined' && process.env) {
         if (process.env.POSTHOG_PB_API_KEY) {
           key = process.env.POSTHOG_PB_API_KEY;
         }
@@ -73,11 +73,12 @@ onModelCreate((e) => {
           body: JSON.stringify(body),
           timeout: 5
         })
-        .catch(() => {
-          // intentionally silent to avoid emitting logs from PB
+        .catch((err) => {
+          // Log the error for debugging but don't emit logs from PB
+          $console.error('PostHog fireAndForget failed:', err);
         });
-    } catch {
-      // noop
+    } catch (err) {
+      $console.error('PostHog fireAndForget exception:', err);
     }
   }
 
@@ -92,12 +93,15 @@ onModelCreate((e) => {
   }
 
   const cfg = readConfig();
+  $console.log('PostHog config:', cfg.key ? 'key present' : 'NO KEY', 'host:', cfg.host);
   if (!cfg.key) {
+    $console.log('PostHog: skipping - no API key');
     e.next();
     return;
   }
 
   const { level, raw, rid, eventName, distinctId } = getEventMeta(e.model);
+  $console.log('PostHog: processing', eventName, 'level:', level, 'skip:', shouldSkip(level, raw));
   if (shouldSkip(level, raw)) {
     e.next();
     return;
@@ -105,8 +109,11 @@ onModelCreate((e) => {
 
   const phUrl = `${cfg.host}/i/v0/e/`;
   const phBody = makePhBody(e.model, raw, eventName, distinctId, level, rid, cfg.key);
+  $console.log('PostHog: sending to', phUrl, 'body:', JSON.stringify(phBody).slice(0, 200));
 
   e.next();
   fireAndForget(phUrl, phBody);
   return;
 }, '_logs');
+
+$console.log('PostHog hook initialized');

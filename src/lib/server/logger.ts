@@ -51,43 +51,47 @@ const log = logger.getSubLogger({
 });
 /* endregion variables */
 
+function isInternalRequest(pathname: string, host: string): boolean {
+  const internalPaths = ['.js', '.css', '.map', '__data.json', 'favicon', '/_app/'];
+  return (!dev && host === 'localhost:3000') || internalPaths.some((p) => pathname.includes(p));
+}
+
+function resolveReferer(event: RequestEvent): string | null {
+  const referer = event.request.headers.get('referer') || event.request.headers.get('referrer');
+  if (!referer) {
+    return null;
+  }
+  try {
+    const refererUrl = new URL(referer);
+    const refererHostname = refererUrl.hostname;
+    let appHostname: string | undefined;
+    try {
+      appHostname = new URL(env.PUBLIC_HOSTNAME ?? '').hostname;
+    } catch {
+      /* env not set */
+    }
+    if (refererHostname === 'localhost' || (appHostname && refererHostname === appHostname)) {
+      return refererUrl.pathname;
+    }
+  } catch {
+    /* invalid referrer URL */
+  }
+  return null;
+}
+
 function logEvent(statusCode: number, event: RequestEvent) {
   const requestId = crypto.randomUUID();
 
   try {
     // Skip logging for internal requests
-    const pathname = event.url.pathname;
-    const internalPaths = ['.js', '.css', '.map', '__data.json', 'favicon', '/_app/'];
-    if ((!dev && event.url.host === 'localhost:3000') || internalPaths.some((p) => pathname.includes(p))) {
+    if (isInternalRequest(event.url.pathname, event.url.host)) {
       return;
     }
 
     const error = event?.locals?.error;
     const errorId = event?.locals?.errorId;
     const errorStackTrace = event?.locals?.errorStackTrace;
-
-    // Get referrer and handle internal referrers
-    let referer = event.request.headers.get('referer') || event.request.headers.get('referrer');
-    if (referer) {
-      try {
-        const refererUrl = new URL(referer);
-        const refererHostname = refererUrl.hostname;
-        let appHostname: string | undefined;
-        try {
-          appHostname = new URL(env.PUBLIC_HOSTNAME ?? '').hostname;
-        } catch {
-          /* env not set */
-        }
-        if (refererHostname === 'localhost' || (appHostname && refererHostname === appHostname)) {
-          referer = refererUrl.pathname;
-        }
-      } catch {
-        // Invalid referrer URL, keep as is or set to null
-        referer = null;
-      }
-    } else {
-      referer = null;
-    }
+    const referer = resolveReferer(event);
 
     const sensitiveHeaders = new Set(['auth', 'authorization', 'cookie']);
     const logData: object = {
@@ -105,6 +109,7 @@ function logEvent(statusCode: number, event: RequestEvent) {
       referer,
       status: statusCode,
       timeInMs: Date.now() - (event?.locals?.startTimer as number),
+      traceId: event?.locals?.traceId,
       url: event.url.toString(),
       userAgent: event.request.headers.get('user-agent')
     };

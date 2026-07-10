@@ -86,12 +86,14 @@ async function getClientIp(event: RequestEvent): Promise<string | undefined> {
 
 async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const startTimer = Date.now();
+  const traceId = crypto.randomUUID();
+  event.locals.traceId = traceId;
 
   const clientIp = await getClientIp(event);
 
   // Per-request PocketBase instance — avoids race conditions on beforeSend
   // and authStore that would occur with a shared singleton (see P-11).
-  const requestApi = createApi();
+  const requestApi = createApi(traceId);
   requestApi.beforeSend = (url, options) => {
     const ipHeader = clientIp
       ? {
@@ -104,19 +106,19 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   event.locals.api = requestApi;
   event.locals.log = log;
 
-  // Create origin-aware PostHog functions
+  // Create origin-aware PostHog functions with trace ID propagation
   event.locals.capture = (
     user: string | undefined,
     eventName: string,
     properties?: Record<string, unknown>
   ): Promise<void> => {
     if (user) {
-      capture(user, eventName, properties);
+      capture(user, eventName, properties, traceId);
     }
     return Promise.resolve();
   };
   event.locals.captureException = (error: unknown, user?: string, other?: Record<string, number | string>) =>
-    captureException(error, user ?? '', other);
+    captureException(error, user ?? '', other, traceId);
 
   event.locals.validate = (async <S extends $ZodType<Record<string, unknown>>>(
     request: Record<string, unknown> | RequestEvent,
