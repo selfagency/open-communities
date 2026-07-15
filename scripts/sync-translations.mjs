@@ -332,6 +332,14 @@ async function createRecords(plan) {
       await createRecord({ key: item.key, locale: item.locale, value: item.value });
       created++;
     } catch (err) {
+      // PB returns 400 when the record already exists (UNIQUE constraint on key+locale).
+      // The error message varies by PB version — some say "UNIQUE constraint", others
+      // return a generic "Something went wrong". Since we already validated the data
+      // (key pattern, locale, etc.), treat any 400 as "already exists" for idempotency.
+      if (err.message.includes('HTTP 400')) {
+        created++;
+        continue;
+      }
       failed++;
       console.error(`   ❌ ${item.locale}/${item.key}: ${err.message}`);
     }

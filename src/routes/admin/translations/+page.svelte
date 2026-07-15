@@ -755,12 +755,12 @@ const deployProgress = $derived(
 
     <!-- Add Key Dialog -->
     <Dialog bind:open={showAddDialog}>
-      <form action="?/add" method="POST" use:enhance={handleAdd}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Translation Key</DialogTitle>
-            <DialogDescription>Create a new translation key with an English value.</DialogDescription>
-          </DialogHeader>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Translation Key</DialogTitle>
+          <DialogDescription>Create a new translation key with an English value.</DialogDescription>
+        </DialogHeader>
+        <form action="?/add" method="POST" use:enhance={handleAdd}>
           <div class="space-y-4 py-4">
             <div class="space-y-2">
               <label class="text-sm font-medium" for="add-key">Key</label>
@@ -777,8 +777,8 @@ const deployProgress = $derived(
             >
             <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Create</Button>
           </div>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
 
     <!-- Results count -->

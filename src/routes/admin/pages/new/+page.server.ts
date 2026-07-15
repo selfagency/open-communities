@@ -67,7 +67,7 @@ export const actions = {
         );
       }
 
-      throw redirect(303, '/admin/pages');
+      throw redirect(303, `/admin/pages/${page.id}`);
     } catch (err: unknown) {
       if ((err as { status?: number }).status === 303) {
         throw err;

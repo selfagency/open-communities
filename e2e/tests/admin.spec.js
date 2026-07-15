@@ -133,6 +133,6 @@ test.describe('Admin backend', () => {
     await expect(slugInput).toHaveValue(/[a-z0-9-]+/);
 
     // Verify submit button is enabled when form is valid
-    await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Create Page' })).toBeEnabled();
   });
 });
