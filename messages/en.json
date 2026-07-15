@@ -375,6 +375,8 @@
   "pageEditorUpdatePage": "Update Page",
   "pageEditorCreatePage": "Create Page",
   "pageEditorCancel": "Cancel",
+  "pageEditorUpdateSuccess": "Page updated",
+  "pageEditorCreateSuccess": "Page created",
   "pageEditorSaveFailed": "Save failed",
   "searchResults": "{count} results",
   "noCongregationLinked": "No congregation linked.",

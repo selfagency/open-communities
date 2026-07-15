@@ -77,6 +77,19 @@ onMount(() => {
 
   initWysi();
 });
+
+// When value changes externally (e.g. from translation), update both the textarea and Wysi editor
+$effect(() => {
+  const current = value;
+  if (textareaEl && typeof globalThis.Wysi !== 'undefined') {
+    textareaEl.value = sanitizeHtml(current);
+    // Wysi creates a contenteditable div — update its content too
+    const editor = textareaEl.parentElement?.querySelector('.wysi-editor');
+    if (editor) {
+      editor.innerHTML = sanitizeHtml(current);
+    }
+  }
+});
 </script>
 
 <div class="wysi-wrapper" data-editor-id={id} class:rtl={dir === 'rtl'}>

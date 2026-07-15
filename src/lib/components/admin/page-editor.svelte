@@ -1,6 +1,7 @@
 <script lang="ts">
+import type { ActionResult } from '@sveltejs/kit';
 import { isEmpty } from 'radashi';
-import { enhance } from '$app/forms';
+import { deserialize, enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
 import { Button } from '$lib/components/ui/button';
@@ -9,6 +10,13 @@ import { m } from '$lib/paraglide/messages';
 import PageEditorBase from './page-editor-base.svelte';
 import PageEditorImage from './page-editor-image.svelte';
 import PageEditorVariant from './page-editor-variant.svelte';
+
+interface TranslateResult {
+  error?: string;
+  errors?: string[];
+  success?: number | boolean;
+  translations?: Array<{ locale: string; translatedText: string }>;
+}
 
 const languages = [
   { code: 'en', label: 'English' },
@@ -87,9 +95,9 @@ function handleEnhance() {
   errMsg = '';
   return ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
     saving = false;
-    if (result.type === 'success' || result.type === 'redirect') {
+    if (result.type === 'success') {
       onSuccess();
-    } else {
+    } else if (result.type === 'failure') {
       errMsg = (result.data?.error as string) ?? m.pageEditorSaveFailed();
     }
   };
@@ -118,10 +126,17 @@ async function translateField(text: string, locale: string): Promise<string | nu
   form.set('text', text);
   form.set('locales', JSON.stringify([locale]));
   try {
-    const res = await fetch('?/translate', { method: 'POST', body: form });
-    const body = await res.json();
-    const data = body?.data ?? body;
-    return data?.translations?.[0]?.translatedText ?? null;
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
+    const result: ActionResult = deserialize(await res.text());
+    const actionData = result.type === 'success' ? (result.data as TranslateResult | undefined) : null;
+    return actionData?.translations?.[0]?.translatedText ?? null;
   } catch {
     return null;
   }
@@ -161,12 +176,14 @@ async function translateLocaleFields(
   }
 }
 
-async function handleTranslate() {
-  if (translating || !content) {
+async function handleTranslateAll() {
+  if (translating || !content || !page?.id) {
     return;
   }
 
   translating = true;
+  errMsg = '';
+
   const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
 
   const form = new FormData();
@@ -174,17 +191,83 @@ async function handleTranslate() {
   form.set('locales', JSON.stringify(nonEnglishLocales));
 
   try {
-    const res = await fetch('?/translate', { method: 'POST', body: form });
-    const body = await res.json();
-    const actionData = body?.data ?? body;
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
 
-    if (body?.type === 'failure' || !res.ok || actionData?.error) {
+    let actionData: TranslateResult | null = null;
+    try {
+      const result: ActionResult = deserialize(await res.text());
+      if (result.type === 'success') {
+        actionData = (result.data as TranslateResult | undefined) ?? null;
+      }
+    } catch {
+      actionData = null;
+    }
+
+    if (!res.ok || actionData?.error) {
       errMsg = actionData?.error ?? 'Translation failed';
       return;
     }
 
     if (actionData?.success && actionData?.translations) {
-      await Promise.all(nonEnglishLocales.map((l) => translateLocaleFields(l, actionData.translations)));
+      await Promise.all(nonEnglishLocales.map((l) => translateLocaleFields(l, actionData.translations!)));
+    }
+
+    if (actionData?.errors?.length) {
+      errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+    }
+  } catch {
+    errMsg = 'Translation request failed';
+  } finally {
+    translating = false;
+  }
+}
+
+async function handleTranslate() {
+  if (translating || !content || !selectedLang || selectedLang === 'en') {
+    return;
+  }
+
+  translating = true;
+  errMsg = '';
+
+  const form = new FormData();
+  form.set('text', content);
+  form.set('locales', JSON.stringify([selectedLang]));
+
+  try {
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
+
+    let actionData: TranslateResult | null = null;
+    try {
+      const result: ActionResult = deserialize(await res.text());
+      if (result.type === 'success') {
+        actionData = (result.data as TranslateResult | undefined) ?? null;
+      }
+    } catch {
+      actionData = null;
+    }
+
+    if (!res.ok || actionData?.error) {
+      errMsg = actionData?.error ?? 'Translation failed';
+      return;
+    }
+
+    if (actionData?.success && actionData?.translations) {
+      await translateLocaleFields(selectedLang, actionData.translations);
     }
 
     if (actionData?.errors?.length) {
@@ -237,9 +320,15 @@ async function handleTranslate() {
     <Button disabled={saveDisabled} type="submit">
       {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
     </Button>
-    <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="secondary">
-      {translating ? 'Translating…' : 'Translate from English'}
-    </Button>
+    {#if selectedLang === 'en' && page?.id}
+      <Button disabled={translating || !content} onclick={handleTranslateAll} type="button" variant="outline">
+        {translating ? 'Translating…' : 'Translate to all languages'}
+      </Button>
+    {:else if selectedLang !== 'en'}
+      <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
+        {translating ? 'Translating…' : 'Translate from English'}
+      </Button>
+    {/if}
     <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
   </div>
 </form>

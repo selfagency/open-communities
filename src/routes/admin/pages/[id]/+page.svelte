@@ -1,8 +1,15 @@
 <script lang="ts">
+import { toast } from 'svelte-sonner';
+import { invalidateAll } from '$app/navigation';
 import PageEditor from '$lib/components/admin/page-editor.svelte';
 import { m } from '$lib/paraglide/messages';
 
 let { data } = $props();
+
+function onSaveSuccess() {
+  invalidateAll();
+  toast.success(m.pageEditorUpdateSuccess());
+}
 </script>
 
 <svelte:head>
@@ -16,5 +23,5 @@ let { data } = $props();
     >
   </div>
 
-  <PageEditor action="?/save" page={data.page} />
+  <PageEditor action="?/save" onSuccess={onSaveSuccess} page={data.page} />
 </div>
