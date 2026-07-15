@@ -332,6 +332,12 @@ async function createRecords(plan) {
       await createRecord({ key: item.key, locale: item.locale, value: item.value });
       created++;
     } catch (err) {
+      // PB returns 400 with "UNIQUE constraint" when the record already exists
+      // (e.g. from a previous CI run that partially succeeded). Treat as success.
+      if (err.message.includes('400') && err.message.includes('UNIQUE')) {
+        created++;
+        continue;
+      }
       failed++;
       console.error(`   ❌ ${item.locale}/${item.key}: ${err.message}`);
     }
