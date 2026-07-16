@@ -32,13 +32,37 @@ function getCaptchaEndpoint(): string {
   return endpoint;
 }
 
+function getClientIp(incoming: Request): string {
+  // Cloudflare passes the real client IP in cf-connecting-ip.
+  // Otherwise use the left-most entry of x-forwarded-for (closest to the user)
+  // or x-real-ip as a fallback.
+  const cf = incoming.headers.get('cf-connecting-ip');
+  if (cf) {
+    return cf;
+  }
+
+  const forwarded = incoming.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+
+  const realIp = incoming.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp;
+  }
+
+  return '127.0.0.1';
+}
+
 function buildProxyHeaders(incoming: Request): Record<string, string> {
   const headers: Record<string, string> = {};
   const contentType = incoming.headers.get('content-type');
   if (contentType) {
     headers['content-type'] = contentType;
   }
-  headers['x-forwarded-for'] = incoming.headers.get('x-forwarded-for') || '127.0.0.1';
+  // Forward the real visitor IP so Cap's rate-limiting keys per-user, not per-server.
+  headers['x-forwarded-for'] = getClientIp(incoming);
+  headers['x-real-ip'] = headers['x-forwarded-for'];
   return headers;
 }
 
