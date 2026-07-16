@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { ActionResult } from '@sveltejs/kit';
 import { isEmpty } from 'radashi';
+import { toast } from 'svelte-sonner';
 import { deserialize, enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
@@ -63,7 +64,6 @@ let content = $state((initialPage?.content as string) ?? '');
 let imageAlt = $state((initialPage?.imageAlt as string) ?? '');
 let imageCaption = $state((initialPage?.imageCaption as string) ?? '');
 let manualSlug = $state(!!initialPage);
-let errMsg = $state('');
 
 let variants = $state<Variant[]>(
   languages
@@ -92,13 +92,13 @@ function getVariant(lang: string): Variant | undefined {
 
 function handleEnhance() {
   saving = true;
-  errMsg = '';
   return ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
     saving = false;
     if (result.type === 'success') {
+      toast.success(page?.id ? m.pageEditorUpdateSuccess() : m.pageEditorCreateSuccess());
       onSuccess();
     } else if (result.type === 'failure') {
-      errMsg = (result.data?.error as string) ?? m.pageEditorSaveFailed();
+      toast.error((result.data?.error as string) ?? m.pageEditorSaveFailed());
     }
   };
 }
@@ -182,7 +182,6 @@ async function handleTranslateAll() {
   }
 
   translating = true;
-  errMsg = '';
 
   const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
 
@@ -211,7 +210,7 @@ async function handleTranslateAll() {
     }
 
     if (!res.ok || actionData?.error) {
-      errMsg = actionData?.error ?? 'Translation failed';
+      toast.error(actionData?.error ?? 'Translation failed');
       return;
     }
 
@@ -220,10 +219,10 @@ async function handleTranslateAll() {
     }
 
     if (actionData?.errors?.length) {
-      errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+      toast.warning(`${actionData.errors.length} locale(s) failed to translate`);
     }
   } catch {
-    errMsg = 'Translation request failed';
+    toast.error('Translation request failed');
   } finally {
     translating = false;
   }
@@ -235,7 +234,6 @@ async function handleTranslate() {
   }
 
   translating = true;
-  errMsg = '';
 
   const form = new FormData();
   form.set('text', content);
@@ -262,7 +260,7 @@ async function handleTranslate() {
     }
 
     if (!res.ok || actionData?.error) {
-      errMsg = actionData?.error ?? 'Translation failed';
+      toast.error(actionData?.error ?? 'Translation failed');
       return;
     }
 
@@ -271,19 +269,15 @@ async function handleTranslate() {
     }
 
     if (actionData?.errors?.length) {
-      errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+      toast.warning(`${actionData.errors.length} locale(s) failed to translate`);
     }
   } catch {
-    errMsg = 'Translation request failed';
+    toast.error('Translation request failed');
   } finally {
     translating = false;
   }
 }
 </script>
-
-{#if errMsg}
-  <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm mb-4">{errMsg}</div>
-{/if}
 
 <form {action} class="space-y-6" method="POST" onsubmit={beforeSubmit} use:enhance={handleEnhance}>
   <input name="variants" type="hidden" value="" bind:this={variantsInput} />

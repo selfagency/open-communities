@@ -274,8 +274,8 @@ async function createCapKeys() {
     return;
   }
 
-  // Write keys to env files
-  const entry = buildEnvEntry(result.siteKey, result.secretKey);
+  // Write keys to env files (include internal endpoint so the dev proxy routes to local Cap)
+  const entry = buildEnvEntry(result.siteKey, result.secretKey, capUrl);
   for (const f of [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')]) {
     try { appendFileSync(f, entry); } catch {}
   }

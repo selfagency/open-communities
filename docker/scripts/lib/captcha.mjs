@@ -24,8 +24,8 @@ export function buildBearerAuth(token, hash) {
 /**
  * Build env file entry string from site + secret keys.
  */
-export function buildEnvEntry(siteKey, secretKey) {
-  return `\n# Created by bootstrap\nPUBLIC_CAPTCHA_SITE_KEY="${siteKey}"\nCAPTCHA_SITE_SECRET="${secretKey}"\n`;
+export function buildEnvEntry(siteKey, secretKey, internalEndpoint = 'http://localhost:3001') {
+  return `\n# Created by bootstrap\nCAPTCHA_INTERNAL_ENDPOINT="${internalEndpoint}"\nPUBLIC_CAPTCHA_SITE_KEY="${siteKey}"\nCAPTCHA_SITE_SECRET="${secretKey}"\n`;
 }
 
 /**
@@ -43,13 +43,13 @@ export async function createCaptchaKeys(capUrl, capAdminKey, capPost) {
   const bearer = buildBearerAuth(token, hash);
 
   // Step 2: Create API key
-  const ak = await capPost('/server/settings/apikeys', { name: 'ci-bot' }, `Bearer ${bearer}`);
+  const ak = await capPost('/server/settings/apikeys', { name: 'ci-bot' }, bearer);
   if (!ak.ok || !ak.data) {
     return { ok: false, message: `api key creation failed: ${ak.status}` };
   }
 
   // Step 3: Create site key
-  const sk = await capPost('/server/keys', { name: 'open-communities' }, `Bot ${ak.data.apiKey}`);
+  const sk = await capPost('/server/keys', { name: 'open-communities' }, bearer);
   if (!sk.ok || !sk.data) {
     return { ok: false, message: `site key creation failed: ${sk.status}` };
   }

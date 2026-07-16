@@ -5,7 +5,7 @@ import { onDestroy, onMount } from 'svelte';
 import type { SuperForm } from 'sveltekit-superforms';
 
 import { browser } from '$app/environment';
-import { env } from '$env/dynamic/public';
+import { env as pubEnv } from '$env/dynamic/public';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Form from '$lib/components/ui/form';
 import { log } from '$lib/utils';
@@ -60,10 +60,7 @@ onDestroy(() => {
 <Form.Field class="w-full" {form} name="captcha">
   <Form.Control>
     <div class="my-4 w-full">
-      <cap-widget
-        data-cap-api-endpoint={`${env.PUBLIC_CAPTCHA_ENDPOINT}/${env.PUBLIC_CAPTCHA_SITE_KEY}/`}
-        id="captcha"
-      ></cap-widget>
+      <cap-widget data-cap-api-endpoint={`/api/captcha/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/`} id="captcha"></cap-widget>
     </div>
   </Form.Control>
   <Form.FieldErrors />

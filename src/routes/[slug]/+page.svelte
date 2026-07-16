@@ -1,6 +1,7 @@
 <script lang="ts">
 /* region imports */
 import DOMPurify from 'isomorphic-dompurify';
+import 'suneditor/css/contents';
 // biome-ignore lint/performance/noNamespaceImport: shadcn namespace import pattern
 import * as Card from '$lib/components/ui/card';
 import { m } from '$lib/paraglide/messages';
