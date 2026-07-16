@@ -58,28 +58,30 @@ export async function createCaptchaKeys(capUrl, capAdminKey, capPost) {
   return { ok: true, message: 'Captcha keys created', siteKey, secretKey };
 }
 
+function isRetryableResult(result) {
+  return result && typeof result === 'object' && 'ok' in result && !result.ok;
+}
+
+function formatError(e) {
+  return e?.cause?.code || e?.message || 'error';
+}
+
 /**
  * Retry wrapper with backoff.
  * Calls fn(i) up to maxRetries times.
  */
-async function retryAttempt(fn, i) {
-  try {
-    const result = await fn(i);
-    if (result && typeof result === 'object' && 'ok' in result && !result.ok) {
-      if (i === 0) process.stdout.write('\n    \u23f3 retry');
-      return { shouldRetry: true, value: undefined };
-    }
-    return { shouldRetry: false, value: result };
-  } catch (e) {
-    if (i === 0) process.stdout.write(`\n    \u23f3 waiting (${e?.cause?.code || e?.message || 'error'})`);
-    return { shouldRetry: true, value: undefined };
-  }
-}
-
 export async function withRetry(fn, maxRetries = 60, delayMs = 2000) {
   for (let i = 0; i < maxRetries; i++) {
-    const { shouldRetry, value } = await retryAttempt(fn, i);
-    if (!shouldRetry) return value;
+    try {
+      const result = await fn(i);
+      if (isRetryableResult(result)) {
+        if (i === 0) process.stdout.write('\n    \u23f3 retry');
+      } else {
+        return result;
+      }
+    } catch (e) {
+      if (i === 0) process.stdout.write(`\n    \u23f3 waiting (${formatError(e)})`);
+    }
     await sleep(delayMs);
   }
   return { ok: false, message: 'Max retries exhausted' };

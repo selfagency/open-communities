@@ -21,46 +21,61 @@ export const GET: RequestHandler = ({ params, request }) => proxyRequest(params.
 
 export const POST: RequestHandler = ({ params, request }) => proxyRequest(params.path, request);
 
-async function proxyRequest(path: string, incoming: Request): Promise<Response> {
-  const captchaEndpoint = env.CAPTCHA_INTERNAL_ENDPOINT || pubEnv.PUBLIC_CAPTCHA_ENDPOINT;
+function getCaptchaEndpoint(): string {
+  const endpoint = env.CAPTCHA_INTERNAL_ENDPOINT || pubEnv.PUBLIC_CAPTCHA_ENDPOINT;
 
-  if (!captchaEndpoint) {
+  if (!endpoint) {
     log.error('[captcha-proxy] No captcha endpoint configured');
     throw error(500, 'Captcha endpoint not configured');
   }
 
+  return endpoint;
+}
+
+function buildProxyHeaders(incoming: Request): Record<string, string> {
+  const headers: Record<string, string> = {};
+  const contentType = incoming.headers.get('content-type');
+  if (contentType) {
+    headers['content-type'] = contentType;
+  }
+  headers['x-forwarded-for'] = incoming.headers.get('x-forwarded-for') || '127.0.0.1';
+  return headers;
+}
+
+function readIncomingBody(incoming: Request): Promise<BodyInit | undefined> | undefined {
+  if (incoming.method === 'GET' || incoming.method === 'HEAD') {
+    return;
+  }
+  return incoming.text();
+}
+
+function buildProxyResponse(response: Response, body: string): Response {
+  return new Response(body, {
+    status: response.status,
+    headers: {
+      'content-type': response.headers.get('content-type') || 'application/octet-stream',
+      'set-cookie': ''
+    }
+  });
+}
+
+async function proxyRequest(path: string, incoming: Request): Promise<Response> {
+  const captchaEndpoint = getCaptchaEndpoint();
   const targetUrl = `${captchaEndpoint}/${path}`;
   log.debug('[captcha-proxy] Proxying', incoming.method, 'to', targetUrl);
 
-  // Read the incoming body (may be empty for GET)
-  let body: BodyInit | undefined;
-  const contentType = incoming.headers.get('content-type');
-  if (incoming.method !== 'GET' && incoming.method !== 'HEAD') {
-    body = await incoming.text();
-  }
+  const body = await readIncomingBody(incoming);
 
   try {
     const response = await fetch(targetUrl, {
       method: incoming.method,
-      headers: {
-        ...(contentType ? { 'content-type': contentType } : {}),
-        // Forward the client IP so Cap sees the real visitor, not the server
-        'x-forwarded-for': incoming.headers.get('x-forwarded-for') || '127.0.0.1'
-      },
+      headers: buildProxyHeaders(incoming),
       body,
       signal: AbortSignal.timeout(10_000)
     });
 
     const responseBody = await response.text();
-
-    return new Response(responseBody, {
-      status: response.status,
-      headers: {
-        'content-type': response.headers.get('content-type') || 'application/octet-stream',
-        // Don't let the proxy response set cookies from Cap — not needed client-side
-        'set-cookie': ''
-      }
-    });
+    return buildProxyResponse(response, responseBody);
   } catch (err) {
     log.error('[captcha-proxy] Proxy request failed:', err);
     throw error(502, 'Captcha proxy request failed');

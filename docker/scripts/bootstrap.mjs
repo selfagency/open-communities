@@ -240,14 +240,34 @@ async function seedData(token) {
   await create('pages', { title: 'FAQ', slug: 'frequently-asked-questions', lang: 'en', content: '# FAQ\n\nClick "Add Congregation".', published: true });
 }
 
-async function createCapKeys() {
-  // Guard: check if already configured
+function readExistingEnv() {
   const readFiles = [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')];
   let existing = '';
   for (const f of readFiles) {
     try { existing += readFileSync(f, 'utf-8'); } catch {}
   }
-  if (keysAlreadyConfigured(existing)) {
+  return existing;
+}
+
+function makeCapPost(capUrl) {
+  return async (path, body, auth) => {
+    const headers = { 'content-type': 'application/json' };
+    if (auth) headers['authorization'] = auth;
+    const res = await fetch(`${capUrl}${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
+    const data = res.ok ? await res.json().catch(() => null) : null;
+    return { ok: res.ok, status: res.status, data };
+  };
+}
+
+function writeCapEnvEntry(siteKey, secretKey, capUrl) {
+  const entry = buildEnvEntry(siteKey, secretKey, capUrl);
+  for (const f of [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')]) {
+    try { appendFileSync(f, entry); } catch {}
+  }
+}
+
+async function createCapKeys() {
+  if (keysAlreadyConfigured(readExistingEnv())) {
     console.log('🧢 Captcha keys already configured');
     return;
   }
@@ -257,28 +277,15 @@ async function createCapKeys() {
 
   process.stdout.write(`🧢 Creating captcha keys (${capUrl})...`);
 
-  const capPost = async (path, body, auth) => {
-    const headers = { 'content-type': 'application/json' };
-    if (auth) headers['authorization'] = auth;
-    const res = await fetch(`${capUrl}${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
-    const data = res.ok ? await res.json().catch(() => null) : null;
-    return { ok: res.ok, status: res.status, data };
-  };
-
-  const result = await withRetry(async () => {
-    return await createCaptchaKeys(capUrl, capAdminKey, capPost);
-  });
+  const capPost = makeCapPost(capUrl);
+  const result = await withRetry(() => createCaptchaKeys(capUrl, capAdminKey, capPost));
 
   if (!result.ok) {
     console.log(` ⏭  Cap not reachable: ${result.message}`);
     return;
   }
 
-  // Write keys to env files (include internal endpoint so the dev proxy routes to local Cap)
-  const entry = buildEnvEntry(result.siteKey, result.secretKey, capUrl);
-  for (const f of [resolve(ROOT, '.env.e2e'), resolve(ROOT, '.env.dynamic')]) {
-    try { appendFileSync(f, entry); } catch {}
-  }
+  writeCapEnvEntry(result.siteKey, result.secretKey, capUrl);
   console.log(' ✅\n  🔑 Captcha keys created and written to .env files');
 }
 

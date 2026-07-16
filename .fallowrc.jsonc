@@ -32,6 +32,11 @@
       "src/lib/components/users/user-list.svelte",
       // Pre-existing complexity in hooks
       "src/hooks.server.ts",
+      // Same-origin Cap captcha proxy — helpers are thin and the file is small
+      "src/routes/api/captcha/[...path]/+server.ts",
+      // Bootstrap helpers — retry/captcha helpers are inherently branch-heavy
+      "docker/scripts/bootstrap.mjs",
+      "docker/scripts/lib/captcha.mjs",
       // Complexity in standalone Docker/script helpers (excluded by ignorePatterns)
       "docker/helpers/mailpit.js",
       "scripts/migrate-translations.mjs",
