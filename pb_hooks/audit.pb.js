@@ -14,13 +14,12 @@
 //   isolated context and cannot see helpers declared at file scope, so
 //   every helper used by a handler is declared inside that handler.
 
-const AUDIT_COLLECTION = 'audit_logs';
-const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
-
 // ---- Before-request events (have full request context: headers, IP, auth) ----
 
 onRecordCreateRequest((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.collection?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
@@ -49,6 +48,8 @@ onRecordCreateRequest((e) => {
 
 onRecordUpdateRequest((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.collection?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
@@ -77,6 +78,8 @@ onRecordUpdateRequest((e) => {
 
 onRecordDeleteRequest((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.collection?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
@@ -106,6 +109,8 @@ onRecordDeleteRequest((e) => {
 
 onRecordAfterCreateSuccess((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.record?.collection()?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
@@ -130,6 +135,8 @@ onRecordAfterCreateSuccess((e) => {
 
 onRecordAfterUpdateSuccess((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.record?.collection()?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
@@ -154,6 +161,8 @@ onRecordAfterUpdateSuccess((e) => {
 
 onRecordAfterDeleteSuccess((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.record?.collection()?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
@@ -179,6 +188,8 @@ onRecordAfterDeleteSuccess((e) => {
 
 onRecordAuthWithOAuth2Request((e) => {
   function writeAuditLog() {
+    const AUDIT_COLLECTION = 'audit_logs';
+    const SKIP_COLLECTIONS = ['audit_logs', '_superusers', '_migrations', '_params', '_tokenKeys'];
     const collectionName = e.collection?.name || '';
     if (SKIP_COLLECTIONS.includes(collectionName)) {
       return;
