@@ -34,6 +34,7 @@ services:
     environment:
       - ADMIN_KEY=${CAP_ADMIN_KEY:-b622695b-1e2c-42f7-87b2-b442049c679a}
       - REDIS_URL=redis://dragonfly:6379
+      - RATELIMIT_IP_HEADER=cf-connecting-ip
     volumes:
       - cap_data:/usr/src/app/.data
     healthcheck:

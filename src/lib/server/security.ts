@@ -63,7 +63,8 @@ const CSP_DIRECTIVES = {
     'cdn.jsdelivr.net',
     'static.cloudflareinsights.com',
     "'self'",
-    "'wasm-unsafe-eval'" // MapLibre GL JS compiles WebAssembly for vector tile rendering
+    "'wasm-unsafe-eval'", // MapLibre GL JS compiles WebAssembly for vector tile rendering
+    "'unsafe-eval'" // Cap v3 instrumentation challenges use eval/new Function in-page
   ],
   'script-src-elem': [
     '*.opencommunities.info',
