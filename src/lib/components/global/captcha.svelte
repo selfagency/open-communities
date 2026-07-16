@@ -60,7 +60,10 @@ onDestroy(() => {
 <Form.Field class="w-full" {form} name="captcha">
   <Form.Control>
     <div class="my-4 w-full">
-      <cap-widget data-cap-api-endpoint={`/api/captcha/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/`} id="captcha"></cap-widget>
+      <cap-widget
+        data-cap-api-endpoint={`${pubEnv.PUBLIC_CAPTCHA_ENDPOINT}/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/`}
+        id="captcha"
+      ></cap-widget>
     </div>
   </Form.Control>
   <Form.FieldErrors />
