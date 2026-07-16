@@ -1,23 +1,22 @@
 <script lang="ts">
-import CancelIcon from '@tabler/icons-svelte/icons/cancel';
-import CircleCheckIcon from '@tabler/icons-svelte/icons/circle-check';
-import CircleXIcon from '@tabler/icons-svelte/icons/circle-x';
-import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
-import LanguageIcon from '@tabler/icons-svelte/icons/language';
-import LoadingIcon from '@tabler/icons-svelte/icons/loader';
-
+import type { ActionResult } from '@sveltejs/kit';
 import { isEmpty } from 'radashi';
 import { deserialize, enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '$lib/components/ui/accordion';
 import { Button } from '$lib/components/ui/button';
 import { m } from '$lib/paraglide/messages';
 
 import PageEditorBase from './page-editor-base.svelte';
 import PageEditorImage from './page-editor-image.svelte';
-import PageEditorTranslatePortal from './page-editor-translate-portal.svelte';
 import PageEditorVariant from './page-editor-variant.svelte';
+
+interface TranslateResult {
+  error?: string;
+  errors?: string[];
+  success?: number | boolean;
+  translations?: Array<{ locale: string; translatedText: string }>;
+}
 
 const languages = [
   { code: 'en', label: 'English' },
@@ -84,10 +83,8 @@ let imagePreview = $state((initialPage?.image as string) ?? '');
 let variantsInput: HTMLInputElement;
 
 let selectedLang = $state('en');
-let accordionOpening = $state('');
 let saveDisabled = $derived(!(title && slug) || saving);
 let translating = $state(false);
-let translateStatus = $state<'idle' | 'loading' | 'success' | 'error'>('idle');
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
@@ -98,9 +95,9 @@ function handleEnhance() {
   errMsg = '';
   return ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
     saving = false;
-    if (result.type === 'success' || result.type === 'redirect') {
+    if (result.type === 'success') {
       onSuccess();
-    } else {
+    } else if (result.type === 'failure') {
       errMsg = (result.data?.error as string) ?? m.pageEditorSaveFailed();
     }
   };
@@ -137,23 +134,8 @@ async function translateField(text: string, locale: string): Promise<string | nu
         Accept: 'application/json'
       }
     });
-
-    let body: any;
-    try {
-      body = await res.json();
-    } catch {
-      const text = await res.text();
-      try {
-        body = deserialize(text);
-      } catch {
-        body = null;
-      }
-    }
-
-    const actionData = body?.data ?? body;
-    if (body?.type === 'failure' || !res.ok || actionData?.error) {
-      return null;
-    }
+    const result: ActionResult = deserialize(await res.text());
+    const actionData = result.type === 'success' ? (result.data as TranslateResult | undefined) : null;
     return actionData?.translations?.[0]?.translatedText ?? null;
   } catch {
     return null;
@@ -194,13 +176,65 @@ async function translateLocaleFields(
   }
 }
 
+async function handleTranslateAll() {
+  if (translating || !content || !page?.id) {
+    return;
+  }
+
+  translating = true;
+  errMsg = '';
+
+  const nonEnglishLocales = languages.filter((l) => l.code !== 'en').map((l) => l.code);
+
+  const form = new FormData();
+  form.set('text', content);
+  form.set('locales', JSON.stringify(nonEnglishLocales));
+
+  try {
+    const res = await fetch('?/translate', {
+      method: 'POST',
+      body: form,
+      headers: {
+        'x-sveltekit-action': 'true',
+        Accept: 'application/json'
+      }
+    });
+
+    let actionData: TranslateResult | null = null;
+    try {
+      const result: ActionResult = deserialize(await res.text());
+      if (result.type === 'success') {
+        actionData = (result.data as TranslateResult | undefined) ?? null;
+      }
+    } catch {
+      actionData = null;
+    }
+
+    if (!res.ok || actionData?.error) {
+      errMsg = actionData?.error ?? 'Translation failed';
+      return;
+    }
+
+    if (actionData?.success && actionData?.translations) {
+      await Promise.all(nonEnglishLocales.map((l) => translateLocaleFields(l, actionData.translations!)));
+    }
+
+    if (actionData?.errors?.length) {
+      errMsg = `${actionData.errors.length} locale(s) failed to translate`;
+    }
+  } catch {
+    errMsg = 'Translation request failed';
+  } finally {
+    translating = false;
+  }
+}
+
 async function handleTranslate() {
   if (translating || !content || !selectedLang || selectedLang === 'en') {
     return;
   }
 
   translating = true;
-  translateStatus = 'loading';
   errMsg = '';
 
   const form = new FormData();
@@ -217,39 +251,30 @@ async function handleTranslate() {
       }
     });
 
-    let body: any;
+    let actionData: TranslateResult | null = null;
     try {
-      body = await res.json();
-    } catch {
-      const text = await res.text();
-      try {
-        body = deserialize(text);
-      } catch {
-        body = null;
+      const result: ActionResult = deserialize(await res.text());
+      if (result.type === 'success') {
+        actionData = (result.data as TranslateResult | undefined) ?? null;
       }
+    } catch {
+      actionData = null;
     }
 
-    const actionData = body?.data ?? body;
-
-    if (body?.type === 'failure' || !res.ok || actionData?.error) {
-      const err = actionData?.error ?? 'Translation failed';
-      errMsg = typeof err === 'string' ? err : (err?.message ?? JSON.stringify(err));
-      translateStatus = 'error';
+    if (!res.ok || actionData?.error) {
+      errMsg = actionData?.error ?? 'Translation failed';
       return;
     }
 
     if (actionData?.success && actionData?.translations) {
-      await Promise.all([selectedLang].map((l) => translateLocaleFields(l, actionData.translations)));
-      translateStatus = 'success';
+      await translateLocaleFields(selectedLang, actionData.translations);
     }
 
     if (actionData?.errors?.length) {
       errMsg = `${actionData.errors.length} locale(s) failed to translate`;
-      translateStatus = 'error';
     }
-  } catch (e) {
-    errMsg = (e && typeof e === 'object' && (e as any).message) || 'Translation request failed';
-    translateStatus = 'error';
+  } catch {
+    errMsg = 'Translation request failed';
   } finally {
     translating = false;
   }
@@ -267,120 +292,43 @@ async function handleTranslate() {
   {/if}
 
   <div class="relative space-y-6">
-    <!-- Language selector: restore dropdown UX to switch between variants -->
-    <div class="flex items-center gap-2 mb-2">
-      <label class="text-sm text-muted-foreground" for="page-editor-lang">Language:</label>
-      <select
-        class="form-select rounded-md border px-2 py-1"
-        id="page-editor-lang"
-        onchange={(e) => {
-          const v = (e.target as HTMLSelectElement).value;
-          selectedLang = v;
-          if (typeof window !== 'undefined') {
-            const el = document.getElementById(`variant-${v}`);
-            if (el) {
-              const btn = el.querySelector('button');
-              if (btn instanceof HTMLButtonElement) {
-                try {
-                  btn.click();
-                  btn.focus();
-                } catch {
-                  // ignore
-                }
-              }
-              try {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              } catch {
-                // ignore
-              }
-            }
-          }
-        }}
-        value={selectedLang}
-      >
-        {#each languages as l}
-          <option selected={l.code === selectedLang} value={l.code}>{l.label}</option>
-        {/each}
-      </select>
-      <Button class="ml-2" onclick={() => handleTranslate()} type="button" variant="outline">
-        <LanguageIcon class="mr-1.5 size-4" />
-        Translate selected
-      </Button>
-    </div>
-    <Accordion type="multiple" value={languages.map((l) => l.code)}>
-      <AccordionItem class="border-b-0" value="en">
-        <AccordionTrigger class="hover:no-underline">
-          <span class="font-semibold text-lg">{languages.find((l) => l.code === 'en')?.label || 'English'}</span>
-        </AccordionTrigger>
-        <AccordionContent>
-          <div class="space-y-6 pt-4">
-            <PageEditorBase bind:content bind:description bind:manualSlug bind:slug bind:title />
-            <PageEditorImage bind:imageAlt bind:imageCaption bind:imageFile bind:imagePreview />
-          </div>
-        </AccordionContent>
-      </AccordionItem>
+    {#if page?.id}
+      <div class="absolute right-4 top-4 z-10">
+        <select
+          class="h-9 rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          bind:value={selectedLang}
+        >
+          {#each languages as lang (lang.code)}
+            <option value={lang.code}>{lang.label}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
 
-      {#each languages.filter((l) => l.code !== 'en') as lang (lang.code)}
-        <AccordionItem id={`variant-${lang.code}`} value={lang.code}>
-          <div class="flex items-center justify-between">
-            <AccordionTrigger class="hover:no-underline">
-              <div class="flex items-center gap-3">
-                <span class="font-semibold text-lg">{lang.label}</span>
-              </div>
-            </AccordionTrigger>
-            {#if page?.id}
-              <div class="translate-button-root" data-lang={lang.code}>
-                <!-- Portal-mounted visual: keeps DOM valid while preserving layout -->
-                <PageEditorTranslatePortal
-                  {content}
-                  langCode={lang.code}
-                  onTranslate={(l) => {
-                    selectedLang = l;
-                    // open the requested variant accordion and run translate
-                    // (best-effort DOM interaction in browser only)
-                    if (typeof window !== 'undefined') {
-                      const el = document.getElementById(`variant-${l}`);
-                      if (el) {
-                        const btn = el.querySelector('button');
-                        if (btn instanceof HTMLButtonElement) {
-                          btn.click();
-                        }
-                      }
-                    }
-                    handleTranslate();
-                  }}
-                  {selectedLang}
-                  {translateStatus}
-                  {translating}
-                />
-              </div>
-            {/if}
-          </div>
-          <AccordionContent>
-            <div class="pt-4 relative">
-              {#if getVariant(lang.code)}
-                <PageEditorVariant language={lang} variant={getVariant(lang.code)!} />
-              {/if}
-              <!-- visual-only positioning target preserved via CSS for translate button -->
-              <div aria-hidden="true" class="absolute top-2 right-2 pointer-events-none">
-                <!-- placeholder to reserve space so layout matches previous look -->
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      {/each}
-    </Accordion>
+    {#if selectedLang === 'en'}
+      <PageEditorBase bind:content bind:description bind:manualSlug bind:slug bind:title />
+      <PageEditorImage bind:imageAlt bind:imageCaption bind:imageFile bind:imagePreview />
+    {:else}
+      {@const v = getVariant(selectedLang)}
+      {#if v}
+        <PageEditorVariant language={languages.find((l) => l.code === selectedLang) ?? languages[0]} variant={v} />
+      {/if}
+    {/if}
   </div>
 
-  <div class="flex flex-wrap items-center justify-between gap-2">
-    <div class="ml-auto flex items-center gap-2">
-      <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">
-        <CancelIcon class="mr-1.5 size-4" />{m.pageEditorCancel()}
+  <div class="flex gap-2">
+    <Button disabled={saveDisabled} type="submit">
+      {saving ? m.pageEditorSaving() : page?.id ? m.pageEditorUpdatePage() : m.pageEditorCreatePage()}
+    </Button>
+    {#if selectedLang === 'en' && page?.id}
+      <Button disabled={translating || !content} onclick={handleTranslateAll} type="button" variant="outline">
+        {translating ? 'Translating…' : 'Translate to all languages'}
       </Button>
-      <Button disabled={saveDisabled} type="submit" variant="outline">
-        <FileUploadIcon class="mr-1.5 size-4" />
-        {saving ? m.pageEditorSaving() : 'Save'}
+    {:else if selectedLang !== 'en'}
+      <Button disabled={translating || !content} onclick={handleTranslate} type="button" variant="outline">
+        {translating ? 'Translating…' : 'Translate from English'}
       </Button>
-    </div>
+    {/if}
+    <Button onclick={() => goto('/admin/pages')} type="button" variant="outline">{m.pageEditorCancel()}</Button>
   </div>
 </form>
