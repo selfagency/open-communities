@@ -59,14 +59,12 @@ export const load: PageServerLoad = async ({ locals }) => {
   const [active, pending] = await Promise.all([
     withRetry(() =>
       client.collection('congregationMeta').getFullList({
-        filter: client.filter('visible={:v}', { v: true }),
-        sort: '-created'
+        filter: client.filter('visible={:v}', { v: true })
       })
     ).catch(() => [] as never[]),
     withRetry(() =>
       client.collection('congregationMeta').getFullList({
-        filter: client.filter('visible={:v}', { v: false }),
-        sort: '-created'
+        filter: client.filter('visible={:v}', { v: false })
       })
     ).catch(() => [] as never[])
   ]);
