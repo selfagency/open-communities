@@ -21,11 +21,11 @@ describe('contactSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('accepts claim reason with record UUID', () => {
+  it('accepts claim reason with record PocketBase id', () => {
     const result = contactSchema.safeParse({
       ...validData,
       reason: 'claim',
-      record: '550e8400-e29b-41d4-a716-446655440000'
+      record: 'gj1umzvpaxw75h2'
     });
     expect(result.success).toBe(true);
   });
@@ -53,8 +53,8 @@ describe('contactSchema', () => {
     }
   });
 
-  it('rejects non-UUID record', () => {
-    const result = contactSchema.safeParse({ ...validData, reason: 'claim', record: 'not-a-uuid' });
+  it('rejects non-PocketBase id record', () => {
+    const result = contactSchema.safeParse({ ...validData, reason: 'claim', record: 'not-a-pb-id' });
     expect(result.success).toBe(false);
   });
 });
