@@ -64,6 +64,7 @@ let content = $state((initialPage?.content as string) ?? '');
 let imageAlt = $state((initialPage?.imageAlt as string) ?? '');
 let imageCaption = $state((initialPage?.imageCaption as string) ?? '');
 let manualSlug = $state(!!initialPage);
+let published = $state((initialPage?.published as boolean) ?? true);
 
 let variants = $state<Variant[]>(
   languages
@@ -300,7 +301,7 @@ async function handleTranslate() {
     {/if}
 
     {#if selectedLang === 'en'}
-      <PageEditorBase bind:content bind:description bind:manualSlug bind:slug bind:title />
+      <PageEditorBase bind:content bind:description bind:manualSlug bind:published bind:slug bind:title />
       <PageEditorImage bind:imageAlt bind:imageCaption bind:imageFile bind:imagePreview />
     {:else}
       {@const v = getVariant(selectedLang)}

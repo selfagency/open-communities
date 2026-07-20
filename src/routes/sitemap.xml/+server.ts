@@ -26,8 +26,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
     const congs = await withRetry(() =>
       client.collection('congregations').getFullList({
         filter: 'visible=true',
-        fields: 'id,updated',
-        requestKey: 'sitemap-congs'
+        fields: 'id,updated'
       })
     );
     congregationIds = (congs as Array<{ id: string }>).map((c) => c.id);
@@ -35,14 +34,13 @@ export const GET: RequestHandler = async ({ locals, url }) => {
     // Graceful degradation — sitemap without congregations
   }
 
-  // Fetch all published page slugs
+  // Fetch all published page slugs for the [slug] route
   let pageSlugs: string[] = [];
   try {
     const pages = await withRetry(() =>
       client.collection('pages').getFullList({
         filter: 'published=true',
-        fields: 'slug',
-        requestKey: 'sitemap-pages'
+        fields: 'slug'
       })
     );
     pageSlugs = (pages as Array<{ slug: string }>).map((p) => p.slug);

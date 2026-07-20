@@ -264,6 +264,7 @@ export interface PagesRecord {
   description?: string;
   id: string;
   lang: PagesLangOptions;
+  published?: boolean;
   sisters?: RecordIdString[];
   slug: string;
   title: string;

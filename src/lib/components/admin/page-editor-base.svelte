@@ -13,13 +13,15 @@ let {
   slug = $bindable(''),
   description = $bindable(''),
   content = $bindable(''),
-  manualSlug = $bindable(false)
+  manualSlug = $bindable(false),
+  published = $bindable(true)
 }: {
   title?: string;
   slug?: string;
   description?: string;
   content?: string;
   manualSlug?: boolean;
+  published?: boolean;
 } = $props();
 
 function generateSlug(val: string): string {
@@ -63,10 +65,16 @@ $effect(() => {
   </CardHeader>
   <CardContent class="space-y-4">
     <div class="space-y-2">
-      <label class="text-sm font-bold block mb-2" for="title">
-        <span>{m.pageEditorTitleLabel()}</span>
-        <Required set={title !== ''} />
-      </label>
+      <div class="flex items-center justify-between">
+        <label class="text-sm font-bold block" for="title">
+          <span>{m.pageEditorTitleLabel()}</span>
+          <Required set={title !== ''} />
+        </label>
+        <label class="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Switch aria-label="Published" class="scale-75" name="published" bind:checked={published} />
+          Published
+        </label>
+      </div>
       <Input id="title" name="title" placeholder={m.pageEditorTitlePlaceholder()} required bind:value={title} />
     </div>
 

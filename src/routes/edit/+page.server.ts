@@ -14,7 +14,7 @@ import type {
   ServicesRecord
 } from '$lib/pocketbase.d';
 import { defaultSchema, deleteSchema } from '$lib/schemas/record';
-import { cleanResponse, throwAsHttpError } from '$lib/server/api';
+import { cleanResponse, throwAsHttpError, withRetry } from '$lib/server/api';
 import { clearCongregationCache } from '$lib/server/cache';
 import { log } from '$lib/server/logger';
 import { adminMail, transactionalMail } from '$lib/server/mail';
@@ -37,6 +37,9 @@ type RecordWithId = CongregationMetaRecord & { id: string };
 
 /* region helpers */
 
+/** PocketBase record IDs are 15-character `[a-z0-9]` strings. */
+const PB_ID_RE = /^[a-z0-9]{15}$/;
+
 function upsertChildRecord(
   batch: {
     collection: (name: string) => {
@@ -48,7 +51,7 @@ function upsertChildRecord(
   data: { id?: string },
   congregationId: string | undefined
 ) {
-  if (data.id) {
+  if (data.id && PB_ID_RE.test(data.id)) {
     batch.collection(collection).update(data.id, omit(data, ['id']));
   } else if (!isEmpty(data)) {
     batch.collection(collection).create({ ...data, congregation: congregationId });
@@ -178,8 +181,10 @@ export const actions = {
         throw new Error('Invalid form data');
       }
 
-      const record = await api.collection('congregationMeta').getOne(data.id ?? '', { fetch });
-      const { accessibility, fit, health, owner, registration, security, services } = record as MetaRecord;
+      const record = (await withRetry(() =>
+        api.collection('congregationMeta').getOne(data.id ?? '', { fetch })
+      )) as MetaRecord;
+      const { accessibility, fit, health, owner, registration, security, services } = record;
 
       const batch = api.createBatch();
 
@@ -200,7 +205,7 @@ export const actions = {
         }
       }
       batch.collection('congregations').delete(data.id);
-      await batch.send({ fetch });
+      await withRetry(() => batch.send({ fetch }));
 
       clearCongregationCache();
       await sendDeleteNotifications(client);
@@ -240,7 +245,7 @@ export const actions = {
         throw new Error('Invalid form data');
       }
 
-      const priorToChange = await api.collection('congregationMeta').getOne(data.id ?? '', { fetch });
+      const priorToChange = await withRetry(() => api.collection('congregationMeta').getOne(data.id ?? '', { fetch }));
       const { accessibility, fit, health, location, registration, security, services } = data;
       const batch = api.createBatch();
 
@@ -267,7 +272,7 @@ export const actions = {
       upsertChildRecord(batch, 'health', health, data.id);
       upsertChildRecord(batch, 'security', security, data.id);
       upsertChildRecord(batch, 'services', services, data.id);
-      await batch.send({ fetch });
+      await withRetry(() => batch.send({ fetch }));
 
       clearCongregationCache();
       // biome-ignore lint/suspicious/noExplicitAny: AuthRecord not assignable to Record<string, unknown>

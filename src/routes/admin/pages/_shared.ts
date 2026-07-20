@@ -29,6 +29,7 @@ export interface ParsedPage {
   description: string;
   imageAlt: string;
   imageCaption: string;
+  published: boolean;
   slug: string;
   title: string;
 }
@@ -59,7 +60,8 @@ export function parsePageForm(
       content: getTextValue(fd, 'content'),
       description: getTextValue(fd, 'description'),
       imageAlt: getTextValue(fd, 'imageAlt'),
-      imageCaption: getTextValue(fd, 'imageCaption')
+      imageCaption: getTextValue(fd, 'imageCaption'),
+      published: fd.get('published') === 'true'
     }
   };
 }

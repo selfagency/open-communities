@@ -22,6 +22,7 @@ interface Page {
   id: string;
   imageAlt?: string;
   imageCaption?: string;
+  published: boolean;
   slug: string;
   title: string;
   updated: string;
@@ -78,9 +79,24 @@ const columns: ColumnDef<Page>[] = [
       )
   },
   {
+    accessorKey: 'published',
+    header: 'Published',
+    size: 80,
+    cell: ({ row }) =>
+      renderSnippet(
+        createRawSnippet<[{ v: boolean }]>((get) => ({
+          render: () =>
+            get().v
+              ? '<span class="text-xs text-green-600 font-medium">Yes</span>'
+              : '<span class="text-xs text-muted-foreground">No</span>'
+        })),
+        { v: row.original.published }
+      )
+  },
+  {
     accessorKey: 'description',
     header: m.description(),
-    size: 400,
+    size: 380,
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({

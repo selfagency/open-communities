@@ -18,6 +18,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
       title: p.title,
       slug: p.slug,
       description: p.description ?? '',
+      published: p.published ?? false,
       updated: p.updated
     })),
     // fallow-ignore-next-line unused-load-data-key -- consumed by PageList component via {data} pass-through

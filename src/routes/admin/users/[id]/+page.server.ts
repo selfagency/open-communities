@@ -25,8 +25,7 @@ async function fetchAvailableCongregations(client: ReturnType<typeof import('$li
     .collection('congregationMeta')
     .getFullList({
       filter: client.filter('owner = null'),
-      sort: 'name',
-      requestKey: 'admin-user-avail-congs'
+      sort: 'name'
     })
     .catch(() => []);
   return available.map((c) => ({ id: c.id as string, name: c.name as string }));

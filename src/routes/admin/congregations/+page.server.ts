@@ -60,15 +60,13 @@ export const load: PageServerLoad = async ({ locals }) => {
     withRetry(() =>
       client.collection('congregationMeta').getFullList({
         filter: client.filter('visible={:v}', { v: true }),
-        sort: '-created',
-        requestKey: 'admin-cong-active'
+        sort: '-created'
       })
     ).catch(() => [] as never[]),
     withRetry(() =>
       client.collection('congregationMeta').getFullList({
         filter: client.filter('visible={:v}', { v: false }),
-        sort: '-created',
-        requestKey: 'admin-cong-pending'
+        sort: '-created'
       })
     ).catch(() => [] as never[])
   ]);
@@ -88,8 +86,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     const ownerRecords = await withRetry(() =>
       client.collection('users').getFullList({
         filter: client.filter(clauses.join(' || '), params),
-        fields: 'id,email,name',
-        requestKey: 'admin-cong-owners'
+        fields: 'id,email,name'
       })
     ).catch(() => [] as never[]);
     for (const u of ownerRecords as Array<{ id: string; email: string; name: string }>) {

@@ -29,29 +29,25 @@ interface CitiesByQtyView {
 /* region helpers */
 
 function fetchTopCountries(client: ReturnType<typeof import('$lib/server/api').createApi>) {
-  return withRetry(() =>
-    client.collection('countriesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-countries-qty' })
-  ).catch(() => []) as Promise<CountriesByQtyView[]>;
+  return withRetry(() => client.collection('countriesByQty').getFullList({ sort: '-congregation_count' })).catch(
+    () => []
+  ) as Promise<CountriesByQtyView[]>;
 }
 
 function fetchTopStates(client: ReturnType<typeof import('$lib/server/api').createApi>) {
-  return withRetry(() =>
-    client.collection('statesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-states-qty' })
-  ).catch(() => []) as Promise<StatesByQtyView[]>;
+  return withRetry(() => client.collection('statesByQty').getFullList({ sort: '-congregation_count' })).catch(
+    () => []
+  ) as Promise<StatesByQtyView[]>;
 }
 
 function fetchTopCities(client: ReturnType<typeof import('$lib/server/api').createApi>) {
-  return withRetry(() =>
-    client.collection('citiesByQty').getFullList({ sort: '-congregation_count', requestKey: 'dash-cities-qty' })
-  ).catch(() => []) as Promise<CitiesByQtyView[]>;
+  return withRetry(() => client.collection('citiesByQty').getFullList({ sort: '-congregation_count' })).catch(
+    () => []
+  ) as Promise<CitiesByQtyView[]>;
 }
 
-function fetchTotalCount(
-  client: ReturnType<typeof import('$lib/server/api').createApi>,
-  collection: string,
-  key: string
-) {
-  return withRetry(() => client.collection(collection).getFullList({ requestKey: key })).catch(() => []);
+function fetchTotalCount(client: ReturnType<typeof import('$lib/server/api').createApi>, collection: string) {
+  return withRetry(() => client.collection(collection).getFullList()).catch(() => []);
 }
 
 function getFirstCount(data: Record<string, unknown>[], field: string): number {
@@ -71,9 +67,9 @@ export const GET: RequestHandler = async ({ locals }) => {
     fetchTopCountries(client),
     fetchTopStates(client),
     fetchTopCities(client),
-    fetchTotalCount(client, 'totalCities', 'dash-total-cities'),
-    fetchTotalCount(client, 'totalStates', 'dash-total-states'),
-    fetchTotalCount(client, 'totalCountries', 'dash-total-countries')
+    fetchTotalCount(client, 'totalCities'),
+    fetchTotalCount(client, 'totalStates'),
+    fetchTotalCount(client, 'totalCountries')
   ]);
 
   const topCountries = countriesByQty

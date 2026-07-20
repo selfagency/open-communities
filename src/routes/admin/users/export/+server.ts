@@ -35,8 +35,7 @@ export const GET: RequestHandler = async ({ locals }) => {
   const users = await withRetry(() =>
     client.collection('users').getFullList({
       sort: '-created',
-      expand: 'congregation,congregation.city,congregation.state,congregation.country',
-      requestKey: 'admin-export-users'
+      expand: 'congregation,congregation.city,congregation.state,congregation.country'
     })
   );
   if (!users?.length) {

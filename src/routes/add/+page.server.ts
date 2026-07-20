@@ -129,7 +129,13 @@ function handleSubmitError(
 
   const err = error as ClientResponseError;
 
-  if (err.message === 'Failed to create record.') {
+  // PB returns different messages for duplicate name+city violations depending
+  // on whether the unique index catches it ("Failed to create record.") or the
+  // field validation layer catches it ("An error occurred while validating...").
+  if (
+    err.message === 'Failed to create record.' ||
+    err.message === 'An error occurred while validating the submitted data.'
+  ) {
     // biome-ignore lint/suspicious/noExplicitAny: superforms setError expects SuperValidated
     setError(form as any, 'name', m.exists());
   }
@@ -164,18 +170,20 @@ export const actions = {
         return fail(400, { form });
       }
 
-      const record = (await api.collection('congregations').create(
-        {
-          ...omit(formData, ['accessibility', 'fit', 'health', 'location', 'registration', 'security', 'services']),
-          ...(formData.location as object),
-          visible: client?.admin ? formData.visible : false
-        },
-        { fetch }
+      const record = (await withRetry(() =>
+        api.collection('congregations').create(
+          {
+            ...omit(formData, ['accessibility', 'fit', 'health', 'location', 'registration', 'security', 'services']),
+            ...(formData.location as object),
+            visible: client?.admin ? formData.visible : false
+          },
+          { fetch }
+        )
       )) as CongregationsResponse;
 
       const batch = api.createBatch();
       await createChildRecords(batch, formData, record.id);
-      await batch.send({ fetch });
+      await withRetry(() => batch.send({ fetch }));
 
       await sendSubmissionNotifications(client, record, api);
 

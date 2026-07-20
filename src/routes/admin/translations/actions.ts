@@ -178,7 +178,7 @@ export const actions: Actions = {
 
     const records = await client
       .collection('translations')
-      .getFullList({ filter: client.filter('key = {:key}', { key }), requestKey: `del-${key}` })
+      .getFullList({ filter: client.filter('key = {:key}', { key }) })
       .catch(() => []);
 
     let deleted = 0;
