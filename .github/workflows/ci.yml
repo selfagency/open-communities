@@ -285,6 +285,16 @@ jobs:
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
 
+      - name: Verify PB hooks loaded without errors
+        run: |
+          HOOK_ERRORS=$(docker logs docker-pocketbase-1 2>&1 | grep -i -E '(error|referenceerror|typeerror|is not defined|cannot find)' | head -20)
+          if [ -n "$HOOK_ERRORS" ]; then
+            echo "❌ PB hook errors detected:"
+            echo "$HOOK_ERRORS"
+            exit 1
+          fi
+          echo "✅ PB hooks loaded cleanly"
+
       - name: Wait for app
         run: |
           timeout 120 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 2; done'

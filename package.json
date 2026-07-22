@@ -15,6 +15,7 @@
     "deps:bootstrap": "node docker/scripts/bootstrap.mjs",
     "deps:down": "docker compose --env-file .env.dynamic -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down",
     "deps:reset": "docker compose --env-file .env.dynamic -f docker/docker-compose.yml -f docker/docker-compose.dev.yml down -v && rm -rf docker/pocketbase/pb_data && mkdir -p docker/pocketbase/pb_data && sed -i '' '/^CAPTCHA_INTERNAL_ENDPOINT=/d; /^PUBLIC_CAPTCHA_SITE_KEY=/d; /^CAPTCHA_SITE_SECRET=/d; /^# Created by bootstrap/d' .env.dynamic .env.e2e 2>/dev/null; docker compose --env-file .env.dynamic -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build pocketbase dragonfly cap libretranslate mailpit && sleep 5 && node docker/scripts/bootstrap.mjs",
+    "deps:verify-hooks": "node docker/scripts/verify-hooks.mjs",
     "deps:up": "docker compose --env-file .env.dynamic -f docker/docker-compose.yml -f docker/docker-compose.dev.yml up -d --build pocketbase dragonfly cap libretranslate mailpit",
     "dev": "pnpx dotenv-cli -c dynamic -- vite dev",
     "fix": "ultracite fix",
