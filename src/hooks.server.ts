@@ -13,6 +13,7 @@ import type { $ZodType, output } from 'zod/v4/core';
 import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createApi } from '$lib/server/api';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 import { logEvent, log as logger } from '$lib/server/logger';
 import { closeTransporter } from '$lib/server/mail';
 import { capture, captureException, closePhClient } from '$lib/server/posthog';
@@ -116,6 +117,43 @@ function customHandler({ event, resolve }: Parameters<Handle>[0]): Promise<Respo
   });
 }
 
+async function handleAuth(event: Parameters<Handle>[0]['event'], requestApi: TypedPocketBase) {
+  try {
+    if (event.url.pathname === '/logout') {
+      event.cookies.set('auth', '', { ...event.locals.cookieOpts, maxAge: 0 });
+      event.cookies.set('session', '', { ...event.locals.cookieOpts, maxAge: 0 });
+      requestApi.authStore.clear();
+    } else if (requestApi?.authStore?.isValid) {
+      pruneAuthRefreshTimestamps();
+      const now = Date.now();
+      let sessionKey = event.cookies.get('session');
+      if (!sessionKey) {
+        sessionKey = crypto.randomUUID();
+        event.cookies.set('session', sessionKey, event.locals.cookieOpts);
+      }
+      const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
+      if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
+        await Promise.race([
+          requestApi.collection('users').authRefresh(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
+        ]);
+        authRefreshTimestamps.set(sessionKey, now);
+      }
+      event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
+    }
+  } catch (error: unknown) {
+    const status = (error as { status?: number })?.status;
+    if (status === 401 || status === 403) {
+      log.warn('Auth refresh rejected — clearing auth store', { status });
+      requestApi.authStore.clear();
+      event.cookies.set('auth', '', event.locals.cookieOpts);
+      event.cookies.set('session', '', event.locals.cookieOpts);
+    } else {
+      log.warn('Auth refresh transient failure — keeping existing token', { error });
+    }
+  }
+}
+
 async function handleRequest({
   event,
   resolve,
@@ -194,46 +232,7 @@ async function handleRequest({
   };
 
   // auth
-  try {
-    if (event.url.pathname === '/logout') {
-      event.cookies.set('auth', '', { ...event.locals.cookieOpts, maxAge: 0 });
-      event.cookies.set('session', '', { ...event.locals.cookieOpts, maxAge: 0 });
-      requestApi.authStore.clear();
-    } else if (requestApi?.authStore?.isValid) {
-      pruneAuthRefreshTimestamps();
-      const now = Date.now();
-      // Use the stable session cookie as the cooldown key (not auth cookie, which changes on refresh)
-      let sessionKey = event.cookies.get('session');
-      if (!sessionKey) {
-        sessionKey = crypto.randomUUID();
-        event.cookies.set('session', sessionKey, event.locals.cookieOpts);
-      }
-      const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
-      if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
-        // Hard timeout on auth refresh to avoid blocking SSR on PB latency
-        await Promise.race([
-          requestApi.collection('users').authRefresh(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
-        ]);
-        authRefreshTimestamps.set(sessionKey, now);
-      }
-      // Re-set the auth cookie on every request — keep the full exportToCookie
-      // value so loadFromCookie can parse it (expects pb_auth=<json> prefix).
-      event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
-    }
-  } catch (error: unknown) {
-    // Differentiate between auth rejection vs transient network errors
-    const status = (error as { status?: number })?.status;
-    if (status === 401 || status === 403) {
-      log.warn('Auth refresh rejected — clearing auth store', { status });
-      requestApi.authStore.clear();
-      event.cookies.set('auth', '', event.locals.cookieOpts);
-      event.cookies.set('session', '', event.locals.cookieOpts);
-    } else {
-      // Transient error: keep existing auth token and log a warning
-      log.warn('Auth refresh transient failure — keeping existing token', { error });
-    }
-  }
+  await handleAuth(event, requestApi);
 
   // Store start timer before resolving the response
   event.locals.startTimer = startTimer;
