@@ -207,16 +207,18 @@ function sendSpan(e, cfg) {
   postJson(`${cfg.host}/i/v1/logs`, logPayload);
 }
 
-const cfg = readConfig();
-if (cfg.key) {
-  const handler = (e) => {
-    sendSpan(e, cfg);
+const handler = (e) => {
+  const cfg = readConfig();
+  if (!cfg.key) {
     e.next();
-  };
+    return;
+  }
+  sendSpan(e, cfg);
+  e.next();
+};
 
-  onRecordsListRequest(handler);
-  onRecordViewRequest(handler);
-  onRecordCreateRequest(handler);
-  onRecordUpdateRequest(handler);
-  onRecordDeleteRequest(handler);
-}
+onRecordsListRequest(handler);
+onRecordViewRequest(handler);
+onRecordCreateRequest(handler);
+onRecordUpdateRequest(handler);
+onRecordDeleteRequest(handler);
