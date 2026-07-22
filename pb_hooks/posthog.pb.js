@@ -1,22 +1,18 @@
 // fallow-ignore-file complexity,unused-file -- auto-loaded by PocketBase at startup
-// PocketBase JS Hook — Export request logs as OTel spans to PostHog.
+// PocketBase JS Hook — Export API request traces to PostHog as OTel spans.
 //
 // Env vars (set in PocketHost dashboard):
 //   POSTHOG_PB_API_KEY  — PostHog project API key
 //   POSTHOG_PB_HOST     — PostHog API host (default: https://us.i.posthog.com)
 //
-// Sends OTLP JSON trace payloads to /i/v1/traces so traces appear in PostHog's
-// distributed tracing UI, not as events.
+// Uses request hooks (onRecordsListRequest, onRecordViewRequest, etc.) to capture
+// every API request as an OTel span sent to /i/v1/traces.
 //
 // IMPORTANT: PB's JSVM isolates each handler invocation. ALL config and
 // logic is inside the handler body — no require(), no external modules,
 // no module-level state.
 
-// handler must be self-contained (PB isolation scope)
-
-onModelCreate((e) => {
-  // All helper functions must live inside the handler because PB JSVM
-  // executes each handler in an isolated context.
+function makeRequestHook() {
   function readConfig() {
     let key = '';
     let host = 'https://us.i.posthog.com';
@@ -38,12 +34,6 @@ onModelCreate((e) => {
     return { key, host };
   }
 
-  function shouldSkip(level, raw) {
-    // Skip debug (-4) unless it's a request log; keep info(0) and above
-    return level < 0 && !(raw && raw.type === 'request');
-  }
-
-  // Generate a random 16-byte hex string for OTel trace_id
   function makeTraceId() {
     // NOSONAR
     let hex = '';
@@ -53,7 +43,6 @@ onModelCreate((e) => {
     return hex;
   }
 
-  // Generate a random 8-byte hex string for OTel span_id
   function makeSpanId() {
     // NOSONAR
     let hex = '';
@@ -63,110 +52,125 @@ onModelCreate((e) => {
     return hex;
   }
 
-  // Convert a Date to nanoseconds since epoch (OTLP format)
   function toNanos(date) {
     // NOSONAR
     return (date.getTime() * 1_000_000).toString();
   }
 
-  // Build OTLP span attributes from a PB log model
-  function makeSpanAttrs(raw, level, execTimeMs) {
+  function makeSpanAttrs(e, _startTime, execTimeMs) {
+    const method = e.request ? e.request.method : 'UNKNOWN';
+    const url = e.url || '';
+    const status = e.response ? e.response.statusCode : 0;
+    const auth = e.auth ? e.auth.id : '';
+    const ip = e.request ? e.request.remoteIP : '';
+
     const attrs = [
       { key: 'service.name', value: { stringValue: 'pocketbase' } },
-      { key: 'http.method', value: { stringValue: raw ? raw.method : 'UNKNOWN' } },
-      { key: 'http.url', value: { stringValue: raw ? raw.url : '' } },
-      { key: 'http.status_code', value: { intValue: raw ? raw.status : 0 } },
-      { key: 'http.route', value: { stringValue: raw ? raw.url : '' } },
+      { key: 'http.method', value: { stringValue: method } },
+      { key: 'http.url', value: { stringValue: url } },
+      { key: 'http.status_code', value: { intValue: status } },
+      { key: 'http.route', value: { stringValue: url } },
       { key: 'exec_time_ms', value: { intValue: execTimeMs } },
-      { key: 'client.ip', value: { stringValue: raw ? raw.remoteIP : '' } },
-      { key: 'auth', value: { stringValue: raw ? raw.auth : '' } },
-      { key: 'log.level', value: { stringValue: level >= 4 ? 'error' : 'info' } }
+      { key: 'client.ip', value: { stringValue: ip } },
+      { key: 'auth', value: { stringValue: auth } }
     ];
-    if (level >= 4 && model.message) {
-      attrs.push({ key: 'error.message', value: { stringValue: model.message } });
+
+    if (status >= 400) {
+      attrs.push({ key: 'error.message', value: { stringValue: `HTTP ${status}` } });
     }
+
     return attrs;
   }
 
-  // Build an OTLP JSON span from a PB log model
-  function makeOtlpSpan(model, raw, level) {
-    const now = new Date();
-    const execTimeMs = raw?.execTime ? Math.round(raw.execTime * 1000) : 0;
-    const startTime = new Date(now.getTime() - execTimeMs);
+  function sendSpan(e, cfg) {
+    const startTime = new Date();
+    const execTimeMs = 0;
 
-    return {
-      traceId: (raw && (raw['x-request-id'] || raw['request-id'])) || makeTraceId(),
-      spanId: makeSpanId(),
+    // Use the x-request-id header if present (set by SvelteKit's createApi)
+    let traceId = '';
+    try {
+      if (e.request?.header) {
+        traceId = e.request.header['x-request-id'] || '';
+      }
+    } catch {
+      /* ignore */
+    }
+    if (!traceId) {
+      traceId = makeTraceId();
+    }
+
+    const spanId = makeSpanId();
+    const method = e.request ? e.request.method : 'UNKNOWN';
+    const url = e.url || '';
+    const status = e.response ? e.response.statusCode : 0;
+
+    const span = {
+      traceId,
+      spanId,
       parentSpanId: '',
-      name: (raw ? `${raw.method} ${raw.url}` : model.message) || 'pb_request',
+      name: `${method} ${url}`,
       kind: 2, // SPAN_KIND_SERVER
       startTimeUnixNano: toNanos(startTime),
-      endTimeUnixNano: toNanos(now),
-      attributes: makeSpanAttrs(raw, level, execTimeMs),
-      status: { code: level >= 4 ? 2 : 0 }
+      endTimeUnixNano: toNanos(new Date()),
+      attributes: makeSpanAttrs(e, startTime, execTimeMs),
+      status: { code: status >= 500 ? 2 : 0 }
     };
-  }
 
-  function fireAndForget(url, body) {
+    const otlpPayload = {
+      resourceSpans: [
+        {
+          resource: {
+            attributes: [
+              { key: 'service.name', value: { stringValue: 'pocketbase' } },
+              { key: 'service.version', value: { stringValue: '0.29.x' } }
+            ]
+          },
+          scopeSpans: [
+            {
+              scope: { name: 'pocketbase', version: '0.1.0' },
+              spans: [span]
+            }
+          ]
+        }
+      ]
+    };
+
+    const tracesUrl = `${cfg.host}/i/v1/traces`;
+
     try {
       $http
         .send({
-          url,
+          url: tracesUrl,
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(body),
+          body: JSON.stringify(otlpPayload),
           timeout: 5
         })
         .catch(() => {
-          // fire-and-forget: swallow errors silently
+          /* fire-and-forget: swallow errors silently */
         });
     } catch {
-      // fire-and-forget: swallow errors silently
+      /* fire-and-forget: swallow errors silently */
     }
   }
 
   const cfg = readConfig();
   if (!cfg.key) {
-    e.next();
     return;
   }
 
-  const model = e.model;
-  const level = model.level;
-  const raw = model.data;
-
-  if (shouldSkip(level, raw)) {
+  return function handler(e) {
+    sendSpan(e, cfg);
     e.next();
-    return;
-  }
-
-  const span = makeOtlpSpan(model, raw, level);
-
-  const otlpPayload = {
-    resourceSpans: [
-      {
-        resource: {
-          attributes: [
-            { key: 'service.name', value: { stringValue: 'pocketbase' } },
-            { key: 'service.version', value: { stringValue: '0.29.x' } }
-          ]
-        },
-        scopeSpans: [
-          {
-            scope: {
-              name: 'pocketbase',
-              version: '0.1.0'
-            },
-            spans: [span]
-          }
-        ]
-      }
-    ]
   };
+}
 
-  const tracesUrl = `${cfg.host}/i/v1/traces`;
-
-  e.next();
-  fireAndForget(tracesUrl, otlpPayload);
-  return;
-}, '_logs');
+// Register on all record request hooks to capture every API call
+const hook = makeRequestHook();
+if (hook) {
+  onRecordsListRequest(hook);
+  onRecordViewRequest(hook);
+  onRecordCreateRequest(hook);
+  onRecordUpdateRequest(hook);
+  onRecordDeleteRequest(hook);
+}
