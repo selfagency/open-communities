@@ -1,5 +1,6 @@
-// @ts-expect-error: Svelte 5 component default export not recognized by TS
+// @ts-ignore: Svelte 5 component default export not recognized by TS-Go
 import _Root from './file-drop-zone.svelte';
+// @ts-ignore: Svelte 5 component default export not recognized by TS-Go
 import _Trigger from './file-drop-zone-trigger.svelte';
 export const Root = _Root;
 export const Trigger = _Trigger;

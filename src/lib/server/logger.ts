@@ -21,16 +21,17 @@ function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
 
   try {
     const severityMap: Record<string, string> = {
-      silly: 'trace',
-      trace: 'trace',
-      debug: 'debug',
-      info: 'info',
-      warn: 'warn',
-      error: 'error',
-      fatal: 'fatal'
+      SILLY: 'trace',
+      TRACE: 'trace',
+      DEBUG: 'debug',
+      INFO: 'info',
+      WARN: 'warn',
+      ERROR: 'error',
+      FATAL: 'fatal'
     };
+    const levelName = logObject._meta?.logLevelName as string | undefined;
     otelLogger.emit({
-      severityText: severityMap[logObject._meta?.logLevelId as unknown as keyof typeof severityMap] || 'info',
+      severityText: (levelName && severityMap[levelName]) || 'info',
       body: typeof logObject === 'object' ? shake(logObject as unknown as Record<string, unknown>) : logObject,
       attributes: {
         'service.name': 'open-communities',

@@ -1,17 +1,18 @@
 /* region imports */
+
+import { trace } from '@opentelemetry/api';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
-
 import { publicIpv4 } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
 import type { SuperValidated } from 'sveltekit-superforms';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import type { $ZodType, output } from 'zod/v4/core';
-
 import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 import { createApi } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 import { closeTransporter } from '$lib/server/mail';
@@ -84,11 +85,86 @@ async function getClientIp(event: RequestEvent): Promise<string | undefined> {
   }
 }
 
-async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
+function customHandler({ event, resolve }: Parameters<Handle>[0]): Promise<Response> {
   const startTimer = Date.now();
-  const traceId = crypto.randomUUID();
-  event.locals.traceId = traceId;
 
+  // Create an OTel span wrapping this request — provides real distributed tracing
+  // to PostHog via the OTLP trace exporter configured in instrumentation.server.ts
+  const tracer = trace.getTracer('open-communities');
+
+  return tracer.startActiveSpan('request', async (span) => {
+    try {
+      const traceId = span.spanContext().traceId;
+      event.locals.traceId = traceId;
+
+      const result = await handleRequest({ event, resolve, startTimer, traceId });
+
+      span.setAttribute('http.method', event.request.method);
+      span.setAttribute('http.url', event.url.toString());
+      span.setAttribute('http.status_code', result.status);
+      span.setAttribute('http.route', event.url.pathname);
+      span.setAttribute('duration_ms', Date.now() - startTimer);
+      span.setStatus({ code: result.status >= 500 ? 2 : 0 }); // ERROR or OK
+
+      span.end();
+      return result.response;
+    } catch (err) {
+      span.recordException(err as Error);
+      span.setStatus({ code: 2 }); // ERROR
+      span.end();
+      throw err;
+    }
+  });
+}
+
+async function handleAuth(event: Parameters<Handle>[0]['event'], requestApi: TypedPocketBase) {
+  try {
+    if (event.url.pathname === '/logout') {
+      event.cookies.set('auth', '', { ...event.locals.cookieOpts, maxAge: 0 });
+      event.cookies.set('session', '', { ...event.locals.cookieOpts, maxAge: 0 });
+      requestApi.authStore.clear();
+    } else if (requestApi?.authStore?.isValid) {
+      pruneAuthRefreshTimestamps();
+      const now = Date.now();
+      let sessionKey = event.cookies.get('session');
+      if (!sessionKey) {
+        sessionKey = crypto.randomUUID();
+        event.cookies.set('session', sessionKey, event.locals.cookieOpts);
+      }
+      const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
+      if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
+        await Promise.race([
+          requestApi.collection('users').authRefresh(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
+        ]);
+        authRefreshTimestamps.set(sessionKey, now);
+      }
+      event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
+    }
+  } catch (error: unknown) {
+    const status = (error as { status?: number })?.status;
+    if (status === 401 || status === 403) {
+      log.warn('Auth refresh rejected — clearing auth store', { status });
+      requestApi.authStore.clear();
+      event.cookies.set('auth', '', event.locals.cookieOpts);
+      event.cookies.set('session', '', event.locals.cookieOpts);
+    } else {
+      log.warn('Auth refresh transient failure — keeping existing token', { error });
+    }
+  }
+}
+
+async function handleRequest({
+  event,
+  resolve,
+  startTimer,
+  traceId
+}: {
+  event: Parameters<Handle>[0]['event'];
+  resolve: Parameters<Handle>[0]['resolve'];
+  startTimer: number;
+  traceId: string;
+}): Promise<{ response: Response; status: number }> {
   const clientIp = await getClientIp(event);
 
   // Per-request PocketBase instance — avoids race conditions on beforeSend
@@ -156,46 +232,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   };
 
   // auth
-  try {
-    if (event.url.pathname === '/logout') {
-      event.cookies.set('auth', '', { ...event.locals.cookieOpts, maxAge: 0 });
-      event.cookies.set('session', '', { ...event.locals.cookieOpts, maxAge: 0 });
-      requestApi.authStore.clear();
-    } else if (requestApi?.authStore?.isValid) {
-      pruneAuthRefreshTimestamps();
-      const now = Date.now();
-      // Use the stable session cookie as the cooldown key (not auth cookie, which changes on refresh)
-      let sessionKey = event.cookies.get('session');
-      if (!sessionKey) {
-        sessionKey = crypto.randomUUID();
-        event.cookies.set('session', sessionKey, event.locals.cookieOpts);
-      }
-      const lastRefresh = authRefreshTimestamps.get(sessionKey) ?? 0;
-      if (now - lastRefresh > AUTH_REFRESH_COOLDOWN_MS) {
-        // Hard timeout on auth refresh to avoid blocking SSR on PB latency
-        await Promise.race([
-          requestApi.collection('users').authRefresh(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('auth refresh timed out')), 3000))
-        ]);
-        authRefreshTimestamps.set(sessionKey, now);
-      }
-      // Re-set the auth cookie on every request — keep the full exportToCookie
-      // value so loadFromCookie can parse it (expects pb_auth=<json> prefix).
-      event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
-    }
-  } catch (error: unknown) {
-    // Differentiate between auth rejection vs transient network errors
-    const status = (error as { status?: number })?.status;
-    if (status === 401 || status === 403) {
-      log.warn('Auth refresh rejected — clearing auth store', { status });
-      requestApi.authStore.clear();
-      event.cookies.set('auth', '', event.locals.cookieOpts);
-      event.cookies.set('session', '', event.locals.cookieOpts);
-    } else {
-      // Transient error: keep existing auth token and log a warning
-      log.warn('Auth refresh transient failure — keeping existing token', { error });
-    }
-  }
+  await handleAuth(event, requestApi);
 
   // Store start timer before resolving the response
   event.locals.startTimer = startTimer;
@@ -208,7 +245,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const response = await resolve(event);
 
   logEvent(response.status, event);
-  return response;
+  return { response, status: response.status };
 }
 
 function serializeError(error: unknown): string {

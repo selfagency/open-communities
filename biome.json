@@ -24,6 +24,8 @@
       "!src/app.css",
       "!static/**",
       "!**/flex-render.svelte",
+      "!src/lib/components/ui/file-drop-zone/index.ts",
+      "!src/test/stubs/sveltekit-superforms.js",
       "!docker"
     ]
   },
