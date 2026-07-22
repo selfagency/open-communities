@@ -1,17 +1,18 @@
 // fallow-ignore-file complexity,unused-file -- auto-loaded by PocketBase at startup
-// PocketBase JS Hook — Export logs and traces to PostHog.
+// PocketBase JS Hook — Export request logs as OTel spans to PostHog.
 //
 // Env vars (set in PocketHost dashboard):
 //   POSTHOG_PB_API_KEY  — PostHog project API key
 //   POSTHOG_PB_HOST     — PostHog API host (default: https://us.i.posthog.com)
+//
+// Sends OTLP JSON trace payloads to /i/v1/traces so traces appear in PostHog's
+// distributed tracing UI, not as events.
 //
 // IMPORTANT: PB's JSVM isolates each handler invocation. ALL config and
 // logic is inside the handler body — no require(), no external modules,
 // no module-level state.
 
 // handler must be self-contained (PB isolation scope)
-
-// NOTE: helpers must be declared inside the handler function due to PB JSVM isolation.
 
 onModelCreate((e) => {
   // All helper functions must live inside the handler because PB JSVM
@@ -42,24 +43,64 @@ onModelCreate((e) => {
     return level < 0 && !(raw && raw.type === 'request');
   }
 
-  function makePhBody(model, raw, eventName, distinctId, level, rid, key) {
+  // Generate a random 16-byte hex string for OTel trace_id
+  function makeTraceId() {
+    let hex = '';
+    for (let i = 0; i < 32; i++) {
+      hex += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
+    }
+    return hex;
+  }
+
+  // Generate a random 8-byte hex string for OTel span_id
+  function makeSpanId() {
+    let hex = '';
+    for (let i = 0; i < 16; i++) {
+      hex += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
+    }
+    return hex;
+  }
+
+  // Convert a Date to nanoseconds since epoch (OTLP format)
+  function toNanos(date) {
+    return (date.getTime() * 1_000_000).toString();
+  }
+
+  // Build OTLP span attributes from a PB log model
+  function makeSpanAttrs(raw, level, execTimeMs) {
+    const attrs = [
+      { key: 'service.name', value: { stringValue: 'pocketbase' } },
+      { key: 'http.method', value: { stringValue: raw ? raw.method : 'UNKNOWN' } },
+      { key: 'http.url', value: { stringValue: raw ? raw.url : '' } },
+      { key: 'http.status_code', value: { intValue: raw ? raw.status : 0 } },
+      { key: 'http.route', value: { stringValue: raw ? raw.url : '' } },
+      { key: 'exec_time_ms', value: { intValue: execTimeMs } },
+      { key: 'client.ip', value: { stringValue: raw ? raw.remoteIP : '' } },
+      { key: 'auth', value: { stringValue: raw ? raw.auth : '' } },
+      { key: 'log.level', value: { stringValue: level >= 4 ? 'error' : 'info' } }
+    ];
+    if (level >= 4 && model.message) {
+      attrs.push({ key: 'error.message', value: { stringValue: model.message } });
+    }
+    return attrs;
+  }
+
+  // Build an OTLP JSON span from a PB log model
+  function makeOtlpSpan(model, raw, level) {
+    const now = new Date();
+    const execTimeMs = raw?.execTime ? Math.round(raw.execTime * 1000) : 0;
+    const startTime = new Date(now.getTime() - execTimeMs);
+
     return {
-      api_key: key,
-      event: eventName,
-      distinct_id: distinctId,
-      properties: {
-        $lib: 'pocketbase',
-        $event_id: (raw && (raw['x-request-id'] || raw['request-id'])) || rid,
-        level,
-        message: model.message,
-        method: raw ? raw.method : undefined,
-        path: raw ? raw.url : undefined,
-        status: raw ? raw.status : undefined,
-        execTimeMs: raw ? Math.round((raw.execTime || 0) * 1000) : undefined,
-        ip: raw ? raw.remoteIP : undefined,
-        auth: raw ? raw.auth : undefined
-      },
-      timestamp: new Date().toISOString()
+      traceId: (raw && (raw['x-request-id'] || raw['request-id'])) || makeTraceId(),
+      spanId: makeSpanId(),
+      parentSpanId: '',
+      name: (raw ? `${raw.method} ${raw.url}` : model.message) || 'pb_request',
+      kind: 2, // SPAN_KIND_SERVER
+      startTimeUnixNano: toNanos(startTime),
+      endTimeUnixNano: toNanos(now),
+      attributes: makeSpanAttrs(raw, level, execTimeMs),
+      status: { code: level >= 4 ? 2 : 0 }
     };
   }
 
@@ -81,32 +122,48 @@ onModelCreate((e) => {
     }
   }
 
-  function getEventMeta(model) {
-    const level = model.level;
-    const raw = model.data;
-    const rid = model.id;
-    const eventName = level >= 4 ? 'pb_log' : 'pb_request';
-    const xrid = raw?.['x-request-id'] || '';
-    const distinctId = xrid || 'pocketbase';
-    return { level, raw, rid, eventName, distinctId };
-  }
-
   const cfg = readConfig();
   if (!cfg.key) {
     e.next();
     return;
   }
 
-  const { level, raw, rid, eventName, distinctId } = getEventMeta(e.model);
+  const model = e.model;
+  const level = model.level;
+  const raw = model.data;
+
   if (shouldSkip(level, raw)) {
     e.next();
     return;
   }
 
-  const phUrl = `${cfg.host}/i/v0/e/`;
-  const phBody = makePhBody(e.model, raw, eventName, distinctId, level, rid, cfg.key);
+  const span = makeOtlpSpan(model, raw, level);
+
+  const otlpPayload = {
+    resourceSpans: [
+      {
+        resource: {
+          attributes: [
+            { key: 'service.name', value: { stringValue: 'pocketbase' } },
+            { key: 'service.version', value: { stringValue: '0.29.x' } }
+          ]
+        },
+        scopeSpans: [
+          {
+            scope: {
+              name: 'pocketbase',
+              version: '0.1.0'
+            },
+            spans: [span]
+          }
+        ]
+      }
+    ]
+  };
+
+  const tracesUrl = `${cfg.host}/i/v1/traces`;
 
   e.next();
-  fireAndForget(phUrl, phBody);
+  fireAndForget(tracesUrl, otlpPayload);
   return;
 }, '_logs');

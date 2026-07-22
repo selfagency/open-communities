@@ -1,15 +1,15 @@
 /* region imports */
+
+import { trace } from '@opentelemetry/api';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
-
 import { publicIpv4 } from 'public-ip';
 import { assign, isEmpty, isFunction } from 'radashi';
 import type { SuperValidated } from 'sveltekit-superforms';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import type { $ZodType, output } from 'zod/v4/core';
-
 import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createApi } from '$lib/server/api';
@@ -84,11 +84,49 @@ async function getClientIp(event: RequestEvent): Promise<string | undefined> {
   }
 }
 
-async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
+function customHandler({ event, resolve }: Parameters<Handle>[0]): Promise<Response> {
   const startTimer = Date.now();
-  const traceId = crypto.randomUUID();
-  event.locals.traceId = traceId;
 
+  // Create an OTel span wrapping this request — provides real distributed tracing
+  // to PostHog via the OTLP trace exporter configured in instrumentation.server.ts
+  const tracer = trace.getTracer('open-communities');
+
+  return tracer.startActiveSpan('request', async (span) => {
+    try {
+      const traceId = span.spanContext().traceId;
+      event.locals.traceId = traceId;
+
+      const result = await handleRequest({ event, resolve, startTimer, traceId });
+
+      span.setAttribute('http.method', event.request.method);
+      span.setAttribute('http.url', event.url.toString());
+      span.setAttribute('http.status_code', result.status);
+      span.setAttribute('http.route', event.url.pathname);
+      span.setAttribute('duration_ms', Date.now() - startTimer);
+      span.setStatus({ code: result.status >= 500 ? 2 : 0 }); // ERROR or OK
+
+      span.end();
+      return result.response;
+    } catch (err) {
+      span.recordException(err as Error);
+      span.setStatus({ code: 2 }); // ERROR
+      span.end();
+      throw err;
+    }
+  });
+}
+
+async function handleRequest({
+  event,
+  resolve,
+  startTimer,
+  traceId
+}: {
+  event: Parameters<Handle>[0]['event'];
+  resolve: Parameters<Handle>[0]['resolve'];
+  startTimer: number;
+  traceId: string;
+}): Promise<{ response: Response; status: number }> {
   const clientIp = await getClientIp(event);
 
   // Per-request PocketBase instance — avoids race conditions on beforeSend
@@ -208,7 +246,7 @@ async function customHandler({ event, resolve }: Parameters<Handle>[0]) {
   const response = await resolve(event);
 
   logEvent(response.status, event);
-  return response;
+  return { response, status: response.status };
 }
 
 function serializeError(error: unknown): string {

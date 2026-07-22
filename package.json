@@ -37,6 +37,12 @@
   "dependencies": {
     "@jsrob/svelte-portal": "^0.2.1",
     "@math.gl/types": "^4.1.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.221.0",
+    "@opentelemetry/instrumentation": "^0.221.0",
+    "@opentelemetry/instrumentation-http": "^0.221.0",
+    "@opentelemetry/sdk-trace-base": "^2.10.0",
+    "@opentelemetry/sdk-trace-node": "^2.10.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
     "@selfagency/stately": "^0.1.5",
     "isomorphic-dompurify": "^3.18.0",
     "posthog-js": "^1.393.5",
