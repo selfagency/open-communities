@@ -4,6 +4,7 @@ declare global {
   interface GlobalThis {
     __TEST__: boolean | undefined;
     __TEST_SUPERFORM_SUBMIT__: ((...args: unknown[]) => unknown) | undefined;
+    __TEST_SUPERFORM_SUBMIT_CALLS__: number | undefined;
     __TEST_USER_STORE__:
       | undefined
       | {

@@ -1,5 +1,6 @@
 /* region imports */
 
+import { trace } from '@opentelemetry/api';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
@@ -17,7 +18,6 @@ import { logEvent, log as logger } from '$lib/server/logger';
 import { closeTransporter } from '$lib/server/mail';
 import { capture, captureException, closePhClient } from '$lib/server/posthog';
 import security from '$lib/server/security';
-import { trace } from '@opentelemetry/api';
 
 /* endregion imports */
 
