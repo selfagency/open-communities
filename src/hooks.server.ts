@@ -14,6 +14,7 @@ import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import type { TypedPocketBase } from '$lib/pocketbase.d';
 import { createApi } from '$lib/server/api';
+import type { TypedPocketBase } from '$lib/pocketbase.d';
 import { logEvent, log as logger } from '$lib/server/logger';
 import { closeTransporter } from '$lib/server/mail';
 import { capture, captureException, closePhClient } from '$lib/server/posthog';
