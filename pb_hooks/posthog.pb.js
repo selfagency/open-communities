@@ -82,11 +82,80 @@ function makeRequestHook() {
     return attrs;
   }
 
+  function buildLogRecord(traceId, spanId, method, url, status, startTime, execTimeMs, e) {
+    let severityText = 'info';
+    let severityNumber = 9;
+    if (status >= 500) {
+      severityText = 'error';
+      severityNumber = 17;
+    } else if (status >= 400) {
+      severityText = 'warn';
+      severityNumber = 13;
+    }
+
+    return {
+      traceId,
+      spanId,
+      severityText,
+      severityNumber,
+      body: { stringValue: `${method} ${url} → ${status}` },
+      timeUnixNano: toNanos(startTime),
+      attributes: [
+        { key: 'service.name', value: { stringValue: 'pocketbase' } },
+        { key: 'http.method', value: { stringValue: method } },
+        { key: 'http.url', value: { stringValue: url } },
+        { key: 'http.status_code', value: { intValue: status } },
+        { key: 'http.route', value: { stringValue: url } },
+        { key: 'exec_time_ms', value: { intValue: execTimeMs } },
+        { key: 'client.ip', value: { stringValue: e.request?.remoteIP || '' } },
+        { key: 'auth', value: { stringValue: e.auth?.id || '' } }
+      ]
+    };
+  }
+
+  function buildLogPayload(logRecord) {
+    return {
+      resourceLogs: [
+        {
+          resource: {
+            attributes: [
+              { key: 'service.name', value: { stringValue: 'pocketbase' } },
+              { key: 'service.version', value: { stringValue: '0.29.x' } }
+            ]
+          },
+          scopeLogs: [
+            {
+              scope: { name: 'pocketbase', version: '0.1.0' },
+              logRecords: [logRecord]
+            }
+          ]
+        }
+      ]
+    };
+  }
+
+  function postJson(url, body) {
+    try {
+      $http
+        .send({
+          url,
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+          timeout: 5
+        })
+        .catch(() => {
+          /* fire-and-forget: swallow errors silently */
+        });
+    } catch {
+      /* fire-and-forget: swallow errors silently */
+    }
+  }
+
   function sendSpan(e, cfg) {
     const startTime = new Date();
     const execTimeMs = 0;
 
-    // Use the x-request-id header if present (set by SvelteKit's createApi)
     let traceId = '';
     try {
       if (e.request?.header) {
@@ -109,7 +178,7 @@ function makeRequestHook() {
       spanId,
       parentSpanId: '',
       name: `${method} ${url}`,
-      kind: 2, // SPAN_KIND_SERVER
+      kind: 2,
       startTimeUnixNano: toNanos(startTime),
       endTimeUnixNano: toNanos(new Date()),
       attributes: makeSpanAttrs(e, startTime, execTimeMs),
@@ -135,23 +204,11 @@ function makeRequestHook() {
       ]
     };
 
-    const tracesUrl = `${cfg.host}/i/v1/traces`;
+    const logRecord = buildLogRecord(traceId, spanId, method, url, status, startTime, execTimeMs, e);
+    const logPayload = buildLogPayload(logRecord);
 
-    try {
-      $http
-        .send({
-          url: tracesUrl,
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(otlpPayload),
-          timeout: 5
-        })
-        .catch(() => {
-          /* fire-and-forget: swallow errors silently */
-        });
-    } catch {
-      /* fire-and-forget: swallow errors silently */
-    }
+    postJson(`${cfg.host}/i/v1/traces`, otlpPayload);
+    postJson(`${cfg.host}/i/v1/logs`, logPayload);
   }
 
   const cfg = readConfig();
