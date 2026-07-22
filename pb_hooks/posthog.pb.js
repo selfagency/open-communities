@@ -44,6 +44,7 @@ onModelCreate((e) => {
   }
 
   // Generate a random 16-byte hex string for OTel trace_id
+  // NOSONAR — Math.random is sufficient for OTel ID generation (not security-sensitive)
   function makeTraceId() {
     let hex = '';
     for (let i = 0; i < 32; i++) {
@@ -53,6 +54,7 @@ onModelCreate((e) => {
   }
 
   // Generate a random 8-byte hex string for OTel span_id
+  // NOSONAR — Math.random is sufficient for OTel ID generation (not security-sensitive)
   function makeSpanId() {
     let hex = '';
     for (let i = 0; i < 16; i++) {
@@ -62,6 +64,7 @@ onModelCreate((e) => {
   }
 
   // Convert a Date to nanoseconds since epoch (OTLP format)
+  // NOSONAR — PB JSVM requires all helpers inside handler scope
   function toNanos(date) {
     return (date.getTime() * 1_000_000).toString();
   }
