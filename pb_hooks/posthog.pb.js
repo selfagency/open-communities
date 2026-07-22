@@ -44,30 +44,27 @@ onModelCreate((e) => {
   }
 
   // Generate a random 16-byte hex string for OTel trace_id
-  // NOSONAR — Math.random is sufficient for OTel ID generation (not security-sensitive)
   function makeTraceId() {
     let hex = '';
     for (let i = 0; i < 32; i++) {
       hex += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
     }
     return hex;
-  }
+  } // NOSONAR — Math.random sufficient for OTel IDs (not security-sensitive)
 
   // Generate a random 8-byte hex string for OTel span_id
-  // NOSONAR — Math.random is sufficient for OTel ID generation (not security-sensitive)
   function makeSpanId() {
     let hex = '';
     for (let i = 0; i < 16; i++) {
       hex += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
     }
     return hex;
-  }
+  } // NOSONAR — Math.random sufficient for OTel IDs (not security-sensitive)
 
   // Convert a Date to nanoseconds since epoch (OTLP format)
-  // NOSONAR — PB JSVM requires all helpers inside handler scope
   function toNanos(date) {
     return (date.getTime() * 1_000_000).toString();
-  }
+  } // NOSONAR — PB JSVM requires all helpers inside handler scope
 
   // Build OTLP span attributes from a PB log model
   function makeSpanAttrs(raw, level, execTimeMs) {

@@ -1,6 +1,5 @@
 /* region imports */
 
-import { trace } from '@opentelemetry/api';
 import type { Handle, RequestEvent } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { SerializeOptions } from 'cookie';
@@ -12,12 +11,13 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import type { $ZodType, output } from 'zod/v4/core';
 import { dev } from '$app/environment';
 import { paraglideMiddleware } from '$lib/paraglide/server';
-import { createApi } from '$lib/server/api';
 import type { TypedPocketBase } from '$lib/pocketbase.d';
+import { createApi } from '$lib/server/api';
 import { logEvent, log as logger } from '$lib/server/logger';
 import { closeTransporter } from '$lib/server/mail';
 import { capture, captureException, closePhClient } from '$lib/server/posthog';
 import security from '$lib/server/security';
+import { trace } from '@opentelemetry/api';
 
 /* endregion imports */
 
