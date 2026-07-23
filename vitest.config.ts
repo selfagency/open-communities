@@ -50,7 +50,6 @@ export default defineConfig({
         import.meta.dirname,
         'src/test/mocks/$lib_server_logger.js'
       ),
-      'sveltekit-superforms': resolve(import.meta.dirname, 'src/test/mocks/sveltekit-superforms.js'),
       'sveltekit-superforms/adapters': resolve(import.meta.dirname, 'src/test/mocks/sveltekit-superforms-adapters.js')
     }
   },

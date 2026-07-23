@@ -126,7 +126,7 @@ export class Search {
     this.toggleLocation = this.toggleLocation.bind(this);
   }
 
-  /** Backward-compat accessor so `$searchState` Svelte store subscription works. */
+  // fallow-ignore-next-line unused-class-member — used via destructured `{ state: searchState }` pattern in congregations.svelte and map.svelte
   get state(): SearchStore {
     return this.store;
   }
