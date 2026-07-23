@@ -26,8 +26,18 @@
 
 <DO_NOT_SKIP>
 - Do not use `--no-verify` when committing. All checks must pass regardless of whether you think the errors are unrelated to your work.
+- NEVER EVER skip type checking, linting, or testing for any reason. Fix all issues before committing — no exceptions, no "I'll fix it later."
+- The application must actually RUN before shipping any change. Verify in dev or preview mode, not just by checking compilation.
 - NEVER EVER engage in destructive actions like resetting a git branch or deleting a folder without user confirmation.
 - Prefer internal agentic and MCP tooling like AFT and git-mcp over the command-line to reduce likelihood of errors with structured data IO.
+</DO_NOT_SKIP>
+
+## Development Mandates
+
+<DO_NOT_SKIP>
+- **TDD is mandatory.** All new code must be driven by tests first: write a failing test (Red), make it pass (Green), then refactor. Every new feature, bug fix, or behavior change requires unit and integration tests that cover positive cases, negative cases, and edge conditions.
+- **Feature completeness requires live verification.** No feature is considered finished until it has been demonstrated working in the running application (dev server or preview build). Compilation alone is insufficient proof.
+- **Clarify before executing.** If the intent behind a feature request, repair, or directive is unclear, ask clarifying questions before proceeding. Never guess at requirements or assume context that wasn't stated.
 </DO_NOT_SKIP>
 
 ## Architecture
