@@ -1,3 +1,4 @@
+// fallow-ignore-file security-sink — intentional: connects to config-defined LibreTranslate endpoint
 import { log } from '$lib/server/logger';
 
 export interface TranslateResult {

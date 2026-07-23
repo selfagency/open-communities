@@ -14,7 +14,20 @@
       "src/lib/components/users/user-list.svelte",
       // Phase 2.2 — repetitive mock helpers in test files are expected
       "src/lib/components/admin/page-editor-base.test.ts",
-      "src/lib/components/admin/page-editor-image.test.ts"
+      "src/lib/components/admin/page-editor-image.test.ts",
+      // Phase 4 — structural Form.Form boilerplate in Formsnap patterns
+      "src/lib/components/account/password-card.svelte",
+      "src/lib/components/account/profile-form.svelte",
+      "src/lib/components/global/contact.svelte",
+      "src/lib/components/login/index.svelte",
+      "src/lib/components/login/signup.svelte",
+      // Phase 4 — accordion next-button navigation in form segments (6 instances)
+      "src/lib/components/form/segments/accessibility.svelte",
+      "src/lib/components/form/segments/fit.svelte",
+      "src/lib/components/form/segments/health.svelte",
+      "src/lib/components/form/segments/registration.svelte",
+      "src/lib/components/form/segments/security.svelte",
+      "src/lib/components/form/segments/services.svelte"
     ]
   },
   "health": {
