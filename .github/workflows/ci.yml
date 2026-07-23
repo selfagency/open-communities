@@ -290,6 +290,21 @@ jobs:
         env:
           PUBLIC_API_ENDPOINT: http://localhost:8090
 
+      - name: PocketBase security audit
+        continue-on-error: true
+        run: npx pocketbase-security --url http://localhost:8090 --email ${{ secrets.PB_TEST_ADMIN }} --password ${{ secrets.PB_TEST_PASSWORD }} --html test-results/pb-security-report.html
+        env:
+          POCKETBASE_URL: http://localhost:8090
+          POCKETBASE_ADMIN_EMAIL: ${{ secrets.PB_TEST_ADMIN }}
+          POCKETBASE_ADMIN_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+
+      - name: Upload PB security report
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always() && hashFiles('test-results/pb-security-report.html') != ''
+        with:
+          name: pb-security-report
+          path: test-results/pb-security-report.html
+
       - name: Wait for app
         run: |
           timeout 120 bash -c 'until curl -f http://localhost:3000 >/dev/null 2>&1; do sleep 2; done'

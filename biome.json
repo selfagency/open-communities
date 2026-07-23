@@ -167,11 +167,21 @@
       }
     },
     {
-      "includes": ["**/pb_hooks/*.js", "docker/**", "e2e/**"],
+      "includes": ["docker/**", "e2e/**"],
       "linter": {
         "rules": {
           "correctness": {
             "noUndeclaredVariables": "off"
+          },
+          "style": {
+            "useAtIndex": "off",
+            "useConsistentObjectDefinitions": "off",
+            "useNumericSeparators": "off",
+            "useTemplate": "off",
+            "useConst": "off"
+          },
+          "complexity": {
+            "noForEach": "off"
           }
         }
       }

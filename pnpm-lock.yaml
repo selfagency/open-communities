@@ -267,6 +267,9 @@ importers:
       playwright:
         specifier: ^1.61.1
         version: 1.61.1
+      pocketbase-jsvm:
+        specifier: ^0.25.10001
+        version: 0.25.10001
       pocketbase-typegen:
         specifier: ^1.5.0
         version: 1.5.0
@@ -3391,6 +3394,9 @@ packages:
   pngjs@7.0.0:
     resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
     engines: {node: '>=14.19.0'}
+
+  pocketbase-jsvm@0.25.10001:
+    resolution: {integrity: sha512-F8Jss51uzp4C6nHcR5PxmscXtKbrWJjqDF/u7cHIh2amnUILnfY/JD5tTzYoqn3rDe1CIrQOaalDzAZ3gdMz9w==}
 
   pocketbase-typegen@1.5.0:
     resolution: {integrity: sha512-8B6MByVOX4mJGm+83zwmI/zmsbpOLcQ/lysRtnVx5NqyAcMg+aPUKE3ZZN3pINn+Tquv/cwcm3GJmFNTEGoQjg==}
@@ -7487,6 +7493,8 @@ snapshots:
       fflate: 0.8.3
 
   pngjs@7.0.0: {}
+
+  pocketbase-jsvm@0.25.10001: {}
 
   pocketbase-typegen@1.5.0:
     dependencies:

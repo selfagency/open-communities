@@ -11,7 +11,7 @@
     "strict": true,
     "moduleResolution": "bundler",
     "lib": ["DOM", "ESNext"],
-    "types": ["node", "nodemailer", "web"]
+    "types": ["node", "nodemailer", "web", "pocketbase-jsvm"]
   },
   "exclude": ["node_modules"]
 }

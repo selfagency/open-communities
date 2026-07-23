@@ -124,6 +124,7 @@
     "maplibre-gl": "^5.24.0",
     "msw": "^2.14.6",
     "playwright": "^1.61.1",
+    "pocketbase-jsvm": "^0.25.10001",
     "pocketbase-typegen": "^1.5.0",
     "runed": "^0.37.1",
     "svelte-check": "^4.7.1",

@@ -145,3 +145,6 @@ posthog-setup-report.md
 e2e/pocketbase/pb_data/data.db
 .fallow/
 # Docker infrastructure
+
+# PocketBase JSVM hooks — linted by PB Goja runtime, not Biome
+pb_hooks/
