@@ -34,9 +34,14 @@ const verifying = $derived(page.url.searchParams.has('verifyEmail'));
 let formSuccess = $derived(appState.form?.success);
 let redirectUrl = $derived(page.url.searchParams.get('redirect'));
 
+// One-shot guard: prevent reactivating after navigation starts to avoid
+// effect_update_depth_exceeded if goto() triggers intermediate re-renders.
+let redirected = $state(false);
+
 // After successful signup, redirect if a redirect URL was provided
 $effect(() => {
-  if (formSuccess && redirectUrl) {
+  if (!redirected && formSuccess && redirectUrl) {
+    redirected = true;
     goto(redirectUrl);
   }
 });

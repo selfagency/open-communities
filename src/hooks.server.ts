@@ -280,7 +280,9 @@ export const handleError = async ({
     logEvent(status, event);
 
     if (isFunction(event.locals.captureException)) {
-      await event.locals.captureException(error, event.locals.api?.authStore?.record?.id);
+      await event.locals.captureException(error, event.locals.api?.authStore?.record?.id, {
+        url: event.url.toString()
+      });
     }
 
     return {
