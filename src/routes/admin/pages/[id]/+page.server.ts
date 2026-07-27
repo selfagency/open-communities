@@ -1,9 +1,11 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod/v4';
 import { env } from '$env/dynamic/private';
 import { withRetry } from '$lib/server/api';
 import { processTranslationResults, translateLocale } from '$lib/server/translate';
-import { parsePageForm, pbErrorToFail, variantSchema } from '../_shared';
+import { pageSchema, pbErrorToFail, variantSchema } from '../_shared';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params }) => {
@@ -22,29 +24,42 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   }
 
   return {
-    page
+    page,
+    saveForm: await superValidate(
+      {
+        title: (page.title as string) ?? '',
+        slug: (page.slug as string) ?? '',
+        content: (page.content as string) ?? '',
+        description: (page.description as string) ?? '',
+        imageAlt: (page.imageAlt as string) ?? '',
+        imageCaption: (page.imageCaption as string) ?? '',
+        published: (page.published as boolean) ?? true
+      },
+      zod4(pageSchema)
+    )
   };
 };
 
 export const actions = {
+  // fallow-ignore-next-line complexity
   save: async ({ locals, params, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
       throw error(401, 'Unauthorized');
     }
 
-    const form = await request.formData();
-    const parsed = parsePageForm(form);
-    if (!parsed.ok) {
-      return fail(400, { error: parsed.error, field: parsed.field });
+    const form = await superValidate(request, zod4(pageSchema));
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
-    const variantsJson = form.get('variants') as string;
-    const imageRaw = form.get('image');
+    const fd = await request.formData();
+    const variantsJson = fd.get('variants') as string;
+    const imageRaw = fd.get('image');
     const imageFile = imageRaw instanceof File ? imageRaw : null;
 
     try {
-      const body: Record<string, unknown> = { ...parsed.data };
+      const body: Record<string, unknown> = { ...form.data };
 
       if (imageFile?.size && imageFile.size > 0) {
         body.image = imageFile;
@@ -86,12 +101,13 @@ export const actions = {
         }
       }
 
-      return { success: true };
+      return { form, success: true };
     } catch (err) {
       return pbErrorToFail(err);
     }
   },
 
+  // fallow-ignore-next-line complexity
   translate: async ({ locals, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {

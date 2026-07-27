@@ -13,6 +13,17 @@ export const variantSchema = z.object({
   imageCaption: z.string().optional().default('')
 });
 
+/** Zod schema for the page form fields (all text/boolean inputs). */
+export const pageSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  slug: z.string().regex(SLUG_RE, 'Slug must contain only lowercase letters, numbers, and hyphens'),
+  content: z.string().optional().default(''),
+  description: z.string().optional().default(''),
+  imageAlt: z.string().optional().default(''),
+  imageCaption: z.string().optional().default(''),
+  published: z.boolean().optional().default(true)
+});
+
 /**
  * Safely extract a text value from FormData.
  * FormData.get() can return File | string | null, but we only expect strings

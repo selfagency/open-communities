@@ -1,8 +1,15 @@
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createMockRequestEvent, mockSveltekitSuperforms } from '$test/testUtils';
 
-import { createMockRequestEvent } from '$test/testUtils';
+// Mock sveltekit-superforms before any dynamic imports
+// Use vi.fn() for superValidate to allow per-test overrides via mockResolvedValueOnce
+const mockSuperValidate = vi.fn().mockReturnValue({});
+vi.mock('sveltekit-superforms', () => ({
+  ...mockSveltekitSuperforms,
+  superValidate: mockSuperValidate
+}));
 
 const PB = 'http://*:8090';
 
@@ -47,7 +54,15 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
 describe('P-1: admin user edit preserves admin/verified', () => {
   it('does not change verified/admin when fields are absent', async () => {
     const mod = await import('../../routes/admin/users/[id]/+page.server');
+    const { superValidate } = await import('sveltekit-superforms');
     const capturedBodies: Record<string, unknown>[] = [];
+
+    // Mock superValidate to return valid with only name/email
+    (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      valid: true,
+      data: { name: 'Updated Name', email: 'updated@test.com' },
+      errors: {}
+    } as never);
 
     // Mock PB update to capture request body
     server.use(
@@ -81,7 +96,15 @@ describe('P-1: admin user edit preserves admin/verified', () => {
 
   it('sets verified and admin when present in form data', async () => {
     const mod = await import('../../routes/admin/users/[id]/+page.server');
+    const { superValidate } = await import('sveltekit-superforms');
     const capturedBodies: Record<string, unknown>[] = [];
+
+    // Mock superValidate to return valid with all fields
+    (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      valid: true,
+      data: { name: 'Updated Name', email: 'updated@test.com', verified: true, admin: true },
+      errors: {}
+    } as never);
 
     server.use(
       http.patch(`${PB}/api/collections/users/records/:id`, async ({ request }) => {
@@ -117,6 +140,14 @@ describe('P-1: admin user edit preserves admin/verified', () => {
 describe('S-9: last admin demotion guard', () => {
   it('returns fail when demoting the last admin', async () => {
     const mod = await import('../../routes/admin/users/[id]/+page.server');
+    const { superValidate } = await import('sveltekit-superforms');
+
+    // Mock superValidate to return valid with admin=false
+    (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      valid: true,
+      data: { name: 'Target User', email: 'target@test.com', admin: false },
+      errors: {}
+    } as never);
 
     // Mock admin count query to return only 1 admin
     server.use(
@@ -153,7 +184,7 @@ describe('S-9: last admin demotion guard', () => {
     const event = await createAdminEvent({ params: { id: 'user123' }, request });
     const result = await mod.actions.update(event as never);
     expect(result).toHaveProperty('data');
-    expect((result as { data: Record<string, unknown> }).data).toHaveProperty('error');
+    expect((result as { data: Record<string, unknown> }).data.error).toBeDefined();
   });
 });
 
@@ -169,7 +200,22 @@ describe('P-4: translations parallel save', () => {
 
   it('save action processes entries', async () => {
     const mod = await import('../../routes/admin/translations/+page.server');
+    const { superValidate } = await import('sveltekit-superforms');
     let callCount = 0;
+
+    // Mock superValidate to return valid
+    (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      valid: true,
+      data: {
+        key: 'test.key',
+        entries: JSON.stringify([
+          { locale: 'en', value: 'Hello' },
+          { locale: 'es', value: 'Hola', id: 'existing-1' },
+          { locale: 'fr', value: 'Bonjour' }
+        ])
+      },
+      errors: {}
+    } as never);
 
     server.use(
       http.post(`${PB}/api/collections/translations/records`, () => {

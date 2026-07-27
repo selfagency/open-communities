@@ -1,4 +1,6 @@
 import { fail } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod/v4';
 import {
   doTranslations,
@@ -10,6 +12,7 @@ import {
 import { withRetry } from '$lib/server/api';
 import { log } from '$lib/server/logger';
 import { rateLimitByUser } from '$lib/server/rate-limit';
+import { addSchema, deleteSchema, saveSchema } from './_shared';
 import type { Actions } from './$types';
 
 const entriesSchema = z.array(
@@ -85,13 +88,14 @@ function mapRunConclusion(data: { status: string; conclusion: string | null }): 
 export const actions: Actions = {
   save: async ({ locals, request }) => {
     const client = getAdminClient(locals);
-    const form = await request.formData();
-    const key = form.get('key') as string;
-    const entriesJson = form.get('entries') as string;
 
-    if (!(key && entriesJson)) {
-      return fail(400, { error: 'Key and entries are required' });
+    const form = await superValidate(request, zod4(saveSchema));
+    if (!form.valid) {
+      return fail(400, { form });
     }
+
+    const key = form.data.key;
+    const entriesJson = form.data.entries;
 
     function parseEntries(jsonStr: string) {
       const raw = JSON.parse(jsonStr);
@@ -137,7 +141,7 @@ export const actions: Actions = {
     try {
       entries = parseEntries(entriesJson);
     } catch {
-      return fail(400, { error: 'Invalid entries JSON' });
+      return fail(400, { form, error: 'Invalid entries JSON' });
     }
 
     let existingRecords: Record<string, unknown>[] = [];
@@ -158,23 +162,24 @@ export const actions: Actions = {
             .filter((e) => typeof e.id === 'string' && e.id)
             .map((e) => ({ id: e.id as string, locale: e.locale }));
         } else {
-          return fail(502, { error: 'Could not load existing translations — check PB auth/rules' });
+          return fail(502, { form, error: 'Could not load existing translations — check PB auth/rules' });
         }
       }
     }
 
     const { created, updated, errors } = await upsertEntries(key, entries, existingRecords);
-    return handleSaveErrors(client, errors, created, updated);
+    return { form, ...handleSaveErrors(client, errors, created, updated) };
   },
 
   delete: async ({ locals, request }) => {
     const client = getAdminClient(locals);
-    const form = await request.formData();
-    const key = form.get('key') as string;
 
-    if (!key) {
-      return fail(400, { error: 'Key is required' });
+    const form = await superValidate(request, zod4(deleteSchema));
+    if (!form.valid) {
+      return fail(400, { form });
     }
+
+    const key = form.data.key;
 
     const records = await client
       .collection('translations')
@@ -191,25 +196,25 @@ export const actions: Actions = {
       }
     }
 
-    return { success: true, deleted };
+    return { form, success: true, deleted };
   },
 
   add: async ({ locals, request }) => {
     const client = getAdminClient(locals);
-    const form = await request.formData();
-    const key = form.get('key') as string;
-    const value = form.get('value') as string;
 
-    if (!key) {
-      return fail(400, { error: 'Key is required' });
+    const form = await superValidate(request, zod4(addSchema));
+    if (!form.valid) {
+      return fail(400, { form });
     }
+
+    const { key, value } = form.data;
 
     try {
       await withRetry(() => client.collection('translations').create({ key, locale: 'en', value: value || '' }));
-      return { success: true, key };
+      return { form, success: true, key };
     } catch (err: unknown) {
       log.error('Failed to create translation key', err);
-      return fail(400, { error: 'Failed to create key' });
+      return fail(400, { form, error: 'Failed to create key' });
     }
   },
 

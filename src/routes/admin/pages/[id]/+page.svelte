@@ -23,5 +23,5 @@ function onSaveSuccess() {
     >
   </div>
 
-  <PageEditor action="?/save" onSuccess={onSaveSuccess} page={data.page} />
+  <PageEditor action="?/save" onSuccess={onSaveSuccess} page={data.page} saveForm={data.saveForm} />
 </div>

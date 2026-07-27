@@ -1,6 +1,24 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
+
+/* region schemas */
+
+const updateSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email'),
+  verified: z.boolean().optional(),
+  admin: z.boolean().optional()
+});
+
+const assignSchema = z.object({
+  congregationId: z.string().min(1, 'Select a congregation')
+});
+
+/* endregion schemas */
 
 /* region helpers */
 
@@ -34,9 +52,8 @@ async function fetchAvailableCongregations(client: ReturnType<typeof import('$li
 async function resolveAdminToggle(
   client: ReturnType<typeof import('$lib/server/api').createApi>,
   userId: string,
-  formData: FormData
+  admin: boolean
 ): Promise<boolean | ReturnType<typeof fail>> {
-  const admin = formData.get('admin') === 'true';
   if (userId === client.authStore.record?.id && !admin) {
     return fail(400, { error: 'Cannot demote yourself' });
   }
@@ -69,7 +86,9 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
   return {
     targetUser: mapUserData(user),
-    availableCongregations: await fetchAvailableCongregations(client)
+    availableCongregations: await fetchAvailableCongregations(client),
+    updateForm: await superValidate(zod4(updateSchema)),
+    assignForm: await superValidate(zod4(assignSchema))
   };
 };
 
@@ -80,20 +99,17 @@ export const actions = {
       throw error(401, 'Unauthorized');
     }
 
-    const formData = await request.formData();
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-
-    if (!(name && email)) {
-      return fail(400, { error: 'Name and email are required' });
+    const form = await superValidate(request, zod4(updateSchema));
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
-    const body: Record<string, unknown> = { name, email };
-    if (formData.has('verified')) {
-      body.verified = formData.get('verified') === 'true';
+    const body: Record<string, unknown> = { name: form.data.name, email: form.data.email };
+    if (form.data.verified !== undefined) {
+      body.verified = form.data.verified;
     }
-    if (formData.has('admin')) {
-      const adminResult = await resolveAdminToggle(client, params.id, formData);
+    if (form.data.admin !== undefined) {
+      const adminResult = await resolveAdminToggle(client, params.id, form.data.admin);
       if (typeof adminResult !== 'boolean') {
         return adminResult;
       }
@@ -102,9 +118,9 @@ export const actions = {
 
     try {
       await withRetry(() => client.collection('users').update(params.id, body));
-      return { success: 'User updated' };
+      return { form, success: 'User updated' };
     } catch {
-      return fail(400, { error: 'Update failed' });
+      return fail(400, { form, error: 'Update failed' });
     }
   },
 
@@ -145,18 +161,16 @@ export const actions = {
       throw error(401, 'Unauthorized');
     }
 
-    const formData = await request.formData();
-    const congregationId = formData.get('congregationId') as string;
-
-    if (!congregationId) {
-      return fail(400, { error: 'No congregation selected' });
+    const form = await superValidate(request, zod4(assignSchema));
+    if (!form.valid) {
+      return fail(400, { form });
     }
 
     try {
-      await withRetry(() => client.collection('users').update(params.id, { congregation: congregationId }));
-      return { success: 'Congregation assigned' };
+      await withRetry(() => client.collection('users').update(params.id, { congregation: form.data.congregationId }));
+      return { form, success: 'Congregation assigned' };
     } catch {
-      return fail(400, { error: 'Failed to assign congregation' });
+      return fail(400, { form, error: 'Failed to assign congregation' });
     }
   },
 

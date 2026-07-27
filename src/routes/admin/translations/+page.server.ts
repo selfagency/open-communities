@@ -1,6 +1,9 @@
 import { error } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { getAdminClient } from '$lib/server/admin-translations';
 import { log } from '$lib/server/logger';
+import { addSchema, deleteSchema } from './_shared';
 import type { PageServerLoad } from './$types';
 
 const PER_PAGE = 20;
@@ -75,7 +78,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     translations,
     locales,
     recordsCount: records.length,
-    pagination: { page, totalPages, total, search, perPage: PER_PAGE }
+    pagination: { page, totalPages, total, search, perPage: PER_PAGE },
+    addForm: await superValidate(zod4(addSchema)),
+    deleteForm: await superValidate(zod4(deleteSchema))
   };
 };
 

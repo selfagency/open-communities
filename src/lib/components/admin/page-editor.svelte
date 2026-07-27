@@ -1,13 +1,12 @@
 <script lang="ts">
 import type { ActionResult } from '@sveltejs/kit';
-import { isEmpty } from 'radashi';
 import { toast } from 'svelte-sonner';
+import { type SuperValidated, superForm } from 'sveltekit-superforms';
 import { deserialize, enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
 import { Button } from '$lib/components/ui/button';
 import { m } from '$lib/paraglide/messages';
-
 import PageEditorBase from './page-editor-base.svelte';
 import PageEditorImage from './page-editor-image.svelte';
 import PageEditorVariant from './page-editor-variant.svelte';
@@ -47,13 +46,34 @@ let {
   page = null,
   saving = $bindable(false),
   action = '?/save',
-  onSuccess = () => goto('/admin/pages')
+  onSuccess = () => goto('/admin/pages'),
+  saveForm
 }: {
   page?: Record<string, unknown> | null;
   saving?: boolean;
   action?: string;
   onSuccess?: () => void;
+  saveForm: SuperValidated<Record<string, unknown>>;
 } = $props();
+
+// svelte-ignore state_referenced_locally
+// SuperForms instance for form lifecycle and submission
+const sf = superForm(saveForm, {
+  dataType: 'json',
+  id: 'page-save',
+  onResult({ result }) {
+    saving = false;
+    if (result.type === 'success') {
+      toast.success(page?.id ? m.pageEditorUpdateSuccess() : m.pageEditorCreateSuccess());
+      onSuccess();
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? m.pageEditorSaveFailed());
+    }
+  }
+});
+
+const sfFormEnhance: any = sf.enhance;
+// svelte-ignore state_referenced_locally
 
 // svelte-ignore state_referenced_locally
 const initialPage = page;
@@ -89,19 +109,6 @@ let translating = $state(false);
 
 function getVariant(lang: string): Variant | undefined {
   return variants.find((v) => v.language === lang);
-}
-
-function handleEnhance() {
-  saving = true;
-  return ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
-    saving = false;
-    if (result.type === 'success') {
-      toast.success(page?.id ? m.pageEditorUpdateSuccess() : m.pageEditorCreateSuccess());
-      onSuccess();
-    } else if (result.type === 'failure') {
-      toast.error((result.data?.error as string) ?? m.pageEditorSaveFailed());
-    }
-  };
 }
 
 function beforeSubmit() {
@@ -280,7 +287,7 @@ async function handleTranslate() {
 }
 </script>
 
-<form {action} class="space-y-6" method="POST" onsubmit={beforeSubmit} use:enhance={handleEnhance}>
+<form {action} class="space-y-6" method="POST" onsubmit={beforeSubmit} use:enhance={sfFormEnhance}>
   <input name="variants" type="hidden" value="" bind:this={variantsInput} />
   {#if page?.id}
     <input name="id" type="hidden" value={page.id as string} />

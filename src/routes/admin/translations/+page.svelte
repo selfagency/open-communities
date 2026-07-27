@@ -11,6 +11,7 @@ import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { toast } from 'svelte-sonner';
+import { superForm } from 'sveltekit-superforms';
 import { browser } from '$app/environment';
 import { deserialize, enhance } from '$app/forms';
 import { goto, invalidateAll } from '$app/navigation';
@@ -39,8 +40,36 @@ import { Progress } from '$lib/components/ui/progress/index.js';
 import { Textarea } from '$lib/components/ui/textarea';
 import { m } from '$lib/paraglide/messages';
 import { useEditStateStore } from '$lib/stately/translations';
+import type { addSchema } from './_shared';
 
 let { data } = $props();
+
+// Add form (superForm)
+// svelte-ignore state_referenced_locally
+const addSf = superForm(data.addForm, {
+  dataType: 'json',
+  id: 'add',
+  onResult({ result }) {
+    if (result.type === 'success' && result.data?.key) {
+      showAddDialog = false;
+      toast.success('Key created');
+      const newKey = result.data.key as string;
+      const params = new URLSearchParams();
+      params.set('page', '1');
+      goto(`/admin/translations?${params}`, { replaceState: true });
+      setTimeout(() => {
+        openKey = newKey;
+      }, 500);
+    } else if (result.type === 'failure') {
+      toast.error((result.data?.error as string) ?? 'Failed to create key');
+    } else {
+      toast.error('An error occurred while creating key');
+    }
+  }
+});
+
+const addFormEnhance: any = addSf.enhance;
+// svelte-ignore state_referenced_locally
 
 // svelte-ignore state_referenced_locally
 // Build a stable list of locales to render:
@@ -760,7 +789,7 @@ const deployProgress = $derived(
           <DialogTitle>Add Translation Key</DialogTitle>
           <DialogDescription>Create a new translation key with an English value.</DialogDescription>
         </DialogHeader>
-        <form action="?/add" method="POST" use:enhance={handleAdd}>
+        <form action="?/add" method="POST" use:enhance={addFormEnhance}>
           <div class="space-y-4 py-4">
             <div class="space-y-2">
               <label class="text-sm font-medium" for="add-key">Key</label>

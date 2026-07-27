@@ -2,7 +2,6 @@
 import PageEditor from '$lib/components/admin/page-editor.svelte';
 import { m } from '$lib/paraglide/messages';
 
-// fallow-ignore-next-line unused-component-props
 let { data } = $props();
 </script>
 
@@ -19,5 +18,5 @@ let { data } = $props();
 
   <h1 class="text-2xl font-semibold mb-6">{m.newPage()}</h1>
 
-  <PageEditor action="?/save" />
+  <PageEditor action="?/save" saveForm={data.saveForm} />
 </div>

@@ -3,6 +3,7 @@ import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import UserKeyIcon from '@tabler/icons-svelte/icons/user-key';
+import { superForm } from 'sveltekit-superforms';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 
@@ -27,16 +28,56 @@ import { m } from '$lib/paraglide/messages';
 let { data } = $props();
 
 // svelte-ignore state_referenced_locally
-let verifiedToggle = $state(data.targetUser?.verified ?? false);
-// svelte-ignore state_referenced_locally
-let adminToggle = $state(data.targetUser?.admin ?? false);
-// svelte-ignore state_referenced_locally
 const user = data.targetUser;
 let formError = $state('');
 let formSuccess = $state('');
-let selectedCong = $state('');
 let showDeleteDialog = $state(false);
 
+// Update form (superForm)
+// svelte-ignore state_referenced_locally
+const updateForm = superForm(data.updateForm, {
+  dataType: 'json',
+  id: 'update',
+  // fallow-ignore-next-line complexity
+  onResult({ result }) {
+    if (result.type === 'success') {
+      formSuccess = (result.data?.success as string) ?? 'Saved';
+      formError = '';
+    } else if (result.type === 'failure') {
+      formError = (result.data?.error as string) ?? 'Error';
+      formSuccess = '';
+    }
+  }
+});
+
+// svelte-ignore state_referenced_locally
+const { form: updateFormData } = updateForm;
+// svelte-ignore state_referenced_locally
+const updateFormEnhance: any = updateForm.enhance;
+
+// Assign form (superForm)
+// svelte-ignore state_referenced_locally
+const assignForm = superForm(data.assignForm, {
+  dataType: 'json',
+  id: 'assign',
+  // fallow-ignore-next-line complexity
+  onResult({ result }) {
+    if (result.type === 'success') {
+      formSuccess = (result.data?.success as string) ?? 'Saved';
+      formError = '';
+    } else if (result.type === 'failure') {
+      formError = (result.data?.error as string) ?? 'Error';
+      formSuccess = '';
+    }
+  }
+});
+
+// svelte-ignore state_referenced_locally
+const { form: assignFormData } = assignForm;
+// svelte-ignore state_referenced_locally
+const assignFormEnhance: any = assignForm.enhance;
+
+// Action-only forms (plain callbacks)
 function handleUpdate() {
   // biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
   return async ({ result }: { result: { type: string; data?: Record<string, unknown> } }) => {
@@ -86,7 +127,7 @@ function handleDelete() {
     <div class="bg-destructive/10 text-destructive rounded-lg border p-4 text-sm">{formError}</div>
   {/if}
 
-  <form action="?/update" method="POST" use:enhance={handleUpdate}>
+  <form action="?/update" method="POST" use:enhance={updateFormEnhance}>
     <Card>
       <CardHeader>
         <CardTitle class="text-lg font-bold">{m.profile()}</CardTitle>
@@ -94,21 +135,19 @@ function handleDelete() {
       <CardContent class="space-y-4">
         <div class="space-y-2">
           <label class="text-sm font-medium" for="name">{m.name()}</label>
-          <Input id="name" name="name" required value={user.name} />
+          <Input id="name" name="name" required bind:value={$updateFormData.name} />
         </div>
         <div class="space-y-2">
           <label class="text-sm font-medium" for="email">{m.email()}</label>
-          <Input id="email" name="email" required type="email" value={user.email} />
+          <Input id="email" name="email" required type="email" bind:value={$updateFormData.email} />
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="verified">{m.verified()}</label>
-          <Switch aria-label={m.verified()} id="verified" name="verified" bind:checked={verifiedToggle} />
-          <input name="verified" type="hidden" value={String(verifiedToggle)} />
+          <Switch aria-label={m.verified()} id="verified" name="verified" bind:checked={$updateFormData.verified} />
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="admin">{m.admin()}</label>
-          <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={adminToggle} />
-          <input name="admin" type="hidden" value={String(adminToggle)} />
+          <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={$updateFormData.admin} />
         </div>
         <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
       </CardContent>
@@ -147,19 +186,19 @@ function handleDelete() {
       <CardContent class="space-y-4">
         <p class="text-muted-foreground text-sm">{m.noCongregationLinked()}</p>
         {#if data.availableCongregations.length > 0}
-          <form action="?/assign" method="POST" use:enhance={handleUpdate}>
+          <form action="?/assign" method="POST" use:enhance={assignFormEnhance}>
             <div class="flex gap-2">
               <select
                 class="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 name="congregationId"
-                bind:value={selectedCong}
+                bind:value={$assignFormData.congregationId}
               >
                 <option value="">{m.selectCongregation()}</option>
                 {#each data.availableCongregations as cong (cong.id)}
                   <option value={cong.id}>{cong.name}</option>
                 {/each}
               </select>
-              <Button disabled={!selectedCong} type="submit" variant="outline">{m.assign()}</Button>
+              <Button disabled={!$assignFormData.congregationId} type="submit" variant="outline">{m.assign()}</Button>
             </div>
           </form>
         {:else}

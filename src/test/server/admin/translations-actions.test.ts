@@ -1,8 +1,15 @@
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createMockRequestEvent, mockSveltekitSuperforms } from '$test/testUtils';
 
-import { createMockRequestEvent } from '$test/testUtils';
+// Mock sveltekit-superforms before any dynamic imports
+// Use vi.fn() for superValidate to allow per-test overrides via mockResolvedValueOnce
+const mockSuperValidate = vi.fn().mockReturnValue({});
+vi.mock('sveltekit-superforms', () => ({
+  ...mockSveltekitSuperforms,
+  superValidate: mockSuperValidate
+}));
 
 vi.mock('$env/dynamic/private', () => ({
   env: new Proxy<Record<string, string>>({} as Record<string, string>, {
@@ -436,11 +443,19 @@ describe('admin/translations — save action', () => {
 
     const result = await mod.actions.save({ ...event, request } as never);
     expect((result as { status: number }).status).toBe(400);
-    expect((result as { data: { error: string } }).data.error).toBe('Key and entries are required');
+    expect((result as { data: { form: Record<string, unknown> } }).data.form).toBeDefined();
   });
 
   it('returns 500 when entries fail to save and no creates to roll back', async () => {
     const mod = await import('../../../routes/admin/translations/+page.server');
+    const { superValidate } = await import('sveltekit-superforms');
+
+    // Mock superValidate to return valid for this specific test
+    (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      valid: true,
+      data: { key: 'test.key', entries: JSON.stringify([{ locale: 'en', value: 'Hello', id: 'existing-1' }]) },
+      errors: {}
+    } as never);
 
     // Mock PB update to fail
     server.use(
@@ -484,7 +499,7 @@ describe('admin/translations — add action', () => {
 
     const result = await mod.actions.add({ ...event, request } as never);
     expect((result as { status: number }).status).toBe(400);
-    expect((result as { data: { error: string } }).data.error).toBe('Key is required');
+    expect((result as { data: { form: Record<string, unknown> } }).data.form).toBeDefined();
   });
 });
 
@@ -507,6 +522,6 @@ describe('admin/translations — delete action', () => {
 
     const result = await mod.actions.delete({ ...event, request } as never);
     expect((result as { status: number }).status).toBe(400);
-    expect((result as { data: { error: string } }).data.error).toBe('Key is required');
+    expect((result as { data: { form: Record<string, unknown> } }).data.form).toBeDefined();
   });
 });
