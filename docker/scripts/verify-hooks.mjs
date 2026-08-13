@@ -25,13 +25,17 @@ function getLogs() {
 }
 
 function findHookErrors(logs) {
+  // Only fail on FATAL hook errors — a hook that failed to load or execute.
+  // Benign application-level errors logged by hooks (e.g. audit-log write
+  // failures that the hook catches and swallows) must NOT fail the check.
   const errorPatterns = [
-    /error/i,
     /referenceerror/i,
     /typeerror/i,
     /is not defined/i,
     /cannot find/i,
     /the handler must/i,
+    /unexpected token/i,
+    /syntaxerror/i,
   ];
 
   const errors = [];
