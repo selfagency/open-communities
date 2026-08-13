@@ -13,10 +13,11 @@
 //   an async handler returns a Promise, which the JSVM rejects with
 //   "the handler must a non-async function and not return a Promise".
 // - Per "Handlers scope" in the PB JS docs, each handler runs in its own
-//   isolated context and cannot see helpers declared at file scope, so
-//   every helper used by a handler is declared inside that handler.
+//   isolated serialized context and cannot see helpers declared at file scope
+//   or in a closure. Every helper used by a handler must be declared inside
+//   that handler's body.
 
-function makeHandler() {
+const handler = (e) => {
   function readConfig() {
     let key = '';
     let host = 'https://us.i.posthog.com';
@@ -208,22 +209,18 @@ function makeHandler() {
     postJson(cfg.host + '/i/v1/logs', logPayload);
   }
 
-  return (e) => {
-    try {
-      var cfg = readConfig();
-      if (!cfg.key) {
-        e.next();
-        return;
-      }
-      sendSpan(e, cfg);
-    } catch (err) {
-      console.error('posthog hook error:', String(err));
+  try {
+    var cfg = readConfig();
+    if (!cfg.key) {
+      e.next();
+      return;
     }
-    e.next();
-  };
-}
-
-const handler = makeHandler();
+    sendSpan(e, cfg);
+  } catch (err) {
+    console.error('posthog hook error:', String(err));
+  }
+  e.next();
+};
 
 onRecordsListRequest(handler);
 onRecordViewRequest(handler);
