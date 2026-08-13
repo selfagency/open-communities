@@ -10,8 +10,7 @@ import Overlay from './alert-dialog-overlay.svelte';
 import Title from './alert-dialog-title.svelte';
 import Trigger from './alert-dialog-trigger.svelte';
 
-const Root = AlertDialogPrimitive.Root;
-const Portal = AlertDialogPrimitive.Portal;
+const { Root, Portal } = AlertDialogPrimitive;
 
 export {
   Action,

@@ -40,12 +40,12 @@ function isUpdaterFunction<T>(updater: Updater<T>): updater is (prev: T) => T {
 export function createSvelteTable<TData extends RowData>(options: TableOptions<TData>) {
   const resolvedOptions: TableOptionsResolved<TData> = mergeObjects(
     {
-      state: {},
+      mergeOptions: (defaultOptions: TableOptions<TData>, options: Partial<TableOptions<TData>>) =>
+        mergeObjects(defaultOptions, options),
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       onStateChange() {},
       renderFallbackValue: null,
-      mergeOptions: (defaultOptions: TableOptions<TData>, options: Partial<TableOptions<TData>>) =>
-        mergeObjects(defaultOptions, options)
+      state: {}
     },
     options
   );
@@ -56,8 +56,6 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
   function updateOptions() {
     table.setOptions(() =>
       mergeObjects(resolvedOptions, options, {
-        state: mergeObjects(state, options.state || {}),
-
         onStateChange: (updater: Updater<TableState>) => {
           if (isUpdaterFunction(updater)) {
             state = updater(state);
@@ -66,7 +64,8 @@ export function createSvelteTable<TData extends RowData>(options: TableOptions<T
           }
 
           options.onStateChange?.(updater);
-        }
+        },
+        state: mergeObjects(state, options.state || {})
       })
     );
   }
@@ -114,6 +113,20 @@ function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
       return src?.[key as never];
     },
 
+    getOwnPropertyDescriptor(_, key) {
+      const src = findSourceWithKey(key);
+      if (!src) {
+        return;
+      }
+      return {
+        configurable: true,
+        enumerable: true,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        value: (src as any)[key],
+        writable: true
+      };
+    },
+
     has(_, key) {
       return !!findSourceWithKey(key);
     },
@@ -130,20 +143,6 @@ function mergeObjects<Sources extends readonly MaybeThunk<any>[]>(
         }
       }
       return [...all];
-    },
-
-    getOwnPropertyDescriptor(_, key) {
-      const src = findSourceWithKey(key);
-      if (!src) {
-        return;
-      }
-      return {
-        configurable: true,
-        enumerable: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        value: (src as any)[key],
-        writable: true
-      };
     }
   }) as Intersection<{ [K in keyof Sources]: Sources[K] }>;
 }

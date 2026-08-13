@@ -58,7 +58,7 @@ describe('Security component', () => {
   });
 
   it('has no accessibility violations in full mode', () => {
-    const security = { localPolice: true, clergyArmed: true } as unknown as SecurityRecord;
+    const security = { clergyArmed: true, localPolice: true } as unknown as SecurityRecord;
     const { container } = render(Security, { mode: 'full', security });
     assertAccessible(container);
   });

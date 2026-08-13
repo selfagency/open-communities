@@ -22,13 +22,13 @@ export const POST: RequestHandler = async ({ locals, params }) => {
     if (owner?.owner?.email) {
       const result = await transactionalMail({
         email: owner.owner.email,
+        message: m.transactional_approvedBody({ name: cong.name as string }),
         name: owner.owner.name ?? '',
-        subject: m.transactional_approvedSubject(),
-        message: m.transactional_approvedBody({ name: cong.name as string })
+        subject: m.transactional_approvedSubject()
       });
       emailSent = result.ok;
     }
   }
 
-  return json({ success: true, emailSent });
+  return json({ emailSent, success: true });
 };

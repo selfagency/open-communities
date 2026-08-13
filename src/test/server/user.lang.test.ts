@@ -20,9 +20,9 @@ describe('user/lang +server', () => {
     } as any;
 
     const request = new Request('http://localhost:5173/user/lang', {
-      method: 'POST',
+      body: JSON.stringify({ lang: 'invalid' }),
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
-      body: JSON.stringify({ lang: 'invalid' })
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
@@ -47,9 +47,9 @@ describe('user/lang +server', () => {
     } as any;
 
     const request = new Request('http://localhost:5173/user/lang', {
-      method: 'POST',
+      body: JSON.stringify({ lang: 'en', user: 'other-user' }),
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
-      body: JSON.stringify({ lang: 'en', user: 'other-user' })
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
@@ -73,14 +73,14 @@ describe('user/lang +server', () => {
     } as any;
 
     const request = new Request('http://localhost:5173/user/lang', {
-      method: 'POST',
+      body: JSON.stringify({ lang: 'es' }),
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
-      body: JSON.stringify({ lang: 'es' })
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-      cookies: { get: () => '', set: () => {}, serialize: () => '' },
+      cookies: { get: () => '', serialize: () => '', set: () => {} },
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       locals: { api, captureException: () => {}, cookieOpts: {} },
       request,
@@ -101,9 +101,9 @@ describe('user/lang +server', () => {
     } as any;
 
     const request = new Request('http://localhost:5173/user/lang', {
-      method: 'POST',
+      body: JSON.stringify({ lang: 'en' }),
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
-      body: JSON.stringify({ lang: 'en' })
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
@@ -131,14 +131,14 @@ describe('user/lang +server', () => {
     } as any;
 
     const request = new Request('http://localhost:5173/user/lang', {
-      method: 'POST',
+      body: JSON.stringify({ lang: 'en' }),
       headers: { 'content-type': 'application/json', origin: 'http://localhost:5173' },
-      body: JSON.stringify({ lang: 'en' })
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-      cookies: { get: () => '', set: () => {}, serialize: () => '' },
+      cookies: { get: () => '', serialize: () => '', set: () => {} },
       locals: { api, captureException: vi.fn(), cookieOpts: {} },
       request,
       route: { id: '/user/lang' },

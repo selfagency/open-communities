@@ -24,9 +24,9 @@ export interface PageVariantFixture {
 }
 
 export const pageHome: PageFixture = {
-  content: '# Welcome\n\nThis is the home page content for testing.',
   collectionId: 'pbc_pages',
   collectionName: 'pages',
+  content: '# Welcome\n\nThis is the home page content for testing.',
   created: '2025-01-01T00:00:00Z',
   description: 'Welcome to Open Communities',
   id: 'page_home_001',
@@ -36,9 +36,9 @@ export const pageHome: PageFixture = {
 };
 
 export const pageAdd: PageFixture = {
-  content: '# Add a Congregation\n\nUse this form to submit a new congregation.',
   collectionId: 'pbc_pages',
   collectionName: 'pages',
+  content: '# Add a Congregation\n\nUse this form to submit a new congregation.',
   created: '2025-01-01T00:00:00Z',
   description: 'Submit a new congregation',
   id: 'page_add_001',
@@ -48,9 +48,9 @@ export const pageAdd: PageFixture = {
 };
 
 export const pageAbout: PageFixture = {
-  content: '# About\n\nAbout page content.',
   collectionId: 'pbc_pages',
   collectionName: 'pages',
+  content: '# About\n\nAbout page content.',
   created: '2025-01-01T00:00:00Z',
   description: 'About Open Communities',
   id: 'page_about_001',

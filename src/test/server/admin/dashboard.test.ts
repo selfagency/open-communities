@@ -16,12 +16,12 @@ async function createAdminLocals() {
   const { createApi } = await import('../../../lib/server/api');
   const api = createApi();
   api.authStore.save('mock-token', {
-    id: 'admin123',
-    email: 'admin@test.test',
     admin: true,
-    verified: true,
     collectionId: 'test',
-    collectionName: 'users'
+    collectionName: 'users',
+    email: 'admin@test.test',
+    id: 'admin123',
+    verified: true
   });
   return { api, captureException: () => undefined, cookieOpts: {}, validate: async () => ({}) };
 }
@@ -49,7 +49,7 @@ describe('admin +page.server — load', () => {
     const event = createMockServerLoadEvent({ locals, url: new URL('http://localhost/admin') });
     const result = (await mod.load(event as never)) as any;
     expect(result).toEqual({
-      stats: { congregations: 42, users: 100, pendingApprovals: 5 }
+      stats: { congregations: 42, pendingApprovals: 5, users: 100 }
     });
   });
 });
@@ -64,16 +64,16 @@ describe('admin/congregations +page.server — load', () => {
           return HttpResponse.json({
             items: [
               {
-                id: 'c1',
-                name: 'Test Cong',
+                created: '2024-01-01',
                 denomination: 'Reform',
-                visible: true,
+                id: 'c1',
                 location: JSON.stringify({
                   city: { name: 'Los Angeles' },
-                  state: { name: 'California' },
-                  country: { code: 'US' }
+                  country: { code: 'US' },
+                  state: { name: 'California' }
                 }),
-                created: '2024-01-01'
+                name: 'Test Cong',
+                visible: true
               }
             ]
           });
@@ -81,12 +81,12 @@ describe('admin/congregations +page.server — load', () => {
         return HttpResponse.json({
           items: [
             {
-              id: 'c2',
-              name: 'Pending Cong',
+              created: '2024-06-01',
               denomination: 'Conservative',
-              visible: false,
+              id: 'c2',
               location: '{}',
-              created: '2024-06-01'
+              name: 'Pending Cong',
+              visible: false
             }
           ]
         });

@@ -6,8 +6,8 @@ export const addSchema = z.object({
 });
 
 export const saveSchema = z.object({
-  key: z.string().min(1, 'Key is required'),
-  entries: z.string().min(1, 'Entries are required')
+  entries: z.string().min(1, 'Entries are required'),
+  key: z.string().min(1, 'Key is required')
 });
 
 export const deleteSchema = z.object({

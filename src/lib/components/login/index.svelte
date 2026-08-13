@@ -160,7 +160,13 @@ let loadingSecondary = $derived(appState.loadingSecondary);
 
         <div class="mt-4">
           <Form.Button>{m.login()}</Form.Button>
-          <Button onclick={() => (resetting = true)} variant="link">{m.forgotPassword()}</Button>
+          <Button
+            onclick={() => {
+              resetting = true;
+            }}
+            variant="link"
+            >{m.forgotPassword()}</Button
+          >
         </div>
       </form>
     {/if}

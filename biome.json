@@ -60,7 +60,8 @@
         "noExportedImports": "off",
         "noParameterProperties": "off",
         "useFilenamingConvention": "off",
-        "noNestedTernary": "off"
+        "noNestedTernary": "off",
+        "noIncrementDecrement": "off"
       },
       "complexity": {
         "noForEach": "warn",
@@ -183,6 +184,48 @@
           },
           "complexity": {
             "noForEach": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/lib/location.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noUnnecessaryConditions": "off",
+            "noShadow": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/lib/components/ui/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noShadow": "off",
+            "noEqualsToNull": "off",
+            "noUnnecessaryConditions": "off"
+          },
+          "style": {
+            "useDestructuring": "off"
+          },
+          "complexity": {
+            "noRedundantDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noAwaitInLoops": "off"
+          },
+          "suspicious": {
+            "noUnnecessaryConditions": "off"
           }
         }
       }

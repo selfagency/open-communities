@@ -51,6 +51,7 @@ function fetchTotalCount(client: ReturnType<typeof import('$lib/server/api').cre
 }
 
 function getFirstCount(data: Record<string, unknown>[], field: string): number {
+  // biome-ignore lint/suspicious/noUnnecessaryConditions: data[0] is undefined for empty arrays despite the non-null element type
   return (data[0]?.[field] as number) ?? 0;
 }
 
@@ -74,18 +75,18 @@ export const GET: RequestHandler = async ({ locals }) => {
 
   const topCountries = countriesByQty
     .slice(0, 5)
-    .map((c) => ({ name: c.country_name || '', count: c.congregation_count ?? 0 }));
+    .map((c) => ({ count: c.congregation_count ?? 0, name: c.country_name || '' }));
   const topStates = statesByQty
     .slice(0, 5)
-    .map((s) => ({ name: s.state_name || '', count: s.congregation_count ?? 0 }));
-  const topCities = citiesByQty.slice(0, 5).map((c) => ({ name: c.city_name || '', count: c.congregation_count ?? 0 }));
+    .map((s) => ({ count: s.congregation_count ?? 0, name: s.state_name || '' }));
+  const topCities = citiesByQty.slice(0, 5).map((c) => ({ count: c.congregation_count ?? 0, name: c.city_name || '' }));
 
   return json({
+    topCities,
     topCountries,
     topStates,
-    topCities,
     totalCities: getFirstCount(totalCities, 'total_cities'),
-    totalStates: getFirstCount(totalStates, 'total_states'),
-    totalCountries: getFirstCount(totalCountries, 'total_countries')
+    totalCountries: getFirstCount(totalCountries, 'total_countries'),
+    totalStates: getFirstCount(totalStates, 'total_states')
   });
 };

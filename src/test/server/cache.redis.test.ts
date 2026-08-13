@@ -19,12 +19,12 @@ vi.mock('$env/dynamic/private', () => ({
 // declarations, so the shared mock object must be created via vi.hoisted.
 const { redisMock } = vi.hoisted(() => ({
   redisMock: {
-    get: vi.fn(),
-    set: vi.fn(),
     del: vi.fn(),
-    scan: vi.fn(),
+    get: vi.fn(),
     on: vi.fn(),
-    quit: vi.fn()
+    quit: vi.fn(),
+    scan: vi.fn(),
+    set: vi.fn()
   }
 }));
 

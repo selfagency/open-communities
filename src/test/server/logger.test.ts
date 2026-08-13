@@ -12,6 +12,12 @@ vi.mock('$env/dynamic/public', () => ({
 
 // Mock the frontend logger from $lib/utils to avoid tslog side effects
 vi.mock('$lib/utils', () => ({
+  log: {
+    debug: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn()
+  },
   logger: {
     getSubLogger: vi.fn(() => ({
       debug: vi.fn(),
@@ -22,21 +28,15 @@ vi.mock('$lib/utils', () => ({
       trace: vi.fn(),
       warn: vi.fn()
     }))
-  },
-  log: {
-    debug: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn()
   }
 }));
 
 function mockRequestEvent(overrides: Record<string, unknown> = {}): RequestEvent {
   const url = new URL((overrides.url as string) || 'http://localhost:5173/admin');
   const headerMap: Record<string, string | undefined> = {
+    referer: (overrides.referer as string) || undefined,
     'user-agent': 'vitest/1.0',
     'x-forwarded-for': '127.0.0.1',
-    referer: (overrides.referer as string) || undefined,
     ...((overrides.headerOverrides as Record<string, string | undefined>) || {})
   };
   const entries: [string, string][] = [];
@@ -46,13 +46,7 @@ function mockRequestEvent(overrides: Record<string, unknown> = {}): RequestEvent
     }
   }
   return {
-    url,
-    request: {
-      headers: {
-        get: vi.fn((key: string) => headerMap[key] || null),
-        entries: vi.fn().mockReturnValue(entries.values())
-      }
-    },
+    isDataRequest: false,
     locals: {
       error: overrides.error || undefined,
       errorId: overrides.errorId || undefined,
@@ -60,8 +54,14 @@ function mockRequestEvent(overrides: Record<string, unknown> = {}): RequestEvent
       startTimer: (overrides.startTimer as number) || Date.now()
     },
     params: {},
+    request: {
+      headers: {
+        entries: vi.fn().mockReturnValue(entries.values()),
+        get: vi.fn((key: string) => headerMap[key] || null)
+      }
+    },
     route: { id: null },
-    isDataRequest: false
+    url
   } as unknown as RequestEvent;
 }
 
@@ -112,8 +112,8 @@ describe('logEvent', () => {
     const { logEvent, log } = await import('$lib/server/logger');
     const infoSpy = vi.spyOn(log, 'info');
     const event = mockRequestEvent({
-      url: 'http://localhost:5173/contact',
-      referer: 'http://localhost:5173/'
+      referer: 'http://localhost:5173/',
+      url: 'http://localhost:5173/contact'
     });
     logEvent(200, event);
     expect(infoSpy).toHaveBeenCalledOnce();
@@ -123,8 +123,8 @@ describe('logEvent', () => {
     const { logEvent, log } = await import('$lib/server/logger');
     const infoSpy = vi.spyOn(log, 'info');
     const event = mockRequestEvent({
-      url: 'http://localhost:5173/some-path',
-      referer: 'not a valid url'
+      referer: 'not a valid url',
+      url: 'http://localhost:5173/some-path'
     });
     logEvent(200, event);
     expect(infoSpy).toHaveBeenCalledOnce();
@@ -134,8 +134,8 @@ describe('logEvent', () => {
     const { logEvent, log } = await import('$lib/server/logger');
     const infoSpy = vi.spyOn(log, 'info');
     const event = mockRequestEvent({
-      url: 'http://localhost:5173/page',
-      headerOverrides: { referer: '' }
+      headerOverrides: { referer: '' },
+      url: 'http://localhost:5173/page'
     });
     logEvent(200, event);
     expect(infoSpy).toHaveBeenCalledOnce();

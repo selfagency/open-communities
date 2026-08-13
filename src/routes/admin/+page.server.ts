@@ -22,8 +22,8 @@ export const load: PageServerLoad = async ({ locals, depends }) => {
   return {
     stats: {
       congregations: congCount.totalItems,
-      users: userCount.totalItems,
-      pendingApprovals: pendingCount.totalItems
+      pendingApprovals: pendingCount.totalItems,
+      users: userCount.totalItems
     }
   };
 };

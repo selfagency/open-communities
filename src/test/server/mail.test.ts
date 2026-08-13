@@ -13,9 +13,9 @@ vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
 // Mock Mailgun env vars
 vi.mock('$env/dynamic/private', () => ({
   env: {
+    ADMIN_EMAIL: 'admin@test.test',
     MAILGUN_API_KEY: 'test-key',
-    MAILGUN_DOMAIN: 'm.opencommunities.info',
-    ADMIN_EMAIL: 'admin@test.test'
+    MAILGUN_DOMAIN: 'm.opencommunities.info'
   }
 }));
 
@@ -57,7 +57,7 @@ describe('src/lib/server/mail', () => {
     expect(result).toEqual({ ok: true });
 
     expect(sentMessages).toHaveLength(1);
-    const sent = sentMessages[0];
+    const [sent] = sentMessages;
     expect(sent.subject).toBe(txSubject);
     expect(sent.to).toEqual(['Test <user@example.test>']);
     expect(sent.from).toBe('Open Communities <no-reply@m.opencommunities.info>');
@@ -120,7 +120,7 @@ describe('src/lib/server/mail', () => {
     await adminMail(payload, fakeApi);
 
     expect(sentMessages).toHaveLength(1);
-    const sent = sentMessages[0];
+    const [sent] = sentMessages;
     expect(sent.subject).toBe(adminSubject);
     expect(sent.to).toEqual(['Open Communities Admin <admin@test.test>']);
     expect(sent.from).toBe('Sender via Open Communities <from@example.test>');

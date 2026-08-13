@@ -28,7 +28,8 @@ describe.skip('Security segment (behavior)', () => {
 
     const target = document.createElement('div');
 
-    new (Host as unknown as any)({ props: { props }, target });
+    const instance = new (Host as unknown as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     // wait for Svelte to render
     await Promise.resolve();
@@ -42,11 +43,13 @@ describe.skip('Security segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 
-    const security = (latest as unknown as unknown as Record<string, unknown>)?.security as unknown as
+    const security = (latest as unknown as unknown as Record<string, unknown>).security as unknown as
       | Record<string, unknown>
       | undefined;
     expect(

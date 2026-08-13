@@ -6,23 +6,23 @@ import type PocketBase from 'pocketbase';
 import type { RecordService } from 'pocketbase';
 
 export const Collections = {
-  Authorigins: '_authOrigins',
-  Externalauths: '_externalAuths',
-  Mfas: '_mfas',
-  Otps: '_otps',
-  Superusers: '_superusers',
   Accessibility: 'accessibility',
+  Authorigins: '_authOrigins',
   Cities: 'cities',
   CongregationMeta: 'congregationMeta',
   Congregations: 'congregations',
   Countries: 'countries',
+  Externalauths: '_externalAuths',
   Fit: 'fit',
   Health: 'health',
+  Mfas: '_mfas',
+  Otps: '_otps',
   Pages: 'pages',
   Registration: 'registration',
   Security: 'security',
   Services: 'services',
   States: 'states',
+  Superusers: '_superusers',
   Translations: 'translations',
   Users: 'users'
 } as const;
@@ -130,16 +130,16 @@ export interface CitiesRecord {
 }
 
 export const CongregationMetaDenominationOptions = {
-  reform: 'reform',
   conservative: 'conservative',
-  orthodox: 'orthodox',
-  reconstructionist: 'reconstructionist',
-  renewal: 'renewal',
-  unaffiliated: 'unaffiliated',
-  postDenominational: 'postDenominational',
-  multiDenominational: 'multiDenominational',
   humanist: 'humanist',
-  other: 'other'
+  multiDenominational: 'multiDenominational',
+  orthodox: 'orthodox',
+  other: 'other',
+  postDenominational: 'postDenominational',
+  reconstructionist: 'reconstructionist',
+  reform: 'reform',
+  renewal: 'renewal',
+  unaffiliated: 'unaffiliated'
 } as const;
 export type CongregationMetaDenominationOptions =
   (typeof CongregationMetaDenominationOptions)[keyof typeof CongregationMetaDenominationOptions];
@@ -173,16 +173,16 @@ export interface CongregationMetaRecord<
 }
 
 export const CongregationsDenominationOptions = {
-  reform: 'reform',
   conservative: 'conservative',
-  orthodox: 'orthodox',
-  reconstructionist: 'reconstructionist',
-  renewal: 'renewal',
-  unaffiliated: 'unaffiliated',
-  postDenominational: 'postDenominational',
-  multiDenominational: 'multiDenominational',
   humanist: 'humanist',
-  other: 'other'
+  multiDenominational: 'multiDenominational',
+  orthodox: 'orthodox',
+  other: 'other',
+  postDenominational: 'postDenominational',
+  reconstructionist: 'reconstructionist',
+  reform: 'reform',
+  renewal: 'renewal',
+  unaffiliated: 'unaffiliated'
 } as const;
 export type CongregationsDenominationOptions =
   (typeof CongregationsDenominationOptions)[keyof typeof CongregationsDenominationOptions];
@@ -235,8 +235,8 @@ export interface FitRecord {
 }
 
 export const HealthProtocolOptions = {
-  maskingRequired: 'maskingRequired',
   maskingRecommended: 'maskingRecommended',
+  maskingRequired: 'maskingRequired',
   noGuidelines: 'noGuidelines',
   other: 'other'
 } as const;
@@ -251,8 +251,8 @@ export interface HealthRecord {
 }
 
 export const PagesLangOptions = {
-  en: 'en',
   de: 'de',
+  en: 'en',
   es: 'es',
   fr: 'fr',
   he: 'he'
@@ -272,11 +272,11 @@ export interface PagesRecord {
 }
 
 export const RegistrationRegistrationTypeOptions = {
-  free: 'free',
   fixedPrice: 'fixedPrice',
+  free: 'free',
+  other: 'other',
   slidingScale: 'slidingScale',
-  suggestedDonation: 'suggestedDonation',
-  other: 'other'
+  suggestedDonation: 'suggestedDonation'
 } as const;
 export type RegistrationRegistrationTypeOptions =
   (typeof RegistrationRegistrationTypeOptions)[keyof typeof RegistrationRegistrationTypeOptions];
@@ -331,8 +331,8 @@ export interface StatesRecord {
 }
 
 export const TranslationsLocaleOptions = {
-  en: 'en',
   de: 'de',
+  en: 'en',
   es: 'es',
   fr: 'fr',
   he: 'he',
@@ -354,11 +354,11 @@ export interface TranslationsRecord {
 }
 
 export const UsersLangOptions = {
+  de: 'de',
   en: 'en',
   es: 'es',
   fr: 'fr',
-  he: 'he',
-  de: 'de'
+  he: 'he'
 } as const;
 export type UsersLangOptions = (typeof UsersLangOptions)[keyof typeof UsersLangOptions];
 export interface UsersRecord {
@@ -515,5 +515,5 @@ export type Update<T extends keyof CollectionResponses> = CollectionResponses[T]
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = {
-  collection<T extends keyof CollectionResponses>(idOrName: T): RecordService<CollectionResponses[T]>;
+  collection: <T extends keyof CollectionResponses>(idOrName: T) => RecordService<CollectionResponses[T]>;
 } & PocketBase;

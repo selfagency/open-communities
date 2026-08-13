@@ -35,8 +35,8 @@ describe('accessibilitySchema', () => {
 describe('registrationSchema', () => {
   it('accepts free registration with email', () => {
     const result = registrationSchema.safeParse({
-      registrationType: 'free',
-      email: 'register@shul.org'
+      email: 'register@shul.org',
+      registrationType: 'free'
     });
     expect(result.success).toBe(true);
   });
@@ -74,8 +74,8 @@ describe('registrationSchema', () => {
 
   it('accepts null url (preprocessed to undefined, hasContact passes with email)', () => {
     const result = registrationSchema.safeParse({
-      registrationType: 'free',
       email: 'test@test.com',
+      registrationType: 'free',
       url: null
     });
     expect(result.success).toBe(true);
@@ -171,7 +171,7 @@ describe('healthSchema', () => {
   });
 
   it('accepts other with text', () => {
-    const result = healthSchema.safeParse({ protocol: 'other', otherText: 'outdoor only' });
+    const result = healthSchema.safeParse({ otherText: 'outdoor only', protocol: 'other' });
     expect(result.success).toBe(true);
   });
 

@@ -15,7 +15,7 @@ import { runAudit } from '@accesslint/core';
 export function assertAccessible(container: Element | Document): void {
   const doc = container instanceof Document ? container : (container.ownerDocument ?? document);
   const results = runAudit(doc, { componentMode: true }) as AuditResult;
-  const violations = results.violations;
+  const { violations } = results;
 
   // Filter violations to only those within the container's descendants
   const containerViolations =

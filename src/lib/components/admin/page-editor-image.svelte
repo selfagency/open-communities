@@ -19,7 +19,7 @@ let {
 
 // biome-ignore lint/suspicious/useAwait: onUpload callback must return Promise<void>
 async function handleImageSelect(files: File[]) {
-  const file = files[0];
+  const [file] = files;
   if (!file) {
     return;
   }

@@ -12,15 +12,15 @@ describe('login +page.server — load', () => {
     const api = {
       authStore: { record: null },
       collection: () => ({
-        getFirstListItem: async () => ({}),
         authWithPassword: async () => ({ record: { id: 'u1' }, token: 'tok' }),
-        create: async () => ({ id: 'u1' }),
         // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-        requestVerification: async () => {},
+        confirmPasswordReset: async () => {},
+        create: async () => ({ id: 'u1' }),
+        getFirstListItem: async () => ({}),
         // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
         requestPasswordReset: async () => {},
         // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-        confirmPasswordReset: async () => {}
+        requestVerification: async () => {}
       }),
       filter: (expr: string) => expr
     } as any;
@@ -47,18 +47,18 @@ describe('login +page.server — actions', () => {
         record: null
       },
       collection: () => ({
-        authWithPassword: async () => ({ record: { id: 'u1', email: 'test@example.com' }, token: 'tok' })
+        authWithPassword: async () => ({ record: { email: 'test@example.com', id: 'u1' }, token: 'tok' })
       }),
       filter: (expr: string) => expr
     } as any;
 
     const locals = {
       api,
-      cookieOpts: { httpOnly: true, path: '/', sameSite: 'strict', secure: false },
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
+      cookieOpts: { httpOnly: true, path: '/', sameSite: 'strict', secure: false },
       validate: async () => ({
         data: { email: 'test@example.com', password: 'validpass' },
         valid: true
@@ -66,13 +66,13 @@ describe('login +page.server — actions', () => {
     } as any;
 
     const request = new Request('http://localhost/login?/login', {
-      method: 'POST',
-      body: new URLSearchParams({ email: 'test@example.com', password: 'validpass' })
+      body: new URLSearchParams({ email: 'test@example.com', password: 'validpass' }),
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-      cookies: { get: () => '', set: () => {}, serialize: () => '' },
+      cookies: { get: () => '', serialize: () => '', set: () => {} },
       locals,
       request,
       route: { id: '/login' },
@@ -99,11 +99,11 @@ describe('login +page.server — actions', () => {
 
     const locals = {
       api,
-      cookieOpts: { httpOnly: true, path: '/', sameSite: 'strict', secure: false },
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       captureException: () => {},
+      cookieOpts: { httpOnly: true, path: '/', sameSite: 'strict', secure: false },
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       log: { debug: () => {}, error: () => {}, warn: () => {} },
       validate: async () => ({
@@ -113,13 +113,13 @@ describe('login +page.server — actions', () => {
     } as any;
 
     const request = new Request('http://localhost/login?/login', {
-      method: 'POST',
-      body: new URLSearchParams({ email: 'wrong@example.com', password: 'wrongpass' })
+      body: new URLSearchParams({ email: 'wrong@example.com', password: 'wrongpass' }),
+      method: 'POST'
     });
 
     const mockEvent = createMockRequestEvent({
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-      cookies: { get: () => '', set: () => {}, serialize: () => '' },
+      cookies: { get: () => '', serialize: () => '', set: () => {} },
       locals,
       request,
       route: { id: '/login' },

@@ -28,9 +28,9 @@ vi.mock('mailgun.js', () => ({
 // Mock Mailgun env vars
 vi.mock('$env/dynamic/private', () => ({
   env: {
+    ADMIN_EMAIL: 'admin@test.test',
     MAILGUN_API_KEY: 'test-key',
-    MAILGUN_DOMAIN: 'm.opencommunities.info',
-    ADMIN_EMAIL: 'admin@test.test'
+    MAILGUN_DOMAIN: 'm.opencommunities.info'
   }
 }));
 

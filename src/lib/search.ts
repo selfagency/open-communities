@@ -13,38 +13,38 @@ import type { LocationMeta, SearchData, SearchState } from '$lib/types.d';
 /* ------------------------------------------------------------------ */
 
 const useSearchStore = defineStore('search', {
-  state: (): SearchState => ({
-    showLocation: true,
-    searchTerms: '',
-    searchLocation: {} as LocationMeta,
-    filters: {} as Record<string, Record<string, boolean>>
-  }),
   actions: {
-    setSearchTerms(terms: string) {
-      this.searchTerms = terms;
-    },
-    setSearchLocation(location: LocationMeta) {
-      this.searchLocation = location;
-    },
-    setFilters(filters: SearchState['filters']) {
-      this.filters = filters;
-    },
-    resetSearchTerms() {
-      this.searchTerms = '';
-    },
-    resetLocation() {
-      this.searchLocation = {} as LocationMeta;
+    resetAll() {
+      this.$reset();
     },
     resetFilters() {
       this.filters = {};
     },
-    resetAll() {
-      this.$reset();
+    resetLocation() {
+      this.searchLocation = {} as LocationMeta;
+    },
+    resetSearchTerms() {
+      this.searchTerms = '';
+    },
+    setFilters(filters: SearchState['filters']) {
+      this.filters = filters;
+    },
+    setSearchLocation(location: LocationMeta) {
+      this.searchLocation = location;
+    },
+    setSearchTerms(terms: string) {
+      this.searchTerms = terms;
     },
     toggleLocation() {
       this.showLocation = !this.showLocation;
     }
-  }
+  },
+  state: (): SearchState => ({
+    filters: {} as Record<string, Record<string, boolean>>,
+    searchLocation: {} as LocationMeta,
+    searchTerms: '',
+    showLocation: true
+  })
 });
 
 export type SearchStore = ReturnType<typeof useSearchStore>;
@@ -60,7 +60,7 @@ export class Search {
   ids: string[];
   store: SearchStore;
   results: {
-    subscribe(run: (v: SearchData[]) => void): () => void;
+    subscribe: (run: (v: SearchData[]) => void) => () => void;
   };
 
   // Pre-built indexes for fast filtering
@@ -156,7 +156,7 @@ export class Search {
     if (state.searchTerms && !isEmpty(state.searchTerms)) {
       const searchIds =
         this.fuzzy
-          ?.filter(this.searchStrings, (state.searchTerms as string)?.toLowerCase())
+          .filter(this.searchStrings, (state.searchTerms as string).toLowerCase())
           ?.map((i) => this.data[i].id) || [];
       const searchIdSet = new Set(searchIds);
       resultIds = resultIds.filter((i) => searchIdSet.has(i));
@@ -202,7 +202,7 @@ export class Search {
 
   applyAllFilters(state: SearchState, currentIds: string[]) {
     const hasFilter = (filters: Record<string, boolean>): boolean => {
-      if (!filters || isEmpty(filters)) {
+      if (isEmpty(filters)) {
         return false;
       }
       return Object.values(filters).includes(true);

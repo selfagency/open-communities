@@ -21,23 +21,23 @@ function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
 
   try {
     const severityMap: Record<string, string> = {
+      DEBUG: 'debug',
+      ERROR: 'error',
+      FATAL: 'fatal',
+      INFO: 'info',
       SILLY: 'trace',
       TRACE: 'trace',
-      DEBUG: 'debug',
-      INFO: 'info',
-      WARN: 'warn',
-      ERROR: 'error',
-      FATAL: 'fatal'
+      WARN: 'warn'
     };
     const levelName = logObject._meta?.logLevelName as string | undefined;
     otelLogger.emit({
-      severityText: (levelName && severityMap[levelName]) || 'info',
-      body: typeof logObject === 'object' ? shake(logObject as unknown as Record<string, unknown>) : logObject,
       attributes: {
+        'logger.name': logObject._meta?.name?.[0] || 'server',
         'service.name': 'open-communities',
-        'service.version': '1.0.0',
-        'logger.name': logObject._meta?.name?.[0] || 'server'
-      }
+        'service.version': '1.0.0'
+      },
+      body: typeof logObject === 'object' ? shake(logObject as unknown as Record<string, unknown>) : logObject,
+      severityText: (levelName && severityMap[levelName]) || 'info'
     });
   } catch {
     // OTel bridge failure is non-critical; don't let it crash logging
@@ -46,9 +46,9 @@ function otelTransport(logObject: Record<string, unknown> & ILogObjMeta) {
 
 // tslog logger with OTel bridge attached
 const log = logger.getSubLogger({
+  attachedTransports: [otelTransport],
   name: 'server',
-  type: 'pretty',
-  attachedTransports: [otelTransport]
+  type: 'pretty'
 });
 /* endregion variables */
 

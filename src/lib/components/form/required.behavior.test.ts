@@ -6,7 +6,8 @@ describe('Required component (behavior)', () => {
     const { default: Component } = await import('./required.svelte');
     const target = document.createElement('div');
 
-    new (Component as any)({ props: { set: true }, target });
+    const instance = new (Component as any)({ props: { set: true }, target });
+    expect(instance).toBeTruthy();
 
     const textNode = target.querySelector('span');
     expect(textNode).toBeTruthy();
@@ -17,7 +18,8 @@ describe('Required component (behavior)', () => {
     const { default: Component } = await import('./required.svelte');
     const target = document.createElement('div');
 
-    new (Component as any)({ props: { set: false }, target });
+    const instance = new (Component as any)({ props: { set: false }, target });
+    expect(instance).toBeTruthy();
 
     const textNode = target.querySelector('span');
     expect(textNode).toBeTruthy();

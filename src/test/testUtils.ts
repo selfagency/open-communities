@@ -27,7 +27,7 @@ export function createMockRequestEvent(overrides: Partial<Record<string, unknown
     route: { id: '/' },
     // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
     setHeaders: () => {},
-    tracing: { enabled: false, root: {} as any, current: {} as any },
+    tracing: { current: {} as any, enabled: false, root: {} as any },
     untrack: <T>(fn: () => T) => fn(),
     url: new URL('http://localhost/'),
     ...overrides
@@ -127,12 +127,12 @@ export const mockSveltekitSuperforms = {
  * Create minimal props for components that expect a SuperForm-like `form`,
  * a `formData` store and an `errors` store.
  */
-export function makeMockFormProps(formData = {}, errors = {}) {
+export function makeMockFormProps(initialFormData = {}, errors = {}) {
   // create writable stores so UI components that call set/update work
-  const formDataStore = writable(formData);
+  const formDataStore = writable(initialFormData);
   const errorsStore = writable(errors);
 
-  const base = mockSveltekitSuperforms.superForm(formData);
+  const base = mockSveltekitSuperforms.superForm(initialFormData);
   // shallow clone and set helpful properties
   const f = { ...base };
   (f as any).formId = 'test';
@@ -171,16 +171,16 @@ export function formData(record: Record<string, string | string[]>): FormData {
 export function mockPbApi(userId?: string) {
   return {
     authStore: {
-      model: userId ? { id: userId, email: 'test@test.local' } : null,
-      isValid: !!userId
+      isValid: !!userId,
+      model: userId ? { email: 'test@test.local', id: userId } : null
     },
     collection: (_name: string) => ({
+      create: async (data: Record<string, unknown>) => ({ id: 'new-id', ...data }),
+      delete: async (_id: string) => true,
+      getFirstListItem: async () => null,
       getFullList: async () => [],
       getOne: async (id: string) => ({ id }),
-      getFirstListItem: async () => null,
-      create: async (data: Record<string, unknown>) => ({ id: 'new-id', ...data }),
-      update: async (id: string, data: Record<string, unknown>) => ({ id, ...data }),
-      delete: async (_id: string) => true
+      update: async (id: string, data: Record<string, unknown>) => ({ id, ...data })
     })
   };
 }

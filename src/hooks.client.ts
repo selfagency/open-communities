@@ -21,9 +21,9 @@ export const handleError = ({ error, event, message, status }) => {
 
     // Structured label gives immediate triage context in the console:
     // [500] TypeError: Cannot read properties of undefined @ /edit (uuid)
-    log.error(`[${status}] ${err?.name ?? 'Error'}: ${err?.message ?? message ?? 'unknown'} @ ${url} (${errorId})`);
+    log.error(`[${status}] ${err.name || 'Error'}: ${err.message || message || 'unknown'} @ ${url} (${errorId})`);
 
-    if (dev && err?.stack) {
+    if (dev && err.stack) {
       log.debug(err.stack);
     }
 
@@ -32,7 +32,7 @@ export const handleError = ({ error, event, message, status }) => {
 
   return {
     message,
-    ...(dev ? { stack: (error as Error)?.stack } : {}),
+    ...(dev ? { stack: (error as Error).stack } : {}),
     status
   };
 };

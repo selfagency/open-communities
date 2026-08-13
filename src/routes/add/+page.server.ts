@@ -78,11 +78,14 @@ function createChildRecords(
  * Non-admin users get a confirmation email; admins skip the transactional step.
  */
 async function sendSubmissionNotifications(
-  client: Record<string, unknown>,
+  client: Record<string, unknown> | null | undefined,
   record: { id: string; name: string },
   api: import('$lib/pocketbase.d').TypedPocketBase
 ): Promise<void> {
-  if (!client?.admin) {
+  if (!client) {
+    return;
+  }
+  if (client && !client.admin) {
     try {
       await api.collection('users').update(client.id as string, { congregation: record.id });
     } catch {
@@ -105,7 +108,7 @@ async function sendSubmissionNotifications(
     {
       email: client.email as string,
       message: `A new congregation, ${record.name}, has been submitted and requires approval:\nhttps://opencommunities.info/edit?id=${record.id}`,
-      name: (client.name as string) ?? '',
+      name: (client.name as string) || '',
       subject: 'New congregation submitted'
     },
     api

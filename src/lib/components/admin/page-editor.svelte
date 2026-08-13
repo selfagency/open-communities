@@ -90,12 +90,12 @@ let variants = $state<Variant[]>(
   languages
     .filter((l) => l.code !== 'en')
     .map((lang) => ({
-      language: lang.code,
-      title: '',
-      description: '',
       content: '',
+      description: '',
       imageAlt: '',
-      imageCaption: ''
+      imageCaption: '',
+      language: lang.code,
+      title: ''
     }))
 );
 let imageFile = $state<File | null>(null);
@@ -115,13 +115,13 @@ function beforeSubmit() {
   const vars = variants
     .filter((v) => v.title || v.description || v.content || v.imageAlt || v.imageCaption)
     .map((v) => ({
-      id: v.id,
-      language: v.language,
-      title: v.title,
-      description: v.description,
       content: v.content,
+      description: v.description,
+      id: v.id,
       imageAlt: v.imageAlt,
-      imageCaption: v.imageCaption
+      imageCaption: v.imageCaption,
+      language: v.language,
+      title: v.title
     }));
   variantsInput.value = JSON.stringify(vars);
 }
@@ -135,12 +135,12 @@ async function translateField(text: string, locale: string): Promise<string | nu
   form.set('locales', JSON.stringify([locale]));
   try {
     const res = await fetch('?/translate', {
-      method: 'POST',
       body: form,
       headers: {
-        'x-sveltekit-action': 'true',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+        'x-sveltekit-action': 'true'
+      },
+      method: 'POST'
     });
     const result: ActionResult = deserialize(await res.text());
     const actionData = result.type === 'success' ? (result.data as TranslateResult | undefined) : null;
@@ -199,12 +199,12 @@ async function handleTranslateAll() {
 
   try {
     const res = await fetch('?/translate', {
-      method: 'POST',
       body: form,
       headers: {
-        'x-sveltekit-action': 'true',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+        'x-sveltekit-action': 'true'
+      },
+      method: 'POST'
     });
 
     let actionData: TranslateResult | null = null;
@@ -249,12 +249,12 @@ async function handleTranslate() {
 
   try {
     const res = await fetch('?/translate', {
-      method: 'POST',
       body: form,
       headers: {
-        'x-sveltekit-action': 'true',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+        'x-sveltekit-action': 'true'
+      },
+      method: 'POST'
     });
 
     let actionData: TranslateResult | null = null;

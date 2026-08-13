@@ -27,7 +27,7 @@ describe('GET /admin/users/export', () => {
     const locals = {
       api: {
         authStore: {
-          record: { id: 'admin1', admin: true, email: 'admin@test.com' }
+          record: { admin: true, email: 'admin@test.com', id: 'admin1' }
         },
         collection: () => ({
           getFullList: async () => []
@@ -45,11 +45,11 @@ describe('GET /admin/users/export', () => {
         HttpResponse.json({
           items: [
             {
-              id: 'u1',
-              name: 'Test User',
               email: 'test@example.com',
               email_opted_out: false,
-              expand: {}
+              expand: {},
+              id: 'u1',
+              name: 'Test User'
             }
           ],
           page: 1,
@@ -63,16 +63,16 @@ describe('GET /admin/users/export', () => {
     const locals = {
       api: {
         authStore: {
-          record: { id: 'admin1', admin: true, email: 'admin@test.com' }
+          record: { admin: true, email: 'admin@test.com', id: 'admin1' }
         },
         collection: () => ({
           getFullList: async () => [
             {
-              id: 'u1',
-              name: 'Test User',
-              email: 'test@example.com',
               congregation: null,
-              expand: {}
+              email: 'test@example.com',
+              expand: {},
+              id: 'u1',
+              name: 'Test User'
             }
           ]
         })

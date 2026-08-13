@@ -46,7 +46,7 @@ function countUpsertResults(
       errors.push(i);
     }
   });
-  return { created, updated, errors };
+  return { created, errors, updated };
 }
 
 function handleSaveErrors(
@@ -57,19 +57,19 @@ function handleSaveErrors(
 ) {
   if (errors.length > 0 && created.length > 0) {
     Promise.allSettled(created.map((id) => withRetry(() => client.collection('translations').delete(id))));
-    return fail(500, { error: 'Save failed — rolled back', created: created.length, updated, errors: errors.length });
+    return fail(500, { created: created.length, error: 'Save failed — rolled back', errors: errors.length, updated });
   }
 
   if (errors.length > 0) {
     return fail(500, {
-      error: `${errors.length} entr${errors.length === 1 ? 'y' : 'ies'} failed to save`,
       created: created.length,
-      updated,
-      errors: errors.length
+      error: `${errors.length} entr${errors.length === 1 ? 'y' : 'ies'} failed to save`,
+      errors: errors.length,
+      updated
     });
   }
 
-  return { success: true, created: created.length, updated, errors: errors.length };
+  return { created: created.length, errors: errors.length, success: true, updated };
 }
 
 function mapRunConclusion(data: { status: string; conclusion: string | null }): string {
@@ -86,6 +86,73 @@ function mapRunConclusion(data: { status: string; conclusion: string | null }): 
 }
 
 export const actions: Actions = {
+  add: async ({ locals, request }) => {
+    const client = getAdminClient(locals);
+
+    const form = await superValidate(request, zod4(addSchema));
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    const { key, value } = form.data;
+
+    try {
+      await withRetry(() => client.collection('translations').create({ key, locale: 'en', value: value || '' }));
+      return { form, key, success: true };
+    } catch (err: unknown) {
+      log.error('Failed to create translation key', err);
+      return fail(400, { error: 'Failed to create key', form });
+    }
+  },
+
+  delete: async ({ locals, request }) => {
+    const client = getAdminClient(locals);
+
+    const form = await superValidate(request, zod4(deleteSchema));
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    const { key } = form.data;
+
+    const records = await client
+      .collection('translations')
+      .getFullList({ filter: client.filter('key = {:key}', { key }) })
+      .catch(() => []);
+
+    let deleted = 0;
+    for (const r of records) {
+      try {
+        // biome-ignore lint/performance/noAwaitInLoops: sequential deletes are intentional
+        await withRetry(() => client.collection('translations').delete(r.id as string));
+        deleted++;
+      } catch {
+        /* skip */
+      }
+    }
+
+    return { deleted, form, success: true };
+  },
+
+  redeploy: async ({ locals }) => {
+    const client = getAdminClient(locals);
+    rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
+    const ghToken = (process.env.GH_DEPLOY_TOKEN as string) || '';
+    if (!ghToken) {
+      return fail(500, { error: 'Deploy is not configured' });
+    }
+
+    try {
+      const result = await triggerDeploy(ghToken, 'selfagency', 'open-communities');
+      if ('triggered' in result) {
+        return result;
+      }
+      return { deploymentUuid: result.deploymentUuid };
+    } catch (err: unknown) {
+      log.error('GitHub Actions deploy error', err);
+      return fail(502, { error: 'Rebuild failed' });
+    }
+  },
   save: async ({ locals, request }) => {
     const client = getAdminClient(locals);
 
@@ -94,8 +161,7 @@ export const actions: Actions = {
       return fail(400, { form });
     }
 
-    const key = form.data.key;
-    const entriesJson = form.data.entries;
+    const { entries: entriesJson, key } = form.data;
 
     function parseEntries(jsonStr: string) {
       const raw = JSON.parse(jsonStr);
@@ -114,17 +180,17 @@ export const actions: Actions = {
 
     async function upsertEntries(
       keyVal: string,
-      entries: Array<{ locale: string; value: string; id?: string }>,
-      existingRecords: Record<string, unknown>[]
+      entryList: Array<{ locale: string; value: string; id?: string }>,
+      existing: Record<string, unknown>[]
     ) {
-      const existingByLocale = new Map(existingRecords.map((r: Record<string, unknown>) => [r.locale as string, r]));
+      const existingByLocale = new Map(existing.map((r: Record<string, unknown>) => [r.locale as string, r]));
 
       const results = await Promise.allSettled(
-        entries.map((entry) => {
-          const existing = existingByLocale.get(entry.locale);
-          if (existing) {
+        entryList.map((entry) => {
+          const existingRecord = existingByLocale.get(entry.locale);
+          if (existingRecord) {
             return withRetry(() =>
-              client.collection('translations').update(existing.id as string, { value: entry.value })
+              client.collection('translations').update(existingRecord.id as string, { value: entry.value })
             );
           }
           return withRetry(() =>
@@ -133,15 +199,15 @@ export const actions: Actions = {
         })
       );
 
-      const { created, updated, errors } = countUpsertResults(results, entries, existingByLocale);
-      return { created, updated, errors, results } as const;
+      const { created, updated, errors } = countUpsertResults(results, entryList, existingByLocale);
+      return { created, errors, results, updated } as const;
     }
 
     let entries: Array<{ locale: string; value: string; id?: string }>;
     try {
       entries = parseEntries(entriesJson);
     } catch {
-      return fail(400, { form, error: 'Invalid entries JSON' });
+      return fail(400, { error: 'Invalid entries JSON', form });
     }
 
     let existingRecords: Record<string, unknown>[] = [];
@@ -162,7 +228,7 @@ export const actions: Actions = {
             .filter((e) => typeof e.id === 'string' && e.id)
             .map((e) => ({ id: e.id as string, locale: e.locale }));
         } else {
-          return fail(502, { form, error: 'Could not load existing translations — check PB auth/rules' });
+          return fail(502, { error: 'Could not load existing translations — check PB auth/rules', form });
         }
       }
     }
@@ -171,70 +237,35 @@ export const actions: Actions = {
     return { form, ...handleSaveErrors(client, errors, created, updated) };
   },
 
-  delete: async ({ locals, request }) => {
-    const client = getAdminClient(locals);
+  status: async ({ locals, request }) => {
+    getAdminClient(locals);
+    const form = await request.formData();
+    const runId = form.get('uuid') as string;
 
-    const form = await superValidate(request, zod4(deleteSchema));
-    if (!form.valid) {
-      return fail(400, { form });
+    if (!runId) {
+      return fail(400, { error: 'Missing run ID' });
     }
 
-    const key = form.data.key;
-
-    const records = await client
-      .collection('translations')
-      .getFullList({ filter: client.filter('key = {:key}', { key }) })
-      .catch(() => []);
-
-    let deleted = 0;
-    for (const r of records) {
-      try {
-        await withRetry(() => client.collection('translations').delete(r.id as string));
-        deleted++;
-      } catch {
-        /* skip */
-      }
-    }
-
-    return { form, success: true, deleted };
-  },
-
-  add: async ({ locals, request }) => {
-    const client = getAdminClient(locals);
-
-    const form = await superValidate(request, zod4(addSchema));
-    if (!form.valid) {
-      return fail(400, { form });
-    }
-
-    const { key, value } = form.data;
-
-    try {
-      await withRetry(() => client.collection('translations').create({ key, locale: 'en', value: value || '' }));
-      return { form, success: true, key };
-    } catch (err: unknown) {
-      log.error('Failed to create translation key', err);
-      return fail(400, { form, error: 'Failed to create key' });
-    }
-  },
-
-  redeploy: async ({ locals }) => {
-    const client = getAdminClient(locals);
-    rateLimitByUser(client.authStore.record?.id ?? 'unknown', 3, 60_000);
     const ghToken = (process.env.GH_DEPLOY_TOKEN as string) || '';
     if (!ghToken) {
       return fail(500, { error: 'Deploy is not configured' });
     }
 
     try {
-      const result = await triggerDeploy(ghToken, 'selfagency', 'open-communities');
-      if ('triggered' in result) {
-        return result;
+      const res = await fetch(`https://api.github.com/repos/selfagency/open-communities/actions/runs/${runId}`, {
+        headers: { accept: 'application/vnd.github.v3+json', authorization: `Bearer ${ghToken}` }
+      });
+
+      if (!res.ok) {
+        log.error('GitHub run status check failed', { status: res.status });
+        return fail(502, { error: 'Status check failed' });
       }
-      return { deploymentUuid: result.deploymentUuid };
+
+      const data = (await res.json()) as { status: string; conclusion: string | null };
+      return { status: mapRunConclusion(data) };
     } catch (err: unknown) {
-      log.error('GitHub Actions deploy error', err);
-      return fail(502, { error: 'Rebuild failed' });
+      log.error('GitHub run status check error', err);
+      return fail(502, { error: 'Status check failed' });
     }
   },
 
@@ -259,42 +290,10 @@ export const actions: Actions = {
       if (translations.length === 0 && errors.length > 0) {
         return fail(502, { error: 'Translation API error' });
       }
-      return { success: true, translations, errors } as const;
+      return { errors, success: true, translations } as const;
     } catch (err: unknown) {
       log.error('translate action failed', err);
       return fail(502, { error: 'Translation API error' });
-    }
-  },
-
-  status: async ({ locals, request }) => {
-    getAdminClient(locals);
-    const form = await request.formData();
-    const runId = form.get('uuid') as string;
-
-    if (!runId) {
-      return fail(400, { error: 'Missing run ID' });
-    }
-
-    const ghToken = (process.env.GH_DEPLOY_TOKEN as string) || '';
-    if (!ghToken) {
-      return fail(500, { error: 'Deploy is not configured' });
-    }
-
-    try {
-      const res = await fetch(`https://api.github.com/repos/selfagency/open-communities/actions/runs/${runId}`, {
-        headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' }
-      });
-
-      if (!res.ok) {
-        log.error('GitHub run status check failed', { status: res.status });
-        return fail(502, { error: 'Status check failed' });
-      }
-
-      const data = (await res.json()) as { status: string; conclusion: string | null };
-      return { status: mapRunConclusion(data) };
-    } catch (err: unknown) {
-      log.error('GitHub run status check error', err);
-      return fail(502, { error: 'Status check failed' });
     }
   }
 };

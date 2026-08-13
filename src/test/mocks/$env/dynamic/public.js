@@ -4,9 +4,10 @@ const PUBLIC_HOSTNAME = 'http://localhost:4173';
 export const env = {
   PUBLIC_API_ENDPOINT,
   PUBLIC_HOSTNAME,
-  PUBLIC_POSTHOG_KEY: 'phc_test',
-  PUBLIC_POSTHOG_HOST: 'http://localhost:3001'
+  PUBLIC_POSTHOG_HOST: 'http://localhost:3001',
+  PUBLIC_POSTHOG_KEY: 'phc_test'
 };
 
 // Provide a default export to avoid ESM named export resolution issues under test bundling
+// biome-ignore lint/complexity/noRedundantDefaultExport: required to avoid ESM named export resolution issues under test bundling
 export default env;

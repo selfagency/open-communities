@@ -40,21 +40,27 @@ $effect(() => {
     <div class="flex gap-1 rounded-lg bg-muted p-1">
       <Button
         class="h-7 px-3 text-xs"
-        onclick={() => viewMode = 'realtime'}
+        onclick={() => {
+          viewMode = 'realtime';
+        }}
         size="sm"
         variant={viewMode === 'realtime' ? 'default' : 'ghost'}
         >{m.adminRealtime()}</Button
       >
       <Button
         class="h-7 px-3 text-xs"
-        onclick={() => viewMode = 'week'}
+        onclick={() => {
+          viewMode = 'week';
+        }}
         size="sm"
         variant={viewMode === 'week' ? 'default' : 'ghost'}
         >{m.adminWeek()}</Button
       >
       <Button
         class="h-7 px-3 text-xs"
-        onclick={() => viewMode = 'month'}
+        onclick={() => {
+          viewMode = 'month';
+        }}
         size="sm"
         variant={viewMode === 'month' ? 'default' : 'ghost'}
         >{m.adminMonth()}</Button

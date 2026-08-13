@@ -11,57 +11,57 @@ function fd(o: Record<string, string>) {
 
 describe('parsePageForm', () => {
   it('rejects empty title and slug', () => {
-    const r = parsePageForm(fd({ title: '', slug: '' }));
-    expect(r).toMatchObject({ ok: false, error: 'Title and slug are required' });
+    const r = parsePageForm(fd({ slug: '', title: '' }));
+    expect(r).toMatchObject({ error: 'Title and slug are required', ok: false });
   });
 
   it('rejects missing slug', () => {
     const r = parsePageForm(fd({ title: 'T' }));
-    expect(r).toMatchObject({ ok: false, error: 'Title and slug are required' });
+    expect(r).toMatchObject({ error: 'Title and slug are required', ok: false });
   });
 
   it('rejects invalid slug (uppercase, spaces, special chars)', () => {
-    const r = parsePageForm(fd({ title: 'T', slug: 'Bad Slug!' }));
-    expect(r).toMatchObject({ ok: false, field: 'slug' });
+    const r = parsePageForm(fd({ slug: 'Bad Slug!', title: 'T' }));
+    expect(r).toMatchObject({ field: 'slug', ok: false });
   });
 
   it('accepts valid page with defaults', () => {
-    const r = parsePageForm(fd({ title: 'My Page', slug: 'my-page' }));
+    const r = parsePageForm(fd({ slug: 'my-page', title: 'My Page' }));
     expect(r).toMatchObject({
-      ok: true,
       data: {
-        title: 'My Page',
-        slug: 'my-page',
         content: '',
         description: '',
         imageAlt: '',
-        imageCaption: ''
-      }
+        imageCaption: '',
+        slug: 'my-page',
+        title: 'My Page'
+      },
+      ok: true
     });
   });
 
   it('trims title and slug whitespace', () => {
-    const r = parsePageForm(fd({ title: '  Trimmed  ', slug: '  trimmed-slug  ' }));
+    const r = parsePageForm(fd({ slug: '  trimmed-slug  ', title: '  Trimmed  ' }));
     expect(r).toMatchObject({
-      ok: true,
-      data: { title: 'Trimmed', slug: 'trimmed-slug' }
+      data: { slug: 'trimmed-slug', title: 'Trimmed' },
+      ok: true
     });
   });
 
   it('accepts full page data', () => {
     const r = parsePageForm(
-      fd({ title: 'Full', slug: 'full', content: 'Body', description: 'Desc', imageAlt: 'Alt', imageCaption: 'Cap' })
+      fd({ content: 'Body', description: 'Desc', imageAlt: 'Alt', imageCaption: 'Cap', slug: 'full', title: 'Full' })
     );
     expect(r).toMatchObject({
-      ok: true,
-      data: { title: 'Full', slug: 'full', content: 'Body', description: 'Desc', imageAlt: 'Alt', imageCaption: 'Cap' }
+      data: { content: 'Body', description: 'Desc', imageAlt: 'Alt', imageCaption: 'Cap', slug: 'full', title: 'Full' },
+      ok: true
     });
   });
 });
 
 describe('pbErrorToFail', () => {
   it('maps PocketBase 400 field error → fail with field', () => {
-    const e = { status: 400, data: { data: { slug: { message: 'slug already in use' } } } };
+    const e = { data: { data: { slug: { message: 'slug already in use' } } }, status: 400 };
     const r = pbErrorToFail(e);
     expect(r.status).toBe(400);
     expect((r.data as Record<string, unknown>).error).toBe('slug already in use');

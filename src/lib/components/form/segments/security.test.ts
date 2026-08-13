@@ -12,7 +12,7 @@ describe.skip('Security segment', () => {
     const props = makeMockFormProps({}, {});
     const target = document.createElement('div');
 
-    new (Component as any)({ props, target });
-    expect(target).toBeTruthy();
+    const instance = new (Component as any)({ props, target });
+    expect(instance).toBeTruthy();
   });
 });

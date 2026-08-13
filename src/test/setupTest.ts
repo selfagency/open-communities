@@ -15,13 +15,13 @@ import { vi } from 'vitest';
 // Mock PocketBase constructor so server API module can be imported in tests
 vi.mock('pocketbase', () => {
   const MockPB = vi.fn(() => ({
+    authRefresh: vi.fn(),
+    authWithPassword: vi.fn().mockResolvedValue({ record: { id: 'test' } }),
     autoCancellation: vi.fn().mockReturnThis(),
     collection: vi.fn().mockReturnThis(),
     filter: vi.fn(),
-    getFullList: vi.fn().mockResolvedValue([]),
     getFirstListItem: vi.fn().mockResolvedValue(null),
-    authWithPassword: vi.fn().mockResolvedValue({ record: { id: 'test' } }),
-    authRefresh: vi.fn()
+    getFullList: vi.fn().mockResolvedValue([])
   }));
   return { default: MockPB };
 });
@@ -38,9 +38,9 @@ if (typeof window !== 'undefined' && !prototype.animate) {
     cancel: () => {},
     finished: Promise.resolve(),
     // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-    play: () => {},
+    pause: () => {},
     // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-    pause: () => {}
+    play: () => {}
   })) as unknown as typeof prototype.animate;
 }
 

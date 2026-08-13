@@ -5,8 +5,8 @@ import { validateCaptcha } from '../../lib/server/utils';
 // Mock dependencies
 vi.mock('$env/dynamic/public', () => ({
   env: {
-    PUBLIC_CAPTCHA_SITE_KEY: 'test-site-key',
-    PUBLIC_CAPTCHA_ENDPOINT: 'http://localhost:3001'
+    PUBLIC_CAPTCHA_ENDPOINT: 'http://localhost:3001',
+    PUBLIC_CAPTCHA_SITE_KEY: 'test-site-key'
   }
 }));
 

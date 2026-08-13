@@ -20,12 +20,12 @@ interface GeoStats {
 }
 
 let geoStats = $state<GeoStats>({
+  topCities: [],
   topCountries: [],
   topStates: [],
-  topCities: [],
   totalCities: 0,
-  totalStates: 0,
-  totalCountries: 0
+  totalCountries: 0,
+  totalStates: 0
 });
 
 let monthDigest = $state<Digest | null>(null);
@@ -48,9 +48,10 @@ function fetchAnalytics() {
   fetch('/admin/analytics')
     .then((r) => r.json())
     .then((json) => {
-      monthDigest = json.monthDigest;
-      realtimeDigest = json.realtimeDigest;
-      weekDigest = json.weekDigest;
+      const { monthDigest: md, realtimeDigest: rd, weekDigest: wd } = json;
+      monthDigest = md;
+      realtimeDigest = rd;
+      weekDigest = wd;
     })
     .catch(() => {
       // ignore — digests stay null, component shows skeletons

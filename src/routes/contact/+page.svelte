@@ -17,7 +17,9 @@ let snapshotData = $state('');
 
 export const snapshot: Snapshot<string> = {
   capture: () => snapshotData,
-  restore: (value) => (snapshotData = value)
+  restore: (value) => {
+    snapshotData = value;
+  }
 };
 </script>
 

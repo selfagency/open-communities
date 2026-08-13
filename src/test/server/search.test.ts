@@ -4,8 +4,8 @@ describe('Search class', () => {
   it('initializes with congregation data', async () => {
     const { Search } = await import('../../lib/search');
     const search = new Search([
-      { id: '1', name: 'Beth Israel', denomination: 'Reform', visible: true },
-      { id: '2', name: 'Temple Sinai', denomination: 'Conservative', visible: true }
+      { denomination: 'Reform', id: '1', name: 'Beth Israel', visible: true },
+      { denomination: 'Conservative', id: '2', name: 'Temple Sinai', visible: true }
     ]);
     expect(search.data).toHaveLength(2);
   });
@@ -19,8 +19,8 @@ describe('Search class', () => {
   it('sorts data alphabetically by name', async () => {
     const { Search } = await import('../../lib/search');
     const search = new Search([
-      { id: '3', name: 'Zion Temple', denomination: 'Orthodox', visible: true },
-      { id: '1', name: 'Beth Israel', denomination: 'Reform', visible: true }
+      { denomination: 'Orthodox', id: '3', name: 'Zion Temple', visible: true },
+      { denomination: 'Reform', id: '1', name: 'Beth Israel', visible: true }
     ]);
     expect(search.data[0].name).toBe('Beth Israel');
     expect(search.data[1].name).toBe('Zion Temple');

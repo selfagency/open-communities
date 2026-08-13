@@ -28,28 +28,6 @@ export interface AppState {
  * ```
  */
 export const useAppStore = defineStore('app', {
-  state: (): AppState => ({
-    form: undefined,
-    isMobile: false,
-    lang: 'en',
-    loading: false,
-    loadingSecondary: false,
-    offsetHeight: 0,
-    offsetWidth: 0,
-    showIntro: true
-  }),
-  persist: browser
-    ? {
-        adapter: createLocalStorageAdapter(),
-        key: 'stately:app',
-        pick: ['lang', 'showIntro'],
-        version: 1
-      }
-    : {
-        adapter: createMemoryStorageAdapter(),
-        key: 'stately:app',
-        version: 1
-      },
   actions: {
     /** Initialize from window dimensions and user preferences. Call ONCE on first browser boot. */
     init(userLang?: string) {
@@ -78,7 +56,29 @@ export const useAppStore = defineStore('app', {
         }
       }
     }
-  }
+  },
+  persist: browser
+    ? {
+        adapter: createLocalStorageAdapter(),
+        key: 'stately:app',
+        pick: ['lang', 'showIntro'],
+        version: 1
+      }
+    : {
+        adapter: createMemoryStorageAdapter(),
+        key: 'stately:app',
+        version: 1
+      },
+  state: (): AppState => ({
+    form: undefined,
+    isMobile: false,
+    lang: 'en',
+    loading: false,
+    loadingSecondary: false,
+    offsetHeight: 0,
+    offsetWidth: 0,
+    showIntro: true
+  })
 });
 
 export type AppStore = ReturnType<typeof useAppStore>;

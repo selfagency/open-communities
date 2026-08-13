@@ -6,33 +6,33 @@ import type { AccessibilityResponse, IsoAutoDateString } from '$lib/pocketbase.d
 
 function makeAccessibility(overrides: Partial<AccessibilityResponse> = {}): AccessibilityResponse {
   return {
-    id: 'test-acc',
-    created: '2025-01-01T00:00:00.000Z' as IsoAutoDateString,
-    updated: '2025-01-01T00:00:00.000Z' as IsoAutoDateString,
     collectionId: '',
     collectionName: 'accessibility',
-    inPerson_adaSome: false,
+    created: '2025-01-01T00:00:00.000Z' as IsoAutoDateString,
+    id: 'test-acc',
     inPerson_adaAll: false,
+    inPerson_adaSome: false,
     inPerson_asl: false,
-    inPerson_eva: false,
-    inPerson_noHearing: false,
-    inPerson_wheelchair: false,
-    inPerson_visual: false,
-    inPerson_seating: false,
-    inPerson_sensory: false,
     inPerson_bathroom: false,
     inPerson_carts: false,
-    inPerson_tactile: false,
-    inPerson_quiet: false,
+    inPerson_eva: false,
     inPerson_guide: false,
     inPerson_masks: false,
+    inPerson_noHearing: false,
+    inPerson_quiet: false,
+    inPerson_seating: false,
+    inPerson_sensory: false,
+    inPerson_tactile: false,
+    inPerson_visual: false,
+    inPerson_wheelchair: false,
     online_asl: false,
     online_automatedCaptions: false,
-    online_liveCaptions: false,
     online_cart: false,
-    online_transcript: false,
     online_guide: false,
+    online_liveCaptions: false,
+    online_transcript: false,
     otherText: '',
+    updated: '2025-01-01T00:00:00.000Z' as IsoAutoDateString,
     ...overrides
   } as AccessibilityResponse;
 }
@@ -42,8 +42,8 @@ describe('AccessibilityMini', () => {
     const { default: A11yMini } = await import('./accessibility-mini.svelte');
     const target = document.createElement('div');
     const instance = mount(A11yMini, {
-      target,
-      props: { accessibility: makeAccessibility({ inPerson_adaAll: true }) }
+      props: { accessibility: makeAccessibility({ inPerson_adaAll: true }) },
+      target
     });
     expect(target.textContent).toContain('accessibility_ada');
     unmount(instance);
@@ -53,8 +53,8 @@ describe('AccessibilityMini', () => {
     const { default: A11yMini } = await import('./accessibility-mini.svelte');
     const target = document.createElement('div');
     const instance = mount(A11yMini, {
-      target,
-      props: { accessibility: makeAccessibility({ online_liveCaptions: true }) }
+      props: { accessibility: makeAccessibility({ online_liveCaptions: true }) },
+      target
     });
     expect(target.textContent).toContain('accessibility_cc');
     unmount(instance);
@@ -64,8 +64,8 @@ describe('AccessibilityMini', () => {
     const { default: A11yMini } = await import('./accessibility-mini.svelte');
     const target = document.createElement('div');
     const instance = mount(A11yMini, {
-      target,
-      props: { accessibility: makeAccessibility({ inPerson_eva: true }) }
+      props: { accessibility: makeAccessibility({ inPerson_eva: true }) },
+      target
     });
     expect(target.textContent).toContain('accessibility_eva');
     unmount(instance);
@@ -75,8 +75,8 @@ describe('AccessibilityMini', () => {
     const { default: A11yMini } = await import('./accessibility-mini.svelte');
     const target = document.createElement('div');
     const instance = mount(A11yMini, {
-      target,
-      props: { accessibility: makeAccessibility({ inPerson_asl: true }) }
+      props: { accessibility: makeAccessibility({ inPerson_asl: true }) },
+      target
     });
     expect(target.textContent).toContain('accessibility_asl');
     unmount(instance);
@@ -86,8 +86,8 @@ describe('AccessibilityMini', () => {
     const { default: A11yMini } = await import('./accessibility-mini.svelte');
     const target = document.createElement('div');
     const instance = mount(A11yMini, {
-      target,
-      props: { accessibility: makeAccessibility() }
+      props: { accessibility: makeAccessibility() },
+      target
     });
     // no icons should render — the outer div has no visible text
     expect(target.textContent?.trim()).toBe('');
@@ -98,15 +98,15 @@ describe('AccessibilityMini', () => {
     const { default: A11yMini } = await import('./accessibility-mini.svelte');
     const target = document.createElement('div');
     const instance = mount(A11yMini, {
-      target,
       props: {
         accessibility: makeAccessibility({
           inPerson_adaAll: true,
-          online_liveCaptions: true,
+          inPerson_asl: true,
           inPerson_eva: true,
-          inPerson_asl: true
+          online_liveCaptions: true
         })
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('accessibility_ada');
     expect(target.textContent).toContain('accessibility_cc');

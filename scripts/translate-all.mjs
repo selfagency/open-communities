@@ -78,7 +78,7 @@ function saveCheckpoint(completed) {
 /* ── Helpers ── */
 
 async function api(method, path, body) {
-  const opts = { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` } };
+  const opts = { headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' }, method };
   if (body) {
     opts.body = JSON.stringify(body);
   }
@@ -92,11 +92,11 @@ async function api(method, path, body) {
 }
 
 async function translateText(text, locale) {
-  const body = { q: text, source: 'en', target: locale, format: 'text', api_key: LT_KEY };
+  const body = { api_key: LT_KEY, format: 'text', q: text, source: 'en', target: locale };
   const res = await fetch(`${LT_URL}/translate`, {
-    method: 'POST',
+    body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    method: 'POST'
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
@@ -112,9 +112,9 @@ async function batchSend(requests) {
   }
   // Try PB batch API first
   const res = await fetch(`${PB_URL}/api/batch`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` },
-    body: JSON.stringify({ requests })
+    body: JSON.stringify({ requests }),
+    headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' },
+    method: 'POST'
   });
   if (res.ok) {
     return;
@@ -124,9 +124,9 @@ async function batchSend(requests) {
   for (const req of requests) {
     try {
       const r = await fetch(`${PB_URL}${req.url}`, {
-        method: req.method,
+        body: req.body ? JSON.stringify(req.body) : undefined,
         headers: { ...req.headers, authorization: `Bearer ${TOKEN}` },
-        body: req.body ? JSON.stringify(req.body) : undefined
+        method: req.method
       });
       if (!r.ok) {
         const t = await r.text();
@@ -218,7 +218,7 @@ async function translatePages(pages, pageVariantsMap, checkpoint) {
 
   await flushBatch(batch, checkpoint);
   process.stdout.write('\n');
-  return { translated, errors };
+  return { errors, translated };
 }
 
 async function fetchAllPages() {
@@ -243,7 +243,7 @@ async function fetchAllPageVariants() {
   while (true) {
     const data = await api('GET', `/collections/pageVariants/records?perPage=500&page=${page}`);
     for (const v of data?.items ?? []) {
-      map.set(`${v.page}|${v.language}`, { id: v.id, title: v.title, description: v.description, content: v.content });
+      map.set(`${v.page}|${v.language}`, { content: v.content, description: v.description, id: v.id, title: v.title });
     }
     if (!data?.items?.length || data.items.length < 500) {
       break;
@@ -254,20 +254,20 @@ async function fetchAllPageVariants() {
 }
 
 function makePageVariantEntry(existing, pageId, language, title, description, content) {
-  const body = { page: pageId, language, title, description, content };
+  const body = { content, description, language, page: pageId, title };
   if (existing) {
     return {
-      method: 'PATCH',
-      url: `/api/collections/pageVariants/records/${existing.id}`,
       body,
-      headers: { 'content-type': 'application/json' }
+      headers: { 'content-type': 'application/json' },
+      method: 'PATCH',
+      url: `/api/collections/pageVariants/records/${existing.id}`
     };
   }
   return {
-    method: 'POST',
-    url: '/api/collections/pageVariants/records',
     body,
-    headers: { 'content-type': 'application/json' }
+    headers: { 'content-type': 'application/json' },
+    method: 'POST',
+    url: '/api/collections/pageVariants/records'
   };
 }
 
@@ -282,16 +282,16 @@ async function processItemLocale(item, locale, enValue, existingMap, batch, chec
     batch.push(
       existingMap.get(entryKey)
         ? {
-            method: 'PATCH',
-            url: `/api/collections/translations/records/${existingMap.get(entryKey).id}`,
             body: { key: item.key, locale, value: translatedText },
-            headers: { 'content-type': 'application/json' }
+            headers: { 'content-type': 'application/json' },
+            method: 'PATCH',
+            url: `/api/collections/translations/records/${existingMap.get(entryKey).id}`
           }
         : {
-            method: 'POST',
-            url: '/api/collections/translations/records',
             body: { key: item.key, locale, value: translatedText },
-            headers: { 'content-type': 'application/json' }
+            headers: { 'content-type': 'application/json' },
+            method: 'POST',
+            url: '/api/collections/translations/records'
           }
     );
     return 1;
@@ -327,7 +327,7 @@ async function processItems(items, existingMap, checkpoint) {
   }
 
   await flushBatch(batch, checkpoint);
-  return { translated, errors };
+  return { errors, translated };
 }
 
 async function flushBatch(batch, checkpoint) {

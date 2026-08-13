@@ -62,7 +62,7 @@ export interface SearchData {
 export interface SearchState {
   filters?: {
     [key: string]: {
-      [key: string]: boolean;
+      [filterKey: string]: boolean;
     };
   };
   searchLocation?: LocationMeta;

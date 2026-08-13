@@ -134,7 +134,7 @@ describe('triggerDeploy', () => {
     const { triggerDeploy } = await import('../../lib/server/admin-translations');
     // pollNewRunId will time out because the mock returns the same run ID
     const result = await triggerDeploy('fake-token', 'selfagency', 'open-communities');
-    expect(result).toEqual({ triggered: true, message: 'Deploy triggered, but could not determine run ID' });
+    expect(result).toEqual({ message: 'Deploy triggered, but could not determine run ID', triggered: true });
   });
 
   it('throws when dispatch fails', async () => {

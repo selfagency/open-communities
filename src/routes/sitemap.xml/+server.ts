@@ -18,15 +18,15 @@ const SLUG_ROUTE_PATTERN = /^\/\[slug\]/;
 
 export const GET: RequestHandler = async ({ locals, url }) => {
   const client = locals.api;
-  const origin = url.origin;
+  const { origin } = url;
 
   // Fetch all visible congregation IDs for the sitemap
   let congregationIds: string[] = [];
   try {
     const congs = await withRetry(() =>
       client.collection('congregations').getFullList({
-        filter: 'visible=true',
-        fields: 'id,updated'
+        fields: 'id,updated',
+        filter: 'visible=true'
       })
     );
     congregationIds = (congs as Array<{ id: string }>).map((c) => c.id);
@@ -39,8 +39,8 @@ export const GET: RequestHandler = async ({ locals, url }) => {
   try {
     const pages = await withRetry(() =>
       client.collection('pages').getFullList({
-        filter: 'published=true',
-        fields: 'slug'
+        fields: 'slug',
+        filter: 'published=true'
       })
     );
     pageSlugs = (pages as Array<{ slug: string }>).map((p) => p.slug);
@@ -52,17 +52,6 @@ export const GET: RequestHandler = async ({ locals, url }) => {
   const excludeRoutePatterns = [...EXCLUDE_ROUTES, ...(pageSlugs.length === 0 ? [SLUG_ROUTE_PATTERN] : [])];
 
   return await response({
-    origin,
-
-    excludeRoutePatterns,
-
-    paramValues:
-      pageSlugs.length > 0
-        ? {
-            '/[slug]': pageSlugs
-          }
-        : undefined,
-
     additionalPaths: [
       '/',
       // Congregation detail pages — accessed via ?id= query param on home page
@@ -71,6 +60,16 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
     defaultChangefreq: 'daily',
     defaultPriority: 0.7,
+
+    excludeRoutePatterns,
+    origin,
+
+    paramValues:
+      pageSlugs.length > 0
+        ? {
+            '/[slug]': pageSlugs
+          }
+        : undefined,
     sort: 'alpha'
   });
 };

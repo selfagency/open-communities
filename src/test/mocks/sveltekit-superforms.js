@@ -2,10 +2,9 @@
 import { mockSveltekitSuperforms } from '../testUtils.js';
 
 // Named exports
-export const superForm = mockSveltekitSuperforms.superForm;
-export const setError = mockSveltekitSuperforms.setError;
-export const message = mockSveltekitSuperforms.message;
-export const superValidate = mockSveltekitSuperforms.superValidate;
+const { message, setError, superForm, superValidate } = mockSveltekitSuperforms;
+
+export { message, setError, superForm, superValidate };
 
 // Default export
 export default mockSveltekitSuperforms;

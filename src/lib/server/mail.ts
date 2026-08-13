@@ -1,7 +1,6 @@
 import FormData from 'form-data';
 import DOMPurify from 'isomorphic-dompurify';
 import Mailgun from 'mailgun.js';
-import type { IMailgunClient } from 'mailgun.js/Types/Interfaces/MailgunClient/IMailgunClient.js';
 import { marked } from 'marked';
 /* region imports */
 import { env } from '$env/dynamic/private';
@@ -13,8 +12,13 @@ import { log } from '$lib/server/logger';
 
 const { ADMIN_EMAIL, MAILGUN_API_KEY, MAILGUN_DOMAIN } = env;
 
+// Derive the client type from the Mailgun class — the package does not export
+// its IMailgunClient type from the root, and deep imports are blocked by its
+// exports map.
+type MailgunClient = ReturnType<InstanceType<typeof Mailgun>['client']>;
+
 // Lazy singleton Mailgun client — created once on first use, reused for all subsequent sends.
-let _client: IMailgunClient | null = null;
+let _client: MailgunClient | null = null;
 
 /**
  * Sanitize a header value by stripping CR/LF characters and trimming whitespace.
@@ -60,11 +64,10 @@ export async function adminMail({ email, message, name, record, subject }: Admin
     const safeEmail = sanitizeHeader(email);
 
     await mailTransport({
-      headerFrom: `${safeName} via Open Communities <${safeEmail}>`,
-      headerTo: `Open Communities Admin <${ADMIN_EMAIL ?? 'admin@example.test'}>`,
-
       // S-9: sanitize HTML output from marked to prevent email HTML injection
       bodyText,
+      headerFrom: `${safeName} via Open Communities <${safeEmail}>`,
+      headerTo: `Open Communities Admin <${ADMIN_EMAIL ?? 'admin@example.test'}>`,
       subject
     });
   } catch (e) {
@@ -102,13 +105,13 @@ async function mailTransport({
 
   const client = getClient();
 
-  log.debug('Sending email', { from: headerFrom, to: headerTo, subject });
+  log.debug('Sending email', { from: headerFrom, subject, to: headerTo });
   await client.messages.create(MAILGUN_DOMAIN as string, {
     from: headerFrom,
-    to: [headerTo],
+    html,
     subject,
     text,
-    html
+    to: [headerTo]
   });
 }
 
@@ -120,29 +123,29 @@ export async function transactionalMail({
 }: TransactionalMailInput): Promise<{ ok: true } | { ok: false; error: string }> {
   try {
     await mailTransport({
-      headerFrom: 'Open Communities <no-reply@m.opencommunities.info>',
       bodyText: message,
-      subject,
-      headerTo: `${sanitizeHeader(name)} <${sanitizeHeader(email)}>`
+      headerFrom: 'Open Communities <no-reply@m.opencommunities.info>',
+      headerTo: `${sanitizeHeader(name)} <${sanitizeHeader(email)}>`,
+      subject
     });
     return { ok: true };
   } catch (e) {
     const error = (e as { message?: string }).message ?? 'Unknown email error';
     log.error('Error sending transactional email', e);
-    return { ok: false, error };
+    return { error, ok: false };
   }
 }
 
-function getClient(): IMailgunClient {
+function getClient(): MailgunClient {
   if (_client) {
     return _client;
   }
 
   const mailgun = new Mailgun(FormData);
   _client = mailgun.client({
-    username: 'api',
     key: MAILGUN_API_KEY as string,
-    useFetch: true
+    useFetch: true,
+    username: 'api'
   });
   return _client;
 }

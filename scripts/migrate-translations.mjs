@@ -36,7 +36,7 @@ if (!TOKEN) {
 }
 
 async function api(method, path, body) {
-  const opts = { method, headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` } };
+  const opts = { headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' }, method };
   if (body) {
     opts.body = JSON.stringify(body);
   }
@@ -50,9 +50,9 @@ async function api(method, path, body) {
 
 async function batchSend(requests) {
   const res = await fetch(`${PB_URL}/api/batch`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', authorization: `Bearer ${TOKEN}` },
-    body: JSON.stringify({ requests })
+    body: JSON.stringify({ requests }),
+    headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/json' },
+    method: 'POST'
   });
   if (!res.ok) {
     console.error(`\n⚠  Batch failed (${res.status})`);
@@ -65,9 +65,9 @@ async function fallbackBatch(requests) {
   for (const req of requests) {
     try {
       const r = await fetch(`${PB_URL}${req.url}`, {
-        method: req.method,
+        body: req.body ? JSON.stringify(req.body) : undefined,
         headers: { ...req.headers, authorization: `Bearer ${TOKEN}` },
-        body: req.body ? JSON.stringify(req.body) : undefined
+        method: req.method
       });
       if (!r.ok) {
         const t = await r.text();
@@ -88,17 +88,17 @@ function buildBatchEntry(key, locale, value, existingEntry) {
       return null;
     }
     return {
-      method: 'PATCH',
-      url: `/api/collections/translations/records/${existingEntry.id}`,
       body: { value },
-      headers: { 'content-type': 'application/json' }
+      headers: { 'content-type': 'application/json' },
+      method: 'PATCH',
+      url: `/api/collections/translations/records/${existingEntry.id}`
     };
   }
   return {
-    method: 'POST',
-    url: '/api/collections/translations/records',
     body: { key, locale, value },
-    headers: { 'content-type': 'application/json' }
+    headers: { 'content-type': 'application/json' },
+    method: 'POST',
+    url: '/api/collections/translations/records'
   };
 }
 
@@ -145,11 +145,11 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
     for (const locale of locales) {
       const result = await processLocaleEntry(key, locale, messages, existingMap, batch);
       if (result === 'created') {
-        created++;
+        created += 1;
       } else if (result === 'updated') {
-        updated++;
+        updated += 1;
       } else if (result === 'skipped') {
-        skipped++;
+        skipped += 1;
       }
     }
   }
@@ -157,7 +157,7 @@ async function buildBatchOps(messages, locales, allKeys, existingMap) {
   if (batch.length > 0) {
     await batchSend(batch);
   }
-  return { created, updated, skipped };
+  return { created, skipped, updated };
 }
 
 async function main() {
@@ -201,7 +201,7 @@ async function main() {
     if (!existing?.items?.length || existing.items.length < 500) {
       break;
     }
-    page++;
+    page += 1;
   }
 
   console.log(`  📋 ${existingMap.size} existing records in PB`);

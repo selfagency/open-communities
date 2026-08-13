@@ -41,12 +41,12 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
   const api = createApi();
 
   api.authStore.save('mock-token', {
-    id: 'admin123',
-    email: 'admin@test.test',
     admin: true,
-    verified: true,
     collectionId: 'test',
-    collectionName: 'users'
+    collectionName: 'users',
+    email: 'admin@test.test',
+    id: 'admin123',
+    verified: true
   });
 
   const cookieOpts = { httpOnly: true, path: '/', sameSite: 'strict' as const, secure: false };
@@ -54,20 +54,20 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
   return createMockRequestEvent({
     cookies: {
       get: () => '',
+      serialize: () => '',
       set: () => {
         /* noop */
-      },
-      serialize: () => ''
+      }
     },
     locals: {
       api,
-      cookieOpts,
       capture: () => {
         /* noop */
       },
       captureException: () => {
         /* noop */
-      }
+      },
+      cookieOpts
     },
     ...overrides
   });
@@ -91,8 +91,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es","fr"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -107,8 +107,8 @@ describe('admin/translations — translate action', () => {
     formData.set('text', 'Hello');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -124,8 +124,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', 'not-json');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -144,8 +144,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es","fr"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -158,8 +158,8 @@ describe('admin/translations — translate action', () => {
     vi.stubEnv('LT_API_KEY', '');
 
     server.use(
-      http.post(`${LT_URL}/translate`, async ({ request }) => {
-        const body = await request.clone().text();
+      http.post(`${LT_URL}/translate`, async ({ request: req }) => {
+        const body = await req.clone().text();
         const parsed = JSON.parse(body);
         if (parsed.target === 'es') {
           return HttpResponse.json({ translatedText: 'Hola' });
@@ -178,8 +178,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es","fr"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = (await mod.actions.translate({ ...event, request } as never)) as {
@@ -201,8 +201,8 @@ describe('admin/translations — translate action', () => {
     let sawApiKey = false;
 
     server.use(
-      http.post(`${LT_URL}/translate`, async ({ request }) => {
-        const body = await request.clone().text();
+      http.post(`${LT_URL}/translate`, async ({ request: req }) => {
+        const body = await req.clone().text();
         const parsed = JSON.parse(body);
         if (parsed.api_key === 'my-secret-key') {
           sawApiKey = true;
@@ -218,8 +218,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = (await mod.actions.translate({ ...event, request } as never)) as {
@@ -235,8 +235,8 @@ describe('admin/translations — translate action', () => {
     vi.stubEnv('LT_API_KEY', '');
 
     server.use(
-      http.post(`${LT_URL}/translate`, async ({ request }) => {
-        const body = await request.clone().text();
+      http.post(`${LT_URL}/translate`, async ({ request: req }) => {
+        const body = await req.clone().text();
         const parsed = JSON.parse(body);
         if (parsed.target === 'es') {
           return HttpResponse.json({ translatedText: 'Hola' });
@@ -253,8 +253,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es","fr"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -282,8 +282,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es","fr"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -304,8 +304,8 @@ describe('admin/translations — translate action', () => {
     formData.set('locales', '["es"]');
 
     const request = new Request('http://localhost/admin/translations?/translate', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.translate({ ...event, request } as never);
@@ -332,11 +332,11 @@ describe('admin/translations — load function', () => {
 
   it('groups records by key and returns sorted locales', async () => {
     const records = [
-      { id: '1', key: 'greeting', locale: 'en', value: 'Hello', collectionId: 't', collectionName: 'translations' },
-      { id: '2', key: 'greeting', locale: 'es', value: 'Hola', collectionId: 't', collectionName: 'translations' },
-      { id: '3', key: 'farewell', locale: 'en', value: 'Goodbye', collectionId: 't', collectionName: 'translations' },
-      { id: '4', key: 'farewell', locale: 'fr', value: 'Au revoir', collectionId: 't', collectionName: 'translations' },
-      { id: '5', key: 'greeting', locale: 'fr', value: 'Bonjour', collectionId: 't', collectionName: 'translations' }
+      { collectionId: 't', collectionName: 'translations', id: '1', key: 'greeting', locale: 'en', value: 'Hello' },
+      { collectionId: 't', collectionName: 'translations', id: '2', key: 'greeting', locale: 'es', value: 'Hola' },
+      { collectionId: 't', collectionName: 'translations', id: '3', key: 'farewell', locale: 'en', value: 'Goodbye' },
+      { collectionId: 't', collectionName: 'translations', id: '4', key: 'farewell', locale: 'fr', value: 'Au revoir' },
+      { collectionId: 't', collectionName: 'translations', id: '5', key: 'greeting', locale: 'fr', value: 'Bonjour' }
     ];
 
     server.use(
@@ -382,20 +382,20 @@ describe('admin/translations — load function', () => {
           return HttpResponse.json({
             items: [
               {
+                collectionId: 't',
+                collectionName: 'translations',
                 id: '1',
                 key: 'greeting',
                 locale: 'en',
-                value: 'Hello',
-                collectionId: 't',
-                collectionName: 'translations'
+                value: 'Hello'
               },
               {
+                collectionId: 't',
+                collectionName: 'translations',
                 id: '2',
                 key: 'greeting',
                 locale: 'es',
-                value: 'Hola',
-                collectionId: 't',
-                collectionName: 'translations'
+                value: 'Hola'
               }
             ],
             page: 1,
@@ -437,8 +437,8 @@ describe('admin/translations — save action', () => {
     const formData = new FormData();
 
     const request = new Request('http://localhost/admin/translations?/save', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.save({ ...event, request } as never);
@@ -452,9 +452,9 @@ describe('admin/translations — save action', () => {
 
     // Mock superValidate to return valid for this specific test
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
-      data: { key: 'test.key', entries: JSON.stringify([{ locale: 'en', value: 'Hello', id: 'existing-1' }]) },
-      errors: {}
+      data: { entries: JSON.stringify([{ id: 'existing-1', locale: 'en', value: 'Hello' }]), key: 'test.key' },
+      errors: {},
+      valid: true
     } as never);
 
     // Mock PB update to fail
@@ -466,11 +466,11 @@ describe('admin/translations — save action', () => {
 
     const formData = new FormData();
     formData.set('key', 'test.key');
-    formData.set('entries', JSON.stringify([{ locale: 'en', value: 'Hello', id: 'existing-1' }]));
+    formData.set('entries', JSON.stringify([{ id: 'existing-1', locale: 'en', value: 'Hello' }]));
 
     const request = new Request('http://localhost/admin/translations?/save', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const event = await createAdminEvent({ request });
@@ -493,8 +493,8 @@ describe('admin/translations — add action', () => {
     const formData = new FormData();
 
     const request = new Request('http://localhost/admin/translations?/add', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.add({ ...event, request } as never);
@@ -516,8 +516,8 @@ describe('admin/translations — delete action', () => {
     const formData = new FormData();
 
     const request = new Request('http://localhost/admin/translations?/delete', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const result = await mod.actions.delete({ ...event, request } as never);

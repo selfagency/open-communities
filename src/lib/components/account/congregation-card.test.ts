@@ -7,11 +7,11 @@ describe('CongregationCard', () => {
     const { default: CongregationCard } = await import('./congregation-card.svelte');
     const target = document.createElement('div');
     const instance = mount(CongregationCard, {
-      target,
       props: {
         congregation: 'abc123',
         onUnlink: vi.fn()
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('congregation');
     expect(target.textContent).toContain('unlinkFromCongregation');
@@ -23,11 +23,11 @@ describe('CongregationCard', () => {
     const { default: CongregationCard } = await import('./congregation-card.svelte');
     const target = document.createElement('div');
     const instance = mount(CongregationCard, {
-      target,
       props: {
         congregation: '',
         onUnlink: vi.fn()
-      }
+      },
+      target
     });
     expect(target.textContent).toBe('');
     unmount(instance);

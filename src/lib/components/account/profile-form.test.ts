@@ -9,16 +9,16 @@ describe('ProfileForm', () => {
     const { default: ProfileForm } = await import('./profile-form.svelte');
     const target = document.createElement('div');
     const instance = mount(ProfileForm, {
-      target,
       props: {
         saved: false,
         ...makeMockFormProps({
-          name: 'Test User',
           email: 'test@example.com',
           lang: 'en',
+          name: 'Test User',
           notifications: true
         })
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('profile');
     expect(target.textContent).toContain('saveChanges');
@@ -30,16 +30,16 @@ describe('ProfileForm', () => {
     const { default: ProfileForm } = await import('./profile-form.svelte');
     const target = document.createElement('div');
     const instance = mount(ProfileForm, {
-      target,
       props: {
         saved: true,
         ...makeMockFormProps({
-          name: 'Test User',
           email: 'test@example.com',
           lang: 'en',
+          name: 'Test User',
           notifications: true
         })
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('updateSuccess');
     unmount(instance);

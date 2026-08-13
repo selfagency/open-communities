@@ -22,7 +22,7 @@ export function createApi(traceId?: string): TypedPocketBase {
   instance.beforeSend = (url: string, opts: Record<string, unknown>) => {
     const headers = (opts.headers as Record<string, string>) || {};
     headers['x-request-id'] = requestId;
-    return { url, options: { ...opts, headers } };
+    return { options: { ...opts, headers }, url };
   };
   return instance;
 }
@@ -64,9 +64,9 @@ function jitter(): number {
 // without blocking SSR for 30+ seconds. Load functions already have graceful
 // fallbacks (return empty arrays) when PB is unreachable.
 const RETRY_DEFAULTS = {
-  maxRetries: 2,
   baseDelayMs: 500,
-  maxDelayMs: 4000
+  maxDelayMs: 4000,
+  maxRetries: 2
 };
 
 /**
@@ -80,6 +80,7 @@ async function withRetry<T>(fn: () => Promise<T>, options?: Partial<typeof RETRY
 
   for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
     try {
+      // biome-ignore lint/performance/noAwaitInLoops: retry loop — return await exits on first success, sequential retries are intentional
       return await fn();
     } catch (err) {
       // Throw immediately on non-retryable errors (e.g., 404, 403)

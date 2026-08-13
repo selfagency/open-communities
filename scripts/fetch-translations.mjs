@@ -80,7 +80,7 @@ async function fetchRecords() {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
   try {
-    for (let guard = 0; guard < 100; guard++) {
+    for (let guard = 0; guard < 100; guard += 1) {
       const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=500&page=${pageParam}`, {
         headers: { authorization: `Bearer ${TOKEN}` },
         signal: controller.signal
@@ -95,7 +95,7 @@ async function fetchRecords() {
       if (items.length === 0 || all.length >= total) {
         break;
       }
-      pageParam++;
+      pageParam += 1;
     }
     return all;
   } finally {
@@ -106,7 +106,7 @@ async function fetchRecords() {
 function groupByLocale(records) {
   const byLocale = new Map();
   for (const r of records) {
-    const locale = r.locale;
+    const { locale } = r;
     if (!byLocale.has(locale)) {
       byLocale.set(locale, {});
     }
@@ -146,7 +146,7 @@ async function main() {
   try {
     records = await fetchRecords();
   } catch (err) {
-    const errorMsg = `Fetch failed (${err?.cause?.code || err?.message || err})`;
+    const errorMsg = `Fetch failed (${err.cause?.code || err.message || err})`;
     console.error(`❌ ${errorMsg}`);
 
     if (IS_CI) {

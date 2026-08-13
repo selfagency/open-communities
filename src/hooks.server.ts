@@ -76,12 +76,10 @@ async function getClientIp(event: RequestEvent): Promise<string | undefined> {
     } catch (err) {
       // Don't escalate — client IP is helpful for logging but not required
       log.debug('getClientIp: public-ip lookup failed', { err });
-      return;
     }
   } catch (err) {
     // Defensive: never throw from hook-level helpers
     log.warn('getClientIp: unexpected error while resolving client ip', { err });
-    return;
   }
 }
 
@@ -94,7 +92,7 @@ function customHandler({ event, resolve }: Parameters<Handle>[0]): Promise<Respo
 
   return tracer.startActiveSpan('request', async (span) => {
     try {
-      const traceId = span.spanContext().traceId;
+      const { traceId } = span.spanContext();
       event.locals.traceId = traceId;
 
       const result = await handleRequest({ event, resolve, startTimer, traceId });
@@ -142,7 +140,7 @@ async function handleAuth(event: Parameters<Handle>[0]['event'], requestApi: Typ
       event.cookies.set('auth', requestApi.authStore.exportToCookie(), event.locals.cookieOpts);
     }
   } catch (error: unknown) {
-    const status = (error as { status?: number })?.status;
+    const { status } = error as { status?: number };
     if (status === 401 || status === 403) {
       log.warn('Auth refresh rejected — clearing auth store', { status });
       requestApi.authStore.clear();
@@ -256,7 +254,7 @@ function serializeError(error: unknown): string {
       return JSON.stringify({ message: error instanceof Error ? error.message : 'Unknown error' });
     }
   }
-  if (error == null) {
+  if (error === null || error === undefined) {
     return '';
   }
   return JSON.stringify({ message: String(error) });
@@ -275,7 +273,7 @@ export const handleError = async ({
     const errorId = crypto.randomUUID();
 
     event.locals.error = serializeError(error);
-    event.locals.errorStackTrace = (error as Error)?.stack || undefined;
+    event.locals.errorStackTrace = (error as Error).stack || undefined;
     event.locals.errorId = errorId;
     logEvent(status, event);
 
@@ -287,7 +285,7 @@ export const handleError = async ({
 
     return {
       errorId,
-      message: dev ? (error as Error)?.message || 'An error occurred' : 'An error occurred'
+      message: dev ? (error as Error).message || 'An error occurred' : 'An error occurred'
     };
   }
 };

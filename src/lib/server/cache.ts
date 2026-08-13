@@ -33,10 +33,10 @@ function getRedis(): Redis | null {
   }
   try {
     _redis = new Redis(url, {
-      lazyConnect: true,
-      maxRetriesPerRequest: 1,
+      connectTimeout: 1000,
       enableOfflineQueue: false,
-      connectTimeout: 1000
+      lazyConnect: true,
+      maxRetriesPerRequest: 1
     });
     _redis.on('error', (err) => {
       // Mark failed so subsequent calls skip Redis entirely (fast fail).
@@ -91,6 +91,7 @@ async function redisDelPattern(pattern: string): Promise<void> {
   try {
     let cursor = '0';
     do {
+      // biome-ignore lint/performance/noAwaitInLoops: Redis SCAN cursor loop must be sequential — each iteration uses the cursor from the previous
       const [next, keys] = await redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
       cursor = next;
       if (keys.length > 0) {

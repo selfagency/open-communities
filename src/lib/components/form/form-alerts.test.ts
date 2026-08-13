@@ -10,16 +10,16 @@ vi.mock('isomorphic-dompurify', () => ({
 }));
 
 describe('FormAlerts', () => {
-  const adminUser = { id: 'admin1', admin: true } as UsersRecord & { id: string };
-  const regularUser = { id: 'user1', admin: false } as UsersRecord & { id: string };
+  const adminUser = { admin: true, id: 'admin1' } as UsersRecord & { id: string };
+  const regularUser = { admin: false, id: 'user1' } as UsersRecord & { id: string };
   const sampleContent = { content: '<p>Hello world</p>' } as PagesRecord;
 
   it('renders content preview in add mode', async () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'add', user: adminUser, content: sampleContent, formSuccess: false }
+      props: { content: sampleContent, formSuccess: false, mode: 'add', user: adminUser },
+      target
     });
     expect(target.textContent).toContain('Hello world');
     unmount(instance);
@@ -29,8 +29,8 @@ describe('FormAlerts', () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'add', user: adminUser, content: undefined, formSuccess: false }
+      props: { content: undefined, formSuccess: false, mode: 'add', user: adminUser },
+      target
     });
     // rendered element has whitespace from Alert.Root layout
     expect(target.textContent?.trim()).toBe('');
@@ -41,8 +41,8 @@ describe('FormAlerts', () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'edit', user: regularUser }
+      props: { mode: 'edit', user: regularUser },
+      target
     });
     expect(target.textContent).toContain('editNotice');
     unmount(instance);
@@ -52,8 +52,8 @@ describe('FormAlerts', () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'edit', user: adminUser }
+      props: { mode: 'edit', user: adminUser },
+      target
     });
     expect(target.textContent).not.toContain('editNotice');
     unmount(instance);
@@ -63,8 +63,8 @@ describe('FormAlerts', () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'add', user: adminUser, formSuccess: true }
+      props: { formSuccess: true, mode: 'add', user: adminUser },
+      target
     });
     expect(target.textContent).toContain('addSuccessNotice');
     unmount(instance);
@@ -74,8 +74,8 @@ describe('FormAlerts', () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'edit', user: adminUser, formSuccess: true }
+      props: { formSuccess: true, mode: 'edit', user: adminUser },
+      target
     });
     expect(target.textContent).toContain('editSuccessNotice');
     unmount(instance);
@@ -85,8 +85,8 @@ describe('FormAlerts', () => {
     const { default: FormAlerts } = await import('./form-alerts.svelte');
     const target = document.createElement('div');
     const instance = mount(FormAlerts, {
-      target,
-      props: { mode: 'add', user: adminUser, formHasErrors: true, formSuccess: false }
+      props: { formHasErrors: true, formSuccess: false, mode: 'add', user: adminUser },
+      target
     });
     expect(target.textContent).toContain('formErrors');
     unmount(instance);

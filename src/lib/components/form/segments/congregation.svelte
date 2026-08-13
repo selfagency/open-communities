@@ -101,11 +101,11 @@ function handleCityChange(newValue: string) {
 
 onMount(async () => {
   if (congregation) {
-    const location = (congregation as CongregationMetaRecord)?.location as LocationMeta;
+    const congLocation = (congregation as CongregationMetaRecord)?.location as LocationMeta;
 
-    city = location.city?.id as string;
-    province = location.state?.id as string;
-    country = location.country?.id as string;
+    city = congLocation.city?.id as string;
+    province = congLocation.state?.id as string;
+    country = congLocation.country?.id as string;
 
     try {
       await loadLocation({

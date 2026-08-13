@@ -82,17 +82,17 @@ const locations = $derived.by(() => {
   if (resultsValue.length && resultsValue.length > 0) {
     const allLocations = resultsValue
       .filter((l) => {
-        const location = l.location as LocationMeta;
-        return [location.city?.name, location.state?.name, location.country?.name].every((l) => !isEmpty(l));
+        const loc = l.location as LocationMeta;
+        return [loc.city?.name, loc.state?.name, loc.country?.name].every((v) => !isEmpty(v));
       })
       .map((l) => {
-        const location = l.location as LocationMeta;
+        const loc = l.location as LocationMeta;
         return {
-          city: location.city,
-          country: location.country,
-          latitude: location.city?.latitude || location.state?.latitude || location.country?.latitude,
-          longitude: location.city?.longitude || location.state?.longitude || location.country?.longitude,
-          state: location.state
+          city: loc.city,
+          country: loc.country,
+          latitude: loc.city?.latitude || loc.state?.latitude || loc.country?.latitude,
+          longitude: loc.city?.longitude || loc.state?.longitude || loc.country?.longitude,
+          state: loc.state
         };
       }) as LocationMeta[];
     return unique(allLocations, (l) => l.city?.id as string);

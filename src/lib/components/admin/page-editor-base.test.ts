@@ -7,8 +7,8 @@ describe('PageEditorBase', () => {
     const { default: Component } = await import('./page-editor-base.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { title: '', slug: '', description: '', content: '' }
+      props: { content: '', description: '', slug: '', title: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorTitleNew');
     expect(target.textContent).toContain('pageEditorTitleLabel');
@@ -20,8 +20,8 @@ describe('PageEditorBase', () => {
     const { default: Component } = await import('./page-editor-base.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { title: '', slug: '', description: '', content: '' }
+      props: { content: '', description: '', slug: '', title: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorDescriptionLabel');
     unmount(instance);
@@ -31,8 +31,8 @@ describe('PageEditorBase', () => {
     const { default: Component } = await import('./page-editor-base.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { title: '', slug: '', description: '', content: '' }
+      props: { content: '', description: '', slug: '', title: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorContentLabel');
     unmount(instance);
@@ -42,8 +42,8 @@ describe('PageEditorBase', () => {
     const { default: Component } = await import('./page-editor-base.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { title: '', slug: '', description: '', content: '' }
+      props: { content: '', description: '', slug: '', title: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorSlugManual');
     unmount(instance);

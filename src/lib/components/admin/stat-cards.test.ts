@@ -7,13 +7,13 @@ describe('StatCards', () => {
     const { default: StatCards } = await import('./stat-cards.svelte');
     const target = document.createElement('div');
     const instance = mount(StatCards, {
-      target,
       props: {
         congregations: 42,
-        users: 100,
+        geoLoaded: false,
         pendingApprovals: 5,
-        geoLoaded: false
-      }
+        users: 100
+      },
+      target
     });
     expect(target.textContent).toContain('42');
     expect(target.textContent).toContain('100');
@@ -25,28 +25,28 @@ describe('StatCards', () => {
     const { default: StatCards } = await import('./stat-cards.svelte');
     const target = document.createElement('div');
     const instance = mount(StatCards, {
-      target,
       props: {
         congregations: 10,
-        users: 20,
-        pendingApprovals: 0,
         geoLoaded: true,
-        totalCities: 50,
-        totalStates: 10,
-        totalCountries: 5,
+        pendingApprovals: 0,
         topCities: [
-          { name: 'New York', count: 15 },
-          { name: 'Los Angeles', count: 10 }
-        ],
-        topStates: [
-          { name: 'California', count: 12 },
-          { name: 'New York', count: 8 }
+          { count: 15, name: 'New York' },
+          { count: 10, name: 'Los Angeles' }
         ],
         topCountries: [
-          { name: 'United States', count: 25 },
-          { name: 'Canada', count: 5 }
-        ]
-      }
+          { count: 25, name: 'United States' },
+          { count: 5, name: 'Canada' }
+        ],
+        topStates: [
+          { count: 12, name: 'California' },
+          { count: 8, name: 'New York' }
+        ],
+        totalCities: 50,
+        totalCountries: 5,
+        totalStates: 10,
+        users: 20
+      },
+      target
     });
     expect(target.textContent).toContain('50');
     expect(target.textContent).toContain('10');
@@ -62,16 +62,16 @@ describe('StatCards', () => {
     const { default: StatCards } = await import('./stat-cards.svelte');
     const target = document.createElement('div');
     const instance = mount(StatCards, {
-      target,
       props: {
         congregations: 0,
-        users: 0,
-        pendingApprovals: 0,
         geoLoaded: true,
+        pendingApprovals: 0,
         totalCities: 0,
+        totalCountries: 0,
         totalStates: 0,
-        totalCountries: 0
-      }
+        users: 0
+      },
+      target
     });
     expect(target.textContent).toContain('adminTotalCities');
     expect(target.textContent).toContain('adminTotalStates');

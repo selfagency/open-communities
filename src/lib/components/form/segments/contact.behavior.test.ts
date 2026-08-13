@@ -13,16 +13,17 @@ describe('Contact segment (behavior)', () => {
 
     // mount the host which provides Accordion.Root and renders Contact
 
-    new (Host as any)({ props: { props }, target });
+    const instance = new (Host as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     const inputs = Array.from(target.querySelectorAll('input')) as HTMLInputElement[];
     expect(inputs.length).toBeGreaterThanOrEqual(2);
 
-    const nameInput = inputs[0];
+    const [nameInput] = inputs;
     nameInput.value = 'Alice';
     nameInput.dispatchEvent(new Event('input', { bubbles: true }));
 
-    const emailInput = inputs[1];
+    const [, emailInput] = inputs;
     emailInput.value = 'alice@example.org';
     emailInput.dispatchEvent(new Event('input', { bubbles: true }));
     emailInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -31,7 +32,9 @@ describe('Contact segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 

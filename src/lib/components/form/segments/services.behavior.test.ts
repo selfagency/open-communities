@@ -28,7 +28,8 @@ describe.skip('Services segment (behavior)', () => {
 
     // mount the host which provides Accordion.Root and renders Services
 
-    new (ServicesHost as any)({ props: { props }, target });
+    const instance = new (ServicesHost as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     // find checkbox-like elements (bits-ui may render non-input checkboxes)
     const checkboxes = target.querySelectorAll('input[type="checkbox"], [role="checkbox"]');
@@ -44,7 +45,9 @@ describe.skip('Services segment (behavior)', () => {
     // read formData store once
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v: unknown) => (latest = v)
+      (v: unknown) => {
+        latest = v;
+      }
     );
     unsub();
 

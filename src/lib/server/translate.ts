@@ -13,22 +13,22 @@ export async function translateLocale(
   ltKey?: string
 ): Promise<TranslateResult> {
   const res = await fetch(`${apiUrl}/translate`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      format: 'text',
       q: text,
       source: 'en',
       target: locale,
-      format: 'text',
       ...(ltKey ? { api_key: ltKey } : {})
-    })
+    }),
+    headers: { 'Content-Type': 'application/json' },
+    method: 'POST'
   });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     const errMsg =
-      ((body as Record<string, unknown>)?.error as string) ?? `Translation failed for ${locale}: ${res.status}`;
-    log.error('LibreTranslate request failed', { locale, status: res.status, error: errMsg });
+      ((body as Record<string, unknown>).error as string) || `Translation failed for ${locale}: ${res.status}`;
+    log.error('LibreTranslate request failed', { error: errMsg, locale, status: res.status });
     throw new Error(errMsg);
   }
 
@@ -53,5 +53,5 @@ export function processTranslationResults(rawResults: PromiseSettledResult<Trans
     }
   }
 
-  return { translations, errors };
+  return { errors, translations };
 }

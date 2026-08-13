@@ -46,10 +46,6 @@ const initFilters = {
     online_liveCaptions: false,
     other: false
   },
-  status: {
-    unapproved: false,
-    unclaimed: false
-  },
   denomination: {
     conservative: false,
     humanist: false,
@@ -80,9 +76,9 @@ const initFilters = {
     congregantsArmed: false,
     localPolice: false,
     noFirearms: false,
+    other: false,
     privateSecurityArmed: false,
-    privateSecurityUnarmed: false,
-    other: false
+    privateSecurityUnarmed: false
   },
   services: {
     hybrid: false,
@@ -90,12 +86,15 @@ const initFilters = {
     offsite: false,
     onlineOnly: false,
     other: false
+  },
+  status: {
+    unapproved: false,
+    unclaimed: false
   }
 };
 
 const icons: Record<string, any> = {
   accessibility: AccessibilityIcon,
-  status: CircleCheckIcon,
   circle: CircleIcon,
   circleCheck: CircleCheckIcon,
   circleMinus: CircleMinusIcon,
@@ -106,7 +105,8 @@ const icons: Record<string, any> = {
   open: OpenIcon,
   registration: RegistrationIcon,
   security: SecurityIcon,
-  services: SiddurIcon
+  services: SiddurIcon,
+  status: CircleCheckIcon
 };
 
 const user = $derived(page.data.user);

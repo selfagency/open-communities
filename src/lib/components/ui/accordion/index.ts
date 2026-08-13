@@ -18,7 +18,7 @@ export {
 // Backwards-compatible default export for CommonJS consumers
 export default {
   Accordion: Root,
-  AccordionItem: Item,
   AccordionContent: Content,
+  AccordionItem: Item,
   AccordionTrigger: Trigger
 };
