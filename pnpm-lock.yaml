@@ -241,8 +241,8 @@ importers:
         specifier: ^10.0.4
         version: 10.0.4
       cookie:
-        specifier: 2.0.1
-        version: 2.0.1
+        specifier: 1.1.1
+        version: 1.1.1
       fallow:
         specifier: ^3.15.0
         version: 3.15.0
@@ -2353,10 +2353,6 @@ packages:
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
-
-  cookie@2.0.1:
-    resolution: {integrity: sha512-yuToqVvRrj6pfDXREyQAAv8SkAEk/8GS3jQRTiUMm66TVtBYmqQeoEjL2Lmq8Rpo6271vH76InTChTitEAm65w==}
-    engines: {node: '>=22'}
 
   core-js@3.50.0:
     resolution: {integrity: sha512-BRWgOLKkFeCgRudR6zrs8p9XJZcE14grzKMMssoYrk6krtuEZ7MTKPIY5RzOnqsEKIR9kst7wNzphttraT+Yqw==}
@@ -6065,7 +6061,7 @@ snapshots:
 
   '@types/cookie@1.0.0':
     dependencies:
-      cookie: 2.0.1
+      cookie: 1.1.1
 
   '@types/d3-array@3.2.2': {}
 
@@ -6718,8 +6714,6 @@ snapshots:
   cookie@0.7.2: {}
 
   cookie@1.1.1: {}
-
-  cookie@2.0.1: {}
 
   core-js@3.50.0: {}
 
