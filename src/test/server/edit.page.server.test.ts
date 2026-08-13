@@ -103,9 +103,9 @@ describe('edit +page.server — delete action', () => {
     // The delete action expects a form with a valid id
     const form = await locals.api.collection('congregationMeta').getOne('c1', {});
     const request = new Request('http://localhost/?/delete', {
-      method: 'POST',
+      body: new URLSearchParams({ id: 'c1' }),
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ id: 'c1' })
+      method: 'POST'
     });
     const mockEvent = createMockServerLoadEvent({
       locals,
@@ -137,9 +137,9 @@ describe('edit +page.server — submit action', () => {
       })
     } as any;
     const request = new Request('http://localhost/?/submit', {
-      method: 'POST',
+      body: JSON.stringify({ id: 'cong_002', name: 'Test' }),
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: 'cong_002', name: 'Test' })
+      method: 'POST'
     });
     const mockEvent = createMockServerLoadEvent({
       locals,

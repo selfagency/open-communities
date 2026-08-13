@@ -11,6 +11,12 @@ vi.mock('sveltekit-superforms', () => ({
   superValidate: mockSuperValidate
 }));
 
+// Routes import superValidate from the server subpath; mock it too.
+vi.mock('sveltekit-superforms/server', () => ({
+  ...mockSveltekitSuperforms,
+  superValidate: mockSuperValidate
+}));
+
 const PB = 'http://*:8090';
 
 const server = setupServer();
@@ -28,21 +34,21 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
 
   // Inject admin auth into the client's auth store using save()
   api.authStore.save('mock-token', {
-    id: 'admin123',
-    email: 'admin@test.test',
     admin: true,
-    verified: true,
     collectionId: 'test',
-    collectionName: 'users'
+    collectionName: 'users',
+    email: 'admin@test.test',
+    id: 'admin123',
+    verified: true
   });
 
   const cookieOpts = { httpOnly: true, path: '/', sameSite: 'strict' as const, secure: false };
 
   return createMockRequestEvent({
     // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mocks
-    cookies: { get: () => '', set: () => {}, serialize: () => '' },
+    cookies: { get: () => '', serialize: () => '', set: () => {} },
     // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mocks
-    locals: { api, cookieOpts, capture: () => {}, captureException: () => {} },
+    locals: { api, capture: () => {}, captureException: () => {}, cookieOpts },
     ...overrides
   });
 }
@@ -59,15 +65,15 @@ describe('P-1: admin user edit preserves admin/verified', () => {
 
     // Mock superValidate to return valid with only name/email
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
-      data: { name: 'Updated Name', email: 'updated@test.com' },
-      errors: {}
+      data: { email: 'updated@test.com', name: 'Updated Name' },
+      errors: {},
+      valid: true
     } as never);
 
     // Mock PB update to capture request body
     server.use(
-      http.patch(`${PB}/api/collections/users/records/:id`, async ({ request }) => {
-        const body = (await request.json()) as Record<string, unknown>;
+      http.patch(`${PB}/api/collections/users/records/:id`, async ({ request: req }) => {
+        const body = (await req.json()) as Record<string, unknown>;
         capturedBodies.push(body);
         return HttpResponse.json({ ...body, id: 'user123' });
       })
@@ -79,8 +85,8 @@ describe('P-1: admin user edit preserves admin/verified', () => {
     // Intentionally NOT setting 'verified' or 'admin'
 
     const request = new Request('http://localhost/admin/users/user123?/update', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const event = await createAdminEvent({ params: { id: 'user123' }, request });
@@ -101,14 +107,14 @@ describe('P-1: admin user edit preserves admin/verified', () => {
 
     // Mock superValidate to return valid with all fields
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
-      data: { name: 'Updated Name', email: 'updated@test.com', verified: true, admin: true },
-      errors: {}
+      data: { admin: true, email: 'updated@test.com', name: 'Updated Name', verified: true },
+      errors: {},
+      valid: true
     } as never);
 
     server.use(
-      http.patch(`${PB}/api/collections/users/records/:id`, async ({ request }) => {
-        const body = (await request.json()) as Record<string, unknown>;
+      http.patch(`${PB}/api/collections/users/records/:id`, async ({ request: req }) => {
+        const body = (await req.json()) as Record<string, unknown>;
         capturedBodies.push(body);
         return HttpResponse.json({ ...body, id: 'user123' });
       })
@@ -121,8 +127,8 @@ describe('P-1: admin user edit preserves admin/verified', () => {
     formData.set('admin', 'true');
 
     const request = new Request('http://localhost/admin/users/user123?/update', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const event = await createAdminEvent({ params: { id: 'user123' }, request });
@@ -144,18 +150,18 @@ describe('S-9: last admin demotion guard', () => {
 
     // Mock superValidate to return valid with admin=false
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
-      data: { name: 'Target User', email: 'target@test.com', admin: false },
-      errors: {}
+      data: { admin: false, email: 'target@test.com', name: 'Target User' },
+      errors: {},
+      valid: true
     } as never);
 
     // Mock admin count query to return only 1 admin
     server.use(
-      http.get(`${PB}/api/collections/users/records`, ({ request }) => {
-        const url = new URL(request.url);
+      http.get(`${PB}/api/collections/users/records`, ({ request: req }) => {
+        const url = new URL(req.url);
         if (url.searchParams.get('filter')?.includes('admin')) {
           return HttpResponse.json({
-            items: [{ id: 'admin123', email: 'admin@test.test', admin: true }],
+            items: [{ admin: true, email: 'admin@test.test', id: 'admin123' }],
             page: 1,
             perPage: 1,
             totalItems: 1,
@@ -165,8 +171,8 @@ describe('S-9: last admin demotion guard', () => {
         return HttpResponse.json({ items: [], page: 1, perPage: 50, totalItems: 0, totalPages: 1 });
       }),
       // Allow any PATCH to succeed (won't be reached if guard fires)
-      http.patch(`${PB}/api/collections/users/records/:id`, async ({ request }) => {
-        const body = (await request.json()) as Record<string, unknown>;
+      http.patch(`${PB}/api/collections/users/records/:id`, async ({ request: req }) => {
+        const body = (await req.json()) as Record<string, unknown>;
         return HttpResponse.json({ ...body, id: 'user123' });
       })
     );
@@ -177,8 +183,8 @@ describe('S-9: last admin demotion guard', () => {
     formData.set('admin', 'false');
 
     const request = new Request('http://localhost/admin/users/user123?/update', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const event = await createAdminEvent({ params: { id: 'user123' }, request });
@@ -205,16 +211,16 @@ describe('P-4: translations parallel save', () => {
 
     // Mock superValidate to return valid
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
       data: {
-        key: 'test.key',
         entries: JSON.stringify([
           { locale: 'en', value: 'Hello' },
-          { locale: 'es', value: 'Hola', id: 'existing-1' },
+          { id: 'existing-1', locale: 'es', value: 'Hola' },
           { locale: 'fr', value: 'Bonjour' }
-        ])
+        ]),
+        key: 'test.key'
       },
-      errors: {}
+      errors: {},
+      valid: true
     } as never);
 
     server.use(
@@ -234,14 +240,14 @@ describe('P-4: translations parallel save', () => {
       'entries',
       JSON.stringify([
         { locale: 'en', value: 'Hello' },
-        { locale: 'es', value: 'Hola', id: 'existing-1' },
+        { id: 'existing-1', locale: 'es', value: 'Hola' },
         { locale: 'fr', value: 'Bonjour' }
       ])
     );
 
     const request = new Request('http://localhost/admin/translations?/save', {
-      method: 'POST',
-      body: formData
+      body: formData,
+      method: 'POST'
     });
 
     const event = await createAdminEvent({ request });

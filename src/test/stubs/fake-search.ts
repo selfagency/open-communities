@@ -28,10 +28,10 @@ function createFakeStore(): {
   toggleLocation: () => void;
 } {
   let _state: SearchState = {
-    showLocation: false,
-    searchTerms: '',
+    filters: {},
     searchLocation: {},
-    filters: {}
+    searchTerms: '',
+    showLocation: false
   };
   const subs = new Set<FakeStoreSubscriber>();
   function _notify() {
@@ -40,19 +40,26 @@ function createFakeStore(): {
     }
   }
   return {
-    get showLocation() {
-      return _state.showLocation ?? false;
+    get filters() {
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: SearchState.filters is optional, so the fallback is required
+      return _state.filters ?? {};
     },
-    set showLocation(v: boolean) {
-      _state = { ..._state, showLocation: v };
+    set filters(v: Record<string, Record<string, boolean>>) {
+      _state = { ..._state, filters: v };
       _notify();
     },
-    get searchTerms() {
-      return _state.searchTerms ?? '';
-    },
-    set searchTerms(v: string) {
-      _state = { ..._state, searchTerms: v };
+    resetAll() {
+      _state = { filters: {}, searchLocation: {}, searchTerms: '', showLocation: false };
       _notify();
+    },
+    resetFilters() {
+      this.filters = {};
+    },
+    resetLocation() {
+      this.searchLocation = {};
+    },
+    resetSearchTerms() {
+      this.searchTerms = '';
     },
     get searchLocation() {
       return _state.searchLocation ?? {};
@@ -61,39 +68,35 @@ function createFakeStore(): {
       _state = { ..._state, searchLocation: v };
       _notify();
     },
-    get filters() {
-      return _state.filters ?? {};
+    get searchTerms() {
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: SearchState.searchTerms is optional, so the fallback is required
+      return _state.searchTerms ?? '';
     },
-    set filters(v: Record<string, Record<string, boolean>>) {
-      _state = { ..._state, filters: v };
+    set searchTerms(v: string) {
+      _state = { ..._state, searchTerms: v };
+      _notify();
+    },
+    setFilters(f: Record<string, Record<string, boolean>>) {
+      this.filters = f;
+    },
+    setSearchLocation(l: Partial<LocationMeta>) {
+      this.searchLocation = l;
+    },
+    setSearchTerms(t: string) {
+      this.searchTerms = t;
+    },
+    get showLocation() {
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: SearchState.showLocation is optional, so the fallback is required
+      return _state.showLocation ?? false;
+    },
+    set showLocation(v: boolean) {
+      _state = { ..._state, showLocation: v };
       _notify();
     },
     subscribe(fn: FakeStoreSubscriber) {
       fn(_state as SearchState);
       subs.add(fn);
       return () => subs.delete(fn);
-    },
-    setSearchTerms(t: string) {
-      this.searchTerms = t;
-    },
-    setSearchLocation(l: Partial<LocationMeta>) {
-      this.searchLocation = l;
-    },
-    setFilters(f: Record<string, Record<string, boolean>>) {
-      this.filters = f;
-    },
-    resetSearchTerms() {
-      this.searchTerms = '';
-    },
-    resetLocation() {
-      this.searchLocation = {};
-    },
-    resetFilters() {
-      this.filters = {};
-    },
-    resetAll() {
-      _state = { showLocation: false, searchTerms: '', searchLocation: {}, filters: {} };
-      _notify();
     },
     toggleLocation() {
       this.showLocation = !this.showLocation;

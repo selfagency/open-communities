@@ -9,9 +9,9 @@ type Props = HTMLAttributes<HTMLTextAreaElement>;
 let { onpaste, ondragover, ondrop, child, ...rest }: WithChild & Props = $props();
 
 const fileDropZoneTextareaState = useFileDropZoneTextarea({
-  onpaste: box.with(() => onpaste),
   ondragover: box.with(() => ondragover),
-  ondrop: box.with(() => ondrop)
+  ondrop: box.with(() => ondrop),
+  onpaste: box.with(() => onpaste)
 });
 
 const mergedProps = $derived(mergeProps(fileDropZoneTextareaState.props, rest));

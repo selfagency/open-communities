@@ -75,11 +75,11 @@ function readIncomingBody(incoming: Request): Promise<BodyInit | undefined> | un
 
 function buildProxyResponse(response: Response, body: string): Response {
   return new Response(body, {
-    status: response.status,
     headers: {
       'content-type': response.headers.get('content-type') || 'application/octet-stream',
       'set-cookie': ''
-    }
+    },
+    status: response.status
   });
 }
 
@@ -92,9 +92,9 @@ async function proxyRequest(path: string, incoming: Request): Promise<Response> 
 
   try {
     const response = await fetch(targetUrl, {
-      method: incoming.method,
-      headers: buildProxyHeaders(incoming),
       body,
+      headers: buildProxyHeaders(incoming),
+      method: incoming.method,
       signal: AbortSignal.timeout(10_000)
     });
 

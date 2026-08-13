@@ -16,8 +16,8 @@ interface StoreReader<T> {
   subscribe: (run: (v: T) => void) => () => void;
 }
 type LocationStore = StoreReader<LocationState> & {
-  get(): LocationState;
-  set(v: LocationState): void;
+  get: () => LocationState;
+  set: (v: LocationState) => void;
 };
 
 function writable<T>(initial: T): {
@@ -29,11 +29,6 @@ function writable<T>(initial: T): {
   const subs = new Set<(v: T) => void>();
 
   return {
-    subscribe(run: (v: T) => void) {
-      run(value);
-      subs.add(run);
-      return () => subs.delete(run);
-    },
     get() {
       return value;
     },
@@ -42,6 +37,11 @@ function writable<T>(initial: T): {
       for (const fn of subs) {
         fn(value);
       }
+    },
+    subscribe(run: (v: T) => void) {
+      run(value);
+      subs.add(run);
+      return () => subs.delete(run);
     }
   };
 }

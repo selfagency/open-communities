@@ -65,27 +65,26 @@ function onPageChange(p: number) {
 const columns: ColumnDef<User>[] = [
   {
     accessorKey: 'name',
-    header: m.name(),
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
           render: () => `<span class="font-medium">${escapeHtml(get().v || '—')}</span>`
         })),
         { v: row.original.name }
-      )
+      ),
+    header: m.name()
   },
   {
     accessorKey: 'email',
-    header: m.email(),
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span>${escapeHtml(get().v)}</span>` })),
         { v: row.original.email }
-      )
+      ),
+    header: m.email()
   },
   {
     accessorKey: 'verified',
-    header: m.status(),
     cell: ({ row }) =>
       row.original.verified
         ? renderSnippet(
@@ -99,11 +98,11 @@ const columns: ColumnDef<User>[] = [
               render: () =>
                 `<div class="inline-flex items-center rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">${m.unverified()}</div>`
             }))
-          )
+          ),
+    header: m.status()
   },
   {
     accessorKey: 'admin',
-    header: m.role(),
     cell: ({ row }) =>
       row.original.admin
         ? renderSnippet(
@@ -117,11 +116,10 @@ const columns: ColumnDef<User>[] = [
               render: () =>
                 `<div class="inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">${m.user()}</div>`
             }))
-          )
+          ),
+    header: m.role()
   },
   {
-    id: 'congregation',
-    header: m.congregation(),
     cell: ({ row }) =>
       row.original.congregation
         ? renderSnippet(
@@ -129,22 +127,24 @@ const columns: ColumnDef<User>[] = [
               render: () =>
                 `<a href="/edit?id=${encodeURIComponent(get().i)}" class="text-sm underline-offset-4 hover:underline">${escapeHtml(get().n)}</a>`
             })),
-            { n: row.original.congregationName, i: row.original.congregation }
+            { i: row.original.congregation, n: row.original.congregationName }
           )
         : renderSnippet(
             createRawSnippet(() => ({ render: () => '<span class="text-muted-foreground text-xs">—</span>' }))
-          )
+          ),
+    header: m.congregation(),
+    id: 'congregation'
   }
 ];
 
 const table = $derived(
   createSvelteTable({
+    columns,
     get data() {
       return data.users;
     },
-    columns,
-    getRowId: (r) => r.id,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (r) => r.id
   })
 );
 </script>

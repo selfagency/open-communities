@@ -24,23 +24,23 @@ onMount(() => {
   }
 
   editor = SunEditor.create(textareaEl, {
-    plugins,
     buttonList: [
       ['undo', 'redo'],
       ['bold', 'italic', 'underline', 'strike'],
       ['list', 'link', 'image', 'table', 'codeView'],
       ['removeFormat']
     ],
-    height: 'auto',
-    minHeight: '300px',
-    placeholder: 'Page content...',
-    textDirection: dir === 'rtl' ? 'rtl' : 'ltr',
-    freeCodeViewMode: true,
     events: {
       onChange: (params: { data: string }) => {
         value = params.data;
       }
-    } as any
+    } as any,
+    freeCodeViewMode: true,
+    height: 'auto',
+    minHeight: '300px',
+    placeholder: 'Page content...',
+    plugins,
+    textDirection: dir === 'rtl' ? 'rtl' : 'ltr'
   });
 });
 

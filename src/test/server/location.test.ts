@@ -10,7 +10,7 @@ describe('Location class', () => {
   it('constructs with countries', async () => {
     const { Location } = await import('../../lib/location');
     const loc = new Location({
-      countries: [{ id: 'us', code: 'US', name: 'United States', flag: '\u{1F1FA}\u{1F1F8}' }]
+      countries: [{ code: 'US', flag: '\u{1F1FA}\u{1F1F8}', id: 'us', name: 'United States' }]
     } as any);
     expect(loc).toBeDefined();
     const state = loc.state.get();

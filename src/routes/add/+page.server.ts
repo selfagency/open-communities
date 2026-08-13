@@ -3,7 +3,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import { isEmpty, isFunction, omit } from 'radashi';
-import { setError } from 'sveltekit-superforms';
+import { setError } from 'sveltekit-superforms/server';
 import { m } from '$lib/paraglide/messages';
 import type { CongregationsResponse, PagesRecord } from '$lib/pocketbase.d';
 import { defaultSchema } from '$lib/schemas/record';
@@ -78,11 +78,14 @@ function createChildRecords(
  * Non-admin users get a confirmation email; admins skip the transactional step.
  */
 async function sendSubmissionNotifications(
-  client: Record<string, unknown>,
+  client: Record<string, unknown> | null | undefined,
   record: { id: string; name: string },
   api: import('$lib/pocketbase.d').TypedPocketBase
 ): Promise<void> {
-  if (!client?.admin) {
+  if (!client) {
+    return;
+  }
+  if (client && !client.admin) {
     try {
       await api.collection('users').update(client.id as string, { congregation: record.id });
     } catch {
@@ -105,7 +108,7 @@ async function sendSubmissionNotifications(
     {
       email: client.email as string,
       message: `A new congregation, ${record.name}, has been submitted and requires approval:\nhttps://opencommunities.info/edit?id=${record.id}`,
-      name: (client.name as string) ?? '',
+      name: (client.name as string) || '',
       subject: 'New congregation submitted'
     },
     api
@@ -119,11 +122,14 @@ async function sendSubmissionNotifications(
 function handleSubmitError(
   error: unknown,
   form: { data: Record<string, unknown> },
-  captureException: ((error: unknown, user?: string) => Promise<void>) | undefined,
-  clientId: string | undefined
+  captureException:
+    | ((error: unknown, user?: string, other?: Record<string, number | string>) => Promise<void>)
+    | undefined,
+  clientId: string | undefined,
+  url?: string
 ): ReturnType<typeof fail> {
   if (isFunction(captureException)) {
-    captureException(error, clientId);
+    captureException(error, clientId, url ? { url } : undefined);
   }
   log.error('add:submit:error', error);
 
@@ -191,7 +197,7 @@ export const actions = {
 
       return { form };
     } catch (error) {
-      return handleSubmitError(error, form, captureException, client?.id);
+      return handleSubmitError(error, form, captureException, client?.id, event.url.toString());
     }
   }
 };

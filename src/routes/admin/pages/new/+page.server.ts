@@ -1,6 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import { pageSchema, pbErrorToFail, variantSchema } from '../_shared';
@@ -41,7 +41,7 @@ export const actions = {
       if (imageFile?.size && imageFile.size > 0) {
         body.image = imageFile;
       } else if (typeof imageRaw === 'string' && imageRaw.startsWith('data:image/')) {
-        const base64 = imageRaw.split(',')[1];
+        const [, base64] = imageRaw.split(',');
         const buffer = Buffer.from(base64, 'base64');
         body.image = new File([buffer], 'upload.png', { type: 'image/png' });
       }
@@ -59,15 +59,16 @@ export const actions = {
       }> = variantsJson ? z.array(variantSchema).parse(JSON.parse(variantsJson)) : [];
 
       for (const v of variants) {
+        // biome-ignore lint/performance/noAwaitInLoops: sequential variant writes are intentional
         await withRetry(() =>
           client.collection('pageVariants').create({
-            page: page.id,
-            language: v.language,
-            title: v.title || '',
-            description: v.description || '',
             content: v.content || '',
+            description: v.description || '',
             imageAlt: v.imageAlt || '',
-            imageCaption: v.imageCaption || ''
+            imageCaption: v.imageCaption || '',
+            language: v.language,
+            page: page.id,
+            title: v.title || ''
           })
         );
       }

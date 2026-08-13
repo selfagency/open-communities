@@ -26,7 +26,8 @@ describe('Fit segment (behavior)', () => {
 
     // mount the host; ServicesHost was chosen to provide Accordion.Root in this test env
 
-    new (Host as any)({ props: { props }, target });
+    const instance = new (Host as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     // wait a microtask for Svelte to render
     await Promise.resolve();
@@ -39,11 +40,13 @@ describe('Fit segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 
-    const fit = (latest as unknown as unknown as Record<string, unknown>)?.fit as unknown as
+    const fit = (latest as unknown as unknown as Record<string, unknown>).fit as unknown as
       | Record<string, unknown>
       | undefined;
     expect(

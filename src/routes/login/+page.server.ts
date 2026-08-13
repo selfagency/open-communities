@@ -70,7 +70,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
 
       return fail(err.status ?? 400, {
@@ -124,19 +124,19 @@ export const actions = {
       const err = error as ClientResponseError;
       // CI debug: log the exact failure to Docker container stdout
       log.error('login action failed', {
-        status: err.status,
         message: err.message,
+        status: err.status,
         url: env.PUBLIC_API_ENDPOINT
       });
       if (isFunction(capture)) {
         await capture(client?.id, 'login_failure', {
-          error_status: err.status,
           error_message: (err.message ?? '').slice(0, 120),
+          error_status: err.status,
           error_url: event.url.pathname
         });
       }
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
 
       return fail(err.status ?? 401, { form });
@@ -187,7 +187,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error);
+        await captureException(error, undefined, { url: event.url.toString() });
       }
 
       return fail(err.status || 400, {

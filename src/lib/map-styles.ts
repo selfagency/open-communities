@@ -19,150 +19,150 @@ const source = {
 
 const LIGHT = {
   background: '#f0f0f0',
-  water: '#d9d9d9',
-  land: '#eeebe4',
   boundary: '#d0d0d0',
+  land: '#eeebe4',
   text: '#666666',
+  textDim: '#8c8070',
   textHalo: '#f0f0f0',
-  textDim: '#8c8070'
+  water: '#d9d9d9'
 };
 
 const DARK = {
   background: '#1a1a1a',
-  water: '#2a2a2a',
-  land: '#343230',
   boundary: '#353535',
+  land: '#343230',
   text: '#808080',
+  textDim: '#8c8070',
   textHalo: '#1a1a1a',
-  textDim: '#8c8070'
+  water: '#2a2a2a'
 };
 
 function buildStyle(colors: typeof LIGHT, sprite: string): StyleSpecification {
   return {
-    version: 8,
-    name: 'Open Communities',
-    sources: { carto: source },
     glyphs: GLYPHS_URL,
-    sprite,
     layers: [
-      { id: 'background', type: 'background', paint: { 'background-color': colors.background } },
+      { id: 'background', paint: { 'background-color': colors.background }, type: 'background' },
 
       // Water
       {
+        filter: ['all', ['==', '$type', 'Polygon']],
         id: 'water',
-        type: 'fill',
+        paint: { 'fill-color': colors.water },
         source: 'carto',
         'source-layer': 'water',
-        filter: ['all', ['==', '$type', 'Polygon']],
-        paint: { 'fill-color': colors.water }
+        type: 'fill'
       },
 
       // Parks and landuse
       {
+        filter: ['any', ['==', 'class', 'wood'], ['==', 'class', 'grass'], ['==', 'subclass', 'recreation_ground']],
         id: 'landcover',
-        type: 'fill',
+        paint: { 'fill-color': colors.land, 'fill-opacity': 0.5 },
         source: 'carto',
         'source-layer': 'landcover',
-        filter: ['any', ['==', 'class', 'wood'], ['==', 'class', 'grass'], ['==', 'subclass', 'recreation_ground']],
-        paint: { 'fill-color': colors.land, 'fill-opacity': 0.5 }
+        type: 'fill'
       },
       {
+        filter: ['any', ['==', 'class', 'cemetery'], ['==', 'class', 'stadium']],
         id: 'landuse',
-        type: 'fill',
+        paint: { 'fill-color': colors.land, 'fill-opacity': 0.5 },
         source: 'carto',
         'source-layer': 'landuse',
-        filter: ['any', ['==', 'class', 'cemetery'], ['==', 'class', 'stadium']],
-        paint: { 'fill-color': colors.land, 'fill-opacity': 0.5 }
+        type: 'fill'
       },
 
       // State boundaries
       {
+        filter: ['all', ['==', 'admin_level', 4], ['==', 'maritime', 0]],
         id: 'boundary-state',
-        type: 'line',
+        minzoom: 4,
+        paint: { 'line-color': colors.boundary, 'line-dasharray': [2, 2], 'line-opacity': 0.5, 'line-width': 1 },
         source: 'carto',
         'source-layer': 'boundary',
-        minzoom: 4,
-        filter: ['all', ['==', 'admin_level', 4], ['==', 'maritime', 0]],
-        paint: { 'line-color': colors.boundary, 'line-width': 1, 'line-dasharray': [2, 2], 'line-opacity': 0.5 }
+        type: 'line'
       },
 
       // Place labels
       {
-        id: 'place-country',
-        type: 'symbol',
-        source: 'carto',
-        'source-layer': 'place',
         filter: ['==', 'class', 'country'],
+        id: 'place-country',
         layout: {
           'text-field': '{name}',
           'text-font': ['Noto Sans Regular'],
-          'text-size': 12,
+          'text-letter-spacing': 0.05,
           'text-max-width': 10,
-          'text-transform': 'uppercase',
-          'text-letter-spacing': 0.05
+          'text-size': 12,
+          'text-transform': 'uppercase'
         },
         minzoom: 4,
         paint: {
           'text-color': colors.textDim,
           'text-halo-color': colors.textHalo,
           'text-halo-width': 1.5
-        }
-      },
-      {
-        id: 'place-state',
-        type: 'symbol',
+        },
         source: 'carto',
         'source-layer': 'place',
+        type: 'symbol'
+      },
+      {
         filter: ['==', 'class', 'state'],
+        id: 'place-state',
         layout: {
           'text-field': '{name}',
           'text-font': ['Noto Sans Regular'],
-          'text-size': 10,
-          'text-max-width': 8
+          'text-max-width': 8,
+          'text-size': 10
         },
         paint: {
           'text-color': colors.textDim,
           'text-halo-color': colors.textHalo,
           'text-halo-width': 1
-        }
-      },
-      {
-        id: 'place-city',
-        type: 'symbol',
+        },
         source: 'carto',
         'source-layer': 'place',
+        type: 'symbol'
+      },
+      {
         filter: ['==', 'class', 'city'],
+        id: 'place-city',
         layout: {
           'text-field': '{name}',
           'text-font': ['Noto Sans Regular'],
-          'text-size': 11,
-          'text-max-width': 10
+          'text-max-width': 10,
+          'text-size': 11
         },
         paint: {
           'text-color': colors.text,
           'text-halo-color': colors.textHalo,
           'text-halo-width': 1
-        }
-      },
-      {
-        id: 'place-town',
-        type: 'symbol',
+        },
         source: 'carto',
         'source-layer': 'place',
+        type: 'symbol'
+      },
+      {
         filter: ['==', 'class', 'town'],
+        id: 'place-town',
         layout: {
           'text-field': '{name}',
           'text-font': ['Noto Sans Regular'],
-          'text-size': 9,
-          'text-max-width': 8
+          'text-max-width': 8,
+          'text-size': 9
         },
         paint: {
           'text-color': colors.text,
           'text-halo-color': colors.textHalo,
           'text-halo-width': 1
-        }
+        },
+        source: 'carto',
+        'source-layer': 'place',
+        type: 'symbol'
       }
-    ]
+    ],
+    name: 'Open Communities',
+    sources: { carto: source },
+    sprite,
+    version: 8
   };
 }
 

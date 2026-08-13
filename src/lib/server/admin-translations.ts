@@ -17,10 +17,10 @@ export function getLibreTranslateConfig() {
   const ltUrl = env.LT_API_URL;
   const ltKey = env.LT_API_KEY;
   if (!ltUrl) {
-    return { apiUrl: '', ltKey: '', error: 'LT_API_URL missing' } as const;
+    return { apiUrl: '', error: 'LT_API_URL missing', ltKey: '' } as const;
   }
   const apiUrl = ltUrl.endsWith('/') ? ltUrl.slice(0, -1) : ltUrl;
-  return { apiUrl, ltKey, error: null } as const;
+  return { apiUrl, error: null, ltKey } as const;
 }
 
 export function validateTranslateInput(text: string, localesStr: string): string[] | null {
@@ -48,12 +48,14 @@ async function pollNewRunId(
 ): Promise<number | null> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
+    // biome-ignore lint/performance/noAwaitInLoops: polling loop must be sequential — each iteration waits for the previous
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/runs?branch=main&event=workflow_dispatch&per_page=1`,
-      { headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github.v3+json' } }
+      { headers: { accept: 'application/vnd.github.v3+json', authorization: `Bearer ${token}` } }
     );
     if (res.ok) {
       const data = (await res.json()) as { workflow_runs: Array<{ id: number }> };
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: workflow_runs may be absent in the API response
       const latest = data.workflow_runs?.[0];
       if (latest && latest.id > prevRunId) {
         return latest.id;
@@ -67,19 +69,20 @@ async function pollNewRunId(
 export async function triggerDeploy(ghToken: string, owner: string, repo: string) {
   const prevRunsRes = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/runs?branch=main&event=workflow_dispatch&per_page=1`,
-    { headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' } }
+    { headers: { accept: 'application/vnd.github.v3+json', authorization: `Bearer ${ghToken}` } }
   );
 
   const prevRunId = prevRunsRes.ok
-    ? (((await prevRunsRes.json()) as { workflow_runs: Array<{ id: number }> }).workflow_runs?.[0]?.id ?? 0)
+    ? // biome-ignore lint/suspicious/noUnnecessaryConditions: workflow_runs may be absent in the API response
+      (((await prevRunsRes.json()) as { workflow_runs: Array<{ id: number }> }).workflow_runs?.[0]?.id ?? 0)
     : 0;
 
   const dispatchRes = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/actions/workflows/deploy.yml/dispatches`,
     {
-      method: 'POST',
-      headers: { authorization: `Bearer ${ghToken}`, accept: 'application/vnd.github.v3+json' },
-      body: JSON.stringify({ ref: 'main' })
+      body: JSON.stringify({ ref: 'main' }),
+      headers: { accept: 'application/vnd.github.v3+json', authorization: `Bearer ${ghToken}` },
+      method: 'POST'
     }
   );
 
@@ -89,7 +92,7 @@ export async function triggerDeploy(ghToken: string, owner: string, repo: string
 
   const runId = await pollNewRunId(owner, repo, ghToken, prevRunId, 10_000);
   if (!runId) {
-    return { triggered: true, message: 'Deploy triggered, but could not determine run ID' };
+    return { message: 'Deploy triggered, but could not determine run ID', triggered: true };
   }
 
   return { deploymentUuid: String(runId) };

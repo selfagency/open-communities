@@ -11,7 +11,7 @@ export const captchaHandlers = [
   http.post(`${CAPTCHA}/api/site/verify`, async ({ request }) => {
     const body = (await request.json()) as { token?: string } | null;
     if (!body?.token) {
-      return HttpResponse.json({ success: false, error: 'Missing token' }, { status: 400 });
+      return HttpResponse.json({ error: 'Missing token', success: false }, { status: 400 });
     }
     return HttpResponse.json({ success: true });
   })

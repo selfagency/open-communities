@@ -39,17 +39,17 @@ function mapCong(c: CongView, users: Map<string, { email: string; id: string; na
   const loc = parseLocation(c.location);
   const { owner, ownerId, ownerName } = getOwnerData(c, users);
   return {
+    city: loc.city?.name ?? '',
+    countryCode: loc.country?.code ?? '',
+    created: c.created,
+    denomination: c.denomination,
     id: c.id,
     name: c.name,
-    denomination: c.denomination,
-    visible: c.visible,
-    city: loc?.city?.name ?? '',
-    state: loc?.state?.name ?? '',
-    countryCode: loc?.country?.code ?? '',
     owner,
     ownerId,
     ownerName,
-    created: c.created
+    state: loc.state?.name ?? '',
+    visible: c.visible
   };
 }
 
@@ -83,8 +83,8 @@ export const load: PageServerLoad = async ({ locals }) => {
     });
     const ownerRecords = await withRetry(() =>
       client.collection('users').getFullList({
-        filter: client.filter(clauses.join(' || '), params),
-        fields: 'id,email,name'
+        fields: 'id,email,name',
+        filter: client.filter(clauses.join(' || '), params)
       })
     ).catch(() => [] as never[]);
     for (const u of ownerRecords as Array<{ id: string; email: string; name: string }>) {

@@ -13,7 +13,8 @@ describe('Accessibility segment (behavior)', () => {
 
     // mount the host which provides Accordion.Root and renders Accessibility
 
-    new (Host as any)({ props: { props }, target });
+    const instance = new (Host as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     // find checkboxes rendered by bits-ui Checkbox (role or input)
     const checkboxes = target.querySelectorAll('input[type="checkbox"], [role="checkbox"]');
@@ -26,7 +27,9 @@ describe('Accessibility segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 

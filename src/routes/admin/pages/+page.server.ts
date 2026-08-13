@@ -8,17 +8,17 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const perPage = 50;
 
   const result = await withRetry(() =>
-    client.collection('pages').getList(page, perPage, { sort: '-updated', requestKey: 'admin-pages' })
+    client.collection('pages').getList(page, perPage, { requestKey: 'admin-pages', sort: '-updated' })
   );
 
   return {
     // fallow-ignore-next-line unused-load-data-key -- consumed by PageList component via {data} pass-through
     pages: (result.items as PagesRecord[]).map((p) => ({
-      id: p.id,
-      title: p.title,
-      slug: p.slug,
       description: p.description ?? '',
+      id: p.id,
       published: p.published ?? false,
+      slug: p.slug,
+      title: p.title,
       updated: p.updated
     })),
     // fallow-ignore-next-line unused-load-data-key -- consumed by PageList component via {data} pass-through

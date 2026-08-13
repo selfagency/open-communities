@@ -8,10 +8,10 @@ describe('userSchema', () => {
   it('accepts valid user with lang and email', () => {
     const result = userSchema.safeParse({
       email: 'test@example.com',
+      lang: 'en',
       name: 'Test User',
       password: validPw,
-      passwordConfirm: validPw,
-      lang: 'en'
+      passwordConfirm: validPw
     });
     expect(result.success).toBe(true);
   });
@@ -19,10 +19,10 @@ describe('userSchema', () => {
   it('accepts Hebrew language', () => {
     const result = userSchema.safeParse({
       email: 'test@example.com',
+      lang: 'he',
       name: 'Test User',
       password: validPw,
-      passwordConfirm: validPw,
-      lang: 'he'
+      passwordConfirm: validPw
     });
     expect(result.success).toBe(true);
   });
@@ -30,10 +30,10 @@ describe('userSchema', () => {
   it('rejects invalid language', () => {
     const result = userSchema.safeParse({
       email: 'test@example.com',
+      lang: 'invalid',
       name: 'Test User',
       password: validPw,
-      passwordConfirm: validPw,
-      lang: 'invalid'
+      passwordConfirm: validPw
     });
     expect(result.success).toBe(false);
   });

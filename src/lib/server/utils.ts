@@ -1,7 +1,7 @@
 // fallow-ignore-file security-sink — intentional: fetch to captcha / email-verification endpoints configured via env vars
 import type { SuperValidated } from 'sveltekit-superforms';
 
-import { setError } from 'sveltekit-superforms';
+import { setError } from 'sveltekit-superforms/server';
 
 import { env } from '$env/dynamic/private';
 import { env as pubEnv } from '$env/dynamic/public';
@@ -32,7 +32,7 @@ export async function validateCaptcha(form: SuperValidated<Record<string, unknow
     return true;
   }
 
-  log.debug('[captcha] Validating captcha token:', `${(form.data.captcha as string)?.slice(0, 4)}...`);
+  log.debug('[captcha] Validating captcha token:', `${(form.data.captcha as string).slice(0, 4)}...`);
 
   const captchaEndpoint = env.CAPTCHA_INTERNAL_ENDPOINT || pubEnv.PUBLIC_CAPTCHA_ENDPOINT;
   const endpoint = `${captchaEndpoint}/${pubEnv.PUBLIC_CAPTCHA_SITE_KEY}/siteverify`;

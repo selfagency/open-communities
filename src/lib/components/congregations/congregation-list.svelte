@@ -129,65 +129,65 @@ const ownerCell = (email: string, id: string, name: string) =>
     : mutedCell(email);
 
 const activeCols: ColumnDef<Cong>[] = [
-  { accessorKey: 'name', header: m.name(), cell: ({ row }) => nameCell(row.original.name) },
-  { accessorKey: 'denomination', header: m.denomination(), cell: ({ row }) => denomCell(row.original.denomination) },
+  { accessorKey: 'name', cell: ({ row }) => nameCell(row.original.name), header: m.name() },
+  { accessorKey: 'denomination', cell: ({ row }) => denomCell(row.original.denomination), header: m.denomination() },
   {
-    id: 'location',
-    header: m.location(),
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
           render: () => `<span class="text-muted-foreground">${get().v}</span>`
         })),
         { v: locationStr(row.original) }
-      )
+      ),
+    header: m.location(),
+    id: 'location'
   },
   {
     accessorKey: 'owner',
-    header: m.owner(),
-    cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName)
+    cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName),
+    header: m.owner()
   }
 ];
 
 const pendingCols: ColumnDef<Cong>[] = [
-  { accessorKey: 'name', header: m.name(), cell: ({ row }) => nameCell(row.original.name) },
+  { accessorKey: 'name', cell: ({ row }) => nameCell(row.original.name), header: m.name() },
   {
-    id: 'location',
-    header: m.location(),
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
           render: () => `<span class="text-muted-foreground">${get().v}</span>`
         })),
         { v: locationStr(row.original) }
-      )
+      ),
+    header: m.location(),
+    id: 'location'
   },
   {
     accessorKey: 'owner',
-    header: m.submittedBy(),
-    cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName)
+    cell: ({ row }) => ownerCell(row.original.owner, row.original.ownerId, row.original.ownerName),
+    header: m.submittedBy()
   },
-  { accessorKey: 'created', header: m.date(), cell: ({ row }) => mutedCell((row.original.created || '').slice(0, 10)) }
+  { accessorKey: 'created', cell: ({ row }) => mutedCell((row.original.created || '').slice(0, 10)), header: m.date() }
 ];
 
 const activeTable = $derived(
   createSvelteTable({
+    columns: activeCols,
     get data() {
       return paginatedActive;
     },
-    columns: activeCols,
-    getRowId: (r) => r.id,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (r) => r.id
   })
 );
 const pendingTable = $derived(
   createSvelteTable({
+    columns: pendingCols,
     get data() {
       return data.pending;
     },
-    columns: pendingCols,
-    getRowId: (r) => r.id,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (r) => r.id
   })
 );
 </script>

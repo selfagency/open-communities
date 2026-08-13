@@ -13,12 +13,12 @@ describe('FormFooter', () => {
     const { default: FormFooter } = await import('./form-footer.svelte');
     const target = document.createElement('div');
     const instance = mount(FormFooter, {
-      target,
       props: {
-        mode: 'add',
         initData,
+        mode: 'add',
         ...makeMockFormProps()
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('submit');
     unmount(instance);
@@ -28,12 +28,12 @@ describe('FormFooter', () => {
     const { default: FormFooter } = await import('./form-footer.svelte');
     const target = document.createElement('div');
     const instance = mount(FormFooter, {
-      target,
       props: {
-        mode: 'edit',
         initData,
+        mode: 'edit',
         ...makeMockFormProps()
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('delete');
     unmount(instance);
@@ -43,12 +43,12 @@ describe('FormFooter', () => {
     const { default: FormFooter } = await import('./form-footer.svelte');
     const target = document.createElement('div');
     const instance = mount(FormFooter, {
-      target,
       props: {
-        mode: 'edit',
         initData,
+        mode: 'edit',
         ...makeMockFormProps()
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('reset');
     unmount(instance);
@@ -58,12 +58,12 @@ describe('FormFooter', () => {
     const { default: FormFooter } = await import('./form-footer.svelte');
     const target = document.createElement('div');
     const instance = mount(FormFooter, {
-      target,
       props: {
-        mode: 'add',
         initData,
+        mode: 'add',
         ...makeMockFormProps()
-      }
+      },
+      target
     });
     expect(target.textContent).not.toContain('delete');
     unmount(instance);

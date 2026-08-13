@@ -4,22 +4,22 @@ import { describe, expect, it } from 'vitest';
 
 describe('PageEditorVariant', () => {
   const baseVariant = {
-    title: 'Test Page',
-    description: 'A test page variant',
     content: '<p>Variant content</p>',
+    description: 'A test page variant',
     imageAlt: '',
-    imageCaption: ''
+    imageCaption: '',
+    title: 'Test Page'
   };
 
   it('renders the variant card with i18n title', async () => {
     const { default: Component } = await import('./page-editor-variant.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
       props: {
-        variant: baseVariant,
-        language: { code: 'es', label: 'Spanish' }
-      }
+        language: { code: 'es', label: 'Spanish' },
+        variant: baseVariant
+      },
+      target
     });
     expect(target.textContent).toContain('pageEditorVariantTitle');
     unmount(instance);
@@ -29,11 +29,11 @@ describe('PageEditorVariant', () => {
     const { default: Component } = await import('./page-editor-variant.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
       props: {
-        variant: baseVariant,
-        language: { code: 'es', label: 'Spanish' }
-      }
+        language: { code: 'es', label: 'Spanish' },
+        variant: baseVariant
+      },
+      target
     });
     expect(target.textContent).toContain('pageEditorVariantTitleLabel');
     expect(target.textContent).toContain('pageEditorDescriptionLabel');
@@ -45,11 +45,11 @@ describe('PageEditorVariant', () => {
     const { default: Component } = await import('./page-editor-variant.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
       props: {
-        variant: baseVariant,
-        language: { code: 'fr', label: 'French' }
-      }
+        language: { code: 'fr', label: 'French' },
+        variant: baseVariant
+      },
+      target
     });
     expect(target.textContent).toContain('pageEditorVariantImageAltLabel');
     expect(target.textContent).toContain('pageEditorVariantImageCaptionLabel');
@@ -60,11 +60,11 @@ describe('PageEditorVariant', () => {
     const { default: Component } = await import('./page-editor-variant.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
       props: {
-        variant: baseVariant,
-        language: { code: 'he', label: 'Hebrew' }
-      }
+        language: { code: 'he', label: 'Hebrew' },
+        variant: baseVariant
+      },
+      target
     });
     expect(target.textContent).toContain('pageEditorVariantFallback');
     unmount(instance);

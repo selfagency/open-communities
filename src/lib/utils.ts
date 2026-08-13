@@ -55,12 +55,12 @@ export const flyAndScale = (
     return valueB;
   };
 
-  const styleToString = (style: Record<string, number | string | undefined>): string =>
-    Object.keys(style).reduce((str, key) => {
-      if (style[key] === undefined) {
+  const styleToString = (styles: Record<string, number | string | undefined>): string =>
+    Object.keys(styles).reduce((str, key) => {
+      if (styles[key] === undefined) {
         return str;
       }
-      return `${str}${key}:${style[key]};`;
+      return `${str}${key}:${styles[key]};`;
     }, '');
 
   return {
@@ -94,7 +94,7 @@ export const logger = new Logger(
 export const log = logger.getSubLogger({ name: 'frontend' });
 
 export const valueSet = (obj: Record<string, unknown>): boolean => {
-  if (!obj || isEmpty(obj)) {
+  if (isEmpty(obj)) {
     return false;
   }
   const shaken = shake(obj, (v) => (typeof v === 'boolean' ? v !== true : isEmpty(v)));

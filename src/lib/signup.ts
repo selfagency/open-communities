@@ -1,6 +1,6 @@
 import { isEmpty } from 'radashi';
 import { toast } from 'svelte-sonner';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 
 import { m } from '$lib/paraglide/messages';
 import { setState } from '$lib/stores';

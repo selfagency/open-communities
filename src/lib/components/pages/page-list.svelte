@@ -58,30 +58,28 @@ $effect(() => {
 const columns: ColumnDef<Page>[] = [
   {
     accessorKey: 'title',
-    header: m.pageTitle(),
-    size: 200,
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({ render: () => `<span class="font-medium">${get().v}</span>` })),
         { v: row.original.title }
-      )
+      ),
+    header: m.pageTitle(),
+    size: 200
   },
   {
     accessorKey: 'slug',
-    header: m.slug(),
-    size: 100,
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
           render: () => `<span class="text-muted-foreground font-mono text-xs truncate inline-block">/${get().v}</span>`
         })),
         { v: row.original.slug }
-      )
+      ),
+    header: m.slug(),
+    size: 100
   },
   {
     accessorKey: 'published',
-    header: 'Published',
-    size: 80,
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: boolean }]>((get) => ({
@@ -91,12 +89,12 @@ const columns: ColumnDef<Page>[] = [
               : '<span class="text-xs text-muted-foreground">No</span>'
         })),
         { v: row.original.published }
-      )
+      ),
+    header: 'Published',
+    size: 80
   },
   {
     accessorKey: 'description',
-    header: m.description(),
-    size: 380,
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
@@ -104,30 +102,32 @@ const columns: ColumnDef<Page>[] = [
             `<span class="text-muted-foreground text-xs truncate inline-block max-w-sm">${get().v || '—'}</span>`
         })),
         { v: row.original.description }
-      )
+      ),
+    header: m.description(),
+    size: 380
   },
   {
     accessorKey: 'updated',
-    header: m.updated(),
-    size: 120,
     cell: ({ row }) =>
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
           render: () => `<span class="text-muted-foreground text-xs">${(get().v || '').slice(0, 10)}</span>`
         })),
         { v: row.original.updated }
-      )
+      ),
+    header: m.updated(),
+    size: 120
   }
 ];
 
 const table = $derived(
   createSvelteTable({
+    columns,
     get data() {
       return paginated;
     },
-    columns,
-    getRowId: (r) => r.id,
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getRowId: (r) => r.id
   })
 );
 </script>

@@ -15,11 +15,8 @@ export async function invalidate() {
   return Promise.resolve();
 }
 
-export function invalidateAll() {
-  return;
-}
+// biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+export function invalidateAll() {}
 
-// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-export async function resolve() {
-  return;
-}
+// biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+export async function resolve() {}

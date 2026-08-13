@@ -9,10 +9,10 @@ describe('PasswordCard', () => {
     const { default: PasswordCard } = await import('./password-card.svelte');
     const target = document.createElement('div');
     const instance = mount(PasswordCard, {
-      target,
       props: {
         ...makeMockFormProps()
-      }
+      },
+      target
     });
     expect(target.textContent).toContain('changePassword');
     expect(target.querySelector('input')).toBeTruthy();

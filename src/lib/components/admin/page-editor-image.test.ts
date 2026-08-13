@@ -7,8 +7,8 @@ describe('PageEditorImage', () => {
     const { default: Component } = await import('./page-editor-image.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { imageFile: null, imagePreview: '', imageAlt: '', imageCaption: '' }
+      props: { imageAlt: '', imageCaption: '', imageFile: null, imagePreview: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorImage');
     unmount(instance);
@@ -18,8 +18,8 @@ describe('PageEditorImage', () => {
     const { default: Component } = await import('./page-editor-image.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { imageFile: null, imagePreview: '', imageAlt: '', imageCaption: '' }
+      props: { imageAlt: '', imageCaption: '', imageFile: null, imagePreview: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorImageAltLabel');
     unmount(instance);
@@ -29,8 +29,8 @@ describe('PageEditorImage', () => {
     const { default: Component } = await import('./page-editor-image.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
-      props: { imageFile: null, imagePreview: '', imageAlt: '', imageCaption: '' }
+      props: { imageAlt: '', imageCaption: '', imageFile: null, imagePreview: '' },
+      target
     });
     expect(target.textContent).toContain('pageEditorImageCaptionLabel');
     unmount(instance);
@@ -40,14 +40,14 @@ describe('PageEditorImage', () => {
     const { default: Component } = await import('./page-editor-image.svelte');
     const target = document.createElement('div');
     const instance = mount(Component, {
-      target,
       props: {
+        imageAlt: '',
+        imageCaption: '',
         imageFile: null,
         imagePreview:
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
-        imageAlt: '',
-        imageCaption: ''
-      }
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+      },
+      target
     });
     expect(target.textContent).toContain('pageEditorImage');
     unmount(instance);

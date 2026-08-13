@@ -12,24 +12,25 @@ vi.mock('$app/environment', () => ({
   dev: false
 }));
 
-// Mock nodemailer to always throw for error-path testing
-vi.mock('nodemailer', () => ({
-  default: {
-    createTransport: () => ({
-      sendMail: () => Promise.reject(new Error('SMTP connection refused')),
-      verify: () => Promise.reject(new Error('Verification failed'))
-    })
+// Mock mailgun.js to always throw for error-path testing
+vi.mock('mailgun.js', () => ({
+  default: class {
+    client() {
+      return {
+        messages: {
+          create: () => Promise.reject(new Error('SMTP connection refused'))
+        }
+      };
+    }
   }
 }));
 
-// Mock SMTP env vars
+// Mock Mailgun env vars
 vi.mock('$env/dynamic/private', () => ({
   env: {
-    SMTP_HOST: 'localhost',
-    SMTP_PORT: '1025',
-    SMTP_USER: 'test',
-    SMTP_PASS: 'test',
-    ADMIN_EMAIL: 'admin@test.test'
+    ADMIN_EMAIL: 'admin@test.test',
+    MAILGUN_API_KEY: 'test-key',
+    MAILGUN_DOMAIN: 'm.opencommunities.info'
   }
 }));
 

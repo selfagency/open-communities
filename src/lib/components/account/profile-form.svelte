@@ -93,7 +93,9 @@ function langName(lang: string): string {
               {...props}
               checked={$formData.notifications as unknown as boolean}
               id="notifications"
-              onCheckedChange={(c) => $formData.notifications = c}
+              onCheckedChange={(c) => {
+                $formData.notifications = c;
+              }}
             />
             <Form.Label class="text-sm" for="notifications">{m.emailUpdates()}</Form.Label>
           </div>

@@ -142,13 +142,13 @@ class FileDropZoneState {
   });
 
   props = $derived.by(() => ({
+    accept: this.opts.accept.current,
     disabled: !this.canUploadFiles,
     id: this.opts.id.current,
-    accept: this.opts.accept.current,
     multiple:
       this.opts.maxFiles.current === undefined || this.opts.maxFiles.current - (this.opts.fileCount.current ?? 0) > 1,
-    type: 'file',
-    onchange: this.onchange
+    onchange: this.onchange,
+    type: 'file'
   }));
 }
 
@@ -168,10 +168,10 @@ class FileDropZoneTrigger {
   }
 
   props = $derived.by(() => ({
-    ondragover: this.ondragover.bind(this),
-    ondrop: this.ondrop.bind(this),
+    'aria-disabled': !this.rootState.canUploadFiles,
     for: this.rootState.opts.id.current,
-    'aria-disabled': !this.rootState.canUploadFiles
+    ondragover: this.ondragover.bind(this),
+    ondrop: this.ondrop.bind(this)
   }));
 }
 

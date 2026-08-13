@@ -74,7 +74,7 @@ export const userHandlers = [
       emailVisibility: false,
       id: `user_new_${crypto.randomUUID().replaceAll('-', '').slice(0, 8)}`,
       lang: 'en',
-      name: (body.name as string) ?? '',
+      name: (body.name as string) || '',
       token: 'mock_new_user_token',
       updated: new Date().toISOString(),
       verified: false,

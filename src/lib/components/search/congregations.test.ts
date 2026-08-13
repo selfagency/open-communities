@@ -19,7 +19,7 @@ vi.mock('radashi', () => ({
   assign: vi.fn((target, ...sources) => Object.assign({}, target, ...sources)),
   isArray: vi.fn((val) => Array.isArray(val)),
   isEmpty: vi.fn((val) => {
-    if (val == null) {
+    if (val === null || val === undefined) {
       return true;
     }
     if (Array.isArray(val)) {
@@ -42,7 +42,7 @@ vi.mock('radashi', () => ({
   shake: vi.fn((obj) => {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
-      if (value != null && value !== '' && value !== false) {
+      if (value !== null && value !== undefined && value !== '' && value !== false) {
         result[key] = value;
       }
     }

@@ -22,9 +22,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      $app: resolve(import.meta.dirname, 'src/test/mocks/$app'),
       // specific $app aliases must come before the generic '$app' alias
       '$app/environment': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
       '$app/environment.js': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
+      '$app/forms': resolve(import.meta.dirname, 'src/test/mocks/$app/forms.js'),
+      '$app/forms.js': resolve(import.meta.dirname, 'src/test/mocks/$app/forms.js'),
       '$app/navigation': resolve(import.meta.dirname, 'src/test/mocks/$app/navigation.js'),
       '$app/navigation.js': resolve(import.meta.dirname, 'src/test/mocks/$app/navigation.js'),
       '$app/state': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
@@ -33,10 +36,6 @@ export default defineConfig({
       '$app/state/index': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
       '$app/stores': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
       '$app/stores.js': resolve(import.meta.dirname, 'src/test/mocks/$app/stores.js'),
-      '$app/forms': resolve(import.meta.dirname, 'src/test/mocks/$app/forms.js'),
-      '$app/forms.js': resolve(import.meta.dirname, 'src/test/mocks/$app/forms.js'),
-      // eslint-disable-next-line perfectionist/sort-objects
-      $app: resolve(import.meta.dirname, 'src/test/mocks/$app'),
       '$env/dynamic/private': resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/private.js'),
       '$env/dynamic/public': resolve(import.meta.dirname, 'src/test/mocks/$env/dynamic/public.js'),
       '$env/static/private': resolve(import.meta.dirname, 'src/test/mocks/$env/static/private.js'),
@@ -83,10 +82,10 @@ export default defineConfig({
       reporter: ['text', 'json-summary', 'json', 'html'],
       reportsDirectory: './test-results/coverage',
       thresholds: {
-        statements: 80,
         branches: 80,
         functions: 80,
-        lines: 80
+        lines: 80,
+        statements: 80
       }
     },
     globals: true,

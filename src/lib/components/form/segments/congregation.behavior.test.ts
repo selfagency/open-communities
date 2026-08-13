@@ -24,7 +24,7 @@ describe('Congregation segment (behavior)', () => {
     ) as HTMLInputElement[];
     expect(textInputs.length).toBeGreaterThanOrEqual(1);
 
-    const nameInput = textInputs[0];
+    const [nameInput] = textInputs;
     nameInput.value = '  My Congregation  ';
     nameInput.dispatchEvent(new Event('input', { bubbles: true }));
     nameInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -34,7 +34,9 @@ describe('Congregation segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 
@@ -42,7 +44,7 @@ describe('Congregation segment (behavior)', () => {
 
     // If a second input exists, treat it as contactUrl and test trimming
     if (textInputs.length >= 2) {
-      const urlInput = textInputs[1];
+      const [, urlInput] = textInputs;
       urlInput.value = '  https://example.org/path  ';
       urlInput.dispatchEvent(new Event('input', { bubbles: true }));
       urlInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -50,7 +52,9 @@ describe('Congregation segment (behavior)', () => {
 
       let latest2: unknown;
       const unsub2 = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-        (v) => (latest2 = v)
+        (v) => {
+          latest2 = v;
+        }
       );
       unsub2();
 

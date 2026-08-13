@@ -3,7 +3,8 @@
 import { onMount, untrack } from 'svelte';
 import { fade } from 'svelte/transition';
 import { toast } from 'svelte-sonner';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
+import SuperDebug from 'sveltekit-superforms/SuperDebug.svelte';
 
 import { dev } from '$app/environment';
 import { page } from '$app/state';
@@ -117,6 +118,7 @@ $effect(() => {
       </span>
     {:else}
       <form
+        action="?/"
         class="space-y-4"
         method="POST"
         use:enhance
@@ -217,9 +219,7 @@ $effect(() => {
       </form>
 
       {#if dev}
-        {#await import('sveltekit-superforms') then { default: SuperDebug }}
-          <div class="mt-4"><SuperDebug data={$formData} /></div>
-        {/await}
+        <div class="mt-4"><SuperDebug data={$formData} /></div>
       {/if}
     {/if}
   </Card.Content>

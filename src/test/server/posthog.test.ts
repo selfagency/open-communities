@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$lib/server/logger', () => ({
   // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-  log: { error: () => {}, debug: () => {}, warn: () => {} }
+  log: { debug: () => {}, error: () => {}, warn: () => {} }
 }));
 
 vi.mock('posthog-node', () => {
@@ -93,7 +93,7 @@ describe('server/posthog', () => {
     const { captureException } = await import('../../lib/server/posthog');
     await captureException('string error', 'user-1');
     expect(ph().captureException).toHaveBeenCalled();
-    const call = ph().captureException.mock.calls[0];
+    const [call] = ph().captureException.mock.calls;
     expect(call[0]).toBeInstanceOf(Error);
     expect(call[0].message).toBe('string error');
   });
@@ -118,7 +118,7 @@ describe('server/posthog', () => {
     const obj = { code: 500, detail: 'server error' };
     await captureException(obj, 'user-1');
     expect(ph().captureException).toHaveBeenCalled();
-    const call = ph().captureException.mock.calls[0];
+    const [call] = ph().captureException.mock.calls;
     expect(call[0]).toBeInstanceOf(Error);
     expect(call[0].message).toContain('server error');
   });
@@ -129,7 +129,7 @@ describe('server/posthog', () => {
     circular.self = circular;
     await captureException(circular, 'user-1');
     expect(ph().captureException).toHaveBeenCalled();
-    const call = ph().captureException.mock.calls[0];
+    const [call] = ph().captureException.mock.calls;
     expect(call[0]).toBeInstanceOf(Error);
   });
 

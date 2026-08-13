@@ -1,6 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod/v4';
 import { env } from '$env/dynamic/private';
 import { withRetry } from '$lib/server/api';
@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   try {
     page = await withRetry(() => client.collection('pages').getOne(pageId));
   } catch {
+    // biome-ignore lint/style/useErrorCause: SvelteKit error() helper doesn't accept a cause option
     throw error(404, 'Page not found');
   }
 
@@ -27,13 +28,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
     page,
     saveForm: await superValidate(
       {
-        title: (page.title as string) ?? '',
-        slug: (page.slug as string) ?? '',
-        content: (page.content as string) ?? '',
-        description: (page.description as string) ?? '',
-        imageAlt: (page.imageAlt as string) ?? '',
-        imageCaption: (page.imageCaption as string) ?? '',
-        published: (page.published as boolean) ?? true
+        content: (page.content as string) || '',
+        description: (page.description as string) || '',
+        imageAlt: (page.imageAlt as string) || '',
+        imageCaption: (page.imageCaption as string) || '',
+        published: (page.published as boolean | undefined) ?? true,
+        slug: (page.slug as string) || '',
+        title: (page.title as string) || ''
       },
       zod4(pageSchema)
     )
@@ -64,7 +65,7 @@ export const actions = {
       if (imageFile?.size && imageFile.size > 0) {
         body.image = imageFile;
       } else if (typeof imageRaw === 'string' && imageRaw.startsWith('data:image/')) {
-        const base64 = imageRaw.split(',')[1];
+        const [, base64] = imageRaw.split(',');
         const buffer = Buffer.from(base64, 'base64');
         body.image = new File([buffer], 'upload.png', { type: 'image/png' });
       }
@@ -84,17 +85,18 @@ export const actions = {
 
       for (const v of variants) {
         const vBody: Record<string, unknown> = {
-          page: params.id,
-          language: v.language,
-          title: v.title || '',
-          description: v.description || '',
           content: v.content || '',
+          description: v.description || '',
           imageAlt: v.imageAlt || '',
-          imageCaption: v.imageCaption || ''
+          imageCaption: v.imageCaption || '',
+          language: v.language,
+          page: params.id,
+          title: v.title || ''
         };
 
         if (v.id) {
           const vid = v.id;
+          // biome-ignore lint/performance/noAwaitInLoops: sequential variant writes are intentional
           await withRetry(() => client.collection('pageVariants').update(vid, vBody));
         } else {
           await withRetry(() => client.collection('pageVariants').create(vBody));

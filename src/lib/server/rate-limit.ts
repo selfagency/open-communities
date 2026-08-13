@@ -18,7 +18,7 @@ function checkRateLimit(key: string, maxRequests: number, windowMs: number): boo
 
   if (!bucket || now - bucket.lastRefill >= windowMs) {
     // New window — refill
-    buckets.set(key, { tokens: maxRequests - 1, lastRefill: now });
+    buckets.set(key, { lastRefill: now, tokens: maxRequests - 1 });
     return true;
   }
 

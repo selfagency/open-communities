@@ -5,21 +5,21 @@ import { describe, expect, it } from 'vitest';
 describe('UserList', () => {
   const sampleUsers = [
     {
-      id: '1',
-      name: 'Alice',
-      email: 'alice@example.com',
+      admin: true,
       congregation: '',
       congregationName: '',
-      admin: true,
+      email: 'alice@example.com',
+      id: '1',
+      name: 'Alice',
       verified: true
     },
     {
-      id: '2',
-      name: 'Bob',
-      email: 'bob@example.com',
+      admin: false,
       congregation: 'c1',
       congregationName: 'Test Cong',
-      admin: false,
+      email: 'bob@example.com',
+      id: '2',
+      name: 'Bob',
       verified: false
     }
   ];
@@ -29,10 +29,10 @@ describe('UserList', () => {
     const { default: UserList } = await import('./user-list.svelte');
     const target = document.createElement('div');
     const instance = mount(UserList, {
-      target,
       props: {
-        data: { users: sampleUsers, total: 2, page: 1, perPage: 10, search: '' }
-      }
+        data: { page: 1, perPage: 10, search: '', total: 2, users: sampleUsers }
+      },
+      target
     });
     expect(target.textContent).toContain('Alice');
     expect(target.textContent).toContain('Bob');
@@ -43,10 +43,10 @@ describe('UserList', () => {
     const { default: UserList } = await import('./user-list.svelte');
     const target = document.createElement('div');
     const instance = mount(UserList, {
-      target,
       props: {
-        data: { users: [], total: 0, page: 1, perPage: 10, search: '' }
-      }
+        data: { page: 1, perPage: 10, search: '', total: 0, users: [] }
+      },
+      target
     });
     expect(target).toBeTruthy();
     unmount(instance);
@@ -56,10 +56,10 @@ describe('UserList', () => {
     const { default: UserList } = await import('./user-list.svelte');
     const target = document.createElement('div');
     const instance = mount(UserList, {
-      target,
       props: {
-        data: { users: sampleUsers, total: 2, page: 1, perPage: 10, search: 'alice' }
-      }
+        data: { page: 1, perPage: 10, search: 'alice', total: 2, users: sampleUsers }
+      },
+      target
     });
     expect(target.querySelector('input')).toBeTruthy();
     unmount(instance);
@@ -69,10 +69,10 @@ describe('UserList', () => {
     const { default: UserList } = await import('./user-list.svelte');
     const target = document.createElement('div');
     const instance = mount(UserList, {
-      target,
       props: {
-        data: { users: sampleUsers, total: 25, page: 1, perPage: 10, search: '' }
-      }
+        data: { page: 1, perPage: 10, search: '', total: 25, users: sampleUsers }
+      },
+      target
     });
     expect(target.textContent).toContain('1');
     expect(target.textContent).toContain('2');

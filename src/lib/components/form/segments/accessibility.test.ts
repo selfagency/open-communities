@@ -13,8 +13,8 @@ describe('Accessibility segment', () => {
 
     // mount the segment via a static host that provides Accordion.Root
 
-    new (Host as any)({ props: { props }, target });
+    const instance = new (Host as any)({ props: { props }, target });
 
-    expect(target).toBeTruthy();
+    expect(instance).toBeTruthy();
   });
 });

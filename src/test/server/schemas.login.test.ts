@@ -39,11 +39,11 @@ describe('tokenSchema', () => {
 
   it('accepts resetPassword with matching passwords', () => {
     const result = tokenSchema.safeParse({
-      token: validToken,
-      type: 'resetPassword',
       email: 'user@example.com',
       password: 'NewPw123!',
-      passwordConfirm: 'NewPw123!'
+      passwordConfirm: 'NewPw123!',
+      token: validToken,
+      type: 'resetPassword'
     });
     expect(result.success).toBe(true);
   });
@@ -65,26 +65,26 @@ describe('tokenSchema', () => {
 
   it('rejects mismatched passwords', () => {
     const result = tokenSchema.safeParse({
-      token: validToken,
-      type: 'resetPassword',
       email: 'user@example.com',
       password: 'NewPw123!',
-      passwordConfirm: 'DifferentPw456!'
+      passwordConfirm: 'DifferentPw456!',
+      token: validToken,
+      type: 'resetPassword'
     });
     expect(result.success).toBe(false);
   });
 
   it('accepts optional email', () => {
-    const result = tokenSchema.safeParse({ token: validToken, type: 'verifyEmail', email: 'user@example.com' });
+    const result = tokenSchema.safeParse({ email: 'user@example.com', token: validToken, type: 'verifyEmail' });
     expect(result.success).toBe(true);
   });
 
   it('accepts optional password fields', () => {
     const result = tokenSchema.safeParse({
-      token: validToken,
-      type: 'verifyEmail',
       password: 'abc',
-      passwordConfirm: 'abc'
+      passwordConfirm: 'abc',
+      token: validToken,
+      type: 'verifyEmail'
     });
     expect(result.success).toBe(true);
   });

@@ -39,8 +39,8 @@ let {
   } = $props();
 
 setToggleGroupCtx({
-  get variant() {
-    return variant;
+  get orientation() {
+    return orientation;
   },
   get size() {
     return size;
@@ -48,8 +48,8 @@ setToggleGroupCtx({
   get spacing() {
     return spacing;
   },
-  get orientation() {
-    return orientation;
+  get variant() {
+    return variant;
   }
 });
 </script>

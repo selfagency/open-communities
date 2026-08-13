@@ -22,7 +22,7 @@ export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) =
       variant = await withRetry(() =>
         api
           .collection('pageVariants')
-          .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { pageId: page.id, lang }), { fetch })
+          .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { lang, pageId: page.id }), { fetch })
       );
     } catch {
       // No variant for this language — try English fallback
@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) =
         variant = await withRetry(() =>
           api
             .collection('pageVariants')
-            .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { pageId: page.id, lang: 'en' }), {
+            .getFirstListItem(api.filter('page={:pageId} && language={:lang}', { lang: 'en', pageId: page.id }), {
               fetch
             })
         );

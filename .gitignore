@@ -147,4 +147,10 @@ e2e/pocketbase/pb_data/data.db
 # Docker infrastructure
 
 # PocketBase JSVM hooks — linted by PB Goja runtime, not Biome
-pb_hooks/
+# Keep tracked hooks; ignore local overrides only
+!pb_hooks/*.pb.js
+pb_hooks/*.local*
+pb_hooks/.DS_Store
+
+.opencode/opencode-loop
+.cortexkit/magic-context

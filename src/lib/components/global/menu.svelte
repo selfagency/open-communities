@@ -61,7 +61,7 @@ const isMobile = $derived(appState.isMobile);
         <span class="text-muted-foreground text-xs max-sm:text-sm">Language</span>
         <NativeSelect.Root
           onchange={async () => {
-            await fetch('/user/lang', { method: 'POST', body: JSON.stringify({ lang, user: page.data.user?.id }) });
+            await fetch('/user/lang', { body: JSON.stringify({ lang, user: page.data.user?.id }), method: 'POST' });
             setLocale(lang as Parameters<typeof setLocale>[0], { reload: true });
           }}
           bind:value={lang}

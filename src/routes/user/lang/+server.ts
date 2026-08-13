@@ -70,7 +70,7 @@ export async function POST({ cookies, locals, request, url }) {
     return json({ success: true }, { status: 200 });
   } catch (error) {
     if (isFunction(captureException)) {
-      await captureException(error, client?.id);
+      await captureException(error, client?.id, { url: url.toString() });
     }
     log.error('Error updating user:', error);
     return json({ error: 'Failed to update user language' }, { status: 500 });

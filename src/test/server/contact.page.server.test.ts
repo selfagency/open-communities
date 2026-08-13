@@ -82,14 +82,14 @@ describe('contact +page.server', () => {
       } as any;
 
       const request = new Request('http://localhost/contact', {
-        method: 'POST',
         body: new URLSearchParams({
           captcha: 'invalid',
           email: 'test@example.com',
           message: 'Test message',
           name: 'Test User',
           reason: 'question'
-        })
+        }),
+        method: 'POST'
       });
 
       const mockEvent = createMockRequestEvent({

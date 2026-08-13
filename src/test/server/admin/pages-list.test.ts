@@ -16,12 +16,12 @@ async function createAdminLocals() {
   const { createApi } = await import('../../../lib/server/api');
   const api = createApi();
   api.authStore.save('mock-token', {
-    id: 'admin123',
-    email: 'admin@test.test',
     admin: true,
-    verified: true,
     collectionId: 'test',
-    collectionName: 'users'
+    collectionName: 'users',
+    email: 'admin@test.test',
+    id: 'admin123',
+    verified: true
   });
   return { api, captureException: () => undefined, cookieOpts: {}, validate: async () => ({}) };
 }
@@ -32,8 +32,8 @@ describe('admin/pages +page.server — load', () => {
       http.get(`${PB}/api/collections/pages/records`, () =>
         HttpResponse.json({
           items: [
-            { id: 'p1', title: 'Home', slug: 'home', description: 'Home page', updated: '2024-01-01' },
-            { id: 'p2', title: 'About', slug: 'about', description: 'About us', updated: '2024-02-01' }
+            { description: 'Home page', id: 'p1', slug: 'home', title: 'Home', updated: '2024-01-01' },
+            { description: 'About us', id: 'p2', slug: 'about', title: 'About', updated: '2024-02-01' }
           ],
           page: 1,
           perPage: 50,
@@ -48,7 +48,7 @@ describe('admin/pages +page.server — load', () => {
     const event = createMockServerLoadEvent({ locals, url: new URL('http://localhost/admin/pages') });
     const result = (await mod.load(event as never)) as any;
     expect(result.pages).toHaveLength(2);
-    expect(result.pages[0]).toMatchObject({ id: 'p1', title: 'Home', slug: 'home' });
+    expect(result.pages[0]).toMatchObject({ id: 'p1', slug: 'home', title: 'Home' });
     expect(result.totalPages).toBe(1);
   });
 
@@ -82,15 +82,15 @@ describe('admin/users +page.server — load', () => {
         HttpResponse.json({
           items: [
             {
+              admin: true,
+              congregation: 'c1',
+              email: 'alice@test.com',
+              expand: { congregation: { name: 'Test Cong' } },
               id: 'u1',
               name: 'Alice',
-              email: 'alice@test.com',
-              admin: true,
-              verified: true,
-              congregation: 'c1',
-              expand: { congregation: { name: 'Test Cong' } }
+              verified: true
             },
-            { id: 'u2', name: 'Bob', email: 'bob@test.com', admin: false, verified: false, congregation: '' }
+            { admin: false, congregation: '', email: 'bob@test.com', id: 'u2', name: 'Bob', verified: false }
           ],
           page: 1,
           perPage: 18,
@@ -118,7 +118,7 @@ describe('admin/users +page.server — load', () => {
         const filter = url.searchParams.get('filter') ?? '';
         return HttpResponse.json({
           items: filter.includes('Alice')
-            ? [{ id: 'u1', name: 'Alice', email: 'alice@test.com', verified: true, admin: false, congregation: '' }]
+            ? [{ admin: false, congregation: '', email: 'alice@test.com', id: 'u1', name: 'Alice', verified: true }]
             : [],
           page: 1,
           perPage: 18,

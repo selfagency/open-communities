@@ -13,7 +13,6 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
   build: {
-    sourcemap: true,
     cssMinify: 'esbuild',
     rollupOptions: {
       onwarn(warning, warn) {
@@ -31,27 +30,22 @@ export default defineConfig(({ mode }) => ({
           }
         }
       }
-    }
-  },
-  ssr: {
-    external: ['@opentelemetry', '@grpc', 'protobufjs'],
-    noExternal: ['super-sitemap']
+    },
+    sourcemap: true
   },
   plugins: [
     ViteMcp(),
     mode === 'test' && inlineSveltePlugin(),
     mode === 'development' &&
       biomePlugin({
-        mode: 'lint',
+        failOnError: false,
         files: 'src',
-        failOnError: false
+        mode: 'lint'
       }),
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
     {
-      name: 'fix-paraglide-messages',
-      enforce: 'post',
       buildStart() {
         // Overwrite the generated messages.js to replace `export * as m` with
         // `import * + export const m`, which Rolldown can resolve correctly.
@@ -70,13 +64,15 @@ export default defineConfig(({ mode }) => ({
         } catch {
           // File may not exist yet if paraglide hasn't compiled — that's fine
         }
-      }
+      },
+      enforce: 'post',
+      name: 'fix-paraglide-messages'
     },
     mode === 'development' &&
       paraglideVitePlugin({
+        cleanOutdir: false,
         outdir: './src/lib/paraglide',
-        project: './project.inlang',
-        cleanOutdir: false
+        project: './project.inlang'
       }),
     svg(),
     // PostHog sourcemap upload — only during production builds with credentials
@@ -84,14 +80,14 @@ export default defineConfig(({ mode }) => ({
       process.env.POSTHOG_CLI_PROJECT_ID &&
       process.env.POSTHOG_CLI_API_KEY &&
       posthog({
+        host: process.env.POSTHOG_CLI_HOST,
         personalApiKey: process.env.POSTHOG_CLI_API_KEY,
         projectId: process.env.POSTHOG_CLI_PROJECT_ID,
-        host: process.env.POSTHOG_CLI_HOST,
         sourcemaps: {
+          deleteAfterUpload: true,
           enabled: true,
           releaseName: 'open-communities',
-          releaseVersion: (process.env.SOURCE_VERSION ?? process.env.COMMIT_REF) || 'dev',
-          deleteAfterUpload: true
+          releaseVersion: process.env.SOURCE_VERSION ?? process.env.COMMIT_REF ?? 'dev'
         }
       })
   ].filter((x): x is Exclude<typeof x, false | '' | undefined> => !!x),
@@ -109,6 +105,10 @@ export default defineConfig(({ mode }) => ({
     ...(process.env.VITEST ? { conditions: ['browser'] } : {})
   },
   sourceMap: process.env.VITEST ? 'inline' : true,
+  ssr: {
+    external: ['@opentelemetry', '@grpc', 'protobufjs'],
+    noExternal: ['super-sitemap']
+  },
   test: {
     coverage: {
       // you can include other reporters, but 'json-summary' is required, json is recommended
@@ -120,11 +120,11 @@ export default defineConfig(({ mode }) => ({
     environment: 'jsdom',
     // enable vitest globals (expect, describe, it) so tests can use them without imports
     globals: true,
-    reporter: ['junit', 'json', 'verbose'],
     outputFile: {
-      junit: './test-results/junit.xml',
-      json: './test-results/results.json'
+      json: './test-results/results.json',
+      junit: './test-results/junit.xml'
     },
+    reporter: ['junit', 'json', 'verbose'],
     // run our test setup before tests so we can mock SvelteKit runtime modules
     setupFiles: ['./src/test/setupTest.ts']
   }

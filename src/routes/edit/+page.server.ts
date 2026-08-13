@@ -58,8 +58,11 @@ function upsertChildRecord(
   }
 }
 
-async function sendDeleteNotifications(client: Record<string, unknown>) {
-  if (!client?.admin) {
+async function sendDeleteNotifications(client: Record<string, unknown> | null | undefined) {
+  if (!client) {
+    return;
+  }
+  if (!client.admin) {
     await transactionalMail({
       email: client.email as string,
       message: m.transactional_deleted({ locale: (client.lang as string) || 'en' }),
@@ -70,12 +73,15 @@ async function sendDeleteNotifications(client: Record<string, unknown>) {
 }
 
 async function sendEditNotifications(
-  client: Record<string, unknown>,
+  client: Record<string, unknown> | null | undefined,
   data: { id?: string; name?: string; owner?: string; visible?: boolean },
   api: import('$lib/pocketbase.d').TypedPocketBase,
   priorToChange: { visible?: boolean }
 ) {
-  if (!client?.admin) {
+  if (!client) {
+    return;
+  }
+  if (!client.admin) {
     const c = client as { email: string; name: string; lang?: string };
     await adminMail(
       {
@@ -98,7 +104,7 @@ async function sendEditNotifications(
       name: c.name,
       subject: m.transactional_subject({ locale: c.lang || 'en' })
     });
-  } else if (client?.admin && data.owner && data.visible && !priorToChange.visible) {
+  } else if (client.admin && data.owner && data.visible && !priorToChange.visible) {
     const owner = await api.collection('users').getOne(data.owner, { fetch: undefined });
     await transactionalMail({
       email: owner.email,
@@ -174,7 +180,7 @@ export const actions = {
 
     try {
       if (!client?.admin && client?.congregation !== data.id) {
-        return fail(403, { form, error: 'Forbidden' });
+        return fail(403, { error: 'Forbidden', form });
       }
 
       if (!form.valid) {
@@ -182,7 +188,7 @@ export const actions = {
       }
 
       const record = (await withRetry(() =>
-        api.collection('congregationMeta').getOne(data.id ?? '', { fetch })
+        api.collection('congregationMeta').getOne(data.id, { fetch })
       )) as MetaRecord;
       const { accessibility, fit, health, owner, registration, security, services } = record;
 
@@ -214,7 +220,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
 
       return fail(err.status ?? 400, { form });
@@ -226,7 +232,7 @@ export const actions = {
     const client = api?.authStore?.record;
 
     const form = await validate(event, defaultSchema);
-    const data = form.data;
+    const { data } = form;
 
     try {
       if (isFunction(capture)) {
@@ -238,7 +244,7 @@ export const actions = {
 
     try {
       if (!client?.admin && client?.congregation !== data.id) {
-        return fail(403, { form, error: 'Forbidden' });
+        return fail(403, { error: 'Forbidden', form });
       }
 
       if (!form.valid) {
@@ -282,7 +288,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
 
       return fail(err.status ?? 400, { form });

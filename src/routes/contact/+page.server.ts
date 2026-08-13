@@ -59,7 +59,7 @@ async function sendContactMail(form: SuperValidated<Record<string, unknown>>, ap
   const reasonKey = `contactOptions_${form.data.reason as string}` as keyof typeof m;
   const reasonFn = m[reasonKey];
   if (typeof reasonFn !== 'function') {
-    return fail(400, { form, error: 'Invalid reason' });
+    return fail(400, { error: 'Invalid reason', form });
   }
 
   const record = form.data.record as string | undefined;
@@ -111,7 +111,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
       log.error('error', err);
 

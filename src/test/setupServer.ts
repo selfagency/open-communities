@@ -28,16 +28,35 @@ afterAll(() => server.close());
 
 // ── Module mocks (non-HTTP) ────────────────────────────────────────────
 
-// Nodemailer is Node-only; provide a minimal mock for server modules
-vi.mock('nodemailer', () => ({
-  default: {
-    createTransport: () => ({
-      sendMail: async () => ({ messageId: 'mock' })
-    })
-  },
-  createTransport: () => ({
-    sendMail: async () => ({ messageId: 'mock' })
-  })
+// Mailgun is Node-only; provide a minimal mock for server modules
+vi.mock('mailgun.js', () => ({
+  default: class {
+    client() {
+      return {
+        messages: {
+          create: async () => ({ id: 'mock', message: 'Queued. Thank you.' })
+        }
+      };
+    }
+  }
+}));
+
+// sveltekit-superforms pulls in SuperDebug.svelte which the node module
+// evaluator cannot parse (SyntaxError: Unexpected strict mode reserved word).
+// Mock it so the real package never loads in the server project.
+vi.mock('sveltekit-superforms', () => ({
+  message: () => ({}),
+  setError: () => ({}),
+  superForm: () => ({}),
+  superValidate: () => ({})
+}));
+
+// The server subpath is used by server-side modules; mock it too so the real
+// package (and its SuperDebug.svelte) never loads in the server project.
+vi.mock('sveltekit-superforms/server', () => ({
+  message: () => ({}),
+  setError: () => ({}),
+  superValidate: () => ({})
 }));
 
 // Paraglide messages aren't available before build; return key names.

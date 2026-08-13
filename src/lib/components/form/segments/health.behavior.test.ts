@@ -12,7 +12,8 @@ describe('Health segment (behavior)', () => {
     const props = makeMockFormProps({ health: { otherText: '', protocol: '' } }, {});
     const target = document.createElement('div');
 
-    new (Host as unknown as any)({ props: { props }, target });
+    const instance = new (Host as unknown as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     // wait a couple microtasks for Svelte to render the radios
     await Promise.resolve();
@@ -29,7 +30,9 @@ describe('Health segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 

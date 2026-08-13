@@ -11,6 +11,12 @@ vi.mock('sveltekit-superforms', () => ({
   superValidate: mockSuperValidate
 }));
 
+// Routes import superValidate from the server subpath; mock it too.
+vi.mock('sveltekit-superforms/server', () => ({
+  ...mockSveltekitSuperforms,
+  superValidate: mockSuperValidate
+}));
+
 const PB = 'http://*:8090';
 
 const server = setupServer();
@@ -23,16 +29,16 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
   const { createApi } = await import('../../../lib/server/api');
   const api = createApi();
   api.authStore.save('mock-token', {
-    id: 'admin123',
-    email: 'admin@test.test',
     admin: true,
-    verified: true,
     collectionId: 'test',
-    collectionName: 'users'
+    collectionName: 'users',
+    email: 'admin@test.test',
+    id: 'admin123',
+    verified: true
   });
   return createMockRequestEvent({
-    cookies: { get: () => '', set: () => undefined, serialize: () => '' },
-    locals: { api, cookieOpts: {}, capture: () => undefined, captureException: () => undefined },
+    cookies: { get: () => '', serialize: () => '', set: () => undefined },
+    locals: { api, capture: () => undefined, captureException: () => undefined, cookieOpts: {} },
     ...overrides
   });
 }
@@ -40,7 +46,7 @@ async function createAdminEvent(overrides: Record<string, unknown> = {}) {
 describe('admin/pages/[id] — save action', () => {
   it('throws 401 without auth', async () => {
     const mod = await import('../../../routes/admin/pages/[id]/+page.server');
-    const event = createMockRequestEvent({ params: { id: 'page123' }, locals: {} });
+    const event = createMockRequestEvent({ locals: {}, params: { id: 'page123' } });
     await expect(mod.actions.save(event as never)).rejects.toThrow();
   });
 
@@ -52,7 +58,7 @@ describe('admin/pages/[id] — save action', () => {
     formData.set('slug', '');
     const result = (await mod.actions.save({
       ...event,
-      request: new Request('http://localhost', { method: 'POST', body: formData })
+      request: new Request('http://localhost', { body: formData, method: 'POST' })
     } as never)) as any;
     expect(result.status).toBe(400);
     expect(result.data.form).toBeDefined();
@@ -66,7 +72,7 @@ describe('admin/pages/[id] — save action', () => {
     formData.set('slug', 'Invalid Slug!');
     const result = (await mod.actions.save({
       ...event,
-      request: new Request('http://localhost', { method: 'POST', body: formData })
+      request: new Request('http://localhost', { body: formData, method: 'POST' })
     } as never)) as any;
     expect(result.status).toBe(400);
     expect(result.data.form).toBeDefined();
@@ -89,17 +95,17 @@ describe('admin/pages/[id] — save action', () => {
     // Mock superValidate to return valid for success case
     const { superValidate } = await import('sveltekit-superforms');
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
       data: {
-        title: 'My Page',
-        slug: 'my-page',
         content: '<p>Hello</p>',
         description: 'A test page',
         imageAlt: 'Alt text',
         imageCaption: 'Caption',
-        published: false
+        published: false,
+        slug: 'my-page',
+        title: 'My Page'
       },
-      errors: {}
+      errors: {},
+      valid: true
     } as never);
 
     const event = await createAdminEvent({ params: { id: 'page123' } });
@@ -113,13 +119,13 @@ describe('admin/pages/[id] — save action', () => {
     formData.set(
       'variants',
       JSON.stringify([
-        { language: 'es', title: 'Mi Página', description: '', content: '', imageAlt: '', imageCaption: '', id: 'v1' }
+        { content: '', description: '', id: 'v1', imageAlt: '', imageCaption: '', language: 'es', title: 'Mi Página' }
       ])
     );
 
     const result = (await mod.actions.save({
       ...event,
-      request: new Request('http://localhost', { method: 'POST', body: formData })
+      request: new Request('http://localhost', { body: formData, method: 'POST' })
     } as never)) as any;
 
     expect(result).toHaveProperty('success', true);
@@ -148,17 +154,17 @@ describe('admin/pages/new — save action', () => {
     // Mock superValidate to return valid for success case
     const { superValidate } = await import('sveltekit-superforms');
     (superValidate as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      valid: true,
       data: {
-        title: 'New Page',
-        slug: 'new-page',
         content: '',
         description: '',
         imageAlt: '',
         imageCaption: '',
-        published: false
+        published: false,
+        slug: 'new-page',
+        title: 'New Page'
       },
-      errors: {}
+      errors: {},
+      valid: true
     } as never);
 
     const event = await createAdminEvent();
@@ -170,7 +176,7 @@ describe('admin/pages/new — save action', () => {
     await expect(
       mod.actions.save({
         ...event,
-        request: new Request('http://localhost', { method: 'POST', body: formData })
+        request: new Request('http://localhost', { body: formData, method: 'POST' })
       } as never)
     ).rejects.toThrow(); // redirect (303)
   });
@@ -184,7 +190,7 @@ describe('admin/pages/new — save action', () => {
 
     const result = (await mod.actions.save({
       ...event,
-      request: new Request('http://localhost', { method: 'POST', body: formData })
+      request: new Request('http://localhost', { body: formData, method: 'POST' })
     } as never)) as any;
     expect(result.status).toBe(400);
     expect(result.data.form).toBeDefined();

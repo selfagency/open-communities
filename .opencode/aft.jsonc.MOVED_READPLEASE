@@ -1,0 +1,58 @@
+// AFT configuration moved.
+//
+// AFT now reads its configuration from one shared CortexKit location
+// instead of a per-agent path. The settings that were in this file have
+// been moved to:
+//
+//     /Users/daniel/Developer/opencommunities/.cortexkit/aft.jsonc
+//
+// Edit that file to change AFT settings. This location is no longer read
+// by AFT.
+//
+// To undo, rename this file back to "aft.jsonc" (and remove the
+// CortexKit copy above if you want this location to take precedence).
+//
+// Your original settings are preserved below for reference.
+
+{
+  "hoist_builtin_tools": true,
+  "format_on_edit": true,
+  "validate_on_edit": "syntax",
+  "formatter": {
+    "typescript": "biome",
+    "rust": "rustfmt"
+  },
+  "checker": {
+    "typescript": "biome"
+  },
+  "configure_warnings_delivery": "toast",
+  "tool_surface": "recommended",
+  "disabled_tools": [],
+  "search_index": true,
+  "semantic_search": true,
+  "semantic": {
+    "backend": "fastembed", // "fastembed" | "openai_compatible" | "ollama"
+    "model": "all-MiniLM-L6-v2", // model id understood by the backend
+    // "base_url": "https://api.openai.com/v1",   // required for openai_compatible / ollama
+    // "api_key_env": "OPENAI_API_KEY",            // env var name (not the key itself)
+    "timeout_ms": 25000, // per-request timeout, kept under bridge limit
+    "max_batch_size": 64, // embeddings batched in groups of this size
+    "max_files": 20000 // max files indexed (default 20000); raise for remote backends
+  },
+  "restrict_to_project_root": false,
+  "auto_update": true,
+  "max_callgraph_files": 5000,
+  "lsp": {},
+  "bash": {
+    "rewrite": true,
+    "compress": true,
+    "background": true,
+    "subagent_background": true,
+    "foreground_wait_window_ms": 10000
+  },
+  "inspect": {
+    "enabled": true, // set false to drop the aft_inspect tool
+    "tier2_idle_minutes": 5 // debounce before idle-triggered Tier 2 background scans
+  },
+  "$schema": "https://raw.githubusercontent.com/cortexkit/aft/main/assets/aft.schema.json"
+}

@@ -182,19 +182,19 @@ describe('src/lib/server/api', () => {
   describe('cleanResponse', () => {
     it('removes pocketbase meta fields and preserves numeric 0/1 values', () => {
       const result = cleanResponse({
-        visible: 1,
         active: 0,
-        name: 'test',
         collectionId: 'abc',
         collectionName: 'test',
         created: '2025-01-01',
-        updated: '2025-01-02'
+        name: 'test',
+        updated: '2025-01-02',
+        visible: 1
       });
-      expect(result).toEqual({ visible: 1, active: 0, name: 'test' });
+      expect(result).toEqual({ active: 0, name: 'test', visible: 1 });
     });
 
     it('skips __proto__ and constructor keys', () => {
-      const result = cleanResponse({ visible: 1, __proto__: 1, constructor: 0 });
+      const result = cleanResponse({ __proto__: 1, constructor: 0, visible: 1 });
       expect(result).toEqual({ visible: 1 });
     });
   });

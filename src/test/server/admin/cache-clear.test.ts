@@ -16,7 +16,7 @@ describe('POST /api/admin/cache/clear', () => {
     const mod = await import('../../../routes/api/admin/cache/clear/+server');
     const locals = {
       api: {
-        authStore: { record: { id: 'admin1', admin: true, email: 'admin@test.com' } }
+        authStore: { record: { admin: true, email: 'admin@test.com', id: 'admin1' } }
       }
     };
     const res = await mod.POST({ locals } as never);

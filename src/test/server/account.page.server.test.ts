@@ -30,22 +30,22 @@ describe('account +page.server — load', () => {
     const mod = await import('../../../src/routes/account/+page.server');
 
     const user = {
-      id: 'u1',
-      email: 'test@example.com',
-      name: 'Test User',
-      lang: 'en',
       congregation: '',
+      email: 'test@example.com',
+      id: 'u1',
+      lang: 'en',
+      name: 'Test User',
       notifications: true
     };
     const api = {
       authStore: { record: user },
       collection: () => ({
+        create: async (data: Record<string, unknown>) => ({ id: 'new-id', ...data }),
+        delete: async (_id: string) => true,
+        getFirstListItem: async () => null,
         getFullList: async () => [],
         getOne: async (id: string) => ({ id }),
-        getFirstListItem: async () => null,
-        create: async (data: Record<string, unknown>) => ({ id: 'new-id', ...data }),
-        update: async (id: string, data: Record<string, unknown>) => ({ id, ...data }),
-        delete: async (_id: string) => true
+        update: async (id: string, data: Record<string, unknown>) => ({ id, ...data })
       })
     };
     const locals = { api } as any;

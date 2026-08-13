@@ -136,11 +136,11 @@ const nestLabel = $derived(visibleSeries.length === 1 && indicator !== 'dot');
         >
           {#if formatter && item.value !== undefined && item.label}
             {@render formatter({
-							value: item.value,
-							name: item.label,
-							item,
 							index: i,
+							item,
+							name: item.label,
 							payload: visibleSeries,
+							value: item.value,
 						})}
           {:else}
             {#if itemConfig?.icon}
@@ -150,11 +150,11 @@ const nestLabel = $derived(visibleSeries.length === 1 && indicator !== 'dot');
                 class={cn(
 									"shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)",
 									{
-										"size-2.5": indicator === "dot",
 										"h-full w-1": indicator === "line",
+										"my-0.5": nestLabel && indicator === "dashed",
+										"size-2.5": indicator === "dot",
 										"w-0 border-[1.5px] border-dashed bg-transparent":
 											indicator === "dashed",
-										"my-0.5": nestLabel && indicator === "dashed",
 									}
 								)}
                 style="--color-bg: {indicatorColor}; --color-border: {indicatorColor};"

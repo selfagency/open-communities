@@ -199,8 +199,8 @@ async function fetchAllRecords() {
 
 async function createRecord(record) {
   const res = await pbFetch(`/api/collections/${COLLECTION}/records`, {
-    method: 'POST',
-    body: JSON.stringify(record)
+    body: JSON.stringify(record),
+    method: 'POST'
   });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}: ${await res.text()}`);
@@ -315,7 +315,7 @@ function buildRequiredSet() {
     }
   }
 
-  return { required, enValues };
+  return { enValues, required };
 }
 
 async function fetchProductionRecords() {

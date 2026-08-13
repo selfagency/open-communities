@@ -47,10 +47,10 @@ if (phKey) {
 
   // Trace exporter — sends OTel spans to PostHog's /i/v1/traces endpoint
   const traceExporter = new OTLPTraceExporter({
-    url: new URL('/i/v1/traces', phHost).href,
     headers: {
       Authorization: `Bearer ${phKey}`
-    }
+    },
+    url: new URL('/i/v1/traces', phHost).href
   });
 
   const traceProvider = new NodeTracerProvider({
@@ -62,15 +62,15 @@ if (phKey) {
 
   // Log exporter — sends OTel log records to PostHog's /i/v1/logs endpoint
   const logExporter = new OTLPLogExporter({
-    url: new URL('/i/v1/logs', phHost).href,
     headers: {
       Authorization: `Bearer ${phKey}`
-    }
+    },
+    url: new URL('/i/v1/logs', phHost).href
   });
 
   const sdk = new NodeSDK({
-    resource,
-    logRecordProcessor: new BatchLogRecordProcessor(logExporter)
+    logRecordProcessor: new BatchLogRecordProcessor({ exporter: logExporter }),
+    resource
   });
 
   sdk.start();

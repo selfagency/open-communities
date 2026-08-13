@@ -1,7 +1,7 @@
 import { isEmpty } from 'radashi';
 import { toast } from 'svelte-sonner';
 import type { SuperValidated } from 'sveltekit-superforms';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 
 import { goto } from '$app/navigation';
 import { m } from '$lib/paraglide/messages';

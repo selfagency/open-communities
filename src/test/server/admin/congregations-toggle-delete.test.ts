@@ -13,12 +13,12 @@ async function createAdminLocals() {
   const { createApi } = await import('../../../lib/server/api');
   const api = createApi();
   api.authStore.save('mock-token', {
-    id: 'admin123',
-    email: 'admin@test.test',
     admin: true,
-    verified: true,
     collectionId: 'test',
-    collectionName: 'users'
+    collectionName: 'users',
+    email: 'admin@test.test',
+    id: 'admin123',
+    verified: true
   });
   return { api, captureException: () => undefined, cookieOpts: {}, validate: async () => ({}) };
 }
@@ -45,7 +45,7 @@ describe('POST /api/admin/congregations/[id]/toggle', () => {
     const locals = await createAdminLocals();
     const res = await mod.POST({ locals, params: { id: 'cong123' } } as never);
     const data = await res.json();
-    expect(data).toMatchObject({ success: true, emailSent: false });
+    expect(data).toMatchObject({ emailSent: false, success: true });
   });
 });
 
@@ -59,7 +59,7 @@ describe('DELETE /api/admin/congregations/[id]/delete', () => {
   it('deletes congregation and returns success', async () => {
     server.use(
       http.get(`${PB}/api/collections/congregations/records/cong123`, () =>
-        HttpResponse.json({ id: 'cong123', name: 'Test', expand: { owner: null } })
+        HttpResponse.json({ expand: { owner: null }, id: 'cong123', name: 'Test' })
       ),
       http.delete(`${PB}/api/collections/congregations/records/cong123`, () => HttpResponse.json({}))
     );

@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { getAdminClient } from '$lib/server/admin-translations';
 import { log } from '$lib/server/logger';
 import { addSchema, deleteSchema } from './_shared';
@@ -28,7 +28,7 @@ function groupRecordsByKey(
     keyMap[key].push({
       id: r.id as string,
       locale: r.locale as string,
-      value: (r.value as string) ?? ''
+      value: (r.value as string) || ''
     });
   }
   return keyMap;
@@ -72,15 +72,15 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const keyMap = groupRecordsByKey(records);
   const { pageKeys, total, totalPages } = paginateKeys(keyMap, page);
 
-  const translations = pageKeys.map((key) => ({ key, entries: keyMap[key] }));
+  const translations = pageKeys.map((key) => ({ entries: keyMap[key], key }));
 
   return {
-    translations,
-    locales,
-    recordsCount: records.length,
-    pagination: { page, totalPages, total, search, perPage: PER_PAGE },
     addForm: await superValidate(zod4(addSchema)),
-    deleteForm: await superValidate(zod4(deleteSchema))
+    deleteForm: await superValidate(zod4(deleteSchema)),
+    locales,
+    pagination: { page, perPage: PER_PAGE, search, total, totalPages },
+    recordsCount: records.length,
+    translations
   };
 };
 

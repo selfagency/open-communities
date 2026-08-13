@@ -18,14 +18,14 @@ let {
 }: FileDropZoneRootProps = $props();
 
 const rootState = useFileDropZone({
-  id: box.with(() => id),
+  accept: box.with(() => accept),
   disabled: box.with(() => disabled ?? false),
-  onUpload: box.with(() => onUpload),
-  maxFiles: box.with(() => maxFiles),
   fileCount: box.with(() => fileCount),
+  id: box.with(() => id),
   maxFileSize: box.with(() => maxFileSize),
+  maxFiles: box.with(() => maxFiles),
   onFileRejected: box.with(() => onFileRejected),
-  accept: box.with(() => accept)
+  onUpload: box.with(() => onUpload)
 });
 </script>
 

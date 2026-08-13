@@ -4,7 +4,7 @@ import { createInitForm } from './defaults';
 
 describe('createInitForm', () => {
   it('returns default form with owner set to user id for non-admin', () => {
-    const user = { id: 'user123', admin: false } as any;
+    const user = { admin: false, id: 'user123' } as any;
     const form = createInitForm(user);
     expect(form.visible).toBe(false);
     expect(form.name).toBe('');
@@ -12,7 +12,7 @@ describe('createInitForm', () => {
   });
 
   it('returns default form with empty owner for admin', () => {
-    const user = { id: 'admin123', admin: true } as any;
+    const user = { admin: true, id: 'admin123' } as any;
     const form = createInitForm(user);
     expect(form.owner).toBe('');
   });

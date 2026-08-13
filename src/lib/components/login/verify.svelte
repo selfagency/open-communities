@@ -4,7 +4,9 @@ import { isEmpty } from 'radashi';
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import { toast } from 'svelte-sonner';
-import { type SuperValidated, superForm } from 'sveltekit-superforms';
+import type { SuperValidated } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
+import SuperDebug from 'sveltekit-superforms/SuperDebug.svelte';
 import { waitForTheElement } from 'wait-for-the-element';
 
 import { dev } from '$app/environment';
@@ -83,8 +85,6 @@ onMount(async () => {
   {/if}
 
   {#if dev}
-    {#await import('sveltekit-superforms') then { default: SuperDebug }}
-      <div class="mt-4"><SuperDebug data={$formData} /></div>
-    {/await}
+    <div class="mt-4"><SuperDebug data={$formData} /></div>
   {/if}
 </div>

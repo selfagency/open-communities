@@ -10,7 +10,7 @@ vi.mock('$lib/posthog', () => ({
 }));
 
 vi.mock('$lib/utils', () => ({
-  log: { error: mockError, debug: mockDebug }
+  log: { debug: mockDebug, error: mockError }
 }));
 
 vi.mock('$app/environment', () => ({ dev: false }));
@@ -25,8 +25,8 @@ describe('handleError (client)', () => {
     const r = handleError({
       error: new Error('boom'),
       event: { url: new URL('http://x/') },
-      status: 500,
-      message: 'Internal Error'
+      message: 'Internal Error',
+      status: 500
     } as never);
     expect(r).toMatchObject({ message: 'Internal Error', status: 500 });
   });
@@ -36,15 +36,15 @@ describe('handleError (client)', () => {
     const r = handleError({
       error: new Error('not found'),
       event: { url: new URL('http://x/missing') },
-      status: 404,
-      message: 'Not Found'
+      message: 'Not Found',
+      status: 404
     } as never);
     expect(r).toMatchObject({ message: 'Not Found', status: 404 });
   });
 
   it('handles non-Error throwable gracefully', async () => {
     const { handleError } = await import('./hooks.client');
-    expect(() => handleError({ error: 'str', event: {}, status: 500, message: '' } as never)).not.toThrow();
+    expect(() => handleError({ error: 'str', event: {}, message: '', status: 500 } as never)).not.toThrow();
   });
 
   it('captures exception for non-404 errors', async () => {
@@ -52,8 +52,8 @@ describe('handleError (client)', () => {
     handleError({
       error: new Error('crash'),
       event: { url: new URL('http://x/') },
-      status: 500,
-      message: 'Server Error'
+      message: 'Server Error',
+      status: 500
     } as never);
     expect(mockCapture).toHaveBeenCalled();
   });

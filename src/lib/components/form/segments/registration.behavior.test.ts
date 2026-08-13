@@ -12,7 +12,8 @@ describe('Registration segment (behavior)', () => {
     const props = makeMockFormProps({ registration: { email: '', otherText: '', registrationType: '', url: '' } }, {});
     const target = document.createElement('div');
 
-    new (Host as unknown as any)({ props: { props }, target });
+    const instance = new (Host as unknown as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
 
     // wait a tick for Svelte to render inputs
     await Promise.resolve();
@@ -35,7 +36,9 @@ describe('Registration segment (behavior)', () => {
 
     let latest: unknown;
     const unsub = (props.formData as unknown as { subscribe: (fn: (v: unknown) => void) => () => void }).subscribe(
-      (v) => (latest = v)
+      (v) => {
+        latest = v;
+      }
     );
     unsub();
 

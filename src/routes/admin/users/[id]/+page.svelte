@@ -3,7 +3,7 @@ import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import UserKeyIcon from '@tabler/icons-svelte/icons/user-key';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 
@@ -143,11 +143,13 @@ function handleDelete() {
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="verified">{m.verified()}</label>
-          <Switch aria-label={m.verified()} id="verified" name="verified" bind:checked={$updateFormData.verified} />
+          <Switch aria-label={m.verified()} id="verified" bind:checked={$updateFormData.verified} />
+          <input name="verified" type="hidden" value={$updateFormData.verified ? 'true' : 'false'} />
         </div>
         <div class="flex items-center gap-3">
           <label class="text-sm font-medium" for="admin">{m.admin()}</label>
-          <Switch aria-label={m.admin()} id="admin" name="admin" bind:checked={$updateFormData.admin} />
+          <Switch aria-label={m.admin()} id="admin" bind:checked={$updateFormData.admin} />
+          <input name="admin" type="hidden" value={$updateFormData.admin ? 'true' : 'false'} />
         </div>
         <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />{m.saveChanges()}</Button>
       </CardContent>

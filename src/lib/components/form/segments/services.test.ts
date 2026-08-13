@@ -18,7 +18,7 @@ describe.skip('Services segment', () => {
     const target = document.createElement('div');
     // mount the Services component inside the ServicesHost which provides Accordion.Root
 
-    new (ServicesHost as any)({ props: { props }, target });
-    expect(target).toBeTruthy();
+    const instance = new (ServicesHost as any)({ props: { props }, target });
+    expect(instance).toBeTruthy();
   });
 });

@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { RecordModel } from 'pocketbase';
-import { setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { setError, superValidate } from 'sveltekit-superforms/server';
 import { userSchema } from '$lib/schemas/user';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
@@ -13,21 +13,43 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw error(401, 'Not authenticated');
   }
   const defaults = {
-    name: (user?.name as string) ?? '',
-    email: (user?.email as string) ?? '',
+    congregation: (user.congregation as string) || '',
+    email: (user.email as string) || '',
     emailVisibility: true,
-    lang: (user?.lang as 'en' | 'es' | 'fr' | 'he' | 'de' | 'hu' | 'nl' | 'pl' | 'pt' | 'ru' | 'uk') ?? 'en',
-    notifications: (user?.notifications as boolean) ?? true,
-    congregation: (user?.congregation as string) ?? '',
+    lang: (user.lang as 'en' | 'es' | 'fr' | 'he' | 'de' | 'hu' | 'nl' | 'pl' | 'pt' | 'ru' | 'uk') || 'en',
+    name: (user.name as string) || '',
+    notifications: (user.notifications as boolean | undefined) ?? true,
+    oldPassword: '',
     password: '',
-    passwordConfirm: '',
-    oldPassword: ''
+    passwordConfirm: ''
   };
   const form = await superValidate(zod4(userSchema), { defaults });
   return { form, user };
 };
 
 export const actions = {
+  deleteAccount: async ({ cookies, locals }) => {
+    const client = locals.api;
+    const uid = client.authStore?.record?.id;
+    if (!uid) {
+      throw error(401, 'Not authenticated');
+    }
+    await withRetry(() => client.collection('users').delete(uid));
+    client.authStore.clear();
+    cookies.set('auth', '', { ...locals.cookieOpts, maxAge: 0 });
+    cookies.set('session', '', { ...locals.cookieOpts, maxAge: 0 });
+    throw redirect(303, '/');
+  },
+
+  unlink: async ({ locals }) => {
+    const client = locals.api;
+    const uid = client.authStore?.record?.id;
+    if (!uid) {
+      throw error(401, 'Not authenticated');
+    }
+    await withRetry(() => client.collection('users').update(uid, { congregation: '' }));
+    return { unlinked: true };
+  },
   update: async (event) => {
     const { locals, request } = event;
     const client = locals.api;
@@ -44,8 +66,8 @@ export const actions = {
 
     try {
       const body: Record<string, unknown> = {
-        name: form.data.name,
         lang: form.data.lang,
+        name: form.data.name,
         notifications: form.data.notifications
       };
       if (form.data.password) {
@@ -61,28 +83,5 @@ export const actions = {
       setError(form, '', msg);
       return fail(400, { form });
     }
-  },
-
-  unlink: async ({ locals }) => {
-    const client = locals.api;
-    const uid = client.authStore?.record?.id;
-    if (!uid) {
-      throw error(401, 'Not authenticated');
-    }
-    await withRetry(() => client.collection('users').update(uid, { congregation: '' }));
-    return { unlinked: true };
-  },
-
-  deleteAccount: async ({ cookies, locals }) => {
-    const client = locals.api;
-    const uid = client.authStore?.record?.id;
-    if (!uid) {
-      throw error(401, 'Not authenticated');
-    }
-    await withRetry(() => client.collection('users').delete(uid));
-    client.authStore.clear();
-    cookies.set('auth', '', { ...locals.cookieOpts, maxAge: 0 });
-    cookies.set('session', '', { ...locals.cookieOpts, maxAge: 0 });
-    throw redirect(303, '/');
   }
 } satisfies Actions;

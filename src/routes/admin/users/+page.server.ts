@@ -7,43 +7,43 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const page = Number(url.searchParams.get('page')) || 1;
   const perPage = 18;
 
-  // Build filter
+  // Build filter — match email, name, or the linked congregation's name
   let filter = '';
   if (search) {
-    filter = client.filter('email ~ {:search} || name ~ {:search}', { search });
+    filter = client.filter('email ~ {:search} || name ~ {:search} || congregation.name ~ {:search}', { search });
   }
 
   const list = await withRetry(() =>
     client.collection('users').getList(page, perPage, {
-      filter: filter || undefined,
-      sort: 'name',
       expand: 'congregation',
-      requestKey: `admin-users-${page}`
+      filter: filter || undefined,
+      requestKey: `admin-users-${page}`,
+      sort: 'name'
     })
   );
 
   return {
-    // fallow-ignore-next-line unused-load-data-key -- consumed by UserList component via {data} pass-through
-    users: list.items.map((u) => {
-      const expand = u.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
-      const congData = expand?.congregation as Record<string, string> | undefined;
-      return {
-        id: u.id as string,
-        name: (u.name as string) ?? '',
-        email: (u.email as string) ?? '',
-        verified: (u.verified as boolean) ?? false,
-        admin: (u.admin as boolean) ?? false,
-        congregation: (u.congregation as string) ?? '',
-        congregationName: congData?.name ?? ''
-      };
-    }),
-    // fallow-ignore-next-line unused-load-data-key -- unused by page, returned for pagination state
-    total: list.totalItems,
     // fallow-ignore-next-line unused-load-data-key -- consumed by pagination component
     page,
     // fallow-ignore-next-line unused-load-data-key -- consumed by pagination component
     perPage,
     // fallow-ignore-next-line unused-load-data-key -- consumed by search filter
-    search
+    search,
+    // fallow-ignore-next-line unused-load-data-key -- unused by page, returned for pagination state
+    total: list.totalItems,
+    // fallow-ignore-next-line unused-load-data-key -- consumed by UserList component via {data} pass-through
+    users: list.items.map((u) => {
+      const expand = u.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
+      const congData = expand?.congregation as Record<string, string> | undefined;
+      return {
+        admin: (u.admin as boolean | undefined) ?? false,
+        congregation: (u.congregation as string) || '',
+        congregationName: congData?.name ?? '',
+        email: (u.email as string) || '',
+        id: u.id as string,
+        name: (u.name as string) || '',
+        verified: (u.verified as boolean | undefined) ?? false
+      };
+    })
   };
 };

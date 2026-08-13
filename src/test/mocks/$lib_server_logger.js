@@ -19,9 +19,8 @@ export const log = {
   warn: () => {}
 };
 
-// biome-ignore lint/suspicious/useAwait: required by SvelteKit type signature
-export async function logEvent() {
-  return;
-}
+// biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+export async function logEvent() {}
 
+// biome-ignore lint/complexity/noRedundantDefaultExport: mock module may be imported via default
 export default log;

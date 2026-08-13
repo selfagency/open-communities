@@ -49,12 +49,12 @@ describe('throwAsHttpError', () => {
   });
 
   it('throws with status from PB error', () => {
-    const pbErr = { status: 404, message: 'Not found' };
+    const pbErr = { message: 'Not found', status: 404 };
     expect(() => throwAsHttpError(pbErr)).toThrow();
   });
 
   it('re-throws 303 redirects from PB', () => {
-    const redirectErr = { status: 303, message: 'Redirect' };
+    const redirectErr = { message: 'Redirect', status: 303 };
     expect(() => throwAsHttpError(redirectErr)).toThrow();
   });
 
@@ -74,33 +74,33 @@ describe('withRetry', () => {
   it('retries on retryable error then succeeds', async () => {
     const fn = vi
       .fn()
-      .mockRejectedValueOnce({ status: 502, message: 'Bad Gateway' })
+      .mockRejectedValueOnce({ message: 'Bad Gateway', status: 502 })
       .mockResolvedValueOnce('recovered');
     await expect(withRetry(fn)).resolves.toBe('recovered');
     expect(fn).toHaveBeenCalledTimes(2);
   });
 
   it('throws immediately on non-retryable error', async () => {
-    const fn = vi.fn().mockRejectedValue({ status: 404, message: 'Not Found' });
+    const fn = vi.fn().mockRejectedValue({ message: 'Not Found', status: 404 });
     await expect(withRetry(fn)).rejects.toThrow();
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   it('throws after exhausting retries', async () => {
-    const err = { status: 503, message: 'Service Unavailable' };
+    const err = { message: 'Service Unavailable', status: 503 };
     const fn = vi.fn().mockRejectedValue(err);
     // Custom options: 1 retry with 1ms delay (so tests are fast)
-    await expect(withRetry(fn, { maxRetries: 1, baseDelayMs: 1, maxDelayMs: 10 })).rejects.toThrow();
+    await expect(withRetry(fn, { baseDelayMs: 1, maxDelayMs: 10, maxRetries: 1 })).rejects.toThrow();
     expect(fn).toHaveBeenCalledTimes(2); // 1 initial + 1 retry
   });
 
   it('retries on 429 (rate limited)', async () => {
-    const fn = vi.fn().mockRejectedValueOnce({ status: 429, message: 'Too Many Requests' }).mockResolvedValueOnce('ok');
-    await expect(withRetry(fn, { maxRetries: 1, baseDelayMs: 1, maxDelayMs: 10 })).resolves.toBe('ok');
+    const fn = vi.fn().mockRejectedValueOnce({ message: 'Too Many Requests', status: 429 }).mockResolvedValueOnce('ok');
+    await expect(withRetry(fn, { baseDelayMs: 1, maxDelayMs: 10, maxRetries: 1 })).resolves.toBe('ok');
   });
 
   it('retries on 520 (cloudflare)', async () => {
-    const fn = vi.fn().mockRejectedValueOnce({ status: 520, message: 'Origin Error' }).mockResolvedValueOnce('ok');
-    await expect(withRetry(fn, { maxRetries: 1, baseDelayMs: 1, maxDelayMs: 10 })).resolves.toBe('ok');
+    const fn = vi.fn().mockRejectedValueOnce({ message: 'Origin Error', status: 520 }).mockResolvedValueOnce('ok');
+    await expect(withRetry(fn, { baseDelayMs: 1, maxDelayMs: 10, maxRetries: 1 })).resolves.toBe('ok');
   });
 });

@@ -1,6 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';
@@ -8,10 +8,10 @@ import type { Actions, PageServerLoad } from './$types';
 /* region schemas */
 
 const updateSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  admin: z.preprocess((v) => v === 'true' || v === true, z.boolean()).optional(),
   email: z.string().email('Invalid email'),
-  verified: z.boolean().optional(),
-  admin: z.boolean().optional()
+  name: z.string().min(1, 'Name is required'),
+  verified: z.preprocess((v) => v === 'true' || v === true, z.boolean()).optional()
 });
 
 const assignSchema = z.object({
@@ -27,14 +27,14 @@ function mapUserData(user: Record<string, unknown>) {
   const expand = user.expand as unknown as { congregation?: Record<string, unknown> } | undefined;
   const congData = (expand?.congregation as Record<string, string> | undefined) || null;
   return {
-    id: user.id as string,
-    name: (user.name as string) ?? '',
-    email: (user.email as string) ?? '',
-    verified: !!(user.verified as boolean),
     admin: !!(user.admin as boolean),
-    congregation: (user.congregation as string) ?? '',
+    congregation: (user.congregation as string) || '',
     congregationName: congData?.name ?? '',
-    congregationSlug: congData?.slug ?? ''
+    congregationSlug: congData?.slug ?? '',
+    email: (user.email as string) || '',
+    id: user.id as string,
+    name: (user.name as string) || '',
+    verified: !!(user.verified as boolean)
   };
 }
 
@@ -81,60 +81,35 @@ export const load: PageServerLoad = async ({ locals, params }) => {
   try {
     user = await withRetry(() => client.collection('users').getOne(userId, { expand: 'congregation' }));
   } catch {
+    // biome-ignore lint/style/useErrorCause: SvelteKit error() helper doesn't accept a cause option
     throw error(404, 'User not found');
   }
 
   return {
-    targetUser: mapUserData(user),
+    assignForm: await superValidate(zod4(assignSchema)),
     availableCongregations: await fetchAvailableCongregations(client),
-    updateForm: await superValidate(zod4(updateSchema)),
-    assignForm: await superValidate(zod4(assignSchema))
+    targetUser: mapUserData(user),
+    updateForm: await superValidate(zod4(updateSchema))
   };
 };
 
 export const actions = {
-  update: async ({ locals, params, request }) => {
+  assign: async ({ locals, params, request }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
       throw error(401, 'Unauthorized');
     }
 
-    const form = await superValidate(request, zod4(updateSchema));
+    const form = await superValidate(request, zod4(assignSchema));
     if (!form.valid) {
       return fail(400, { form });
     }
 
-    const body: Record<string, unknown> = { name: form.data.name, email: form.data.email };
-    if (form.data.verified !== undefined) {
-      body.verified = form.data.verified;
-    }
-    if (form.data.admin !== undefined) {
-      const adminResult = await resolveAdminToggle(client, params.id, form.data.admin);
-      if (typeof adminResult !== 'boolean') {
-        return adminResult;
-      }
-      body.admin = adminResult;
-    }
-
     try {
-      await withRetry(() => client.collection('users').update(params.id, body));
-      return { form, success: 'User updated' };
+      await withRetry(() => client.collection('users').update(params.id, { congregation: form.data.congregationId }));
+      return { form, success: 'Congregation assigned' };
     } catch {
-      return fail(400, { form, error: 'Update failed' });
-    }
-  },
-
-  unlink: async ({ locals, params }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
-
-    try {
-      await withRetry(() => client.collection('users').update(params.id, { congregation: '' }));
-      return { success: 'Congregation unlinked' };
-    } catch {
-      return fail(400, { error: 'Failed to unlink congregation' });
+      return fail(400, { error: 'Failed to assign congregation', form });
     }
   },
 
@@ -155,25 +130,6 @@ export const actions = {
     }
   },
 
-  assign: async ({ locals, params, request }) => {
-    const client = locals.api;
-    if (!client?.authStore?.record?.admin) {
-      throw error(401, 'Unauthorized');
-    }
-
-    const form = await superValidate(request, zod4(assignSchema));
-    if (!form.valid) {
-      return fail(400, { form });
-    }
-
-    try {
-      await withRetry(() => client.collection('users').update(params.id, { congregation: form.data.congregationId }));
-      return { form, success: 'Congregation assigned' };
-    } catch {
-      return fail(400, { form, error: 'Failed to assign congregation' });
-    }
-  },
-
   resetPassword: async ({ fetch, locals, params }) => {
     const client = locals.api;
     if (!client?.authStore?.record?.admin) {
@@ -186,6 +142,50 @@ export const actions = {
       return { success: 'Password reset email sent' };
     } catch {
       return fail(400, { error: 'Failed to send password reset' });
+    }
+  },
+
+  unlink: async ({ locals, params }) => {
+    const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
+
+    try {
+      await withRetry(() => client.collection('users').update(params.id, { congregation: '' }));
+      return { success: 'Congregation unlinked' };
+    } catch {
+      return fail(400, { error: 'Failed to unlink congregation' });
+    }
+  },
+  update: async ({ locals, params, request }) => {
+    const client = locals.api;
+    if (!client?.authStore?.record?.admin) {
+      throw error(401, 'Unauthorized');
+    }
+
+    const form = await superValidate(request, zod4(updateSchema));
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    const body: Record<string, unknown> = { email: form.data.email, name: form.data.name };
+    if (form.data.verified !== undefined) {
+      body.verified = form.data.verified;
+    }
+    if (form.data.admin !== undefined) {
+      const adminResult = await resolveAdminToggle(client, params.id, form.data.admin);
+      if (typeof adminResult !== 'boolean') {
+        return adminResult;
+      }
+      body.admin = adminResult;
+    }
+
+    try {
+      await withRetry(() => client.collection('users').update(params.id, body));
+      return { form, success: 'User updated' };
+    } catch {
+      return fail(400, { error: 'Update failed', form });
     }
   }
 } satisfies Actions;

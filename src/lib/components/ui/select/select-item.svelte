@@ -31,7 +31,7 @@ let {
     </span>
     <span class="flex flex-1 gap-2 shrink-0 whitespace-nowrap">
       {#if childrenProp}
-        {@render childrenProp({ selected, highlighted })}
+        {@render childrenProp({ highlighted, selected })}
       {:else}
         {label || value}
       {/if}

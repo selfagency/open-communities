@@ -1,6 +1,6 @@
 <script lang="ts">
 import { toast } from 'svelte-sonner';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 import CongregationCard from '$lib/components/account/congregation-card.svelte';
 import DangerZone from '$lib/components/account/danger-zone.svelte';
 import PasswordCard from '$lib/components/account/password-card.svelte';

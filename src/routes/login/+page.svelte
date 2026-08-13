@@ -40,7 +40,9 @@ export const snapshot = { capture: form.capture, restore: form.restore };
       <p class="mt-4 text-center text-sm text-muted-foreground">
         <button
           class="text-primary font-semibold underline-offset-4 hover:underline"
-          onclick={() => (showingLogin = false)}
+          onclick={() => {
+            showingLogin = false;
+          }}
         >
           Don't have an account? Sign up.
         </button>

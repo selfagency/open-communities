@@ -11,7 +11,7 @@ import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { toast } from 'svelte-sonner';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 import { browser } from '$app/environment';
 import { deserialize, enhance } from '$app/forms';
 import { goto, invalidateAll } from '$app/navigation';
@@ -105,7 +105,7 @@ function onSearchInput(e: Event) {
       params.delete('q');
     }
     params.set('page', '1');
-    goto(`/admin/translations?${params}`, { replaceState: true, keepFocus: true });
+    goto(`/admin/translations?${params}`, { keepFocus: true, replaceState: true });
   }, 300);
 }
 
@@ -117,7 +117,7 @@ function onPageChange(p: number) {
   currentPage = p;
   const params = new URLSearchParams($page.url.searchParams);
   params.set('page', String(p));
-  goto(`/admin/translations?${params}`, { replaceState: true, keepFocus: true });
+  goto(`/admin/translations?${params}`, { keepFocus: true, replaceState: true });
 }
 
 // Accordion — track which key is open
@@ -204,9 +204,9 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
   const result = entries.map((e) => {
     seen.add(e.locale);
     return {
+      id: e.id,
       locale: e.locale,
-      value: editEntries[key]?.[e.locale] ?? e.value,
-      id: e.id
+      value: editEntries[key]?.[e.locale] ?? e.value
     };
   });
 
@@ -216,7 +216,7 @@ function buildEntries(key: string, entries: Array<{ locale: string; value: strin
   if (edits) {
     for (const [locale, val] of Object.entries(edits)) {
       if (!seen.has(locale) && val) {
-        result.push({ locale, value: val, id: undefined });
+        result.push({ id: undefined, locale, value: val });
       }
     }
   }
@@ -253,7 +253,7 @@ async function parseActionResponse(res: Response) {
     }
   }
   // devtools: parseActionResponse result intentionally not persisted in prod
-  return { body, actionData };
+  return { actionData, body };
 }
 
 function applyTranslationsToEditState(key: string, translations: Array<{ locale: string; translatedText: string }>) {
@@ -360,28 +360,28 @@ function extractTranslationsFromActionData(actionData: any): Array<{ locale: str
   }
 
   // Work on a local variable to avoid parameter mutation warnings
-  let data: any = actionData;
+  let translationData: any = actionData;
 
-  const normalizedArray = normalizeToArray(data);
+  const normalizedArray = normalizeToArray(translationData);
   if (normalizedArray) {
     try {
-      data = deepResolveArray(normalizedArray);
+      translationData = deepResolveArray(normalizedArray);
     } catch {
       // best-effort: leave data unchanged on failure
     }
   }
 
-  if (Array.isArray(data?.translations)) {
-    data = data.translations;
+  if (Array.isArray(translationData?.translations)) {
+    translationData = translationData.translations;
   }
 
-  if (Array.isArray(data)) {
-    return extractPairsFromArray(data);
+  if (Array.isArray(translationData)) {
+    return extractPairsFromArray(translationData);
   }
 
-  if (typeof data === 'object') {
-    for (const k of Object.keys(data)) {
-      const val = data[k];
+  if (typeof translationData === 'object') {
+    for (const k of Object.keys(translationData)) {
+      const val = translationData[k];
       if (val && typeof val === 'string') {
         out.push({ locale: k, translatedText: val });
       }
@@ -434,12 +434,12 @@ async function handleAutoTranslate(key: string, text: string) {
 
   try {
     const res = await fetch('?/translate', {
-      method: 'POST',
       body: form,
       headers: {
-        'x-sveltekit-action': 'true',
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+        'x-sveltekit-action': 'true'
+      },
+      method: 'POST'
     });
 
     const { body, actionData } = await parseActionResponse(res);
@@ -497,7 +497,7 @@ function pollStatus() {
   pollTimer = setInterval(async () => {
     const form = new FormData();
     form.set('uuid', deploymentUuid ?? '');
-    const res = await fetch('?/status', { method: 'POST', body: form });
+    const res = await fetch('?/status', { body: form, method: 'POST' });
     const json = await res.json();
     if (json.status) {
       deploymentStatus = json.status;
@@ -566,7 +566,7 @@ interface EnhanceResult {
 
 function handleAdd() {
   return (opts: { result: EnhanceResult }) => {
-    const result = opts.result;
+    const { result } = opts;
     if (result.type === 'success' && result.data?.key) {
       showAddDialog = false;
       toast.success('Key created');
@@ -587,7 +587,7 @@ function handleAdd() {
 
 function handleSave(key: string) {
   return async (opts: { result: EnhanceResult }) => {
-    const result = opts.result;
+    const { result } = opts;
     if (result.type === 'success') {
       resetEditState(key);
       toast.success('Translations saved');
@@ -602,7 +602,7 @@ function handleSave(key: string) {
 
 function handleDelete(key: string) {
   return (opts: { result: EnhanceResult }) => {
-    const result = opts.result;
+    const { result } = opts;
     if (result.type === 'success') {
       goto('/admin/translations', { replaceState: true });
       toast.success('Key deleted');
@@ -616,7 +616,7 @@ function handleDelete(key: string) {
 
 function handleBulkDelete() {
   return (opts: { result: EnhanceResult }) => {
-    const result = opts.result;
+    const { result } = opts;
     if (result.type === 'success') {
       showDeleteDialog = false;
       goto('/admin/translations', { replaceState: true });
@@ -632,12 +632,12 @@ function handleBulkDelete() {
 }
 
 const statusLabels: Record<string, string> = {
-  queued: 'Queued',
-  in_progress: 'Building...',
-  success: 'Deployed!',
-  failed: 'Failed',
   cancelled: 'Cancelled',
-  restarting: 'Restarting...'
+  failed: 'Failed',
+  in_progress: 'Building...',
+  queued: 'Queued',
+  restarting: 'Restarting...',
+  success: 'Deployed!'
 };
 
 const deployProgress = $derived(
@@ -801,7 +801,11 @@ const deployProgress = $derived(
             </div>
           </div>
           <div class="flex justify-end gap-2">
-            <Button onclick={() => (showAddDialog = false)} variant="outline"
+            <Button
+              onclick={() => {
+                showAddDialog = false;
+              }}
+              variant="outline"
               ><CancelIcon class="mr-1.5 size-4" />Cancel</Button
             >
             <Button type="submit" variant="outline"><FileUploadIcon class="mr-1.5 size-4" />Create</Button>

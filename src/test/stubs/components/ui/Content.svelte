@@ -19,7 +19,9 @@ const defaultOpen: BoolStore = {
 const open: BoolStore = ctx?.open && typeof ctx.open.subscribe === 'function' ? ctx.open : defaultOpen;
 
 let visible = false;
-const unsub = open.subscribe((v: boolean) => (visible = v));
+const unsub = open.subscribe((v: boolean) => {
+  visible = v;
+});
 onDestroy(() => {
   if (typeof unsub === 'function') {
     unsub();

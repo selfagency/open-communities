@@ -34,15 +34,15 @@ export const GET: RequestHandler = async ({ locals }) => {
 
   const users = await withRetry(() =>
     client.collection('users').getFullList({
-      sort: '-created',
-      expand: 'congregation,congregation.city,congregation.state,congregation.country'
+      expand: 'congregation,congregation.city,congregation.state,congregation.country',
+      sort: '-created'
     })
   );
   if (!users?.length) {
     return new Response(
       'name,email,email_opted_out,congregation,congregation_city,congregation_state,congregation_country\n',
       {
-        headers: { 'content-type': 'text/csv', 'content-disposition': 'attachment; filename=users.csv' }
+        headers: { 'content-disposition': 'attachment; filename=users.csv', 'content-type': 'text/csv' }
       }
     );
   }
@@ -53,11 +53,11 @@ export const GET: RequestHandler = async ({ locals }) => {
       const congData = expand?.congregation as Record<string, unknown> | undefined;
       const cityData = congData?.expand as Record<string, unknown> | undefined;
       const optedOut = u.notifications === false ? 'true' : 'false';
-      return `${csvEscape(u.name)},${csvEscape(u.email)},${csvEscape(optedOut)},${csvEscape(congData?.name ?? '')},${csvEscape((cityData?.city as Record<string, string>)?.name ?? '')},${csvEscape((cityData?.state as Record<string, string>)?.name ?? '')},${csvEscape((cityData?.country as Record<string, string>)?.name ?? '')}`;
+      return `${csvEscape(u.name)},${csvEscape(u.email)},${csvEscape(optedOut)},${csvEscape(congData?.name ?? '')},${csvEscape((cityData?.city as Record<string, string> | undefined)?.name ?? '')},${csvEscape((cityData?.state as Record<string, string> | undefined)?.name ?? '')},${csvEscape((cityData?.country as Record<string, string> | undefined)?.name ?? '')}`;
     })
     .join('\n');
   const csv = `${header}\n${rows}`;
   return new Response(csv, {
-    headers: { 'content-type': 'text/csv', 'content-disposition': 'attachment; filename=users.csv' }
+    headers: { 'content-disposition': 'attachment; filename=users.csv', 'content-type': 'text/csv' }
   });
 };

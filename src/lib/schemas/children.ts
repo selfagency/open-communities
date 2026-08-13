@@ -11,7 +11,7 @@ import { Lazy } from './_shared';
 const valueSelected = (value: Record<string, unknown>): boolean => Object.values(value).some(Boolean);
 
 const hasContact = (value: { email?: null | string; url?: null | string }): boolean =>
-  !(isEmpty(value?.email) && isEmpty(value?.url));
+  !(isEmpty(value.email) && isEmpty(value.url));
 /* endregion methods */
 
 export const accessibilitySchema = z.object({
