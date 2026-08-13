@@ -119,11 +119,14 @@ async function sendSubmissionNotifications(
 function handleSubmitError(
   error: unknown,
   form: { data: Record<string, unknown> },
-  captureException: ((error: unknown, user?: string) => Promise<void>) | undefined,
-  clientId: string | undefined
+  captureException:
+    | ((error: unknown, user?: string, other?: Record<string, number | string>) => Promise<void>)
+    | undefined,
+  clientId: string | undefined,
+  url?: string
 ): ReturnType<typeof fail> {
   if (isFunction(captureException)) {
-    captureException(error, clientId);
+    captureException(error, clientId, url ? { url } : undefined);
   }
   log.error('add:submit:error', error);
 
@@ -191,7 +194,7 @@ export const actions = {
 
       return { form };
     } catch (error) {
-      return handleSubmitError(error, form, captureException, client?.id);
+      return handleSubmitError(error, form, captureException, client?.id, event.url.toString());
     }
   }
 };

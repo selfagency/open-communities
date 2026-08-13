@@ -70,7 +70,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
 
       return fail(err.status ?? 400, {
@@ -136,7 +136,7 @@ export const actions = {
         });
       }
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
 
       return fail(err.status ?? 401, { form });
@@ -187,7 +187,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error);
+        await captureException(error, undefined, { url: event.url.toString() });
       }
 
       return fail(err.status || 400, {

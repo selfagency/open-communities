@@ -13,6 +13,7 @@
       "!**/yarn.lock",
       "!**/pb_data/",
       "!**/pb_migrations/",
+      "!**/pb_hooks/**",
       "!e2e",
       "!**/build/",
       "!**/.svelte-kit/",

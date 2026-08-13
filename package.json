@@ -54,10 +54,10 @@
     "bits-ui": "2.18.1",
     "clsx": "^2.1.1",
     "fast-string-truncated-width": "3.0.3",
+    "ioredis": "^6.0.0",
     "isomorphic-dompurify": "^3.18.0",
     "marked": "^18.0.5",
     "mode-watcher": "1.1.0",
-    "nodemailer": "^9.0.1",
     "pocketbase": "^0.27.0",
     "posthog-js": "^1.393.5",
     "posthog-node": "^5.38.5",
@@ -76,7 +76,8 @@
     "tailwindcss": "^4.3.1",
     "tslog": "^4.10.2",
     "wait-for-the-element": "^4.0.2",
-    "zod": "4.4.3"
+    "zod": "4.4.3",
+    "nodemailer": "^9.0.1"
   },
   "devDependencies": {
     "@accesslint/core": "^0.13.0",
@@ -106,7 +107,6 @@
     "@types/eslint": "^9.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.0.1",
-    "@types/nodemailer": "^8.0.1",
     "@types/web": "^0.0.350",
     "@typescript/native-preview": "7.0.0-dev.20260624.1",
     "@vitest/browser": "^4.1.9",
@@ -141,7 +141,8 @@
     "vite-plugin-mcp": "^0.3.2",
     "vite-plugin-svelte-inline-component": "^0.0.8",
     "vitest": "^4.1.9",
-    "vitest-browser-svelte": "2.1.1"
+    "vitest-browser-svelte": "2.1.1",
+    "@types/nodemailer": "^8.0.1"
   },
   "packageManager": "pnpm@10.18.3",
   "engines": {

@@ -59,6 +59,8 @@ services:
       - '3000:3000'
     networks:
       - dev
+    environment:
+      REDIS_URL: redis://dragonfly:6379
 
 networks:
   dev:

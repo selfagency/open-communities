@@ -13,6 +13,11 @@ export const env = {
   POSTHOG_CLI_API_KEY: 'phx_test_key',
   POSTHOG_CLI_PROJECT_ID: '212770',
   POSTHOG_CLI_HOST: 'http://localhost:3001',
+  // Getter so tests can set process.env.REDIS_URL after module load (the
+  // module is cached across test files in the same worker).
+  get REDIS_URL() {
+    return process.env.REDIS_URL ?? '';
+  },
   SMTP_HOST,
   SMTP_PASS,
   SMTP_PORT,

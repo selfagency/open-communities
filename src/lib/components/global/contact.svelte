@@ -117,6 +117,7 @@ $effect(() => {
       </span>
     {:else}
       <form
+        action="?/"
         class="space-y-4"
         method="POST"
         use:enhance

@@ -111,7 +111,7 @@ export const actions = {
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
-        await captureException(error, client?.id);
+        await captureException(error, client?.id, { url: event.url.toString() });
       }
       log.error('error', err);
 

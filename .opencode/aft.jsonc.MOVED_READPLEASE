@@ -1,3 +1,19 @@
+// AFT configuration moved.
+//
+// AFT now reads its configuration from one shared CortexKit location
+// instead of a per-agent path. The settings that were in this file have
+// been moved to:
+//
+//     /Users/daniel/Developer/opencommunities/.cortexkit/aft.jsonc
+//
+// Edit that file to change AFT settings. This location is no longer read
+// by AFT.
+//
+// To undo, rename this file back to "aft.jsonc" (and remove the
+// CortexKit copy above if you want this location to take precedence).
+//
+// Your original settings are preserved below for reference.
+
 {
   "hoist_builtin_tools": true,
   "format_on_edit": true,
