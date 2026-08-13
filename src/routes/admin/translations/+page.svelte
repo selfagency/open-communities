@@ -11,7 +11,7 @@ import LoadingIcon from '@tabler/icons-svelte/icons/loader';
 import RefreshIcon from '@tabler/icons-svelte/icons/refresh';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import { toast } from 'svelte-sonner';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 import { browser } from '$app/environment';
 import { deserialize, enhance } from '$app/forms';
 import { goto, invalidateAll } from '$app/navigation';

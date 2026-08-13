@@ -22,7 +22,6 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      // eslint-disable-next-line perfectionist/sort-objects
       $app: resolve(import.meta.dirname, 'src/test/mocks/$app'),
       // specific $app aliases must come before the generic '$app' alias
       '$app/environment': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),

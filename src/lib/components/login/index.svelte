@@ -3,7 +3,9 @@ import posthog from 'posthog-js';
 import { fade } from 'svelte/transition';
 /* region imports */
 import { toast } from 'svelte-sonner';
-import { type SuperValidated, superForm } from 'sveltekit-superforms';
+import type { SuperValidated } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
+import SuperDebug from 'sveltekit-superforms/SuperDebug.svelte';
 
 import { browser, dev } from '$app/environment';
 import { goto } from '$app/navigation';
@@ -172,9 +174,7 @@ let loadingSecondary = $derived(appState.loadingSecondary);
     {/if}
 
     {#if dev}
-      {#await import('sveltekit-superforms') then { default: SuperDebug }}
-        <div class="mt-4"><SuperDebug data={$formData} /></div>
-      {/await}
+      <div class="mt-4"><SuperDebug data={$formData} /></div>
     {/if}
   </Card.Content>
   <!-- <Card.Footer></Card.Footer> -->

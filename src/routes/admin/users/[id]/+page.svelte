@@ -3,7 +3,7 @@ import CancelIcon from '@tabler/icons-svelte/icons/cancel';
 import FileUploadIcon from '@tabler/icons-svelte/icons/file-upload';
 import TrashIcon from '@tabler/icons-svelte/icons/trash';
 import UserKeyIcon from '@tabler/icons-svelte/icons/user-key';
-import { superForm } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 import { enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 

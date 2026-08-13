@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { RecordModel } from 'pocketbase';
-import { setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { setError, superValidate } from 'sveltekit-superforms/server';
 import { userSchema } from '$lib/schemas/user';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';

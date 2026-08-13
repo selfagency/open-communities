@@ -3,6 +3,7 @@ import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 /* region imports */
 import type { SuperForm, SuperValidated } from 'sveltekit-superforms';
+import SuperDebug from 'sveltekit-superforms/SuperDebug.svelte';
 import { dev } from '$app/environment';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
@@ -166,9 +167,7 @@ onMount(async () => {
       </form>
 
       {#if dev}
-        {#await import('sveltekit-superforms') then { default: SuperDebug }}
-          <div class="mt-4"><SuperDebug data={$formData} /></div>
-        {/await}
+        <div class="mt-4"><SuperDebug data={$formData} /></div>
       {/if}
     {/if}
   </Card.Content>

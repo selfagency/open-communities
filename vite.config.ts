@@ -87,7 +87,7 @@ export default defineConfig(({ mode }) => ({
           deleteAfterUpload: true,
           enabled: true,
           releaseName: 'open-communities',
-          releaseVersion: (process.env.SOURCE_VERSION ?? process.env.COMMIT_REF) || 'dev'
+          releaseVersion: process.env.SOURCE_VERSION ?? process.env.COMMIT_REF ?? 'dev'
         }
       })
   ].filter((x): x is Exclude<typeof x, false | '' | undefined> => !!x),

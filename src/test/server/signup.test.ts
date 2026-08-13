@@ -9,6 +9,15 @@ vi.mock('sveltekit-superforms', () => ({
     message: { subscribe: vi.fn() }
   })
 }));
+// signup.ts imports superForm from the client subpath; mock it too.
+vi.mock('sveltekit-superforms/client', () => ({
+  superForm: () => ({
+    enhance: vi.fn(),
+    errors: { subscribe: vi.fn() },
+    form: { subscribe: vi.fn() },
+    message: { subscribe: vi.fn() }
+  })
+}));
 vi.mock('$lib/paraglide/messages', () => ({
   m: { signUpFailure: () => 'Sign up failed', signUpSuccess: () => 'Signed up' }
 }));

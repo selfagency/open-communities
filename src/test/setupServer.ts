@@ -51,6 +51,14 @@ vi.mock('sveltekit-superforms', () => ({
   superValidate: () => ({})
 }));
 
+// The server subpath is used by server-side modules; mock it too so the real
+// package (and its SuperDebug.svelte) never loads in the server project.
+vi.mock('sveltekit-superforms/server', () => ({
+  message: () => ({}),
+  setError: () => ({}),
+  superValidate: () => ({})
+}));
+
 // Paraglide messages aren't available before build; return key names.
 vi.mock('$lib/paraglide/messages', () => {
   const m = new Proxy(

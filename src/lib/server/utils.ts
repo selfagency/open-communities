@@ -1,7 +1,7 @@
 // fallow-ignore-file security-sink — intentional: fetch to captcha / email-verification endpoints configured via env vars
 import type { SuperValidated } from 'sveltekit-superforms';
 
-import { setError } from 'sveltekit-superforms';
+import { setError } from 'sveltekit-superforms/server';
 
 import { env } from '$env/dynamic/private';
 import { env as pubEnv } from '$env/dynamic/public';

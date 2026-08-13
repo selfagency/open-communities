@@ -11,6 +11,12 @@ vi.mock('sveltekit-superforms', () => ({
   superValidate: mockSuperValidate
 }));
 
+// Routes import superValidate from the server subpath; mock it too.
+vi.mock('sveltekit-superforms/server', () => ({
+  ...mockSveltekitSuperforms,
+  superValidate: mockSuperValidate
+}));
+
 const PB = 'http://*:8090';
 
 const server = setupServer();

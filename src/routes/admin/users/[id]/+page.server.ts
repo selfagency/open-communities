@@ -1,6 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod/v4';
 import { withRetry } from '$lib/server/api';
 import type { Actions, PageServerLoad } from './$types';

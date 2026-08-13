@@ -11,6 +11,12 @@ vi.mock('sveltekit-superforms', () => ({
   superValidate: mockSuperValidate
 }));
 
+// The route imports superValidate from the server subpath; mock it too.
+vi.mock('sveltekit-superforms/server', () => ({
+  ...mockSveltekitSuperforms,
+  superValidate: mockSuperValidate
+}));
+
 vi.mock('$env/dynamic/private', () => ({
   env: new Proxy<Record<string, string>>({} as Record<string, string>, {
     get: (_, key) => process.env[key as string] ?? ''

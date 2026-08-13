@@ -86,7 +86,7 @@ export function pbErrorToFail(e: unknown): ReturnType<typeof fail> {
   const [field] = Object.keys(data);
 
   return fail(status === 0 ? 502 : status, {
-    error: field ? data[field].message : 'Save failed',
-    ...(field ? { field } : {})
+    error: field && Object.hasOwn(data, field) ? data[field].message : 'Save failed',
+    ...(field && Object.hasOwn(data, field) ? { field } : {})
   });
 }

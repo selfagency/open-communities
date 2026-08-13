@@ -8,7 +8,9 @@ import { isEmpty } from 'radashi';
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import { toast } from 'svelte-sonner';
-import { type SuperValidated, superForm } from 'sveltekit-superforms';
+import type { SuperValidated } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
+import SuperDebug from 'sveltekit-superforms/SuperDebug.svelte';
 
 import { dev } from '$app/environment';
 import { goto } from '$app/navigation';
@@ -128,11 +130,9 @@ onMount(() => {
       </form>
     {/if}
     {#if dev}
-      {#await import("sveltekit-superforms") then { default: SuperDebug }}
-        <div class="mt-4">
-          <SuperDebug collapsed collapsible data={$formData} />
-        </div>
-      {/await}
+      <div class="mt-4">
+        <SuperDebug collapsed collapsible data={$formData} />
+      </div>
     {/if}
   </AlertDialog.Content>
 </AlertDialog.Root>

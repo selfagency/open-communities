@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { getAdminClient } from '$lib/server/admin-translations';
 import { log } from '$lib/server/logger';
 import { addSchema, deleteSchema } from './_shared';

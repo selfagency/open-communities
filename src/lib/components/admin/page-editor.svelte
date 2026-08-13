@@ -1,7 +1,8 @@
 <script lang="ts">
 import type { ActionResult } from '@sveltejs/kit';
 import { toast } from 'svelte-sonner';
-import { type SuperValidated, superForm } from 'sveltekit-superforms';
+import type { SuperValidated } from 'sveltekit-superforms';
+import { superForm } from 'sveltekit-superforms/client';
 import { deserialize, enhance } from '$app/forms';
 import { goto } from '$app/navigation';
 import Required from '$lib/components/form/required.svelte';
