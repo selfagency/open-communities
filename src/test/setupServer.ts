@@ -28,16 +28,17 @@ afterAll(() => server.close());
 
 // ── Module mocks (non-HTTP) ────────────────────────────────────────────
 
-// Nodemailer is Node-only; provide a minimal mock for server modules
-vi.mock('nodemailer', () => ({
-  default: {
-    createTransport: () => ({
-      sendMail: async () => ({ messageId: 'mock' })
-    })
-  },
-  createTransport: () => ({
-    sendMail: async () => ({ messageId: 'mock' })
-  })
+// Mailgun is Node-only; provide a minimal mock for server modules
+vi.mock('mailgun.js', () => ({
+  default: class {
+    client() {
+      return {
+        messages: {
+          create: async () => ({ id: 'mock', message: 'Queued. Thank you.' })
+        }
+      };
+    }
+  }
 }));
 
 // Paraglide messages aren't available before build; return key names.

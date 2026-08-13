@@ -1,8 +1,7 @@
 // @vitest-environment node
 
-import { spawn } from 'node:child_process';
-import { sleep, uid } from 'radashi';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { uid } from 'radashi';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { Collections, CongregationMetaResponse, TypedPocketBase } from '$lib/pocketbase.d';
 
@@ -11,196 +10,40 @@ vi.mock('$lib/assets/emailTemplate.html?raw', () => ({
   default: '<!doctype html><html><body>%MESSAGE%</body></html>'
 }));
 
-// Unmock nodemailer — mail test needs real SMTP transport to Mailpit
-vi.unmock('nodemailer');
+// Mock Mailgun env vars
+vi.mock('$env/dynamic/private', () => ({
+  env: {
+    MAILGUN_API_KEY: 'test-key',
+    MAILGUN_DOMAIN: 'm.opencommunities.info',
+    ADMIN_EMAIL: 'admin@test.test'
+  }
+}));
 
-// Bypass MSW for Mailpit API calls (localhost:8025)
-import { http, passthrough } from 'msw';
-import { server } from '../../mocks/node';
-
-beforeAll(() => {
-  server.use(http.all('http://localhost:8025/*', () => passthrough()));
-});
-
-// (use shared mocks in src/test/mocks)
+// Capture the messages.create payloads so we can assert on them
+const sentMessages: Record<string, unknown>[] = [];
+vi.mock('mailgun.js', () => ({
+  default: class {
+    client() {
+      return {
+        messages: {
+          create: (_domain: string, data: Record<string, unknown>) => {
+            sentMessages.push(data);
+            return Promise.resolve({ id: 'mock', message: 'Queued. Thank you.' });
+          }
+        }
+      };
+    }
+  }
+}));
 
 import { adminMail, transactionalMail } from '$lib/server/mail';
 
-async function ensureMailpitRunning() {
-  const check = async () => {
-    try {
-      // prefer the lightweight /info endpoint to confirm Mailpit readiness
-      const res = await fetch('http://localhost:8025/api/v1/info', {
-        headers: {
-          accept: 'application/json'
-        }
-      });
-      console.debug('mailpit running', res.ok);
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  // if Mailpit is already reachable, we're done
-  if (await check()) {
-    return;
-  }
-
-  // In CI we expect the runner to provide Mailpit as a service. Do not attempt to spawn
-  // the binary in CI; instead poll briefly and fail early so CI setup issues are visible.
-  if (process.env.CI) {
-    const deadline = Date.now() + 10_000;
-    while (Date.now() < deadline) {
-      if (await check()) {
-        return;
-      }
-      await sleep(250);
-    }
-    throw new Error('Mailpit not reachable at http://localhost:8025 in CI');
-  }
-  // Local developer run: try to spawn a local mailpit binary if available, then poll.
-  try {
-    const child = spawn('mailpit', [], { detached: true, stdio: 'ignore' });
-    child.unref();
-  } catch (e) {
-    // ignore spawn errors for local runs; we'll still poll for a running service
-    // biome-ignore lint/complexity/noVoid: intentional catch discard
-    void e;
-    const deadline = Date.now() + 10_000;
-    while (Date.now() < deadline) {
-      if (await check()) {
-        return;
-      }
-      await sleep(250);
-    }
-  }
-}
-
-beforeEach(async () => {
-  await ensureMailpitRunning();
-});
-
-// cleanup Mailpit between tests to avoid cross-test contamination
-afterEach(async () => {
-  try {
-    // only attempt cleanup if Mailpit is reachable (avoid noisy "Failed to fetch" logs)
-    try {
-      const info = await fetch('http://localhost:8025/api/v1/info', {
-        headers: {
-          accept: 'application/json'
-        }
-      });
-      if (!info.ok) {
-        console.debug('Mailpit not reachable for cleanup (non-ok /info)');
-        return;
-      }
-    } catch {
-      console.debug('Mailpit not reachable for cleanup (fetch failed), skipping DELETE');
-      return;
-    }
-
-    // delete all messages
-    await fetch('http://localhost:8025/api/v1/messages', {
-      headers: {
-        accept: 'application/json'
-      },
-      method: 'DELETE'
-    });
-    // small pause to ensure Mailpit processed deletion
-    await sleep(100);
-  } catch (e) {
-    // ignore cleanup failures in test environment
-    console.debug('Mailpit cleanup error', e);
-  }
-});
-
-/** Extract a flat message array from Mailpit API responses of any shape */
-function extractMessageList(dataRaw: unknown): Record<string, unknown>[] {
-  if (Array.isArray(dataRaw)) {
-    return dataRaw as Record<string, unknown>[];
-  }
-  if (!dataRaw || typeof dataRaw !== 'object') {
-    return [];
-  }
-  const asObj = dataRaw as Record<string, unknown>;
-  if (Array.isArray(asObj.messages)) {
-    return asObj.messages as Record<string, unknown>[];
-  }
-  if (Array.isArray(asObj.items)) {
-    return asObj.items as Record<string, unknown>[];
-  }
-  // fallback: collect any array-valued properties
-  const collected: Record<string, unknown>[] = [];
-  for (const v of Object.values(asObj)) {
-    if (Array.isArray(v)) {
-      collected.push(...(v as Record<string, unknown>[]));
-    }
-  }
-  return collected;
-}
-
-/** Normalize a single Mailpit message to a consistent { id, subject, raw } shape */
-function normalizeMessage(m: unknown): { id?: string; raw: Record<string, unknown>; subject?: string } {
-  const msg = m as Record<string, unknown>;
-  const id =
-    (msg.id as string) ??
-    (msg.ID as string) ??
-    (msg.Id as string) ??
-    (msg._id as string) ??
-    (msg.messageId as string) ??
-    undefined;
-  const subjectVal = (msg.subject as string) ?? (msg.Subject as string) ?? (msg.SubjectLine as string) ?? undefined;
-  return { id, raw: msg, subject: subjectVal };
-}
-
-async function findMessageBySubject(subject: string) {
-  const deadline = Date.now() + 8000;
-  while (Date.now() < deadline) {
-    const res = await fetch('http://localhost:8025/api/v1/messages', {
-      headers: {
-        accept: 'application/json'
-      }
-    });
-    if (!res.ok) {
-      throw new Error('Mailpit API not reachable');
-    }
-    const dataRaw = await res.json();
-    const list = extractMessageList(dataRaw);
-    const normalized = list.map(normalizeMessage);
-
-    const found = normalized.find((m) => typeof m.subject === 'string' && m.subject.includes(subject));
-    if (found) {
-      return found as { id?: string; subject?: string };
-    }
-
-    // wait a bit before retrying
-
-    await sleep(300);
-  }
-
-  // final fetch for debug
-  try {
-    const res = await fetch('http://localhost:8025/api/v1/messages', {
-      headers: {
-        accept: 'application/json'
-      }
-    });
-    const data = await res.json();
-    // print a short summary for debugging
-
-    console.debug('Mailpit messages (sample):', Array.isArray(data) ? data.slice(0, 5) : data);
-  } catch (e) {
-    console.debug('Mailpit API fetch failed at final debug:', e);
-  }
-
-  return;
-}
-
 describe('src/lib/server/mail', () => {
-  it('sends transactional email via SMTP (mailpit)', async () => {
-    await ensureMailpitRunning();
+  beforeEach(() => {
+    sentMessages.length = 0;
+  });
 
+  it('sends transactional email via Mailgun', async () => {
     const txSubject = `TxSubject-${uid(8)}`;
 
     const payload = {
@@ -210,18 +53,19 @@ describe('src/lib/server/mail', () => {
       subject: txSubject
     };
 
-    await transactionalMail(payload);
+    const result = await transactionalMail(payload);
+    expect(result).toEqual({ ok: true });
 
-    // allow delivery to Mailpit
-    await sleep(500);
-
-    const found = await findMessageBySubject(txSubject);
-    expect(found).toBeTruthy();
-  }, 20_000);
+    expect(sentMessages).toHaveLength(1);
+    const sent = sentMessages[0];
+    expect(sent.subject).toBe(txSubject);
+    expect(sent.to).toEqual(['Test <user@example.test>']);
+    expect(sent.from).toBe('Open Communities <no-reply@m.opencommunities.info>');
+    expect(sent.text).toBe('Hello world');
+    expect(sent.html).toContain('Hello world');
+  });
 
   it('sends admin email with listing appended when record present', async () => {
-    await ensureMailpitRunning();
-
     const fakeApi = {
       collection: (name: string) => {
         if (name === 'congregationMeta') {
@@ -275,83 +119,13 @@ describe('src/lib/server/mail', () => {
 
     await adminMail(payload, fakeApi);
 
-    // allow delivery to Mailpit
-    await sleep(500);
-
-    // ensure a message with the expected subject made it to Mailpit
-    const found = await findMessageBySubject(adminSubject);
-    expect(found).toBeTruthy();
-    console.error('Found message from list search:', found);
-
-    // fetch raw source and assert listing presence
-    let raw = '';
-    const rawDeadline = Date.now() + 5000;
-    while (Date.now() < rawDeadline) {
-      const rawRes = await fetch(`http://localhost:8025/api/v1/messages/${found?.id}/raw`, {
-        headers: {
-          accept: 'application/json'
-        }
-      });
-      if (rawRes.ok) {
-        raw = await rawRes.text();
-        break;
-      }
-      await sleep(250);
-    }
-
-    // if raw not available, fetch message details and search there
-    if (raw) {
-      expect(raw).toContain('Listing: Congregation Name');
-    } else {
-      const detailRes = await fetch(`http://localhost:8025/api/v1/message/${found?.id}`, {
-        headers: {
-          accept: 'application/json'
-        }
-      });
-      if (detailRes.ok) {
-        const detail = await detailRes.json();
-        // Check HTML and Text fields directly instead of stringifying the whole object
-        const htmlContent = detail.HTML || '';
-        const textContent = detail.Text || '';
-
-        if (htmlContent.includes('Listing: Congregation Name') || textContent.includes('Listing: Congregation Name')) {
-          // Test passes
-          return;
-        }
-
-        // Fallback to checking the whole object
-        const haystack = JSON.stringify(detail);
-        expect(haystack).toContain('Listing: Congregation Name');
-      } else {
-        const detailText = await detailRes.text().catch(() => '<no-body>');
-        console.error('Mailpit /messages/{id} non-ok:', {
-          body: detailText,
-          id: found?.id,
-          status: detailRes.status
-        });
-        try {
-          const listRes = await fetch('http://localhost:8025/api/v1/messages', {
-            headers: {
-              accept: 'application/json'
-            }
-          });
-          const listBody = await listRes.text();
-          console.error('Mailpit messages list raw:', listBody);
-          // Since we have the message list, let's check if the content is in the snippet
-          const listData = JSON.parse(listBody);
-          const foundMessage = listData.messages?.find((m: Record<string, unknown>) => m.ID === found?.id);
-          if (foundMessage?.Snippet) {
-            expect(foundMessage.Snippet).toContain('Listing: Congregation Name');
-            return; // Test passed, exit early
-          }
-        } catch (e) {
-          console.debug('Failed to fetch Mailpit messages list for diagnostics:', e);
-        }
-        // If we get here, we couldn't find the content anywhere
-        throw new Error(
-          `Could not verify email content. Raw fetch failed, detail fetch failed, and snippet not found. Detail status: ${detailRes.status}`
-        );
-      }
-    }
-  }, 20_000);
+    expect(sentMessages).toHaveLength(1);
+    const sent = sentMessages[0];
+    expect(sent.subject).toBe(adminSubject);
+    expect(sent.to).toEqual(['Open Communities Admin <admin@test.test>']);
+    expect(sent.from).toBe('Sender via Open Communities <from@example.test>');
+    expect(sent.text).toContain('Please review');
+    expect(sent.text).toContain('Listing: Congregation Name');
+    expect(sent.text).toContain('https://opencommunities.info/edit?id=abc');
+  });
 });

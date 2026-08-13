@@ -28,10 +28,8 @@ vi.mock('$env/dynamic/private', () => ({
     },
     ADMIN_EMAIL: 'admin@test.local',
     CAPTCHA_SITE_SECRET: '',
-    SMTP_HOST: 'localhost',
-    SMTP_PASS: '',
-    SMTP_PORT: '1025',
-    SMTP_USER: ''
+    MAILGUN_API_KEY: 'test-key',
+    MAILGUN_DOMAIN: 'm.opencommunities.info'
   }
 }));
 

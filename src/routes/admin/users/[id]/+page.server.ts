@@ -10,8 +10,8 @@ import type { Actions, PageServerLoad } from './$types';
 const updateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email'),
-  verified: z.boolean().optional(),
-  admin: z.boolean().optional()
+  verified: z.preprocess((v) => v === 'true' || v === true, z.boolean()).optional(),
+  admin: z.preprocess((v) => v === 'true' || v === true, z.boolean()).optional()
 });
 
 const assignSchema = z.object({

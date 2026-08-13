@@ -7,10 +7,10 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const page = Number(url.searchParams.get('page')) || 1;
   const perPage = 18;
 
-  // Build filter
+  // Build filter — match email, name, or the linked congregation's name
   let filter = '';
   if (search) {
-    filter = client.filter('email ~ {:search} || name ~ {:search}', { search });
+    filter = client.filter('email ~ {:search} || name ~ {:search} || congregation.name ~ {:search}', { search });
   }
 
   const list = await withRetry(() =>

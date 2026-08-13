@@ -1,9 +1,9 @@
+import FormData from 'form-data';
 import DOMPurify from 'isomorphic-dompurify';
+import Mailgun from 'mailgun.js';
+import type { IMailgunClient } from 'mailgun.js/Types/Interfaces/MailgunClient/IMailgunClient.js';
 import { marked } from 'marked';
-import nodemailer from 'nodemailer';
-import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 /* region imports */
-import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import emailTemplate from '$lib/assets/emailTemplate.html?raw';
 import type { TypedPocketBase } from '$lib/pocketbase.d';
@@ -11,11 +11,10 @@ import { log } from '$lib/server/logger';
 
 /* endregion imports */
 
-const { ADMIN_EMAIL, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } = env;
+const { ADMIN_EMAIL, MAILGUN_API_KEY, MAILGUN_DOMAIN } = env;
 
-// Lazy singleton transporter — created once on first use, reused for all subsequent sends.
-// Avoids TCP setup per email and skips verify() in production (one-time check at creation).
-let _transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo> | null = null;
+// Lazy singleton Mailgun client — created once on first use, reused for all subsequent sends.
+let _client: IMailgunClient | null = null;
 
 /**
  * Sanitize a header value by stripping CR/LF characters and trimming whitespace.
@@ -74,10 +73,7 @@ export async function adminMail({ email, message, name, record, subject }: Admin
 }
 
 export function closeTransporter() {
-  if (_transporter) {
-    _transporter.close();
-    _transporter = null;
-  }
+  _client = null;
 }
 
 async function mailTransport({
@@ -91,8 +87,8 @@ async function mailTransport({
   subject: string;
   headerTo: string;
 }) {
-  if (!(SMTP_USER && SMTP_PASS && SMTP_HOST && SMTP_PORT)) {
-    log.warn('SMTP credentials are not set');
+  if (!(MAILGUN_API_KEY && MAILGUN_DOMAIN)) {
+    log.warn('Mailgun credentials are not set');
   }
 
   // S-9: sanitize HTML output to prevent email injection
@@ -103,28 +99,17 @@ async function mailTransport({
   });
   const html = emailTemplate.replace('%MESSAGE%', sanitized);
   const text = bodyText;
-  const mail = {
+
+  const client = getClient();
+
+  log.debug('Sending email', { from: headerFrom, to: headerTo, subject });
+  await client.messages.create(MAILGUN_DOMAIN as string, {
     from: headerFrom,
-    html,
+    to: [headerTo],
     subject,
     text,
-    to: [headerTo]
-  };
-
-  const transporter = getTransporter();
-
-  // Verify only on first use (dev) or skip in production
-  if (dev && typeof transporter.verify === 'function') {
-    try {
-      await transporter.verify();
-    } catch (err) {
-      log.error('SMTP transporter verification failed', err);
-      throw err;
-    }
-  }
-
-  log.debug('Sending email', mail);
-  await transporter.sendMail(mail);
+    html
+  });
 }
 
 export async function transactionalMail({
@@ -148,23 +133,16 @@ export async function transactionalMail({
   }
 }
 
-function getTransporter(): nodemailer.Transporter<SMTPTransport.SentMessageInfo> {
-  if (_transporter) {
-    return _transporter;
+function getClient(): IMailgunClient {
+  if (_client) {
+    return _client;
   }
 
-  const smtpPort = Number.parseInt(SMTP_PORT as string, 10);
-  const transportOpts: SMTPTransport.Options = {
-    host: SMTP_HOST as string,
-    port: smtpPort,
-    secure: smtpPort === 465,
-    tls: { rejectUnauthorized: true }
-  };
-
-  if (SMTP_USER && SMTP_PASS) {
-    transportOpts.auth = { pass: SMTP_PASS, user: SMTP_USER };
-  }
-
-  _transporter = nodemailer.createTransport(transportOpts);
-  return _transporter;
+  const mailgun = new Mailgun(FormData);
+  _client = mailgun.client({
+    username: 'api',
+    key: MAILGUN_API_KEY as string,
+    useFetch: true
+  });
+  return _client;
 }

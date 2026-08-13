@@ -36,12 +36,20 @@ type Congregation = CongregationMetaRecord & { id: string };
 /* region variables */
 // constants
 // id is handled via +page.svelte load → resolved before this component mounts
-const search = new Search(page.data.congregations as SearchData[], dev);
-const { results, state: searchState } = search;
-const location = new LocationService({
-  countries: page.data.countries,
-  search
-});
+// Rebuild the Search + Location instances whenever the congregation data changes
+// (e.g. after an edit submit triggers invalidateAll). Search is immutable after
+// construction — it pre-builds fuzzy indexes and search strings — so a stale
+// instance would keep serving the pre-edit congregation list.
+const search = $derived.by(() => new Search(page.data.congregations as SearchData[], dev));
+const results = $derived(search.results);
+const searchState = $derived(search.state);
+const location = $derived.by(
+  () =>
+    new LocationService({
+      countries: page.data.countries,
+      search
+    })
+);
 let open = $state<Record<string, boolean>>({});
 
 // locals

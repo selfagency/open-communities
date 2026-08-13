@@ -122,18 +122,19 @@ vi.mock('cookie', () => ({
   serialize: (name: string, value: string) => `${name}=${value}`
 }));
 
-// Nodemailer is Node-only and pulls in streams/os APIs; provide a minimal
+// Mailgun is Node-only and pulls in streams/os APIs; provide a minimal
 // mock used by server tests that import it so transforms won't execute
 // node-only code in the browser runner.
-vi.mock('nodemailer', () => ({
-  default: {
-    createTransport: () => ({
-      sendMail: async () => ({ messageId: 'mock' })
-    })
-  },
-  createTransport: () => ({
-    sendMail: async () => ({ messageId: 'mock' })
-  })
+vi.mock('mailgun.js', () => ({
+  default: class {
+    client() {
+      return {
+        messages: {
+          create: async () => ({ id: 'mock', message: 'Queued. Thank you.' })
+        }
+      };
+    }
+  }
 }));
 
 // Provide a deterministic environment for tests: not in dev and not in browser
