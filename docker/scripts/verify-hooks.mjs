@@ -15,8 +15,9 @@
 const CONTAINER = process.env.PB_CONTAINER || 'docker-pocketbase-1';
 const PB_URL = process.env.PUBLIC_API_ENDPOINT || 'http://127.0.0.1:8090';
 
+import { execSync } from 'node:child_process';
+
 function getLogs() {
-  const { execSync } = await import('node:child_process');
   return execSync(`docker logs ${CONTAINER} 2>&1`, {
     encoding: 'utf8',
     timeout: 10000,
