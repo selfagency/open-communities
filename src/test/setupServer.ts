@@ -41,6 +41,16 @@ vi.mock('mailgun.js', () => ({
   }
 }));
 
+// sveltekit-superforms pulls in SuperDebug.svelte which the node module
+// evaluator cannot parse (SyntaxError: Unexpected strict mode reserved word).
+// Mock it so the real package never loads in the server project.
+vi.mock('sveltekit-superforms', () => ({
+  message: () => ({}),
+  setError: () => ({}),
+  superForm: () => ({}),
+  superValidate: () => ({})
+}));
+
 // Paraglide messages aren't available before build; return key names.
 vi.mock('$lib/paraglide/messages', () => {
   const m = new Proxy(
