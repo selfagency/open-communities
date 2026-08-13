@@ -16,5 +16,9 @@ export const env = {
   // module is cached across test files in the same worker).
   get REDIS_URL() {
     return process.env.REDIS_URL ?? '';
-  }
+  },
+  SMTP_HOST,
+  SMTP_PASS,
+  SMTP_PORT,
+  SMTP_USER
 };

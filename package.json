@@ -78,7 +78,8 @@
     "tailwindcss": "^4.3.3",
     "tslog": "^4.11.0",
     "wait-for-the-element": "^4.0.2",
-    "zod": "4.4.3"
+    "zod": "4.4.3",
+    "nodemailer": "^9.0.1"
   },
   "devDependencies": {
     "@accesslint/core": "^0.21.0",
