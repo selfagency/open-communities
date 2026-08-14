@@ -11,13 +11,21 @@ interface CongView {
   visible: boolean;
 }
 
-function parseLocation(location: string): {
+function parseLocation(location: string | Record<string, unknown>): {
   city?: { name: string };
   state?: { name: string; code: string };
   country?: { code: string };
 } {
+  // PocketBase SDK auto-parses JSON fields into objects; handle both shapes.
+  if (location && typeof location === 'object') {
+    return location as {
+      city?: { name: string };
+      state?: { name: string; code: string };
+      country?: { code: string };
+    };
+  }
   try {
-    return JSON.parse(location) as {
+    return JSON.parse(location as string) as {
       city?: { name: string };
       state?: { name: string; code: string };
       country?: { code: string };

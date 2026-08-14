@@ -99,7 +99,7 @@ const columns: ColumnDef<Page>[] = [
       renderSnippet(
         createRawSnippet<[{ v: string }]>((get) => ({
           render: () =>
-            `<span class="text-muted-foreground text-xs truncate inline-block max-w-sm">${get().v || '—'}</span>`
+            `<span class="text-muted-foreground text-xs truncate inline-block max-w-[16rem]">${get().v || '—'}</span>`
         })),
         { v: row.original.description }
       ),

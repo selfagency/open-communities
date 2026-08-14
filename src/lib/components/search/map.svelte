@@ -1,6 +1,8 @@
 <script lang="ts">
-import { mode } from 'mode-watcher';
 /* region imports */
+import { setWorkerUrl } from 'maplibre-gl';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+import { mode } from 'mode-watcher';
 import { DefaultMarker, type LngLatLike, MapLibre, Popup } from 'svelte-maplibre';
 import { Button } from '$lib/components/ui/button';
 import type { Location } from '$lib/location';
@@ -10,6 +12,10 @@ import type { Search } from '$lib/search';
 import type { LocationMeta } from '$lib/types.d';
 
 /* endregion imports */
+
+// maplibre-gl v6 requires a one-time setWorkerUrl() call in bundlers (Vite/Rolldown)
+// so the worker file resolves correctly; without it the worker 404s.
+setWorkerUrl(workerUrl);
 
 /* region variables */
 // props
