@@ -186,7 +186,9 @@ export const actions = {
       };
     } catch (error) {
       const err = error as ClientResponseError;
-      if (isFunction(captureException)) {
+      // Don't capture expected 400 validation failures (e.g. duplicate email) as
+      // PostHog errors — they're handled and returned to the user as a fail.
+      if (err.status !== 400 && isFunction(captureException)) {
         await captureException(error, undefined, { url: event.url.toString() });
       }
 

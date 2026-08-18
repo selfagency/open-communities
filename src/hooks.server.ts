@@ -270,6 +270,14 @@ export const handleError = async ({
   status: number;
 }): Promise<{ errorId: string; message: string } | undefined> => {
   if (status !== 404) {
+    // Skip SvelteKit's "method not allowed" error thrown when bots/crawlers POST
+    // to pages with no form actions — it's handled (returns 405) and is not a
+    // real application error.
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.includes('No form actions exist for this page')) {
+      return;
+    }
+
     const errorId = crypto.randomUUID();
 
     event.locals.error = serializeError(error);
