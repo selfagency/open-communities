@@ -50,9 +50,16 @@ export default defineConfig(({ mode }) => ({
     // sourcemaps for error de-minification via the rollup plugin below.
     mode === 'production' && {
       enforce: 'post',
-      generateBundle(_options, bundle) {
+      generateBundle(_options: unknown, bundle: Record<string, unknown>) {
         for (const file of Object.values(bundle)) {
-          if (file.type === 'chunk' && typeof file.code === 'string') {
+          if (
+            file &&
+            typeof file === 'object' &&
+            'type' in file &&
+            file.type === 'chunk' &&
+            'code' in file &&
+            typeof file.code === 'string'
+          ) {
             file.code = file.code.replace(/\/\/#\s*sourceMappingURL=.*$/gm, '');
           }
         }
