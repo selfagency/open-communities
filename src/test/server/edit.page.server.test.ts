@@ -113,8 +113,7 @@ describe('edit +page.server — delete action', () => {
       route: { id: '/edit' },
       url: new URL('http://localhost/?/delete')
     });
-    const res = await mod.actions.delete(mockEvent as any);
-    expect(res).toBeDefined();
+    await expect(mod.actions.delete(mockEvent as any)).rejects.toMatchObject({ location: '/', status: 302 });
   });
 });
 

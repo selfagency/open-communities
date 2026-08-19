@@ -215,8 +215,6 @@ export const actions = {
 
       clearCongregationCache();
       await sendDeleteNotifications(client);
-
-      redirect(302, '/');
     } catch (error) {
       const err = error as ClientResponseError;
       if (isFunction(captureException)) {
@@ -225,6 +223,9 @@ export const actions = {
 
       return fail(err.status ?? 400, { form });
     }
+
+    // Must be outside try-catch so redirect()'s throw propagates
+    redirect(302, '/');
   },
   submit: async (event) => {
     const { fetch, locals } = event;
