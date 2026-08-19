@@ -45,6 +45,27 @@ export default defineConfig(({ mode }) => ({
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
+    // Strip `//# sourceMappingURL=` comments from production JS so browsers don't
+    // try to fetch the (deleted/blocked) .map files — PostHog still receives the
+    // sourcemaps for error de-minification via the rollup plugin below.
+    mode === 'production' && {
+      enforce: 'post',
+      generateBundle(_options: unknown, bundle: Record<string, unknown>) {
+        for (const file of Object.values(bundle)) {
+          if (
+            file &&
+            typeof file === 'object' &&
+            'type' in file &&
+            file.type === 'chunk' &&
+            'code' in file &&
+            typeof file.code === 'string'
+          ) {
+            file.code = file.code.replace(/\/\/#\s*sourceMappingURL=.*$/gm, '');
+          }
+        }
+      },
+      name: 'strip-sourcemap-comments'
+    },
     {
       buildStart() {
         // Overwrite the generated messages.js to replace `export * as m` with

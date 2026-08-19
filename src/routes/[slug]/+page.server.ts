@@ -44,11 +44,8 @@ export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) =
       variant: variant as Record<string, unknown> | null
     };
   } catch (err) {
-    if (isFunction(captureException)) {
-      await captureException(err);
-    }
-
-    // Distinguish PB-down from genuine 404
+    // Distinguish PB-down from genuine 404 — check BEFORE capturing so expected
+    // 404s (non-existent slugs) are not reported as errors.
     if (
       typeof err === 'object' &&
       err !== null &&
@@ -59,6 +56,10 @@ export const load: PageServerLoad = async ({ cookies, fetch, locals, params }) =
       // PB responded — slug genuinely not found
       log.warn('Slug not found:', params.slug);
       return error(404, { message: 'Page not found' });
+    }
+
+    if (isFunction(captureException)) {
+      await captureException(err);
     }
 
     // PB unreachable after retries — graceful degradation
