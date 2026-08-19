@@ -23,7 +23,15 @@ export async function load({ fetch, locals }) {
       ).map((c) => cleanResponse(c as unknown as Record<string, unknown>))
     };
   } catch (err) {
-    if (isFunction(captureException)) {
+    // Transient rate-limit / connection errors are handled gracefully below
+    // (empty list) — don't report them as PostHog errors. Only capture genuine
+    // unexpected failures.
+    const status =
+      err && typeof err === 'object' && 'status' in err ? (err as Record<string, number>).status : undefined;
+    const isTransient =
+      status === 429 || status === 502 || status === 503 || status === 504 || status === 520 || status === 524;
+
+    if (!isTransient && isFunction(captureException)) {
       await captureException(err, client?.id);
     }
     // Graceful degradation: if PB is down after retries, show empty map

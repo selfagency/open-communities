@@ -168,7 +168,7 @@ export const actions = {
       }
 
       if (!form.valid) {
-        throw new Error('Invalid form data');
+        return fail(400, { form });
       }
 
       const captchaValid = await validateCaptcha(form);
