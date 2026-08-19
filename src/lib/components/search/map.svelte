@@ -60,6 +60,15 @@ const zoom = $derived.by(() => {
   }
   return 1;
 });
+
+// Only markers with real coordinates can project onto the map. Skip the rest so
+// maplibre never tries to place a marker at [0, 0] or with an undefined lngLat.
+const markerLocations = $derived(
+  locations.filter(
+    (l): l is LocationMeta & { latitude: number; longitude: number } =>
+      typeof l.latitude === 'number' && typeof l.longitude === 'number'
+  )
+);
 /* endregion variables */
 </script>
 
@@ -67,7 +76,7 @@ const zoom = $derived.by(() => {
   <!-- Test-friendly fallback: render buttons for each location so tests can query labels
 		 without initializing MapLibre / WebGL. -->
   <div class="h-96">
-    {#each locations as { city, country, state } (city?.id)}
+    {#each locations as { city, country, state }, i (city?.id ?? `${country?.id ?? ''}-${state?.id ?? ''}-${i}`)}
       <div>
         <Button
           class="h-full min-h-max w-full"
@@ -95,35 +104,40 @@ const zoom = $derived.by(() => {
 {:else}
   <div aria-label={m.congregationMap()} role="region">
     <MapLibre {center} class="h-96" minZoom={1} standardControls style={mapStyle} {zoom}>
-      {#each locations as { city, country, latitude, longitude, state } (city?.id)}
-        <DefaultMarker lngLat={[longitude || 0, latitude || 0]}>
-          <Popup offset={[0, -10]}>
-            <button
-              class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
-              onclick={async () => {
-              search.store.showLocation = true;
-              await location.load({
-                city: city?.id,
-                country: country?.id,
-                state: state?.id
-              });
-              const loc = location.state.get();
-              search.setSearchLocation(loc.record);
-            }}
-            >
-              {#if city}
-                {city.name},
-              {/if}
-              {#if state}
-                {state.name},
-              {/if}
-              {#if country}
-                {country.name}
-              {/if}
-            </button>
-          </Popup>
-        </DefaultMarker>
-      {/each}
+      {#snippet children({ loaded })}
+        <!-- Wait for the map load event so its transform is ready before markers project. -->
+        {#if loaded}
+          {#each markerLocations as { city, country, latitude, longitude, state }, i (city?.id ?? `${country?.id ?? ''}-${state?.id ?? ''}-${i}`)}
+            <DefaultMarker lngLat={[longitude, latitude]}>
+              <Popup offset={[0, -10]}>
+                <button
+                  class="text-foreground underline-offset-4 hover:underline text-sm cursor-pointer"
+                  onclick={async () => {
+                  search.store.showLocation = true;
+                  await location.load({
+                    city: city?.id,
+                    country: country?.id,
+                    state: state?.id
+                  });
+                  const loc = location.state.get();
+                  search.setSearchLocation(loc.record);
+                }}
+                >
+                  {#if city}
+                    {city.name},
+                  {/if}
+                  {#if state}
+                    {state.name},
+                  {/if}
+                  {#if country}
+                    {country.name}
+                  {/if}
+                </button>
+              </Popup>
+            </DefaultMarker>
+          {/each}
+        {/if}
+      {/snippet}
     </MapLibre>
   </div>
 {/if}
