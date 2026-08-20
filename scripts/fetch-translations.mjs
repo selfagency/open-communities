@@ -74,33 +74,64 @@ if (!TOKEN) {
   process.exit(0);
 }
 
-async function fetchRecords() {
-  const all = [];
-  let pageParam = 1;
+// Transient HTTP statuses worth retrying (mirrors withRetry in src/lib/server/api.ts).
+const RETRYABLE_STATUSES = new Set([429, 502, 503, 504, 520, 524]);
+const MAX_RETRIES = 3;
+const REQUEST_TIMEOUT_MS = 20_000;
+const HTTP_STATUS_RE = /^HTTP (\d+)/;
+
+async function fetchPage(pageParam) {
+  // Per-request timeout so a slow page doesn't abort the whole pagination loop.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15_000);
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    for (let guard = 0; guard < 100; guard += 1) {
-      const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=500&page=${pageParam}`, {
-        headers: { authorization: `Bearer ${TOKEN}` },
-        signal: controller.signal
-      });
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-      }
-      const data = await res.json();
-      const items = data?.items ?? [];
-      all.push(...items);
-      const total = data?.totalItems ?? all.length;
-      if (items.length === 0 || all.length >= total) {
-        break;
-      }
-      pageParam += 1;
+    const res = await fetch(`${PB_URL}/api/collections/translations/records?perPage=500&page=${pageParam}`, {
+      headers: { authorization: `Bearer ${TOKEN}` },
+      signal: controller.signal
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${await res.text()}`);
     }
-    return all;
+    return await res.json();
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// Fetch one page with retry on transient failures / timeouts.
+async function fetchPageWithRetry(pageParam) {
+  let lastError;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt += 1) {
+    try {
+      return await fetchPage(pageParam);
+    } catch (err) {
+      lastError = err;
+      const status = err.message?.match(HTTP_STATUS_RE)?.[1];
+      const retryable = status ? RETRYABLE_STATUSES.has(Number(status)) : true;
+      if (!retryable || attempt === MAX_RETRIES) {
+        throw err;
+      }
+      console.warn(`  ⚠  Page ${pageParam} attempt ${attempt + 1} failed (${err.message}); retrying...`);
+      await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
+    }
+  }
+  throw lastError ?? new Error('fetchPageWithRetry: no data after retries');
+}
+
+async function fetchRecords() {
+  const all = [];
+  let pageParam = 1;
+  for (let guard = 0; guard < 100; guard += 1) {
+    const data = await fetchPageWithRetry(pageParam);
+    const items = data?.items ?? [];
+    all.push(...items);
+    const total = data?.totalItems ?? all.length;
+    if (items.length === 0 || all.length >= total) {
+      break;
+    }
+    pageParam += 1;
+  }
+  return all;
 }
 
 function groupByLocale(records) {
