@@ -46,3 +46,15 @@ export const page = {
   },
   url: { searchParams: fakeSearchParams }
 };
+
+// Minimal navigating store used by sveltekit-superforms/client
+const navigating = {
+  /** @param {(v: unknown) => void} fn */
+  subscribe(fn) {
+    fn(null);
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+    return () => {};
+  }
+};
+
+export { navigating };

@@ -10,3 +10,10 @@ export function enhance(_action, _options) {
     }
   });
 }
+
+// biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+export async function applyAction() {}
+
+export function deserialize() {
+  return {};
+}

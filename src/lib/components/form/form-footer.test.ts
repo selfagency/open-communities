@@ -1,8 +1,12 @@
 import '@testing-library/jest-dom/vitest';
 import { mount, unmount } from 'svelte';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { makeMockFormProps } from '$test/testUtils';
+import { makeMockFormProps, mockSveltekitSuperforms } from '$test/testUtils';
+
+// form-footer renders Delete (edit mode) which imports superForm from the
+// client subpath; mock it so the real client never loads.
+vi.mock('sveltekit-superforms/client', () => mockSveltekitSuperforms);
 
 describe('FormFooter', () => {
   const initData = () => {

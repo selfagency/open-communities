@@ -9,7 +9,7 @@
  * @accesslint/core directly and filter violations to the container's descendants.
  */
 
-import type { AuditResult, AxeViolation } from '@accesslint/core';
+import type { AuditResult, Violation } from '@accesslint/core';
 import { runAudit } from '@accesslint/core';
 
 export function assertAccessible(container: Element | Document): void {
