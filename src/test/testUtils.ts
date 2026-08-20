@@ -98,9 +98,14 @@ export const mockSveltekitSuperforms = {
       // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
       capture: () => {},
       constraints: {},
-      delayed,
-      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
-      enhance: () => {},
+      // Svelte's use:enhance action expects { destroy } on the returned node
+      // object; returning undefined causes "enhanced.destroy is not a function"
+      // on unmount.
+      enhance: () => ({
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+        destroy: () => {}
+      }),
+
       errors: errorsStore,
       form: formStore,
       isTainted: () => false,

@@ -124,17 +124,22 @@ vi.mock('cookie', () => ({
   serialize: (name: string, value: string) => `${name}=${value}`
 }));
 
-// Mailgun is Node-only and pulls in streams/os APIs; provide a minimal
-// mock used by server tests that import it so transforms won't execute
-// node-only code in the browser runner.
-vi.mock('mailgun.js', () => ({
-  default: class {
-    client() {
-      return {
-        messages: {
-          create: async () => ({ id: 'mock', message: 'Queued. Thank you.' })
-        }
-      };
+// Upyo MailgunTransport would make real HTTP calls; provide a stub that
+// resolves a successful receipt so tests never hit Mailgun.
+vi.mock('@upyo/mailgun', () => ({
+  MailgunTransport: class {
+    send() {
+      return Promise.resolve({ messageId: 'mock', successful: true });
+    }
+  }
+}));
+
+// Upyo SmtpTransport would make real SMTP connections; provide a stub so
+// tests never hit a real SMTP server (Mailpit or otherwise).
+vi.mock('@upyo/smtp', () => ({
+  SmtpTransport: class {
+    send() {
+      return Promise.resolve({ messageId: 'mock', successful: true });
     }
   }
 }));
@@ -202,7 +207,16 @@ vi.mock('$app/state', () => {
     url: { searchParams: fakeSearchParams }
   };
 
-  return { page };
+  // Minimal navigating store used by sveltekit-superforms/client
+  const navigating = {
+    subscribe(fn: (v: unknown) => void) {
+      fn(null);
+      // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+      return () => {};
+    }
+  };
+
+  return { navigating, page };
 });
 
 // Mock side-effecting modules used in components
@@ -232,6 +246,20 @@ vi.doMock('formsnap', () => testApi.formsnap);
 
 // Use shared sveltekit-superforms stub for tests
 vi.doMock('sveltekit-superforms', () => testApi.superforms);
+// Components import superForm from the /client subpath; mock it too so the
+// real client (which calls onDestroy outside a component and returns an
+// enhance action without destroy) never loads in browser tests.
+vi.doMock('sveltekit-superforms/client', () => testApi.superforms);
+// delete.svelte imports SuperDebug from the /SuperDebug.svelte subpath, which
+// the package's exports map resolves to SuperDebugRuned.svelte (imports
+// $app/state, unresolvable in the browser runner). Mock the resolved path to a
+// no-op so the real component never loads.
+vi.doMock('sveltekit-superforms/SuperDebug.svelte', () => ({
+  default: () => null
+}));
+vi.doMock('sveltekit-superforms/dist/client/SuperDebugRuned.svelte', () => ({
+  default: () => null
+}));
 
 // Provide a safe messages stub for paraglide translations used throughout the app.
 // Many components call m.someKey() — return a function that yields the key name
