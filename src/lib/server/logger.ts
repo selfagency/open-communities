@@ -117,7 +117,7 @@ function logEvent(statusCode: number, event: RequestEvent) {
 
     log[error ? 'error' : 'info']('request', shake({ ...logData, requestId }));
   } catch (err) {
-    log.error(err);
+    log.error(err instanceof Error ? err.message : String(err));
   }
 }
 

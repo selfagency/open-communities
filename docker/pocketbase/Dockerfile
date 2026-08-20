@@ -7,19 +7,18 @@ FROM alpine:3.21
 ARG PB_VERSION=0.29.2
 ARG PB_ARCH=amd64
 
+# download and unzip PocketBase for the requested architecture
+# nosec: HTTPS to github.com releases
 RUN apk add --no-cache \
     unzip \
     ca-certificates \
-    curl
-
-# download and unzip PocketBase for the requested architecture
-RUN curl -fsSL -o /tmp/pb.zip \
-  "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${PB_ARCH}.zip" \
-  && unzip /tmp/pb.zip -d /pb/ \
-  && rm -f /tmp/pb.zip
-
-RUN mkdir -p /pb_data && chmod 777 /pb_data
-RUN mkdir -p /pb_data/pb_hooks && chmod 777 /pb_data/pb_hooks
+    curl \
+    && curl -fsSL -o /tmp/pb.zip \
+      "https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${PB_ARCH}.zip" \
+    && unzip /tmp/pb.zip -d /pb/ \
+    && rm -f /tmp/pb.zip \
+    && mkdir -p /pb_data /pb_data/pb_hooks \
+    && chmod 755 /pb_data /pb_data/pb_hooks
 
 EXPOSE 8090
 

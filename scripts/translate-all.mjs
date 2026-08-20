@@ -336,7 +336,8 @@ async function flushBatch(batch, checkpoint) {
   }
   await batchSend(batch);
   for (const b of batch) {
-    checkpoint.add(`${b.body.key ? `${b.body.key}|${b.body.locale}` : `page:${b.body.page}|${b.body.language}`}`);
+    const checkpointKey = b.body.key ? `${b.body.key}|${b.body.locale}` : `page:${b.body.page}|${b.body.language}`;
+    checkpoint.add(checkpointKey);
   }
   batch.length = 0;
   saveCheckpoint(checkpoint);

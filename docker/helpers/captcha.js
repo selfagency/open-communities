@@ -43,7 +43,7 @@ export async function loadCaptchaConfig() {
     envContent.split('\n').forEach((line) => {
       const [key, value] = line.split('=');
       if (key && value) {
-        config[key.trim()] = value.replace(/"/g, '').trim();
+        config[key.trim()] = value.replaceAll('"', '').trim();
       }
     });
 

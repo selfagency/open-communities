@@ -33,7 +33,7 @@ const handler = (e) => {
     } catch {
       /* silent */
     }
-    while (host.length > 0 && host[host.length - 1] === '/') {
+    while (host.length > 0 && host.endsWith('/')) {
       host = host.slice(0, -1);
     }
     return { key: key, host: host };
@@ -60,11 +60,11 @@ const handler = (e) => {
   }
 
   function makeSpanAttrs(e, startTime, execTimeMs) {
-    const method = e.request ? e.request.method : 'UNKNOWN';
+    const method = e.request?.method ?? 'UNKNOWN';
     const url = e.url || '';
-    const status = e.response ? e.response.statusCode : 0;
-    const auth = e.auth ? e.auth.id : '';
-    const ip = e.request ? e.request.remoteIP : '';
+    const status = e.response?.statusCode ?? 0;
+    const auth = e.auth?.id ?? '';
+    const ip = e.request?.remoteIP ?? '';
     const attrs = [
       { key: 'service.name', value: { stringValue: 'pocketbase' } },
       { key: 'http.method', value: { stringValue: method } },
@@ -93,10 +93,10 @@ const handler = (e) => {
       severityNumber = 13;
     }
     return {
-      traceId: traceId,
-      spanId: spanId,
-      severityText: severityText,
-      severityNumber: severityNumber,
+      traceId,
+      spanId,
+      severityText,
+      severityNumber,
       body: { stringValue: method + ' ' + url + ' -> ' + status },
       timeUnixNano: toNanos(startTime),
       attributes: [
@@ -106,8 +106,8 @@ const handler = (e) => {
         { key: 'http.status_code', value: { intValue: status } },
         { key: 'http.route', value: { stringValue: url } },
         { key: 'exec_time_ms', value: { intValue: execTimeMs } },
-        { key: 'client.ip', value: { stringValue: e.request ? e.request.remoteIP : '' } },
-        { key: 'auth', value: { stringValue: e.auth ? e.auth.id : '' } }
+        { key: 'client.ip', value: { stringValue: e.request?.remoteIP ?? '' } },
+        { key: 'auth', value: { stringValue: e.auth?.id ?? '' } }
       ]
     };
   }
@@ -135,14 +135,14 @@ const handler = (e) => {
 
   function postJson(url, body) {
     try {
-      var resp = $http.send({
+      $http.send({
         url: url,
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(body),
         timeout: 5
       });
-    } catch (err) {
+    } catch {
       /* fire-and-forget: swallow errors silently */
     }
   }
@@ -152,7 +152,7 @@ const handler = (e) => {
     const execTimeMs = 0;
     let traceId = '';
     try {
-      if (e.request && e.request.header) {
+      if (e.request?.header) {
         traceId = e.request.header['x-request-id'] || '';
       }
     } catch {
@@ -162,9 +162,9 @@ const handler = (e) => {
       traceId = makeTraceId();
     }
     const spanId = makeSpanId();
-    const method = e.request ? e.request.method : 'UNKNOWN';
+    const method = e.request?.method ?? 'UNKNOWN';
     const url = e.url || '';
-    const status = e.response ? e.response.statusCode : 0;
+    const status = e.response?.statusCode ?? 0;
     const span = {
       traceId: traceId,
       spanId: spanId,
@@ -195,14 +195,14 @@ const handler = (e) => {
       ]
     };
     const logRecord = buildLogRecord({
-      traceId: traceId,
-      spanId: spanId,
-      method: method,
-      url: url,
-      status: status,
-      startTime: startTime,
-      execTimeMs: execTimeMs,
-      e: e
+      traceId,
+      spanId,
+      method,
+      url,
+      status,
+      startTime,
+      execTimeMs,
+      e
     });
     const logPayload = buildLogPayload(logRecord);
     postJson(cfg.host + '/i/v1/traces', otlpPayload);
