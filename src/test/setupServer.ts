@@ -28,15 +28,20 @@ afterAll(() => server.close());
 
 // ── Module mocks (non-HTTP) ────────────────────────────────────────────
 
-// Mailgun is Node-only; provide a minimal mock for server modules
-vi.mock('mailgun.js', () => ({
-  default: class {
-    client() {
-      return {
-        messages: {
-          create: async () => ({ id: 'mock', message: 'Queued. Thank you.' })
-        }
-      };
+// Upyo MailgunTransport would make real HTTP calls; provide a stub for server modules.
+vi.mock('@upyo/mailgun', () => ({
+  MailgunTransport: class {
+    send() {
+      return Promise.resolve({ messageId: 'mock', successful: true });
+    }
+  }
+}));
+
+// Upyo SmtpTransport would make real SMTP connections; provide a stub for server modules.
+vi.mock('@upyo/smtp', () => ({
+  SmtpTransport: class {
+    send() {
+      return Promise.resolve({ messageId: 'mock', successful: true });
     }
   }
 }));

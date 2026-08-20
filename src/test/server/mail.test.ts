@@ -19,19 +19,19 @@ vi.mock('$env/dynamic/private', () => ({
   }
 }));
 
-// Capture the messages.create payloads so we can assert on them
-const sentMessages: Record<string, unknown>[] = [];
-vi.mock('mailgun.js', () => ({
-  default: class {
-    client() {
-      return {
-        messages: {
-          create: (_domain: string, data: Record<string, unknown>) => {
-            sentMessages.push(data);
-            return Promise.resolve({ id: 'mock', message: 'Queued. Thank you.' });
-          }
-        }
-      };
+// Capture the messages passed to transport.send so we can assert on them
+interface CapturedMessage {
+  content: { html: string; text: string };
+  recipients: { address: string; name?: string }[];
+  sender: { address: string; name?: string };
+  subject: string;
+}
+const sentMessages: CapturedMessage[] = [];
+vi.mock('@upyo/mailgun', () => ({
+  MailgunTransport: class {
+    send(message: CapturedMessage) {
+      sentMessages.push(message);
+      return Promise.resolve({ messageId: 'mock', successful: true });
     }
   }
 }));
@@ -59,10 +59,10 @@ describe('src/lib/server/mail', () => {
     expect(sentMessages).toHaveLength(1);
     const [sent] = sentMessages;
     expect(sent.subject).toBe(txSubject);
-    expect(sent.to).toEqual(['Test <user@example.test>']);
-    expect(sent.from).toBe('Open Communities <no-reply@m.opencommunities.info>');
-    expect(sent.text).toBe('Hello world');
-    expect(sent.html).toContain('Hello world');
+    expect(sent.recipients).toEqual([{ address: 'user@example.test', name: 'Test' }]);
+    expect(sent.sender).toEqual({ address: 'no-reply@m.opencommunities.info', name: 'Open Communities' });
+    expect(sent.content.text).toBe('Hello world');
+    expect(sent.content.html).toContain('Hello world');
   });
 
   it('sends admin email with listing appended when record present', async () => {
@@ -122,10 +122,10 @@ describe('src/lib/server/mail', () => {
     expect(sentMessages).toHaveLength(1);
     const [sent] = sentMessages;
     expect(sent.subject).toBe(adminSubject);
-    expect(sent.to).toEqual(['Open Communities Admin <admin@test.test>']);
-    expect(sent.from).toBe('Sender via Open Communities <from@example.test>');
-    expect(sent.text).toContain('Please review');
-    expect(sent.text).toContain('Listing: Congregation Name');
-    expect(sent.text).toContain('https://opencommunities.info/edit?id=abc');
+    expect(sent.recipients).toEqual([{ address: 'admin@test.test', name: 'Open Communities Admin' }]);
+    expect(sent.sender).toEqual({ address: 'from@example.test', name: 'Sender via Open Communities' });
+    expect(sent.content.text).toContain('Please review');
+    expect(sent.content.text).toContain('Listing: Congregation Name');
+    expect(sent.content.text).toContain('https://opencommunities.info/edit?id=abc');
   });
 });

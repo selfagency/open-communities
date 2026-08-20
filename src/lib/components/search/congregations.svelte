@@ -83,7 +83,9 @@ const locations = $derived.by(() => {
     const allLocations = resultsValue
       .filter((l) => {
         const loc = l.location as LocationMeta;
-        return [loc.city?.name, loc.state?.name, loc.country?.name].every((v) => !isEmpty(v));
+        // Keep any row that has at least one named locality (city, state, or
+        // country) so country-only congregations still appear on the map.
+        return [loc.city?.name, loc.state?.name, loc.country?.name].some((v) => !isEmpty(v));
       })
       .map((l) => {
         const loc = l.location as LocationMeta;
@@ -95,7 +97,9 @@ const locations = $derived.by(() => {
           state: loc.state
         };
       }) as LocationMeta[];
-    return unique(allLocations, (l) => l.city?.id as string);
+    // Dedupe on a composite key so country-only rows (no city id) don't all
+    // collapse to the same key and drop each other.
+    return unique(allLocations, (l) => `${l.country?.id ?? ''}-${l.state?.id ?? ''}-${l.city?.id ?? ''}`);
   }
   return [];
 });

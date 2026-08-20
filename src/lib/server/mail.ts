@@ -1,6 +1,7 @@
-import FormData from 'form-data';
+import { createMessage, type Transport } from '@upyo/core';
+import { MailgunTransport } from '@upyo/mailgun';
+import { SmtpTransport } from '@upyo/smtp';
 import DOMPurify from 'isomorphic-dompurify';
-import Mailgun from 'mailgun.js';
 import { marked } from 'marked';
 /* region imports */
 import { env } from '$env/dynamic/private';
@@ -10,15 +11,12 @@ import { log } from '$lib/server/logger';
 
 /* endregion imports */
 
-const { ADMIN_EMAIL, MAILGUN_API_KEY, MAILGUN_DOMAIN } = env;
+const { ADMIN_EMAIL, MAILGUN_API_KEY, MAILGUN_DOMAIN, SMTP_HOST, SMTP_PORT } = env;
 
-// Derive the client type from the Mailgun class — the package does not export
-// its IMailgunClient type from the root, and deep imports are blocked by its
-// exports map.
-type MailgunClient = ReturnType<InstanceType<typeof Mailgun>['client']>;
-
-// Lazy singleton Mailgun client — created once on first use, reused for all subsequent sends.
-let _client: MailgunClient | null = null;
+// Lazy singleton transport — created once on first use, reused for all
+// subsequent sends. Uses Mailgun when MAILGUN_API_KEY is present (production),
+// otherwise falls back to SMTP (Mailpit in test/dev).
+let _transport: Transport<string> | null = null;
 
 /**
  * Sanitize a header value by stripping CR/LF characters and trimming whitespace.
@@ -76,7 +74,7 @@ export async function adminMail({ email, message, name, record, subject }: Admin
 }
 
 export function closeTransporter() {
-  _client = null;
+  _transport = null;
 }
 
 async function mailTransport({
@@ -103,16 +101,21 @@ async function mailTransport({
   const html = emailTemplate.replace('%MESSAGE%', sanitized);
   const text = bodyText;
 
-  const client = getClient();
+  const transport = getTransport();
 
   log.debug('Sending email', { from: headerFrom, subject, to: headerTo });
-  await client.messages.create(MAILGUN_DOMAIN as string, {
+
+  const message = createMessage({
+    content: { html, text },
     from: headerFrom,
-    html,
     subject,
-    text,
     to: [headerTo]
   });
+
+  const receipt = await transport.send(message);
+  if (!receipt.successful) {
+    throw new Error(receipt.errorMessages.join(', '));
+  }
 }
 
 export async function transactionalMail({
@@ -136,16 +139,25 @@ export async function transactionalMail({
   }
 }
 
-function getClient(): MailgunClient {
-  if (_client) {
-    return _client;
+function getTransport(): Transport<string> {
+  if (_transport) {
+    return _transport;
   }
 
-  const mailgun = new Mailgun(FormData);
-  _client = mailgun.client({
-    key: MAILGUN_API_KEY as string,
-    useFetch: true,
-    username: 'api'
-  });
-  return _client;
+  if (MAILGUN_API_KEY) {
+    _transport = new MailgunTransport({
+      apiKey: MAILGUN_API_KEY as string,
+      domain: MAILGUN_DOMAIN as string,
+      region: 'us',
+      retries: 3
+    });
+  } else {
+    // No Mailgun key — use SMTP (Mailpit in test/dev).
+    _transport = new SmtpTransport({
+      host: SMTP_HOST as string,
+      port: Number(SMTP_PORT ?? 587),
+      secure: false
+    });
+  }
+  return _transport;
 }
