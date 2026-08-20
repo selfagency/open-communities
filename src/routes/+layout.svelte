@@ -61,8 +61,12 @@ onNavigate((navigation) => {
 
       // Catch rejections on both promises so a skipped/aborted transition
       // (e.g. background tab) never surfaces as an unhandled rejection.
-      transition.ready.catch(() => {});
-      transition.finished.catch(() => {});
+      transition.ready.catch(() => {
+        // noop: skipped/aborted transition
+      });
+      transition.finished.catch(() => {
+        // noop: skipped/aborted transition
+      });
     });
   }
 });
