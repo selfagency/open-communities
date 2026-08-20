@@ -34,6 +34,20 @@ vi.mock('sveltekit-superforms', () => {
   return { superForm };
 });
 
+// form.ts imports superForm from the client subpath; mock it too so the
+// real client (which calls onDestroy outside a component) never loads.
+vi.mock('sveltekit-superforms/client', () => {
+  const superForm = ((data: unknown, opts: unknown) => {
+    (superForm as unknown as SuperFormMockShape).lastOptions = opts as FormOptions;
+    const errors: FormErrors = { set: vi.fn() };
+    const ret = { data, errors, options: opts } as FormReturn;
+    (superForm as unknown as SuperFormMockShape).mock.results.push({ value: ret });
+    return ret;
+  }) as unknown as SuperFormMockShape;
+  (superForm as unknown as SuperFormMockShape).mock = { results: [] };
+  return { superForm };
+});
+
 vi.mock('svelte-sonner', () => {
   const toast = { error: vi.fn(), success: vi.fn() };
   return { toast };
@@ -71,7 +85,7 @@ vi.mock('radashi', () => ({
 }));
 
 // Grab mocked exports so tests can assert on them
-const { superForm: superFormMock } = await import('sveltekit-superforms');
+const { superForm: superFormMock } = await import('sveltekit-superforms/client');
 const { toast } = await import('svelte-sonner');
 const { goto } = await import('$app/navigation');
 const { m } = await import('$lib/paraglide/messages');

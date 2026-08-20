@@ -62,9 +62,6 @@ importers:
       fast-string-truncated-width:
         specifier: 3.0.3
         version: 3.0.3
-      form-data:
-        specifier: ^4.0.6
-        version: 4.0.6
       ioredis:
         specifier: ^6.0.0
         version: 6.0.0

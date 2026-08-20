@@ -5,6 +5,33 @@ import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  // Pre-bundle these deps so Vite doesn't re-optimize mid-test (which
+  // reloads the page and fails the current test).
+  optimizeDeps: {
+    // Don't pre-bundle sveltekit-superforms: its SuperDebugRuned.svelte imports
+    // $app/state, which the dependency scanner can't resolve (aliases aren't
+    // applied during scan). Loading it as a regular module lets the alias apply.
+    exclude: ['sveltekit-superforms'],
+    include: [
+      '@testing-library/svelte',
+      '@testing-library/jest-dom/vitest',
+      '@testing-library/user-event',
+      '@leeoniya/ufuzzy',
+      '@tanstack/table-core',
+      'cookie',
+      'fast-string-truncated-width',
+      'isomorphic-dompurify',
+      'maplibre-gl',
+      'mailgun.js',
+      'pocketbase',
+      'posthog-js',
+      'radashi',
+      'svelte-sonner',
+      'tailwind-merge',
+      'tailwind-variants',
+      'tslog'
+    ]
+  },
   // Vitest 4 manages dep optimization internally via deps.optimizer.ssr|client.enabled
   // (defaults: false). Do NOT set optimizeDeps.disabled here — Vitest strips it.
   // prebundleSvelteLibraries: false keeps the svelte plugin from re-enabling Rolldown.
@@ -45,6 +72,14 @@ export default defineConfig({
       '$lib/server/logger': resolve(import.meta.dirname, 'src/test/mocks/$lib_server_logger.js'),
       $test: resolve(import.meta.dirname, 'src/test'),
       formsnap: resolve(import.meta.dirname, 'src/test/stubs/formsnap.js'),
+      'sveltekit-superforms/dist/client/SuperDebugRuned.svelte': resolve(
+        import.meta.dirname,
+        'src/test/stubs/SuperDebug.svelte'
+      ),
+      // SuperDebug.svelte imports $app/state (unresolvable in the browser
+      // runner); alias it to a no-op stub. The exports map resolves
+      // ./SuperDebug.svelte to SuperDebugRuned.svelte, so alias that path too.
+      'sveltekit-superforms/SuperDebug.svelte': resolve(import.meta.dirname, 'src/test/stubs/SuperDebug.svelte'),
       [resolve(import.meta.dirname, 'src/lib/server/logger.ts')]: resolve(
         import.meta.dirname,
         'src/test/mocks/$lib_server_logger.js'
