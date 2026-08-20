@@ -58,7 +58,7 @@ export async function getWeeklyDigest(days = 7): Promise<WeeklyDigest | null> {
 
     return res.json() as Promise<WeeklyDigest>;
   } catch (error) {
-    log.error('PostHog weekly digest error', error);
+    log.error('PostHog weekly digest error', error instanceof Error ? error.message : String(error));
     return null;
   }
 }

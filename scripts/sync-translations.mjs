@@ -75,7 +75,7 @@ const PARAGLIDE_M_SPEC_RE = /\bm\b(?:\s+as\s+([A-Za-z_$][\w$]*))?/;
 
 // Inlang metadata key ($schema) is not a real paraglide message — filter it out.
 // PB's `key` field rejects non-alphanumeric characters like `$`.
-const VALID_KEY_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+const VALID_KEY_RE = /^[a-zA-Z_]\w*$/;
 
 function escapeRe(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -124,9 +124,9 @@ function collectKeys(alias, src) {
   // (e.g. `form.set(` must NOT match alias `m`).
   const aliasRe = `\\b${escapeRe(alias)}`;
   // m.key(  or  mBase.key(
-  const callRe = new RegExp(`${aliasRe}\\.([A-Za-z_$][\\w$]*)\\s*\\(`, 'g');
+  const callRe = new RegExp(String.raw`${aliasRe}\.([\w$]*)\s*\(`, 'g');
   // m["key"]  / m['key']  (dynamic literal access)
-  const dynRe = new RegExp(`${aliasRe}\\[\\s*['"]([A-Za-z_$][\\w$]*)['"]\\s*\\]`, 'g');
+  const dynRe = new RegExp(String.raw`${aliasRe}\[\s*['"]([\w$]*)['"]\s*\]`, 'g');
   for (const match of src.matchAll(callRe)) {
     keys.add(match[1]);
   }

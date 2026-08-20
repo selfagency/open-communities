@@ -38,10 +38,9 @@ export function truncateText(text: unknown, limit = 32, ellipses = true) {
   return `${text.slice(0, sliced.index + 1)}${ellipses && sliced.ellipsed ? opts.ellipsis : ''}`;
 }
 
-export const flyAndScale = (
-  node: Element,
-  params: FlyAndScaleParams = { duration: 150, start: 0.95, x: 0, y: -8 }
-): TransitionConfig => {
+const DEFAULT_FLY_PARAMS: FlyAndScaleParams = { duration: 150, start: 0.95, x: 0, y: -8 };
+
+export const flyAndScale = (node: Element, params: FlyAndScaleParams = DEFAULT_FLY_PARAMS): TransitionConfig => {
   const style = getComputedStyle(node);
   const transform = style.transform === 'none' ? '' : style.transform;
 

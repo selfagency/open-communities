@@ -26,8 +26,8 @@ COPY package.json pnpm-lock.yaml ./
 # CI=true prevents ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY in non-TTY CI envs
 # --mount=type=cache caches the pnpm store across builds (Docker BuildKit)
 RUN --mount=type=cache,target=/root/.local/share/pnpm-store \
-    CI=true pnpm fetch \
-    && CI=true pnpm install --offline
+    CI=true pnpm fetch --ignore-scripts \
+    && CI=true pnpm install --offline --ignore-scripts
 
 # Copy the rest of the source and build the production output
 # PB_API_TOKEN/PB_URL passed inline to avoid persisting as ENV in intermediate layers
@@ -35,8 +35,8 @@ COPY . .
 # Force Paraglide to recompile fresh from updated translations (not cached src/lib/paraglide/)
 RUN rm -rf src/lib/paraglide/messages
 # bust-docker-cache 2026-07-08
-RUN CI=true SOURCE_VERSION=${SOURCE_VERSION} COMMIT_SHA=${COMMIT_SHA} \
-  PB_API_TOKEN=${PB_API_TOKEN} PB_URL=${PB_URL} \
+RUN CI=true SOURCE_VERSION="${SOURCE_VERSION}" COMMIT_SHA="${COMMIT_SHA}" \
+  PB_API_TOKEN="${PB_API_TOKEN}" PB_URL="${PB_URL}" \
   pnpm run build:prod
 
 # ─── Runtime image ───────────────────────────────────────────────────────
