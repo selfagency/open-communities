@@ -142,7 +142,7 @@ jobs:
           PHIO_PASSWORD: ${{ secrets.POCKETHOST_PASSWORD }}
           PHIO_SSH_KEY: ${{ secrets.PHIO_SSH_KEY }}
         run: |
-          npm install -g --ignore-scripts phio@1.2.3 tsx@4.19.2
+          npm install -g --ignore-scripts phio@0.4.0 tsx@4.19.2
           PHIO_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/phio-nodejs"
           mkdir -p "$PHIO_DIR"
           echo "$PHIO_SSH_KEY" > "$PHIO_DIR/phio_deploy_ed25519"
