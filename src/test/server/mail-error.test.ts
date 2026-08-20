@@ -12,15 +12,11 @@ vi.mock('$app/environment', () => ({
   dev: false
 }));
 
-// Mock mailgun.js to always throw for error-path testing
-vi.mock('mailgun.js', () => ({
-  default: class {
-    client() {
-      return {
-        messages: {
-          create: () => Promise.reject(new Error('SMTP connection refused'))
-        }
-      };
+// Mock @upyo/mailgun to always throw for error-path testing
+vi.mock('@upyo/mailgun', () => ({
+  MailgunTransport: class {
+    send() {
+      return Promise.reject(new Error('SMTP connection refused'));
     }
   }
 }));

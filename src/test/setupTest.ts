@@ -124,17 +124,12 @@ vi.mock('cookie', () => ({
   serialize: (name: string, value: string) => `${name}=${value}`
 }));
 
-// Mailgun is Node-only and pulls in streams/os APIs; provide a minimal
-// mock used by server tests that import it so transforms won't execute
-// node-only code in the browser runner.
-vi.mock('mailgun.js', () => ({
-  default: class {
-    client() {
-      return {
-        messages: {
-          create: async () => ({ id: 'mock', message: 'Queued. Thank you.' })
-        }
-      };
+// Upyo MailgunTransport would make real HTTP calls; provide a stub that
+// resolves a successful receipt so tests never hit Mailgun.
+vi.mock('@upyo/mailgun', () => ({
+  MailgunTransport: class {
+    send() {
+      return Promise.resolve({ messageId: 'mock', successful: true });
     }
   }
 }));

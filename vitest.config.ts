@@ -22,7 +22,7 @@ export default defineConfig({
       'fast-string-truncated-width',
       'isomorphic-dompurify',
       'maplibre-gl',
-      'mailgun.js',
+      '@upyo/mailgun',
       'pocketbase',
       'posthog-js',
       'radashi',
@@ -49,7 +49,6 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      $app: resolve(import.meta.dirname, 'src/test/mocks/$app'),
       // specific $app aliases must come before the generic '$app' alias
       '$app/environment': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
       '$app/environment.js': resolve(import.meta.dirname, 'src/test/mocks/$app/environment.js'),
