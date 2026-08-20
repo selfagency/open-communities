@@ -298,10 +298,6 @@ jobs:
           PB_ADMIN_EMAIL: ${{ secrets.PB_TEST_ADMIN }}
           PB_ADMIN_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
         run: pnpm dlx pocketbase-security@1.2.3 --url "$POCKETBASE_URL" --email "$PB_ADMIN_EMAIL" --password "$PB_ADMIN_PASSWORD" --html test-results/pb-security-report.html
-        env:
-          POCKETBASE_URL: http://localhost:8090
-          POCKETBASE_ADMIN_EMAIL: ${{ secrets.PB_TEST_ADMIN }}
-          POCKETBASE_ADMIN_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
 
       - name: Upload PB security report
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
