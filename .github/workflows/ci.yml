@@ -56,7 +56,7 @@ jobs:
             ${{ runner.os }}-node-modules-build-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate i18n messages + type check
         run: |
@@ -112,7 +112,7 @@ jobs:
             ${{ runner.os }}-node-modules-unit-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate SvelteKit types (required for tsconfig resolution)
         run: pnpm svelte-kit sync

@@ -2,8 +2,7 @@
 FROM tiago2/cap:3.1.5
 
 USER root
-RUN \
-  if command -v apk >/dev/null 2>&1; then \
+RUN if command -v apk >/dev/null 2>&1; then \
     apk add --no-cache curl; \
   elif command -v apt-get >/dev/null 2>&1; then \
     apt-get update && apt-get install -y --no-install-recommends curl \
