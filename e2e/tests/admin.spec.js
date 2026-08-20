@@ -75,14 +75,21 @@ test.describe('Admin backend', () => {
     await expect(page.getByRole('heading', { name: 'Pages' })).toBeVisible();
   });
 
-  test('non-admin user is redirected from admin', async ({ page }) => {
-    await page.goto(`${BASE}/logout`);
-    await page.goto(`${BASE}/login?login`);
-    const loginForm = page.locator('form[action*="login"]');
-    await loginForm.locator('input[autocomplete="email"]').fill('regular@example.test');
-    await loginForm.locator('input[type="password"]').first().fill(TEST_PASSWORD);
-    await loginForm.locator('button[type="submit"]').click();
-    await page.waitForURL('**/');
+  test('non-admin user is redirected from admin', async ({ page, context }) => {
+    // Auth as a non-admin user via PB API (use:enhance form doesn't work in prod build)
+    const res = await fetch(`${PB_API}/collections/users/auth-with-password`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ identity: 'regular@example.test', password: TEST_PASSWORD })
+    });
+    if (!res.ok) throw new Error(`PB non-admin auth failed: ${res.status}`);
+    const data = await res.json();
+    const pbAuth = `pb_auth=${encodeURIComponent(JSON.stringify({ token: data.token, record: data.record }))}`;
+    await context.addCookies([
+      { name: 'auth', value: pbAuth, domain: 'localhost', path: '/' },
+      { name: 'session', value: crypto.randomUUID(), domain: 'localhost', path: '/' }
+    ]);
+
     await page.goto(`${BASE}/admin`);
     await expect(page).toHaveURL(`${BASE}/`);
   });
