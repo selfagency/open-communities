@@ -31,7 +31,7 @@ let {
   {/if}
   <div class="flex flex-row items-center justify-end space-x-2" class:w-full={mode === "add"}>
     <Button
-      onclick={(e) => {
+      onclick={(e: Event) => {
         e.preventDefault();
         e.stopPropagation();
         untrack(() => {
@@ -48,7 +48,7 @@ let {
       {m.reset()}
     </Button>
     <Form.Button
-      onclick={(e) => {
+      onclick={(e: Event) => {
         e.preventDefault();
         e.stopPropagation();
         form.submit(document.getElementById("addEdit"));
