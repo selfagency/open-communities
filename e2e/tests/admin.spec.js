@@ -41,7 +41,6 @@ test.describe('Admin backend', () => {
 
   test('admin dashboard loads with stats', async ({ page }) => {
     await page.goto(`${BASE}/admin`);
-    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('link', { name: 'Congregations' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Users' })).toBeVisible();
     await expect(page.getByText('Pending Approvals').first()).toBeVisible();
@@ -49,7 +48,6 @@ test.describe('Admin backend', () => {
 
   test('congregations list loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/congregations`);
-    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('heading', { name: 'Congregations' })).toBeVisible();
   });
 
@@ -63,41 +61,34 @@ test.describe('Admin backend', () => {
 
   test('users list loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/users`);
-    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible();
   });
 
   test('dashboard shows analytics stats', async ({ page }) => {
     await page.goto(`${BASE}/admin`);
-    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('link', { name: 'Congregations' })).toBeVisible();
     await expect(page.getByText('Pending Approvals').first()).toBeVisible();
   });
 
   test('pages list loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/pages`);
-    await page.waitForLoadState('networkidle');
     await expect(page.getByRole('heading', { name: 'Pages' })).toBeVisible();
   });
 
   test('non-admin user is redirected from admin', async ({ page }) => {
     await page.goto(`${BASE}/logout`);
-    await page.waitForLoadState('networkidle');
     await page.goto(`${BASE}/login?login`);
-    await page.waitForLoadState('networkidle');
     const loginForm = page.locator('form[action*="login"]');
     await loginForm.locator('input[autocomplete="email"]').fill('regular@example.test');
     await loginForm.locator('input[type="password"]').first().fill(TEST_PASSWORD);
     await loginForm.locator('button[type="submit"]').click();
-    await page.waitForTimeout(2000);
+    await page.waitForURL('**/');
     await page.goto(`${BASE}/admin`);
-    await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL(`${BASE}/`);
   });
 
   test('new page form loads', async ({ page }) => {
     await page.goto(`${BASE}/admin/pages`);
-    await page.waitForLoadState('networkidle');
     await page.getByText('New Page').click();
     await page.waitForURL('**/admin/pages/new');
     await expect(page.getByRole('heading', { name: 'New Page' })).toBeVisible();
@@ -109,7 +100,6 @@ test.describe('Admin backend', () => {
 
   test('page list has title and slug columns', async ({ page }) => {
     await page.goto(`${BASE}/admin/pages`);
-    await page.waitForLoadState('networkidle');
     await expect(page.getByText('Title')).toBeVisible();
     await expect(page.getByText('Slug')).toBeVisible();
     await expect(page.getByText('Updated')).toBeVisible();
@@ -119,7 +109,6 @@ test.describe('Admin backend', () => {
     // Navigate via pages list first (client-side routing) to avoid SSR hydration
     // issues with direct navigation to the editor page.
     await page.goto(`${BASE}/admin/pages`);
-    await page.waitForLoadState('networkidle');
     await page.getByText('New Page').click();
     await page.waitForURL('**/admin/pages/new');
     await expect(page.getByRole('heading', { name: 'New Page' })).toBeVisible();

@@ -53,7 +53,6 @@ test.describe('Congregation CRUD', () => {
 
     // Navigate to home — should render logged-in state (Add Congregation button, no Login button)
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Verify login succeeded: Add Congregation button should be visible.
     const addBtn = page.getByRole('button', { name: /add congregation/i });
@@ -65,7 +64,6 @@ test.describe('Congregation CRUD', () => {
     await loginAsUser({ context });
 
     await page.goto(`${BASE}/add`);
-    await page.waitForLoadState('networkidle');
     // The Congregation accordion section is open by default (initial view='congregation').
     // Wait for the name input to be visible directly without clicking any trigger.
     const nameInput = page.locator('#name');
@@ -101,7 +99,6 @@ test.describe('Congregation CRUD', () => {
 
   test('known congregation appears in search results', async ({ page }) => {
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Search for a congregation seeded as visible (non-admin submissions are invisible).
     const searchInput = page.locator('input[id="search"]');

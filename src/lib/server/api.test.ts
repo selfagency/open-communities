@@ -177,9 +177,7 @@ describe('src/lib/server/api', () => {
       });
       expect(result).toEqual({ id: '123' });
     });
-  });
 
-  describe('cleanResponse', () => {
     it('removes pocketbase meta fields and preserves numeric 0/1 values', () => {
       const result = cleanResponse({
         active: 0,
