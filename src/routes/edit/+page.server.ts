@@ -154,6 +154,20 @@ export const load = async ({ fetch, locals, url }) => {
       }
     };
   } catch (error) {
+    // Don't capture expected 404s (deleted congregation / stale client.congregation)
+    // as PostHog errors — they're handled and surfaced to the user below.
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'status' in error &&
+      (error as Record<string, number>).status === 404
+    ) {
+      log.warn('Congregation not found for edit', {
+        id: client?.admin ? url.searchParams.get('id') : client?.congregation
+      });
+      throwAsHttpError(error as { message?: string; status?: number });
+    }
+
     if (isFunction(captureException)) {
       await captureException(error, client?.id);
     }
