@@ -230,7 +230,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps --only-shell
+        timeout-minutes: 15
+        run: pnpm exec playwright install chromium --with-deps --only-shell
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -292,7 +293,11 @@ jobs:
 
       - name: PocketBase security audit
         continue-on-error: true
-        run: npx pocketbase-security --url http://localhost:8090 --email ${{ secrets.PB_TEST_ADMIN }} --password ${{ secrets.PB_TEST_PASSWORD }} --html test-results/pb-security-report.html
+        env:
+          POCKETBASE_URL: http://localhost:8090
+          PB_ADMIN_EMAIL: ${{ secrets.PB_TEST_ADMIN }}
+          PB_ADMIN_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
+        run: pnpm dlx pocketbase-security@1.2.3 --url "$POCKETBASE_URL" --email "$PB_ADMIN_EMAIL" --password "$PB_ADMIN_PASSWORD" --html test-results/pb-security-report.html
         env:
           POCKETBASE_URL: http://localhost:8090
           POCKETBASE_ADMIN_EMAIL: ${{ secrets.PB_TEST_ADMIN }}
@@ -311,6 +316,7 @@ jobs:
           echo "App ready"
 
       - name: Run Playwright E2E
+        timeout-minutes: 60
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
           SMTP_HOST: localhost
@@ -319,7 +325,7 @@ jobs:
           PB_TEST_BASEURL: http://localhost:3000
           PB_TEST_ADMIN: ${{ secrets.PB_TEST_ADMIN }}
           PB_TEST_PASSWORD: ${{ secrets.PB_TEST_PASSWORD }}
-        run: npx playwright test --config e2e/playwright.config.cjs
+        run: pnpm exec playwright test --config e2e/playwright.config.cjs
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
