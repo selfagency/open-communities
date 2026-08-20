@@ -188,7 +188,7 @@ export const actions = {
       )) as CongregationsResponse;
 
       const batch = api.createBatch();
-      await createChildRecords(batch, formData, record.id);
+      createChildRecords(batch, formData, record.id);
       await withRetry(() => batch.send({ fetch }));
 
       await sendSubmissionNotifications(client, record, api);

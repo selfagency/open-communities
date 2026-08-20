@@ -207,7 +207,6 @@ test.describe('auth flows', () => {
 
     // Navigate to home — should show logged-in state
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
     await expect(page.locator('nav').getByRole('button', { name: /add congregation/i })).toBeVisible({ timeout: 10000 });
   });
 });

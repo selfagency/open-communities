@@ -72,7 +72,7 @@ SQL
     continue
   fi
   # Unexpected error - print and exit
-  echo "SQLite error (rc=$rc):"
-  echo "$output"
+  echo "SQLite error (rc=$rc):" >&2
+  echo "$output" >&2
   exit $rc
 done

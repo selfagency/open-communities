@@ -41,6 +41,7 @@ const handler = (e) => {
 
   function makeTraceId() {
     let hex = '';
+    // nosec: observability IDs, not cryptographic
     for (let i = 0; i < 32; i++) {
       hex += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
     }
@@ -49,6 +50,7 @@ const handler = (e) => {
 
   function makeSpanId() {
     let hex = '';
+    // nosec: observability IDs, not cryptographic
     for (let i = 0; i < 16; i++) {
       hex += '0123456789abcdef'.charAt(Math.floor(Math.random() * 16));
     }
@@ -210,7 +212,7 @@ const handler = (e) => {
   }
 
   try {
-    var cfg = readConfig();
+    const cfg = readConfig();
     if (!cfg.key) {
       e.next();
       return;

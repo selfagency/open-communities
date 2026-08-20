@@ -35,9 +35,8 @@ export function assertAccessible(container: Element | Document): void {
   if (containerViolations.length === 0) {
     return;
   }
-  const detail = containerViolations
-    .slice(0, 10)
-    .map((v) => `  [${v.impact ?? '?'}] ${v.message}${v.selector ? ` (${v.selector})` : ''}`)
-    .join('\n');
+  const violationToString = (v: AxeViolation) =>
+    `  [${v.impact ?? '?'}] ${v.message}${v.selector ? ` (${v.selector})` : ''}`;
+  const detail = containerViolations.slice(0, 10).map(violationToString).join('\n');
   throw new Error(`Found ${containerViolations.length} accessibility violation(s):\n${detail}`);
 }

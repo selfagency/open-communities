@@ -33,7 +33,6 @@ test.describe('Sidebar menu — desktop (1280px)', () => {
 
   test('anon: opens Sheet with language, theme, add congregation, login, footer links', async ({ page }) => {
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Desktop header should show Add Congregation button + hamburger
     await expect(page.getByRole('button', { name: /add congregation/i })).toBeVisible();
@@ -41,8 +40,6 @@ test.describe('Sidebar menu — desktop (1280px)', () => {
     // Open the Sheet via hamburger
     const hamburger = page.locator('nav button').last();
     await hamburger.click();
-    await page.waitForTimeout(500);
-
     // Sheet should contain language selector
     await expect(page.getByText('Language', { exact: true })).toBeVisible();
 
@@ -65,13 +62,10 @@ test.describe('Sidebar menu — desktop (1280px)', () => {
   test('logged-in user: opens Sheet with account, logout, no login', async ({ page, context }) => {
     await loginAs({ context, email: TEST_EMAIL, password: TEST_PASSWORD });
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Open the Sheet
     const hamburger = page.locator('nav button').last();
     await hamburger.click();
-    await page.waitForTimeout(500);
-
     // Should show account link
     await expect(page.getByRole('button', { name: /manage account/i })).toBeVisible();
 
@@ -89,13 +83,10 @@ test.describe('Sidebar menu — desktop (1280px)', () => {
   test('admin: opens Sheet with admin links', async ({ page, context }) => {
     await loginAs({ context, email: ADMIN_EMAIL, password: ADMIN_PASSWORD });
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Open the Sheet
     const hamburger = page.locator('nav button').last();
     await hamburger.click();
-    await page.waitForTimeout(500);
-
     // Should show admin section
     await expect(page.getByRole('button', { name: /dashboard/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /congregations/i })).toBeVisible();
@@ -114,7 +105,6 @@ test.describe('Sidebar menu — mobile (375px)', () => {
 
   test('anon: hamburger replaces top nav, opens Sheet with all links', async ({ page }) => {
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Mobile header should NOT show Add Congregation button inline
     await expect(page.getByRole('button', { name: /add congregation/i })).not.toBeVisible();
@@ -122,8 +112,6 @@ test.describe('Sidebar menu — mobile (375px)', () => {
     // Open the Sheet via hamburger (only button in mobile nav)
     const hamburger = page.locator('nav button').last();
     await hamburger.click();
-    await page.waitForTimeout(500);
-
     // Sheet should contain language + theme
     await expect(page.getByText('Language', { exact: true })).toBeVisible();
     await expect(page.getByText(/dark mode/i)).toBeVisible();
@@ -144,13 +132,10 @@ test.describe('Sidebar menu — mobile (375px)', () => {
   test('logged-in user: hamburger replaces top nav, shows account + logout', async ({ page, context }) => {
     await loginAs({ context, email: TEST_EMAIL, password: TEST_PASSWORD });
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Open the Sheet
     const hamburger = page.locator('nav button').last();
     await hamburger.click();
-    await page.waitForTimeout(500);
-
     // Should show account + logout
     await expect(page.getByRole('button', { name: /manage account/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /logout/i })).toBeVisible();
@@ -166,13 +151,10 @@ test.describe('Sidebar menu — mobile (375px)', () => {
   test('admin: hamburger replaces top nav, shows admin links', async ({ page, context }) => {
     await loginAs({ context, email: ADMIN_EMAIL, password: ADMIN_PASSWORD });
     await page.goto(BASE);
-    await page.waitForLoadState('networkidle');
 
     // Open the Sheet
     const hamburger = page.locator('nav button').last();
     await hamburger.click();
-    await page.waitForTimeout(500);
-
     // Admin links
     await expect(page.getByRole('button', { name: /dashboard/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /congregations/i })).toBeVisible();

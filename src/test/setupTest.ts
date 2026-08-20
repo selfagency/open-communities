@@ -98,8 +98,10 @@ if (typeof globalThis.document === 'undefined') {
 vi.mock('$app/navigation', () => ({
   afterNavigate: () => undefined,
   beforeNavigate: () => undefined,
-  goto: async () => Promise.resolve(),
-  invalidate: async () => Promise.resolve(),
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+  goto: async () => {},
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: intentional noop mock
+  invalidate: async () => {},
   invalidateAll: () => undefined
 }));
 

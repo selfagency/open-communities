@@ -19,7 +19,7 @@ ARG COMMIT_SHA
 ENV SOURCE_VERSION=${COMMIT_SHA:-dev}
 
 # Install pnpm
-RUN npm install -g pnpm@10
+RUN npm install -g pnpm@10 --ignore-scripts
 
 # Copy dependency manifests first for Docker layer caching
 COPY package.json pnpm-lock.yaml ./
@@ -52,8 +52,8 @@ COPY package.json pnpm-lock.yaml ./
 # Install only production dependencies
 # --ignore-scripts avoids the husky prepare hook failing in prod install
 # --frozen-lockfile ensures deterministic install; fall back if lockfile is absent
-RUN npm install -g pnpm@10 \
-    && (pnpm fetch --prod 2>/dev/null || true) \
+RUN npm install -g pnpm@10 --ignore-scripts \
+    && (pnpm fetch --prod --ignore-scripts 2>/dev/null || true) \
     && (pnpm install --prod --frozen-lockfile --ignore-scripts --offline \
         || pnpm install --prod --ignore-scripts)
 
