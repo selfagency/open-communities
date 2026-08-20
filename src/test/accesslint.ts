@@ -9,7 +9,7 @@
  * @accesslint/core directly and filter violations to the container's descendants.
  */
 
-import type { AuditResult, AxeViolation } from '@accesslint/core';
+import type { AuditResult, Violation } from '@accesslint/core';
 import { runAudit } from '@accesslint/core';
 
 export function assertAccessible(container: Element | Document): void {
@@ -35,7 +35,7 @@ export function assertAccessible(container: Element | Document): void {
   if (containerViolations.length === 0) {
     return;
   }
-  const violationToString = (v: AxeViolation) =>
+  const violationToString = (v: Violation) =>
     `  [${v.impact ?? '?'}] ${v.message}${v.selector ? ` (${v.selector})` : ''}`;
   const detail = containerViolations.slice(0, 10).map(violationToString).join('\n');
   throw new Error(`Found ${containerViolations.length} accessibility violation(s):\n${detail}`);
