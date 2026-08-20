@@ -1,4 +1,3 @@
-import FormData from 'form-data';
 import DOMPurify from 'isomorphic-dompurify';
 import Mailgun from 'mailgun.js';
 import { marked } from 'marked';
