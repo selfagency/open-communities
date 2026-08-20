@@ -140,4 +140,24 @@ describe('logEvent', () => {
     logEvent(200, event);
     expect(infoSpy).toHaveBeenCalledOnce();
   });
+
+  it('includes headers in log data in dev mode', async () => {
+    vi.doMock('$app/environment', () => ({
+      browser: false,
+      dev: true
+    }));
+
+    vi.resetModules();
+    const { logEvent, log } = await import('$lib/server/logger');
+    const infoSpy = vi.spyOn(log, 'info');
+    const event = mockRequestEvent({
+      headerOverrides: { 'x-custom-header': 'custom-value' },
+      url: 'http://localhost:5173/api/test'
+    });
+    logEvent(200, event);
+    expect(infoSpy).toHaveBeenCalledOnce();
+    // In dev mode, headers should be included in the log data
+    const [, logData] = infoSpy.mock.calls[0];
+    expect(logData).toHaveProperty('headers');
+  });
 });
