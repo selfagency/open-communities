@@ -44,18 +44,25 @@ onNavigate((navigation) => {
   if (browser) {
     setState({ loading: true });
 
-    if (!document.startViewTransition) {
-      // No view transitions: set loading=false when navigation completes
+    if (!document.startViewTransition || document.hidden) {
+      // No view transitions (or hidden doc where the transition would be
+      // skipped and its promises rejected): set loading=false when navigation
+      // completes.
       navigation.complete.then(() => setState({ loading: false }));
       return;
     }
 
     return new Promise((resolve) => {
-      document.startViewTransition(async () => {
+      const transition = document.startViewTransition(async () => {
         resolve();
         await navigation.complete;
         setState({ loading: false });
       });
+
+      // Catch rejections on both promises so a skipped/aborted transition
+      // (e.g. background tab) never surfaces as an unhandled rejection.
+      transition.ready.catch(() => {});
+      transition.finished.catch(() => {});
     });
   }
 });
